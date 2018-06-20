@@ -21,6 +21,37 @@ namespace mfront {
      * \brief structure describing a behaviour
      */
     struct Description {
+      //! \behaviour symmetry
+      enum Symmetry { ISOTROPIC, ORTHOTROPIC };
+      //! \brief constructor
+      Description();
+      //! \brief move constructor
+      Description(Description &&);
+      //! \brief copy constructor
+      Description(const Description &);
+      //! \brief move assignement
+      Description &operator=(Description &&);
+      //! \brief standard assignement
+      Description &operator=(const Description &);
+      //! \brief destructor
+      ~Description();
+      //! \brief name of the library providing the behaviour
+      std::string library;
+      //! \brief name of the behaviour
+      std::string behaviour;
+      //! \brief modelling hypothesis
+      Hypothesis hypothesis;
+      /*!
+       * \brief name of the function (build using the behaviour name and the
+       * modelling hypothesis)
+       */
+      std::string function;
+      //! \brief name of the `MFront` source file used to generate the behaviour
+      std::string source;
+      //! \brief version of `TFEL` used to generate the behaviour
+      std::string tfel_version;
+      //! pointer to the function implementing the behaviour
+      Behaviour b;
       //! \behaviour type
       enum {
         GENERALBEHAVIOUR,
@@ -35,32 +66,9 @@ namespace mfront {
         COHESIVEZONEKINEMATIC,
         FINITESTRAINKINEMATIC_F_CAUCHY,
         FINITESTRAINKINEMATIC_ETO_PK1
-      } ktype;
-      //! \brief constructor
-      Description();
-      //! \brief move constructor
-      Description(Description&&);
-      //! \brief copy constructor
-      Description(const Description&);
-      //! \brief move assignement
-      Description& operator=(Description&&);
-      //! \brief standard assignement
-      Description& operator=(const Description&);
-      //! \brief destructor
-      ~Description();
-      //! \brief name of the library providing the behaviour
-      std::string library;
-      //! \brief name of the behaviour
-      std::string behaviour;
-      //! \brief modelling hypothesis
-      Hypothesis hypothesis;
-      /*!
-       * \brief name of the function (build using the behaviour name and the
-       * modelling hypothesis)
-       */
-      std::string function;
-      //! pointer to the function implementing the behaviour
-      Behaviour b;
+      } kinematic;
+      //! behaviour symmetry
+      Symmetry symmetry;
       //! gradients
       std::vector<Variable> gradients;
       //! fluxes associated to gradients
@@ -68,9 +76,9 @@ namespace mfront {
       //! material properties
       std::vector<Variable> mps;
       //! internal state variables
-      std::vector<Variable> ivs;
+      std::vector<Variable> isvs;
       //! external state variables
-      std::vector<Variable> evs;
+      std::vector<Variable> esvs;
       //! parameters
       std::vector<Variable> parameters;
     };  // end of struct Description
@@ -91,3 +99,4 @@ namespace mfront {
 }  // end of namespace mfront
 
 #endif /* LIB_MFRONT_BEHAVIOUR_DESCRIPTION_HXX */
+

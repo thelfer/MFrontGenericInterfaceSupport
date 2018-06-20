@@ -9,8 +9,8 @@
 #define LIB_MFRONT_LIBRARIESMANAGER_HXX
 
 #include <map>
-#include <vector>
 #include <string>
+#include <vector>
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 #ifndef NOMINMAX
@@ -23,110 +23,210 @@
 
 namespace mfront {
 
-  /*!
-   * \brief structure in charge of handling libraries and querying MFront'
-   * meta-data
-   */
-  struct LibrariesManager {
+/*!
+ * \brief structure in charge of handling libraries and querying MFront'
+ * meta-data
+ */
+struct LibrariesManager {
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-    //! a simple alias
-    using libhandler = HINSTANCE__*;
+  //! a simple alias
+  using libhandler = HINSTANCE__ *;
 #else
-    //! a simple alias
-    using libhandler = void*;
+  //! a simple alias
+  using libhandler = void *;
 #endif /* LIB_EXTERNALLIBRARYMANAGER_HXX */
-    //! a simple alias
-    using Hypothesis = mfront::behaviour::Hypothesis;
-    //! \return the only instance of this class (singleton pattern).
-    static LibrariesManager& get();
-    LibrariesManager(LibrariesManager&&) = delete;
-    LibrariesManager(const LibrariesManager&) = delete;
-    LibrariesManager& operator=(LibrariesManager&&) = delete;
-    LibrariesManager& operator=(const LibrariesManager&) = delete;
-    /*!
-     * \return the `TFEL` version used to generate an `MFront` entry point
-     * \param[in] l: library name
-     * \param[in] n: entry point name
-     */
-    std::string getTFELVersion(const std::string&, const std::string&);
-    /*!
-     * \return the names of the material properties associated with a behaviour
-     * \param[in] l: library name
-     * \param[in] b: behaviour name
-     * \param[in] h: modelling hypothesis
-     */
-    std::vector<std::string> getMaterialPropertiesNames(const std::string&,
-                                                        const std::string&,
-                                                        const Hypothesis);
+  //! a simple alias
+  using Hypothesis = mfront::behaviour::Hypothesis;
+  //! \return the only instance of this class (singleton pattern).
+  static LibrariesManager &get();
+  LibrariesManager(LibrariesManager &&) = delete;
+  LibrariesManager(const LibrariesManager &) = delete;
+  LibrariesManager &operator=(LibrariesManager &&) = delete;
+  LibrariesManager &operator=(const LibrariesManager &) = delete;
+  /*!
+   * \return the `TFEL` version used to generate an `MFront` entry point
+   * \param[in] l: library name
+   * \param[in] n: entry point name
+   */
+  std::string getTFELVersion(const std::string &, const std::string &);
+  /*!
+   * \return the name of `MFront` file used to generate the given entry point
+   * \param[in] l: library name
+   * \param[in] n: entry point name
+   */
+  std::string getSource(const std::string &, const std::string &);
+  /*!
+   * \return the type of the behaviour
+   * \see MechanicalBehaviourBase::BehaviourType
+   * The value returned has the following meaning:
+   * - 0: general behaviour
+   * - 1: strain based behaviour
+   * - 2: standard finite strain behaviour
+   * - 3: cohesive zone model
+   * \param[in] l : name of the library
+   * \param[in] b : behaviour name
+   */
+  unsigned short getBehaviourType(const std::string &, const std::string &);
+  /*!
+   * \return the kinematic assumption used by the behaviour
+   * \see MechanicalBehaviourBase::Kinematic
+   * The value returned has the following meaning:
+   * - 0: undefined kinematic
+   * - 1: standard small strain behaviour kinematic
+   * - 2: cohesive zone model kinematic
+   * - 3: standard finite strain kinematic (F-Cauchy)
+   * - 4: ptest finite strain kinematic (eto-pk1)
+   * - 5: Green-Lagrange strain
+   * - 6: Miehe Apel Lambrecht logarithmic strain framework
+   * \param[in] l : name of the library
+   * \param[in] f : behaviour name
+   */
+  unsigned short getBehaviourKinematic(const std::string &,
+                                       const std::string &);
+  /*!
+   * \return the symmetry of the behaviour
+   * The value returned has the following meaning:
+   * - 0: isotropic behaviour
+   * - 1: orthotropic behaviour
+   * \param[in] l : name of the library
+   * \param[in] b : behaviour name
+   */
+  unsigned short getBehaviourSymmetry(const std::string &, const std::string &);
+  /*!
+   * \return the symmetry of the elastic stiffness
+   * The value returned has the following meaning:
+   * - 0: isotropic elastic stiffness
+   * - 1: orthotropic elastic stiffness
+   * \param[in] l : name of the library
+   * \param[in] b : behaviour name
+   */
+  unsigned short getElasticStiffnessSymmetry(const std::string &,
+                                             const std::string &);
+  /*!
+   * \return true if a behaviour generated throught the aster
+   * interface requires a offset for the elastic properties
+   * \param[in] l: library name
+   * \param[in] b: behaviour name
+   * \param[in] h: modelling hypothesis
+   */
+  bool requiresStiffnessTensor(const std::string &, const std::string &,
+                               const Hypothesis);
+  /*!
+   * \return true if a behaviour generated throught the aster
+   * interface requires a offset for the elastic properties
+   * \param[in] l: name of the library
+   * \param[in] b: behaviour name
+   * \param[in] h: modelling hypothesis
+   */
+  bool requiresThermalExpansionCoefficientTensor(const std::string &,
+                                                 const std::string &,
+                                                 const Hypothesis);
+  /*!
+   * \return the names of the material properties associated with
+   * a behaviour
+   * \param[in] l: library name
+   * \param[in] b: behaviour name
+   * \param[in] h: modelling hypothesis
+   */
+  std::vector<std::string> getMaterialPropertiesNames(const std::string &,
+                                                      const std::string &,
+                                                      const Hypothesis);
+  /*!
+   * \return the names of the internal state variables associated with
+   * a behaviour
+   * \param[in] l: library name
+   * \param[in] b: behaviour name
+   * \param[in] h: modelling hypothesis
+   */
+  std::vector<std::string> getInternalStateVariablesNames(const std::string &,
+                                                          const std::string &,
+                                                          const Hypothesis);
+  /*!
+   * \return the types of the internal state variables associated with
+   * a behaviour
+   * \param[in] l: library name
+   * \param[in] b: behaviour name
+   * \param[in] h: modelling hypothesis
+   */
+  std::vector<int> getInternalStateVariablesTypes(const std::string &,
+                                                  const std::string &,
+                                                  const Hypothesis);
+  /*!
+   * \return the names of the external state variables associated with
+   * a behaviour
+   * \param[in] l: library name
+   * \param[in] b: behaviour name
+   * \param[in] h: modelling hypothesis
+   */
+  std::vector<std::string> getExternalStateVariablesNames(const std::string &,
+                                                          const std::string &,
+                                                          const Hypothesis);
 
-   private:
-    //! \brief constructor
-    LibrariesManager();
-    //! \brief destructor
-    ~LibrariesManager();
-    /*!
-     * \return the names of a group of variables associated with a behaviour.
-     * \param[in] l: library name
-     * \param[in] b: behaviour name
-     * \param[in] h: modelling hypothesis
-     * \param[in] n: name of the group of variables (such as MaterialProperties)
-     */
-    std::vector<std::string> getNames(const std::string&,
-                                      const std::string&,
-                                      const Hypothesis,
-                                      const std::string&);
-    /*!
-     * \brief load the given symbol and cast it to a pointer of the given
-     * type.
-     * \tparam T: expected type
-     * \param[in] l: library name
-     * \param[in] n: symbol name
-     */
-    template <typename T>
-    const T* extract(const std::string&, const std::string&);
-    /*!
-     * \brief load the given symbol and cast it to a pointer of the given
-     * type.
-     * \tparam T: expected type
-     * \param[in] l: library name
-     * \param[in] n1: symbol name
-     * \param[in] n2: symbol name
-     */
-    template <typename T>
-    const T* extract(const std::string&,
-                     const std::string&,
-                     const std::string&);
-    /*!
-     * \return the adress of the given symbol. If no symbol is found, a
-     * null pointer is returned.
-     * \param[in] l: library name
-     * \param[in] n: symbol name
-     */
-    void* getSymbolAddress(const std::string&, const std::string&);
-    /*!
-     * \return the adress of the first given symbol if it exists or the
-     * adress of the second symbol. If no symbol is found, a null pointer is
-     * returned.
-     * \param[in] l: library name
-     * \param[in] n1: symbol name
-     * \param[in] n2: symbol name
-     */
-    void* getSymbolAddress(const std::string&,
-                           const std::string&,
-                           const std::string&);
-    /*!
-     * \brief load an external library if not already loaded. If the library
-     * is
-     * successfully loaded, the associated handler is stored.
-     * \param[in] l: library name
-     * \return the handler to the library
-     */
-    libhandler loadLibrary(const std::string&);
-    //! list of alreay loaded libraries
-    std::map<std::string, libhandler> libraries;
+private:
+  //! \brief constructor
+  LibrariesManager();
+  //! \brief destructor
+  ~LibrariesManager();
+  /*!
+   * \return the names of a group of variables associated with a behaviour.
+   * \param[in] l: library name
+   * \param[in] b: behaviour name
+   * \param[in] h: modelling hypothesis
+   * \param[in] n: name of the group of variables (such as
+   * MaterialProperties)
+   */
+  std::vector<std::string> getNames(const std::string &, const std::string &,
+                                    const Hypothesis, const std::string &);
+  /*!
+   * \brief load the given symbol and cast it to a pointer of the given
+   * type.
+   * \tparam T: expected type
+   * \param[in] l: library name
+   * \param[in] n: symbol name
+   */
+  template <typename T>
+  const T *extract(const std::string &, const std::string &);
+  /*!
+   * \brief load the given symbol and cast it to a pointer of the given
+   * type.
+   * \tparam T: expected type
+   * \param[in] l: library name
+   * \param[in] n1: symbol name
+   * \param[in] n2: symbol name
+   */
+  template <typename T>
+  const T *extract(const std::string &, const std::string &,
+                   const std::string &);
+  /*!
+   * \return the adress of the given symbol. If no symbol is found, a
+   * null pointer is returned.
+   * \param[in] l: library name
+   * \param[in] n: symbol name
+   */
+  void *getSymbolAddress(const std::string &, const std::string &);
+  /*!
+   * \return the adress of the first given symbol if it exists or the
+   * adress of the second symbol. If no symbol is found, a null pointer is
+   * returned.
+   * \param[in] l: library name
+   * \param[in] n1: symbol name
+   * \param[in] n2: symbol name
+   */
+  void *getSymbolAddress(const std::string &, const std::string &,
+                         const std::string &);
+  /*!
+   * \brief load an external library if not already loaded. If the library
+   * is
+   * successfully loaded, the associated handler is stored.
+   * \param[in] l: library name
+   * \return the handler to the library
+   */
+  libhandler loadLibrary(const std::string &);
+  //! list of alreay loaded libraries
+  std::map<std::string, libhandler> libraries;
 
-    };  // end of struct LibrariesManager
+}; // end of struct LibrariesManager
 
-}  // end of namespace mfront
+} // end of namespace mfront
 
 #endif /* LIB_MFRONT_LIBRARIESMANAGER_HXX */

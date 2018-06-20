@@ -44,13 +44,15 @@ namespace mfront {
 
     size_type getArraySize(const std::vector<Variable>& vs,
                            const Hypothesis h) {
-      auto getSize = [h](const Variable& v) -> size_type {
+      auto getSize = [h](const Variable &v) -> size_type {
         if (v.type == Variable::SCALAR) {
           return 1;
         } else if (v.type == Variable::STENSOR) {
           return getStensorSize(h);
         }
-	mfront::raise("getArraySize: unsupported variable type");
+        if (v.type != Variable::TENSOR) {
+          mfront::raise("getArraySize: unsupported variable type");
+        }
         return getTensorSize(h);
       };
       auto s = size_type{};

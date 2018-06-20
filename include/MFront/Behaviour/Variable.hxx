@@ -24,7 +24,7 @@ namespace mfront {
       //! name of the variable
       std::string name;
       //! type of the variable
-      enum { SCALAR, STENSOR, TENSOR } type;
+      enum { SCALAR, VECTOR, STENSOR, TENSOR } type;
     };  // end of struct Description
 
     /*!
