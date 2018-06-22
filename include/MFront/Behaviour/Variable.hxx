@@ -35,6 +35,13 @@ namespace mfront {
     };  // end of struct Description
 
     /*!
+     * \return the size of a variable
+     * \param[in] v: variable
+     * \param[in] h: modelling hypothesis
+     */
+    MFRONT_EXPORT size_type getVariableSize(const std::vector<Variable> &,
+                                            const Hypothesis);
+    /*!
      * \return the size of an array that may contain the values described by the
      * given array of variables
      * \param[in] vs: variables
@@ -42,6 +49,15 @@ namespace mfront {
      */
     MFRONT_EXPORT size_type getArraySize(const std::vector<Variable>&,
                                          const Hypothesis);
+    /*!
+     * \return the offset of the given variable for the given hypothesis
+     * \param[in] vs: variables
+     * \param[in] n: variable name
+     * \param[in] h: modelling hypothesis
+     */
+    MFRONT_EXPORT size_type getVariableOffset(const std::vector<Variable>&,
+                                              const std::string&,
+                                              const Hypothesis);
 
   }  // end of namespace behaviour
 
