@@ -1,0 +1,6 @@
+link_directories("${PROJECT_BINARY_DIR}/src")
+add_library(BehaviourTest SHARED gurson.cxx)
+add_executable(MFrontGenericBehaviourInterfaceTest
+	MFrontGenericBehaviourInterfaceTest.cxx)
+target_link_libraries(MFrontGenericBehaviourInterfaceTest
+	PRIVATE MFrontGenericInterface)

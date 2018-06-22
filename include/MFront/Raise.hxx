@@ -2,13 +2,14 @@
  * \file   include/MFront/Raise.hxx
  * \brief  declaration of the `raise` function.
  * \author Thomas Helfer
- * \date   19/09/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
- * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
- * project under specific licensing conditions.
+ * \date   20/06/2018
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MFRONT_RAISE_HXX

@@ -48,3 +48,4 @@ if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 
 add_subdirectory(src)
+add_subdirectory(tests)
