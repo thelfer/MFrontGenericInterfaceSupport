@@ -16,7 +16,7 @@ add_test(NAME MFrontGenericBehaviourInterfaceTest
  "$<TARGET_FILE:BehaviourTest>" "gurson")
 add_dependencies(check MFrontGenericBehaviourInterfaceTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ${test_arg}
+  set_property(TEST MFrontGenericBehaviourInterfaceTest
     PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$ENV{PATH}")
 else((CMAKE_HOST_WIN32) AND (NOT MSYS))
@@ -29,7 +29,7 @@ add_test(NAME MFrontGenericBehaviourInterfaceTest2
  "$<TARGET_FILE:BehaviourTest>" "FiniteStrainSingleCrystal")
 add_dependencies(check MFrontGenericBehaviourInterfaceTest2)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ${test_arg}
+  set_property(TEST MFrontGenericBehaviourInterfaceTest2
     PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$ENV{PATH}")
 else((CMAKE_HOST_WIN32) AND (NOT MSYS))
