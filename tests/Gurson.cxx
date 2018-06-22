@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontGenericBehaviourInterfaceTest.cxx
+ * \file   Gurson.cxx
  * \brief
  * \author Thomas Helfer
  * \date   20/06/2018
@@ -36,9 +36,9 @@ MFRONT_SHAREDOBJ const char *gurson_tfel_version = "3.2.0-dev";
 
 MFRONT_SHAREDOBJ unsigned short gurson_mfront_mkt = 1u;
 
-MFRONT_SHAREDOBJ const char *gurson_mfront_interface = "Aster";
-
 MFRONT_SHAREDOBJ const char *gurson_src = "Gurson.mfront";
+
+MFRONT_SHAREDOBJ const char *gurson_mfront_interface = "generic";
 
 MFRONT_SHAREDOBJ unsigned short gurson_nModellingHypotheses = 4u;
 

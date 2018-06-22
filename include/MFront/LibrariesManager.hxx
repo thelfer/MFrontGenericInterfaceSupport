@@ -57,7 +57,23 @@ struct LibrariesManager {
    */
   std::string getTFELVersion(const std::string &, const std::string &);
   /*!
-   * \return the name of `MFront` file used to generate the given entry point
+   * \return the material knowledge type of an entry point in a
+   * library. The returned value has the following meaning:
+   * - 0: material property
+   * - 1: behaviour
+   * - 2: model
+   * \param[in] l: library name
+   */
+  unsigned short getMaterialKnowledgeType(const std::string &,
+                                          const std::string &);
+  /*!
+   * \return the name of the interface used to generate the given entry point
+   * \param[in] l: library name
+   * \param[in] n: entry point name
+   */
+  std::string getInterface(const std::string &, const std::string &);
+  /*!
+   * \return the name of the `MFront` file used to generate the given entry point
    * \param[in] l: library name
    * \param[in] n: entry point name
    */

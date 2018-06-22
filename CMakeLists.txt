@@ -39,13 +39,24 @@ else(UNIX)
   set(MFRONT_DL_LIBRARY "")
 endif(UNIX)
 
-
 #compiler options
 include(cmake/modules/compiler.cmake)
 if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
   include(cmake/modules/CodeCoverage.cmake)
   SETUP_TARGET_FOR_COVERAGE(coverage ctest coverage)
 endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")
+
+# testing
+set(CTEST_CONFIGURATION_TYPE "${JOB_BUILD_CONFIGURATION}")
+# (must be placed *before* any add_subdirectory, cmake bug ?)
+enable_testing()
+if(CMAKE_CONFIGURATION_TYPES)
+  add_custom_target(check COMMAND 
+    ${CMAKE_CTEST_COMMAND} -T test -C $<CONFIGURATION>)
+else(CMAKE_CONFIGURATION_TYPES)
+  add_custom_target(check COMMAND 
+    ${CMAKE_CTEST_COMMAND} -T test )
+endif(CMAKE_CONFIGURATION_TYPES)
 
 add_subdirectory(src)
 add_subdirectory(tests)

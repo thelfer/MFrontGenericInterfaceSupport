@@ -141,6 +141,11 @@ std::string LibrariesManager::getTFELVersion(const std::string &l,
   return *(static_cast<const char *const *>(p));
 } // end of LibrariesManager::getTFELVersion
 
+unsigned short LibrariesManager::getMaterialKnowledgeType(
+    const std::string &l, const std::string &b) {
+  return *(this->extract<unsigned short>(l, b + "_mfront_mkt"));
+} // end of LibrariesManager::getMaterialKnowledgeType
+
 std::string LibrariesManager::getSource(const std::string &l,
                                         const std::string &n) {
   const auto p = this->getSymbolAddress(l, n + "_src");
@@ -149,6 +154,15 @@ std::string LibrariesManager::getSource(const std::string &l,
   }
   return *(static_cast<const char *const *>(p));
 } // end of LibrariesManager::getSource
+
+std::string LibrariesManager::getInterface(const std::string &l,
+                                           const std::string &n) {
+  const auto p = this->getSymbolAddress(l, n + "_mfront_interface");
+  if (p == nullptr) {
+    return "";
+  }
+  return *(static_cast<const char *const *>(p));
+} // end of LibrariesManager::getInterface
 
 unsigned short LibrariesManager::getBehaviourType(const std::string &l,
                                                   const std::string &b) {
