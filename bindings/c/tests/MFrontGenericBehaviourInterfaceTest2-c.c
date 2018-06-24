@@ -34,7 +34,7 @@ static int check(const int b, const char* const e) {
 }  // end of check
 
 int main(const int argc, const char* const* argv) {
-  if (check(argc == 3, "expected three arguments") == 0) {
+  if (!check(argc == 3, "expected three arguments")) {
     return EXIT_FAILURE;
   }
   mgis_behaviour_Description *d;
@@ -42,8 +42,11 @@ int main(const int argc, const char* const* argv) {
       mgis_behaviour_load_description(&d, argv[1], argv[2], "Tridimensional"));
   mgis_size_type mps_size;
   check_status(mgis_behaviour_get_number_of_material_properties(&mps_size, d));
-  if (check(mps_size == 0, "invalid number of material properties") == 0) {
-  
+  if (check(mps_size == 16, "invalid number of material properties")) {
+    const char *mp1;
+    check_status(mgis_behaviour_get_material_property_name(&mp1, d, 0));
+    check(strcmp(mp1, "YoungModulus1") == 0,
+          "invalid name for the material property 'YoungModulus1'");
   }
   mgis_behaviour_free_description(&d);
   return test_status;

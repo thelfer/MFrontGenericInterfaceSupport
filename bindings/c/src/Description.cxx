@@ -32,8 +32,39 @@ mgis_status mgis_behaviour_load_description(mgis_behaviour_Description** ptr,
   return mgis_report_success();
 } // end of load
 
-void mgis_behaviour_free_description(mgis_behaviour_Description* const d) {
-  std::free(d);
+mgis_status mgis_behaviour_get_number_of_material_properties(
+    mgis_size_type *const s, const mgis_behaviour_Description *const d) {
+  if (d == nullptr) {
+    *s = 0;
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *s = d->mps.size();
+    return mgis_report_success();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+} // end of mgis_behaviour_get_number_of_material_properties
+
+mgis_status mgis_behaviour_get_material_property_name(
+    const char **n, const mgis_behaviour_Description *const d,
+    const mgis_size_type i) {
+  if (d == nullptr) {
+    *n = nullptr;
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto &mp = d->mps.at(i);
+    *n = mp.name.c_str();
+    return mgis_report_success();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+} // end of mgis_behaviour_get_material_property_name
+
+void mgis_behaviour_free_description(mgis_behaviour_Description **d) {
+  std::free(*d);
+  *d = nullptr;
 } // end of mgis_behaviour_free_Description
 
 } // end of extern "C"

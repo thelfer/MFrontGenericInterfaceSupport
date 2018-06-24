@@ -39,9 +39,6 @@ mgis_status mgis_handle_cxx_exception() {
         "mgis_handle_cxx_exception: "
         "unknown exception");
   }
-  return mgis_report_failure(
-      "mgis_handle_cxx_exception: "
-      "invalid use, no C++ exception in use");
 }  // end of mgis_handle_cxx_exception
 
 }  // end of extern "C"

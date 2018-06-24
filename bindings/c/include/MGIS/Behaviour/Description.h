@@ -36,21 +36,40 @@ using mgis_behaviour_Description = mgis::behaviour::Description;
 typedef struct mgis_behaviour_Description mgis_behaviour_Description;
 #endif
 
+/*!
+ * \brief load a behaviour description
+ * \param[out] d: behaviour description
+ * \param[in] l: library name
+ * \param[in] b: behaviour name
+ * \param[in] h: hypothesis
+ */
 MGIS_C_EXPORT mgis_status
 mgis_behaviour_load_description(mgis_behaviour_Description**,
                                 const char* const,
                                 const char* const,
                                 const char* const);
-
-MGIS_C_EXPORT void mgis_behaviour_free_description(
-    mgis_behaviour_Description* const);
-
 /*!
- * \brief return the numer of material properties
+ * \brief return the number of material properties
+ * \param[out] c: number of the material properties
  * \param[in] b: behaviour description
  */
-MGIS_C_EXPORT mgis_status mgis_behaviour_getNumerOfMaterialProperties(
-    mgis_size_type* const, const mgis_behaviour_Description* const);
+MGIS_C_EXPORT mgis_status mgis_behaviour_get_number_of_material_properties(
+    mgis_size_type *const, const mgis_behaviour_Description *const);
+/*!
+ * \brief return the numer of material properties
+ * \param[in] c: material property name
+ * \param[in] b: behaviour description
+ * \param[in] i: material property index
+ */
+MGIS_C_EXPORT mgis_status mgis_behaviour_get_material_property_name(
+    const char **, const mgis_behaviour_Description *const,
+    const mgis_size_type);
+/*!
+ * \brief free the memory associated with the given description.
+ * \param[in,out] d: description
+ */
+MGIS_C_EXPORT void
+mgis_behaviour_free_description(mgis_behaviour_Description **);
 
 #ifdef __cplusplus
 }

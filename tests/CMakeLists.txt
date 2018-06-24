@@ -20,7 +20,7 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$ENV{PATH}")
 else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ${test_arg}
+  set_property(TEST MFrontGenericBehaviourInterfaceTest
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
@@ -33,6 +33,6 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$ENV{PATH}")
 else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ${test_arg}
+  set_property(TEST MFrontGenericBehaviourInterfaceTest2
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
