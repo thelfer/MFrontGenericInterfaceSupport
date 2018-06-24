@@ -12,12 +12,12 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MFRONT_BEHAVIOUR_DATA_HXX
-#define LIB_MFRONT_BEHAVIOUR_DATA_HXX
+#ifndef LIB_MGIS_BEHAVIOUR_DATA_HXX
+#define LIB_MGIS_BEHAVIOUR_DATA_HXX
 
-#include "MFront/Behaviour/Information.hxx"
+#include "MGIS/Behaviour/Information.hxx"
 
-namespace mfront {
+namespace mgis {
 
   /*!
    * \brief structure containing the material data of a set of integration points
@@ -32,6 +32,6 @@ namespace mfront {
     std::vector<real> evs;
   }; // end of struct MaterialData
 
-}  // end of mfront
+}  // end of mgis
 
-#endif /* LIB_MFRONT_BEHAVIOUR_DATA_HXX */
+#endif /* LIB_MGIS_BEHAVIOUR_DATA_HXX */

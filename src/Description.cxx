@@ -12,11 +12,11 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include "MFront/Behaviour/Description.hxx"
-#include "MFront/LibrariesManager.hxx"
-#include "MFront/Raise.hxx"
+#include "MGIS/Behaviour/Description.hxx"
+#include "MGIS/LibrariesManager.hxx"
+#include "MGIS/Raise.hxx"
 
-namespace mfront {
+namespace mgis {
 
   namespace behaviour {
 
@@ -30,10 +30,10 @@ namespace mfront {
     Description load(const std::string &l,
                      const std::string &b,
                      const Hypothesis h) {
-      auto &lm = mfront::LibrariesManager::get();
+      auto &lm = mgis::LibrariesManager::get();
       const auto fct = b + '_' + toString(h);
       auto raise = [&b, &l](const std::string &msg) {
-        mfront::raise("load: " + msg +
+        mgis::raise("load: " + msg +
                       ".\nError while trying to load behaviour '" + b +
                       "' in library '" + l + "'\n");
       };
@@ -257,4 +257,4 @@ namespace mfront {
 
   }  // end of namespace behaviour
 
-}  // end of namespace mfront
+}  // end of namespace mgis

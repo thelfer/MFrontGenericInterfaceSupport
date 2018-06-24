@@ -1,20 +1,19 @@
+link_directories("${PROJECT_BINARY_DIR}/bindings/c/src")
 link_directories("${PROJECT_BINARY_DIR}/src")
-add_library(BehaviourTest SHARED
-  Gurson.cxx
-  FiniteStrainSingleCrystal.cxx)
-add_executable(MFrontGenericBehaviourInterfaceTest
-	MFrontGenericBehaviourInterfaceTest.cxx)
-target_link_libraries(MFrontGenericBehaviourInterfaceTest
-	PRIVATE MFrontGenericInterface)
-add_executable(MFrontGenericBehaviourInterfaceTest2
-	MFrontGenericBehaviourInterfaceTest2.cxx)
-target_link_libraries(MFrontGenericBehaviourInterfaceTest2
-	PRIVATE MFrontGenericInterface)
 
-add_test(NAME MFrontGenericBehaviourInterfaceTest
- COMMAND MFrontGenericBehaviourInterfaceTest
+add_executable(MFrontGenericBehaviourInterfaceTest-c
+	MFrontGenericBehaviourInterfaceTest-c.cxx)
+target_link_libraries(MFrontGenericBehaviourInterfaceTest-c
+	PRIVATE MFrontGenericInterface-c)
+#add_executable(MFrontGenericBehaviourInterfaceTest2-c
+#	MFrontGenericBehaviourInterfaceTest2.cxx)
+#target_link_libraries(MFrontGenericBehaviourInterfaceTest2
+#	PRIVATE MFrontGenericInterface)
+
+add_test(NAME MFrontGenericBehaviourInterfaceTest-c
+ COMMAND MFrontGenericBehaviourInterfaceTest-c
  "$<TARGET_FILE:BehaviourTest>" "gurson")
-add_dependencies(check MFrontGenericBehaviourInterfaceTest)
+add_dependencies(check MFrontGenericBehaviourInterfaceTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ${test_arg}
     PROPERTY DEPENDS BehaviourTest

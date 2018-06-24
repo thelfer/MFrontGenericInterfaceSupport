@@ -1,5 +1,5 @@
 /*!
- * \file   include/MFront/LibrariesManager.hxx
+ * \file   include/MGIS/LibrariesManager.hxx
  * \brief
  * \author Thomas Helfer
  * \date   20/06/2018
@@ -12,8 +12,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MFRONT_LIBRARIESMANAGER_HXX
-#define LIB_MFRONT_LIBRARIESMANAGER_HXX
+#ifndef LIB_MGIS_LIBRARIESMANAGER_HXX
+#define LIB_MGIS_LIBRARIESMANAGER_HXX
 
 #include <map>
 #include <string>
@@ -26,12 +26,12 @@
 #include <windows.h>
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 
-#include "MFront/Behaviour/Hypothesis.hxx"
+#include "MGIS/Behaviour/Hypothesis.hxx"
 
-namespace mfront {
+namespace mgis {
 
 /*!
- * \brief structure in charge of handling libraries and querying MFront'
+ * \brief structure in charge of handling libraries and querying MGIS'
  * meta-data
  */
 struct LibrariesManager {
@@ -43,7 +43,7 @@ struct LibrariesManager {
   using libhandler = void *;
 #endif /* LIB_EXTERNALLIBRARYMANAGER_HXX */
   //! a simple alias
-  using Hypothesis = mfront::behaviour::Hypothesis;
+  using Hypothesis = mgis::behaviour::Hypothesis;
   //! \return the only instance of this class (singleton pattern).
   static LibrariesManager &get();
   LibrariesManager(LibrariesManager &&) = delete;
@@ -51,7 +51,7 @@ struct LibrariesManager {
   LibrariesManager &operator=(LibrariesManager &&) = delete;
   LibrariesManager &operator=(const LibrariesManager &) = delete;
   /*!
-   * \return the `TFEL` version used to generate an `MFront` entry point
+   * \return the `TFEL` version used to generate an `MGIS` entry point
    * \param[in] l: library name
    * \param[in] n: entry point name
    */
@@ -73,7 +73,7 @@ struct LibrariesManager {
    */
   std::string getInterface(const std::string &, const std::string &);
   /*!
-   * \return the name of the `MFront` file used to generate the given entry point
+   * \return the name of the `MGIS` file used to generate the given entry point
    * \param[in] l: library name
    * \param[in] n: entry point name
    */
@@ -250,6 +250,6 @@ private:
 
 }; // end of struct LibrariesManager
 
-} // end of namespace mfront
+} // end of namespace mgis
 
-#endif /* LIB_MFRONT_LIBRARIESMANAGER_HXX */
+#endif /* LIB_MGIS_LIBRARIESMANAGER_HXX */

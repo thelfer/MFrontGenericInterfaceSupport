@@ -12,22 +12,22 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MFRONT_BEHAVIOUR_DESCRIPTION_HXX
-#define LIB_MFRONT_BEHAVIOUR_DESCRIPTION_HXX
+#ifndef LIB_MGIS_BEHAVIOUR_DESCRIPTION_HXX
+#define LIB_MGIS_BEHAVIOUR_DESCRIPTION_HXX
 
 #include <vector>
-#include "MFront/Config.hxx"
-#include "MFront/Behaviour/Variable.hxx"
-#include "MFront/Behaviour/Behaviour.hxx"
+#include "MGIS/Config.hxx"
+#include "MGIS/Behaviour/Variable.hxx"
+#include "MGIS/Behaviour/Behaviour.hxx"
 
-namespace mfront {
+namespace mgis {
 
   namespace behaviour {
 
     /*!
      * \brief structure describing a behaviour
      */
-    struct MFRONT_EXPORT Description {
+    struct MGIS_EXPORT Description {
       //! \behaviour symmetry
       enum Symmetry { ISOTROPIC, ORTHOTROPIC };
       //! \brief constructor
@@ -53,7 +53,7 @@ namespace mfront {
        * modelling hypothesis)
        */
       std::string function;
-      //! \brief name of the `MFront` source file used to generate the behaviour
+      //! \brief name of the `MGIS` source file used to generate the behaviour
       std::string source;
       //! \brief version of `TFEL` used to generate the behaviour
       std::string tfel_version;
@@ -97,13 +97,12 @@ namespace mfront {
      * \param[in] h: modelling hypothesis
      * \return the behaviour description
      */
-    MFRONT_EXPORT Description load(const std::string&,
-                                   const std::string&,
-                                   const Hypothesis);
+    MGIS_EXPORT Description load(const std::string &,
+                                 const std::string &,
+                                 const Hypothesis);
 
   }  // end of namespace behaviour
 
-}  // end of namespace mfront
+}  // end of namespace mgis
 
-#endif /* LIB_MFRONT_BEHAVIOUR_DESCRIPTION_HXX */
-
+#endif /* LIB_MGIS_BEHAVIOUR_DESCRIPTION_HXX */

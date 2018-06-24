@@ -1,5 +1,5 @@
 /*!
- * \file   include/MFront/Raise.ixx
+ * \file   include/MGIS/Raise.ixx
  * \brief
  * \author Thomas Helfer
  * \date   20/06/2018
@@ -12,10 +12,10 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MFRONT_RAISE_IXX
-#define LIB_MFRONT_RAISE_IXX
+#ifndef LIB_MGIS_RAISE_IXX
+#define LIB_MGIS_RAISE_IXX
 
-namespace mfront {
+namespace mgis {
 
   template <typename Exception>
   void raise() {
@@ -43,6 +43,6 @@ namespace mfront {
     }
   }  // end of raise
 
-}  // end of namespace mfront
+}  // end of namespace mgis
 
-#endif /* LIB_MFRONT_RAISE_IXX */
+#endif /* LIB_MGIS_RAISE_IXX */

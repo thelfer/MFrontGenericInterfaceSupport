@@ -1,5 +1,5 @@
 /*!
- * \file   include/MFront/Raise.hxx
+ * \file   include/MGIS/Raise.hxx
  * \brief  declaration of the `raise` function.
  * \author Thomas Helfer
  * \date   20/06/2018
@@ -12,14 +12,14 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MFRONT_RAISE_HXX
-#define LIB_MFRONT_RAISE_HXX
+#ifndef LIB_MGIS_RAISE_HXX
+#define LIB_MGIS_RAISE_HXX
 
 #include <utility>
 #include <stdexcept>
-#include "MFront/Config.hxx"
+#include "MGIS/Config.hxx"
 
-namespace mfront {
+namespace mgis {
 
   /*!
    * \brief a small wrapper used to build the exception outside the
@@ -30,7 +30,7 @@ namespace mfront {
    * \tparam Exception: type of the exception to be thrown.
    */
   template <typename Exception = std::runtime_error>
-  MFRONT_NORETURN MFRONT_VISIBILITY_LOCAL MFRONT_INLINE void raise();
+  MGIS_NORETURN MGIS_VISIBILITY_LOCAL MGIS_INLINE void raise();
 
   /*!
    * \brief a small wrapper used to build the exception outside the
@@ -44,7 +44,7 @@ namespace mfront {
    * \param[in] a: arguments passed to the exception' constructor.
    */
   template <typename Exception = std::runtime_error, typename... Args>
-  MFRONT_NORETURN MFRONT_VISIBILITY_LOCAL MFRONT_INLINE void raise(Args&&...);
+  MGIS_NORETURN MGIS_VISIBILITY_LOCAL MGIS_INLINE void raise(Args&&...);
 
   /*!
    * \brief raise an exception if the first argument is `true`.
@@ -53,7 +53,7 @@ namespace mfront {
    * thrown.
    */
   template <typename Exception = std::runtime_error>
-  MFRONT_VISIBILITY_LOCAL MFRONT_INLINE void raise_if(const bool);
+  MGIS_VISIBILITY_LOCAL MGIS_INLINE void raise_if(const bool);
 
   /*!
    * \brief raise an exception if the first argument is `true`.
@@ -65,10 +65,10 @@ namespace mfront {
    * \param[in] a: arguments passed to the exception' constructor.
    */
   template <typename Exception = std::runtime_error, typename... Args>
-  MFRONT_VISIBILITY_LOCAL MFRONT_INLINE void raise_if(const bool, Args&&...);
+  MGIS_VISIBILITY_LOCAL MGIS_INLINE void raise_if(const bool, Args&&...);
 
-}  // end of namespace mfront
+}  // end of namespace mgis
 
-#include "MFront/Raise.ixx"
+#include "MGIS/Raise.ixx"
 
-#endif /* LIB_MFRONT_RAISE_HXX */
+#endif /* LIB_MGIS_RAISE_HXX */

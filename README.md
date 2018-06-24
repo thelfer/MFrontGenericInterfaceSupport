@@ -1,4 +1,4 @@
-# MFrontGenericBehaviourSupport
+# MFrontGenericInterfaceSupport
 
 This project aims at proving tools (functions, classes, bindings,
 etc...) to handle behaviours written using `MFront` generic interface.
@@ -14,9 +14,9 @@ The project is build around the `MFrontGenericInterface` library. This
 library provides two main functions:
 
 - load `MFront` behaviours from external shared libraries and retrieve
-  meta data about the behaviour through the `mfront::behaviour::load`
+  meta data about the behaviour through the `mgis::behaviour::load`
   function. All the relevant information about the behaviour are stored
-  in the `mfront::behaviour::Description` class.
+  in the `mgis::behaviour::Description` class.
 - provide generic function to handle material data (such as internal
   state variables) at integration points and call `MFront` behaviours.
 

@@ -12,10 +12,10 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include "MFront/Raise.hxx"
-#include "MFront/Behaviour/Variable.hxx"
+#include "MGIS/Raise.hxx"
+#include "MGIS/Behaviour/Variable.hxx"
 
-namespace mfront {
+namespace mgis {
 
   namespace behaviour {
 
@@ -31,7 +31,7 @@ namespace mfront {
       } else if (h == Hypothesis::TRIDIMENSIONAL) {
         return 6u;
       }
-      mfront::raise("getStensorSize: unsupported modelling hypothesis");
+      mgis::raise("getStensorSize: unsupported modelling hypothesis");
     }  // end of getStensorSize
 
     size_type getTensorSize(const Hypothesis h) {
@@ -46,7 +46,7 @@ namespace mfront {
       } else if (h == Hypothesis::TRIDIMENSIONAL) {
         return 9u;
       }
-      mfront::raise("getTensorSize: unsupported modelling hypothesis");
+      mgis::raise("getTensorSize: unsupported modelling hypothesis");
     }  // end of getTensorSize
 
     size_type getArraySize(const std::vector<Variable>& vs,
@@ -58,7 +58,7 @@ namespace mfront {
           return getStensorSize(h);
         }
         if (v.type != Variable::TENSOR) {
-          mfront::raise("getArraySize: unsupported variable type");
+          mgis::raise("getArraySize: unsupported variable type");
         }
         return getTensorSize(h);
       };
@@ -71,4 +71,4 @@ namespace mfront {
 
   }  // end of namespace behaviour
 
-}  // end of namespace mfront
+}  // end of namespace mgis

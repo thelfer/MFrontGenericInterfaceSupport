@@ -1,5 +1,5 @@
 /*!
- * \file   MFront/Behaviour/Variable.hxx
+ * \file   MGIS/Behaviour/Variable.hxx
  * \brief
  * \author Thomas Helfer
  * \date   19/06/2018
@@ -12,15 +12,15 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MFRONT_BEHAVIOUR_VARIABLE_HXX
-#define LIB_MFRONT_BEHAVIOUR_VARIABLE_HXX
+#ifndef LIB_MGIS_BEHAVIOUR_VARIABLE_HXX
+#define LIB_MGIS_BEHAVIOUR_VARIABLE_HXX
 
 #include <string>
 #include <vector>
-#include "MFront/Config.hxx"
-#include "MFront/Behaviour/Hypothesis.hxx"
+#include "MGIS/Config.hxx"
+#include "MGIS/Behaviour/Hypothesis.hxx"
 
-namespace mfront {
+namespace mgis {
 
   namespace behaviour {
 
@@ -40,11 +40,11 @@ namespace mfront {
      * \param[in] vs: variables
      * \param[in] h: modelling hypothesis
      */
-    MFRONT_EXPORT size_type getArraySize(const std::vector<Variable>&,
+    MGIS_EXPORT size_type getArraySize(const std::vector<Variable>&,
                                          const Hypothesis);
 
   }  // end of namespace behaviour
 
-}  // end of namespace mfront
+}  // end of namespace mgis
 
-#endif /* LIB_MFRONT_BEHAVIOUR_VARIABLE_HXX */
+#endif /* LIB_MGIS_BEHAVIOUR_VARIABLE_HXX */

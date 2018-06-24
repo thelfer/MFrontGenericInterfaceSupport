@@ -18,10 +18,10 @@
 #include <dlfcn.h>
 #endif /* !((defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)) */
 
-#include "MFront/LibrariesManager.hxx"
-#include "MFront/Raise.hxx"
+#include "MGIS/LibrariesManager.hxx"
+#include "MGIS/Raise.hxx"
 
-namespace mfront {
+namespace mgis {
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 // code retrieved from
@@ -317,4 +317,4 @@ LibrariesManager::~LibrariesManager() {
   }
 } // end of LibrariesManager::~LibrariesManager
 
-} // namespace mfront
+} // namespace mgis

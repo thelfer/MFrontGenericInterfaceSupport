@@ -12,12 +12,12 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MFRONT_BEHAVIOUR_BEHAVIOUR_HXX
-#define LIB_MFRONT_BEHAVIOUR_BEHAVIOUR_HXX
+#ifndef LIB_MGIS_BEHAVIOUR_BEHAVIOUR_HXX
+#define LIB_MGIS_BEHAVIOUR_BEHAVIOUR_HXX
 
-#include "MFront/Config.hxx"
+#include "MGIS/Config.hxx"
 
-namespace mfront {
+namespace mgis {
 
   namespace behaviour {
 
@@ -25,6 +25,6 @@ namespace mfront {
 
   }  // end of namespace behaviour
 
-} // end of namespace mfront
+} // end of namespace mgis
 
-#endif /* LIB_MFRONT_BEHAVIOUR_BEHAVIOUR_HXX */
+#endif /* LIB_MGIS_BEHAVIOUR_BEHAVIOUR_HXX */

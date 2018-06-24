@@ -1,23 +1,31 @@
 cmake_minimum_required(VERSION 3.0)
 
+include(cmake/modules/mgis.cmake)
 project("mfront-generic-interface")
 
 # portable-build
 option(enable-portable-build "produce binary that can be shared between various machine (same architecture, same gcc version, different processors" OFF)
 
+# C-bindings (placed before compiler detection)
+option(enable-c-bindings "enable c bindings support")
+
 # fortran (placed before compiler detection)
-option(enable-fortran "enable fortran support")
-if(enable-fortran)
-  set(HAVE_FORTRAN ON)
-  add_definitions("-DHAVE_FORTRAN=1")
-  enable_language (Fortran)
-  message(STATUS "fortran support enabled")
-  set(enable-fortran-bindings ON)
-else(enable-fortran)
-  set(HAVE_FORTRAN OFF)
-  message(STATUS "fortran support disabled")
-  set(enable-fortran-bindings OFF)
-endif(enable-fortran)
+# option(enable-fortran-bindings "enable fortran support")
+
+# summary
+#if(enable-fortran-bindings)
+#  enable_language (Fortran)
+#  if(NOT enable-c-bindings)
+#    message(STATUS "c bindings is required for fortran bindings: "
+#		   "forcing c bindings support")
+#	set(enable-c-bindings ON)
+#  endif(NOT enable-c-bindings)
+#  message(STATUS "fortran bindings support enabled")
+#endif(enable-fortran-bindings)
+
+if(enable-c-bindings)
+  message(STATUS "c bindings support enabled")
+endif(enable-c-bindings)
 
 # Looking for libdl...
 if(UNIX)
@@ -58,5 +66,7 @@ else(CMAKE_CONFIGURATION_TYPES)
     ${CMAKE_CTEST_COMMAND} -T test )
 endif(CMAKE_CONFIGURATION_TYPES)
 
+add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(tests)
+add_subdirectory(bindings)

@@ -14,10 +14,10 @@
 
 #include <iostream>
 #include <cstdlib>
-#include "MFront/Behaviour/Description.hxx"
+#include "MGIS/Behaviour/Description.hxx"
 
 int main(const int argc, const char* const* argv) {
-  using namespace mfront::behaviour;
+  using namespace mgis::behaviour;
   constexpr const auto h = Hypothesis::TRIDIMENSIONAL;
   bool success = true;
   auto check = [&success](const bool b, const std::string& msg) {
