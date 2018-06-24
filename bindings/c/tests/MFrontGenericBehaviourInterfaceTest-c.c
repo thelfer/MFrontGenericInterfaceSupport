@@ -12,7 +12,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <cstdlib>
+#include <stdio.h>
+#include <stdlib.h>
 #include "MGIS/Behaviour/Description.h"
 
 int test_status = EXIT_SUCCESS;
@@ -29,6 +30,7 @@ int main(const int argc, const char* const* argv) {
     return EXIT_FAILURE;
   }
   mgis_behaviour_Description *d;
-  mgis_behaviour_load(&d, argv[1], argv[2], "Tridimensional");
- return test_status;
+  mgis_behaviour_load_description(&d, argv[1], argv[2], "Tridimensional");
+  mgis_behaviour_free_description(d);
+  return test_status;
 }  // end of main

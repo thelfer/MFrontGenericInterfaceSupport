@@ -31,7 +31,7 @@ namespace mgis {
       } else if (h == Hypothesis::TRIDIMENSIONAL) {
         return 6u;
       }
-      mfront::raise("getStensorSize: unsupported modelling hypothesis");
+      mgis::raise("getStensorSize: unsupported modelling hypothesis");
     }  // end of getStensorSize
 
     static size_type getTensorSize(const Hypothesis h) {
@@ -46,7 +46,7 @@ namespace mgis {
       } else if (h == Hypothesis::TRIDIMENSIONAL) {
         return 9u;
       }
-      mfront::raise("getTensorSize: unsupported modelling hypothesis");
+      mgis::raise("getTensorSize: unsupported modelling hypothesis");
     }  // end of getTensorSize
 
     size_type getVariableSize(const Variable &v, const Hypothesis h) {
@@ -56,7 +56,7 @@ namespace mgis {
         return getStensorSize(h);
       }
       if (v.type != Variable::TENSOR) {
-        mfront::raise("getArraySize: unsupported variable type");
+        mgis::raise("getArraySize: unsupported variable type");
       }
       return getTensorSize(h);
     }  // end of getVariableSize

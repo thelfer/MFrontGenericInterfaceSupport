@@ -26,7 +26,7 @@ extern "C" {
  * not. In case of failure, the `msg` fields can be used to retrieve an error
  * message.
  */
-struct mgis_status {
+typedef struct {
   //! exit status
   const enum { SUCCESS, FAILURE } status;
   /*!
@@ -35,7 +35,7 @@ struct mgis_status {
    * This buffer is allocated statically and shall not be freed by the caller.
    */
   const char* const msg;
-};  // end of struct mgis_status
+} mgis_status;  // end of struct mgis_status
 
 /*!
  * \brief build a success status

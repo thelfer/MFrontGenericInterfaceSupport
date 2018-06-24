@@ -33,15 +33,16 @@ using mgis_behaviour_Description = mgis::behaviour::Description;
 /*!
  * \brief an opaque structure which can only be accessed through the mgis API.
  */
-struct mgis_behaviour_Description;
+typedef struct mgis_behaviour_Description mgis_behaviour_Description;
 #endif
 
-MGIS_C_EXPORT mgis_status load(mgis_behaviour_Description**,
-                               const char* const,
-                               const char* const,
-                               const char* const);
+MGIS_C_EXPORT mgis_status
+mgis_behaviour_load_description(mgis_behaviour_Description**,
+                                const char* const,
+                                const char* const,
+                                const char* const);
 
-MGIS_C_EXPORT void mgis_behaviour_free_Description(
+MGIS_C_EXPORT void mgis_behaviour_free_description(
     mgis_behaviour_Description* const);
 
 /*!

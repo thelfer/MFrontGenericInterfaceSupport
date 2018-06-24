@@ -18,10 +18,10 @@
 
 extern "C" {
 
-mgis_status load(mgis_behaviour_Description** ptr,
-                 const char* const l,
-                 const char* const b,
-                 const char* const h) {
+mgis_status mgis_behaviour_load_description(mgis_behaviour_Description** ptr,
+                                            const char* const l,
+                                            const char* const b,
+                                            const char* const h) {
   *ptr = nullptr;
   try {
     const auto d = mgis::behaviour::load(l, b, mgis::behaviour::fromString(h));
@@ -32,7 +32,7 @@ mgis_status load(mgis_behaviour_Description** ptr,
   return mgis_report_success();
 } // end of load
 
-void mgis_behaviour_free_Description(mgis_behaviour_Description* const d) {
+void mgis_behaviour_free_description(mgis_behaviour_Description* const d) {
   std::free(d);
 } // end of mgis_behaviour_free_Description
 
