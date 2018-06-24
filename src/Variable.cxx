@@ -31,10 +31,10 @@ namespace mgis {
       } else if (h == Hypothesis::TRIDIMENSIONAL) {
         return 6u;
       }
-      mgis::raise("getStensorSize: unsupported modelling hypothesis");
+      mfront::raise("getStensorSize: unsupported modelling hypothesis");
     }  // end of getStensorSize
 
-    size_type getTensorSize(const Hypothesis h) {
+    static size_type getTensorSize(const Hypothesis h) {
       if ((h == Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
           (h == Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
         return 3u;
@@ -46,28 +46,42 @@ namespace mgis {
       } else if (h == Hypothesis::TRIDIMENSIONAL) {
         return 9u;
       }
-      mgis::raise("getTensorSize: unsupported modelling hypothesis");
+      mfront::raise("getTensorSize: unsupported modelling hypothesis");
     }  // end of getTensorSize
 
-    size_type getArraySize(const std::vector<Variable>& vs,
+    size_type getVariableSize(const Variable &v, const Hypothesis h) {
+      if (v.type == Variable::SCALAR) {
+        return 1;
+      } else if (v.type == Variable::STENSOR) {
+        return getStensorSize(h);
+      }
+      if (v.type != Variable::TENSOR) {
+        mfront::raise("getArraySize: unsupported variable type");
+      }
+      return getTensorSize(h);
+    }  // end of getVariableSize
+
+    size_type getArraySize(const std::vector<Variable> &vs,
                            const Hypothesis h) {
-      auto getSize = [h](const Variable &v) -> size_type {
-        if (v.type == Variable::SCALAR) {
-          return 1;
-        } else if (v.type == Variable::STENSOR) {
-          return getStensorSize(h);
-        }
-        if (v.type != Variable::TENSOR) {
-          mgis::raise("getArraySize: unsupported variable type");
-        }
-        return getTensorSize(h);
-      };
       auto s = size_type{};
-      for (const auto& v : vs) {
-        s += getSize(v);
+      for (const auto &v : vs) {
+        s += getVariableSize(v, h);
       }
       return s;
     }  // end of getArraySize
+
+    size_type getVariableOffset(const std::vector<Variable> &vs,
+                                const std::string &n,
+                                const Hypothesis h) {
+      auto o = size_type{};
+      for (const auto &v : vs) {
+        if (v.name == n) {
+          return o;
+        }
+        o += getVariableSize(v, h);
+      }
+      raise("getVariableOffset: no variable named '" + n + "'");
+    }  // end of getVariableOffset
 
   }  // end of namespace behaviour
 
