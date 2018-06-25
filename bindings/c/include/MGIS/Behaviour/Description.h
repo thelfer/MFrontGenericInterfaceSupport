@@ -25,6 +25,7 @@ extern "C" {
 
 #include "MGIS/Config-c.h"
 #include "MGIS/Status.h"
+#include "MGIS/Behaviour/Variable.h"
 
 #ifdef __cplusplus
 //! a simple alias
@@ -90,6 +91,20 @@ MGIS_C_EXPORT mgis_status mgis_bv_get_source(const char**,
 MGIS_C_EXPORT mgis_status
 mgis_bv_get_hypothesis(const char**, const mgis_bv_Description* const);
 /*!
+ * \brief retrieve the behaviour name
+ * \param[out] b: behaviour name
+ * \param[in] d: description
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_get_behaviour_name(const char**, const mgis_bv_Description* const);
+/*!
+ * \brief retrieve the function name
+ * \param[out] b: function name
+ * \param[in] d: description
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_get_function_name(const char**, const mgis_bv_Description* const);
+/*!
  * \brief retrieve the `TFEL` version used to generate the behaviour
  * \param[out] v: version
  * \param[in] d: description
@@ -125,12 +140,53 @@ MGIS_C_EXPORT mgis_status mgis_bv_get_behaviour_kinematic(
 MGIS_C_EXPORT mgis_status mgis_bv_get_number_of_material_properties(
     mgis_size_type* const, const mgis_bv_Description* const);
 /*!
- * \brief return the numer of material properties
- * \param[in] c: material property name
+ * \brief return the name of a material property
+ * \param[out] c: material property name
  * \param[in] b: behaviour description
  * \param[in] i: material property index
  */
 MGIS_C_EXPORT mgis_status mgis_bv_get_material_property_name(
+    const char**, const mgis_bv_Description* const, const mgis_size_type);
+/*!
+ * \brief return the number of internal state variables
+ * \param[out] c: number of the internal state variables
+ * \param[in] b: behaviour description
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_get_number_of_internal_state_variables(
+    mgis_size_type* const, const mgis_bv_Description* const);
+/*!
+ * \brief return the name of an internal state variable
+ * \param[out] c: internal state variable name
+ * \param[in] b: behaviour description
+ * \param[in] i: internal state variable index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_get_internal_state_variable_name(
+    const char**, const mgis_bv_Description* const, const mgis_size_type);
+/*!
+ * \brief return the type of an internal state variable
+ * \param[out] t: internal state variable type
+ * \param[in] b: behaviour description
+ * \param[in] i: internal state variable index
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_get_internal_state_variable_type(mgis_bv_VariableType* const,
+                                         const mgis_bv_Description* const,
+                                         const mgis_size_type);
+
+/*!
+ * \brief return the number of external state variables
+ * \param[out] c: number of the external state variables
+ * \param[in] b: behaviour description
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_get_number_of_external_state_variables(
+    mgis_size_type* const, const mgis_bv_Description* const);
+/*!
+ * \brief return the name of an external state variable
+ * \param[out] c: external state variable name
+ * \param[in] b: behaviour description
+ * \param[in] i: external state variable index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_get_external_state_variable_name(
     const char**, const mgis_bv_Description* const, const mgis_size_type);
 /*!
  * \brief free the memory associated with the given description.

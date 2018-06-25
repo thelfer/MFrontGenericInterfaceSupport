@@ -95,11 +95,8 @@ if(enable-sanitize-options)
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=bool")
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=enum")
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fstack-check")
-  
-  
-#  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=leak")
-tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fno-omit-frame-pointer")
-
+  #  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=leak")
+  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fno-omit-frame-pointer")
 endif(enable-sanitize-options)
 
 option(enable-cxx-17 "enable support of the C++17 standard")
@@ -114,6 +111,9 @@ else(enable-cxx-17)
   endif(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 4.7)
   set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -std=c++11")  
 endif(enable-cxx-17)
+
+# basic C support
+set(COMPILER_C_WARNINGS "-Wall -W -pedantic")
 
 # unsable flag
 # set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -D_GLIBCXX_CONCEPT_CHECKS")

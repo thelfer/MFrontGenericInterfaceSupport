@@ -206,7 +206,7 @@ template <typename T>
 const T *LibrariesManager::extract(const std::string &l, const std::string &n) {
   const auto p = this->getSymbolAddress(l, n);
   if (p == nullptr) {
-    raise("LibrariesManager::extract: could not load symbols '" + n + "'");
+    raise("LibrariesManager::extract: could not load symbol '" + n + "'");
   }
   return static_cast<const T *const>(p);
 } // end of LibrariesManager::extract
@@ -216,8 +216,8 @@ const T *LibrariesManager::extract(const std::string &l, const std::string &n1,
                                    const std::string &n2) {
   const auto p = this->getSymbolAddress(l, n1, n2);
   if (p == nullptr) {
-    raise("LibrariesManager::extract: could not load symbols '" + n1 +
-          "' or '" + n1 + "'");
+    raise("LibrariesManager::extract: could not load symbol '" + n1 +
+          "' nor '" + n2 + "'");
   }
   return static_cast<const T *const>(p);
 } // end of LibrariesManager::extract

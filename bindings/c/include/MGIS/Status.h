@@ -30,7 +30,7 @@ typedef enum { MGIS_SUCCESS, MGIS_FAILURE } mgis_exit_flag;
  */
 typedef struct {
   //! exit status
-  enum { SUCCESS, FAILURE } exit_status;
+  mgis_exit_flag exit_status;
   /*!
    * \brief a pointer to a per thread buffer in which the error message is
    * stored.
