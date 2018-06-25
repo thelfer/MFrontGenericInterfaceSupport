@@ -49,6 +49,34 @@ mgis_behaviour_load_description(mgis_behaviour_Description**,
                                 const char* const,
                                 const char* const);
 /*!
+ * \brief retrieve the library
+ * \param[out] l: library
+ * \param[in] d: description
+ */
+MGIS_C_EXPORT mgis_status mgis_behaviour_get_library(
+    const char**, const mgis_behaviour_Description* const);
+/*!
+ * \brief retrieve the source
+ * \param[out] s: source
+ * \param[in] d: description
+ */
+MGIS_C_EXPORT mgis_status mgis_behaviour_get_source(
+    const char**, const mgis_behaviour_Description* const);
+/*!
+ * \brief retrieve the hypothesis
+ * \param[out] h: hypothesis
+ * \param[in] d: description
+ */
+MGIS_C_EXPORT mgis_status mgis_behaviour_get_hypothesis(
+    const char**, const mgis_behaviour_Description* const d);
+/*!
+ * \brief retrieve the `TFEL` version used to generate the behaviour
+ * \param[out] v: version
+ * \param[in] d: description
+ */
+MGIS_C_EXPORT mgis_status mgis_behaviour_get_tfel_version(
+    const char**, const mgis_behaviour_Description* const d);
+/*!
  * \brief return the number of material properties
  * \param[out] c: number of the material properties
  * \param[in] b: behaviour description
