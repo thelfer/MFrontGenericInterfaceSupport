@@ -18,10 +18,10 @@
 
 extern "C" {
 
-mgis_status mgis_behaviour_load_description(mgis_behaviour_Description** ptr,
-                                            const char* const l,
-                                            const char* const b,
-                                            const char* const h) {
+mgis_status mgis_bv_load_description(mgis_bv_Description** ptr,
+                                     const char* const l,
+                                     const char* const b,
+                                     const char* const h) {
   *ptr = nullptr;
   try {
     const auto d = mgis::behaviour::load(l, b, mgis::behaviour::fromString(h));
@@ -32,48 +32,118 @@ mgis_status mgis_behaviour_load_description(mgis_behaviour_Description** ptr,
   return mgis_report_success();
 }  // end of load
 
-mgis_status mgis_behaviour_get_library(
-    const char** l, const mgis_behaviour_Description* const d) {
+mgis_status mgis_bv_get_library(const char** l,
+                                const mgis_bv_Description* const d) {
   if (d == nullptr) {
     *l = nullptr;
     return mgis_report_failure("invalid argument");
   }
   *l = d->library.c_str();
   return mgis_report_success();
-}  // end of mgis_behaviour_get_library
+}  // end of mgis_bv_get_library
 
-mgis_status mgis_behaviour_get_source(
-    const char** s, const mgis_behaviour_Description* const d) {
+mgis_status mgis_bv_get_source(const char** s,
+                               const mgis_bv_Description* const d) {
   if (d == nullptr) {
     *s = nullptr;
     return mgis_report_failure("invalid argument");
   }
   *s = d->source.c_str();
   return mgis_report_success();
-}  // end of mgis_behaviour_get_source
+}  // end of mgis_bv_get_source
 
-mgis_status mgis_behaviour_get_tfel_version(
-    const char** v, const mgis_behaviour_Description* const d) {
+mgis_status mgis_bv_get_tfel_version(const char** v,
+                                     const mgis_bv_Description* const d) {
   if (d == nullptr) {
     *v = nullptr;
     return mgis_report_failure("invalid argument");
   }
   *v = d->source.c_str();
   return mgis_report_success();
-}  // end of mgis_behaviour_get_tfel_version
+}  // end of mgis_bv_get_tfel_version
 
-mgis_status mgis_behaviour_get_hypothesis(
-    const char** h, const mgis_behaviour_Description* const d) {
+mgis_status mgis_bv_get_hypothesis(const char** h,
+                                   const mgis_bv_Description* const d) {
   if (d == nullptr) {
     *h = nullptr;
     return mgis_report_failure("invalid argument");
   }
   *h = mgis::behaviour::toString(d->hypothesis);
   return mgis_report_success();
-}  // end of mgis_behaviour_get_hypothesis
+}  // end of mgis_bv_get_hypothesis
 
-mgis_status mgis_behaviour_get_number_of_material_properties(
-    mgis_size_type* const s, const mgis_behaviour_Description* const d) {
+MGIS_C_EXPORT mgis_status mgis_bv_get_behaviour_symmetry(
+    mgis_bv_BehaviourSymmetry* const s, const mgis_bv_Description* const d) {
+  if (d == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  switch (d->symmetry) {
+    case mgis::behaviour::Description::ISOTROPIC:
+      *s = MGIS_BV_ISOTROPIC;
+      break;
+    case mgis::behaviour::Description::ORTHOTROPIC:
+      *s = MGIS_BV_ORTHOTROPIC;
+      break;
+    default:
+      return mgis_report_failure("unsupported behaviour symmetry type");
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_get_behaviour_symmetry
+
+MGIS_C_EXPORT mgis_status mgis_bv_get_behaviour_type(
+    mgis_bv_BehaviourType* const t, const mgis_bv_Description* const d) {
+  if (d == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  switch (d->btype) {
+    case mgis::behaviour::Description::GENERALBEHAVIOUR:
+      *t = MGIS_BV_GENERALBEHAVIOUR;
+      break;
+    case mgis::behaviour::Description::STANDARDSTRAINBASEDBEHAVIOUR:
+      *t = MGIS_BV_STANDARDSTRAINBASEDBEHAVIOUR;
+      break;
+    case mgis::behaviour::Description::STANDARDFINITESTRAINBEHAVIOUR:
+      *t = MGIS_BV_STANDARDFINITESTRAINBEHAVIOUR;
+      break;
+    case mgis::behaviour::Description::COHESIVEZONEMODEL:
+      *t = MGIS_BV_COHESIVEZONEMODEL;
+      break;
+    default:
+      return mgis_report_failure("unsupported behaviour type");
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_get_behaviour_type
+
+MGIS_C_EXPORT mgis_status mgis_bv_get_behaviour_kinematic(
+    mgis_bv_BehaviourKinematic* const k, const mgis_bv_Description* const d) {
+  if (d == nullptr) {
+    *k = MGIS_BV_UNDEFINEDKINEMATIC;
+    return mgis_report_failure("invalid argument");
+  }
+  switch (d->kinematic) {
+    case mgis::behaviour::Description::UNDEFINEDKINEMATIC:
+      *k = MGIS_BV_UNDEFINEDKINEMATIC;
+      break;
+    case mgis::behaviour::Description::SMALLSTRAINKINEMATIC:
+      *k = MGIS_BV_SMALLSTRAINKINEMATIC;
+      break;
+    case mgis::behaviour::Description::COHESIVEZONEKINEMATIC:
+      *k = MGIS_BV_COHESIVEZONEKINEMATIC;
+      break;
+    case mgis::behaviour::Description::FINITESTRAINKINEMATIC_F_CAUCHY:
+      *k = MGIS_BV_FINITESTRAINKINEMATIC_F_CAUCHY;
+      break;
+    case mgis::behaviour::Description::FINITESTRAINKINEMATIC_ETO_PK1:
+      *k = MGIS_BV_FINITESTRAINKINEMATIC_ETO_PK1;
+      break;
+    default:
+      return mgis_report_failure("unsupported behaviour kinematic");
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_get_behaviour_kinematic
+
+mgis_status mgis_bv_get_number_of_material_properties(
+    mgis_size_type* const s, const mgis_bv_Description* const d) {
   if (d == nullptr) {
     *s = 0;
     return mgis_report_failure("invalid argument");
@@ -84,11 +154,11 @@ mgis_status mgis_behaviour_get_number_of_material_properties(
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
-}  // end of mgis_behaviour_get_number_of_material_properties
+}  // end of mgis_bv_get_number_of_material_properties
 
-mgis_status mgis_behaviour_get_material_property_name(
+mgis_status mgis_bv_get_material_property_name(
     const char** n,
-    const mgis_behaviour_Description* const d,
+    const mgis_bv_Description* const d,
     const mgis_size_type i) {
   if (d == nullptr) {
     *n = nullptr;
@@ -101,11 +171,11 @@ mgis_status mgis_behaviour_get_material_property_name(
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
-}  // end of mgis_behaviour_get_material_property_name
+}  // end of mgis_bv_get_material_property_name
 
-void mgis_behaviour_free_description(mgis_behaviour_Description** d) {
+void mgis_bv_free_description(mgis_bv_Description** d) {
   std::free(*d);
   *d = nullptr;
-}  // end of mgis_behaviour_free_Description
+}  // end of mgis_bv_free_Description
 
 }  // end of extern "C"

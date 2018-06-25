@@ -37,14 +37,14 @@ int main(const int argc, const char* const* argv) {
   if (check(argc == 3, "expected three arguments") == 0) {
     return EXIT_FAILURE;
   }
-  mgis_behaviour_Description *d;
+  mgis_bv_Description *d;
   check_status(
-      mgis_behaviour_load_description(&d, argv[1], argv[2], "Tridimensional"));
+      mgis_bv_load_description(&d, argv[1], argv[2], "Tridimensional"));
   mgis_size_type mps_size;
-  check_status(mgis_behaviour_get_number_of_material_properties(&mps_size, d));
+  check_status(mgis_bv_get_number_of_material_properties(&mps_size, d));
   if (check(mps_size == 0, "invalid number of material properties") == 0) {
   
   }
-  mgis_behaviour_free_description(&d);
+  mgis_bv_free_description(&d);
   return test_status;
 }  // end of main

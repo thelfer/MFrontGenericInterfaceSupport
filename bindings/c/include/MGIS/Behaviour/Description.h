@@ -19,7 +19,7 @@
 #include <cstddef>
 #include "MGIS/Behaviour/Description.hxx"
 extern "C" {
-#else  /*  __cplusplus */
+#else /*  __cplusplus */
 #include <stddef.h>
 #endif /*  __cplusplus */
 
@@ -28,13 +28,34 @@ extern "C" {
 
 #ifdef __cplusplus
 //! a simple alias
-using mgis_behaviour_Description = mgis::behaviour::Description;
+using mgis_bv_Description = mgis::behaviour::Description;
 #else
 /*!
  * \brief an opaque structure which can only be accessed through the mgis API.
  */
-typedef struct mgis_behaviour_Description mgis_behaviour_Description;
+typedef struct mgis_bv_Description mgis_bv_Description;
 #endif
+
+typedef enum {
+  MGIS_BV_ISOTROPIC,
+  MGIS_BV_ORTHOTROPIC
+} mgis_bv_BehaviourSymmetry;
+
+typedef enum {
+  MGIS_BV_GENERALBEHAVIOUR,
+  MGIS_BV_STANDARDSTRAINBASEDBEHAVIOUR,
+  MGIS_BV_STANDARDFINITESTRAINBEHAVIOUR,
+  MGIS_BV_COHESIVEZONEMODEL
+} mgis_bv_BehaviourType;
+
+//! kinematic of the behaviour treated
+typedef enum {
+  MGIS_BV_UNDEFINEDKINEMATIC,
+  MGIS_BV_SMALLSTRAINKINEMATIC,
+  MGIS_BV_COHESIVEZONEKINEMATIC,
+  MGIS_BV_FINITESTRAINKINEMATIC_F_CAUCHY,
+  MGIS_BV_FINITESTRAINKINEMATIC_ETO_PK1
+} mgis_bv_BehaviourKinematic;
 
 /*!
  * \brief load a behaviour description
@@ -43,61 +64,79 @@ typedef struct mgis_behaviour_Description mgis_behaviour_Description;
  * \param[in] b: behaviour name
  * \param[in] h: hypothesis
  */
-MGIS_C_EXPORT mgis_status
-mgis_behaviour_load_description(mgis_behaviour_Description**,
-                                const char* const,
-                                const char* const,
-                                const char* const);
+MGIS_C_EXPORT mgis_status mgis_bv_load_description(mgis_bv_Description**,
+                                                   const char* const,
+                                                   const char* const,
+                                                   const char* const);
 /*!
  * \brief retrieve the library
  * \param[out] l: library
  * \param[in] d: description
  */
-MGIS_C_EXPORT mgis_status mgis_behaviour_get_library(
-    const char**, const mgis_behaviour_Description* const);
+MGIS_C_EXPORT mgis_status mgis_bv_get_library(const char**,
+                                              const mgis_bv_Description* const);
 /*!
  * \brief retrieve the source
  * \param[out] s: source
  * \param[in] d: description
  */
-MGIS_C_EXPORT mgis_status mgis_behaviour_get_source(
-    const char**, const mgis_behaviour_Description* const);
+MGIS_C_EXPORT mgis_status mgis_bv_get_source(const char**,
+                                             const mgis_bv_Description* const);
 /*!
  * \brief retrieve the hypothesis
  * \param[out] h: hypothesis
  * \param[in] d: description
  */
-MGIS_C_EXPORT mgis_status mgis_behaviour_get_hypothesis(
-    const char**, const mgis_behaviour_Description* const d);
+MGIS_C_EXPORT mgis_status
+mgis_bv_get_hypothesis(const char**, const mgis_bv_Description* const);
 /*!
  * \brief retrieve the `TFEL` version used to generate the behaviour
  * \param[out] v: version
  * \param[in] d: description
  */
-MGIS_C_EXPORT mgis_status mgis_behaviour_get_tfel_version(
-    const char**, const mgis_behaviour_Description* const d);
+MGIS_C_EXPORT mgis_status
+mgis_bv_get_tfel_version(const char**, const mgis_bv_Description* const);
+/*!
+ * \brief retrieve the behaviour symmetry
+ * \param[out] s: symmetry
+ * \param[in] d: description
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_get_behaviour_symmetry(
+    mgis_bv_BehaviourSymmetry* const, const mgis_bv_Description* const);
+/*!
+ * \brief retrieve the behaviour type
+ * \param[out] t: behaviour type
+ * \param[in] d: description
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_get_behaviour_type(
+    mgis_bv_BehaviourType* const, const mgis_bv_Description* const);
+/*!
+ * \brief retrieve the behaviour kinematic
+ * \param[out] k: behaviour kinematic
+ * \param[in] d: description
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_get_behaviour_kinematic(
+    mgis_bv_BehaviourKinematic* const, const mgis_bv_Description* const);
 /*!
  * \brief return the number of material properties
  * \param[out] c: number of the material properties
  * \param[in] b: behaviour description
  */
-MGIS_C_EXPORT mgis_status mgis_behaviour_get_number_of_material_properties(
-    mgis_size_type *const, const mgis_behaviour_Description *const);
+MGIS_C_EXPORT mgis_status mgis_bv_get_number_of_material_properties(
+    mgis_size_type* const, const mgis_bv_Description* const);
 /*!
  * \brief return the numer of material properties
  * \param[in] c: material property name
  * \param[in] b: behaviour description
  * \param[in] i: material property index
  */
-MGIS_C_EXPORT mgis_status mgis_behaviour_get_material_property_name(
-    const char **, const mgis_behaviour_Description *const,
-    const mgis_size_type);
+MGIS_C_EXPORT mgis_status mgis_bv_get_material_property_name(
+    const char**, const mgis_bv_Description* const, const mgis_size_type);
 /*!
  * \brief free the memory associated with the given description.
  * \param[in,out] d: description
  */
-MGIS_C_EXPORT void
-mgis_behaviour_free_description(mgis_behaviour_Description **);
+MGIS_C_EXPORT void mgis_bv_free_description(mgis_bv_Description**);
 
 #ifdef __cplusplus
 }
