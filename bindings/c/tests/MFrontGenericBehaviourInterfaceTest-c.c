@@ -21,7 +21,7 @@ int test_status = EXIT_SUCCESS;
 
 static void check_status(const mgis_status s) {
   if (s.exit_status != MGIS_SUCCESS) {
-    fprintf(stderr, "invalid function call: %s\n",s.msg);
+    fprintf(stderr, "invalid function call: %s\n", s.msg);
     exit(EXIT_FAILURE);
   }
 } // end of check_status
