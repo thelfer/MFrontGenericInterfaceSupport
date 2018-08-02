@@ -1,4 +1,5 @@
 mgis_header(MGIS Config-c.h)
 mgis_header(MGIS Status.h)
-mgis_header(MGIS/Behaviour Behaviour.h)
 mgis_header(MGIS/Behaviour Variable.h)
+mgis_header(MGIS/Behaviour Behaviour.h)
+mgis_header(MGIS/Behaviour Integrate.h)

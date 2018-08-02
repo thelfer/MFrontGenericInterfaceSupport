@@ -22,7 +22,7 @@ namespace mgis{
   namespace bv{
     
     //! a simple alias
-    using StateView = ::MGIS_BV_StateView;
+    using StateView = ::mgis_bv_StateView;
     
   } // end of namespace bv
   

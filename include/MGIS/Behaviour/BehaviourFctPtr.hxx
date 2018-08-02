@@ -21,7 +21,7 @@ namespace mgis {
 
   namespace behaviour {
 
-    using BehaviourFctPtr = MGIS_BV_BehaviourFctPtr;
+    using BehaviourFctPtr = mgis_bv_BehaviourFctPtr;
 
   }  // end of namespace behaviour
 

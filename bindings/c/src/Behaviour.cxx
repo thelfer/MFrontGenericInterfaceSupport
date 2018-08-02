@@ -18,14 +18,14 @@
 
 extern "C" {
 
-mgis_status mgis_bv_load_description(mgis_bv_Behaviour** ptr,
+mgis_status mgis_bv_load_behaviour(mgis_bv_Behaviour** ptr,
                                      const char* const l,
                                      const char* const b,
                                      const char* const h) {
   *ptr = nullptr;
   try {
-    const auto d = mgis::behaviour::load(l, b, mgis::behaviour::fromString(h));
-    *ptr = new mgis::behaviour::Behaviour(std::move(d));
+    const auto bv = mgis::behaviour::load(l, b, mgis::behaviour::fromString(h));
+    *ptr = new mgis::behaviour::Behaviour(std::move(bv));
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
@@ -33,71 +33,71 @@ mgis_status mgis_bv_load_description(mgis_bv_Behaviour** ptr,
 }  // end of load
 
 mgis_status mgis_bv_get_library(const char** l,
-                                const mgis_bv_Behaviour* const d) {
-  if (d == nullptr) {
+                                const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
     *l = nullptr;
     return mgis_report_failure("invalid argument");
   }
-  *l = d->library.c_str();
+  *l = b->library.c_str();
   return mgis_report_success();
 }  // end of mgis_bv_get_library
 
 mgis_status mgis_bv_get_source(const char** s,
-                               const mgis_bv_Behaviour* const d) {
-  if (d == nullptr) {
+                               const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
     *s = nullptr;
     return mgis_report_failure("invalid argument");
   }
-  *s = d->source.c_str();
+  *s = b->source.c_str();
   return mgis_report_success();
 }  // end of mgis_bv_get_source
 
 mgis_status mgis_bv_get_tfel_version(const char** v,
-                                     const mgis_bv_Behaviour* const d) {
-  if (d == nullptr) {
+                                     const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
     *v = nullptr;
     return mgis_report_failure("invalid argument");
   }
-  *v = d->tfel_version.c_str();
+  *v = b->tfel_version.c_str();
   return mgis_report_success();
 }  // end of mgis_bv_get_tfel_version
 
 mgis_status mgis_bv_get_behaviour_name(const char** h,
-                                   const mgis_bv_Behaviour* const d) {
-  if (d == nullptr) {
+                                   const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
     *h = nullptr;
     return mgis_report_failure("invalid argument");
   }
-  *h = d->behaviour.c_str();
+  *h = b->behaviour.c_str();
   return mgis_report_success();
 }  // end of mgis_bv_get_behaviour_name
 
 mgis_status mgis_bv_get_function_name(const char** h,
-                                   const mgis_bv_Behaviour* const d) {
-  if (d == nullptr) {
+                                   const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
     *h = nullptr;
     return mgis_report_failure("invalid argument");
   }
-  *h = d->function.c_str();
+  *h = b->function.c_str();
   return mgis_report_success();
 }  // end of mgis_bv_get_function_name
 
 mgis_status mgis_bv_get_hypothesis(const char** h,
-                                   const mgis_bv_Behaviour* const d) {
-  if (d == nullptr) {
+                                   const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
     *h = nullptr;
     return mgis_report_failure("invalid argument");
   }
-  *h = mgis::behaviour::toString(d->hypothesis);
+  *h = mgis::behaviour::toString(b->hypothesis);
   return mgis_report_success();
 }  // end of mgis_bv_get_hypothesis
 
 MGIS_C_EXPORT mgis_status mgis_bv_get_behaviour_symmetry(
-    mgis_bv_BehaviourSymmetry* const s, const mgis_bv_Behaviour* const d) {
-  if (d == nullptr) {
+    mgis_bv_BehaviourSymmetry* const s, const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
     return mgis_report_failure("invalid argument");
   }
-  switch (d->symmetry) {
+  switch (b->symmetry) {
     case mgis::behaviour::Behaviour::ISOTROPIC:
       *s = MGIS_BV_ISOTROPIC;
       break;
@@ -111,11 +111,11 @@ MGIS_C_EXPORT mgis_status mgis_bv_get_behaviour_symmetry(
 }  // end of mgis_bv_get_behaviour_symmetry
 
 MGIS_C_EXPORT mgis_status mgis_bv_get_behaviour_type(
-    mgis_bv_BehaviourType* const t, const mgis_bv_Behaviour* const d) {
-  if (d == nullptr) {
+    mgis_bv_BehaviourType* const t, const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
     return mgis_report_failure("invalid argument");
   }
-  switch (d->btype) {
+  switch (b->btype) {
     case mgis::behaviour::Behaviour::GENERALBEHAVIOUR:
       *t = MGIS_BV_GENERALBEHAVIOUR;
       break;
@@ -135,12 +135,12 @@ MGIS_C_EXPORT mgis_status mgis_bv_get_behaviour_type(
 }  // end of mgis_bv_get_behaviour_type
 
 MGIS_C_EXPORT mgis_status mgis_bv_get_behaviour_kinematic(
-    mgis_bv_BehaviourKinematic* const k, const mgis_bv_Behaviour* const d) {
-  if (d == nullptr) {
+    mgis_bv_BehaviourKinematic* const k, const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
     *k = MGIS_BV_UNDEFINEDKINEMATIC;
     return mgis_report_failure("invalid argument");
   }
-  switch (d->kinematic) {
+  switch (b->kinematic) {
     case mgis::behaviour::Behaviour::UNDEFINEDKINEMATIC:
       *k = MGIS_BV_UNDEFINEDKINEMATIC;
       break;
@@ -163,13 +163,13 @@ MGIS_C_EXPORT mgis_status mgis_bv_get_behaviour_kinematic(
 }  // end of mgis_bv_get_behaviour_kinematic
 
 mgis_status mgis_bv_get_number_of_material_properties(
-    mgis_size_type* const s, const mgis_bv_Behaviour* const d) {
-  if (d == nullptr) {
+    mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
     *s = 0;
     return mgis_report_failure("invalid argument");
   }
   try {
-    *s = d->mps.size();
+    *s = b->mps.size();
     return mgis_report_success();
   } catch (...) {
     return mgis_handle_cxx_exception();
@@ -178,14 +178,14 @@ mgis_status mgis_bv_get_number_of_material_properties(
 
 mgis_status mgis_bv_get_material_property_name(
     const char** n,
-    const mgis_bv_Behaviour* const d,
+    const mgis_bv_Behaviour* const b,
     const mgis_size_type i) {
-  if (d == nullptr) {
+  if (b == nullptr) {
     *n = nullptr;
     return mgis_report_failure("invalid argument");
   }
   try {
-    const auto& mp = d->mps.at(i);
+    const auto& mp = b->mps.at(i);
     *n = mp.name.c_str();
     return mgis_report_success();
   } catch (...) {
@@ -194,13 +194,13 @@ mgis_status mgis_bv_get_material_property_name(
 }  // end of mgis_bv_get_material_property_name
 
 mgis_status mgis_bv_get_number_of_internal_state_variables(
-    mgis_size_type* const s, const mgis_bv_Behaviour* const d) {
-  if (d == nullptr) {
+    mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
     *s = 0;
     return mgis_report_failure("invalid argument");
   }
   try {
-    *s = d->isvs.size();
+    *s = b->isvs.size();
     return mgis_report_success();
   } catch (...) {
     return mgis_handle_cxx_exception();
@@ -209,14 +209,14 @@ mgis_status mgis_bv_get_number_of_internal_state_variables(
 
 mgis_status mgis_bv_get_internal_state_variable_name(
     const char** n,
-    const mgis_bv_Behaviour* const d,
+    const mgis_bv_Behaviour* const b,
     const mgis_size_type i) {
-  if (d == nullptr) {
+  if (b == nullptr) {
     *n = nullptr;
     return mgis_report_failure("invalid argument");
   }
   try {
-    const auto& iv = d->isvs.at(i);
+    const auto& iv = b->isvs.at(i);
     *n = iv.name.c_str();
     return mgis_report_success();
   } catch (...) {
@@ -226,13 +226,13 @@ mgis_status mgis_bv_get_internal_state_variable_name(
 
 mgis_status mgis_bv_get_internal_state_variable_type(
     mgis_bv_VariableType* const t,
-    const mgis_bv_Behaviour* const d,
+    const mgis_bv_Behaviour* const b,
     const mgis_size_type i) {
-  if (d == nullptr) {
+  if (b == nullptr) {
     return mgis_report_failure("invalid argument");
   }
   try {
-    const auto& iv = d->isvs.at(i);
+    const auto& iv = b->isvs.at(i);
     switch(iv.type){
       case mgis::behaviour::Variable::SCALAR:
         *t = MGIS_BV_SCALAR;
@@ -256,13 +256,13 @@ mgis_status mgis_bv_get_internal_state_variable_type(
 }  // end of mgis_bv_get_internal_state_variable_type
 
 mgis_status mgis_bv_get_number_of_external_state_variables(
-    mgis_size_type* const s, const mgis_bv_Behaviour* const d) {
-  if (d == nullptr) {
+    mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
     *s = 0;
     return mgis_report_failure("invalid argument");
   }
   try {
-    *s = d->esvs.size();
+    *s = b->esvs.size();
     return mgis_report_success();
   } catch (...) {
     return mgis_handle_cxx_exception();
@@ -271,14 +271,14 @@ mgis_status mgis_bv_get_number_of_external_state_variables(
 
 mgis_status mgis_bv_get_external_state_variable_name(
     const char** n,
-    const mgis_bv_Behaviour* const d,
+    const mgis_bv_Behaviour* const b,
     const mgis_size_type i) {
-  if (d == nullptr) {
+  if (b == nullptr) {
     *n = nullptr;
     return mgis_report_failure("invalid argument");
   }
   try {
-    const auto& ev = d->esvs.at(i);
+    const auto& ev = b->esvs.at(i);
     *n = ev.name.c_str();
     return mgis_report_success();
   } catch (...) {
@@ -286,7 +286,7 @@ mgis_status mgis_bv_get_external_state_variable_name(
   }
 }  // end of mgis_bv_get_external_state_variable_name
 
-void mgis_bv_free_description(mgis_bv_Behaviour** d) {
+void mgis_bv_free_behaviour(mgis_bv_Behaviour** d) {
   std::free(*d);
   *d = nullptr;
 }  // end of mgis_bv_free_Behaviour

@@ -35,7 +35,7 @@ typedef struct{
   mgis_real * internal_state_variables;
   //! \brief values of the external state variables
   mgis_real * external_state_variables;
-} MGIS_BV_StateView;
+} mgis_bv_StateView;
 
 #ifdef __cplusplus
 }

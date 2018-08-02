@@ -1,5 +1,5 @@
 /*!
- * \file   include/MGIS/Behaviour/BehaviourData.hxx
+ * \file   include/MGIS/Behaviour/BehaviourDataView.hxx
  * \brief
  * \author Thomas Helfer
  * \date   02/07/2018
@@ -12,18 +12,18 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_BEHAVIOUR_BEHAVIOURDATA_HXX
-#define LIB_MGIS_BEHAVIOUR_BEHAVIOURDATA_HXX
+#ifndef LIB_MGIS_BEHAVIOUR_BEHAVIOURDATAVIEW_HXX
+#define LIB_MGIS_BEHAVIOUR_BEHAVIOURDATAVIEW_HXX
 
-#include "TFEL/Material/ModellingHypothesis.hxx"
-#include "MGIS/Behaviour/BehaviourData.h"
+#include "MGIS/Behaviour/Hypothesis.hxx"
+#include "MGIS/Behaviour/BehaviourDataView.h"
 
 namespace mgis{
   
   namespace behaviour{
     
     //! a simple alias
-    using BehaviourData = ::MGIS_BV_BehaviourData;
+    using BehaviourDataView = ::mgis_bv_BehaviourDataView;
 
     //     /*!
     //      * \brief structure returning the number of elastic properties
@@ -122,4 +122,4 @@ namespace mgis{
   
 } // end of namespace mgis
 
-#endif /* LIB_MGIS_BEHAVIOUR_BEHAVIOURDATA_HXX */
+#endif /* LIB_MGIS_BEHAVIOUR_BEHAVIOURDATAVIEW_HXX */

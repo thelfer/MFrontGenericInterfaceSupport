@@ -17,6 +17,6 @@
 
 #include "MGIS/Behaviour/BehaviourDataView.h"
 
-typedef int(*MGIS_BV_BehaviourFctPtr)(const MGIS_BV_BehaviourDataView*);
+typedef int(*mgis_bv_BehaviourFctPtr)(const mgis_bv_BehaviourDataView*);
 
 #endif /* LIB_MGIS_BEHAVIOUR_BEHAVIOURFCTPTR_H */

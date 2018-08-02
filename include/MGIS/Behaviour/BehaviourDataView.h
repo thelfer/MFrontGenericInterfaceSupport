@@ -22,12 +22,12 @@
 extern "C" {
 #endif /* __cplusplus */
 
-typedef struct MGIS_BV_BehaviourDataView MGIS_BV_BehaviourDataView;
+typedef struct mgis_bv_BehaviourDataView mgis_bv_BehaviourDataView;
 
 /*!
  * \brief structure
  */
-struct MGIS_BV_BehaviourDataView {
+struct mgis_bv_BehaviourDataView {
   /*!
    * \brief time increment
    */
@@ -63,11 +63,11 @@ struct MGIS_BV_BehaviourDataView {
   /*!
    * \brief state at the beginning of the time step
    */
-  MGIS_BV_StateView s0;
+  mgis_bv_StateView s0;
   /*!
    * \brief state at the end of the time step
    */
-  MGIS_BV_StateView s1;
+  mgis_bv_StateView s1;
 };
 
 #ifdef __cplusplus
