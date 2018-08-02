@@ -20,7 +20,11 @@ extern "C" {
 
 mgis_status integrate(mgis_bv_BehaviourDataView* const d,
                       const mgis_bv_Behaviour* const b) {
-  mgis::behaviour::integrate(*d, *b);
+  const auto r = mgis::behaviour::integrate(*d, *b);
+  if(r!=1){
+    return mgis_report_failure("behaviour integration failed");
+  }
+  return mgis_report_success();
 }  // end of integrate
 
 } // end of extern "C"

@@ -2,7 +2,7 @@
  * \file   include/MGIS/Behaviour/Integrate.ixx
  * \brief    
  * \author Thomas Helfer
- * \date   01 août 2018
+ * \date   01/08/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
