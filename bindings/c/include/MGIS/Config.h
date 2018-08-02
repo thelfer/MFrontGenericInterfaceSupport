@@ -1,5 +1,5 @@
 /*!
- * \file   Config-c.h
+ * \file   Config.h
  * \brief    
  * \author Thomas Helfer
  * \date   24/06/2018
@@ -12,10 +12,10 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_CONFIG_C_H
-#define LIB_CONFIG_C_H
+#ifndef LIB_CONFIG_H
+#define LIB_CONFIG_H
 
-#include "MGIS/Config.h"
+#include "MGIS/Config.hxx"
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #if defined MFrontGenericInterface_c_EXPORTS
@@ -31,4 +31,4 @@
 #define MGIS_C_EXPORT MGIS_VISIBILITY_EXPORT
 #endif /* */
 
-#endif /* LIB_CONFIG_C_H */
+#endif /* LIB_CONFIG_H */

@@ -280,15 +280,20 @@ mgis_status mgis_bv_get_external_state_variable_name(
   try {
     const auto& ev = b->esvs.at(i);
     *n = ev.name.c_str();
-    return mgis_report_success();
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
+  return mgis_report_success();
 }  // end of mgis_bv_get_external_state_variable_name
 
-void mgis_bv_free_behaviour(mgis_bv_Behaviour** d) {
-  std::free(*d);
-  *d = nullptr;
+mgis_status mgis_bv_free_behaviour(mgis_bv_Behaviour** d) {
+  try {
+    delete *d;
+    *d = nullptr;
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
 }  // end of mgis_bv_free_Behaviour
 
 }  // end of extern "C"

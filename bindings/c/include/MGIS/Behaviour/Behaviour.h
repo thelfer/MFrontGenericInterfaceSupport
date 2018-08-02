@@ -17,22 +17,27 @@
 
 #ifdef __cplusplus
 #include <cstddef>
-#include "MGIS/Behaviour/Behaviour.hxx"
-extern "C" {
 #else /*  __cplusplus */
 #include <stddef.h>
 #endif /*  __cplusplus */
 
-#include "MGIS/Config-c.h"
+#include "MGIS/Config.h"
 #include "MGIS/Status.h"
 #include "MGIS/Behaviour/Variable.h"
 
 #ifdef __cplusplus
-//! a simple alias
+#include "MGIS/Behaviour/Behaviour.hxx"
+#endif /*  __cplusplus */
+
+#ifdef __cplusplus
+extern "C" {
+#endif /*  __cplusplus */
+
+#ifdef __cplusplus
 using mgis_bv_Behaviour = mgis::behaviour::Behaviour;
 #else
 /*!
- * \brief an opaque structure which can only be accessed through the mgis API.
+ * \brief an opaque structure which can only be accessed through the MGIS' API.
  */
 typedef struct mgis_bv_Behaviour mgis_bv_Behaviour;
 #endif
@@ -66,9 +71,9 @@ typedef enum {
  * \param[in] h: hypothesis
  */
 MGIS_C_EXPORT mgis_status mgis_bv_load_behaviour(mgis_bv_Behaviour**,
-                                                   const char* const,
-                                                   const char* const,
-                                                   const char* const);
+                                                 const char* const,
+                                                 const char* const,
+                                                 const char* const);
 /*!
  * \brief retrieve the library
  * \param[out] l: library
@@ -192,10 +197,10 @@ MGIS_C_EXPORT mgis_status mgis_bv_get_external_state_variable_name(
  * \brief free the memory associated with the given behaviour.
  * \param[in,out] b: behaviour
  */
-MGIS_C_EXPORT void mgis_bv_free_behaviour(mgis_bv_Behaviour**);
+MGIS_C_EXPORT mgis_status mgis_bv_free_behaviour(mgis_bv_Behaviour**);
 
 #ifdef __cplusplus
-}
+}  // end of extern "C"
 #endif
 
 #endif /* LIB_MGIS_BEHAVIOUR_BEHAVIOUR_H */

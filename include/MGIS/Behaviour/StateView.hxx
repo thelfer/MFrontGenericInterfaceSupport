@@ -15,17 +15,57 @@
 #ifndef LIB_MGIS_BEHAVIOUR_STATEVIEW_HXX
 #define LIB_MGIS_BEHAVIOUR_STATEVIEW_HXX
 
-#include "MGIS/Behaviour/StateView.h"
+#ifdef __cplusplus
+#include "MGIS/Config.hxx"
+#endif /* __cplusplus */
 
-namespace mgis{
-  
-  namespace bv{
-    
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+/*!
+ * \brief state of the material
+ */
+typedef struct{
+  //! \brief value of the gradients
+  mgis_real * gradients;
+  //! \brief values of the thermodynamic_forces
+  mgis_real * thermodynamic_forces;
+  //! \brief values of the material properties
+  mgis_real * material_properties;
+  //! \brief values of the internal state variables
+  mgis_real * internal_state_variables;
+  //! \brief values of the external state variables
+  mgis_real * external_state_variables;
+} mgis_bv_StateView;
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#ifdef __cplusplus
+
+namespace mgis {
+
+  namespace bv {
+
+    // forward declaration
+    struct State;
     //! a simple alias
     using StateView = ::mgis_bv_StateView;
-    
-  } // end of namespace bv
-  
-} // end of namespace mgis
+
+    /*!
+     * \brief make a view from a behaviour data
+     * \param[in] s: state
+     * \return the view
+     * \note the view has at most the same life time as the state.
+     */
+    MGIS_EXPORT StateView make_view(State&);
+
+  }  // end of namespace bv
+
+}  // end of namespace mgis
+
+#endif /* __cplusplus */
 
 #endif /* LIB_MGIS_BEHAVIOUR_STATEVIEW_HXX */

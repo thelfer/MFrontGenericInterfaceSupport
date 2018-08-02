@@ -1,8 +1,10 @@
 mgis_library(MFrontGenericInterface SHARED
-  LibrariesManager.cxx
-  Variable.cxx
-  Hypothesis.cxx
-  Behaviour.cxx)
+	  LibrariesManager.cxx
+	  Variable.cxx
+	  Hypothesis.cxx
+	  Behaviour.cxx
+	  State.cxx
+	  BehaviourData.cxx)
 target_include_directories(MFrontGenericInterface
 	PUBLIC "${CMAKE_SOURCE_DIR}/include")
 if(UNIX)

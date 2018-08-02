@@ -15,7 +15,7 @@
 #ifndef LIB_MGIS_STATUS_H
 #define LIB_MGIS_STATUS_H
 
-#include "MGIS/Config-c.h"
+#include "MGIS/Config.h"
 
 #ifdef __cplusplus
 extern "C" {

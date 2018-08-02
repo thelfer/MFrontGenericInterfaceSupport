@@ -15,16 +15,24 @@
 #ifndef LIB_MGIS_BEHAVIOUR_BEHAVIOURFCTPTR_HXX
 #define LIB_MGIS_BEHAVIOUR_BEHAVIOURFCTPTR_HXX
 
-#include "MGIS/Behaviour/BehaviourFctPtr.h"
+/* forward declaration */
+typedef struct mgis_bv_BehaviourDataView mgis_bv_BehaviourDataView;
+/*! a simple alias */
+typedef int (*mgis_bv_BehaviourFctPtr)(mgis_bv_BehaviourDataView* const);
+
+#ifdef __cplusplus
 
 namespace mgis {
 
   namespace behaviour {
 
+    /*! a simple alias */
     using BehaviourFctPtr = mgis_bv_BehaviourFctPtr;
 
   }  // end of namespace behaviour
 
 } // end of namespace mgis
+
+#endif /* __cplusplus */
 
 #endif /* LIB_MGIS_BEHAVIOUR_BEHAVIOURFCTPTR_HXX */
