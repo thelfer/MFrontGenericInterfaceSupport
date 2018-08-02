@@ -1,6 +1,6 @@
 mgis_library(MFrontGenericInterface-c SHARED
   Status.cxx
-  Description.cxx)
+  Behaviour.cxx)
 target_include_directories(MFrontGenericInterface-c
 	PUBLIC "${CMAKE_SOURCE_DIR}/include")
 target_include_directories(MFrontGenericInterface-c

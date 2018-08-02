@@ -67,6 +67,14 @@ MGIS_SHAREDOBJ unsigned short
     FiniteStrainSingleCrystal_Tridimensional_UsableInPurelyImplicitResolution =
         1;
 
+MGIS_SHAREDOBJ unsigned short FiniteStrainSingleCrystal_nDrivingVariables = 1;
+MGIS_SHAREDOBJ int FiniteStrainSingleCrystal_DrivingVariablesTypes[1] = {3};
+MGIS_SHAREDOBJ const char * FiniteStrainSingleCrystal_DrivingVariables[1] = {"DeformationGradient"};
+
+MGIS_SHAREDOBJ unsigned short FiniteStrainSingleCrystal_nThermodynamicForces = 1;
+MGIS_SHAREDOBJ int FiniteStrainSingleCrystal_ThermodynamicForcesTypes[1] = {1};
+MGIS_SHAREDOBJ const char * FiniteStrainSingleCrystal_ThermodynamicForces[1] = {"Stress"};
+
 MGIS_SHAREDOBJ unsigned short
     FiniteStrainSingleCrystal_Tridimensional_nMaterialProperties = 7u;
 

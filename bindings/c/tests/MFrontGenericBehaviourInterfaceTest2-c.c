@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "MGIS/Behaviour/Description.h"
+#include "MGIS/Behaviour/Behaviour.h"
 
 int test_status = EXIT_SUCCESS;
 
@@ -49,7 +49,7 @@ int main(const int argc, const char* const* argv) {
   if (!check(argc == 3, "expected three arguments")) {
     return EXIT_FAILURE;
   }
-  mgis_bv_Description *d;
+  mgis_bv_Behaviour* d;
   check_status(
       mgis_bv_load_description(&d, argv[1], argv[2], "Tridimensional"));
   mgis_size_type mps_size;

@@ -57,6 +57,14 @@ MGIS_SHAREDOBJ unsigned short gurson_ElasticSymmetryType = 0u;
 MGIS_SHAREDOBJ unsigned short gurson_savesTangentOperator = 0;
 MGIS_SHAREDOBJ unsigned short gurson_UsableInPurelyImplicitResolution = 1;
 
+MGIS_SHAREDOBJ unsigned short gurson_nDrivingVariables = 1;
+MGIS_SHAREDOBJ int gurson_DrivingVariablesTypes[1] = {1};
+MGIS_SHAREDOBJ const char * gurson_DrivingVariables[1] = {"Strain"};
+
+MGIS_SHAREDOBJ unsigned short gurson_nThermodynamicForces = 1;
+MGIS_SHAREDOBJ int gurson_ThermodynamicForcesTypes[1] = {1};
+MGIS_SHAREDOBJ const char * gurson_ThermodynamicForces[1] = {"Stress"};
+
 MGIS_SHAREDOBJ unsigned short gurson_nMaterialProperties = 0u;
 
 MGIS_SHAREDOBJ const char *const *gurson_MaterialProperties = nullptr;

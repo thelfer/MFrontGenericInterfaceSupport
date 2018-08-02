@@ -26,6 +26,8 @@
 #include <windows.h>
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 
+
+#include "MGIS/Behaviour/BehaviourFctPtr.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
 
 namespace mgis {
@@ -78,6 +80,15 @@ struct LibrariesManager {
    * \param[in] n: entry point name
    */
   std::string getSource(const std::string &, const std::string &);
+  /*!
+   * \return the function implementing the behaviour
+   * \param[in] l: name of the library
+   * \param[in] b: behaviour name
+   * \param[in] h: hypothesis
+   */
+  mgis::behaviour::BehaviourFctPtr getBehaviour(const std::string &,
+                                                const std::string &,
+                                                const Hypothesis);
   /*!
    * \return the type of the behaviour
    * \see MechanicalBehaviourBase::BehaviourType
@@ -144,6 +155,44 @@ struct LibrariesManager {
   bool requiresThermalExpansionCoefficientTensor(const std::string &,
                                                  const std::string &,
                                                  const Hypothesis);
+  /*!
+   * \return the names of the gradients associated with a behaviour
+   * \param[in] l: library name
+   * \param[in] b: behaviour name
+   * \param[in] h: modelling hypothesis
+   */
+  std::vector<std::string> getGradientsNames(const std::string &,
+					     const std::string &,
+					     const Hypothesis);
+  /*!
+   * \return the types of the gradients associated with a behaviour
+   * \param[in] l: library name
+   * \param[in] b: behaviour name
+   * \param[in] h: modelling hypothesis
+   */
+  std::vector<int> getGradientsTypes(const std::string &,
+				     const std::string &,
+				     const Hypothesis);
+  /*!
+   * \return the names of the thermodynamic forces associated with a
+   * behaviour.
+   * \param[in] l: library name
+   * \param[in] b: behaviour name
+   * \param[in] h: modelling hypothesis
+   */
+  std::vector<std::string> getThermodynamicForcesNames(const std::string &,
+						       const std::string &,
+						       const Hypothesis);
+  /*!
+   * \return the types of the thermodynamic forces associated with a
+   * behaviour.
+   * \param[in] l: library name
+   * \param[in] b: behaviour name
+   * \param[in] h: modelling hypothesis
+   */
+  std::vector<int> getThermodynamicForcesTypes(const std::string &,
+					       const std::string &,
+					       const Hypothesis);
   /*!
    * \return the names of the material properties associated with
    * a behaviour

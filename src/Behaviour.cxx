@@ -1,5 +1,5 @@
 /*!
- * \file   Description.cxx
+ * \file   Behaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \date   19/06/2018
@@ -12,7 +12,7 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include "MGIS/Behaviour/Description.hxx"
+#include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/LibrariesManager.hxx"
 #include "MGIS/Raise.hxx"
 
@@ -20,24 +20,87 @@ namespace mgis {
 
   namespace behaviour {
 
-    Description::Description() = default;
-    Description::Description(Description &&) = default;
-    Description::Description(const Description &) = default;
-    Description &Description::operator=(Description &&) = default;
-    Description &Description::operator=(const Description &) = default;
-    Description::~Description() = default;
+    template <typename ErrorHandler>
+    static std::vector<Variable> buildVariablesList(
+        ErrorHandler &raise,
+        const std::vector<std::string> &names,
+        const std::vector<int> &types) {
+      std::vector<Variable> vars;
+      if (names.size() != types.size()) {
+        raise(
+            "the number of internal state variables names does not match "
+            "the number of internal state variables types");
+      }
+      for (decltype(names.size()) i = 0; i != names.size(); ++i) {
+        switch (types[i]) {
+          case 0:
+            vars.push_back({names[i], Variable::SCALAR});
+            break;
+          case 1:
+            vars.push_back({names[i], Variable::STENSOR});
+            break;
+          case 2:
+            vars.push_back({names[i], Variable::VECTOR});
+            break;
+          case 3:
+            vars.push_back({names[i], Variable::TENSOR});
+            break;
+          default:
+            raise("unsupported internal state variable type");
+        }
+      }
+      return vars;
+    }  // end of buildVariablesList
 
-    Description load(const std::string &l,
-                     const std::string &b,
-                     const Hypothesis h) {
+    template <typename ErrorHandler>
+    static void checkGradientsAndThermodynamicForcesConsistency(
+        ErrorHandler &raise,
+        const std::vector<Variable> &gradients,
+        const std::vector<Variable> &thermodynamic_forces,
+        const Variable &g,
+        const Variable &t) {
+      auto raise_if = [&raise](const bool c, const std::string &m) {
+        if (c) {
+          raise(m);
+        }
+      };
+      raise_if(gradients.size() != thermodynamic_forces.size(),
+               "the number of gradients does not match the number of "
+               "thermodynamic forces");
+      raise_if(gradients.size() != 1u, "invalid number of gradients");
+      raise_if(gradients[0].name != g.name, "invalid gradient name");
+      raise_if(gradients[0].type != g.type, "invalid gradient type");
+      raise_if(thermodynamic_forces[0].name != t.name,
+               "invalid thermodynamic force name");
+      raise_if(thermodynamic_forces[0].type != t.type,
+               "invalid thermodynamic force type");
+    }  // end of checkGradientsAndThermodynamicForcesConsistency
+
+    Behaviour::Behaviour() = default;
+    Behaviour::Behaviour(Behaviour &&) = default;
+    Behaviour::Behaviour(const Behaviour &) = default;
+    Behaviour &Behaviour::operator=(Behaviour &&) = default;
+    Behaviour &Behaviour::operator=(const Behaviour &) = default;
+    Behaviour::~Behaviour() = default;
+
+    Behaviour load(const std::string &l,
+                   const std::string &b,
+                   const Hypothesis h) {
       auto &lm = mgis::LibrariesManager::get();
       const auto fct = b + '_' + toString(h);
       auto raise = [&b, &l](const std::string &msg) {
         mgis::raise("load: " + msg +
+                    ".\nError while trying to load behaviour '" + b +
+                    "' in library '" + l + "'\n");
+      };
+      auto raise_if = [&b, &l](const bool c, const std::string &msg) {
+        if (c) {
+          mgis::raise("load: " + msg +
                       ".\nError while trying to load behaviour '" + b +
                       "' in library '" + l + "'\n");
+        }
       };
-      auto d = Description{};
+      auto d = Behaviour{};
 
       d.library = l;
       d.behaviour = b;
@@ -58,16 +121,16 @@ namespace mgis {
          * - 3 : cohesive zone model */
         switch (lm.getBehaviourType(l, b)) {
           case 0:
-            return Description::GENERALBEHAVIOUR;
+            return Behaviour::GENERALBEHAVIOUR;
             break;
           case 1:
-            return Description::STANDARDSTRAINBASEDBEHAVIOUR;
+            return Behaviour::STANDARDSTRAINBASEDBEHAVIOUR;
             break;
           case 2:
-            return Description::STANDARDFINITESTRAINBEHAVIOUR;
+            return Behaviour::STANDARDFINITESTRAINBEHAVIOUR;
             break;
           case 3:
-            return Description::COHESIVEZONEMODEL;
+            return Behaviour::COHESIVEZONEMODEL;
             break;
         }
         raise("unsupported behaviour type");
@@ -83,16 +146,16 @@ namespace mgis {
          * - 6: Miehe Apel Lambrecht logarithmic strain framework */
         switch (lm.getBehaviourKinematic(l, b)) {
           case 0:
-            return Description::UNDEFINEDKINEMATIC;
+            return Behaviour::UNDEFINEDKINEMATIC;
             break;
           case 1:
-            return Description::SMALLSTRAINKINEMATIC;
+            return Behaviour::SMALLSTRAINKINEMATIC;
             break;
           case 2:
-            return Description::COHESIVEZONEKINEMATIC;
+            return Behaviour::COHESIVEZONEKINEMATIC;
             break;
           case 3:
-            return Description::FINITESTRAINKINEMATIC_F_CAUCHY;
+            return Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY;
             break;
           case 4:
             if (((h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) &&
@@ -101,46 +164,56 @@ namespace mgis {
                   "invalid hypothesis for behaviour based on "
                   "the eto-pk1 kinematic");
             }
-            return Description::FINITESTRAINKINEMATIC_ETO_PK1;
+            return Behaviour::FINITESTRAINKINEMATIC_ETO_PK1;
             break;
         }
         raise("unsupported behaviour kinematic");
       }();
-      // setting the gradients and the fluxes
+      // setting gradients and thermodynamic forces
+      d.gradients = buildVariablesList(raise, lm.getGradientsNames(l, b, h),
+                                       lm.getGradientsTypes(l, b, h));
+      d.thermodynamic_forces =
+          buildVariablesList(raise, lm.getThermodynamicForcesNames(l, b, h),
+                             lm.getThermodynamicForcesTypes(l, b, h));
+      raise_if(d.gradients.size() != d.thermodynamic_forces.size(),
+               "the number of the gradients does not match "
+               "the number of thermodynamic forces");
       switch (d.btype) {
-        case Description::GENERALBEHAVIOUR:
-          raise("general behaviour is not handled yet");
+        case Behaviour::GENERALBEHAVIOUR:
           break;
-        case Description::STANDARDSTRAINBASEDBEHAVIOUR:
-          if (d.kinematic != Description::SMALLSTRAINKINEMATIC) {
-            raise(
-                "strain based behaviour must be associated with the "
-                "small strain kinematic hypothesis");
-          }
-          d.gradients.push_back({"Strain", Variable::STENSOR});
-          d.fluxes.push_back({"Stress", Variable::STENSOR});
+        case Behaviour::STANDARDSTRAINBASEDBEHAVIOUR:
+          raise_if(d.kinematic != Behaviour::SMALLSTRAINKINEMATIC,
+                   "strain based behaviour must be associated with the "
+                   "small strain kinematic hypothesis");
+          checkGradientsAndThermodynamicForcesConsistency(
+              raise, d.gradients, d.thermodynamic_forces,
+              {"Strain", Variable::STENSOR}, {"Stress", Variable::STENSOR});
           break;
-        case Description::COHESIVEZONEMODEL:
-          if (d.kinematic != Description::COHESIVEZONEKINEMATIC) {
+        case Behaviour::COHESIVEZONEMODEL:
+          if (d.kinematic != Behaviour::COHESIVEZONEKINEMATIC) {
             raise("invalid kinematic assumption for cohesive zone model");
           }
-          d.gradients.push_back({"OpeningDisplacement", Variable::VECTOR});
-          d.fluxes.push_back({"CohesiveForce", Variable::VECTOR});
+          checkGradientsAndThermodynamicForcesConsistency(
+              raise, d.gradients, d.thermodynamic_forces,
+              {"OpeningDisplacement", Variable::VECTOR},
+              {"CohesiveForce", Variable::VECTOR});
           break;
-        case Description::STANDARDFINITESTRAINBEHAVIOUR:
-          if (d.kinematic == Description::FINITESTRAINKINEMATIC_F_CAUCHY) {
-            d.gradients.push_back({"DeformationGradient", Variable::TENSOR});
-            d.fluxes.push_back({"CauchyStress", Variable::STENSOR});
-          } else if (d.kinematic ==
-                     Description::FINITESTRAINKINEMATIC_ETO_PK1) {
+        case Behaviour::STANDARDFINITESTRAINBEHAVIOUR:
+          if (d.kinematic == Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY) {
+            checkGradientsAndThermodynamicForcesConsistency(
+                raise, d.gradients, d.thermodynamic_forces,
+                {"DeformationGradient", Variable::TENSOR},
+                {"Stress", Variable::STENSOR});
+          } else if (d.kinematic == Behaviour::FINITESTRAINKINEMATIC_ETO_PK1) {
             if (((h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) &&
                  (h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))) {
               raise(
                   "invalid hypothesis for behaviour based on "
                   "the eto-pk1 kinematic");
             }
-            d.gradients.push_back({"Strain", Variable::STENSOR});
-            d.fluxes.push_back({"PK1-Stress", Variable::TENSOR});
+            checkGradientsAndThermodynamicForcesConsistency(
+                raise, d.gradients, d.thermodynamic_forces,
+                {"Strain", Variable::STENSOR}, {"Stresss", Variable::STENSOR});
           } else {
             raise(
                 "invalid kinematic hypothesis for finite strain "
@@ -151,9 +224,8 @@ namespace mgis {
           raise("unsupported behaviour type");
       };
       // behaviour symmetry
-      d.symmetry = lm.getBehaviourSymmetry(l, b) == 0
-                       ? Description::ISOTROPIC
-                       : Description::ORTHOTROPIC;
+      d.symmetry = lm.getBehaviourSymmetry(l, b) == 0 ? Behaviour::ISOTROPIC
+                                                      : Behaviour::ORTHOTROPIC;
       auto add_mp = [&d](const std::string &mp) {
         d.mps.push_back({mp, Variable::SCALAR});
       };
@@ -162,7 +234,7 @@ namespace mgis {
           add_mp("YoungModulus");
           add_mp("PoissonRatio");
         } else {
-          if (d.symmetry != Description::ORTHOTROPIC) {
+          if (d.symmetry != Behaviour::ORTHOTROPIC) {
             raise(
                 "load: the behaviour must be orthotropic "
                 "for the elastic stiffness symmetry to be orthotropic");
@@ -188,7 +260,7 @@ namespace mgis {
         }
       }
       if (lm.requiresThermalExpansionCoefficientTensor(l, b, h)) {
-        if (d.symmetry == Description::ORTHOTROPIC) {
+        if (d.symmetry == Behaviour::ORTHOTROPIC) {
           add_mp("ThermalExpansion1");
           add_mp("ThermalExpansion2");
           add_mp("ThermalExpansion3");
@@ -201,31 +273,9 @@ namespace mgis {
         add_mp(mp);
       }
       // internal state variables
-      const auto ivnames = lm.getInternalStateVariablesNames(l, b, h);
-      const auto ivtypes = lm.getInternalStateVariablesTypes(l, b, h);
-      if (ivnames.size() != ivtypes.size()) {
-        raise(
-            "the number of internal state variables names does not match "
-            "the number of internal state variables types");
-      }
-      for (decltype(ivnames.size()) i = 0; i != ivnames.size(); ++i) {
-        switch (ivtypes[i]) {
-          case 0:
-            d.isvs.push_back({ivnames[i], Variable::SCALAR});
-            break;
-          case 1:
-            d.isvs.push_back({ivnames[i], Variable::STENSOR});
-            break;
-          case 2:
-            d.isvs.push_back({ivnames[i], Variable::VECTOR});
-            break;
-          case 3:
-            d.isvs.push_back({ivnames[i], Variable::TENSOR});
-            break;
-          default:
-            raise("unsupported internal state variable type");
-        }
-      }
+      d.isvs =
+          buildVariablesList(raise, lm.getInternalStateVariablesNames(l, b, h),
+                             lm.getInternalStateVariablesTypes(l, b, h));
       // external state variables
       d.esvs.push_back({"Temperature", Variable::SCALAR});
       for (const auto &esv : lm.getExternalStateVariablesNames(l, b, h)) {

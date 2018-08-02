@@ -14,7 +14,7 @@
 
 #include <iostream>
 #include <cstdlib>
-#include "MGIS/Behaviour/Description.hxx"
+#include "MGIS/Behaviour/Behaviour.hxx"
 
 int main(const int argc, const char* const* argv) {
   using namespace mgis::behaviour;
@@ -36,18 +36,20 @@ int main(const int argc, const char* const* argv) {
   check(d.source == "Gurson.mfront", "invalid source");
   check(d.tfel_version == "3.2.0-dev", "invalid TFEL version");
   check(d.mps.size() == 0, "invalid number of material properties");
-  check(d.btype == Description::STANDARDSTRAINBASEDBEHAVIOUR,
+  check(d.btype == Behaviour::STANDARDSTRAINBASEDBEHAVIOUR,
         "invalid behaviour type");
-  check(d.kinematic == Description::SMALLSTRAINKINEMATIC,
+  check(d.kinematic == Behaviour::SMALLSTRAINKINEMATIC,
         "invalid kinematic value");
-  check(d.symmetry == Description::ISOTROPIC, "invalid behaviour symmetry");
+  check(d.symmetry == Behaviour::ISOTROPIC, "invalid behaviour symmetry");
   if (check(d.gradients.size() == 1u, "invalid number of gradients")) {
     check(d.gradients[0].name == "Strain", "invalid gradient name");
     check(d.gradients[0].type == Variable::STENSOR, "invalid gradient type");
   }
-  if (check(d.fluxes.size() == 1u, "invalid number of fluxes")) {
-    check(d.fluxes[0].name == "Stress", "invalid flux name");
-    check(d.fluxes[0].type == Variable::STENSOR, "invalid flux type");
+  if (check(d.thermodynamic_forces.size() == 1u,
+            "invalid number of thermodynamic_forces")) {
+    check(d.thermodynamic_forces[0].name == "Stress", "invalid flux name");
+    check(d.thermodynamic_forces[0].type == Variable::STENSOR,
+          "invalid flux type");
   }
   if (check(d.isvs.size() == 4, "invalid number of internal state variables")) {
     check(d.isvs[0].name == "ElasticStrain",

@@ -236,6 +236,44 @@ std::vector<std::string> LibrariesManager::getNames(const std::string &l,
   return vars;
 } // end of LibrariesManager::getNames
 
+std::vector<std::string> LibrariesManager::getGradientsNames(
+    const std::string &l, const std::string &b, const Hypothesis h) {
+  return this->getNames(l, b, h, "DrivingVariables");
+}  // end of LibrariesManager::getGradientsNames
+
+std::vector<int> LibrariesManager::getGradientsTypes(
+    const std::string &l, const std::string &b, const Hypothesis h) {
+  std::vector<int> types;
+  const auto hn = toString(h);
+  const auto nb = *(this->extract<unsigned short>(
+      l, b + "_" + hn + "_nDrivingVariables",
+      b + "_nDrivingVariables"));
+  const auto res =
+      this->extract<const int>(l, b + "_" + hn + "_DrivingVariablesTypes",
+                               b + "_DrivingVariablesTypes");
+  std::copy(res, res + nb, std::back_inserter(types));
+  return types;
+} // end of LibrariesManager::getGradientsTypes
+
+std::vector<std::string> LibrariesManager::getThermodynamicForcesNames(
+    const std::string &l, const std::string &b, const Hypothesis h) {
+  return this->getNames(l, b, h, "ThermodynamicForces");
+} // end of LibrariesManager::getThermodynamicForcesNames
+
+std::vector<int> LibrariesManager::getThermodynamicForcesTypes(
+    const std::string &l, const std::string &b, const Hypothesis h) {
+  std::vector<int> types;
+  const auto hn = toString(h);
+  const auto nb = *(this->extract<unsigned short>(
+      l, b + "_" + hn + "_nThermodynamicForces",
+      b + "_nThermodynamicForces"));
+  const auto res =
+      this->extract<const int>(l, b + "_" + hn + "_ThermodynamicForcesTypes",
+                               b + "_ThermodynamicForcesTypes");
+  std::copy(res, res + nb, std::back_inserter(types));
+  return types;
+} // end of LibrariesManager::getThermodynamicForcesTypes
+
 std::vector<std::string> LibrariesManager::getMaterialPropertiesNames(
     const std::string &l, const std::string &b, const Hypothesis h) {
   return this->getNames(l, b, h, "MaterialProperties");
@@ -244,7 +282,7 @@ std::vector<std::string> LibrariesManager::getMaterialPropertiesNames(
 std::vector<std::string> LibrariesManager::getInternalStateVariablesNames(
     const std::string &l, const std::string &b, const Hypothesis h) {
   return this->getNames(l, b, h, "InternalStateVariables");
-} // end of LibrariesManager::getMaterialPropertiesNames
+} // end of LibrariesManager::getInternalStateVariablesNames
 
 std::vector<int> LibrariesManager::getInternalStateVariablesTypes(
     const std::string &l, const std::string &b, const Hypothesis h) {
@@ -258,7 +296,7 @@ std::vector<int> LibrariesManager::getInternalStateVariablesTypes(
                                b + "_InternalStateVariablesTypes");
   std::copy(res, res + nb, std::back_inserter(types));
   return types;
-} // end of LibrariesManager::getMaterialPropertiesNames
+} // end of LibrariesManager::getInternalStateVariablesTypes
 
 std::vector<std::string> LibrariesManager::getExternalStateVariablesNames(
     const std::string &l, const std::string &b, const Hypothesis h) {
