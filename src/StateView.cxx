@@ -19,13 +19,14 @@ namespace mgis {
 
   namespace behaviour {
 
-    StateView make_view(State& s) { StateView v;
-      auto get_ptr = [](const std::vector<real>& v) -> real* {
+    StateView make_view(State& s) {
+      auto get_ptr = [](std::vector<real>& v) -> real* {
         if (v.empty()) {
           return nullptr;
         }
         return &v[0];
       };  // end of get_ptr
+      StateView v;
       v.gradients = get_ptr(s.gradients);
       v.thermodynamic_forces = get_ptr(s.thermodynamic_forces);
       v.material_properties = get_ptr(s.material_properties);

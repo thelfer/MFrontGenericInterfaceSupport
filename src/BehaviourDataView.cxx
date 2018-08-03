@@ -20,7 +20,7 @@ namespace mgis {
   namespace behaviour {
 
     BehaviourDataView make_view(BehaviourData& d) {
-      auto get_ptr = [](const std::vector<real>& v) -> real* {
+      auto get_ptr = [](std::vector<real>& v) -> real* {
         if (v.empty()) {
           return nullptr;
         }

@@ -17,6 +17,7 @@
 
 #include <vector>
 #include "MGIS/Config.hxx"
+#include "MGIS/StringView.hxx"
 
 namespace mgis {
 
@@ -55,6 +56,100 @@ namespace mgis {
       //! \brief values of the external state variables
       std::vector<real> external_state_variables;
     };  // end of struct State
+
+    /*!
+     * \brief set the value of a material property
+     * \param[out] d: behaviour data
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     * \param[in]  v: value
+     */
+    MGIS_EXPORT void setMaterialProperty(State&,
+                                         const Behaviour&,
+                                         const string_view,
+                                         const real);
+    /*!
+     * \brief set the value of a material property
+     * \param[out] d: behaviour data
+     * \param[in]  o: material property offset
+     * \param[in]  v: value
+     */
+    MGIS_EXPORT void setMaterialProperty(State&,
+                                         const size_type,
+                                         const real);
+    /*!
+     * \brief set the value of an internal state variable
+     * \param[out] d: behaviour data
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     * \param[in]  v: value
+     */
+    MGIS_EXPORT void setInternalStateVariable(State&,
+                                              const Behaviour&,
+                                              const string_view,
+                                              const real);
+    /*!
+     * \brief set the value of an internal state variable
+     * \param[out] d: behaviour data
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     * \param[in]  v: values
+     */
+    MGIS_EXPORT void setInternalStateVariable(State&,
+                                              const Behaviour&,
+                                              const string_view,
+                                              const real* const);
+    /*!
+     * \brief set the value of an internal state variable
+     * \param[out] d: behaviour data
+     * \param[in]  o: internal state variable offset
+     * \param[in]  v: value
+     */
+    MGIS_EXPORT void setInternalStateVariable(State&,
+                                              const size_type,
+                                              const real);
+    /*!
+     * \brief set the value of an internal state variable
+     * \param[out] d: behaviour data
+     * \param[in]  o: internal state variable offset
+     * \param[in]  n: internal state variable size
+     * \param[in]  v: value
+     */
+    MGIS_EXPORT void setInternalStateVariable(State&,
+                                              const size_type,
+                                              const size_type,
+                                              const real);
+    /*!
+     * \brief set the values of an internal state variable
+     * \param[out] d: behaviour data
+     * \param[in]  o: internal state variable offset
+     * \param[in]  n: internal state variable size
+     * \param[in]  v: values
+     */
+    MGIS_EXPORT void setInternalStateVariable(State&,
+                                              const size_type,
+                                              const size_type,
+                                              const real* const);
+    /*!
+     * \brief set the value of a external state variable
+     * \param[out] d: behaviour data
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     * \param[in]  v: value
+     */
+    MGIS_EXPORT void setExternalStateVariable(State&,
+                                              const Behaviour&,
+                                              const string_view,
+                                              const real);
+    /*!
+     * \brief set the value of a external state variable
+     * \param[out] d: behaviour data
+     * \param[in]  o: external state variable offset
+     * \param[in]  v: value
+     */
+    MGIS_EXPORT void setExternalStateVariable(State&,
+                                              const size_type,
+                                              const real);
 
   }  // end of namespace behaviour
 

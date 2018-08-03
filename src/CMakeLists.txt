@@ -4,7 +4,9 @@ mgis_library(MFrontGenericInterface SHARED
 	  Hypothesis.cxx
 	  Behaviour.cxx
 	  State.cxx
-	  BehaviourData.cxx)
+	  StateView.cxx
+	  BehaviourData.cxx
+	  BehaviourDataView.cxx)
 target_include_directories(MFrontGenericInterface
 	PUBLIC "${CMAKE_SOURCE_DIR}/include")
 if(UNIX)

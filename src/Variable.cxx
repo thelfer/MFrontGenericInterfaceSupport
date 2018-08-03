@@ -61,6 +61,17 @@ namespace mgis {
       return getTensorSize(h);
     }  // end of getVariableSize
 
+    const Variable &getVariable(const std::vector<Variable> &vs,
+                                const string_view n) {
+      const auto p =
+          std::find_if(vs.begin(), vs.end(),
+                       [&n](const Variable &v) { return v.name == n; });
+      if (p == vs.end()) {
+        mgis::raise("getVariable: no variable named '" + std::string(n) + "'");
+      }
+      return *p;
+    }  // end of getVariable
+
     size_type getArraySize(const std::vector<Variable> &vs,
                            const Hypothesis h) {
       auto s = size_type{};
@@ -71,7 +82,7 @@ namespace mgis {
     }  // end of getArraySize
 
     size_type getVariableOffset(const std::vector<Variable> &vs,
-                                const std::string &n,
+                                const string_view n,
                                 const Hypothesis h) {
       auto o = size_type{};
       for (const auto &v : vs) {
@@ -80,7 +91,7 @@ namespace mgis {
         }
         o += getVariableSize(v, h);
       }
-      raise("getVariableOffset: no variable named '" + n + "'");
+      raise("getVariableOffset: no variable named '" + std::string(n) + "'");
     }  // end of getVariableOffset
 
   }  // end of namespace behaviour

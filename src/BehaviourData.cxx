@@ -12,6 +12,7 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <algorithm>
 #include "MGIS/Behaviour/BehaviourData.hxx"
 
 namespace mgis {
@@ -33,12 +34,24 @@ namespace mgis {
     // declared in the class definition (again regardless of the order of the
     // mem-initializers).
     BehaviourData::BehaviourData(const Behaviour& b)
-        : dt(0), rdt(0), s0(b), s1(s0) {
+        : dt(0), rdt(1), s0(b), s1(s0) {
       constexpr const auto zero = real{0};
       const auto ng = this->s0.gradients.size();
       const auto nth = this->s0.thermodynamic_forces.size();
       this->K.resize(ng * nth, zero);
     }  // end of Behaviour::Behaviour
+
+    void update(BehaviourData& d) {
+      std::fill(d.K.begin(), d.K.end(), real{0});
+      d.rdt = 1;
+      d.s0 = d.s1;
+    }  // end of update
+
+    void revert(BehaviourData& d) {
+      std::fill(d.K.begin(), d.K.end(), real{0});
+      d.rdt = 1;
+      d.s1 = d.s0;
+    }  // end of update
 
   }  // end of namespace behaviour
 

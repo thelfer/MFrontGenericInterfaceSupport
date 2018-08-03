@@ -23,8 +23,8 @@ namespace mgis{
 
     /*!
      * \brief integrate the behaviour
-     * \param[in/out] d: behaviour data
-     * \param[in/out] b: behaviour
+     * \param[in,out] d: behaviour data
+     * \param[in,out] b: behaviour
      */
     int integrate(BehaviourDataView&, const Behaviour&);
 

@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 #include "MGIS/Config.hxx"
+#include "MGIS/StringView.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
 
 namespace mgis {
@@ -35,12 +36,18 @@ namespace mgis {
     };  // end of struct Description
 
     /*!
+     * \return the variable with the given name
+     * \param[in] vs: variables
+     * \param[in] n: name
+     */
+    MGIS_EXPORT const Variable &getVariable(const std::vector<Variable> &,
+                                            const string_view);
+    /*!
      * \return the size of a variable
      * \param[in] v: variable
      * \param[in] h: modelling hypothesis
      */
-    MGIS_EXPORT size_type getVariableSize(const std::vector<Variable> &,
-                                            const Hypothesis);
+    MGIS_EXPORT size_type getVariableSize(const Variable &, const Hypothesis);
     /*!
      * \return the size of an array that may contain the values described by the
      * given array of variables
@@ -56,7 +63,7 @@ namespace mgis {
      * \param[in] h: modelling hypothesis
      */
     MGIS_EXPORT size_type getVariableOffset(const std::vector<Variable> &,
-                                            const std::string &,
+                                            const string_view,
                                             const Hypothesis);
 
   }  // end of namespace behaviour

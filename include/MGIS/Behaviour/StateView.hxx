@@ -47,7 +47,7 @@ typedef struct{
 
 namespace mgis {
 
-  namespace bv {
+  namespace behaviour {
 
     // forward declaration
     struct State;
@@ -62,7 +62,7 @@ namespace mgis {
      */
     MGIS_EXPORT StateView make_view(State&);
 
-  }  // end of namespace bv
+  }  // end of namespace behaviour
 
 }  // end of namespace mgis
 

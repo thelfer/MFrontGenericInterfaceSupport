@@ -17,6 +17,7 @@
 
 #include "MGIS/Config.h"
 #include "MGIS/Status.h"
+#include "MGIS/Behaviour/State.h"
 #include "MGIS/Behaviour/Behaviour.h"
 #ifdef __cplusplus
 #include "MGIS/Behaviour/BehaviourData.hxx"
@@ -43,12 +44,38 @@ typedef struct mgis_bv_BehaviourData mgis_bv_BehaviourData;
  */
 MGIS_C_EXPORT mgis_status mgis_bv_allocate_behaviour_data(
     mgis_bv_BehaviourData**, const mgis_bv_Behaviour* const);
-
+/*!
+ * \brief update the behaviour data
+ * \param[out] d: pointer to a pointer to the allocated data
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_update_behaviour_data(mgis_bv_BehaviourData* const);
+/*!
+ * \brief reset the behaviour data
+ * \param[out] d: pointer to a pointer to the allocated data
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_reset_behaviour_data(mgis_bv_BehaviourData* const);
+/*!
+ * \return the state at the beginning of the time step
+ * \param[out] s: pointer to a pointer to the state
+ * \param[in]  d: behaviour data
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_get_internal_state_variable_0(
+    mgis_bv_State**, mgis_bv_BehaviourData* const);
+/*!
+ * \return the state at the beginning of the time step
+ * \param[out] s: pointer to a pointer to the state
+ * \param[in]  d: behaviour data
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_get_internal_state_variable_1(
+    mgis_bv_State**, mgis_bv_BehaviourData* const);
 /*!
  * \brief free the behaviour data
  * \param[out] d: pointer to a pointer to the allocated data
  */
 MGIS_C_EXPORT mgis_status mgis_bv_free_behaviour_data(mgis_bv_BehaviourData**);
+
 
 #ifdef __cplusplus
 }

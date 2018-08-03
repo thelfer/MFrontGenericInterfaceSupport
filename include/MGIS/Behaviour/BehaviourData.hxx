@@ -86,7 +86,18 @@ namespace mgis {
       State s1;
     };  // end of struct BehaviourData
 
-    MGIS_EXPORT BehaviourData allocateBehaviourData(const Behaviour&);
+    /*!
+     * \brief update the behaviour data by:
+     * - setting s1 equal to s0
+     * - filling the stiffness matrix with 0
+     */
+    MGIS_EXPORT void update(BehaviourData&);
+    /*!
+     * \brief revert the behaviour data by:
+     * - setting s1 equal to s0
+     * - filling the stiffness matrix with 0
+     */
+    MGIS_EXPORT void revert(BehaviourData&);
 
   }  // end of namespace behaviour
 

@@ -12,6 +12,7 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <algorithm>
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/State.hxx"
 
@@ -38,6 +39,78 @@ namespace mgis {
       init(this->internal_state_variables, b.isvs);
       init(this->external_state_variables, b.esvs);
     }  // end of State::State
+
+    void setMaterialProperty(State& s,
+                             const Behaviour& b,
+                             const string_view n,
+                             const real v) {
+      const auto o = getVariableOffset(b.mps, n, b.hypothesis);
+      setMaterialProperty(s, o, v);
+    }  // end of setMaterialProperty
+
+    void setMaterialProperty(State& s, const size_type o, const real v) {
+      s.material_properties[o] = v;
+    }  // end of setMaterialProperty
+
+    void setInternalStateVariable(State& s,
+                                  const Behaviour& b,
+                                  const string_view n,
+                                  const real v) {
+      const auto& iv = getVariable(b.isvs, n);
+      const auto o = getVariableOffset(b.isvs, n, b.hypothesis);
+      if (iv.type == Variable::SCALAR) {
+        setInternalStateVariable(s, o, v);
+      } else {
+        const auto sz = getVariableSize(iv, b.hypothesis);
+        setInternalStateVariable(s, o, sz, v);
+      }
+    }  // end of setInternalStateVariable
+
+    void setInternalStateVariable(State& s,
+                                  const Behaviour& b,
+                                  const string_view n,
+                                  const real* const v) {
+      const auto& iv = getVariable(b.isvs, n);
+      const auto o = getVariableOffset(b.isvs, n, b.hypothesis);
+      if (iv.type == Variable::SCALAR) {
+        setInternalStateVariable(s, o, *v);
+      } else {
+        const auto sz = getVariableSize(iv, b.hypothesis);
+        setInternalStateVariable(s, o, sz, v);
+      }
+    }  // end of setInternalStateVariable
+
+    void setInternalStateVariable(State& s, const size_type o, const real v) {
+      s.internal_state_variables[o] = v;
+    }  // end of setInternalStateVariable
+
+    void setInternalStateVariable(State& s,
+                                  const size_type o,
+                                  const size_type n,
+                                  const real v) {
+      auto p = s.internal_state_variables.begin() + o;
+      std::fill(p, p + n, v);
+    }  // end of setInternalStateVariable
+
+    void setInternalStateVariable(State& s,
+                                  const size_type o,
+                                  const size_type n,
+                                  const real* const v) {
+      auto p = s.internal_state_variables.begin() + o;
+      std::copy(v, v + n, p);
+    }  // end of setInternalStateVariable
+
+    void setExternalStateVariable(State& s,
+                                  const Behaviour& b,
+                                  const string_view n,
+                                  const real v) {
+      const auto o = getVariableOffset(b.mps, n, b.hypothesis);
+      setExternalStateVariable(s, o, v);
+    }  // end of setExternalStateVariable
+
+    void setExternalStateVariable(State& s, const size_type o, const real v) {
+      s.external_state_variables[o] = v;
+    }  // end of setExternalStateVariable
 
   }  // end of namespace behaviour
 

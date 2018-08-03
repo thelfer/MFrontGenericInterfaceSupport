@@ -17,8 +17,8 @@
 
 extern "C" {
 
-MGIS_C_EXPORT mgis_status mgis_bv_allocate_behaviour_data(
-    mgis_bv_BehaviourData** d, const mgis_bv_Behaviour* const b){
+mgis_status mgis_bv_allocate_behaviour_data(mgis_bv_BehaviourData** d,
+                                            const mgis_bv_Behaviour* const b) {
   if (b == nullptr) {
     *d = nullptr;
     return mgis_report_failure("invalid argument (behaviour is null)");
@@ -32,8 +32,37 @@ MGIS_C_EXPORT mgis_status mgis_bv_allocate_behaviour_data(
   return mgis_report_success();
 }  // end of mgis_bv_allocate_behaviour_data
 
-MGIS_C_EXPORT mgis_status mgis_bv_free_behaviour_data(
-    mgis_bv_BehaviourData** d) {
+mgis_status mgis_bv_update_behaviour_data(mgis_bv_BehaviourData* const d){
+  try {
+    revert(*d);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+} // end of mgis_bv_update_behaviour_data
+
+mgis_status mgis_bv_revert_behaviour_data(mgis_bv_BehaviourData* const d) {
+  try {
+    revert(*d);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+} // end of mgis_bv_revert_behaviour_data
+
+mgis_status mgis_bv_behaviour_data_get_internal_state_variable_0(
+    mgis_bv_State** s, mgis_bv_BehaviourData* const d) {
+  *s = &(d->s0);
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_data_get_internal_state_variable_0
+
+mgis_status mgis_bv_behaviour_data_get_internal_state_variable_1(
+    mgis_bv_State** s, mgis_bv_BehaviourData* const d) {
+  *s = &(d->s1);
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_data_get_internal_state_variable_1
+
+mgis_status mgis_bv_free_behaviour_data(mgis_bv_BehaviourData** d) {
   try {
     delete *d;
    } catch (...) {

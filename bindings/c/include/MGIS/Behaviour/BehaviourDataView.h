@@ -25,15 +25,15 @@ extern "C" {
 #endif /*  __cplusplus */
 
 /*!
- * \brief create a view of a behaviour data
+ * \brief intialize a view of a behaviour data
  * \param[in]  v: pointer to the view
  * \param[out] d: pointer to a pointer to the allocated data
  */
-MGIS_C_EXPORT mgis_status mgis_bv_makeBehaviourDataView(
-    mgis_bv_BehaviourDataView**, mgis_bv_BehaviourData* const);
+MGIS_C_EXPORT mgis_status mgis_bv_make_behaviour_data_view(
+    mgis_bv_BehaviourDataView* const, mgis_bv_BehaviourData* const);
 
 #ifdef __cplusplus
-}
+} // end of extern "C"
 #endif /*  __cplusplus */
 
 #endif /* LIB_MGIS_BEHAVIOUR_BEHAVIOURDATAVIEW_H */

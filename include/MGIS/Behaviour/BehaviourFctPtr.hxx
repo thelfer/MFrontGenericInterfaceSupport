@@ -26,7 +26,7 @@ namespace mgis {
 
   namespace behaviour {
 
-    /*! a simple alias */
+    /*! \brief a simple alias */
     using BehaviourFctPtr = mgis_bv_BehaviourFctPtr;
 
   }  // end of namespace behaviour
