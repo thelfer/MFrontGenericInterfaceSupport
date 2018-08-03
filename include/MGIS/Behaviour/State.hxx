@@ -59,7 +59,7 @@ namespace mgis {
 
     /*!
      * \brief set the value of a material property
-     * \param[out] d: behaviour data
+     * \param[out] s: state
      * \param[in]  b: behaviour
      * \param[in]  n: name
      * \param[in]  v: value
@@ -69,17 +69,30 @@ namespace mgis {
                                          const string_view,
                                          const real);
     /*!
+     * \brief get the value of a material property
+     * \param[in] s: state
+     * \param[in] b: behaviour
+     * \param[in] n: name
+     */
+    MGIS_EXPORT real getMaterialProperty(const State&,
+                                         const Behaviour&,
+                                         const string_view);
+    /*!
      * \brief set the value of a material property
-     * \param[out] d: behaviour data
+     * \param[out] s: state
      * \param[in]  o: material property offset
      * \param[in]  v: value
      */
-    MGIS_EXPORT void setMaterialProperty(State&,
-                                         const size_type,
-                                         const real);
+    MGIS_EXPORT void setMaterialProperty(State&, const size_type, const real);
+    /*!
+     * \brief get the value of a material property
+     * \param[out] s: state
+     * \param[in]  o: material property offset
+     */
+    MGIS_EXPORT real getMaterialProperty(const State&, const size_type);
     /*!
      * \brief set the value of an internal state variable
-     * \param[out] d: behaviour data
+     * \param[out] s: state
      * \param[in]  b: behaviour
      * \param[in]  n: name
      * \param[in]  v: value
@@ -90,7 +103,7 @@ namespace mgis {
                                               const real);
     /*!
      * \brief set the value of an internal state variable
-     * \param[out] d: behaviour data
+     * \param[out] s: state
      * \param[in]  b: behaviour
      * \param[in]  n: name
      * \param[in]  v: values
@@ -101,7 +114,7 @@ namespace mgis {
                                               const real* const);
     /*!
      * \brief set the value of an internal state variable
-     * \param[out] d: behaviour data
+     * \param[out] s: state
      * \param[in]  o: internal state variable offset
      * \param[in]  v: value
      */
@@ -110,7 +123,7 @@ namespace mgis {
                                               const real);
     /*!
      * \brief set the value of an internal state variable
-     * \param[out] d: behaviour data
+     * \param[out] s: state
      * \param[in]  o: internal state variable offset
      * \param[in]  n: internal state variable size
      * \param[in]  v: value
@@ -121,7 +134,7 @@ namespace mgis {
                                               const real);
     /*!
      * \brief set the values of an internal state variable
-     * \param[out] d: behaviour data
+     * \param[out] s: state
      * \param[in]  o: internal state variable offset
      * \param[in]  n: internal state variable size
      * \param[in]  v: values
@@ -132,7 +145,7 @@ namespace mgis {
                                               const real* const);
     /*!
      * \brief set the value of a external state variable
-     * \param[out] d: behaviour data
+     * \param[out] s: state
      * \param[in]  b: behaviour
      * \param[in]  n: name
      * \param[in]  v: value
@@ -143,13 +156,28 @@ namespace mgis {
                                               const real);
     /*!
      * \brief set the value of a external state variable
-     * \param[out] d: behaviour data
+     * \param[out] s: state
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     */
+    MGIS_EXPORT real getExternalStateVariable(const State&,
+                                              const Behaviour&,
+                                              const string_view);
+    /*!
+     * \brief set the value of a external state variable
+     * \param[out] s: state
      * \param[in]  o: external state variable offset
      * \param[in]  v: value
      */
     MGIS_EXPORT void setExternalStateVariable(State&,
                                               const size_type,
                                               const real);
+    /*!
+     * \brief get the value of a external state variable
+     * \param[out] s: state
+     * \param[in]  o: external state variable offset
+     */
+    MGIS_EXPORT real getExternalStateVariable(const State&, const size_type);
 
   }  // end of namespace behaviour
 

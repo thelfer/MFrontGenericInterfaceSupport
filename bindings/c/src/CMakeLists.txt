@@ -1,6 +1,7 @@
 mgis_library(MFrontGenericInterface-c SHARED
   Status.cxx
   Behaviour.cxx
+  State.cxx
   BehaviourData.cxx
   BehaviourDataView.cxx
   Integrate.cxx)

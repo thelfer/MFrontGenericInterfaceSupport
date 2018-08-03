@@ -48,9 +48,20 @@ namespace mgis {
       setMaterialProperty(s, o, v);
     }  // end of setMaterialProperty
 
+    real getMaterialProperty(const State& s,
+                             const Behaviour& b,
+                             const string_view n) {
+      const auto o = getVariableOffset(b.mps, n, b.hypothesis);
+      return getMaterialProperty(s, o);
+    }  // end of getMaterialProperty
+
     void setMaterialProperty(State& s, const size_type o, const real v) {
       s.material_properties[o] = v;
     }  // end of setMaterialProperty
+
+    real getMaterialProperty(const State& s, const size_type o) {
+      return s.material_properties[o];
+    }  // end of getMaterialProperty
 
     void setInternalStateVariable(State& s,
                                   const Behaviour& b,
@@ -104,13 +115,24 @@ namespace mgis {
                                   const Behaviour& b,
                                   const string_view n,
                                   const real v) {
-      const auto o = getVariableOffset(b.mps, n, b.hypothesis);
+      const auto o = getVariableOffset(b.esvs, n, b.hypothesis);
       setExternalStateVariable(s, o, v);
     }  // end of setExternalStateVariable
+
+    real getExternalStateVariable(const State& s,
+                                  const Behaviour& b,
+                                  const string_view n) {
+      const auto o = getVariableOffset(b.esvs, n, b.hypothesis);
+      return getExternalStateVariable(s, o);
+    }  // end of getExternalStateVariable
 
     void setExternalStateVariable(State& s, const size_type o, const real v) {
       s.external_state_variables[o] = v;
     }  // end of setExternalStateVariable
+
+    real getExternalStateVariable(const State& s, const size_type o) {
+      return s.external_state_variables[o];
+    }  // end of getExternalStateVariable
 
   }  // end of namespace behaviour
 

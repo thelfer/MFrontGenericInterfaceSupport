@@ -50,17 +50,17 @@ mgis_status mgis_bv_revert_behaviour_data(mgis_bv_BehaviourData* const d) {
   return mgis_report_success();
 } // end of mgis_bv_revert_behaviour_data
 
-mgis_status mgis_bv_behaviour_data_get_internal_state_variable_0(
+mgis_status mgis_bv_behaviour_data_get_state_0(
     mgis_bv_State** s, mgis_bv_BehaviourData* const d) {
   *s = &(d->s0);
   return mgis_report_success();
-}  // end of mgis_bv_behaviour_data_get_internal_state_variable_0
+}  // end of mgis_bv_behaviour_data_get_state_0
 
-mgis_status mgis_bv_behaviour_data_get_internal_state_variable_1(
+mgis_status mgis_bv_behaviour_data_get_state_1(
     mgis_bv_State** s, mgis_bv_BehaviourData* const d) {
   *s = &(d->s1);
   return mgis_report_success();
-}  // end of mgis_bv_behaviour_data_get_internal_state_variable_1
+}  // end of mgis_bv_behaviour_data_get_state_1
 
 mgis_status mgis_bv_free_behaviour_data(mgis_bv_BehaviourData** d) {
   try {

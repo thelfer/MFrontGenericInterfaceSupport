@@ -15,6 +15,9 @@
 #ifndef LIB_MGIS_BEHAVIOUR_STATE_H
 #define LIB_MGIS_BEHAVIOUR_STATE_H
 
+#include "MGIS/Status.h"
+#include "MGIS/Behaviour/Behaviour.h"
+
 #ifdef __cplusplus
 #include "MGIS/Behaviour/State.hxx"
 #endif /*  __cplusplus */
@@ -25,15 +28,96 @@ extern "C" {
 
 #ifdef __cplusplus
 using mgis_bv_State = mgis::behaviour::State;
-#else
+#else /*  __cplusplus */
 /*!
  * \brief an opaque structure which can only be accessed through the MGIS' API.
  */
 typedef struct mgis_bv_State mgis_bv_State;
-#endif
+#endif /*  __cplusplus */
+
+/*!
+ * \brief set a material property' value in a state
+ * \param[out] s: state
+ * \param[in]  b: behaviour
+ * \param[in]  n: name
+ * \param[in]  v: value
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_set_state_material_property_by_name(mgis_bv_State* const,
+                                            const mgis_bv_Behaviour* const,
+                                            const char* const,
+                                            const mgis_real);
+/*!
+ * \brief get a material property' value in a state
+ * \param[out] v: material property' value
+ * \param[in] s: state
+ * \param[in] b: behaviour
+ * \param[in] n: name
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_get_state_material_property_by_name(mgis_real* const,
+                                            const mgis_bv_State* const,
+                                            const mgis_bv_Behaviour* const,
+                                            const char* const);
+/*!
+ * \brief set a material property' value in a state
+ * \param[out] s: state
+ * \param[in] o: offset
+ * \param[in] v: value
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_set_state_material_property_by_offset(
+    mgis_bv_State* const, const mgis_size_type, const mgis_real);
+/*!
+ * \brief get a material property' value in a state
+ * \param[out] v: material property' value
+ * \param[in] s: state
+ * \param[in] n: name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_get_state_material_property_by_offset(
+    mgis_real* const, const mgis_bv_State* const, const mgis_size_type);
+/*!
+ * \brief set a external state variable' value in a state
+ * \param[out] s: state
+ * \param[in] b: behaviour
+ * \param[in] n: name
+ * \param[in] v: value
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_set_state_external_state_variable_by_name(
+    mgis_bv_State* const,
+    const mgis_bv_Behaviour* const,
+    const char* const,
+    const mgis_real);
+/*!
+ * \brief get a external state variable' value in a state
+ * \param[out] v: external state variable' value
+ * \param[in] s: state
+ * \param[in] b: behaviour
+ * \param[in] n: name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_get_state_external_state_variable_by_name(
+    mgis_real* const,
+    const mgis_bv_State* const,
+    const mgis_bv_Behaviour* const,
+    const char* const);
+/*!
+ * \brief set a external state variable' value in a state
+ * \param[out] s: state
+ * \param[in] o: offset
+ * \param[in] v: value
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_set_state_external_state_variable_by_offset(
+    mgis_bv_State* const, const mgis_size_type, const mgis_real);
+/*!
+ * \brief get a external state variable' value in a state
+ * \param[out] v: external state variable' value
+ * \param[in]  s: state
+ * \param[in]  n: name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_get_state_external_state_variable_by_offset(
+    mgis_real* const, const mgis_bv_State* const, const mgis_size_type);
 
 #ifdef __cplusplus
 }  // end of extern "C"
-#endif
+#endif /*  __cplusplus */
 
 #endif /* LIB_MGIS_BEHAVIOUR_STATE_H */
