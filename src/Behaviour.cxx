@@ -106,6 +106,7 @@ namespace mgis {
       d.behaviour = b;
       d.function = fct;
       d.hypothesis = h;
+      d.b = lm.getBehaviour(l, b, h);
 
       if (lm.getMaterialKnowledgeType(l, b) != 1u) {
         raise("entry point '" + b + "' in library " + l +

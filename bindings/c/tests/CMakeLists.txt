@@ -2,25 +2,29 @@ link_directories("${PROJECT_BINARY_DIR}/bindings/c/src")
 link_directories("${PROJECT_BINARY_DIR}/src")
 
 add_executable(MFrontGenericBehaviourInterfaceTest-c
-	MFrontGenericBehaviourInterfaceTest-c.c)
+  EXCLUDE_FROM_ALL
+  MFrontGenericBehaviourInterfaceTest-c.c)
 target_link_libraries(MFrontGenericBehaviourInterfaceTest-c
-	PRIVATE MFrontGenericInterface-c)
+  PRIVATE MFrontGenericInterface-c)
 add_executable(MFrontGenericBehaviourInterfaceTest2-c
-	MFrontGenericBehaviourInterfaceTest2-c.c)
+  EXCLUDE_FROM_ALL
+  MFrontGenericBehaviourInterfaceTest2-c.c)
 target_link_libraries(MFrontGenericBehaviourInterfaceTest2-c
-	PRIVATE MFrontGenericInterface-c)
+  PRIVATE MFrontGenericInterface-c)
 add_executable(BehaviourDataTest-c
-	BehaviourDataTest-c.c)
+  EXCLUDE_FROM_ALL
+  BehaviourDataTest-c.c)
 target_link_libraries(BehaviourDataTest-c
-	PRIVATE MFrontGenericInterface-c)
+  PRIVATE MFrontGenericInterface-c)
 add_executable(StateTest-c
-	StateTest-c.c)
+  EXCLUDE_FROM_ALL
+  StateTest-c.c)
 target_link_libraries(StateTest-c
-	PRIVATE MFrontGenericInterface-c)
+  PRIVATE MFrontGenericInterface-c)
 
 add_test(NAME MFrontGenericBehaviourInterfaceTest-c
  COMMAND MFrontGenericBehaviourInterfaceTest-c
- "$<TARGET_FILE:BehaviourTest>" "gurson")
+ "$<TARGET_FILE:BehaviourTest>" "Gurson")
 add_dependencies(check MFrontGenericBehaviourInterfaceTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST MFrontGenericBehaviourInterfaceTest-c
@@ -46,7 +50,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME BehaviourDataTest-c
  COMMAND BehaviourDataTest-c
- "$<TARGET_FILE:BehaviourTest>" "gurson")
+ "$<TARGET_FILE:BehaviourTest>" "Gurson")
 add_dependencies(check BehaviourDataTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST BehaviourDataTest-c
@@ -59,7 +63,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME StateTest-c
  COMMAND StateTest-c
- "$<TARGET_FILE:BehaviourTest>" "gurson")
+ "$<TARGET_FILE:BehaviourTest>" "Gurson")
 add_dependencies(check StateTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST StateTest-c

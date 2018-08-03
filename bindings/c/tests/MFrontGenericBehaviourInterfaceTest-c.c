@@ -54,7 +54,7 @@ int main(const int argc, const char* const* argv) {
   // behaviour name
   const char* bn;
   check_status(mgis_bv_get_behaviour_name(&bn, b));
-  check_string(bn, "gurson", "invalid behaviour name");
+  check_string(bn, "Gurson", "invalid behaviour name");
   // hypothesis
   const char* h;
   check_status(mgis_bv_get_hypothesis(&h, b));

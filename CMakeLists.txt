@@ -54,6 +54,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
   SETUP_TARGET_FOR_COVERAGE(coverage ctest coverage)
 endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 
+#detecting TFEL and MFront
+include(cmake/modules/tfel.cmake)
+
 #documentations
 add_custom_target(doc)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/docs)
@@ -95,5 +98,7 @@ endif(CMAKE_CONFIGURATION_TYPES)
 
 add_subdirectory(include)
 add_subdirectory(src)
-add_subdirectory(tests)
+if(MGIS_HAVE_TFEL)
+  add_subdirectory(tests)
+endif(MGIS_HAVE_TFEL)
 add_subdirectory(bindings)

@@ -1,3 +1,5 @@
 add_subdirectory(include)
 add_subdirectory(src)
-add_subdirectory(tests)
+if(MGIS_HAVE_TFEL)
+  add_subdirectory(tests)
+endif(MGIS_HAVE_TFEL)

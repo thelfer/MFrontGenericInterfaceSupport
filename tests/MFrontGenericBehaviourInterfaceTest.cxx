@@ -31,7 +31,7 @@ int main(const int argc, const char* const* argv) {
     return EXIT_FAILURE;
   }
   const auto d = load(argv[1], argv[2], h);
-  check(d.behaviour == "gurson", "invalid behaviour name");
+  check(d.behaviour == "Gurson", "invalid behaviour name");
   check(d.hypothesis == h, "invalid hypothesis");
   check(d.source == "Gurson.mfront", "invalid source");
   check(d.tfel_version == "3.2.0-dev", "invalid TFEL version");

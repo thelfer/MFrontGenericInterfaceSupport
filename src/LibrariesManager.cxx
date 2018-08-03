@@ -132,6 +132,19 @@ LibrariesManager &LibrariesManager::get() {
 
 LibrariesManager::LibrariesManager() = default;
 
+mgis::behaviour::BehaviourFctPtr LibrariesManager::getBehaviour(
+    const std::string &l, const std::string &b, const Hypothesis h) {
+  const auto hn = toString(h);
+  const auto p = this->getSymbolAddress(l, b + "_" + hn);
+  if (p == nullptr) {
+    mgis::raise(
+        "LibrariesManager::getBehaviour: "
+        "can't load behaviour '" +
+        b + "' in library '" + l + "' for hypothesis '" + hn + "'");
+  }
+  return reinterpret_cast<mgis::behaviour::BehaviourFctPtr>(p);
+}  // end of LibrariesManager::getBehaviour
+
 std::string LibrariesManager::getTFELVersion(const std::string &l,
                                              const std::string &n) {
   const auto p = this->getSymbolAddress(l, n + "_tfel_version");
