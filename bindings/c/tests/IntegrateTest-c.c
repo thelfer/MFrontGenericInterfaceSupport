@@ -1,6 +1,6 @@
 /*!
  * \file   IntegrateTest-c.c
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   02/08/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -46,6 +46,11 @@ int main(const int argc, const char* const* argv) {
   mgis_size_type o = 6;
   mgis_size_type i;
   mgis_real p[21];
+  const mgis_real de = 5.e-5;
+  /* equivalent plastic strain at beginning and at the end of the time step */
+  mgis_real *p0, *p1;
+  mgis_real* e;
+  /* reference values of the equivalent plastic strain */
   const mgis_real p_ref[21] = {0,
                                1.3523277308229e-11,
                                1.0955374667213e-07,
@@ -67,8 +72,6 @@ int main(const int argc, const char* const* argv) {
                                0.00049969190397646,
                                0.00053302523730979,
                                0.00056635857064313};
-  const mgis_real de = 5.e-5;
-  const mgis_real *p0, *p1;
   if (check(argc == 2, "expected two arguments") == 0) {
     return EXIT_FAILURE;
   }
@@ -93,13 +96,14 @@ int main(const int argc, const char* const* argv) {
   // getting the addresses where the equivalent plastic strain is stored
   check_status(mgis_bv_state_get_internal_state_variable_by_offset(&p0, s0, o));
   check_status(mgis_bv_state_get_internal_state_variable_by_offset(&p1, s1, o));
-  // gradients at the end of the time step
-  v.s1.gradients[0] = de;
+  // strain at the end of the time step
+  check_status(mgis_bv_state_get_gradient_by_name(&e, s1, b, "Strain"));
+  *e += de;
   p[0] = *p0;
   for (i = 0; i != 20; ++i) {
     mgis_bv_integrate(&v, b);
     check_status(mgis_bv_update_behaviour_data(d));
-    v.s1.gradients[0] += de;
+    *e += de;
     p[i + 1] = *p1;
   }
   for (i = 0; i != 21; ++i) {
@@ -116,4 +120,4 @@ int main(const int argc, const char* const* argv) {
   check_status(mgis_bv_free_behaviour_data(&d));
   check_status(mgis_bv_free_behaviour(&b));
   return test_status;
-} // end of main
+}  // end of main

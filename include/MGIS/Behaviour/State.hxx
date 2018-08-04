@@ -58,6 +58,175 @@ namespace mgis {
     };  // end of struct State
 
     /*!
+     * \brief set the value of a gradient
+     * \param[out] s: state
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     * \param[in]  v: value
+     */
+    MGIS_EXPORT void setGradient(State&,
+                                 const Behaviour&,
+                                 const string_view,
+                                 const real);
+    /*!
+     * \brief set the value of a gradient
+     * \param[out] s: state
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     * \param[in]  v: values
+     */
+    MGIS_EXPORT void setGradient(State&,
+                                 const Behaviour&,
+                                 const string_view,
+                                 const real* const);
+    /*!
+     * \brief set the value of a gradient
+     * \param[out] s: state
+     * \param[in]  o: gradient offset
+     * \param[in]  v: value
+     */
+    MGIS_EXPORT void setGradient(State&, const size_type, const real);
+    /*!
+     * \brief set the value of a gradient
+     * \param[out] s: state
+     * \param[in]  o: gradient offset
+     * \param[in]  n: gradient size
+     * \param[in]  v: value
+     */
+    MGIS_EXPORT void setGradient(State&,
+                                 const size_type,
+                                 const size_type,
+                                 const real);
+    /*!
+     * \brief set the values of a gradient
+     * \param[out] s: state
+     * \param[in]  o: gradient offset
+     * \param[in]  n: gradient size
+     * \param[in]  v: values
+     */
+    MGIS_EXPORT void setGradient(State&,
+                                 const size_type,
+                                 const size_type,
+                                 const real* const);
+    /*!
+     * \brief get the value(s) of a gradient
+     * \return a pointer the value(s) of the gradient
+     * \param[in] s: state
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     */
+    MGIS_EXPORT real* getGradient(State&, const Behaviour&, const string_view);
+    /*!
+     * \brief get the value(s) of a gradient
+     * \return a pointer the value(s) of the gradient
+     * \param[in] s: state
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     */
+    MGIS_EXPORT const real* getGradient(const State&,
+                                        const Behaviour&,
+                                        const string_view);
+    /*!
+     * \brief get the value(s) of a gradient
+     * \return a pointer the value(s) of the gradient
+     * \param[in] s: state
+     * \param[in] o: gradient offset
+     */
+    MGIS_EXPORT real* getGradient(State&, const size_type);
+    /*!
+     * \brief get the value(s) of a gradient
+     * \return a pointer the value(s) of the gradient
+     * \param[in] s: state
+     * \param[in] o: gradient offset
+     */
+    MGIS_EXPORT const real* getGradient(const State&, const size_type);
+    /*!
+     * \brief set the value of a thermodynamic force
+     * \param[out] s: state
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     * \param[in]  v: value
+     */
+    MGIS_EXPORT void setThermodynamicForce(State&,
+                                           const Behaviour&,
+                                           const string_view,
+                                           const real);
+    /*!
+     * \brief set the value of a thermodynamic force
+     * \param[out] s: state
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     * \param[in]  v: values
+     */
+    MGIS_EXPORT void setThermodynamicForce(State&,
+                                           const Behaviour&,
+                                           const string_view,
+                                           const real* const);
+    /*!
+     * \brief set the value of a thermodynamic force
+     * \param[out] s: state
+     * \param[in]  o: thermodynamic force offset
+     * \param[in]  v: value
+     */
+    MGIS_EXPORT void setThermodynamicForce(State&, const size_type, const real);
+    /*!
+     * \brief set the value of a thermodynamic force
+     * \param[out] s: state
+     * \param[in]  o: thermodynamic force offset
+     * \param[in]  n: thermodynamic force size
+     * \param[in]  v: value
+     */
+    MGIS_EXPORT void setThermodynamicForce(State&,
+                                           const size_type,
+                                           const size_type,
+                                           const real);
+    /*!
+     * \brief set the values of a thermodynamic force
+     * \param[out] s: state
+     * \param[in]  o: thermodynamic force offset
+     * \param[in]  n: thermodynamic force size
+     * \param[in]  v: values
+     */
+    MGIS_EXPORT void setThermodynamicForce(State&,
+                                           const size_type,
+                                           const size_type,
+                                           const real* const);
+    /*!
+     * \brief get the value(s) of a thermodynamic force
+     * \return a pointer the value(s) of the thermodynamic force
+     * \param[in] s: state
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     */
+    MGIS_EXPORT real* getThermodynamicForce(State&,
+                                            const Behaviour&,
+                                            const string_view);
+    /*!
+     * \brief get the value(s) of a thermodynamic force
+     * \return a pointer the value(s) of the thermodynamic force
+     * \param[in] s: state
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     */
+    MGIS_EXPORT const real* getThermodynamicForce(const State&,
+                                                  const Behaviour&,
+                                                  const string_view);
+    /*!
+     * \brief get the value(s) of a thermodynamic force
+     * \return a pointer the value(s) of the thermodynamic force
+     * \param[in] s: state
+     * \param[in] o: thermodynamic force offset
+     */
+    MGIS_EXPORT real* getThermodynamicForce(State&, const size_type);
+    /*!
+     * \brief get the value(s) of a thermodynamic force
+     * \return a pointer the value(s) of the thermodynamic force
+     * \param[in] s: state
+     * \param[in] o: thermodynamic force offset
+     */
+    MGIS_EXPORT const real* getThermodynamicForce(const State&,
+                                                  const size_type);
+    /*!
      * \brief set the value of a material property
      * \param[out] s: state
      * \param[in]  b: behaviour
@@ -69,14 +238,23 @@ namespace mgis {
                                          const string_view,
                                          const real);
     /*!
-     * \brief get the value of a material property
+     * \return a pointer to the value of a material property
      * \param[in] s: state
      * \param[in] b: behaviour
      * \param[in] n: name
      */
-    MGIS_EXPORT real getMaterialProperty(const State&,
-                                         const Behaviour&,
-                                         const string_view);
+    MGIS_EXPORT real* getMaterialProperty(State&,
+                                          const Behaviour&,
+                                          const string_view);
+    /*!
+     * \return a pointer to the value of a material property
+     * \param[in] s: state
+     * \param[in] b: behaviour
+     * \param[in] n: name
+     */
+    MGIS_EXPORT const real* getMaterialProperty(const State&,
+                                                const Behaviour&,
+                                                const string_view);
     /*!
      * \brief set the value of a material property
      * \param[out] s: state
@@ -85,11 +263,17 @@ namespace mgis {
      */
     MGIS_EXPORT void setMaterialProperty(State&, const size_type, const real);
     /*!
-     * \brief get the value of a material property
+     * \return a pointer to the value of a material property
      * \param[out] s: state
      * \param[in]  o: material property offset
      */
-    MGIS_EXPORT real getMaterialProperty(const State&, const size_type);
+    MGIS_EXPORT real* getMaterialProperty(State&, const size_type);
+    /*!
+     * \return a pointer to the value of a material property
+     * \param[out] s: state
+     * \param[in]  o: material property offset
+     */
+    MGIS_EXPORT const real* getMaterialProperty(const State&, const size_type);
     /*!
      * \brief set the value of an internal state variable
      * \param[out] s: state
@@ -150,6 +334,16 @@ namespace mgis {
      * \param[in]  b: behaviour
      * \param[in]  n: name
      */
+    MGIS_EXPORT real* getInternalStateVariable(State&,
+                                               const Behaviour&,
+                                               const string_view);
+    /*!
+     * \brief get the value(s) of an internal state variable
+     * \return a pointer the value(s) of the internal state variable
+     * \param[in] s: state
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     */
     MGIS_EXPORT const real* getInternalStateVariable(const State&,
                                                      const Behaviour&,
                                                      const string_view);
@@ -159,10 +353,17 @@ namespace mgis {
      * \param[in] s: state
      * \param[in] o: internal state variable offset
      */
+    MGIS_EXPORT real* getInternalStateVariable(State&, const size_type);
+    /*!
+     * \brief get the value(s) of an internal state variable
+     * \return a pointer the value(s) of the internal state variable
+     * \param[in] s: state
+     * \param[in] o: internal state variable offset
+     */
     MGIS_EXPORT const real* getInternalStateVariable(const State&,
                                                      const size_type);
     /*!
-     * \brief set the value of a external state variable
+     * \brief set the value of an external state variable
      * \param[out] s: state
      * \param[in]  b: behaviour
      * \param[in]  n: name
@@ -173,16 +374,25 @@ namespace mgis {
                                               const string_view,
                                               const real);
     /*!
-     * \brief set the value of a external state variable
+     * \brief set the value of an external state variable
      * \param[out] s: state
      * \param[in]  b: behaviour
      * \param[in]  n: name
      */
-    MGIS_EXPORT real getExternalStateVariable(const State&,
-                                              const Behaviour&,
-                                              const string_view);
+    MGIS_EXPORT real* getExternalStateVariable(State&,
+                                               const Behaviour&,
+                                               const string_view);
     /*!
-     * \brief set the value of a external state variable
+     * \brief set the value of an external state variable
+     * \param[out] s: state
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     */
+    MGIS_EXPORT const real* getExternalStateVariable(const State&,
+                                                     const Behaviour&,
+                                                     const string_view);
+    /*!
+     * \brief set the value of an external state variable
      * \param[out] s: state
      * \param[in]  o: external state variable offset
      * \param[in]  v: value
@@ -191,11 +401,18 @@ namespace mgis {
                                               const size_type,
                                               const real);
     /*!
-     * \brief get the value of a external state variable
+     * \return a pointer to the value of an external state variable
      * \param[out] s: state
      * \param[in]  o: external state variable offset
      */
-    MGIS_EXPORT real getExternalStateVariable(const State&, const size_type);
+    MGIS_EXPORT real* getExternalStateVariable(State&, const size_type);
+    /*!
+     * \return a pointer to the value of an external state variable
+     * \param[out] s: state
+     * \param[in]  o: external state variable offset
+     */
+    MGIS_EXPORT const real* getExternalStateVariable(const State&,
+                                                     const size_type);
 
   }  // end of namespace behaviour
 

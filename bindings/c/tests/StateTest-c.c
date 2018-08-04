@@ -45,7 +45,7 @@ int main(const int argc, const char* const* argv) {
   mgis_bv_BehaviourData* d;
   mgis_bv_State* s0;
   mgis_bv_State* s1;
-  mgis_real T;
+  mgis_real *T;
   check_status(mgis_bv_load_behaviour(&b, argv[1], argv[2], "Tridimensional"));
   check_status(mgis_bv_allocate_behaviour_data(&d, b));
   // state at the beginning of the time step
@@ -58,7 +58,7 @@ int main(const int argc, const char* const* argv) {
   check_status(mgis_bv_update_behaviour_data(d));
   check_status(mgis_bv_state_get_external_state_variable_by_name(
       &T, s1, b, "Temperature"));
-  check(fabs(T - 293.15) < 1e-8,"invalid temperature value");
+  check(fabs(*T - 293.15) < 1e-8,"invalid temperature value");
   check_status(mgis_bv_free_behaviour_data(&d));
   check_status(mgis_bv_free_behaviour(&b));
   return test_status;

@@ -40,6 +40,144 @@ namespace mgis {
       init(this->external_state_variables, b.esvs);
     }  // end of State::State
 
+    void setGradient(State& s,
+                     const Behaviour& b,
+                     const string_view n,
+                     const real v) {
+      const auto& iv = getVariable(b.gradients, n);
+      const auto o = getVariableOffset(b.gradients, n, b.hypothesis);
+      if (iv.type == Variable::SCALAR) {
+        setGradient(s, o, v);
+      } else {
+        const auto sz = getVariableSize(iv, b.hypothesis);
+        setGradient(s, o, sz, v);
+      }
+    }  // end of setGradient
+
+    void setGradient(State& s,
+                     const Behaviour& b,
+                     const string_view n,
+                     const real* const v) {
+      const auto& iv = getVariable(b.gradients, n);
+      const auto o = getVariableOffset(b.gradients, n, b.hypothesis);
+      if (iv.type == Variable::SCALAR) {
+        setGradient(s, o, *v);
+      } else {
+        const auto sz = getVariableSize(iv, b.hypothesis);
+        setGradient(s, o, sz, v);
+      }
+    }  // end of setGradient
+
+    void setGradient(State& s, const size_type o, const real v) {
+      s.gradients[o] = v;
+    }  // end of setGradient
+
+    void setGradient(State& s,
+                     const size_type o,
+                     const size_type n,
+                     const real v) {
+      auto p = s.gradients.begin() + o;
+      std::fill(p, p + n, v);
+    }  // end of setGradient
+
+    void setGradient(State& s,
+                     const size_type o,
+                     const size_type n,
+                     const real* const v) {
+      auto p = s.gradients.begin() + o;
+      std::copy(v, v + n, p);
+    }  // end of setGradient
+
+    real* getGradient(State& s, const Behaviour& b, const string_view n) {
+      const auto o = getVariableOffset(b.gradients, n, b.hypothesis);
+      return getGradient(s, o);
+    } // end of getGradient
+
+    const real* getGradient(const State& s,
+                            const Behaviour& b,
+                            const string_view n) {
+      const auto o = getVariableOffset(b.gradients, n, b.hypothesis);
+      return getGradient(s, o);
+    } // end of getGradient
+
+    real* getGradient(State& s, const size_type o) {
+      return &(s.gradients[o]);
+    } // end of getGradient
+
+    const real* getGradient(const State& s, const size_type o) {
+      return &(s.gradients[o]);
+    } // end of getGradient
+
+    void setThermodynamicForce(State& s,
+                               const Behaviour& b,
+                               const string_view n,
+                               const real v) {
+      const auto& iv = getVariable(b.thermodynamic_forces, n);
+      const auto o = getVariableOffset(b.thermodynamic_forces, n, b.hypothesis);
+      if (iv.type == Variable::SCALAR) {
+        setThermodynamicForce(s, o, v);
+      } else {
+        const auto sz = getVariableSize(iv, b.hypothesis);
+        setThermodynamicForce(s, o, sz, v);
+      }
+    }  // end of setThermodynamicForce
+
+    void setThermodynamicForce(State& s,
+                               const Behaviour& b,
+                               const string_view n,
+                               const real* const v) {
+      const auto& iv = getVariable(b.thermodynamic_forces, n);
+      const auto o = getVariableOffset(b.thermodynamic_forces, n, b.hypothesis);
+      if (iv.type == Variable::SCALAR) {
+        setThermodynamicForce(s, o, *v);
+      } else {
+        const auto sz = getVariableSize(iv, b.hypothesis);
+        setThermodynamicForce(s, o, sz, v);
+      }
+    }  // end of setThermodynamicForce
+
+    void setThermodynamicForce(State& s, const size_type o, const real v) {
+      s.thermodynamic_forces[o] = v;
+    }  // end of setThermodynamicForce
+
+    void setThermodynamicForce(State& s,
+                               const size_type o,
+                               const size_type n,
+                               const real v) {
+      auto p = s.thermodynamic_forces.begin() + o;
+      std::fill(p, p + n, v);
+    }  // end of setThermodynamicForce
+
+    void setThermodynamicForce(State& s,
+                               const size_type o,
+                               const size_type n,
+                               const real* const v) {
+      auto p = s.thermodynamic_forces.begin() + o;
+      std::copy(v, v + n, p);
+    }  // end of setThermodynamicForce
+
+    real* getThermodynamicForce(State& s,
+                                const Behaviour& b,
+                                const string_view n) {
+      const auto o = getVariableOffset(b.thermodynamic_forces, n, b.hypothesis);
+      return getThermodynamicForce(s, o);
+    } // end of getThermodynamicForce
+
+    const real* getThermodynamicForce(const State& s,
+                                      const Behaviour& b,
+                                      const string_view n) {
+      const auto o = getVariableOffset(b.thermodynamic_forces, n, b.hypothesis);
+      return getThermodynamicForce(s, o);
+    } // end of getThermodynamicForce
+
+    real* getThermodynamicForce(State& s, const size_type o) {
+      return &(s.thermodynamic_forces[o]);
+    } // end of getThermodynamicForce
+
+    const real* getThermodynamicForce(const State& s, const size_type o) {
+      return &(s.thermodynamic_forces[o]);
+    } // end of getThermodynamicForce
+
     void setMaterialProperty(State& s,
                              const Behaviour& b,
                              const string_view n,
@@ -48,9 +186,16 @@ namespace mgis {
       setMaterialProperty(s, o, v);
     }  // end of setMaterialProperty
 
-    real getMaterialProperty(const State& s,
-                             const Behaviour& b,
-                             const string_view n) {
+    real* getMaterialProperty(State& s,
+                              const Behaviour& b,
+                              const string_view n) {
+      const auto o = getVariableOffset(b.mps, n, b.hypothesis);
+      return getMaterialProperty(s, o);
+    }  // end of getMaterialProperty
+
+    const real* getMaterialProperty(const State& s,
+                                    const Behaviour& b,
+                                    const string_view n) {
       const auto o = getVariableOffset(b.mps, n, b.hypothesis);
       return getMaterialProperty(s, o);
     }  // end of getMaterialProperty
@@ -59,8 +204,12 @@ namespace mgis {
       s.material_properties[o] = v;
     }  // end of setMaterialProperty
 
-    real getMaterialProperty(const State& s, const size_type o) {
-      return s.material_properties[o];
+    real* getMaterialProperty(State& s, const size_type o) {
+      return &(s.material_properties[o]);
+    }  // end of getMaterialProperty
+
+    const real* getMaterialProperty(const State& s, const size_type o) {
+      return &(s.material_properties[o]);
     }  // end of getMaterialProperty
 
     void setInternalStateVariable(State& s,
@@ -111,11 +260,22 @@ namespace mgis {
       std::copy(v, v + n, p);
     }  // end of setInternalStateVariable
 
+    real* getInternalStateVariable(State& s,
+                                   const Behaviour& b,
+                                   const string_view n) {
+      const auto o = getVariableOffset(b.isvs, n, b.hypothesis);
+      return getInternalStateVariable(s, o);
+    } // end of getInternalStateVariable
+
     const real* getInternalStateVariable(const State& s,
                                          const Behaviour& b,
                                          const string_view n) {
       const auto o = getVariableOffset(b.isvs, n, b.hypothesis);
       return getInternalStateVariable(s, o);
+    } // end of getInternalStateVariable
+
+    real* getInternalStateVariable(State& s, const size_type o) {
+      return &(s.internal_state_variables[o]);
     } // end of getInternalStateVariable
 
     const real* getInternalStateVariable(const State& s, const size_type o) {
@@ -130,9 +290,16 @@ namespace mgis {
       setExternalStateVariable(s, o, v);
     }  // end of setExternalStateVariable
 
-    real getExternalStateVariable(const State& s,
-                                  const Behaviour& b,
-                                  const string_view n) {
+    real* getExternalStateVariable(State& s,
+                                   const Behaviour& b,
+                                   const string_view n) {
+      const auto o = getVariableOffset(b.esvs, n, b.hypothesis);
+      return getExternalStateVariable(s, o);
+    }  // end of getExternalStateVariable
+
+    const real* getExternalStateVariable(const State& s,
+                                         const Behaviour& b,
+                                         const string_view n) {
       const auto o = getVariableOffset(b.esvs, n, b.hypothesis);
       return getExternalStateVariable(s, o);
     }  // end of getExternalStateVariable
@@ -141,8 +308,12 @@ namespace mgis {
       s.external_state_variables[o] = v;
     }  // end of setExternalStateVariable
 
-    real getExternalStateVariable(const State& s, const size_type o) {
-      return s.external_state_variables[o];
+    real* getExternalStateVariable(State& s, const size_type o) {
+      return &(s.external_state_variables[o]);
+    }  // end of getExternalStateVariable
+
+    const real* getExternalStateVariable(const State& s, const size_type o) {
+      return &(s.external_state_variables[o]);
     }  // end of getExternalStateVariable
 
   }  // end of namespace behaviour
