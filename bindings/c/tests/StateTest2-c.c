@@ -1,5 +1,5 @@
 /*!
- * \file   StateTest-c.c
+ * \file   StateTest2-c.c
  * \brief    
  * \author Thomas Helfer
  * \date   02/08/2018
@@ -50,14 +50,14 @@ int main(const int argc, const char* const* argv) {
   check_status(mgis_bv_allocate_behaviour_data(&d, b));
   // state at the beginning of the time step
   check_status(mgis_bv_behaviour_data_get_state_0(&s0, d));
+  check_status(mgis_bv_state_set_external_state_variable_by_name(
+      s0, b, "Temperature", 293.15));
   // state at the end of the time step
   check_status(mgis_bv_behaviour_data_get_state_1(&s1, d));
-  check_status(mgis_bv_state_set_external_state_variable_by_name(
-      s1, b, "Temperature", 293.15));
   // s0 is copied in s1
-  check_status(mgis_bv_update_behaviour_data(d));
+  check_status(mgis_bv_revert_behaviour_data(d));
   check_status(mgis_bv_state_get_external_state_variable_by_name(
-      &T, s1, b, "Temperature"));
+      &T, s0, b, "Temperature"));
   check(fabs(T - 293.15) < 1e-8,"invalid temperature value");
   check_status(mgis_bv_free_behaviour_data(&d));
   check_status(mgis_bv_free_behaviour(&b));

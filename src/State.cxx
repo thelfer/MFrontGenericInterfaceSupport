@@ -111,6 +111,17 @@ namespace mgis {
       std::copy(v, v + n, p);
     }  // end of setInternalStateVariable
 
+    const real* getInternalStateVariable(const State& s,
+                                         const Behaviour& b,
+                                         const string_view n) {
+      const auto o = getVariableOffset(b.isvs, n, b.hypothesis);
+      return getInternalStateVariable(s, o);
+    } // end of getInternalStateVariable
+
+    const real* getInternalStateVariable(const State& s, const size_type o) {
+      return &(s.internal_state_variables[o]);
+    } // end of getInternalStateVariable
+
     void setExternalStateVariable(State& s,
                                   const Behaviour& b,
                                   const string_view n,

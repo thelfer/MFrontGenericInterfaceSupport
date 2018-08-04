@@ -15,6 +15,7 @@
 #ifndef LIB_MGIS_BEHAVIOUR_INTEGRATE_H
 #define LIB_MGIS_BEHAVIOUR_INTEGRATE_H
 
+#include "MGIS/Config.h"
 #include "MGIS/Status.h"
 #include "MGIS/Behaviour/BehaviourDataView.h"
 #include "MGIS/Behaviour/Behaviour.h"
@@ -23,8 +24,8 @@
 extern "C" {
 #endif /*  __cplusplus */
 
-mgis_status integrate(mgis_bv_BehaviourDataView* const,
-                      const mgis_bv_Behaviour* const);
+MGIS_EXPORT mgis_status mgis_bv_integrate(mgis_bv_BehaviourDataView* const,
+                                          const mgis_bv_Behaviour* const);
 
 #ifdef __cplusplus
 }

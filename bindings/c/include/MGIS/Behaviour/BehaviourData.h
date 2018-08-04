@@ -55,21 +55,28 @@ mgis_bv_update_behaviour_data(mgis_bv_BehaviourData* const);
  * \param[out] d: pointer to a pointer to the allocated data
  */
 MGIS_C_EXPORT mgis_status
-mgis_bv_reset_behaviour_data(mgis_bv_BehaviourData* const);
+mgis_bv_revert_behaviour_data(mgis_bv_BehaviourData* const);
 /*!
- * \return the state at the beginning of the time step
+ * \brief set the state at the beginning of the time step
  * \param[out] s: pointer to a pointer to the state
  * \param[in]  d: behaviour data
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_get_state_0(
     mgis_bv_State**, mgis_bv_BehaviourData* const);
 /*!
- * \return the state at the end of the time step
+ * \brief set the state at the end of the time step
  * \param[out] s: pointer to a pointer to the state
  * \param[in]  d: behaviour data
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_get_state_1(
     mgis_bv_State**, mgis_bv_BehaviourData* const);
+/*!
+ * \set the state at the end of the time step
+ * \param[out] d: behaviour data
+ * \param[in]  dt: time increment
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_set_time_increment(
+    mgis_bv_BehaviourData* const, const mgis_real);
 /*!
  * \brief free the behaviour data
  * \param[out] d: pointer to a pointer to the allocated data

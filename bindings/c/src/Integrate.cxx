@@ -18,8 +18,8 @@
 
 extern "C" {
 
-mgis_status integrate(mgis_bv_BehaviourDataView* const d,
-                      const mgis_bv_Behaviour* const b) {
+mgis_status mgis_bv_integrate(mgis_bv_BehaviourDataView* const d,
+                              const mgis_bv_Behaviour* const b) {
   const auto r = mgis::behaviour::integrate(*d, *b);
   if(r!=1){
     return mgis_report_failure("behaviour integration failed");

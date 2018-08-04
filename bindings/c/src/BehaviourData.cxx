@@ -33,8 +33,11 @@ mgis_status mgis_bv_allocate_behaviour_data(mgis_bv_BehaviourData** d,
 }  // end of mgis_bv_allocate_behaviour_data
 
 mgis_status mgis_bv_update_behaviour_data(mgis_bv_BehaviourData* const d){
+  if (d == nullptr) {
+    return mgis_report_failure("invalid argument (behaviour data is null)");
+  }
   try {
-    revert(*d);
+    update(*d);
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
@@ -42,6 +45,9 @@ mgis_status mgis_bv_update_behaviour_data(mgis_bv_BehaviourData* const d){
 } // end of mgis_bv_update_behaviour_data
 
 mgis_status mgis_bv_revert_behaviour_data(mgis_bv_BehaviourData* const d) {
+  if (d == nullptr) {
+    return mgis_report_failure("invalid argument (behaviour data is null)");
+  }
   try {
     revert(*d);
   } catch (...) {
@@ -52,15 +58,30 @@ mgis_status mgis_bv_revert_behaviour_data(mgis_bv_BehaviourData* const d) {
 
 mgis_status mgis_bv_behaviour_data_get_state_0(
     mgis_bv_State** s, mgis_bv_BehaviourData* const d) {
+  if (d == nullptr) {
+    return mgis_report_failure("invalid argument (behaviour data is null)");
+  }
   *s = &(d->s0);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_data_get_state_0
 
 mgis_status mgis_bv_behaviour_data_get_state_1(
     mgis_bv_State** s, mgis_bv_BehaviourData* const d) {
+  if (d == nullptr) {
+    return mgis_report_failure("invalid argument (behaviour data is null)");
+  }
   *s = &(d->s1);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_data_get_state_1
+
+mgis_status mgis_bv_behaviour_data_set_time_increment(
+    mgis_bv_BehaviourData* const d, const mgis_real dt) {
+  if (d == nullptr) {
+    return mgis_report_failure("invalid argument (behaviour data is null)");
+  }
+  d->dt = dt;
+  return mgis_report_success();
+}
 
 mgis_status mgis_bv_free_behaviour_data(mgis_bv_BehaviourData** d) {
   try {

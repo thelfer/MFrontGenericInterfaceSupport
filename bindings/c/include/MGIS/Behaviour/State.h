@@ -43,7 +43,7 @@ typedef struct mgis_bv_State mgis_bv_State;
  * \param[in]  v: value
  */
 MGIS_C_EXPORT mgis_status
-mgis_bv_set_state_material_property_by_name(mgis_bv_State* const,
+mgis_bv_state_set_material_property_by_name(mgis_bv_State* const,
                                             const mgis_bv_Behaviour* const,
                                             const char* const,
                                             const mgis_real);
@@ -55,7 +55,7 @@ mgis_bv_set_state_material_property_by_name(mgis_bv_State* const,
  * \param[in] n: name
  */
 MGIS_C_EXPORT mgis_status
-mgis_bv_get_state_material_property_by_name(mgis_real* const,
+mgis_bv_state_get_material_property_by_name(mgis_real* const,
                                             const mgis_bv_State* const,
                                             const mgis_bv_Behaviour* const,
                                             const char* const);
@@ -65,7 +65,7 @@ mgis_bv_get_state_material_property_by_name(mgis_real* const,
  * \param[in] o: offset
  * \param[in] v: value
  */
-MGIS_C_EXPORT mgis_status mgis_bv_set_state_material_property_by_offset(
+MGIS_C_EXPORT mgis_status mgis_bv_state_set_material_property_by_offset(
     mgis_bv_State* const, const mgis_size_type, const mgis_real);
 /*!
  * \brief get a material property' value in a state
@@ -73,8 +73,52 @@ MGIS_C_EXPORT mgis_status mgis_bv_set_state_material_property_by_offset(
  * \param[in] s: state
  * \param[in] n: name
  */
-MGIS_C_EXPORT mgis_status mgis_bv_get_state_material_property_by_offset(
+MGIS_C_EXPORT mgis_status mgis_bv_state_get_material_property_by_offset(
     mgis_real* const, const mgis_bv_State* const, const mgis_size_type);
+/*!
+ * \brief set a internal state variable' value in a state
+ * \param[out] s: state
+ * \param[in]  b: behaviour
+ * \param[in]  n: name
+ * \param[in]  v: value(s)
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_state_set_internal_state_variable_by_name(
+    mgis_bv_State* const,
+    const mgis_bv_Behaviour* const,
+    const char* const,
+    const mgis_real* const);
+/*!
+ * \brief get a internal state variable' value in a state
+ * \param[out] v: pointer to internal state variable' value(s)
+ * \param[in] s: state
+ * \param[in] b: behaviour
+ * \param[in] n: name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_state_get_internal_state_variable_by_name(
+    const mgis_real**,
+    const mgis_bv_State* const,
+    const mgis_bv_Behaviour* const,
+    const char* const);
+/*!
+ * \brief set a internal state variable' value in a state
+ * \param[out] s: state
+ * \param[in]  o: offset
+ * \param[in]  n: variable size
+ * \param[in]  v: value(s)
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_state_set_internal_state_variable_by_offset(mgis_bv_State* const,
+                                                    const mgis_size_type,
+                                                    const mgis_size_type,
+                                                    const mgis_real* const);
+/*!
+ * \brief get a internal state variable' value in a state
+ * \param[out] v: pointer to internal state variable' value(s)
+ * \param[in] s: state
+ * \param[in] n: name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_state_get_internal_state_variable_by_offset(
+    const mgis_real**, const mgis_bv_State* const, const mgis_size_type);
 /*!
  * \brief set a external state variable' value in a state
  * \param[out] s: state
@@ -82,7 +126,7 @@ MGIS_C_EXPORT mgis_status mgis_bv_get_state_material_property_by_offset(
  * \param[in] n: name
  * \param[in] v: value
  */
-MGIS_C_EXPORT mgis_status mgis_bv_set_state_external_state_variable_by_name(
+MGIS_C_EXPORT mgis_status mgis_bv_state_set_external_state_variable_by_name(
     mgis_bv_State* const,
     const mgis_bv_Behaviour* const,
     const char* const,
@@ -94,7 +138,7 @@ MGIS_C_EXPORT mgis_status mgis_bv_set_state_external_state_variable_by_name(
  * \param[in] b: behaviour
  * \param[in] n: name
  */
-MGIS_C_EXPORT mgis_status mgis_bv_get_state_external_state_variable_by_name(
+MGIS_C_EXPORT mgis_status mgis_bv_state_get_external_state_variable_by_name(
     mgis_real* const,
     const mgis_bv_State* const,
     const mgis_bv_Behaviour* const,
@@ -105,7 +149,7 @@ MGIS_C_EXPORT mgis_status mgis_bv_get_state_external_state_variable_by_name(
  * \param[in] o: offset
  * \param[in] v: value
  */
-MGIS_C_EXPORT mgis_status mgis_bv_set_state_external_state_variable_by_offset(
+MGIS_C_EXPORT mgis_status mgis_bv_state_set_external_state_variable_by_offset(
     mgis_bv_State* const, const mgis_size_type, const mgis_real);
 /*!
  * \brief get a external state variable' value in a state
@@ -113,7 +157,7 @@ MGIS_C_EXPORT mgis_status mgis_bv_set_state_external_state_variable_by_offset(
  * \param[in]  s: state
  * \param[in]  n: name
  */
-MGIS_C_EXPORT mgis_status mgis_bv_get_state_external_state_variable_by_offset(
+MGIS_C_EXPORT mgis_status mgis_bv_state_get_external_state_variable_by_offset(
     mgis_real* const, const mgis_bv_State* const, const mgis_size_type);
 
 #ifdef __cplusplus

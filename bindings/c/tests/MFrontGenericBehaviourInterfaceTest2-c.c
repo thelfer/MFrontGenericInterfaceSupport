@@ -1,6 +1,6 @@
 /*!
  * \file   MFrontGenericBehaviourInterfaceTest-c.c
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   24/06/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -24,7 +24,7 @@ static void check_status(const mgis_status s) {
     fprintf(stderr, "invalid function call: %s\n", s.msg);
     exit(EXIT_FAILURE);
   }
-} // end of check_status
+}  // end of check_status
 
 static int check(const int b, const char* const e) {
   if (b == 0) {
@@ -50,10 +50,10 @@ int main(const int argc, const char* const* argv) {
     return EXIT_FAILURE;
   }
   mgis_bv_Behaviour* b;
-  check_status(
-      mgis_bv_load_behaviour(&b, argv[1], argv[2], "Tridimensional"));
+  check_status(mgis_bv_load_behaviour(&b, argv[1], argv[2], "Tridimensional"));
   mgis_size_type mps_size;
-  check_status(mgis_bv_get_number_of_material_properties(&mps_size, b));
+  check_status(
+      mgis_bv_behaviour_get_number_of_material_properties(&mps_size, b));
   if (check(mps_size == 16, "invalid number of material properties")) {
     const char* mps[16] = {"YoungModulus1",
                            "YoungModulus2",
@@ -73,7 +73,7 @@ int main(const int argc, const char* const* argv) {
                            "d1"};
     for (mgis_size_type i = 0; i != 16; ++i) {
       const char* mp;
-      check_status(mgis_bv_get_material_property_name(&mp, b, i));
+      check_status(mgis_bv_behaviour_get_material_property_name(&mp, b, i));
       check_string(mp, mps[i], "invalid name for the material property");
     }
   }

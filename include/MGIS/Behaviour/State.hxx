@@ -144,6 +144,24 @@ namespace mgis {
                                               const size_type,
                                               const real* const);
     /*!
+     * \brief get the value(s) of an internal state variable
+     * \return a pointer the value(s) of the internal state variable
+     * \param[in] s: state
+     * \param[in]  b: behaviour
+     * \param[in]  n: name
+     */
+    MGIS_EXPORT const real* getInternalStateVariable(const State&,
+                                                     const Behaviour&,
+                                                     const string_view);
+    /*!
+     * \brief get the value(s) of an internal state variable
+     * \return a pointer the value(s) of the internal state variable
+     * \param[in] s: state
+     * \param[in] o: internal state variable offset
+     */
+    MGIS_EXPORT const real* getInternalStateVariable(const State&,
+                                                     const size_type);
+    /*!
      * \brief set the value of a external state variable
      * \param[out] s: state
      * \param[in]  b: behaviour
