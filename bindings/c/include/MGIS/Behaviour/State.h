@@ -16,7 +16,6 @@
 #define LIB_MGIS_BEHAVIOUR_STATE_H
 
 #include "MGIS/Status.h"
-#include "MGIS/Behaviour/Behaviour.h"
 
 #ifdef __cplusplus
 #include "MGIS/Behaviour/State.hxx"
@@ -38,26 +37,21 @@ typedef struct mgis_bv_State mgis_bv_State;
 /*!
  * \brief set a gradient' value in a state
  * \param[out] s: state
- * \param[in]  b: behaviour
  * \param[in]  n: name
  * \param[in]  v: value(s)
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_state_set_gradient_by_name(mgis_bv_State* const,
-                                   const mgis_bv_Behaviour* const,
                                    const char* const,
                                    const mgis_real* const);
 /*!
  * \brief get a gradient' value in a state
- * \param[out] v: pointer to gradient' value(s)
  * \param[in] s: state
- * \param[in] b: behaviour
  * \param[in] n: name
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_state_get_gradient_by_name(mgis_real**,
                                    mgis_bv_State* const,
-                                   const mgis_bv_Behaviour* const,
                                    const char* const);
 /*!
  * \brief set a gradient' value in a state
@@ -82,27 +76,23 @@ MGIS_C_EXPORT mgis_status mgis_bv_state_get_gradient_by_offset(
 /*!
  * \brief set a thermodynamic force' value in a state
  * \param[out] s: state
- * \param[in]  b: behaviour
  * \param[in]  n: name
  * \param[in]  v: value(s)
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_state_set_thermodynamic_force_by_name(mgis_bv_State* const,
-                                              const mgis_bv_Behaviour* const,
                                               const char* const,
                                               const mgis_real* const);
 /*!
  * \brief get a thermodynamic force' value in a state
  * \param[out] v: pointer to thermodynamic force' value(s)
  * \param[in] s: state
- * \param[in] b: behaviour
  * \param[in] n: name
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_state_get_thermodynamic_force_by_name(mgis_real**,
                                               mgis_bv_State* const,
-                                              const mgis_bv_Behaviour* const,
-                                              const char* const);
+                                                 const char* const);
 /*!
  * \brief set a thermodynamic force' value in a state
  * \param[out] s: state
@@ -126,26 +116,22 @@ MGIS_C_EXPORT mgis_status mgis_bv_state_get_thermodynamic_force_by_offset(
 /*!
  * \brief set a material property' value in a state
  * \param[out] s: state
- * \param[in]  b: behaviour
  * \param[in]  n: name
  * \param[in]  v: value
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_state_set_material_property_by_name(mgis_bv_State* const,
-                                            const mgis_bv_Behaviour* const,
                                             const char* const,
                                             const mgis_real);
 /*!
  * \brief get a material property' value in a state
  * \param[out] v: material property' value
  * \param[in] s: state
- * \param[in] b: behaviour
  * \param[in] n: name
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_state_get_material_property_by_name(mgis_real** const,
                                             mgis_bv_State* const,
-                                            const mgis_bv_Behaviour* const,
                                             const char* const);
 /*!
  * \brief set a material property' value in a state
@@ -166,26 +152,22 @@ MGIS_C_EXPORT mgis_status mgis_bv_state_get_material_property_by_offset(
 /*!
  * \brief set a internal state variable' value in a state
  * \param[out] s: state
- * \param[in]  b: behaviour
  * \param[in]  n: name
  * \param[in]  v: value(s)
  */
 MGIS_C_EXPORT mgis_status mgis_bv_state_set_internal_state_variable_by_name(
     mgis_bv_State* const,
-    const mgis_bv_Behaviour* const,
     const char* const,
     const mgis_real* const);
 /*!
  * \brief get a internal state variable' value in a state
  * \param[out] v: pointer to internal state variable' value(s)
  * \param[in] s: state
- * \param[in] b: behaviour
  * \param[in] n: name
  */
 MGIS_C_EXPORT mgis_status mgis_bv_state_get_internal_state_variable_by_name(
     mgis_real**,
     mgis_bv_State* const,
-    const mgis_bv_Behaviour* const,
     const char* const);
 /*!
  * \brief set a internal state variable' value in a state
@@ -210,26 +192,22 @@ MGIS_C_EXPORT mgis_status mgis_bv_state_get_internal_state_variable_by_offset(
 /*!
  * \brief set a external state variable' value in a state
  * \param[out] s: state
- * \param[in] b: behaviour
  * \param[in] n: name
  * \param[in] v: value
  */
 MGIS_C_EXPORT mgis_status mgis_bv_state_set_external_state_variable_by_name(
     mgis_bv_State* const,
-    const mgis_bv_Behaviour* const,
     const char* const,
     const mgis_real);
 /*!
  * \brief get a external state variable' value in a state
  * \param[out] v: external state variable' value
  * \param[in] s: state
- * \param[in] b: behaviour
  * \param[in] n: name
  */
 MGIS_C_EXPORT mgis_status mgis_bv_state_get_external_state_variable_by_name(
     mgis_real** const,
     mgis_bv_State* const,
-    const mgis_bv_Behaviour* const,
     const char* const);
 /*!
  * \brief set a external state variable' value in a state

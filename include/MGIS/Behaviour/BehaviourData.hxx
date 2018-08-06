@@ -36,8 +36,6 @@ namespace mgis {
        * \param[in] b: behaviour
        */
       BehaviourData(const Behaviour&);
-      //! default constructor
-      BehaviourData();
       //! move constructor
       BehaviourData(BehaviourData&&);
       //! copy constructor

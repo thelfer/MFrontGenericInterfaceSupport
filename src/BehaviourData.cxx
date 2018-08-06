@@ -19,7 +19,6 @@ namespace mgis {
 
   namespace behaviour {
 
-    BehaviourData::BehaviourData() = default;
     BehaviourData::BehaviourData(BehaviourData&&) = default;
     BehaviourData::BehaviourData(const BehaviourData&) = default;
     BehaviourData& BehaviourData::operator=(BehaviourData&&) = default;

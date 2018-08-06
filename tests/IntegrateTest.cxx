@@ -34,7 +34,7 @@ int main(const int argc, const char* const* argv) {
   const auto de = 5.e-5;
   d.dt = 180;  
   // initialize the states
-  setExternalStateVariable(d.s1, b, "Temperature", 293.15);
+  setExternalStateVariable(d.s1, "Temperature", 293.15);
   // copy d.s1 in d.s0
   update(d);
   d.s1.gradients[0] = de;

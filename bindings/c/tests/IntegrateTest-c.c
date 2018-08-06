@@ -88,16 +88,16 @@ int main(const int argc, const char* const* argv) {
   check_status(mgis_bv_behaviour_data_get_state_0(&s1, d));
   // setting the temperature
   check_status(mgis_bv_state_set_external_state_variable_by_name(
-      s0, b, "Temperature", 293.15));
+      s0, "Temperature", 293.15));
   check_status(mgis_bv_state_set_external_state_variable_by_name(
-      s1, b, "Temperature", 293.15));
+      s1, "Temperature", 293.15));
   // initializing the view
   check_status(mgis_bv_make_behaviour_data_view(&v, d));
   // getting the addresses where the equivalent plastic strain is stored
   check_status(mgis_bv_state_get_internal_state_variable_by_offset(&p0, s0, o));
   check_status(mgis_bv_state_get_internal_state_variable_by_offset(&p1, s1, o));
   // strain at the end of the time step
-  check_status(mgis_bv_state_get_gradient_by_name(&e, s1, b, "Strain"));
+  check_status(mgis_bv_state_get_gradient_by_name(&e, s1, "Strain"));
   *e += de;
   p[0] = *p0;
   for (i = 0; i != 20; ++i) {
