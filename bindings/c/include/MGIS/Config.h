@@ -15,7 +15,7 @@
 #ifndef LIB_CONFIG_H
 #define LIB_CONFIG_H
 
-#include "MGIS/Config.hxx"
+#include "MGIS/Config-c.h"
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #if defined MFrontGenericInterface_c_EXPORTS

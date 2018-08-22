@@ -99,8 +99,8 @@ namespace mgis {
      * \return the behaviour description
      */
     MGIS_EXPORT Behaviour load(const std::string &,
-			       const std::string &,
-			       const Hypothesis);
+                               const std::string &,
+                               const Hypothesis);
 
   }  // end of namespace behaviour
 

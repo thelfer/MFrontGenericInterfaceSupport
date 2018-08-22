@@ -15,7 +15,6 @@
 #define LIB_MGIS_BEHAVIOUR_INTEGRATE_IXX
 
 #include "MGIS/Behaviour/Behaviour.hxx"
-#include "MGIS/Behaviour/BehaviourDataView.hxx"
 
 namespace mgis{
 

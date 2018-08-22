@@ -18,6 +18,7 @@
 #include <vector>
 #include "MGIS/Config.hxx"
 #include "MGIS/Behaviour/State.hxx"
+#include "MGIS/Behaviour/BehaviourDataView.hxx"
 
 namespace mgis {
 
@@ -96,6 +97,14 @@ namespace mgis {
      * - filling the stiffness matrix with 0
      */
     MGIS_EXPORT void revert(BehaviourData&);
+
+    /*!
+     * \brief make a view from a behaviour data
+     * \param[in] d: data
+     * \return the view
+     * \note the view has at most the same life time as the data.
+     */
+    MGIS_EXPORT BehaviourDataView make_view(BehaviourData&);
 
   }  // end of namespace behaviour
 

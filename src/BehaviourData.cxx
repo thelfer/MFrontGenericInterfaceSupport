@@ -13,6 +13,7 @@
  */
 
 #include <algorithm>
+#include "MGIS/Behaviour/BehaviourDataView.hxx"
 #include "MGIS/Behaviour/BehaviourData.hxx"
 
 namespace mgis {
@@ -51,6 +52,22 @@ namespace mgis {
       d.rdt = 1;
       d.s1 = d.s0;
     }  // end of update
+
+    BehaviourDataView make_view(BehaviourData& d) {
+      auto get_ptr = [](std::vector<real>& v) -> real* {
+        if (v.empty()) {
+          return nullptr;
+        }
+        return &v[0];
+      };  // end of get_ptr
+      BehaviourDataView v;
+      v.dt = d.dt;
+      v.rdt = d.rdt;
+      v.K = get_ptr(d.K);
+      v.s0 = make_view(d.s0);
+      v.s1 = make_view(d.s1);
+      return v;
+    }  // end of make_view
 
   }  // end of namespace behaviour
 

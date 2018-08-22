@@ -18,6 +18,7 @@
 #include <vector>
 #include "MGIS/Config.hxx"
 #include "MGIS/StringView.hxx"
+#include "MGIS/Behaviour/StateView.hxx"
 
 namespace mgis {
 
@@ -63,18 +64,14 @@ namespace mgis {
      * \param[in]  n: name
      * \param[in]  v: value
      */
-    MGIS_EXPORT void setGradient(State&,
-                                 const string_view,
-                                 const real);
+    MGIS_EXPORT void setGradient(State&, const string_view, const real);
     /*!
      * \brief set the value of a gradient
      * \param[out] s: state
      * \param[in]  n: name
      * \param[in]  v: values
      */
-    MGIS_EXPORT void setGradient(State&,
-                                 const string_view,
-                                 const real* const);
+    MGIS_EXPORT void setGradient(State&, const string_view, const real* const);
     /*!
      * \brief set the value of a gradient
      * \param[out] s: state
@@ -117,8 +114,7 @@ namespace mgis {
      * \param[in] s: state
      * \param[in]  n: name
      */
-    MGIS_EXPORT const real* getGradient(const State&,
-                                        const string_view);
+    MGIS_EXPORT const real* getGradient(const State&, const string_view);
     /*!
      * \brief get the value(s) of a gradient
      * \return a pointer the value(s) of the gradient
@@ -186,8 +182,7 @@ namespace mgis {
      * \param[in] s: state
      * \param[in]  n: name
      */
-    MGIS_EXPORT real* getThermodynamicForce(State&,
-                                            const string_view);
+    MGIS_EXPORT real* getThermodynamicForce(State&, const string_view);
     /*!
      * \brief get the value(s) of a thermodynamic force
      * \return a pointer the value(s) of the thermodynamic force
@@ -217,16 +212,13 @@ namespace mgis {
      * \param[in]  n: name
      * \param[in]  v: value
      */
-    MGIS_EXPORT void setMaterialProperty(State&,
-                                         const string_view,
-                                         const real);
+    MGIS_EXPORT void setMaterialProperty(State&, const string_view, const real);
     /*!
      * \return a pointer to the value of a material property
      * \param[in] s: state
      * \param[in] n: name
      */
-    MGIS_EXPORT real* getMaterialProperty(State&,
-                                          const string_view);
+    MGIS_EXPORT real* getMaterialProperty(State&, const string_view);
     /*!
      * \return a pointer to the value of a material property
      * \param[in] s: state
@@ -308,8 +300,7 @@ namespace mgis {
      * \param[in] s: state
      * \param[in]  n: name
      */
-    MGIS_EXPORT real* getInternalStateVariable(State&,
-                                               const string_view);
+    MGIS_EXPORT real* getInternalStateVariable(State&, const string_view);
     /*!
      * \brief get the value(s) of an internal state variable
      * \return a pointer the value(s) of the internal state variable
@@ -347,8 +338,7 @@ namespace mgis {
      * \param[out] s: state
      * \param[in]  n: name
      */
-    MGIS_EXPORT real* getExternalStateVariable(State&,
-                                               const string_view);
+    MGIS_EXPORT real* getExternalStateVariable(State&, const string_view);
     /*!
      * \brief set the value of an external state variable
      * \param[out] s: state
@@ -378,6 +368,14 @@ namespace mgis {
      */
     MGIS_EXPORT const real* getExternalStateVariable(const State&,
                                                      const size_type);
+
+    /*!
+     * \brief make a view from a behaviour data
+     * \param[in] s: state
+     * \return the view
+     * \note the view has at most the same life time as the state.
+     */
+    MGIS_EXPORT StateView make_view(State&);
 
   }  // end of namespace behaviour
 

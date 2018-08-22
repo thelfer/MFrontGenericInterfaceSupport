@@ -17,6 +17,8 @@
 
 #ifdef __cplusplus
 #include "MGIS/Config.hxx"
+#else
+#include "MGIS/Config-c.h"
 #endif /* __cplusplus */
 
 #ifdef __cplusplus
@@ -49,18 +51,8 @@ namespace mgis {
 
   namespace behaviour {
 
-    // forward declaration
-    struct State;
     //! a simple alias
     using StateView = ::mgis_bv_StateView;
-
-    /*!
-     * \brief make a view from a behaviour data
-     * \param[in] s: state
-     * \return the view
-     * \note the view has at most the same life time as the state.
-     */
-    MGIS_EXPORT StateView make_view(State&);
 
   }  // end of namespace behaviour
 
