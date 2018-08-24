@@ -11,6 +11,8 @@
  * project under specific licensing conditions.
  */
 
+#include<iostream>
+
 #include <tuple>
 #include <cstdlib>
 #include <cinttypes>
@@ -58,10 +60,9 @@ namespace mgis {
         }
       };  // end of eval
       // strides
-      const auto g_stride = getArraySize(m.b.gradients, m.b.hypothesis);
-      const auto t_stride =
-          getArraySize(m.b.thermodynamic_forces, m.b.hypothesis);
-      const auto isvs_stride = getArraySize(m.b.isvs, m.b.hypothesis);
+      const auto g_stride = m.s0.gradients_stride;
+      const auto t_stride = m.s0.thermodynamic_forces_stride;
+      const auto isvs_stride = m.s0.internal_state_variables_stride;
       // workspace
       std::vector<real> mps0(getArraySize(m.b.mps, m.b.hypothesis));
       std::vector<real> mps1(getArraySize(m.b.mps, m.b.hypothesis));
@@ -116,20 +117,17 @@ namespace mgis {
       const auto d = m.n / nth;
       const auto r = m.n % nth;
       size_type b = 0;
-      size_type e;
       std::vector<std::future<ThreadedTaskResult<int>>> tasks;
       tasks.reserve(nth);
       for (size_type i = 0; i != r; ++i) {
-        e = b + d + 1;
         tasks.push_back(
-            p.addTask([&m, dt, b, e] { return integrate(m, dt, b, e); }));
-        b = e + 1;
+            p.addTask([&m, dt, b, d] { return integrate(m, dt, b, b+d+1); }));
+        b += d+1;
       }
       for (size_type i = r; i != nth; ++i) {
-        e = b + d;
         tasks.push_back(
-            p.addTask([&m, dt, b, e] { return integrate(m, dt, b, e); }));
-        b = e + 1;
+            p.addTask([&m, dt, b, d] { return integrate(m, dt, b, b+d); }));
+        b += d ;
       }
       p.wait();
       auto res = int{1};
