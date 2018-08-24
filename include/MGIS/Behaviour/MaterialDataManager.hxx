@@ -37,7 +37,7 @@ namespace mgis {
      *   individually. They can be uniform or spatially variable.
      * - The internal state variables are treated as a block.
      */
-    struct MaterialDataManager {
+    struct MGIS_EXPORT MaterialDataManager {
       /*!
        * \brief main constructor
        * \param[in] behaviour: behaviour
@@ -60,6 +60,8 @@ namespace mgis {
       MaterialStateManager s1;
       //! \brief the stiffness matrices.
       std::vector<real> K;
+      //! \brief number of integration points
+      const size_type n;
       /*!
        * \brief the size of the stiffness matrix for one integration point (the
        * size of K is K_stride times the number of integration points)

@@ -25,6 +25,26 @@ namespace mgis {
     MaterialStateManager::MaterialStateManager(const MaterialStateManager&) =
         default;
 
+    MaterialStateManager::MaterialStateManager(const Behaviour& behaviour,
+                                               const size_type s)
+        : gradients_stride(
+              getArraySize(behaviour.gradients, behaviour.hypothesis)),
+          thermodynamic_forces_stride(getArraySize(
+              behaviour.thermodynamic_forces, behaviour.hypothesis)),
+          internal_state_variables_stride(
+              getArraySize(behaviour.isvs, behaviour.hypothesis)),
+          b(behaviour) {
+      auto init = [this, s](std::vector<real>& values,
+                            const size_type vs) {
+        constexpr const auto zero = real{0};
+        values.resize(s * vs, zero);
+      };
+      init(this->gradients, this->gradients_stride);
+      init(this->thermodynamic_forces, this->thermodynamic_forces_stride);
+      init(this->internal_state_variables,
+           this->internal_state_variables_stride);
+    }  // end of MaterialStateManager::MaterialStateManager
+
     MaterialStateManager& MaterialStateManager::operator=(
         MaterialStateManager&& src) {
       mgis::raise_if(&src.b != &this->b,
@@ -56,22 +76,6 @@ namespace mgis {
     }  // end of MaterialStateManager::operator=
 
     MaterialStateManager::~MaterialStateManager() = default;
-
-    MaterialStateManager::MaterialStateManager(const Behaviour& behaviour,
-                                               const size_type s)
-        : b(behaviour) {
-      auto init = [this, s](std::vector<real>& values,
-                            const std::vector<Variable> variables) {
-        constexpr const auto zero = real{0};
-        const auto as = getArraySize(variables, this->b.hypothesis);
-        values.resize(s * as, zero);
-      };
-      init(this->gradients, this->b.gradients);
-      init(this->thermodynamic_forces, this->b.thermodynamic_forces);
-      //       init(this->material_properties, this->b.mps);
-      init(this->internal_state_variables, this->b.isvs);
-      //       init(this->external_state_variables, this->b.esvs);
-    }  // end of MaterialStateManager::MaterialStateManager
 
   }  // end of namespace behaviour
 

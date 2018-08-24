@@ -12,6 +12,9 @@
  */
 
 #include <tuple>
+#include <cstdlib>
+#include <cinttypes>
+#include "MGIS/ThreadPool.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
 
@@ -20,6 +23,7 @@ namespace mgis {
   namespace behaviour {
 
     int integrate(MaterialDataManager& m,
+                  const real dt,
                   const size_type b,
                   const size_type e) {
       /*
@@ -28,13 +32,16 @@ namespace mgis {
        */
       auto dispatch = [](
           std::vector<real>& v,
-          std::map<std::string, mgis::variant<real, std::vector<real>>>&
-              values) {
+          std::map<std::string, mgis::variant<real, mgis::span<real>,
+                                              std::vector<real>>>& values) {
         std::vector<std::tuple<size_type, real*>> evs;
         size_type i = 0;
         for (auto& value : values) {
           if (holds_alternative<real>(value.second)) {
             v[i] = get<real>(value.second);
+          } else if (holds_alternative<mgis::span<real>>(value.second)) {
+            evs.push_back(std::make_tuple(
+                i, get<mgis::span<real>>(value.second).data()));
           } else {
             evs.push_back(std::make_tuple(
                 i, get<std::vector<real>>(value.second).data()));
@@ -69,22 +76,24 @@ namespace mgis {
       auto r = int{1};
       for (auto i = b; i != e + 1; ++i) {
         BehaviourDataView v;
+        v.dt = dt;
+        v.K = m.K.data() + m.K_stride * i;
         eval(mps0, vmps0, i);
         eval(mps1, vmps1, i);
         eval(esvs0, vesvs0, i);
         eval(esvs1, vesvs1, i);
-        v.s0.gradients = m.s0.gradients.data() + g_stride;
-        v.s1.gradients = m.s1.gradients.data() + g_stride;
+        v.s0.gradients = m.s0.gradients.data() + g_stride * i;
+        v.s1.gradients = m.s1.gradients.data() + g_stride * i;
         v.s0.thermodynamic_forces =
-            m.s0.thermodynamic_forces.data() + t_stride;
+            m.s0.thermodynamic_forces.data() + t_stride * i;
         v.s1.thermodynamic_forces =
-            m.s1.thermodynamic_forces.data() + t_stride;
+            m.s1.thermodynamic_forces.data() + t_stride * i;
         v.s0.material_properties = mps0.data();
         v.s1.material_properties = mps1.data();
         v.s0.internal_state_variables =
-            m.s0.internal_state_variables.data() + isvs_stride;
+            m.s0.internal_state_variables.data() + isvs_stride * i;
         v.s1.internal_state_variables =
-            m.s1.internal_state_variables.data() + isvs_stride;
+            m.s1.internal_state_variables.data() + isvs_stride * i;
         v.s0.external_state_variables = esvs0.data();
         v.s1.external_state_variables = esvs1.data();
         switch (integrate(v, m.b)) {
@@ -99,6 +108,44 @@ namespace mgis {
         }
       }
       return r;
+    }  // end of integrate
+
+    int integrate(ThreadPool& p, MaterialDataManager& m, const real dt) {
+      // get number of threads
+      const auto nth = p.getNumberOfThreads();
+      const auto d = m.n / nth;
+      const auto r = m.n % nth;
+      size_type b = 0;
+      size_type e;
+      std::vector<std::future<ThreadedTaskResult<int>>> tasks;
+      tasks.reserve(nth);
+      for (size_type i = 0; i != r; ++i) {
+        e = b + d + 1;
+        tasks.push_back(
+            p.addTask([&m, dt, b, e] { return integrate(m, dt, b, e); }));
+        b = e + 1;
+      }
+      for (size_type i = r; i != nth; ++i) {
+        e = b + d;
+        tasks.push_back(
+            p.addTask([&m, dt, b, e] { return integrate(m, dt, b, e); }));
+        b = e + 1;
+      }
+      p.wait();
+      auto res = int{1};
+      for (auto& t : tasks) {
+        switch (*(t.get())) {
+          case 1:
+            res = std::min(res, 1);
+            break;
+          case 0:
+            res = 0;
+            break;
+          default:
+            return -1;
+        }
+      }
+      return res;
     }  // end of integrate
 
   }  // end of namespace behaviour

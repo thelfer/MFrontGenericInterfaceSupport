@@ -19,6 +19,9 @@
 
 namespace mgis {
 
+  // forward declaration
+  struct ThreadPool;
+
   namespace behaviour {
 
     // forward declaration
@@ -45,10 +48,30 @@ namespace mgis {
      * -  1: integration succeeded and results are reliable.
      *
      * \param[in,out] m: material data manager
+     * \param[in] dt: time step
      * \param[in] b: first index of the range
      * \param[in] e: last index of the range
      */
-    int integrate(MaterialDataManager&, const size_type, const size_type);
+    MGIS_EXPORT int integrate(MaterialDataManager&,
+                              const real,
+                              const size_type,
+                              const size_type);
+
+    /*!
+     * \brief integrate the behaviour for a range of integration points. The
+     * returned value has the following meaning:
+     * - -1: integration failed for at least one Gauss point
+     * -  0: all integrations succeeded but results are unreliable for at least
+     *       one Gauss point
+     * -  1: integration succeeded and results are reliable.
+     *
+     * \param[in,out] p: thread pool
+     * \param[in,out] m: material data manager
+     * \param[in] dt: time step
+     */
+    MGIS_EXPORT int integrate(mgis::ThreadPool&,
+                              MaterialDataManager&,
+                              const real);
 
   }  // end of namespace behaviour
 

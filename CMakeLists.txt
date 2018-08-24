@@ -27,24 +27,26 @@ if(enable-c-bindings)
   message(STATUS "c bindings support enabled")
 endif(enable-c-bindings)
 
+find_package(Threads)
+
 # Looking for libdl...
 if(UNIX)
-  if(NOT MFRONT_DL_LIBRARY)
+  if(NOT MGIS_DL_LIBRARY)
     if((${CMAKE_SYSTEM_NAME} MATCHES "Linux") OR
 	(${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
-      find_library(MFRONT_DL_LIBRARY
+      find_library(MGIS_DL_LIBRARY
 	NAMES dl)
-      if(NOT MFRONT_DL_LIBRARY)
-	MESSAGE(FATAL_ERROR "the libdl library not found. You may want to set the `MFRONT_DL_LIBRARY` variable manually")
-      endif(NOT MFRONT_DL_LIBRARY)
+      if(NOT MGIS_DL_LIBRARY)
+	MESSAGE(FATAL_ERROR "the libdl library not found. You may want to set the `MGIS_DL_LIBRARY` variable manually")
+      endif(NOT MGIS_DL_LIBRARY)
     else((${CMAKE_SYSTEM_NAME} MATCHES "Linux") OR
 	(${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
-      set(MFRONT_DL_LIBRARY "")
+      set(MGIS_DL_LIBRARY "")
     endif((${CMAKE_SYSTEM_NAME} MATCHES "Linux") OR
       (${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
-  endif(NOT MFRONT_DL_LIBRARY)
+  endif(NOT MGIS_DL_LIBRARY)
 else(UNIX)
-  set(MFRONT_DL_LIBRARY "")
+  set(MGIS_DL_LIBRARY "")
 endif(UNIX)
 
 #compiler options

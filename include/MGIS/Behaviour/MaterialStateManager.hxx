@@ -20,6 +20,7 @@
 #include <vector>
 #include "MGIS/Config.hxx"
 #include "MGIS/Variant.hxx"
+#include "MGIS/Span.hxx"
 
 namespace mgis {
 
@@ -56,15 +57,39 @@ namespace mgis {
       ~MaterialStateManager();
       //! \brief value of the gradients
       std::vector<real> gradients;
+      //! stride associate with the gradients
+      const size_type gradients_stride;
       //! \brief values of the thermodynamic_forces
       std::vector<real> thermodynamic_forces;
-      //! \brief material properties
-      std::map<std::string, mgis::variant<real, std::vector<real>>>
+      //! stride associate with the thermodynamic forces
+      const size_type thermodynamic_forces_stride;
+      /*!
+       * \brief material properties
+       * The material properties can be uniform or not.
+       * In the non uniform case, the data can be hold by the structure
+       * (std::vector<real>) or simply borrow a reference (mgis::span<real>
+       * case).
+       */
+      std::map<std::string,
+               mgis::variant<real, mgis::span<real>, std::vector<real>>>
           material_properties;
       //! \brief values of the internal state variables
       std::vector<real> internal_state_variables;
-      //! \brief values of the external state variables
-      std::map<std::string, mgis::variant<real, std::vector<real>>>
+      /*!
+       * \brief stride associate with internal state variables.
+       * \note this is also the size of an array containing all the internal
+       * state variables for one integration point.
+       */
+      const size_type internal_state_variables_stride;
+      /*!
+       * \brief values of the external state variables
+       * The external state variables can be uniform or not.
+       * In the non uniform case, the data can be hold by the structure
+       * (std::vector<real>) or simply borrow a reference (mgis::span<real>
+       * case).
+       */
+      std::map<std::string,
+               mgis::variant<real, mgis::span<real>, std::vector<real>>>
           external_state_variables;
       //! underlying behaviour
       const Behaviour& b;

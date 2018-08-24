@@ -28,3 +28,14 @@ The following bindings are under consideration:
 - `c` binding
 - `fortran90` binding
 - `octave` binding
+
+# Acknowledgement
+
+This project uses code extracted from the following projects:
+
+- https://github.com/bitwizeshift/string_view-standalone by Matthew
+  Rodusek
+- https://github.com/mpark/variant: by Michael Park
+- https://github.com/progschj/ThreadPool by Jakob Progsch and Václav
+  Zeman
+- https://github.com/martinmoene/span-lite by Martin Moene
