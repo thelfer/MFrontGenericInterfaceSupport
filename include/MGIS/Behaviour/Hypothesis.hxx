@@ -34,6 +34,21 @@ namespace mgis {
     };  // end of enum Hypothesis
 
     /*!
+     * \return the dimension of the space associated to the given hypothesis.
+     * \param[in] h: modelling hypothesis
+     */
+    MGIS_EXPORT size_type getSpaceDimension(const Hypothesis);
+    /*!
+     * \return the size of a symmetric tensor in the given hypothesis.
+     * \param[in] h: modelling hypothesis
+     */
+    MGIS_EXPORT size_type getStensorSize(const Hypothesis);
+    /*!
+     * \return the size of a tensor in the given hypothesis
+     * \param[in] h: modelling hypothesis
+     */
+    MGIS_EXPORT size_type getTensorSize(const Hypothesis);
+    /*!
      * \return the string associated to the given hypothesis
      * \param[in] h: modelling hypothesis
      */

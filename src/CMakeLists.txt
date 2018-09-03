@@ -5,6 +5,7 @@ mgis_library(MFrontGenericInterface SHARED
 	  Variable.cxx
 	  Hypothesis.cxx
 	  Behaviour.cxx
+	  ChangeBasis.cxx
 	  State.cxx
 	  BehaviourData.cxx
 	  MaterialStateManager.cxx

@@ -129,7 +129,7 @@ namespace mgis {
             p.addTask([&m, dt, b, d] { return integrate(m, dt, b, b+d); }));
         b += d ;
       }
-      p.wait();
+      //      p.wait();
       auto res = int{1};
       for (auto& t : tasks) {
         switch (*(t.get())) {

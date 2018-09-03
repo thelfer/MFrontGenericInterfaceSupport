@@ -29,6 +29,8 @@ endif(enable-c-bindings)
 
 find_package(Threads)
 
+find_package(TBB)
+
 # Looking for libdl...
 if(UNIX)
   if(NOT MGIS_DL_LIBRARY)

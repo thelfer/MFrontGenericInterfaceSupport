@@ -20,6 +20,51 @@ namespace mgis {
 
   namespace behaviour {
 
+    size_type getSpaceDimension(const Hypothesis h) {
+      if ((h == Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+          (h == Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+        return 1u;
+      } else if ((h == Hypothesis::AXISYMMETRICAL) ||
+                 (h == Hypothesis::PLANESTRESS) ||
+                 (h == Hypothesis::PLANESTRAIN) ||
+                 (h == Hypothesis::GENERALISEDPLANESTRAIN)) {
+        return 2u;
+      } else if (h == Hypothesis::TRIDIMENSIONAL) {
+        return 3u;
+      }
+      raise("getSpaceDimension: unsupported modelling hypothesis");
+    }  // end of getSpaceDimension
+
+    size_type getStensorSize(const Hypothesis h) {
+      if ((h == Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+          (h == Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+        return 3u;
+      } else if ((h == Hypothesis::AXISYMMETRICAL) ||
+                 (h == Hypothesis::PLANESTRESS) ||
+                 (h == Hypothesis::PLANESTRAIN) ||
+                 (h == Hypothesis::GENERALISEDPLANESTRAIN)) {
+        return 4u;
+      } else if (h == Hypothesis::TRIDIMENSIONAL) {
+        return 6u;
+      }
+      mgis::raise("getStensorSize: unsupported modelling hypothesis");
+    }  // end of getStensorSize
+
+    size_type getTensorSize(const Hypothesis h) {
+      if ((h == Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+          (h == Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+        return 3u;
+      } else if ((h == Hypothesis::AXISYMMETRICAL) ||
+                 (h == Hypothesis::PLANESTRESS) ||
+                 (h == Hypothesis::PLANESTRAIN) ||
+                 (h == Hypothesis::GENERALISEDPLANESTRAIN)) {
+        return 5u;
+      } else if (h == Hypothesis::TRIDIMENSIONAL) {
+        return 9u;
+      }
+      mgis::raise("getTensorSize: unsupported modelling hypothesis");
+    }  // end of getTensorSize
+
     Hypothesis fromString(const std::string& h) {
       if (h == "AxisymmetricalGeneralisedPlaneStrain") {
         return Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
