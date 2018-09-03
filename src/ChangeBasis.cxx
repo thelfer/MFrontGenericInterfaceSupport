@@ -24,6 +24,14 @@
           m01(m[1]),
           m10(m[3]),
           m11(m[4]) {}  // end of Rotation2D::Rotation2D
+          
+    void Rotation2D::rotateVector(real* const o, const real* const i) const {
+      const real nv[2] = {
+          m00 * i[0] + m01 * i[1], m10 * i[0] + m11 * i[1],
+      };
+      o[0] = nv[0];
+      o[1] = nv[1];
+    }  // end of Rotation2D::rotateVector
 
     void Rotation2D::rotateStensor(real* const o, const real* const i) const {
       constexpr const auto cste = mgis::Cste::sqrt2;
@@ -64,6 +72,17 @@
           m20(m[6]),
           m21(m[7]),
           m22(m[8]) {}  // end of Rotation3D::Rotation3D
+
+    void Rotation3D::rotateVector(real* const o, const real* const i) const {
+      const real nv[3] = {
+          m00 * i[0] + m01 * i[1] + m02 * i[2],
+          m10 * i[0] + m11 * i[1] + m12 * i[2],
+          m20 * i[0] + m21 * i[1] + m22 * i[2],
+      };
+      o[0] = nv[0];
+      o[1] = nv[1];
+      o[2] = nv[2];
+    }  // end of Rotation3D::rotateVector
 
     void Rotation3D::rotateStensor(real* const o, const real* const i) const {
       constexpr const auto cste = mgis::Cste::sqrt2;
