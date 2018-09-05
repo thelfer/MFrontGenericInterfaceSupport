@@ -1,6 +1,8 @@
 mgis_header(MGIS Config-c.h)
 mgis_header(MGIS Config.hxx)
 mgis_header(MGIS Cste.hxx)
+mgis_header(MGIS MatrixView.hxx)
+mgis_header(MGIS MatrixView.ixx)
 mgis_header(MGIS Raise.ixx)
 mgis_header(MGIS Raise.hxx)
 mgis_header(MGIS Span.hxx)

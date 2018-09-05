@@ -14,6 +14,7 @@
 #ifndef LIB_MGIS_BEHAVIOUR_INTEGRATE_HXX
 #define LIB_MGIS_BEHAVIOUR_INTEGRATE_HXX
 
+#include <vector>
 #include "MGIS/Config.hxx"
 #include "MGIS/Behaviour/BehaviourDataView.hxx"
 
@@ -25,7 +26,39 @@ namespace mgis {
   namespace behaviour {
 
     // forward declaration
+    struct Behaviour;
+    // forward declaration
     struct MaterialDataManager;
+
+    /*!
+     * \brief structure in charge of handling temporary memory access.
+     */
+    struct MGIS_EXPORT IntegrateWorkSpace {
+      /*!
+       * \brief constructor
+       * \param[in] b: behaviour
+       */
+      IntegrateWorkSpace(const Behaviour&);
+      IntegrateWorkSpace(IntegrateWorkSpace&&);
+      IntegrateWorkSpace(const IntegrateWorkSpace&);
+      IntegrateWorkSpace& operator=(IntegrateWorkSpace&&);
+      IntegrateWorkSpace& operator=(const IntegrateWorkSpace&);
+      //! material properties at the beginning of the time step
+      std::vector<real> mps0;
+      //! material properties at the end of the time step
+      std::vector<real> mps1;
+      //! external state variables at the beginning of the time step
+      std::vector<real> esvs0;
+      //! external state variables at the end of the time step
+      std::vector<real> esvs1;
+    };  // end of struct IntegrateWorkSpace
+
+    /*!
+     * \brief return a thread-specific workspace associated with the given
+     * behaviour.
+     * \param[in] b: behaviour
+     */
+    MGIS_EXPORT IntegrateWorkSpace& getIntegrateWorkSpace(const Behaviour&);
 
     /*!
      * \brief integrate the behaviour. The returned value has the following

@@ -11,9 +11,10 @@
  * project under specific licensing conditions.
  */
 
-#include<iostream>
-
+#include <map>
 #include <tuple>
+#include <thread>
+#include <memory>
 #include <cstdlib>
 #include <cinttypes>
 #include "MGIS/ThreadPool.hxx"
@@ -23,6 +24,34 @@
 namespace mgis {
 
   namespace behaviour {
+
+    IntegrateWorkSpace::IntegrateWorkSpace(const Behaviour& b)
+        : mps0(getArraySize(b.mps, b.hypothesis)),
+          mps1(getArraySize(b.mps, b.hypothesis)),
+          esvs0(getArraySize(b.esvs, b.hypothesis)),
+          esvs1(getArraySize(b.esvs, b.hypothesis)) {
+    }  // end of IntegrateWorkSpace
+
+    IntegrateWorkSpace::IntegrateWorkSpace(IntegrateWorkSpace&&) = default;
+    IntegrateWorkSpace::IntegrateWorkSpace(const IntegrateWorkSpace&) = default;
+    IntegrateWorkSpace& IntegrateWorkSpace::operator=(IntegrateWorkSpace&&) = default;
+    IntegrateWorkSpace& IntegrateWorkSpace::operator=(const IntegrateWorkSpace&) = default;
+
+    IntegrateWorkSpace& getIntegrateWorkSpace(const Behaviour& b) {
+      static std::map<
+          const Behaviour*,
+          std::map<std::thread::id, std::shared_ptr<IntegrateWorkSpace>>>
+          m;
+      static std::mutex mt;
+      const auto id = std::this_thread::get_id();
+      std::lock_guard<std::mutex> lock(mt);
+      auto& mwks = m[&b];
+      auto p = mwks.find(id);
+      if (p == mwks.end()) {
+        p = mwks.insert({id, std::make_shared<IntegrateWorkSpace>(b)}).first;
+      }
+      return *(p->second);
+    }  // end of getIntegrateWorkSpace
 
     int integrate(MaterialDataManager& m,
                   const real dt,
@@ -36,6 +65,7 @@ namespace mgis {
           std::vector<real>& v,
           std::map<std::string, mgis::variant<real, mgis::span<real>,
                                               std::vector<real>>>& values) {
+        // evaluators
         std::vector<std::tuple<size_type, real*>> evs;
         size_type i = 0;
         for (auto& value : values) {
@@ -64,39 +94,36 @@ namespace mgis {
       const auto t_stride = m.s0.thermodynamic_forces_stride;
       const auto isvs_stride = m.s0.internal_state_variables_stride;
       // workspace
-      std::vector<real> mps0(getArraySize(m.b.mps, m.b.hypothesis));
-      std::vector<real> mps1(getArraySize(m.b.mps, m.b.hypothesis));
-      std::vector<real> esvs0(getArraySize(m.b.esvs, m.b.hypothesis));
-      std::vector<real> esvs1(getArraySize(m.b.esvs, m.b.hypothesis));
+      auto& ws = getIntegrateWorkSpace(m.b);
       // treating uniform values
-      const auto vmps0 = dispatch(mps0, m.s0.material_properties);
-      const auto vmps1 = dispatch(mps1, m.s1.material_properties);
-      const auto vesvs0 = dispatch(esvs0, m.s0.external_state_variables);
-      const auto vesvs1 = dispatch(esvs1, m.s1.external_state_variables);
+      const auto vmps0 = dispatch(ws.mps0, m.s0.material_properties);
+      const auto vmps1 = dispatch(ws.mps1, m.s1.material_properties);
+      const auto vesvs0 = dispatch(ws.esvs0, m.s0.external_state_variables);
+      const auto vesvs1 = dispatch(ws.esvs1, m.s1.external_state_variables);
       // loop over integration points
       auto r = int{1};
-      for (auto i = b; i != e + 1; ++i) {
+      for (auto i = b; i != e ; ++i) {
         BehaviourDataView v;
         v.dt = dt;
         v.K = m.K.data() + m.K_stride * i;
-        eval(mps0, vmps0, i);
-        eval(mps1, vmps1, i);
-        eval(esvs0, vesvs0, i);
-        eval(esvs1, vesvs1, i);
+        eval(ws.mps0, vmps0, i);
+        eval(ws.mps1, vmps1, i);
+        eval(ws.esvs0, vesvs0, i);
+        eval(ws.esvs1, vesvs1, i);
         v.s0.gradients = m.s0.gradients.data() + g_stride * i;
         v.s1.gradients = m.s1.gradients.data() + g_stride * i;
         v.s0.thermodynamic_forces =
             m.s0.thermodynamic_forces.data() + t_stride * i;
         v.s1.thermodynamic_forces =
             m.s1.thermodynamic_forces.data() + t_stride * i;
-        v.s0.material_properties = mps0.data();
-        v.s1.material_properties = mps1.data();
+        v.s0.material_properties = ws.mps0.data();
+        v.s1.material_properties = ws.mps1.data();
         v.s0.internal_state_variables =
             m.s0.internal_state_variables.data() + isvs_stride * i;
         v.s1.internal_state_variables =
             m.s1.internal_state_variables.data() + isvs_stride * i;
-        v.s0.external_state_variables = esvs0.data();
-        v.s1.external_state_variables = esvs1.data();
+        v.s0.external_state_variables = ws.esvs0.data();
+        v.s1.external_state_variables = ws.esvs1.data();
         switch (integrate(v, m.b)) {
           case 1:
             r = std::min(r, 1);

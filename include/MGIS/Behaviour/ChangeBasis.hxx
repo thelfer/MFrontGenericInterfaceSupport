@@ -22,6 +22,9 @@
 
 namespace mgis {
 
+  // forward declaration
+  struct MatrixView;
+
   namespace behaviour {
 
     /*!
@@ -32,6 +35,12 @@ namespace mgis {
        * \brief m: rotation matrix in row-major ordering
        */
       Rotation2D(const real* const);
+      /*!
+       * \brief 
+       */
+      Rotation2D(const real, const real, const real, const real);
+      //! \brief invert the rotation
+      Rotation2D transpose() const;
       /*!
        * \brief rotate a symmetric tensor
        * \param[out] o: rotated values
@@ -50,6 +59,12 @@ namespace mgis {
        * \param[out] i: initial values
        */
       void rotateTensor(real* const, const real* const) const;
+      //! \brief
+      void buildVectorRotationOperator(mgis::MatrixView&) const;
+      //! \brief
+      void buildStensorRotationOperator(mgis::MatrixView&) const;
+      //! \brief
+      void buildTensorRotationOperator(mgis::MatrixView&) const;
 
      private:
       // coefficients of the rotation matrix
@@ -65,6 +80,20 @@ namespace mgis {
        */
       Rotation3D(const real* const);
       /*!
+       * \brief 
+       */
+      Rotation3D(const real,
+                 const real,
+                 const real,
+                 const real,
+                 const real,
+                 const real,
+                 const real,
+                 const real,
+                 const real);
+      //! \brief invert the rotation
+      Rotation3D transpose() const;
+      /*!
        * \brief rotate a symmetric tensor
        * \param[out] o: rotated values
        * \param[out] i: initial values
@@ -82,6 +111,14 @@ namespace mgis {
        * \param[out] i: initial values
        */
       void rotateTensor(real* const, const real* const) const;
+      //! \brief
+      void buildVectorRotationOperator(mgis::MatrixView&) const;
+      //! \brief
+      void buildStensorRotationOperator(mgis::MatrixView&) const;
+      //! \brief
+      void buildTensorRotationOperator(mgis::MatrixView&) const;
+
+     private:
       // coefficients of the rotation matrix
       const real m00, m01, m02, m10, m11, m12, m20, m21, m22;
     };  // end of struct Rotation3D

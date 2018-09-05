@@ -1,4 +1,5 @@
 mgis_library(MFrontGenericInterface SHARED
+	  MatrixView.cxx
 	  ThreadPool.cxx
 	  ThreadedTaskResult.cxx
 	  LibrariesManager.cxx
