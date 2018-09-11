@@ -72,6 +72,7 @@ int main(const int argc, const char* const* argv) {
                                0.00049969190397646,
                                0.00053302523730979,
                                0.00056635857064313};
+  int r;  // behaviour integration result
   if (check(argc == 2, "expected two arguments") == 0) {
     return EXIT_FAILURE;
   }
@@ -101,7 +102,7 @@ int main(const int argc, const char* const* argv) {
   *e += de;
   p[0] = *p0;
   for (i = 0; i != 20; ++i) {
-    mgis_bv_integrate(&v, b);
+    check_status(mgis_bv_integrate(&r, &v, b));
     check_status(mgis_bv_update_behaviour_data(d));
     *e += de;
     p[i + 1] = *p1;

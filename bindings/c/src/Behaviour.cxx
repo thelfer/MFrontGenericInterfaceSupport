@@ -26,6 +26,11 @@ mgis_status mgis_bv_load_behaviour(mgis_bv_Behaviour** ptr,
   try {
     const auto bv = mgis::behaviour::load(l, b, mgis::behaviour::fromString(h));
     *ptr = new mgis::behaviour::Behaviour(std::move(bv));
+    if (*ptr == nullptr) {
+      return mgis_report_failure(
+          "mgis_bv_load_behaviour: "
+          "memory allocation failed");
+    }
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
@@ -295,11 +300,12 @@ mgis_status mgis_bv_behaviour_get_external_state_variable_name(
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_get_external_state_variable_name
 
-mgis_status mgis_bv_free_behaviour(mgis_bv_Behaviour** d) {
+mgis_status mgis_bv_free_behaviour(mgis_bv_Behaviour** b) {
   try {
-    delete *d;
-    *d = nullptr;
+    delete *b;
+    *b = nullptr;
   } catch (...) {
+    *b = nullptr;
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();

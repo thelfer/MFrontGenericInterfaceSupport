@@ -17,6 +17,7 @@
 #include <memory>
 #include <cstdlib>
 #include <cinttypes>
+#include "MGIS/Raise.hxx"
 #include "MGIS/ThreadPool.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
@@ -64,19 +65,30 @@ namespace mgis {
       auto dispatch = [](
           std::vector<real>& v,
           std::map<std::string, mgis::variant<real, mgis::span<real>,
-                                              std::vector<real>>>& values) {
+                                              std::vector<real>>>& values,
+          const std::vector<Variable>& ds) {
+        mgis::raise_if(ds.size() != v.size(), "integrate: ill allocated memory");
         // evaluators
         std::vector<std::tuple<size_type, real*>> evs;
-        size_type i = 0;
-        for (auto& value : values) {
-          if (holds_alternative<real>(value.second)) {
-            v[i] = get<real>(value.second);
-          } else if (holds_alternative<mgis::span<real>>(value.second)) {
-            evs.push_back(std::make_tuple(
-                i, get<mgis::span<real>>(value.second).data()));
+        auto i = mgis::size_type{};
+        for (const auto& d : ds) {
+          if (d.type != Variable::SCALAR) {
+            mgis::raise("integrate: invalid type for variable '" + d.name +
+                        "'");
+          }
+          auto p = values.find(d.name);
+          if (p == values.end()) {
+            mgis::raise("integrate: no variable named '" + d.name +
+                        "' declared");
+          }
+          if (holds_alternative<real>(p->second)) {
+            v[i] = get<real>(p->second);
+          } else if (holds_alternative<mgis::span<real>>(p->second)) {
+            evs.push_back(
+                std::make_tuple(i, get<mgis::span<real>>(p->second).data()));
           } else {
-            evs.push_back(std::make_tuple(
-                i, get<std::vector<real>>(value.second).data()));
+            evs.push_back(
+                std::make_tuple(i, get<std::vector<real>>(p->second).data()));
           }
           ++i;
         }
@@ -96,10 +108,14 @@ namespace mgis {
       // workspace
       auto& ws = getIntegrateWorkSpace(m.b);
       // treating uniform values
-      const auto vmps0 = dispatch(ws.mps0, m.s0.material_properties);
-      const auto vmps1 = dispatch(ws.mps1, m.s1.material_properties);
-      const auto vesvs0 = dispatch(ws.esvs0, m.s0.external_state_variables);
-      const auto vesvs1 = dispatch(ws.esvs1, m.s1.external_state_variables);
+      const auto vmps0 =
+          dispatch(ws.mps0, m.s0.material_properties, m.b.mps);
+      const auto vmps1 =
+          dispatch(ws.mps1, m.s1.material_properties, m.b.mps);
+      const auto vesvs0 =
+          dispatch(ws.esvs0, m.s0.external_state_variables, m.b.esvs);
+      const auto vesvs1 =
+          dispatch(ws.esvs1, m.s1.external_state_variables, m.b.esvs);
       // loop over integration points
       auto r = int{1};
       for (auto i = b; i != e ; ++i) {
