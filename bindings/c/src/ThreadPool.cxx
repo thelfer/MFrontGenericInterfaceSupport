@@ -14,8 +14,10 @@
 
 #include "MGIS/ThreadPool.h"
 
-mgis_status mgis_bv_create_thread_pool(mgis_ThreadPool** p,
-                                       const mgis_size_type n) {
+extern "C" {
+
+mgis_status mgis_create_thread_pool(mgis_ThreadPool** p,
+				    const mgis_size_type n) {
   *p = nullptr;
   try {
     *p = new mgis::ThreadPool(n);
@@ -28,9 +30,9 @@ mgis_status mgis_bv_create_thread_pool(mgis_ThreadPool** p,
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-}  // end of mgis_bv_create_thread_pool
+}  // end of mgis_create_thread_pool
 
-mgis_status mgis_bv_free_thread_pool(mgis_ThreadPool** p){
+mgis_status mgis_free_thread_pool(mgis_ThreadPool** p){
   try {
     delete *p;
     *p = nullptr;
@@ -39,5 +41,6 @@ mgis_status mgis_bv_free_thread_pool(mgis_ThreadPool** p){
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_bv_free_thread_pool
+} // end of mgis_free_thread_pool
 
+} // end of extern "C"

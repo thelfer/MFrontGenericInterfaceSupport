@@ -78,8 +78,17 @@ namespace mgis {
           }
           auto p = values.find(d.name);
           if (p == values.end()) {
-            mgis::raise("integrate: no variable named '" + d.name +
-                        "' declared");
+            auto msg = std::string{"integrate: no variable named '" + d.name +
+                                   "' declared"};
+            if (!values.empty()) {
+              msg += "\nThe following variables were declared: ";
+              for (const auto& vs : values) {
+                msg += "\n- " + vs.first;
+              }
+            } else {
+              msg += "\nNo variable declared.";
+            }
+            mgis::raise(msg);
           }
           if (holds_alternative<real>(p->second)) {
             v[i] = get<real>(p->second);
@@ -120,6 +129,7 @@ namespace mgis {
       auto r = int{1};
       for (auto i = b; i != e ; ++i) {
         BehaviourDataView v;
+        v.rdt = real(1);
         v.dt = dt;
         v.K = m.K.data() + m.K_stride * i;
         eval(ws.mps0, vmps0, i);

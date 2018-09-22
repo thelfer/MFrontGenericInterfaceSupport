@@ -43,6 +43,7 @@ int main(const int argc, const char* const* argv) {
   p[0] = d.s0.internal_state_variables[o];
   for (size_type i = 0; i != 20; ++i) {
     auto v = make_view(d);
+    v.rdt = 1;
     integrate(v, b);
     update(d);
     d.s1.gradients[0] += de;

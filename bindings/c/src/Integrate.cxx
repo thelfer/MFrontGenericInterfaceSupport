@@ -22,7 +22,7 @@ mgis_status mgis_bv_integrate(int* const r,
                               mgis_bv_BehaviourDataView* const d,
                               const mgis_bv_Behaviour* const b) {
   *r = mgis::behaviour::integrate(*d, *b);
-  if(*r!=1){
+  if ((*r != 1) && (*r != 0)) {
     return mgis_report_failure("behaviour integration failed");
   }
   return mgis_report_success();
@@ -33,9 +33,14 @@ mgis_status mgis_bv_integrate_material_data_manager(
     mgis_ThreadPool* const p,
     mgis_bv_MaterialDataManager* const m,
     const mgis_real dt) {
-  *r = mgis::behaviour::integrate(*p, *m, dt);
-  if (*r != 1) {
-    return mgis_report_failure("behaviour integration failed");
+  *r = -1;
+  try {
+    *r = mgis::behaviour::integrate(*p, *m, dt);
+    if ((*r != 1) && (*r != 0)) {
+      return mgis_report_failure("behaviour integration failed");
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
 } // end of mgis_bv_integrate_material_data_manager
@@ -46,9 +51,14 @@ mgis_status mgis_bv_integrate_material_data_manager_part(
     const mgis_real dt,
     const mgis_size_type b,
     const mgis_size_type e) {
-  *r = mgis::behaviour::integrate(*m, dt, b, e);
-  if (*r != 1) {
-    return mgis_report_failure("behaviour integration failed");
+  *r = -1;
+  try {
+    *r = mgis::behaviour::integrate(*m, dt, b, e);
+    if ((*r != 1) && (*r != 0)) {
+      return mgis_report_failure("behaviour integration failed");
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
 } // end of mgis_bv_integrate_material_data_manager_part

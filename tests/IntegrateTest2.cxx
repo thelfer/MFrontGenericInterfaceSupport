@@ -29,7 +29,6 @@ int main(const int argc, const char* const* argv) {
     std::exit(-1);
   }
   const auto b = load(argv[1], "Norton", Hypothesis::TRIDIMENSIONAL);
-
   auto m = MaterialDataManager{b, 100};
   const auto o =
       getVariableOffset(b.isvs, "EquivalentViscoplasticStrain", b.hypothesis);

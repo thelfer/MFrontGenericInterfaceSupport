@@ -35,19 +35,19 @@ using mgis_ThreadPool = mgis::ThreadPool;
 typedef struct mgis_ThreadPool mgis_ThreadPool;
 #endif
 
-#ifdef __cplusplus
-} // end of extern "C"
-#endif
-
 /*!
  * \param[out] p: a pointer to the created thread pool
  * \param[in]  n: number of threads
  */
-MGIS_C_EXPORT mgis_status mgis_bv_create_thread_pool(mgis_ThreadPool**,
-                                                     const mgis_size_type);
+MGIS_C_EXPORT mgis_status mgis_create_thread_pool(mgis_ThreadPool**,
+						  const mgis_size_type);
 /*!
  * \param[in,out] p: a pointer to the thread pool to be destroyed
  */
-MGIS_C_EXPORT mgis_status mgis_bv_free_thread_pool(mgis_ThreadPool**);
+MGIS_C_EXPORT mgis_status mgis_free_thread_pool(mgis_ThreadPool**);
 
+#ifdef __cplusplus
+} // end of extern "C"
+#endif
+  
 #endif /* LIB_MGIS_THREADPOOL_H */

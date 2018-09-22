@@ -251,7 +251,7 @@ std::vector<std::string> LibrariesManager::getNames(const std::string &l,
 
 std::vector<std::string> LibrariesManager::getGradientsNames(
     const std::string &l, const std::string &b, const Hypothesis h) {
-  return this->getNames(l, b, h, "DrivingVariables");
+  return this->getNames(l, b, h, "Gradients");
 }  // end of LibrariesManager::getGradientsNames
 
 std::vector<int> LibrariesManager::getGradientsTypes(
@@ -259,11 +259,11 @@ std::vector<int> LibrariesManager::getGradientsTypes(
   std::vector<int> types;
   const auto hn = toString(h);
   const auto nb = *(this->extract<unsigned short>(
-      l, b + "_" + hn + "_nDrivingVariables",
-      b + "_nDrivingVariables"));
+      l, b + "_" + hn + "_nGradients",
+      b + "_nGradients"));
   const auto res =
-      this->extract<const int>(l, b + "_" + hn + "_DrivingVariablesTypes",
-                               b + "_DrivingVariablesTypes");
+      this->extract<const int>(l, b + "_" + hn + "_GradientsTypes",
+                               b + "_GradientsTypes");
   std::copy(res, res + nb, std::back_inserter(types));
   return types;
 } // end of LibrariesManager::getGradientsTypes

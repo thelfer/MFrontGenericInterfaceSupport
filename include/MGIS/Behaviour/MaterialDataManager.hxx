@@ -75,12 +75,14 @@ namespace mgis {
      * \brief update the behaviour data by:
      * - setting s1 equal to s0
      * - filling the stiffness matrix with 0
+     * \param[in,out] m: material data manager
      */
     MGIS_EXPORT void update(MaterialDataManager&);
     /*!
      * \brief revert the behaviour data by:
      * - setting s1 equal to s0
      * - filling the stiffness matrix with 0
+     * \param[in,out] m: material data manager
      */
     MGIS_EXPORT void revert(MaterialDataManager&);
 

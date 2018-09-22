@@ -35,6 +35,11 @@ using mgis_bv_MaterialStateManager = mgis::behaviour::MaterialStateManager;
 typedef struct mgis_bv_MaterialStateManager mgis_bv_MaterialStateManager;
 #endif
 
+typedef enum {
+  MGIS_BV_LOCAL_STORAGE,
+  MGIS_BV_EXTERNAL_STORAGE,
+} mgis_bv_MaterialStateManagerStorageMode;
+
 /*!
  * \param[out] g: a pointer to the array of gradients
  * \param[in]  s: state manager
@@ -77,6 +82,60 @@ mgis_bv_material_state_manager_get_internal_state_variables(
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_get_internal_state_variables_stride(
     mgis_size_type* const, mgis_bv_MaterialStateManager* const);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_uniform_material_property(
+    mgis_bv_MaterialStateManager* const, const char* const, const mgis_real);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_non_uniform_material_property(
+    mgis_bv_MaterialStateManager* const,
+    const char* const,
+    mgis_real* const,
+    const mgis_bv_MaterialStateManagerStorageMode);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_is_material_property_defined(
+    int* const, const mgis_bv_MaterialStateManager* const, const char* const);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_is_material_property_uniform(
+    int* const, const mgis_bv_MaterialStateManager* const, const char* const);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_get_uniform_material_property(
+    mgis_real* const, mgis_bv_MaterialStateManager* const, const char* const);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_get_non_uniform_material_property(
+    mgis_real** const, mgis_bv_MaterialStateManager* const, const char* const);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_uniform_external_state_variable(
+    mgis_bv_MaterialStateManager* const, const char* const, const mgis_real);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
+    mgis_bv_MaterialStateManager* const,
+    const char* const,
+    mgis_real* const,
+    const mgis_bv_MaterialStateManagerStorageMode);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_is_external_state_variable_defined(
+    int* const, const mgis_bv_MaterialStateManager* const, const char* const);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_is_external_state_variable_uniform(
+    int* const, const mgis_bv_MaterialStateManager* const, const char* const);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_get_uniform_external_state_variable(
+    mgis_real* const, mgis_bv_MaterialStateManager* const, const char* const);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_get_non_uniform_external_state_variable(
+    mgis_real** const, mgis_bv_MaterialStateManager* const, const char* const);
 
 #ifdef __cplusplus
 }  // end of extern "C"
