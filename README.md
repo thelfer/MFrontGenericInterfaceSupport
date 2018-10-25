@@ -29,6 +29,13 @@ The following bindings are under consideration:
 - `fortran90` binding
 - `octave` binding
 
+# Versions, branches
+
+- the `master` branch follows the evolution of the `master` branch of
+  the `TFEL` project
+- the `rliv-1.0` follows the evolution of the 3.2.x series of the
+  `TFEL` project
+
 # Acknowledgement
 
 This project uses code extracted from the following projects:

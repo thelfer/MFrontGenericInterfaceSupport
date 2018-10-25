@@ -35,6 +35,8 @@ namespace mgis {
         this->material_properties = std::move(src.material_properties);
         this->internal_state_variables =
             std::move(src.internal_state_variables);
+        this->stored_energy = src.stored_energy;
+        this->dissipated_energy = src.dissipated_energy;
         this->external_state_variables =
             std::move(src.external_state_variables);
       }
@@ -50,15 +52,17 @@ namespace mgis {
         this->thermodynamic_forces = src.thermodynamic_forces;
         this->material_properties = src.material_properties;
         this->internal_state_variables = src.internal_state_variables;
+        this->stored_energy = src.stored_energy;
+        this->dissipated_energy = src.dissipated_energy;
         this->external_state_variables = src.external_state_variables;
       }
       return *this;
     }  // end of State::operator=
 
     State::State(const Behaviour& behaviour) : b(behaviour) {
+      constexpr const auto zero = real{0};
       auto init = [this](std::vector<real>& values,
                          const std::vector<Variable> variables) {
-        constexpr const auto zero = real{0};
         const auto s = getArraySize(variables, this->b.hypothesis);
         values.resize(s, zero);
       };
@@ -66,6 +70,8 @@ namespace mgis {
       init(this->thermodynamic_forces, this->b.thermodynamic_forces);
       init(this->material_properties, this->b.mps);
       init(this->internal_state_variables, this->b.isvs);
+      this->stored_energy = zero;
+      this->dissipated_energy = zero;
       init(this->external_state_variables, this->b.esvs);
     }  // end of State::State
 
@@ -323,6 +329,8 @@ namespace mgis {
       v.thermodynamic_forces = get_ptr(s.thermodynamic_forces);
       v.material_properties = get_ptr(s.material_properties);
       v.internal_state_variables = get_ptr(s.internal_state_variables);
+      v.stored_energy = &s.stored_energy;
+      v.dissipated_energy = &s.dissipated_energy;
       v.external_state_variables = get_ptr(s.external_state_variables);
       return v;
     }  // end of make_view

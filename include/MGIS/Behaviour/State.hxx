@@ -48,6 +48,16 @@ namespace mgis {
       const Behaviour& b;
       //! \brief value of the gradients
       std::vector<real> gradients;
+      /*!
+       * \brief stored energy (computed by `@InternalEnergy` in `MFront`
+       * files) This output is optional.
+       */
+      real stored_energy;
+      /*!
+       * \brief dissipated energy (computed by `@DissipatedEnergy` in `MFront`
+       * files) This output is optional.
+       */
+      real dissipated_energy;
       //! \brief values of the thermodynamic_forces
       std::vector<real> thermodynamic_forces;
       //! \brief values of the material properties

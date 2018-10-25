@@ -37,6 +37,16 @@ typedef struct{
   mgis_real * material_properties;
   //! \brief values of the internal state variables
   mgis_real * internal_state_variables;
+  /*!
+   * \brief stored energy (computed by `@InternalEnergy` in `MFront`
+   * files) This output is optional.
+   */
+  mgis_real* stored_energy;
+  /*!
+   * \brief stored energy (computed by `@DissipatedEnergy` in `MFront`
+   * files) This output is optional.
+   */
+  mgis_real* dissipated_energy;
   //! \brief values of the external state variables
   mgis_real * external_state_variables;
 } mgis_bv_StateView;

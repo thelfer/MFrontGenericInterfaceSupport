@@ -86,6 +86,14 @@ namespace mgis {
       //! \brief values of the internal state variables
       std::vector<real> internal_state_variables;
       /*!
+       * \brief stored energy.
+       */
+      std::vector<real> stored_energies;
+      /*!
+       * \brief dissipated energies
+       */
+      std::vector<real> dissipated_energies;
+      /*!
        * \brief stride associate with internal state variables.
        * \note this is also the size of an array containing all the internal
        * state variables for one integration point.

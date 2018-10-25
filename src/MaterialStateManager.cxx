@@ -43,6 +43,8 @@ namespace mgis {
       init(this->thermodynamic_forces, this->thermodynamic_forces_stride);
       init(this->internal_state_variables,
            this->internal_state_variables_stride);
+      init(this->stored_energies, 1u);
+      init(this->dissipated_energies, 1u);
     }  // end of MaterialStateManager::MaterialStateManager
 
     MaterialStateManager& MaterialStateManager::operator=(
@@ -58,6 +60,8 @@ namespace mgis {
         this->material_properties = std::move(src.material_properties);
         this->internal_state_variables =
             std::move(src.internal_state_variables);
+        this->stored_energies = std::move(src.stored_energies);
+        this->dissipated_energies = std::move(src.dissipated_energies);
         this->external_state_variables =
             std::move(src.external_state_variables);
       }
@@ -76,6 +80,8 @@ namespace mgis {
         this->thermodynamic_forces = src.thermodynamic_forces;
         this->material_properties = src.material_properties;
         this->internal_state_variables = src.internal_state_variables;
+        this->stored_energies = src.stored_energies;
+        this->dissipated_energies = src.dissipated_energies;
         this->external_state_variables = src.external_state_variables;
       }
       return *this;
