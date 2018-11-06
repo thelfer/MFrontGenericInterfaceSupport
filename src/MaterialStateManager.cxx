@@ -201,6 +201,7 @@ namespace mgis {
 
     mgis::span<real> getNonUniformMaterialProperty(MaterialStateManager& m,
                                                    const mgis::string_view& n) {
+      using index_type = span<real>::index_type;
       const auto p = getFieldHolderIterator(m.material_properties, n);
       mgis::raise_if(p == m.material_properties.end(),
                      "getNonUniformMaterialProperty: "
@@ -212,13 +213,14 @@ namespace mgis {
                          n.to_string() + "' is uniform");
       if (mgis::holds_alternative<std::vector<real>>(p->second)) {
         auto& values = mgis::get<std::vector<real>>(p->second);
-        return {&values[0],values.size()};
+        return {&values[0], static_cast<index_type>(values.size())};
       }
       return mgis::get<span<real>>(p->second);
     }  // end of getNonUniformMaterialProperty
 
     mgis::span<const real> getNonUniformMaterialProperty(
         const MaterialStateManager& m, const mgis::string_view& n) {
+      using index_type = span<const real>::index_type;
       const auto p = getFieldHolderIterator(m.material_properties, n);
       mgis::raise_if(p == m.material_properties.end(),
                      "getNonUniformMaterialProperty: "
@@ -230,7 +232,7 @@ namespace mgis {
                          n.to_string() + "' is uniform");
       if (mgis::holds_alternative<std::vector<real>>(p->second)) {
         const auto& values = mgis::get<std::vector<real>>(p->second);
-        return {&values[0],values.size()};
+        return {&values[0], static_cast<index_type>(values.size())};
       }
       return mgis::get<span<real>>(p->second);
     }  // end of getNonUniformMaterialProperty
@@ -312,6 +314,7 @@ namespace mgis {
 
     mgis::span<real> getNonUniformExternalStateVariable(
         MaterialStateManager& m, const mgis::string_view& n) {
+      using index_type = span<real>::index_type;
       const auto p = getFieldHolderIterator(m.external_state_variables,n);
       mgis::raise_if(p == m.external_state_variables.end(),
                      "getNonUniformExternalStateVariable: "
@@ -323,7 +326,7 @@ namespace mgis {
                          n.to_string() + "' is uniform");
       if (mgis::holds_alternative<std::vector<real>>(p->second)) {
         auto& values = mgis::get<std::vector<real>>(p->second);
-        return {&values[0],values.size()};
+        return {&values[0],static_cast<index_type>(values.size())};
       }
       return mgis::get<span<real>>(p->second);
     }  // end of getUniformExternalStateVariable
@@ -331,6 +334,7 @@ namespace mgis {
     mgis::span<const real> getNonUniformExternalStateVariable(
         const MaterialStateManager& m, const mgis::string_view& n) {
       const auto p = getFieldHolderIterator(m.external_state_variables,n);
+      using index_type = span<const real>::index_type;
       mgis::raise_if(p == m.external_state_variables.end(),
                      "getNonUniformExternalStateVariable: "
                      "no external state variable named '" +
@@ -341,7 +345,7 @@ namespace mgis {
                          n.to_string() + "' is uniform");
       if (mgis::holds_alternative<std::vector<real>>(p->second)) {
         const auto& values = mgis::get<std::vector<real>>(p->second);
-        return {&values[0],values.size()};
+        return {&values[0], static_cast<index_type>(values.size())};
       }
       return mgis::get<span<real>>(p->second);
     }  // end of getUniformExternalStateVariable
