@@ -12,7 +12,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include<boost/python/module.hpp>
+#include <boost/python/module.hpp>
+#include "MGIS/Python/NumPySupport.hxx"
 
 // forward declarations
 void declareHypothesis();
@@ -23,6 +24,7 @@ void declareBehaviourData();
 void declareIntegrate();
 
 BOOST_PYTHON_MODULE(behaviour) {
+  mgis::python::initializeNumPy();
   declareHypothesis();
   declareVariable();
   declareBehaviour();

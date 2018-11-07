@@ -34,7 +34,7 @@ else(MGIS_USES_CONAN)
   target_link_libraries(py_mgis_behaviour
     PRIVATE
     MFrontGenericInterface
-    ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
+    ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
 endif(MGIS_USES_CONAN)
 
 if(MGIS_APPEND_SUFFIX)

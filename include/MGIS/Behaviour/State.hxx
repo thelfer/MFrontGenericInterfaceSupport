@@ -46,8 +46,6 @@ namespace mgis {
       State& operator=(const State&);
       //! \brief the underlying behaviour
       const Behaviour& b;
-      //! \brief value of the gradients
-      std::vector<real> gradients;
       /*!
        * \brief stored energy (computed by `@InternalEnergy` in `MFront`
        * files) This output is optional.
@@ -58,6 +56,8 @@ namespace mgis {
        * files) This output is optional.
        */
       real dissipated_energy;
+      //! \brief value of the gradients
+      std::vector<real> gradients;
       //! \brief values of the thermodynamic_forces
       std::vector<real> thermodynamic_forces;
       //! \brief values of the material properties

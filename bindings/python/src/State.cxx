@@ -13,14 +13,42 @@
  */
 
 #include <boost/python/class.hpp>
+#include "MGIS/Python/NumPySupport.hxx"
 #include "MGIS/Behaviour/State.hxx"
 
 void declareState();
+
+static boost::python::object State_getGradients(mgis::behaviour::State& s) {
+  return mgis::python::wrapInNumPyArray(s.gradients);
+}  // end of State_getGradients
+
+static boost::python::object State_getThermodynamicForces(mgis::behaviour::State& s) {
+  return mgis::python::wrapInNumPyArray(s.thermodynamic_forces);
+}  // end of State_getThermodynamicForces
+
+static boost::python::object State_getMaterialProperties(mgis::behaviour::State& s) {
+  return mgis::python::wrapInNumPyArray(s.material_properties);
+}  // end of State_getMaterialProperties
+
+static boost::python::object State_getInternalStateVariables(mgis::behaviour::State& s) {
+  return mgis::python::wrapInNumPyArray(s.internal_state_variables);
+}  // end of State_getInternalStateVariables
+
+static boost::python::object State_getExternalStateVariables(mgis::behaviour::State& s) {
+  return mgis::python::wrapInNumPyArray(s.external_state_variables);
+}  // end of State_getExternalStateVariables
 
 void declareState() {
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::State;
   boost::python::class_<State>("State", boost::python::no_init)
       .add_property("stored_energy", &State::stored_energy)
-      .add_property("dissipated_energy", &State::dissipated_energy);
-}  // end of declareState
+      .add_property("dissipated_energy", &State::dissipated_energy)
+      .add_property("gradients", &State_getGradients)
+      .add_property("thermodynamic_forces", &State_getThermodynamicForces)
+      .add_property("material_properties", &State_getMaterialProperties)
+      .add_property("internal_state_variables",
+                    &State_getInternalStateVariables)
+      .add_property("external_state_variables",
+                    &State_getExternalStateVariables);
+} // end of declareState
