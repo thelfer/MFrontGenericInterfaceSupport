@@ -2,6 +2,7 @@
 
 This project aims at proving tools (functions, classes, bindings,
 etc...) to handle behaviours written using `MFront` generic interface.
+For information about `MFront`, see <http://tfel.sourceforge.net>.
 
 Those tools are meant to be used by (`FEM`, `FFT`, etc.) solver
 developers. This tools are *not* linked to the `TFEL` libraries.
@@ -13,28 +14,43 @@ and proprietary codes.
 The project is build around the `MFrontGenericInterface` library. This
 library provides two main functions:
 
-- load `MFront` behaviours from external shared libraries and retrieve
-  meta data about the behaviour through the `mgis::behaviour::load`
-  function. All the relevant information about the behaviour are stored
-  in the `mgis::behaviour::Description` class.
-- provide generic function to handle material data (such as internal
-  state variables) at integration points and call `MFront` behaviours.
+- the `mgis::behaviour::load` functions loads `MFront` behaviours from
+  external shared libraries and retrieve all relevant meta data
+  function. Those relevant information are stored in the
+  `mgis::behaviour::Behaviour` class.
+- the `mgis::behaviour::integrate` integrates the behaviour over one
+  time step. The data associated with an integration point are handled
+  by the `mgis::behaviour::BehaviourData` class which contains the state
+  of the integration point at the beginning and at the end of the time
+  step.
+
+The library also supports handling a group of integration points though
+the `mgis::behaviour::MaterialStateManager` class.
 
 ## Bindings
 
+### Existing 
+
+The following bindings are available:
+
+- `c` binding (mostly complete)
+- `python` binding (under current work in the `master` branch)
+
+### Future bindings (contributors are welcomed)
+
 The following bindings are under consideration:
 
-- `python` binding
-- `c` binding
 - `fortran90` binding
 - `octave` binding
+- `julia` binding
 
 # Versions, branches
 
 - the `master` branch follows the evolution of the `master` branch of
   the `TFEL` project
-- the `rliv-1.0` follows the evolution of the 3.2.x series of the
-  `TFEL` project
+- the `rliv-1.0` follows the evolution of the 3.2.x series of the `TFEL`
+  project. Note that this branch is **not** compatible with
+  `TFEL-3.2.0`.
 
 # Acknowledgement
 
