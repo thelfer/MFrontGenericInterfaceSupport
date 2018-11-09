@@ -71,9 +71,6 @@ class IntegrateTest(unittest.TestCase):
             self.assertTrue(abs(p[i]-pref[i])<eps)
         
         pass
-
-def main(args):
-    pass
     
 if __name__ == '__main__':
     unittest.main()
