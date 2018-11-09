@@ -66,7 +66,7 @@ int main(const int argc, const char* const* argv) {
   // version
   const char* v;
   check_status(mgis_bv_behaviour_get_tfel_version(&v, b));
-  check_string(v, "3.2.0-dev", "invalid TFEL version");
+  check_string(v, TFEL_VERSION, "invalid TFEL version");
   // material properties
   mgis_size_type mps_size;
   check_status(mgis_bv_behaviour_get_number_of_material_properties(&mps_size, b));

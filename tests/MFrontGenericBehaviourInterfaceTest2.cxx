@@ -34,7 +34,7 @@ int main(const int argc, const char* const* argv) {
   check(d.behaviour == "FiniteStrainSingleCrystal", "invalid behaviour name");
   check(d.hypothesis == h, "invalid hypothesis");
   check(d.source == "FiniteStrainSingleCrystal.mfront", "invalid source");
-  check(d.tfel_version == "3.2.0-dev", "invalid TFEL version");
+  check(d.tfel_version == TFEL_VERSION, "invalid TFEL version");
   check(d.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR,
         "invalid behaviour type");
   check(d.kinematic == Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY,

@@ -34,7 +34,7 @@ int main(const int argc, const char* const* argv) {
   check(d.behaviour == "Gurson", "invalid behaviour name");
   check(d.hypothesis == h, "invalid hypothesis");
   check(d.source == "Gurson.mfront", "invalid source");
-  check(d.tfel_version == "3.2.0-dev", "invalid TFEL version");
+  check(d.tfel_version == TFEL_VERSION, "invalid TFEL version");
   check(d.mps.size() == 0, "invalid number of material properties");
   check(d.btype == Behaviour::STANDARDSTRAINBASEDBEHAVIOUR,
         "invalid behaviour type");

@@ -4,8 +4,11 @@ link_directories("${PROJECT_BINARY_DIR}/src")
 add_executable(MFrontGenericBehaviourInterfaceTest-c
   EXCLUDE_FROM_ALL
   MFrontGenericBehaviourInterfaceTest-c.c)
+target_compile_definitions(MFrontGenericBehaviourInterfaceTest-c
+  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
 target_link_libraries(MFrontGenericBehaviourInterfaceTest-c
   PRIVATE MFrontGenericInterface-c)
+
 add_executable(MFrontGenericBehaviourInterfaceTest2-c
   EXCLUDE_FROM_ALL
   MFrontGenericBehaviourInterfaceTest2-c.c)
