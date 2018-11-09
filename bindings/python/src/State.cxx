@@ -12,6 +12,9 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include<iostream>
+
+#include <boost/python/def.hpp>
 #include <boost/python/class.hpp>
 #include "MGIS/Python/NumPySupport.hxx"
 #include "MGIS/Behaviour/State.hxx"
@@ -38,6 +41,12 @@ static boost::python::object State_getExternalStateVariables(mgis::behaviour::St
   return mgis::python::wrapInNumPyArray(s.external_state_variables);
 }  // end of State_getExternalStateVariables
 
+static void State_setExternalStateVariable(mgis::behaviour::State& s,
+                                           const std::string& n,
+                                           const mgis::real v) {
+  mgis::behaviour::setExternalStateVariable(s, n, v);
+} // end of State_setExternalStateVariable
+
 void declareState() {
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::State;
@@ -51,4 +60,11 @@ void declareState() {
                     &State_getInternalStateVariables)
       .add_property("external_state_variables",
                     &State_getExternalStateVariables);
+  //
+  void (*ptr_setExternalStateVariable)(State&, const mgis::size_type,
+                                       const mgis::real) =
+      &mgis::behaviour::setExternalStateVariable;
+  boost::python::def("setExternalStateVariable", State_setExternalStateVariable,"toto");
+  boost::python::def("setExternalStateVariable", ptr_setExternalStateVariable);
+
 } // end of declareState

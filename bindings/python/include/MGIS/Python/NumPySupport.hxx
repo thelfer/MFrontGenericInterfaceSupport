@@ -15,7 +15,6 @@
 #ifndef LIB_MGIS_PYTHON_NUMPYSUPPORT_HXX
 #define LIB_MGIS_PYTHON_NUMPYSUPPORT_HXX
 
-#include <numpy/ndarrayobject.h>
 #include <vector>
 #include <boost/python/object.hpp>
 
@@ -23,14 +22,8 @@ namespace mgis {
 
   namespace python {
 
-#if PY_MAJOR_VERSION == 2
-    /*!
-     * \brief initialize NumPy
-     */
-    inline void initializeNumPy() { import_array(); }
-#else
-    inline void* initializeNumPy() { import_array(); }
-#endif
+    //! \brief initialize NumPy
+    void initializeNumPy();
 
     /*!
      * \brief create a ndarray object from a vector.
@@ -38,12 +31,7 @@ namespace mgis {
      * the vector.
      * \param[in] v: vector holding the values
      */
-    inline boost::python::object wrapInNumPyArray(std::vector<double>& v) {
-      npy_intp dims[1] = {v.size()};
-      auto* const arr = PyArray_SimpleNewFromData(1, dims, NPY_DOUBLE, &v[0]);
-      boost::python::handle<> handle(arr);
-      return boost::python::object(handle);
-    }  // end of wrapInNumPyArray
+    boost::python::object wrapInNumPyArray(std::vector<double>&);
 
   }  // end of namespace python
 

@@ -1,10 +1,12 @@
 add_library(py_mgis_behaviour MODULE
  behaviour-module.cxx
+ NumPySupport.cxx
  Hypothesis.cxx
  Variable.cxx
  Behaviour.cxx
  State.cxx
  BehaviourData.cxx
+ BehaviourDataView.cxx
  Integrate.cxx)
 
 if(WIN32)

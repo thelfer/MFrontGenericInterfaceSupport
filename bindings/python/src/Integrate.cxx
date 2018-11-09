@@ -18,12 +18,18 @@
 
 void declareIntegrate();
 
-static int integrateBehaviourData(mgis::behaviour::BehaviourData& d,
-                                  const mgis::behaviour::Behaviour& b) {
+static int integrateBehaviourData1(mgis::behaviour::BehaviourData& d,
+                                   const mgis::behaviour::Behaviour& b) {
   auto v = mgis::behaviour::make_view(d);
-  return mgis::behaviour::integrate(v, b);
+  const auto s = mgis::behaviour::integrate(v, b);
+  d.rdt = v.rdt;
+  return s;
 }  // end of integrateBehaviourData
 
 void declareIntegrate() {
-  boost::python::def("integrate", &integrateBehaviourData);
+  int (*integrate_ptr)(mgis::behaviour::BehaviourDataView&,
+                       const mgis::behaviour::Behaviour&) =
+      mgis::behaviour::integrate;
+  boost::python::def("integrate", &integrateBehaviourData1);
+  boost::python::def("integrate", integrate_ptr);
 }  // end of declareIntegrate

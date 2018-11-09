@@ -22,16 +22,20 @@ void declareBehaviourData();
 void declareBehaviourData() {
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::BehaviourData;
+  using mgis::behaviour::BehaviourDataView;
   // exporting the BehaviourData class
   boost::python::class_<BehaviourData>("BehaviourData",
                                        boost::python::init<const Behaviour&>())
-      .add_property("dt", &BehaviourData::dt)
-      .add_property("rdt", &BehaviourData::rdt)
+      .def_readwrite("dt", &BehaviourData::dt)
+      .def_readwrite("rdt", &BehaviourData::rdt)
       .add_property("s0", &BehaviourData::s0)
       .add_property("s1", &BehaviourData::s1);
   // free functions
   void (*ptr_update)(BehaviourData&) = &mgis::behaviour::update;
   void (*ptr_revert)(BehaviourData&) = &mgis::behaviour::revert;
+  BehaviourDataView (*ptr_make_view)(BehaviourData&) =
+      &mgis::behaviour::make_view;
   boost::python::def("update", ptr_update);
   boost::python::def("revert", ptr_revert);
+  boost::python::def("make_view", ptr_make_view);
 }  // end of declareBehaviourData

@@ -21,6 +21,7 @@ void declareVariable();
 void declareBehaviour();
 void declareState();
 void declareBehaviourData();
+void declareBehaviourDataView();
 void declareIntegrate();
 
 BOOST_PYTHON_MODULE(behaviour) {
@@ -30,5 +31,6 @@ BOOST_PYTHON_MODULE(behaviour) {
   declareBehaviour();
   declareState();
   declareBehaviourData();
+  declareBehaviourDataView();
   declareIntegrate();
 }  // end of module behaviour
