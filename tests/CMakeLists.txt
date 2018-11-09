@@ -11,15 +11,16 @@ add_executable(MFrontGenericBehaviourInterfaceTest
   MFrontGenericBehaviourInterfaceTest.cxx)
 target_link_libraries(MFrontGenericBehaviourInterfaceTest
   PRIVATE MFrontGenericInterface)
+target_compile_definitions(MFrontGenericBehaviourInterfaceTest
+  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
+
 add_executable(MFrontGenericBehaviourInterfaceTest2
   EXCLUDE_FROM_ALL
   MFrontGenericBehaviourInterfaceTest2.cxx)
-target_compile_definitions(MFrontGenericBehaviourInterfaceTest
+target_compile_definitions(MFrontGenericBehaviourInterfaceTest2
   PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
 target_link_libraries(MFrontGenericBehaviourInterfaceTest2
   PRIVATE MFrontGenericInterface)
-target_compile_definitions(MFrontGenericBehaviourInterfaceTest2
-  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
 
 add_executable(IntegrateTest
   EXCLUDE_FROM_ALL IntegrateTest.cxx)
