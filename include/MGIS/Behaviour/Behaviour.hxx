@@ -61,7 +61,7 @@ namespace mgis {
       //! pointer to the function implementing the behaviour
       BehaviourFctPtr b;
       //! \behaviour type
-      enum {
+      enum BehaviourType {
         GENERALBEHAVIOUR,
         STANDARDSTRAINBASEDBEHAVIOUR,
         STANDARDFINITESTRAINBEHAVIOUR,

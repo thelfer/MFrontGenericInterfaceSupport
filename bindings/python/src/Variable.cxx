@@ -47,12 +47,23 @@ void declareVariable();
 
 void declareVariable() {
   using mgis::behaviour::Variable;
+// wrapping the Variable::Type enum
+  boost::python::enum_<Variable::Type>("VariableType")
+      .value("Scalar", Variable::SCALAR)
+      .value("SCALAR", Variable::SCALAR)
+      .value("Vector", Variable::VECTOR)
+      .value("VECTOR", Variable::VECTOR)
+      .value("Stensor", Variable::STENSOR)
+      .value("STENSOR", Variable::STENSOR)
+      .value("Tensor", Variable::TENSOR)
+      .value("TENSOR", Variable::TENSOR);
+  // wrapping the Variable class
   boost::python::class_<Variable>("Variable")
       .def_readonly("name", &Variable::name, "the name of the variable")
-      .add_property(
-          "type", Variable_getType,
-          "the type of the variable. "
-          "Possible values are `Scalar`, `Vector`, `Stensor`, `Tensor`");
+      .add_property("type", &Variable::type, "the type of the variable.")
+      .def("getType", Variable_getType,
+           "the type of the variable. "
+           "Possible values are `Scalar`, `Vector`, `Stensor`, `Tensor`");
   // wrapping std::vector<Variable>
   mgis::python::initializeVectorConverter<std::vector<Variable>>();
   // free functions
