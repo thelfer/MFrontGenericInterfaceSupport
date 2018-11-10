@@ -66,7 +66,7 @@ static const char* Behaviour_getKinematic(const mgis::behaviour::Behaviour& b) {
 
 static const char* Behaviour_getSymmetry(const mgis::behaviour::Behaviour& b) {
   using mgis::behaviour::Behaviour;
-  switch (b.kinematic) {
+  switch (b.symmetry) {
     case Behaviour::ISOTROPIC:
       return "Isotropic";
       break;
