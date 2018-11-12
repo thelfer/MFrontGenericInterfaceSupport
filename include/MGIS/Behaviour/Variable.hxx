@@ -36,6 +36,13 @@ namespace mgis {
     };  // end of struct Description
 
     /*!
+     * \return a boolean stating that a variable with the given name
+     * is in the container.
+     * \param[in] vs: variables
+     * \param[in] n: name
+     */
+    MGIS_EXPORT bool contains(const std::vector<Variable> &, const string_view);
+    /*!
      * \return the variable with the given name
      * \param[in] vs: variables
      * \param[in] n: name

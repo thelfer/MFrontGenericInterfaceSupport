@@ -7,6 +7,8 @@ add_library(py_mgis_behaviour MODULE
  State.cxx
  BehaviourData.cxx
  BehaviourDataView.cxx
+ MaterialDataManager.cxx
+ MaterialStateManager.cxx
  Integrate.cxx)
 
 if(WIN32)

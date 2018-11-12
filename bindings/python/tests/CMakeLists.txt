@@ -49,3 +49,5 @@ endmacro(test_python_bindings)
 test_python_bindings(MFrontGenericBehaviourInterfaceTest)
 test_python_bindings(MFrontGenericBehaviourInterfaceTest2)
 test_python_bindings(IntegrateTest)
+test_python_bindings(IntegrateTest2)
+

@@ -15,6 +15,7 @@
 #include <boost/python/def.hpp>
 #include "MGIS/Behaviour/Integrate.hxx"
 #include "MGIS/Behaviour/BehaviourData.hxx"
+#include "MGIS/Behaviour/MaterialDataManager.hxx"
 
 void declareIntegrate();
 
@@ -27,9 +28,13 @@ static int integrateBehaviourData1(mgis::behaviour::BehaviourData& d,
 }  // end of integrateBehaviourData
 
 void declareIntegrate() {
-  int (*integrate_ptr)(mgis::behaviour::BehaviourDataView&,
-                       const mgis::behaviour::Behaviour&) =
+  int (*integrate_ptr1)(mgis::behaviour::BehaviourDataView&,
+                        const mgis::behaviour::Behaviour&) =
+      mgis::behaviour::integrate;
+  int (*integrate_ptr2)(mgis::behaviour::MaterialDataManager&, const mgis::real,
+                        const mgis::size_type, const mgis::size_type) =
       mgis::behaviour::integrate;
   boost::python::def("integrate", &integrateBehaviourData1);
-  boost::python::def("integrate", integrate_ptr);
+  boost::python::def("integrate", integrate_ptr1);
+  boost::python::def("integrate", integrate_ptr2);
 }  // end of declareIntegrate

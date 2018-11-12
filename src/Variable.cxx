@@ -31,6 +31,12 @@ namespace mgis {
       return getTensorSize(h);
     }  // end of getVariableSize
 
+    bool contains(const std::vector<Variable> &vs, const string_view n) {
+      return std::find_if(vs.begin(), vs.end(), [&n](const Variable &v) {
+               return v.name == n;
+             }) != vs.end();
+    } // end of contains
+
     const Variable &getVariable(const std::vector<Variable> &vs,
                                 const string_view n) {
       const auto p =
@@ -40,29 +46,28 @@ namespace mgis {
         mgis::raise("getVariable: no variable named '" + std::string(n) + "'");
       }
       return *p;
-    }  // end of getVariable
+      }  // end of getVariable
 
-    size_type getArraySize(const std::vector<Variable> &vs,
-                           const Hypothesis h) {
-      auto s = size_type{};
-      for (const auto &v : vs) {
-        s += getVariableSize(v, h);
-      }
-      return s;
-    }  // end of getArraySize
-
-    size_type getVariableOffset(const std::vector<Variable> &vs,
-                                const string_view n,
-                                const Hypothesis h) {
-      auto o = size_type{};
-      for (const auto &v : vs) {
-        if (v.name == n) {
-          return o;
+      size_type getArraySize(const std::vector<Variable> &vs,
+                             const Hypothesis h) {
+        auto s = size_type{};
+        for (const auto &v : vs) {
+          s += getVariableSize(v, h);
         }
-        o += getVariableSize(v, h);
-      }
-      raise("getVariableOffset: no variable named '" + std::string(n) + "'");
-    }  // end of getVariableOffset
+        return s;
+      }  // end of getArraySize
+
+      size_type getVariableOffset(const std::vector<Variable> &vs,
+                                  const string_view n, const Hypothesis h) {
+        auto o = size_type{};
+        for (const auto &v : vs) {
+          if (v.name == n) {
+            return o;
+          }
+          o += getVariableSize(v, h);
+        }
+        raise("getVariableOffset: no variable named '" + std::string(n) + "'");
+      }  // end of getVariableOffset
 
   }  // end of namespace behaviour
 
