@@ -1,4 +1,66 @@
-add_library(py_mgis_behaviour MODULE
+# store the location of the python modules in the MGIS_PYTHON_MODULES_INSTALL_DIRECTORY variable
+if(MGIS_APPEND_SUFFIX)
+  if(WIN32)
+    set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+        bin/${PYTHON_LIBRARY}/site-packages/mgis_${MGIS_SUFFIX_FOR_PYTHON_MODULES})
+  else(WIN32)
+    set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+        "lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/mgis_${MGIS_SUFFIX_FOR_PYTHON_MODULES}")
+  endif(WIN32)
+else(MGIS_APPEND_SUFFIX)
+  if(WIN32)
+    set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+        "bin/${PYTHON_LIBRARY}/site-packages/mgis")
+  else(WIN32)
+    set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+        "lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/mgis")
+  endif(WIN32)
+endif(MGIS_APPEND_SUFFIX)
+
+function(mgis_python_module name output_name)
+  if(${ARGC} LESS 3)
+    message(FATAL_ERROR "mgis_python_module: no source specified")
+  endif(${ARGC} LESS 3)
+  set(module "py_${name}")
+  add_library(${module} MODULE ${ARGN})
+  if(WIN32)
+    set_target_properties(${module} PROPERTIES
+      COMPILE_FLAGS "-DHAVE_ROUND")
+    set_target_properties(${module} PROPERTIES SUFFIX ".pyd")
+  elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set_target_properties(${module} PROPERTIES SUFFIX ".so")
+  endif(WIN32)
+  set_target_properties(${module} PROPERTIES PREFIX "")
+  set_target_properties(${module} PROPERTIES OUTPUT_NAME "${output_name}")
+  # include directories
+  target_include_directories(${module}
+    SYSTEM
+    PRIVATE "${CMAKE_SOURCE_DIR}/bindings/python/include"
+    PRIVATE "${Boost_INCLUDE_DIRS}"
+    PRIVATE "${PYTHON_INCLUDE_DIRS}")
+  # link flags
+  if(MGIS_USES_CONAN)
+    target_link_libraries(${module}
+      PRIVATE
+      MFrontGenericInterface
+      ${CONAN_LIBS} ${PYTHON_LIBRARIES})
+  else(MGIS_USES_CONAN)
+    target_link_libraries(${module}
+      PRIVATE
+      MFrontGenericInterface
+      ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
+  endif(MGIS_USES_CONAN)
+  # installation
+  install(TARGETS ${module}
+    DESTINATION ${MGIS_PYTHON_MODULES_INSTALL_DIRECTORY}
+    COMPONENT python_bindings)
+endfunction(mgis_python_module)
+
+mgis_python_module(mgis _mgis
+ mgis-module.cxx
+ ThreadPool.cxx)
+
+mgis_python_module(mgis_behaviour behaviour
  behaviour-module.cxx
  NumPySupport.cxx
  Hypothesis.cxx
@@ -11,54 +73,7 @@ add_library(py_mgis_behaviour MODULE
  MaterialStateManager.cxx
  Integrate.cxx)
 
-if(WIN32)
-  set_target_properties(py_mgis_behaviour PROPERTIES
-    COMPILE_FLAGS "-DHAVE_ROUND")
-  set_target_properties(py_mgis_behaviour PROPERTIES SUFFIX ".pyd")
-elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  set_target_properties(py_mgis_behaviour PROPERTIES SUFFIX ".so")
-endif(WIN32)
-set_target_properties(py_mgis_behaviour PROPERTIES PREFIX "")
-set_target_properties(py_mgis_behaviour PROPERTIES OUTPUT_NAME behaviour)
+install(FILES __init__.py
+        DESTINATION ${MGIS_PYTHON_MODULES_INSTALL_DIRECTORY}
+        COMPONENT python_bindings)
 
-# include directories
-target_include_directories(py_mgis_behaviour
-  SYSTEM
-  PRIVATE "${CMAKE_SOURCE_DIR}/bindings/python/include"
-  PRIVATE "${Boost_INCLUDE_DIRS}"
-  PRIVATE "${PYTHON_INCLUDE_DIRS}")
-
-# link flags
-if(MGIS_USES_CONAN)
-  target_link_libraries(py_mgis_behaviour
-    PRIVATE
-    MFrontGenericInterface
-    ${CONAN_LIBS} ${PYTHON_LIBRARIES})
-else(MGIS_USES_CONAN)
-  target_link_libraries(py_mgis_behaviour
-    PRIVATE
-    MFrontGenericInterface
-    ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
-endif(MGIS_USES_CONAN)
-
-if(MGIS_APPEND_SUFFIX)
-  if(WIN32)
-    install(TARGETS py_mgis_behaviour
-      DESTINATION bin/${PYTHON_LIBRARY}/site-packages/mgis_${MGIS_SUFFIX_FOR_PYTHON_MODULES}
-      COMPONENT python_bindings)
-  else(WIN32)
-    install(TARGETS py_mgis_behaviour
-      DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/mgis_${MGIS_SUFFIX_FOR_PYTHON_MODULES}
-      COMPONENT python_bindings)
-  endif(WIN32)
-else(MGIS_APPEND_SUFFIX)
-  if(WIN32)
-    install(TARGETS py_mgis_behaviour
-      DESTINATION bin/${PYTHON_LIBRARY}/site-packages/mgis
-      COMPONENT python_bindings)
-  else(WIN32)
-    install(TARGETS py_mgis_behaviour
-      DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/mgis
-      COMPONENT python_bindings)
-  endif(WIN32)
-endif(MGIS_APPEND_SUFFIX)
