@@ -132,6 +132,34 @@ void declareBehaviour() {
       &mgis::behaviour::setParameter;
   void (*setParameter3)(const Behaviour&, const std::string&, const unsigned short) =
       &mgis::behaviour::setParameter;
+  double (*getParameterDefaultValue1)(const Behaviour&, const std::string&) =
+      &mgis::behaviour::getParameterDefaultValue<double>;
+  int (*getParameterDefaultValue2)(const Behaviour&, const std::string&) =
+      &mgis::behaviour::getParameterDefaultValue<int>;
+  unsigned short (*getParameterDefaultValue3)(const Behaviour&,
+                                              const std::string&) =
+      &mgis::behaviour::getParameterDefaultValue<unsigned short>;
+  bool (*hasBounds)(const Behaviour &, const std::string &) =
+      mgis::behaviour::hasBounds;
+  bool (*hasLowerBound)(const Behaviour &, const std::string &) =
+      mgis::behaviour::hasLowerBound;
+  bool (*hasUpperBound)(const Behaviour &, const std::string &) =
+      mgis::behaviour::hasUpperBound;
+  long double (*getLowerBound)(const Behaviour &, const std::string &) =
+      mgis::behaviour::getLowerBound;
+  long double (*getUpperBound)(const Behaviour &, const std::string &) =
+      mgis::behaviour::getUpperBound;
+  bool (*hasPhysicalBounds)(const Behaviour &, const std::string &) =
+      mgis::behaviour::hasPhysicalBounds;
+  bool (*hasLowerPhysicalBound)(const Behaviour &, const std::string &) =
+      mgis::behaviour::hasLowerPhysicalBound;
+  bool (*hasUpperPhysicalBound)(const Behaviour &, const std::string &) =
+      mgis::behaviour::hasUpperPhysicalBound;
+  long double (*getLowerPhysicalBound)(const Behaviour &, const std::string &) =
+      mgis::behaviour::getLowerPhysicalBound;
+  long double (*getUpperPhysicalBound)(const Behaviour &, const std::string &) =
+      mgis::behaviour::getUpperPhysicalBound;
+
   // wrapping the Behaviour::Symmetry enum
   boost::python::enum_<Behaviour::Symmetry>("BehaviourSymmetry")
       .value("ISOTROPIC", Behaviour::Symmetry::ISOTROPIC)
@@ -226,11 +254,39 @@ void declareBehaviour() {
                     "list of unsigned short parameters")
       .def("setParameter", setParameter1)
       .def("setIntegerParameter", setParameter2)
-      .def("setUnsignedShortParameter", setParameter3);
+      .def("setUnsignedShortParameter", setParameter3)
+      .def("getParameterDefaultValue", getParameterDefaultValue1)
+      .def("getIntegerParameterDefaultValue", getParameterDefaultValue2)
+      .def("getUnsignedShortParameterDefaultValue", getParameterDefaultValue3)
+      .def("hasBounds", hasBounds)
+      .def("hasLowerBound", hasLowerBound)
+      .def("hasUpperBound", hasUpperBound)
+      .def("getLowerBound ", getLowerBound)
+      .def("getUpperBound", getUpperBound)
+      .def("hasPhysicalBounds", hasPhysicalBounds)
+      .def("hasLowerPhysicalBound", hasLowerPhysicalBound)
+      .def("hasUpperPhysicalBound", hasUpperPhysicalBound)
+      .def("getLowerPhysicalBound ", getLowerPhysicalBound)
+      .def("getUpperPhysicalBound ", getUpperPhysicalBound);
   // wrapping free functions
   boost::python::def("load", load_ptr);
   boost::python::def("setParameter", setParameter1);
   boost::python::def("setIntegerParameter", setParameter2);
   boost::python::def("setUnsignedShortParameter", setParameter3);
+  boost::python::def("getParameterDefaultValue", getParameterDefaultValue1);
+  boost::python::def("getIntegerParameterDefaultValue",
+                     getParameterDefaultValue2);
+  boost::python::def("getUnsignedShortParameterDefaultValue",
+                     getParameterDefaultValue3);
+  boost::python::def("hasBounds", hasBounds);
+  boost::python::def("hasLowerBound", hasLowerBound);
+  boost::python::def("hasUpperBound", hasUpperBound);
+  boost::python::def("getLowerBound ", getLowerBound);
+  boost::python::def("getUpperBound", getUpperBound);
+  boost::python::def("hasPhysicalBounds", hasPhysicalBounds);
+  boost::python::def("hasLowerPhysicalBound", hasLowerPhysicalBound);
+  boost::python::def("hasUpperPhysicalBound", hasUpperPhysicalBound);
+  boost::python::def("getLowerPhysicalBound ", getLowerPhysicalBound);
+  boost::python::def("getUpperPhysicalBound ", getUpperPhysicalBound);
 
 }  // end of declareBehaviour

@@ -134,6 +134,104 @@ namespace mgis {
     MGIS_EXPORT void setParameter(const Behaviour &,
                                   const std::string &,
                                   const unsigned short);
+    /*!
+     * \return the default value of a parameter
+     * \param[in] b: behaviour description
+     * \param[in] n: parameter name
+     */
+    template <typename T>
+    T getParameterDefaultValue(const Behaviour &, const std::string &);
+
+    /*!
+     * \return the default value of a parameter
+     * \param[in] b: behaviour description
+     * \param[in] n: parameter name
+     */
+    template <>
+    MGIS_EXPORT double getParameterDefaultValue<double>(const Behaviour &,
+                                                        const std::string &);
+    /*!
+     * \return the default value of a parameter
+     * \param[in] b: behaviour description
+     * \param[in] n: parameter name
+     */
+    template <>
+    MGIS_EXPORT int getParameterDefaultValue<int>(const Behaviour &,
+                                                  const std::string &);
+    /*!
+     * \return the default value of a parameter
+     * \param[in] b: behaviour description
+     * \param[in] n: parameter name
+     */
+    template <>
+    MGIS_EXPORT unsigned short getParameterDefaultValue<unsigned short>(
+        const Behaviour &, const std::string &);
+    /*!
+     * \return true if the given variable has bounds
+     * \param[in] b: behaviour
+     * \param[in] v: variable name
+     */
+    MGIS_EXPORT bool hasBounds(const Behaviour &, const std::string &);
+    /*!
+     * \return true if the given variable has a lower bound
+     * \param[in] b: behaviour
+     * \param[in] v: variable name
+     */
+    MGIS_EXPORT bool hasLowerBound(const Behaviour &, const std::string &);
+    /*!
+     * \return true if the given variable has a upper bound
+     * \param[in] b: behaviour
+     * \param[in] v: variable name
+     */
+    MGIS_EXPORT bool hasUpperBound(const Behaviour &, const std::string &);
+    /*!
+     * \return the lower bound of the given variable
+     * \param[in] b: behaviour
+     * \param[in] v: variable name
+     */
+    MGIS_EXPORT long double getLowerBound(const Behaviour &,
+                                          const std::string &);
+    /*!
+     * \return the upper bound of the given variable
+     * \param[in] b: behaviour
+     * \param[in] v: variable name
+     */
+    MGIS_EXPORT long double getUpperBound(const Behaviour &,
+                                          const std::string &);
+    /*!
+     * \return true if the given variable has bounds
+     * \param[in] b: behaviour
+     * \param[in] v: variable name
+     */
+    MGIS_EXPORT bool hasPhysicalBounds(const Behaviour &, const std::string &);
+    /*!
+     * \return true if the given variable has a lower physical bound
+     * \param[in] b: behaviour
+     * \param[in] v: variable name
+     */
+    MGIS_EXPORT bool hasLowerPhysicalBound(const Behaviour &,
+                                           const std::string &);
+    /*!
+     * \return true if the given variable has a upper physical bound
+     * \param[in] b: behaviour
+     * \param[in] v: variable name
+     */
+    MGIS_EXPORT bool hasUpperPhysicalBound(const Behaviour &,
+                                           const std::string &);
+    /*!
+     * \return the lower bound of the given variable
+     * \param[in] b: behaviour
+     * \param[in] v: variable name
+     */
+    MGIS_EXPORT long double getLowerPhysicalBound(const Behaviour &,
+                                                  const std::string &);
+    /*!
+     * \return the upper bound of the given variable
+     * \param[in] b: behaviour
+     * \param[in] v: variable name
+     */
+    MGIS_EXPORT long double getUpperPhysicalBound(const Behaviour &,
+                                                  const std::string &);
 
   }  // end of namespace behaviour
 

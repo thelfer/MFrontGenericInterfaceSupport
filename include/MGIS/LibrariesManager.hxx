@@ -82,7 +82,7 @@ namespace mgis {
     std::string getSource(const std::string &, const std::string &);
     /*!
      * \return the function implementing the behaviour
-     * \param[in] l: name of the library
+     * \param[in] l: library
      * \param[in] b: behaviour name
      * \param[in] h: hypothesis
      */
@@ -97,8 +97,8 @@ namespace mgis {
      * - 1: strain based behaviour
      * - 2: standard finite strain behaviour
      * - 3: cohesive zone model
-     * \param[in] l : name of the library
-     * \param[in] b : behaviour name
+     * \param[in] l: library
+     * \param[in] b: behaviour name
      */
     unsigned short getBehaviourType(const std::string &, const std::string &);
     /*!
@@ -112,8 +112,8 @@ namespace mgis {
      * - 4: ptest finite strain kinematic (eto-pk1)
      * - 5: Green-Lagrange strain
      * - 6: Miehe Apel Lambrecht logarithmic strain framework
-     * \param[in] l : name of the library
-     * \param[in] f : behaviour name
+     * \param[in] l: library
+     * \param[in] f: behaviour name
      */
     unsigned short getBehaviourKinematic(const std::string &,
                                          const std::string &);
@@ -122,8 +122,8 @@ namespace mgis {
      * The value returned has the following meaning:
      * - 0: isotropic behaviour
      * - 1: orthotropic behaviour
-     * \param[in] l : name of the library
-     * \param[in] b : behaviour name
+     * \param[in] l: library
+     * \param[in] b: behaviour name
      */
     unsigned short getBehaviourSymmetry(const std::string &,
                                         const std::string &);
@@ -132,8 +132,8 @@ namespace mgis {
      * The value returned has the following meaning:
      * - 0: isotropic elastic stiffness
      * - 1: orthotropic elastic stiffness
-     * \param[in] l : name of the library
-     * \param[in] b : behaviour name
+     * \param[in] l: library
+     * \param[in] b: behaviour name
      */
     unsigned short getElasticStiffnessSymmetry(const std::string &,
                                                const std::string &);
@@ -150,7 +150,7 @@ namespace mgis {
     /*!
      * \return true if a behaviour generated throught the aster
      * interface requires a offset for the elastic properties
-     * \param[in] l: name of the library
+     * \param[in] l: library
      * \param[in] b: behaviour name
      * \param[in] h: modelling hypothesis
      */
@@ -236,11 +236,11 @@ namespace mgis {
                                                             const std::string &,
                                                             const Hypothesis);
     /*!
-     * \param[in] l : name of the library
-     * \param[in] s : name of function or mechanical behaviour
-     * \param[in] h : modelling hypothesis
-     * \param[in] p : parameter name
-     * \param[in] v : value
+     * \param[in] l: library
+     * \param[in] s: name of function or mechanical behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] p: parameter name
+     * \param[in] v: value
      */
     void setParameter(const std::string &,
                       const std::string &,
@@ -249,11 +249,11 @@ namespace mgis {
                       const double);
     /*!
      * set the value of an integer parameter
-     * \param[in] l : name of the library
-     * \param[in] s : name of function or mechanical behaviour
-     * \param[in] h : modelling hypothesis
-      * \param[in] p : parameter name
-     * \param[in] v : value
+     * \param[in] l: library
+     * \param[in] s: name of function or mechanical behaviour
+     * \param[in] h: modelling hypothesis
+      * \param[in] p: parameter name
+     * \param[in] v: value
      */
     void setParameter(const std::string &,
                       const std::string &,
@@ -262,11 +262,11 @@ namespace mgis {
                       const int);
     /*!
      * set the value of an unsigned short parameter
-     * \param[in] l : name of the library
-     * \param[in] s : name of function or mechanical behaviour
-     * \param[in] h : modelling hypothesis
-     * \param[in] p : parameter name
-     * \param[in] v : value
+     * \param[in] l: library
+     * \param[in] s: name of function or mechanical behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] p: parameter name
+     * \param[in] v: value
      */
     void setParameter(const std::string &,
                       const std::string &,
@@ -274,9 +274,9 @@ namespace mgis {
                       const std::string &,
                       const unsigned short);
     /*!
-     * \param[in] l : name of the library
-     * \param[in] f : law name
-     * \param[in] h : modelling hypothesis
+     * \param[in] l: library
+     * \param[in] f: law name
+     * \param[in] h: modelling hypothesis
      */
     std::vector<std::string> getParametersNames(const std::string &,
                                                 const std::string &,
@@ -289,13 +289,156 @@ namespace mgis {
      * - 1: integer value
      * - 2: unsigned short value
      *
-     * \param[in] l : name of the library
-     * \param[in] f : law name
-     * \param[in] h : modelling hypothesis
+     * \param[in] l: library
+     * \param[in] f: law name
+     * \param[in] h: modelling hypothesis
      */
     std::vector<int> getParametersTypes(const std::string &,
                                         const std::string &,
                                         const Hypothesis);
+    /*!
+     * \brief get the default value of a double parameter
+     * \param[in] l: library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] p: parameter name
+     */
+    double getParameterDefaultValue(const std::string &,
+                                    const std::string &,
+                                    const Hypothesis,
+                                    const std::string &);
+    /*!
+     * \brief get the default value of an integer parameter
+     * \param[in] l: library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] p: parameter name
+     */
+    int getIntegerParameterDefaultValue(const std::string &,
+                                        const std::string &,
+                                        const Hypothesis,
+                                        const std::string &);
+    /*!
+     * \brief get the default value of an unsigned short parameter
+     * \param[in] l: library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] p: parameter name
+     */
+    unsigned short getUnsignedShortParameterDefaultValue(const std::string &,
+                                                         const std::string &,
+                                                         const Hypothesis,
+                                                         const std::string &);
+    /*!
+     * \return true if the given variable has bounds
+     * \param[in] l: name of the library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: variable name
+     */
+    bool hasBounds(const std::string &,
+                   const std::string &,
+                   const Hypothesis,
+                   const std::string &);
+    /*!
+     * \return true if the given variable has a lower bound
+     * \param[in] l: name of the library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: variable name
+     */
+    bool hasLowerBound(const std::string &,
+                       const std::string &,
+                       const Hypothesis,
+                       const std::string &);
+    /*!
+     * \return true if the given variable has a upper bound
+     * \param[in] l: name of the library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: variable name
+     */
+    bool hasUpperBound(const std::string &,
+                       const std::string &,
+                       const Hypothesis,
+                       const std::string &);
+    /*!
+     * \return the lower bound of the given variable
+     * \param[in] l: name of the library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: variable name
+     */
+    long double getLowerBound(const std::string &,
+                              const std::string &,
+                              const Hypothesis,
+                              const std::string &);
+    /*!
+     * \return the upper bound of the given variable
+     * \param[in] l: name of the library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: variable name
+     */
+    long double getUpperBound(const std::string &,
+                              const std::string &,
+                              const Hypothesis,
+                              const std::string &);
+    /*!
+     * \return true if the given variable has bounds
+     * \param[in] l: name of the library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: variable name
+     */
+    bool hasPhysicalBounds(const std::string &,
+                           const std::string &,
+                           const Hypothesis,
+                           const std::string &);
+    /*!
+     * \return true if the given variable has a lower physical bound
+     * \param[in] l: name of the library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: variable name
+     */
+    bool hasLowerPhysicalBound(const std::string &,
+                               const std::string &,
+                               const Hypothesis,
+                               const std::string &);
+    /*!
+     * \return true if the given variable has a upper physical bound
+     * \param[in] l: name of the library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: variable name
+     */
+    bool hasUpperPhysicalBound(const std::string &,
+                               const std::string &,
+                               const Hypothesis,
+                               const std::string &);
+    /*!
+     * \return the lower bound of the given variable
+     * \param[in] l: name of the library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: variable name
+     */
+    long double getLowerPhysicalBound(const std::string &,
+                                      const std::string &,
+                                      const Hypothesis,
+                                      const std::string &);
+    /*!
+     * \return the upper bound of the given variable
+     * \param[in] l: name of the library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: variable name
+     */
+    long double getUpperPhysicalBound(const std::string &,
+                                      const std::string &,
+                                      const Hypothesis,
+                                      const std::string &);
 
    private:
     //! \brief constructor
@@ -335,6 +478,12 @@ namespace mgis {
     const T *extract(const std::string &,
                      const std::string &,
                      const std::string &);
+    /*!
+     * \return the given symbol exists.
+     * \param[in] l: library name
+     * \param[in] n: symbol name
+     */
+    bool contains(const std::string &, const std::string &);
     /*!
      * \return the adress of the given symbol. If no symbol is found, a
      * null pointer is returned.
