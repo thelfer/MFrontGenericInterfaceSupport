@@ -281,12 +281,12 @@ void declareBehaviour() {
   boost::python::def("hasBounds", hasBounds);
   boost::python::def("hasLowerBound", hasLowerBound);
   boost::python::def("hasUpperBound", hasUpperBound);
-  boost::python::def("getLowerBound ", getLowerBound);
+  boost::python::def("getLowerBound", getLowerBound);
   boost::python::def("getUpperBound", getUpperBound);
   boost::python::def("hasPhysicalBounds", hasPhysicalBounds);
   boost::python::def("hasLowerPhysicalBound", hasLowerPhysicalBound);
   boost::python::def("hasUpperPhysicalBound", hasUpperPhysicalBound);
-  boost::python::def("getLowerPhysicalBound ", getLowerPhysicalBound);
-  boost::python::def("getUpperPhysicalBound ", getUpperPhysicalBound);
+  boost::python::def("getLowerPhysicalBound", getLowerPhysicalBound);
+  boost::python::def("getUpperPhysicalBound", getUpperPhysicalBound);
 
 }  // end of declareBehaviour
