@@ -201,7 +201,136 @@ mgis_bv_behaviour_get_number_of_external_state_variables(
  * \param[in] i: external state variable index
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_external_state_variable_name(
-    const char**, const mgis_bv_Behaviour* const, const mgis_size_type);
+    const char **, const mgis_bv_Behaviour *const, const mgis_size_type);
+/*!
+ * \brief set the value of a parameter
+ * \param[in] b: behaviour description
+ * \param[in] n: parameter name
+ * \param[in] v: parameter value
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_set_parameter(
+    const mgis_bv_Behaviour *const, const char *const, const double);
+/*!
+ * \brief set the value of a parameter
+ * \param[in] b: behaviour description
+ * \param[in] n: parameter name
+ * \param[in] v: parameter value
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_set_integer_parameter(
+    const mgis_bv_Behaviour *const, const char *const, const int);
+/*!
+ * \brief set the value of a parameter
+ * \param[in] b: behaviour description
+ * \param[in] n: parameter name
+ * \param[in] v: parameter value
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_set_unsigned_short_parameter(
+    const mgis_bv_Behaviour *const, const char *const, const unsigned short);
+/*!
+ * \brief grant access to the default value of a parameter
+ * \param[out] v: default value of the parameter
+ * \param[in] b: behaviour description
+ * \param[in] n: parameter name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_parameter_default_value(
+    double *const, const mgis_bv_Behaviour *const, const char *const);
+/*!
+ * \brief grant access to the default value of a parameter
+ * \param[out] v: default value of the parameter
+ * \param[in] b: behaviour description
+ * \param[in] n: parameter name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_integer_parameter_default_value(
+    int *const, const mgis_bv_Behaviour *const, const char *const);
+/*!
+ * \brief grant access to the default value of a parameter
+ * \param[out] v: default value of the parameter
+ * \param[in] b: behaviour description
+ * \param[in] n: parameter name
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_unsigned_short_parameter_default_value(
+    unsigned short *const, const mgis_bv_Behaviour *const, const char *const);
+/*!
+ * \brief return true if the given variable has bounds
+ * \param[out] r: returned value
+ * \param[in] b: behaviour
+ * \param[in] n: variable name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_has_bounds(
+    int* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return true if the given variable has a lower bound
+ * \param[out] r: returned value
+ * \param[in] b: behaviour
+ * \param[in] n: variable name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_has_lower_bound(
+    int* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return true if the given variable has a upper bound
+ * \param[out] r: returned value
+ * \param[in] b: behaviour
+ * \param[in] n: variable name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_has_upper_bound(
+    int* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return the lower bound of the given variable
+ * \param[out] v: returned value
+ * \param[in] b: behaviour
+ * \param[in] n: variable name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_lower_bound(
+    long double* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return the upper bound of the given variable
+ * \param[out] v: returned value
+ * \param[in] b: behaviour
+ * \param[in] n: variable name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_upper_bound(
+    long double* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return true if the given variable has physical bounds
+ * \param[out] r: returned value
+ * \param[in] b: behaviour
+ * \param[in] n: variable name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_has_physical_bounds(
+    int* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return true if the given variable has a lower physical bound
+ * \param[out] r: returned value
+ * \param[in] b: behaviour
+ * \param[in] n: variable name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_has_lower_physical_bound(
+    int* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return true if the given variable has a upper physical bound
+ * \param[out] r: returned value
+ * \param[in] b: behaviour
+ * \param[in] n: variable name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_has_upper_physical_bound(
+    int* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return the lower physical bound of the given variable
+ * \param[out] v: returned value
+ * \param[in] b: behaviour
+ * \param[in] n: variable name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_lower_physical_bound(
+    long double* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return the upper physical bound of the given variable
+ * \param[out] v: returned value
+ * \param[in] b: behaviour
+ * \param[in] n: variable name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_upper_physical_bound(
+    long double* const, const mgis_bv_Behaviour* const, const char* const);
 /*!
  * \brief free the memory associated with the given behaviour.
  * \param[in,out] b: behaviour

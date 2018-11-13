@@ -488,8 +488,9 @@ namespace mgis {
                                                     const std::string &p) {
     const auto pn = decomposeVariableName(p);
     const auto hn = toString(h);
-    return *(this->extract<double>(l, b + "_" + hn + "_ParameterDefaultValue",
-                                   b + "_ParameterDefaultValue"));
+    return *(this->extract<double>(
+        l, b + "_" + hn + "_" + pn + "_ParameterDefaultValue",
+        b + "_" + pn + "_ParameterDefaultValue"));
   }  // end of LibrariesManager::getParameterDefaultValue
 
   int LibrariesManager::getIntegerParameterDefaultValue(const std::string &l,
@@ -498,8 +499,9 @@ namespace mgis {
                                                         const std::string &p) {
     const auto pn = decomposeVariableName(p);
     const auto hn = toString(h);
-    return *(this->extract<int>(l, b + "_" + hn + "_ParameterDefaultValue",
-                                b + "_ParameterDefaultValue"));
+    return *(this->extract<int>(
+        l, b + "_" + hn + "_" + pn + "_ParameterDefaultValue",
+        b + "_" + pn + "_ParameterDefaultValue"));
   }  // end of LibrariesManager::getIntegerParameterDefaultValue
 
   unsigned short LibrariesManager::getUnsignedShortParameterDefaultValue(
@@ -510,8 +512,8 @@ namespace mgis {
     const auto pn = decomposeVariableName(p);
     const auto hn = toString(h);
     return *(this->extract<unsigned short>(
-        l, b + "_" + hn + "_ParameterDefaultValue",
-        b + "_ParameterDefaultValue"));
+        l, b + "_" + hn + "_" + pn + "_ParameterDefaultValue",
+        b + "_" + pn + "_ParameterDefaultValue"));
   }  // end of LibrariesManager::getUnsignedShortParameterDefaultValue
 
   bool LibrariesManager::hasBounds(const std::string &l,

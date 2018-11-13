@@ -306,28 +306,28 @@ namespace mgis {
                       const std::string &n,
                       const double v) {
       auto &lm = mgis::LibrariesManager::get();
-      lm.setParameter(b.library, b.function, b.hypothesis, n, v);
+      lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
     } // end of setParameter
 
     void setParameter(const Behaviour &b,
                       const std::string &n,
                       const int v) {
       auto &lm = mgis::LibrariesManager::get();
-      lm.setParameter(b.library, b.function, b.hypothesis, n, v);
+      lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
     } // end of setParameter
 
     void setParameter(const Behaviour &b,
                       const std::string &n,
                       const unsigned short v) {
       auto &lm = mgis::LibrariesManager::get();
-      lm.setParameter(b.library, b.function, b.hypothesis, n, v);
+      lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
     } // end of setParameter
 
     template <>
     double getParameterDefaultValue<double>(const Behaviour &b,
                                             const std::string &n) {
       auto &lm = mgis::LibrariesManager::get();
-      return lm.getParameterDefaultValue(b.library, b.function, b.hypothesis,
+      return lm.getParameterDefaultValue(b.library, b.behaviour, b.hypothesis,
                                          n);
     }  // end of getParameterDefaultValue<double>
 
@@ -335,7 +335,7 @@ namespace mgis {
     int getParameterDefaultValue<int>(const Behaviour &b,
                                       const std::string &n) {
       auto &lm = mgis::LibrariesManager::get();
-      return lm.getIntegerParameterDefaultValue(b.library, b.function,
+      return lm.getIntegerParameterDefaultValue(b.library, b.behaviour,
                                                 b.hypothesis, n);
     }  // end of getParameterDefaultValue<int>
 
@@ -343,60 +343,60 @@ namespace mgis {
     unsigned short getParameterDefaultValue<unsigned short>(
         const Behaviour &b, const std::string &n) {
       auto &lm = mgis::LibrariesManager::get();
-      return lm.getUnsignedShortParameterDefaultValue(b.library, b.function,
+      return lm.getUnsignedShortParameterDefaultValue(b.library, b.behaviour,
                                                       b.hypothesis, n);
     }  // end of getParameterDefaultValue<unsigned short>
 
     bool hasBounds(const Behaviour &b, const std::string &v) {
       auto &lm = mgis::LibrariesManager::get();
-      return lm.hasBounds(b.library, b.function, b.hypothesis, v);
+      return lm.hasBounds(b.library, b.behaviour, b.hypothesis, v);
     }  // end of hasBounds
 
     bool hasLowerBound(const Behaviour &b, const std::string &v) {
       auto &lm = mgis::LibrariesManager::get();
-      return lm.hasLowerBound(b.library, b.function, b.hypothesis, v);
+      return lm.hasLowerBound(b.library, b.behaviour, b.hypothesis, v);
     }  // end of hasLowerBound
 
     bool hasUpperBound(const Behaviour &b, const std::string &v) {
       auto &lm = mgis::LibrariesManager::get();
-      return lm.hasUpperBound(b.library, b.function, b.hypothesis, v);
+      return lm.hasUpperBound(b.library, b.behaviour, b.hypothesis, v);
     }  // end of hasUpperBound
 
     long double getLowerBound(const Behaviour &b, const std::string &v) {
       auto &lm = mgis::LibrariesManager::get();
-      return lm.getLowerBound(b.library, b.function, b.hypothesis, v);
+      return lm.getLowerBound(b.library, b.behaviour, b.hypothesis, v);
     }  // end of getLowerBound
 
     long double getUpperBound(const Behaviour &b, const std::string &v) {
       auto &lm = mgis::LibrariesManager::get();
-      return lm.getUpperBound(b.library, b.function, b.hypothesis, v);
+      return lm.getUpperBound(b.library, b.behaviour, b.hypothesis, v);
     }  // end of getUpperBound
 
     bool hasPhysicalBounds(const Behaviour &b, const std::string &v) {
       auto &lm = mgis::LibrariesManager::get();
-      return lm.hasPhysicalBounds(b.library, b.function, b.hypothesis, v);
+      return lm.hasPhysicalBounds(b.library, b.behaviour, b.hypothesis, v);
     }  // end of hasPhysicalBounds
 
     bool hasLowerPhysicalBound(const Behaviour &b, const std::string &v) {
       auto &lm = mgis::LibrariesManager::get();
-      return lm.hasLowerPhysicalBound(b.library, b.function, b.hypothesis, v);
+      return lm.hasLowerPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
     }  // end of hasLowerPhysicalBound
 
     bool hasUpperPhysicalBound(const Behaviour &b, const std::string &v) {
       auto &lm = mgis::LibrariesManager::get();
-      return lm.hasUpperPhysicalBound(b.library, b.function, b.hypothesis, v);
+      return lm.hasUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
     }  // end of hasUpperPhysicalBound
 
     long double getLowerPhysicalBound(const Behaviour &b,
                                       const std::string &v) {
       auto &lm = mgis::LibrariesManager::get();
-      return lm.getLowerPhysicalBound(b.library, b.function, b.hypothesis, v);
+      return lm.getLowerPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
     }  // end of getLowerPhysicalBound
 
     long double getUpperPhysicalBound(const Behaviour &b,
                                       const std::string &v) {
       auto &lm = mgis::LibrariesManager::get();
-      return lm.getUpperPhysicalBound(b.library, b.function, b.hypothesis, v);
+      return lm.getUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
     }  // end of getUpperPhysicalBound
 
   }  // end of namespace behaviour
