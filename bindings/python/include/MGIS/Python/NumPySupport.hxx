@@ -18,6 +18,7 @@
 #include <vector>
 #include <boost/python/object.hpp>
 #include "MGIS/Config.hxx"
+#include "MGIS/Span.hxx"
 
 namespace mgis {
 
@@ -32,7 +33,6 @@ namespace mgis {
      * the vector.
      * \param[in] v: vector holding the values
      */
-
     boost::python::object wrapInNumPyArray(std::vector<double>&);
     /*!
      * \brief create a 2D-ndarray object from a vector.
@@ -43,6 +43,8 @@ namespace mgis {
      */
     boost::python::object wrapInNumPyArray(std::vector<double>&,
                                            const mgis::size_type);
+
+    mgis::span<mgis::real> mgis_convert_to_span(const boost::python::object&);
 
   }  // end of namespace python
 

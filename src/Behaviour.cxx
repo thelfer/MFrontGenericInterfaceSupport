@@ -282,29 +282,46 @@ namespace mgis {
       for (const auto &esv : lm.getExternalStateVariablesNames(l, b, h)) {
         d.esvs.push_back({esv, Variable::SCALAR});
       }
-      //       //! parameters
-      //       const auto pn = lm.getUMATParametersNames(l, fct, h);
-      //       const auto pt = lm.getUMATParametersTypes(l, fct, h);
-      //       throw_if(
-      //           pn.size() != pt.size(),
-      //           "inconsistent size between parameters' names and
-      //           parameters' sizes");
-      //       for (decltype(pn.size()) i = 0; i != pn.size(); ++i) {
-      //         if (pt[i] == 0) {
-      //           d.pnames.push_back(pn[i]);
-      //         } else if (pt[i] == 1) {
-      //           d.ipnames.push_back(pn[i]);
-      //         } else if (pt[i] == 2) {
-      //           d.upnames.push_back(pn[i]);
-      //         } else {
-      //           throw_if(true,
-      //                    "unsupported parameter type for parameter '" +
-      //                    pn[i]
-      //                    + "'");
-      //         }
-      //       }
+      //! parameters
+      const auto pn = lm.getParametersNames(l, b, h);
+      const auto pt = lm.getParametersTypes(l, b, h);
+      raise_if(pn.size() != pt.size(),
+               "inconsistent size between parameters' names and"
+               "parameters' sizes");
+      for (decltype(pn.size()) i = 0; i != pn.size(); ++i) {
+        if (pt[i] == 0) {
+          d.params.push_back(pn[i]);
+        } else if (pt[i] == 1) {
+          d.iparams.push_back(pn[i]);
+        } else if (pt[i] == 2) {
+          d.usparams.push_back(pn[i]);
+        } else {
+          raise("unsupported parameter type for parameter '" + pn[i] + "'");
+        }
+      }
       return d;
     }  // end of load
+
+    void setParameter(const Behaviour &b,
+                      const std::string &n,
+                      const double v) {
+      auto &lm = mgis::LibrariesManager::get();
+      lm.setParameter(b.library, b.function, b.hypothesis, n, v);
+    } // end of setParameter
+
+    void setParameter(const Behaviour &b,
+                      const std::string &n,
+                      const int v) {
+      auto &lm = mgis::LibrariesManager::get();
+      lm.setParameter(b.library, b.function, b.hypothesis, n, v);
+    } // end of setParameter
+
+    void setParameter(const Behaviour &b,
+                      const std::string &n,
+                      const unsigned short v) {
+      auto &lm = mgis::LibrariesManager::get();
+      lm.setParameter(b.library, b.function, b.hypothesis, n, v);
+    } // end of setParameter
 
   }  // end of namespace behaviour
 

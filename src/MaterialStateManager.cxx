@@ -262,7 +262,8 @@ namespace mgis {
                      "setExternalStateVariable: invalid number of values "
                      "(does not match the number of integration points)");
       if (s == MaterialStateManager::LOCAL_STORAGE) {
-        getFieldHolder(m.external_state_variables,n) = std::vector<real>{v.begin(), v.end()};
+        getFieldHolder(m.external_state_variables, n) =
+            std::vector<real>{v.begin(), v.end()};
       } else {
         getFieldHolder(m.external_state_variables,n) = v;
       }

@@ -52,4 +52,5 @@ test_python_bindings(MFrontGenericBehaviourInterfaceTest2)
 test_python_bindings(IntegrateTest)
 test_python_bindings(IntegrateTest2)
 test_python_bindings(IntegrateTest3)
+test_python_bindings(IntegrateTest4)
 

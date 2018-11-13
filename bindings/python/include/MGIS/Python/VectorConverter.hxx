@@ -37,8 +37,17 @@ namespace mgis {
 
   namespace python {
 
+    template <typename T>
+    boost::python::list convert_vector_to_list(const std::vector<T>& v) {
+      boost::python::list l;
+      for (const auto& e : v) {
+        l.append(e);
+      }
+      return l;
+    }  // end of convert
+
     /*!
-     * convert vector converter to python list
+     * convert vector to python list
      */
     template <typename T>
     struct vector_to_python_list {

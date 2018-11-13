@@ -87,8 +87,12 @@ namespace mgis {
       std::vector<Variable> isvs;
       //! external state variables
       std::vector<Variable> esvs;
-      //! parameters
-      std::vector<Variable> parameters;
+      //! real parameters
+      std::vector<std::string> params;
+      //! integer parameters
+      std::vector<std::string> iparams;
+      //! unsigned short parameters
+      std::vector<std::string> usparams;
     };  // end of struct Behaviour
 
     /*!
@@ -103,6 +107,33 @@ namespace mgis {
     MGIS_EXPORT Behaviour load(const std::string &,
                                const std::string &,
                                const Hypothesis);
+    /*!
+     * \brief set the value of a parameter
+     * \param[in] b: behaviour description
+     * \param[in] n: parameter name
+     * \param[in] v: parameter value
+     */
+    MGIS_EXPORT void setParameter(const Behaviour &,
+                                  const std::string &,
+                                  const double);
+    /*!
+     * \brief set the value of a parameter
+     * \param[in] b: behaviour description
+     * \param[in] n: parameter name
+     * \param[in] v: parameter value
+     */
+    MGIS_EXPORT void setParameter(const Behaviour &,
+                                  const std::string &,
+                                  const int);
+    /*!
+     * \brief set the value of a parameter
+     * \param[in] b: behaviour description
+     * \param[in] n: parameter name
+     * \param[in] v: parameter value
+     */
+    MGIS_EXPORT void setParameter(const Behaviour &,
+                                  const std::string &,
+                                  const unsigned short);
 
   }  // end of namespace behaviour
 

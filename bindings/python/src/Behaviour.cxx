@@ -15,6 +15,7 @@
 #include <boost/python/class.hpp>
 #include <boost/python/enum.hpp>
 #include <boost/python/def.hpp>
+#include "MGIS/Python/VectorConverter.hxx"
 #include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/Behaviour.hxx"
 
@@ -105,16 +106,32 @@ Behaviour_getExternalStateVariables(const mgis::behaviour::Behaviour& b) {
   return b.esvs;
 }  // end of Behaviour_getExternalStateVariables
 
-static std::vector<mgis::behaviour::Variable> Behaviour_getParameters(
+static boost::python::list Behaviour_getParameters(
     const mgis::behaviour::Behaviour& b) {
-  return b.parameters;
+  return mgis::python::convert_vector_to_list(b.params);
 }  // end of Behaviour_getParameters
+
+static boost::python::list Behaviour_getIntegerParameters(
+    const mgis::behaviour::Behaviour& b) {
+  return mgis::python::convert_vector_to_list(b.iparams);
+}  // end of Behaviour_getIntegerParameters
+
+static boost::python::list Behaviour_getUnsignedShortParameters(
+    const mgis::behaviour::Behaviour& b) {
+  return mgis::python::convert_vector_to_list(b.usparams);
+}  // end of Behaviour_getUnsignedShortParameters
 
 void declareBehaviour() {
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::Hypothesis;
   Behaviour (*load_ptr)(const std::string&, const std::string&,
                         const Hypothesis) = &mgis::behaviour::load;
+  void (*setParameter1)(const Behaviour&, const std::string&, const double) =
+      &mgis::behaviour::setParameter;
+  void (*setParameter2)(const Behaviour&, const std::string&, const int) =
+      &mgis::behaviour::setParameter;
+  void (*setParameter3)(const Behaviour&, const std::string&, const unsigned short) =
+      &mgis::behaviour::setParameter;
   // wrapping the Behaviour::Symmetry enum
   boost::python::enum_<Behaviour::Symmetry>("BehaviourSymmetry")
       .value("ISOTROPIC", Behaviour::Symmetry::ISOTROPIC)
@@ -174,7 +191,8 @@ void declareBehaviour() {
                     "return the behaviour kinematic")
       .def("getKinematic", &Behaviour_getKinematic,
            "return the behaviour kinematic")
-      .def("getSymmetry", &Behaviour_getSymmetry, "return the behaviour symmetry")
+      .def("getSymmetry", &Behaviour_getSymmetry,
+           "return the behaviour symmetry")
       .add_property("symmetry", &Behaviour::symmetry,
                     "return the behaviour symmetry")
       .add_property("gradients", &Behaviour_getGradients, "list of gradients")
@@ -194,9 +212,25 @@ void declareBehaviour() {
       .add_property(
           "external_state_variables", &Behaviour_getExternalStateVariables,
           "list of external state variables (same as the `esvs` property)")
+      .add_property("params", &Behaviour_getParameters, "list of parameters")
       .add_property("parameters", &Behaviour_getParameters,
-                    "list of parameters");
-
-  // wrapping the load function
+                    "list of parameters")
+      .add_property("iparams", &Behaviour_getIntegerParameters,
+                    "list of integer parameters")
+      .add_property("integer_parameters", &Behaviour_getIntegerParameters,
+                    "list of integer parameters")
+      .add_property("unsigned_short_parameters",
+                    &Behaviour_getUnsignedShortParameters,
+                    "list of unsigned short parameters")
+      .add_property("usparams", &Behaviour_getUnsignedShortParameters,
+                    "list of unsigned short parameters")
+      .def("setParameter", setParameter1)
+      .def("setIntegerParameter", setParameter2)
+      .def("setUnsignedShortParameter", setParameter3);
+  // wrapping free functions
   boost::python::def("load", load_ptr);
+  boost::python::def("setParameter", setParameter1);
+  boost::python::def("setIntegerParameter", setParameter2);
+  boost::python::def("setUnsignedShortParameter", setParameter3);
+
 }  // end of declareBehaviour

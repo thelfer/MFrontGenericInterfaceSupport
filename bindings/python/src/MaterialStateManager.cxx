@@ -13,6 +13,7 @@
  */
 
 #include <boost/python/def.hpp>
+#include <boost/python/enum.hpp>
 #include <boost/python/class.hpp>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Python/NumPySupport.hxx"
@@ -53,11 +54,27 @@ static void MaterialStateManager_setMaterialProperty(
   mgis::behaviour::setMaterialProperty(s, n, v);
 }  // end of MaterialStateManager_setMaterialProperty
 
+static void MaterialStateManager_setMaterialProperty2(
+    mgis::behaviour::MaterialStateManager& sm,
+    const std::string& n,
+    const boost::python::object& o,
+    const mgis::behaviour::MaterialStateManager::StorageMode s) {
+  setMaterialProperty(sm, n, mgis::python::mgis_convert_to_span(o), s);
+}  // end of MaterialStateManager_setMaterialProperty
+
 static void MaterialStateManager_setExternalStateVariable(
     mgis::behaviour::MaterialStateManager& s,
     const std::string& n,
     const mgis::real v) {
   mgis::behaviour::setExternalStateVariable(s, n, v);
+}  // end of MaterialStateManager_setExternalStateVariable
+
+static void MaterialStateManager_setExternalStateVariable2(
+    mgis::behaviour::MaterialStateManager& sm,
+    const std::string& n,
+    const boost::python::object& o,
+    const mgis::behaviour::MaterialStateManager::StorageMode s) {
+  setExternalStateVariable(sm, n, mgis::python::mgis_convert_to_span(o), s);
 }  // end of MaterialStateManager_setExternalStateVariable
 
 void declareMaterialStateManager();
@@ -66,6 +83,19 @@ void declareMaterialStateManager() {
   using mgis::size_type;
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::MaterialStateManager;
+  // wrapping the MaterialStateManager::StorageMode enum
+  boost::python::enum_<MaterialStateManager::StorageMode>(
+      "MaterialStateManagerStorageMode")
+      .value("LOCAL_STORAGE", MaterialStateManager::StorageMode::LOCAL_STORAGE)
+      .value("LocalStorage", MaterialStateManager::StorageMode::LOCAL_STORAGE)
+      .value("LOCALSTORAGE", MaterialStateManager::StorageMode::LOCAL_STORAGE)
+      .value("EXTERNAL_STORAGE",
+             MaterialStateManager::StorageMode::EXTERNAL_STORAGE)
+      .value("EXTERNALSTORAGE",
+             MaterialStateManager::StorageMode::EXTERNAL_STORAGE)
+      .value("ExternalStorage",
+             MaterialStateManager::StorageMode::EXTERNAL_STORAGE);
+  // wrapping the MaterialStateManager class
   boost::python::class_<MaterialStateManager>(
       "MaterialStateManager",
       boost::python::init<const Behaviour&, const size_type>())
@@ -83,12 +113,19 @@ void declareMaterialStateManager() {
       .add_property("internal_state_variables",
                     &MaterialStateManager_getInternalStateVariables)
       .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty)
+      .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty2)
       .def("setExternalStateVariable",
-           &MaterialStateManager_setExternalStateVariable);
-
+           &MaterialStateManager_setExternalStateVariable)
+      .def("setExternalStateVariable",
+           &MaterialStateManager_setExternalStateVariable2);
+  // free functions
   boost::python::def("setMaterialProperty",
                      &MaterialStateManager_setMaterialProperty);
+  boost::python::def("setMaterialProperty",
+                     &MaterialStateManager_setMaterialProperty2);
   boost::python::def("setExternalStateVariable",
                      &MaterialStateManager_setExternalStateVariable);
+  boost::python::def("setExternalStateVariable",
+                     &MaterialStateManager_setExternalStateVariable2);
 
 }  // end of declareMaterialStateManager

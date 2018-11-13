@@ -13,6 +13,7 @@
  */
 
 #include <numpy/ndarrayobject.h>
+#include "MGIS/Raise.hxx"
 #include "MGIS/Python/NumPySupport.hxx"
 
 namespace mgis {
@@ -43,6 +44,25 @@ namespace mgis {
       boost::python::handle<> handle(arr);
       return boost::python::object(handle);
     }  // end of wrapInNumPyArray
+
+    mgis::span<mgis::real> mgis_convert_to_span(
+        const boost::python::object& o) {
+      auto* const a = reinterpret_cast<PyArrayObject*>(
+          PyArray_FROM_OTF(o.ptr(), NPY_DOUBLE, NPY_IN_ARRAY));
+      if (a == nullptr) {
+        mgis::raise(
+            "convert_to_span: argument not convertible to PyArrayObject");
+      }
+      // number of dimensions
+      const auto nd = PyArray_NDIM(a);
+      if (nd != 1) {
+        mgis::raise("convert_to_span: expected one dimensional array");
+      }
+      auto* const shape = PyArray_DIMS(a);
+      const auto n = shape[0];
+      auto* const values = static_cast<double*>(PyArray_GETPTR1(a, 0));
+      return {values, static_cast<mgis::span<mgis::real>::index_type>(n)};
+    }  // end of mgis_convert_to_span
 
   }  // end of namespace python
 
