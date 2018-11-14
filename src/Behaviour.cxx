@@ -282,29 +282,122 @@ namespace mgis {
       for (const auto &esv : lm.getExternalStateVariablesNames(l, b, h)) {
         d.esvs.push_back({esv, Variable::SCALAR});
       }
-      //       //! parameters
-      //       const auto pn = lm.getUMATParametersNames(l, fct, h);
-      //       const auto pt = lm.getUMATParametersTypes(l, fct, h);
-      //       throw_if(
-      //           pn.size() != pt.size(),
-      //           "inconsistent size between parameters' names and
-      //           parameters' sizes");
-      //       for (decltype(pn.size()) i = 0; i != pn.size(); ++i) {
-      //         if (pt[i] == 0) {
-      //           d.pnames.push_back(pn[i]);
-      //         } else if (pt[i] == 1) {
-      //           d.ipnames.push_back(pn[i]);
-      //         } else if (pt[i] == 2) {
-      //           d.upnames.push_back(pn[i]);
-      //         } else {
-      //           throw_if(true,
-      //                    "unsupported parameter type for parameter '" +
-      //                    pn[i]
-      //                    + "'");
-      //         }
-      //       }
+      //! parameters
+      const auto pn = lm.getParametersNames(l, b, h);
+      const auto pt = lm.getParametersTypes(l, b, h);
+      raise_if(pn.size() != pt.size(),
+               "inconsistent size between parameters' names and"
+               "parameters' sizes");
+      for (decltype(pn.size()) i = 0; i != pn.size(); ++i) {
+        if (pt[i] == 0) {
+          d.params.push_back(pn[i]);
+        } else if (pt[i] == 1) {
+          d.iparams.push_back(pn[i]);
+        } else if (pt[i] == 2) {
+          d.usparams.push_back(pn[i]);
+        } else {
+          raise("unsupported parameter type for parameter '" + pn[i] + "'");
+        }
+      }
       return d;
     }  // end of load
+
+    void setParameter(const Behaviour &b,
+                      const std::string &n,
+                      const double v) {
+      auto &lm = mgis::LibrariesManager::get();
+      lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
+    } // end of setParameter
+
+    void setParameter(const Behaviour &b,
+                      const std::string &n,
+                      const int v) {
+      auto &lm = mgis::LibrariesManager::get();
+      lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
+    } // end of setParameter
+
+    void setParameter(const Behaviour &b,
+                      const std::string &n,
+                      const unsigned short v) {
+      auto &lm = mgis::LibrariesManager::get();
+      lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
+    } // end of setParameter
+
+    template <>
+    double getParameterDefaultValue<double>(const Behaviour &b,
+                                            const std::string &n) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.getParameterDefaultValue(b.library, b.behaviour, b.hypothesis,
+                                         n);
+    }  // end of getParameterDefaultValue<double>
+
+    template <>
+    int getParameterDefaultValue<int>(const Behaviour &b,
+                                      const std::string &n) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.getIntegerParameterDefaultValue(b.library, b.behaviour,
+                                                b.hypothesis, n);
+    }  // end of getParameterDefaultValue<int>
+
+    template <>
+    unsigned short getParameterDefaultValue<unsigned short>(
+        const Behaviour &b, const std::string &n) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.getUnsignedShortParameterDefaultValue(b.library, b.behaviour,
+                                                      b.hypothesis, n);
+    }  // end of getParameterDefaultValue<unsigned short>
+
+    bool hasBounds(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.hasBounds(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of hasBounds
+
+    bool hasLowerBound(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.hasLowerBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of hasLowerBound
+
+    bool hasUpperBound(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.hasUpperBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of hasUpperBound
+
+    long double getLowerBound(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.getLowerBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of getLowerBound
+
+    long double getUpperBound(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.getUpperBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of getUpperBound
+
+    bool hasPhysicalBounds(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.hasPhysicalBounds(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of hasPhysicalBounds
+
+    bool hasLowerPhysicalBound(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.hasLowerPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of hasLowerPhysicalBound
+
+    bool hasUpperPhysicalBound(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.hasUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of hasUpperPhysicalBound
+
+    long double getLowerPhysicalBound(const Behaviour &b,
+                                      const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.getLowerPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of getLowerPhysicalBound
+
+    long double getUpperPhysicalBound(const Behaviour &b,
+                                      const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.getUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of getUpperPhysicalBound
 
   }  // end of namespace behaviour
 

@@ -4,6 +4,8 @@ link_directories("${PROJECT_BINARY_DIR}/src"
 mfront_behaviours_check_library(BehaviourTest
   Norton
   Gurson
+  BoundsCheckTest
+  ParameterTest
   FiniteStrainSingleCrystal)
 
 add_executable(MFrontGenericBehaviourInterfaceTest
@@ -11,14 +13,31 @@ add_executable(MFrontGenericBehaviourInterfaceTest
   MFrontGenericBehaviourInterfaceTest.cxx)
 target_link_libraries(MFrontGenericBehaviourInterfaceTest
   PRIVATE MFrontGenericInterface)
+target_compile_definitions(MFrontGenericBehaviourInterfaceTest
+  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
+
 add_executable(MFrontGenericBehaviourInterfaceTest2
   EXCLUDE_FROM_ALL
   MFrontGenericBehaviourInterfaceTest2.cxx)
-target_compile_definitions(MFrontGenericBehaviourInterfaceTest
+target_compile_definitions(MFrontGenericBehaviourInterfaceTest2
   PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
 target_link_libraries(MFrontGenericBehaviourInterfaceTest2
   PRIVATE MFrontGenericInterface)
-target_compile_definitions(MFrontGenericBehaviourInterfaceTest2
+
+add_executable(BoundsCheckTest
+  EXCLUDE_FROM_ALL
+  BoundsCheckTest.cxx)
+target_link_libraries(BoundsCheckTest
+  PRIVATE MFrontGenericInterface)
+target_compile_definitions(BoundsCheckTest
+  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
+
+add_executable(ParameterTest
+  EXCLUDE_FROM_ALL
+  ParameterTest.cxx)
+target_link_libraries(ParameterTest
+  PRIVATE MFrontGenericInterface)
+target_compile_definitions(ParameterTest
   PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
 
 add_executable(IntegrateTest
@@ -57,6 +76,32 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$ENV{PATH}")
 else((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST MFrontGenericBehaviourInterfaceTest2
+    PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME BoundsCheckTest
+ COMMAND BoundsCheckTest
+ "$<TARGET_FILE:BehaviourTest>" "BoundsCheckTest")
+add_dependencies(check BoundsCheckTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST BoundsCheckTest
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$ENV{PATH}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST BoundsCheckTest
+    PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME ParameterTest
+ COMMAND ParameterTest
+ "$<TARGET_FILE:BehaviourTest>" "ParameterTest")
+add_dependencies(check ParameterTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST ParameterTest
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$ENV{PATH}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST ParameterTest
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 

@@ -12,6 +12,7 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <limits>
 #include <utility>
 #include <stdexcept>
 #include "MGIS/Behaviour/Behaviour.h"
@@ -299,6 +300,328 @@ mgis_status mgis_bv_behaviour_get_external_state_variable_name(
   }
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_get_external_state_variable_name
+
+mgis_status mgis_bv_behaviour_get_number_of_parameters(
+    mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
+    *s = 0;
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *s = b->params.size();
+    return mgis_report_success();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+}  // end of mgis_bv_behaviour_get_number_of_parameters
+
+mgis_status mgis_bv_behaviour_get_parameter_name(
+    const char** n, const mgis_bv_Behaviour* const b, const mgis_size_type i) {
+  if (b == nullptr) {
+    *n = nullptr;
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& p = b->params.at(i);
+    *n = p.c_str();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_parameter_name
+
+mgis_status mgis_bv_behaviour_get_number_of_integer_parameters(
+    mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
+    *s = 0;
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *s = b->iparams.size();
+    return mgis_report_success();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+}  // end of mgis_bv_behaviour_get_number_of_integer_parameters
+
+mgis_status mgis_bv_behaviour_get_integer_parameter_name(
+    const char** n, const mgis_bv_Behaviour* const b, const mgis_size_type i) {
+  if (b == nullptr) {
+    *n = nullptr;
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& p = b->iparams.at(i);
+    *n = p.c_str();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_integer_parameter_name
+
+mgis_status mgis_bv_behaviour_get_number_of_unsigned_short_parameters(
+    mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
+    *s = 0;
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *s = b->usparams.size();
+    return mgis_report_success();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+}  // end of mgis_bv_behaviour_get_number_of_unsigned_short_parameters
+
+mgis_status mgis_bv_behaviour_get_unsigned_short_parameter_name(
+    const char** n, const mgis_bv_Behaviour* const b, const mgis_size_type i) {
+  if (b == nullptr) {
+    *n = nullptr;
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& p = b->usparams.at(i);
+    *n = p.c_str();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_unsigned_short_parameter_name
+
+mgis_status mgis_bv_behaviour_set_parameter(const mgis_bv_Behaviour* const b,
+                                            const char* const n,
+                                            const double v) {
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    setParameter(*b, n, v);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_set_parameter
+
+mgis_status mgis_bv_behaviour_set_integer_parameter(
+    const mgis_bv_Behaviour* const b, const char* const n, const int v) {
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    mgis::behaviour::setParameter(*b, n, v);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_set_integer_parameter
+
+mgis_status mgis_bv_behaviour_set_unsigned_short_parameter(
+    const mgis_bv_Behaviour* const b,
+    const char* const n,
+    const unsigned short v) {
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    mgis::behaviour::setParameter(*b, n, v);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_set_unsigned_short_parameter
+
+mgis_status mgis_bv_behaviour_get_parameter_default_value(
+    double* const v, const mgis_bv_Behaviour* const b, const char* const n) {
+  *v = std::numeric_limits<double>::quiet_NaN();
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *v = mgis::behaviour::getParameterDefaultValue<double>(*b, n);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_parameter_default_value
+
+mgis_status mgis_bv_behaviour_get_integer_parameter_default_value(
+    int* const v, const mgis_bv_Behaviour* const b, const char* const n) {
+  *v = std::numeric_limits<int>::max();
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *v = mgis::behaviour::getParameterDefaultValue<int>(*b, n);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_integer_parameter_default_value
+
+mgis_status mgis_bv_behaviour_get_unsigned_short_parameter_default_value(
+    unsigned short* const v,
+    const mgis_bv_Behaviour* const b,
+    const char* const n) {
+  *v = std::numeric_limits<unsigned short>::max();
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *v = mgis::behaviour::getParameterDefaultValue<unsigned short>(*b, n);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_unsigned_short_parameter_default_value
+
+mgis_status mgis_bv_behaviour_has_bounds(int* const v,
+                                         const mgis_bv_Behaviour* const b,
+                                         const char* const n) {
+  *v = -1;
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *v = mgis::behaviour::hasBounds(*b, n);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_has_bounds
+
+mgis_status mgis_bv_behaviour_has_lower_bound(int* const v,
+                                              const mgis_bv_Behaviour* const b,
+                                              const char* const n) {
+  *v = -1;
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *v = mgis::behaviour::hasLowerBound(*b, n);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_has_lower_bound
+
+mgis_status mgis_bv_behaviour_has_upper_bound(int* const v,
+                                              const mgis_bv_Behaviour* const b,
+                                              const char* const n) {
+  *v = -1;
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *v = mgis::behaviour::hasUpperBound(*b, n);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_has_upper_bound
+
+mgis_status mgis_bv_behaviour_get_lower_bound(long double* const v,
+                                              const mgis_bv_Behaviour* const b,
+                                              const char* const n) {
+  *v = std::numeric_limits<long double>::quiet_NaN();
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *v = mgis::behaviour::getLowerBound(*b, n);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_lower_bound
+
+mgis_status mgis_bv_behaviour_get_upper_bound(long double* const v,
+                                              const mgis_bv_Behaviour* const b,
+                                              const char* const n) {
+  *v = std::numeric_limits<long double>::quiet_NaN();
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *v = mgis::behaviour::getUpperBound(*b, n);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_upper_bound
+
+mgis_status mgis_bv_behaviour_has_physical_bounds(
+    int* const v, const mgis_bv_Behaviour* const b, const char* const n) {
+  *v = -1;
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *v = mgis::behaviour::hasPhysicalBounds(*b, n);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_has_physical_bounds
+
+mgis_status mgis_bv_behaviour_has_lower_physical_bound(
+    int* const v, const mgis_bv_Behaviour* const b, const char* const n) {
+  *v = -1;
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *v = mgis::behaviour::hasLowerPhysicalBound(*b, n);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_has_lower_physical_bound
+
+mgis_status mgis_bv_behaviour_has_upper_physical_bound(
+    int* const v, const mgis_bv_Behaviour* const b, const char* const n) {
+  *v = -1;
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *v = mgis::behaviour::hasUpperPhysicalBound(*b, n);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_has_upper_physical_bound
+
+mgis_status mgis_bv_behaviour_get_lower_physical_bound(
+    long double* const v,
+    const mgis_bv_Behaviour* const b,
+    const char* const n) {
+  *v = std::numeric_limits<long double>::quiet_NaN();
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *v = mgis::behaviour::getLowerPhysicalBound(*b, n);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_lower_physical_bound
+
+mgis_status mgis_bv_behaviour_get_upper_physical_bound(
+    long double* const v,
+    const mgis_bv_Behaviour* const b,
+    const char* const n) {
+  *v = std::numeric_limits<long double>::quiet_NaN();
+  if ((b == nullptr) || (n == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *v = mgis::behaviour::getUpperPhysicalBound(*b, n);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_upper_physical_bound
 
 mgis_status mgis_bv_free_behaviour(mgis_bv_Behaviour** b) {
   try {

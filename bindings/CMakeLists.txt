@@ -6,4 +6,6 @@ endif(enable-c-bindings)
 #  add_subdirectory("fortran")
 #endif(enable-fortran-bindings)
 
-
+if(enable-python-bindings)
+  add_subdirectory("python")
+endif(enable-python-bindings)

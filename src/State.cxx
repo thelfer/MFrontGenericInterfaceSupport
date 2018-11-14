@@ -60,12 +60,12 @@ namespace mgis {
     }  // end of State::operator=
 
     State::State(const Behaviour& behaviour) : b(behaviour) {
-      constexpr const auto zero = real{0};
       auto init = [this](std::vector<real>& values,
                          const std::vector<Variable> variables) {
         const auto s = getArraySize(variables, this->b.hypothesis);
-        values.resize(s, zero);
+        values.resize(s, real{0});
       };
+      constexpr const auto zero = real{0};
       init(this->gradients, this->b.gradients);
       init(this->thermodynamic_forces, this->b.thermodynamic_forces);
       init(this->material_properties, this->b.mps);
