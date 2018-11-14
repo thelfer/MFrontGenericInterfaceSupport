@@ -203,6 +203,21 @@ mgis_bv_behaviour_get_number_of_external_state_variables(
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_external_state_variable_name(
     const char **, const mgis_bv_Behaviour *const, const mgis_size_type);
 /*!
+ * \brief return the number of parameters
+ * \param[out] c: number of the parameters
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_number_of_parameters(
+    mgis_size_type* const, const mgis_bv_Behaviour* const);
+/*!
+ * \brief return the name of an parameter
+ * \param[out] c: parameter name
+ * \param[in] b: behaviour
+ * \param[in] i: parameter index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_parameter_name(
+    const char**, const mgis_bv_Behaviour* const, const mgis_size_type);
+/*!
  * \brief set the value of a parameter
  * \param[in] b: behaviour description
  * \param[in] n: parameter name
@@ -211,6 +226,21 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_external_state_variable_name(
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_set_parameter(
     const mgis_bv_Behaviour *const, const char *const, const double);
 /*!
+ * \brief return the number of integer parameters
+ * \param[out] c: number of the integer parameters
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_number_of_integer_parameters(
+    mgis_size_type* const, const mgis_bv_Behaviour* const);
+/*!
+ * \brief return the name of an integer parameter
+ * \param[out] c: integer parameter name
+ * \param[in] b: behaviour
+ * \param[in] i: integer parameter index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_integer_parameter_name(
+    const char**, const mgis_bv_Behaviour* const, const mgis_size_type);
+/*!
  * \brief set the value of a parameter
  * \param[in] b: behaviour description
  * \param[in] n: parameter name
@@ -218,6 +248,22 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_set_parameter(
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_set_integer_parameter(
     const mgis_bv_Behaviour *const, const char *const, const int);
+/*!
+ * \brief return the number of unsigned short parameters
+ * \param[out] c: number of the unsigned short parameters
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_number_of_unsigned_short_parameters(
+    mgis_size_type* const, const mgis_bv_Behaviour* const);
+/*!
+ * \brief return the name of an unsigned short parameter
+ * \param[out] c: unsigned short parameter name
+ * \param[in] b: behaviour
+ * \param[in] i: unsigned short parameter index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_unsigned_short_parameter_name(
+    const char**, const mgis_bv_Behaviour* const, const mgis_size_type);
 /*!
  * \brief set the value of a parameter
  * \param[in] b: behaviour description

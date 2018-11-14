@@ -10,7 +10,7 @@
 @Parameter nu    = 0.3;
 young.setGlossaryName("YoungModulus");
 nu.setGlossaryName("PoissonRatio");
-			      
+
 @ProvidesSymmetricTangentOperator;
 @Integrator{
   static_cast<void>(smt); // remove compiler warning
