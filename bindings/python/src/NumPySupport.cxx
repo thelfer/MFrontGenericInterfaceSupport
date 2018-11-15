@@ -45,6 +45,16 @@ namespace mgis {
       return boost::python::object(handle);
     }  // end of wrapInNumPyArray
 
+    boost::python::object wrapInNumPyArray(std::vector<double>& v,
+                                           const size_type nl,
+                                           const size_type nc) {
+      npy_intp dims[3] = {v.size() / (nc * nl), nl, nc};
+      auto* const arr =
+          PyArray_SimpleNewFromData(3, dims, NPY_DOUBLE, v.data());
+      boost::python::handle<> handle(arr);
+      return boost::python::object(handle);
+    }  // end of wrapInNumPyArray
+
     mgis::span<mgis::real> mgis_convert_to_span(
         const boost::python::object& o) {
       auto* const a = reinterpret_cast<PyArrayObject*>(

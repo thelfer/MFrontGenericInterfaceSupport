@@ -21,7 +21,7 @@
 extern "C" {
 #endif /*  __cplusplus */
 
-typedef enum { MGIS_SUCCESS, MGIS_FAILURE } mgis_exit_flag;
+typedef enum { MGIS_SUCCESS = 0, MGIS_FAILURE = 1} mgis_exit_flag;
 
 /*!
  * structure in charge of reporting if a function call has been successfull or
@@ -41,7 +41,7 @@ typedef struct {
 
 /*!
  * \brief build a success status
- * \return the build status
+ * \return the status
  */
 MGIS_C_EXPORT mgis_status mgis_report_success();
 
@@ -49,7 +49,7 @@ MGIS_C_EXPORT mgis_status mgis_report_success();
  * \brief build a failed status
  * \param[in] e: error message
  * \note the error message is copied in a statically allocated buffer.
- * \return the build status
+ * \return the status
  */
 MGIS_C_EXPORT mgis_status mgis_report_failure(const char *const);
 
@@ -58,7 +58,7 @@ MGIS_C_EXPORT mgis_status mgis_report_failure(const char *const);
  * \note if the exception is derived from `std::exception`, the error message
  * returned by the `what` method is copied in a statically allocated buffer.
  * \note this function is meant to be used internally and is not exported.
- * \return the build status
+ * \return the status
  */
 mgis_status mgis_handle_cxx_exception();
 

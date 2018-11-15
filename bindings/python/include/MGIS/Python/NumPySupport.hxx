@@ -43,6 +43,17 @@ namespace mgis {
      */
     boost::python::object wrapInNumPyArray(std::vector<double>&,
                                            const mgis::size_type);
+    /*!
+     * \brief create a 3D-ndarray object from a vector.
+     * The ndarray does not own the data, the lifetime of which is handled by
+     * the vector.
+     * \param[in] v: vector holding the values
+     * \param[in] nl: number of line
+     * \param[in] nc: number of columns
+     */
+    boost::python::object wrapInNumPyArray(std::vector<double>&,
+                                           const mgis::size_type,
+                                           const mgis::size_type);
 
     mgis::span<mgis::real> mgis_convert_to_span(const boost::python::object&);
 

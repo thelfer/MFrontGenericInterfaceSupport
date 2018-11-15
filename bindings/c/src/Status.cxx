@@ -25,7 +25,8 @@ mgis_status mgis_report_success() {
 
 mgis_status mgis_report_failure(const char* const e) {
   static thread_local char msg[512];
-  ::strncpy(msg,e,512);
+  ::strncpy(msg, e, 511);
+  msg[511] = '\0';
   return {MGIS_FAILURE, msg};
 } // end of mgis_status mgis_report_failure
 

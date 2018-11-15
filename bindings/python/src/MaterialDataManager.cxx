@@ -20,6 +20,13 @@
 
 void declareMaterialDataManager();
 
+static boost::python::object MaterialDataManager_getK(
+    mgis::behaviour::MaterialDataManager& d) {
+  const auto nl = d.s0.gradients_stride;
+  const auto nc = d.s1.thermodynamic_forces_stride;
+  return mgis::python::wrapInNumPyArray(d.K, nl, nc);
+}  // end of MaterialDataManager_getK
+
 void declareMaterialDataManager() {
   using mgis::size_type;
   using mgis::behaviour::Behaviour;
@@ -35,6 +42,7 @@ void declareMaterialDataManager() {
       .def_readonly("number_of_integration_points", &MaterialDataManager::n)
       .add_property("s0", &MaterialDataManager::s0)
       .add_property("s1", &MaterialDataManager::s1)
+      .add_property("K", &MaterialDataManager_getK)
       .def("update", ptr_update)
       .def("revert", ptr_revert);
   // free functions

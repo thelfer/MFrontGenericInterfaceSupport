@@ -14,10 +14,17 @@
 
 #include <boost/python/def.hpp>
 #include <boost/python/class.hpp>
+#include "MGIS/Python/NumPySupport.hxx"
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/BehaviourData.hxx"
 
 void declareBehaviourData();
+
+static boost::python::object BehaviourData_getK(
+    mgis::behaviour::BehaviourData& d) {
+  const auto s = d.s0.thermodynamic_forces.size();
+  return mgis::python::wrapInNumPyArray(d.K, s);
+}  // end of MaterialStateManager_getK
 
 void declareBehaviourData() {
   using mgis::behaviour::Behaviour;
@@ -33,6 +40,7 @@ void declareBehaviourData() {
       .def_readwrite("rdt", &BehaviourData::rdt)
       .add_property("s0", &BehaviourData::s0)
       .add_property("s1", &BehaviourData::s1)
+      .add_property("K", &BehaviourData_getK)
       .def("update", ptr_update)
       .def("revert", ptr_revert);
   // free functions
