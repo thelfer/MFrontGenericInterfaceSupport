@@ -1,6 +1,3 @@
-link_directories("${PROJECT_BINARY_DIR}/bindings/c/src")
-link_directories("${PROJECT_BINARY_DIR}/src")
-
 add_executable(MFrontGenericBehaviourInterfaceTest-c
   EXCLUDE_FROM_ALL
   MFrontGenericBehaviourInterfaceTest-c.c)

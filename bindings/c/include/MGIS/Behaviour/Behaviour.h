@@ -43,29 +43,29 @@ typedef struct mgis_bv_Behaviour mgis_bv_Behaviour;
 #endif
 
 typedef enum {
-  MGIS_BV_ISOTROPIC,
-  MGIS_BV_ORTHOTROPIC
+  MGIS_BV_ISOTROPIC = 0,
+  MGIS_BV_ORTHOTROPIC = 1
 } mgis_bv_BehaviourSymmetry;
 
 typedef enum {
-  MGIS_BV_GENERALBEHAVIOUR,
-  MGIS_BV_STANDARDSTRAINBASEDBEHAVIOUR,
-  MGIS_BV_STANDARDFINITESTRAINBEHAVIOUR,
-  MGIS_BV_COHESIVEZONEMODEL
+  MGIS_BV_GENERALBEHAVIOUR = 0,
+  MGIS_BV_STANDARDSTRAINBASEDBEHAVIOUR = 1,
+  MGIS_BV_STANDARDFINITESTRAINBEHAVIOUR = 2,
+  MGIS_BV_COHESIVEZONEMODEL = 3
 } mgis_bv_BehaviourType;
 
 //! kinematic of the behaviour treated
 typedef enum {
-  MGIS_BV_UNDEFINEDKINEMATIC,
-  MGIS_BV_SMALLSTRAINKINEMATIC,
-  MGIS_BV_COHESIVEZONEKINEMATIC,
-  MGIS_BV_FINITESTRAINKINEMATIC_F_CAUCHY,
-  MGIS_BV_FINITESTRAINKINEMATIC_ETO_PK1
+  MGIS_BV_UNDEFINEDKINEMATIC = 0,
+  MGIS_BV_SMALLSTRAINKINEMATIC = 1,
+  MGIS_BV_COHESIVEZONEKINEMATIC = 2,
+  MGIS_BV_FINITESTRAINKINEMATIC_F_CAUCHY = 3,
+  MGIS_BV_FINITESTRAINKINEMATIC_ETO_PK1 = 4
 } mgis_bv_BehaviourKinematic;
 
 /*!
  * \brief load a behaviour
- * \param[out] b: behaviour
+ * \param[out] ptr: behaviour
  * \param[in] l: library name
  * \param[in] b: behaviour name
  * \param[in] h: hypothesis

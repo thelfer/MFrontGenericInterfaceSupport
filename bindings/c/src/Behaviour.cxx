@@ -1,5 +1,5 @@
 /*!
- * \file   Description.cxx
+ * \file   Behaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \date   24/06/2018

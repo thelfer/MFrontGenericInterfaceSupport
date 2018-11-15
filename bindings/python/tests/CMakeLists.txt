@@ -25,7 +25,7 @@ add_dependencies(check mgis_python_bindings_checkfiles)
 
 # defining the tests
 
-macro(test_python_bindings test)
+function(test_python_bindings test)
   if(CMAKE_CONFIGURATION_TYPES)
     foreach(conf ${CMAKE_CONFIGURATION_TYPES})
       add_test(NAME ${test}_${conf}_py
@@ -45,7 +45,7 @@ macro(test_python_bindings test)
       MGIS_TEST_BEHAVIOURS_LIBRARY=$<TARGET_FILE:BehaviourTest>
       MGIS_TEST_TFEL_VERSION=${TFEL_VERSION})
   endif(CMAKE_CONFIGURATION_TYPES)
-endmacro(test_python_bindings)
+endfunction(test_python_bindings)
 
 test_python_bindings(MFrontGenericBehaviourInterfaceTest)
 test_python_bindings(MFrontGenericBehaviourInterfaceTest2)

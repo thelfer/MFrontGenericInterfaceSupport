@@ -1,6 +1,3 @@
-link_directories("${PROJECT_BINARY_DIR}/src"
-                 "${TFEL_LIBRARY_PATH}")
-
 mfront_behaviours_check_library(BehaviourTest
   Norton
   Gurson
