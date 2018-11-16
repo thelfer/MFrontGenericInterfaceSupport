@@ -112,8 +112,12 @@ int main(const int argc, const char* const* argv) {
   check_status(mgis_bv_behaviour_get_number_of_external_state_variables(&esvs_size, b));
   if (check(esvs_size == 1, "invalid number of external state variables")) {
     const char* T;
+    mgis_bv_VariableType T_t;
     check_status(mgis_bv_behaviour_get_external_state_variable_name(&T, b, 0));
     check_string(T, "Temperature", "invalid external state variable name");
+    check_status(mgis_bv_behaviour_get_external_state_variable_type(&T_t, b, 0));
+    check(T_t == MGIS_BV_SCALAR,
+          "invalid type for external state variable 'Temperature'");
   }
   mgis_bv_free_behaviour(&b);
   return test_status;

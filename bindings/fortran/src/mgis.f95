@@ -1,12 +1,14 @@
 module mgis
   use, intrinsic :: iso_c_binding, only: c_int, c_ptr, c_char
+  use, intrinsic :: iso_fortran_env, only: int64
   use mgis_fortran_utilities
+  ! enumeration
   enum , bind(c) 
      enumerator :: MGIS_SUCCESS = 0
      enumerator :: MGIS_FAILURE = 1
   end enum
   type, bind(c) :: mgis_status
-     integer(kind = selected_int_kind(MGIS_SUCCESS)) :: exit_status
+     integer :: exit_status
      type(c_ptr) :: msg
   end type mgis_status
   interface

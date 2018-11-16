@@ -1,6 +1,12 @@
 module mgis_behaviour
   use, intrinsic :: iso_c_binding, only: c_ptr, c_null_ptr
   enum, bind(C)
+     enumerator :: SCALAR  = 0
+     enumerator :: VECTOR  = 1
+     enumerator :: STENSOR = 2
+     enumerator :: TENSOR  = 3
+  end enum
+  enum, bind(C)
      enumerator :: ISOTROPIC   = 0
      enumerator :: ORTHOTROPIC = 1
   end enum
@@ -91,6 +97,28 @@ contains
     s = behaviour_get_behaviour_name_wrapper(lp, b%ptr)
     l = convert_c_string(lp)
   end function behaviour_get_behaviour_name
+  ! behaviour_get_function_name
+  function behaviour_get_function_name(l,b) result(s)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_function_name_wrapper(l,b) bind(c,name = 'mgis_bv_behaviour_get_function_name') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_function_name_wrapper
+    end interface
+    character(len=:), allocatable, intent(out) :: l
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    type(c_ptr) :: lp
+    s = behaviour_get_function_name_wrapper(lp, b%ptr)
+    l = convert_c_string(lp)
+  end function behaviour_get_function_name
   ! behaviour_get_source
   function behaviour_get_source(l,b) result(s)
     use mgis_fortran_utilities
@@ -157,6 +185,240 @@ contains
     s = behaviour_get_tfel_version_wrapper(lp, b%ptr)
     l = convert_c_string(lp)
   end function behaviour_get_tfel_version
+  !
+  function behaviour_get_number_of_material_properties(n,b) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_number_of_material_properties_wrapper(l,b) &
+            bind(c,name = 'mgis_bv_behaviour_get_number_of_material_properties') result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_number_of_material_properties_wrapper
+    end interface
+    integer :: n
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = behaviour_get_number_of_material_properties_wrapper(ns, b%ptr)
+    n = ns
+  end function behaviour_get_number_of_material_properties
+  !
+  function behaviour_get_material_property_name(l, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_material_property_name_wrapper(l, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_material_property_name') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_material_property_name_wrapper
+    end interface
+    character(len=:), allocatable, intent(out) :: l
+    type(behaviour), intent(in) :: b
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    type(c_ptr) :: lp
+    integer(kind = c_size_t) :: nc
+    nc = n
+    s = behaviour_get_material_property_name_wrapper(lp, b%ptr, nc)
+    l = convert_c_string(lp)
+  end function behaviour_get_material_property_name
+  !
+  function behaviour_get_material_property_type(t, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_material_property_type_wrapper(t, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_material_property_type') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         integer t
+         type(c_ptr), intent(in), value :: b
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_material_property_type_wrapper
+    end interface
+    integer, intent (out) :: t
+    type(behaviour), intent(in) :: b
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    integer(kind = c_size_t) :: nc
+    nc = n
+    s = behaviour_get_material_property_type_wrapper(t, b%ptr, nc)
+  end function behaviour_get_material_property_type
+  !
+  function behaviour_get_number_of_internal_state_variables(n,b) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_number_of_internal_state_variables_wrapper(l,b) &
+            bind(c,name = 'mgis_bv_behaviour_get_number_of_internal_state_variables') result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_number_of_internal_state_variables_wrapper
+    end interface
+    integer :: n
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = behaviour_get_number_of_internal_state_variables_wrapper(ns, b%ptr)
+    n = ns
+  end function behaviour_get_number_of_internal_state_variables
+  !
+  function behaviour_get_internal_state_variable_name(l, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_internal_state_variable_name_wrapper(l, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_internal_state_variable_name') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_internal_state_variable_name_wrapper
+    end interface
+    character(len=:), allocatable, intent(out) :: l
+    type(behaviour), intent(in) :: b
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    type(c_ptr) :: lp
+    integer(kind = c_size_t) :: nc
+    nc = n
+    s = behaviour_get_internal_state_variable_name_wrapper(lp, b%ptr, nc)
+    l = convert_c_string(lp)
+  end function behaviour_get_internal_state_variable_name
+  !
+  function behaviour_get_internal_state_variable_type(t, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_internal_state_variable_type_wrapper(t, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_internal_state_variable_type') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         integer t
+         type(c_ptr), intent(in), value :: b
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_internal_state_variable_type_wrapper
+    end interface
+    integer, intent (out) :: t
+    type(behaviour), intent(in) :: b
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    integer(kind = c_size_t) :: nc
+    nc = n
+    s = behaviour_get_internal_state_variable_type_wrapper(t, b%ptr, nc)
+  end function behaviour_get_internal_state_variable_type
+  !
+  function behaviour_get_number_of_external_state_variables(n,b) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_number_of_external_state_variables_wrapper(l,b) &
+            bind(c,name = 'mgis_bv_behaviour_get_number_of_external_state_variables') result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_number_of_external_state_variables_wrapper
+    end interface
+    integer :: n
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = behaviour_get_number_of_external_state_variables_wrapper(ns, b%ptr)
+    n = ns
+  end function behaviour_get_number_of_external_state_variables
+  !
+  function behaviour_get_external_state_variable_name(l, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_external_state_variable_name_wrapper(l, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_external_state_variable_name') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_external_state_variable_name_wrapper
+    end interface
+    character(len=:), allocatable, intent(out) :: l
+    type(behaviour), intent(in) :: b
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    type(c_ptr) :: lp
+    integer(kind = c_size_t) :: nc
+    nc = n
+    s = behaviour_get_external_state_variable_name_wrapper(lp, b%ptr, nc)
+    l = convert_c_string(lp)
+  end function behaviour_get_external_state_variable_name
+  !
+  function behaviour_get_external_state_variable_type(t, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_external_state_variable_type_wrapper(t, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_external_state_variable_type') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         integer t
+         type(c_ptr), intent(in), value :: b
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_external_state_variable_type_wrapper
+    end interface
+    integer, intent (out) :: t
+    type(behaviour), intent(in) :: b
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    integer(kind = c_size_t) :: nc
+    nc = n
+    s = behaviour_get_external_state_variable_type_wrapper(t, b%ptr, nc)
+  end function behaviour_get_external_state_variable_type
   ! free behaviour
   ! Use a finalizer to do automatic cleanup off the C structures.
   function free_behaviour(ptr) result(r)

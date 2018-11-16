@@ -153,6 +153,16 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_number_of_material_properties(
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_material_property_name(
     const char**, const mgis_bv_Behaviour* const, const mgis_size_type);
 /*!
+ * \brief return the type of an material property
+ * \param[out] t: material property type
+ * \param[in] b: behaviour
+ * \param[in] i: material property index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_material_property_type(
+    mgis_bv_VariableType* const,
+    const mgis_bv_Behaviour* const,
+    const mgis_size_type);
+/*!
  * \brief return the number of internal state variables
  * \param[out] c: number of the internal state variables
  * \param[in] b: behaviour
@@ -202,6 +212,16 @@ mgis_bv_behaviour_get_number_of_external_state_variables(
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_external_state_variable_name(
     const char **, const mgis_bv_Behaviour *const, const mgis_size_type);
+/*!
+ * \brief return the type of an external state variable
+ * \param[out] t: external state variable type
+ * \param[in] b: behaviour
+ * \param[in] i: external state variable index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_external_state_variable_type(
+    mgis_bv_VariableType* const,
+    const mgis_bv_Behaviour* const,
+    const mgis_size_type);
 /*!
  * \brief return the number of parameters
  * \param[out] c: number of the parameters

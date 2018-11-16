@@ -19,10 +19,10 @@
  * \brief type of a variable
  */
 typedef enum {
-  MGIS_BV_SCALAR,
-  MGIS_BV_VECTOR,
-  MGIS_BV_STENSOR,
-  MGIS_BV_TENSOR
+  MGIS_BV_SCALAR  = 0,
+  MGIS_BV_VECTOR  = 1,
+  MGIS_BV_STENSOR = 2,
+  MGIS_BV_TENSOR  = 3
 } mgis_bv_VariableType;
 
 #endif /* LIB_MGIS_BEHAVIOUR_VARIABLE_H */

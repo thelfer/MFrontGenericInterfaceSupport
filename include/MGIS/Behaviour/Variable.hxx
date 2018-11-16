@@ -32,7 +32,7 @@ namespace mgis {
       //! name of the variable
       std::string name;
       //! type of the variable
-      enum Type { SCALAR, VECTOR, STENSOR, TENSOR } type;
+      enum Type { SCALAR = 0, VECTOR = 1, STENSOR = 2, TENSOR = 3} type;
     };  // end of struct Description
 
     /*!

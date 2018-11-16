@@ -197,6 +197,37 @@ mgis_status mgis_bv_behaviour_get_material_property_name(
   }
 }  // end of mgis_bv_behaviour_get_material_property_name
 
+mgis_status mgis_bv_behaviour_get_material_property_type(
+    mgis_bv_VariableType* const t,
+    const mgis_bv_Behaviour* const b,
+    const mgis_size_type i) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& ev = b->mps.at(i);
+    switch (ev.type) {
+      case mgis::behaviour::Variable::SCALAR:
+        *t = MGIS_BV_SCALAR;
+        break;
+      case mgis::behaviour::Variable::VECTOR:
+        *t = MGIS_BV_VECTOR;
+        break;
+      case mgis::behaviour::Variable::STENSOR:
+        *t = MGIS_BV_STENSOR;
+        break;
+      case mgis::behaviour::Variable::TENSOR:
+        *t = MGIS_BV_TENSOR;
+        break;
+      default:
+        return mgis_report_failure("unsupported variable type");
+    }
+    return mgis_report_success();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+}  // end of mgis_bv_behaviour_get_material_property_type
+  
 mgis_status mgis_bv_behaviour_get_number_of_internal_state_variables(
     mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
   if (b == nullptr) {
@@ -301,6 +332,37 @@ mgis_status mgis_bv_behaviour_get_external_state_variable_name(
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_get_external_state_variable_name
 
+mgis_status mgis_bv_behaviour_get_external_state_variable_type(
+    mgis_bv_VariableType* const t,
+    const mgis_bv_Behaviour* const b,
+    const mgis_size_type i) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& ev = b->esvs.at(i);
+    switch (ev.type) {
+      case mgis::behaviour::Variable::SCALAR:
+        *t = MGIS_BV_SCALAR;
+        break;
+      case mgis::behaviour::Variable::VECTOR:
+        *t = MGIS_BV_VECTOR;
+        break;
+      case mgis::behaviour::Variable::STENSOR:
+        *t = MGIS_BV_STENSOR;
+        break;
+      case mgis::behaviour::Variable::TENSOR:
+        *t = MGIS_BV_TENSOR;
+        break;
+      default:
+        return mgis_report_failure("unsupported variable type");
+    }
+    return mgis_report_success();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+}  // end of mgis_bv_behaviour_get_external_state_variable_type
+  
 mgis_status mgis_bv_behaviour_get_number_of_parameters(
     mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
   if (b == nullptr) {
