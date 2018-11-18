@@ -170,8 +170,8 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_behaviour_kinematic(
 
 mgis_status mgis_bv_behaviour_get_number_of_material_properties(
     mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
+  *s = 0;
   if (b == nullptr) {
-    *s = 0;
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -184,8 +184,8 @@ mgis_status mgis_bv_behaviour_get_number_of_material_properties(
 
 mgis_status mgis_bv_behaviour_get_material_property_name(
     const char** n, const mgis_bv_Behaviour* const b, const mgis_size_type i) {
+  *n = nullptr;
   if (b == nullptr) {
-    *n = nullptr;
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -230,8 +230,8 @@ mgis_status mgis_bv_behaviour_get_material_property_type(
   
 mgis_status mgis_bv_behaviour_get_number_of_internal_state_variables(
     mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
+  *s = 0;
   if (b == nullptr) {
-    *s = 0;
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -244,8 +244,8 @@ mgis_status mgis_bv_behaviour_get_number_of_internal_state_variables(
 
 mgis_status mgis_bv_behaviour_get_internal_state_variable_name(
     const char** n, const mgis_bv_Behaviour* const b, const mgis_size_type i) {
+  *n = nullptr;
   if (b == nullptr) {
-    *n = nullptr;
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -305,8 +305,8 @@ mgis_status mgis_bv_behaviour_get_internal_state_variable_offset(
 
 mgis_status mgis_bv_behaviour_get_number_of_external_state_variables(
     mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
+  *s = 0;
   if (b == nullptr) {
-    *s = 0;
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -319,8 +319,8 @@ mgis_status mgis_bv_behaviour_get_number_of_external_state_variables(
 
 mgis_status mgis_bv_behaviour_get_external_state_variable_name(
     const char** n, const mgis_bv_Behaviour* const b, const mgis_size_type i) {
+  *n = nullptr;
   if (b == nullptr) {
-    *n = nullptr;
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -379,8 +379,8 @@ mgis_status mgis_bv_behaviour_get_number_of_parameters(
 
 mgis_status mgis_bv_behaviour_get_parameter_name(
     const char** n, const mgis_bv_Behaviour* const b, const mgis_size_type i) {
+  *n = nullptr;
   if (b == nullptr) {
-    *n = nullptr;
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -394,8 +394,8 @@ mgis_status mgis_bv_behaviour_get_parameter_name(
 
 mgis_status mgis_bv_behaviour_get_number_of_integer_parameters(
     mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
+  *s = 0;
   if (b == nullptr) {
-    *s = 0;
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -408,8 +408,8 @@ mgis_status mgis_bv_behaviour_get_number_of_integer_parameters(
 
 mgis_status mgis_bv_behaviour_get_integer_parameter_name(
     const char** n, const mgis_bv_Behaviour* const b, const mgis_size_type i) {
+  *n = nullptr;
   if (b == nullptr) {
-    *n = nullptr;
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -423,8 +423,8 @@ mgis_status mgis_bv_behaviour_get_integer_parameter_name(
 
 mgis_status mgis_bv_behaviour_get_number_of_unsigned_short_parameters(
     mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
+  *s = 0;
   if (b == nullptr) {
-    *s = 0;
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -437,8 +437,8 @@ mgis_status mgis_bv_behaviour_get_number_of_unsigned_short_parameters(
 
 mgis_status mgis_bv_behaviour_get_unsigned_short_parameter_name(
     const char** n, const mgis_bv_Behaviour* const b, const mgis_size_type i) {
+  *n = nullptr;
   if (b == nullptr) {
-    *n = nullptr;
     return mgis_report_failure("invalid argument");
   }
   try {

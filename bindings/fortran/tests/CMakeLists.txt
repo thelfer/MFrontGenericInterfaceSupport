@@ -36,3 +36,7 @@ endfunction(test_fortran_bindings)
 
 test_fortran_bindings(mgis_status)
 test_fortran_bindings(MFrontGenericBehaviourInterfaceTest-f)
+test_fortran_bindings(MFrontGenericBehaviourInterfaceTest2-f)
+test_fortran_bindings(StateTest-f)
+test_fortran_bindings(StateTest2-f)
+test_fortran_bindings(IntegrateTest-f)

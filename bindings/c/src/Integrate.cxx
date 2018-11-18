@@ -28,6 +28,13 @@ mgis_status mgis_bv_integrate(int* const r,
   return mgis_report_success();
 }  // end of mgis_bv_integrate
 
+mgis_status mgis_bv_integrate_2(int* const r,
+				mgis_bv_BehaviourData* const d,
+                              const mgis_bv_Behaviour* const b) {
+  auto v = mgis::behaviour::make_view(*d);
+  return mgis_bv_integrate(r, &v, b);
+}  // end of mgis_bv_integrate
+  
 mgis_status mgis_bv_integrate_material_data_manager(
     int* const r,
     mgis_ThreadPool* const p,

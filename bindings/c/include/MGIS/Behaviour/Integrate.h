@@ -41,6 +41,25 @@ MGIS_C_EXPORT mgis_status mgis_bv_integrate(int* const,
                                             mgis_bv_BehaviourDataView* const,
                                             const mgis_bv_Behaviour* const);
 /*!
+ * \brief integrate the behaviour. The returned value has the following
+ * meaning:
+ * - -1: integration failed
+ * -  0: integration succeeded but results are unreliable
+ * -  1: integration succeeded and results are reliable
+ *
+ * \note this version internally creates a view of the data and calls
+ * `mgis_bv_integrate`
+ * \note this function has been introduced mostly for bindings to
+ * languages where exposing `mgis_bv_BehaviourDataView` would be too
+ * difficult (see the `fortran` bindings for example).
+ * \param[out] r: result
+ * \param[in,out] d: behaviour data
+ * \param[in,out] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_integrate_2(int* const,
+					      mgis_bv_BehaviourData* const,
+					      const mgis_bv_Behaviour* const);
+/*!
  * \brief integrate the behaviour for a range of integration points. The
  * returned value has the following meaning:
  * - -1: integration failed for at least one Gauss point

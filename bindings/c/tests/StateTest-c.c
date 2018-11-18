@@ -57,6 +57,9 @@ int main(const int argc, const char* const* argv) {
   // s0 is copied in s1
   check_status(mgis_bv_update_behaviour_data(d));
   check_status(
+      mgis_bv_state_get_external_state_variable_by_name(&T, s0, "Temperature"));
+  check(fabs(*T - 293.15) < 1e-8,"invalid temperature value");
+  check_status(
       mgis_bv_state_get_external_state_variable_by_name(&T, s1, "Temperature"));
   check(fabs(*T - 293.15) < 1e-8,"invalid temperature value");
   check_status(mgis_bv_free_behaviour_data(&d));
