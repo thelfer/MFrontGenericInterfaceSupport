@@ -36,8 +36,8 @@ typedef struct mgis_bv_MaterialStateManager mgis_bv_MaterialStateManager;
 #endif
 
 typedef enum {
-  MGIS_BV_LOCAL_STORAGE,
-  MGIS_BV_EXTERNAL_STORAGE,
+  MGIS_BV_LOCAL_STORAGE    = 0,
+  MGIS_BV_EXTERNAL_STORAGE = 1,
 } mgis_bv_MaterialStateManagerStorageMode;
 /*!
  * \param[out] n: number of integration points

@@ -23,6 +23,10 @@ module mgis_behaviour
      enumerator :: FINITESTRAINKINEMATIC_F_CAUCHY = 3
      enumerator :: FINITESTRAINKINEMATIC_ETO_PK1 = 4
   end enum
+  enum, bind(C)
+     enumerator :: LOCAL_STORAGE    = 0
+     enumerator :: EXTERNAL_STORAGE = 1
+  end enum
   type :: Behaviour
     private
     type(c_ptr) :: ptr = c_null_ptr
@@ -225,6 +229,90 @@ contains
        l = get_empty_string();
     end if
   end function behaviour_get_tfel_version
+  !
+  function behaviour_get_number_of_parameters(n,b) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_number_of_parameters_wrapper(l,b) &
+            bind(c,name = 'mgis_bv_behaviour_get_number_of_parameters') result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_number_of_parameters_wrapper
+    end interface
+    integer :: n
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = behaviour_get_number_of_parameters_wrapper(ns, b%ptr)
+    n = ns
+  end function behaviour_get_number_of_parameters
+  !
+  function behaviour_get_parameter_name(l, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_get_parameter_name_wrapper(l, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_parameter_name') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_parameter_name_wrapper
+    end interface
+    character(len=:), allocatable, intent(out) :: l
+    type(behaviour), intent(in) :: b
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    type(c_ptr) :: lp
+    integer(kind = c_size_t) :: nc
+    if(.not. convert_to_c_index(nc, n)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    s = behaviour_get_parameter_name_wrapper(lp, b%ptr, nc)
+    if (s % exit_status == MGIS_SUCCESS) then
+       l = convert_c_string(lp)
+    else
+       l = get_empty_string();
+    end if
+  end function behaviour_get_parameter_name
+  !
+  function behaviour_get_parameter_default_value(v, b, n) result(r)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_get_parameter_default_value_wrapper(v, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_parameter_default_value') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_double
+         use mgis, only: mgis_status
+         implicit none
+         real(kind=c_double), intent(out) :: v
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: r
+       end function behaviour_get_parameter_default_value_wrapper
+    end interface
+    real(kind=8), intent(out) :: v
+    type(behaviour), intent(in) :: b
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: r
+    r = behaviour_get_parameter_default_value_wrapper(&
+         v, b%ptr, convert_fortran_string(n))
+  end function behaviour_get_parameter_default_value
   !
   function behaviour_get_number_of_material_properties(n,b) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t
@@ -698,6 +786,67 @@ contains
     r = state_set_gradient_by_name_wrapper( &
          s%ptr, convert_fortran_string(n), c_loc(v(1)))
   end function state_set_gradient_by_name
+  !
+  function state_set_material_property_by_name(s, n, v) result(r)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function state_set_material_property_by_name_wrapper(s1, n, v) &
+            bind(c,name = 'mgis_bv_state_set_material_property_by_name') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_char
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in),value :: s1
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         real(kind=c_double), intent(in), value :: v
+         type(mgis_status) :: r
+       end function state_set_material_property_by_name_wrapper
+    end interface
+    type(State), intent(in) :: s
+    character(len=*), intent(in) :: n
+    real(kind=8), intent(in) :: v
+    type(mgis_status) :: r
+    r = state_set_material_property_by_name_wrapper(&
+         s%ptr, convert_fortran_string(n), v)
+  end function state_set_material_property_by_name
+  ! \note the C function returns a pointer to the variable, the
+  !       fortran funtion returns the value
+  function state_get_material_property_by_name(v, s, n) result(r)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer
+    use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function state_get_material_property_by_name_wrapper(v, s1, n) &
+            bind(c,name = 'mgis_bv_state_get_material_property_by_name') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_char
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: v
+         type(c_ptr), intent(in),value :: s1
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: r
+       end function state_get_material_property_by_name_wrapper
+    end interface
+    real(kind=8), intent(out) :: v
+    type(State), intent(in) :: s
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: r
+    real(kind=8), pointer :: fptr => null()
+    type(c_ptr) :: p
+    r = state_get_material_property_by_name_wrapper(&
+         p, s%ptr, convert_fortran_string(n))
+    if (r % exit_status == MGIS_SUCCESS) then
+       call c_f_pointer(p,fptr)
+       v = fptr
+    else
+       v = ieee_value(v, ieee_quiet_nan)
+    endif
+  end function state_get_material_property_by_name
   ! \note the C function returns a pointer to the variable, the
   !       fortran funtion returns the value
   function state_get_internal_state_variable_by_offset(v, s, o) result(r)
@@ -1036,6 +1185,164 @@ contains
     call c_f_pointer(tf_ptr, tf, [tfs, n])
   end function material_state_manager_get_thermodynamic_forces
   !
+  function material_state_manager_set_uniform_material_property(s, n, v) &
+       result(r)
+    use mgis, only: mgis_status
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function msm_set_uniform_material_property_wrapper(s, n, v) &
+            bind(c,name = 'mgis_bv_material_state_manager_set_uniform_material_property') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_char
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         real(kind=c_double), intent(in), value :: v
+         type(mgis_status) :: r
+       end function msm_set_uniform_material_property_wrapper
+    end interface
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    real(kind=8),     intent(in) :: v
+    type(mgis_status) :: r
+    r = msm_set_uniform_material_property_wrapper(s %ptr, &
+         convert_fortran_string(n), v)
+  end function material_state_manager_set_uniform_material_property
+  !
+  function material_state_manager_is_material_property_defined(b, s, n)&
+       result(r)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function msm_is_material_property_defined(b, s, n) &
+            bind(c,name = 'mgis_bv_material_state_manager_is_material_property_defined') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: b
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: r
+       end function msm_is_material_property_defined
+    end interface
+    logical, intent(out) :: b
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: r
+    integer bc
+    r = msm_is_material_property_defined(&
+         bc, s%ptr, convert_fortran_string(n))
+    if( r % exit_status .eq. MGIS_SUCCESS) then
+       b = bc .eq. 1
+    else
+       b = .false.
+    end if
+  end function material_state_manager_is_material_property_defined
+  !
+  function material_state_manager_is_material_property_uniform(b, s, n)&
+       result(r)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function msm_is_material_property_uniform(b, s, n) &
+            bind(c,name = 'mgis_bv_material_state_manager_is_material_property_uniform') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: b
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: r
+       end function msm_is_material_property_uniform
+    end interface
+    logical, intent(out) :: b
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: r
+    integer bc
+    r = msm_is_material_property_uniform(&
+         bc, s%ptr, convert_fortran_string(n))
+    if( r % exit_status .eq. MGIS_SUCCESS) then
+       b = bc .eq. 1
+    else
+       b = .false.
+    end if
+  end function material_state_manager_is_material_property_uniform
+  !
+  function material_state_manager_get_uniform_material_property(v, s, n)&
+       result(r)
+    use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function msm_get_uniform_material_property(v, s, n) &
+            bind(c,name = 'mgis_bv_material_state_manager_get_uniform_material_property') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_char
+         use mgis, only: mgis_status
+         implicit none
+         real(kind=c_double), intent(out) :: v
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: r
+       end function msm_get_uniform_material_property
+    end interface
+    real(kind=8), intent(out) :: v
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: r
+    r = msm_get_uniform_material_property(&
+         v, s%ptr, convert_fortran_string(n))
+    if( r % exit_status .eq. MGIS_SUCCESS) then
+       v = ieee_value(v, ieee_quiet_nan)
+    end if
+  end function material_state_manager_get_uniform_material_property
+  !
+  function material_state_manager_get_non_uniform_material_property(v, s, n)&
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_f_pointer
+    use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function msm_get_non_uniform_material_property(v, s, n) &
+            bind(c,name = 'mgis_bv_material_state_manager_get_non_uniform_material_property') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_char
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out)      :: v
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: r
+       end function msm_get_non_uniform_material_property
+    end interface
+    real(kind=8), dimension(:), pointer, intent(out) :: v
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: r
+    type(c_ptr) values
+    integer nig
+    nullify(v)
+    r = material_state_manager_get_number_of_integration_points(nig, s)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = msm_get_non_uniform_material_property(&
+         values, s%ptr, convert_fortran_string(n))
+    if( r % exit_status .eq. MGIS_SUCCESS) then
+       call c_f_pointer(values, v, [nig])
+    end if
+  end function material_state_manager_get_non_uniform_material_property
+  !
   function material_state_manager_get_internal_state_variables_stride(n_isvs, s) &
        result(r)
     use, intrinsic :: iso_c_binding, only: c_size_t
@@ -1106,8 +1413,8 @@ contains
   !
   function material_state_manager_set_uniform_external_state_variable(s, n, v) &
        result(r)
-    use mgis, only: mgis_status
     use mgis_fortran_utilities
+    use mgis, only: mgis_status
     implicit none
     interface
        function msm_set_uniform_external_state_variable_wrapper(s, n, v) &
@@ -1129,6 +1436,138 @@ contains
     r = msm_set_uniform_external_state_variable_wrapper(s %ptr, &
          convert_fortran_string(n), v)
   end function material_state_manager_set_uniform_external_state_variable
+  !
+  function material_state_manager_is_external_state_variable_defined(b, s, n)&
+       result(r)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function msm_is_external_state_variable_defined(b, s, n) &
+            bind(c,name = 'mgis_bv_material_state_manager_is_external_state_variable_defined') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: b
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: r
+       end function msm_is_external_state_variable_defined
+    end interface
+    logical, intent(out) :: b
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: r
+    integer bc
+    r = msm_is_external_state_variable_defined(&
+         bc, s%ptr, convert_fortran_string(n))
+    if( r % exit_status .eq. MGIS_SUCCESS) then
+       b = bc .eq. 1
+    else
+       b = .false.
+    end if
+  end function material_state_manager_is_external_state_variable_defined
+  !
+  function material_state_manager_is_external_state_variable_uniform(b, s, n)&
+       result(r)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function msm_is_external_state_variable_uniform(b, s, n) &
+            bind(c,name = 'mgis_bv_material_state_manager_is_external_state_variable_uniform') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: b
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: r
+       end function msm_is_external_state_variable_uniform
+    end interface
+    logical, intent(out) :: b
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: r
+    integer bc
+    r = msm_is_external_state_variable_uniform(&
+         bc, s%ptr, convert_fortran_string(n))
+    if( r % exit_status .eq. MGIS_SUCCESS) then
+       b = bc .eq. 1
+    else
+       b = .false.
+    end if
+  end function material_state_manager_is_external_state_variable_uniform
+  !
+  function material_state_manager_get_uniform_external_state_variable(v, s, n)&
+       result(r)
+    use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function msm_get_uniform_external_state_variable(v, s, n) &
+            bind(c,name = 'mgis_bv_material_state_manager_get_uniform_external_state_variable') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_char
+         use mgis, only: mgis_status
+         implicit none
+         real(kind=c_double), intent(out) :: v
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: r
+       end function msm_get_uniform_external_state_variable
+    end interface
+    real(kind=8), intent(out) :: v
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: r
+    r = msm_get_uniform_external_state_variable(&
+         v, s%ptr, convert_fortran_string(n))
+    if( r % exit_status .eq. MGIS_SUCCESS) then
+       v = ieee_value(v, ieee_quiet_nan)
+    end if
+  end function material_state_manager_get_uniform_external_state_variable
+  !
+  function material_state_manager_get_non_uniform_external_state_variable(v, s, n)&
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_f_pointer
+    use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function msm_get_non_uniform_external_state_variable(v, s, n) &
+            bind(c,name = 'mgis_bv_material_state_manager_get_non_uniform_external_state_variable') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_char
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out)      :: v
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: r
+       end function msm_get_non_uniform_external_state_variable
+    end interface
+    real(kind=8), dimension(:), pointer, intent(out) :: v
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: r
+    type(c_ptr) values
+    integer nig
+    nullify(v)
+    r = material_state_manager_get_number_of_integration_points(nig, s)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = msm_get_non_uniform_external_state_variable(&
+         values, s%ptr, convert_fortran_string(n))
+    if( r % exit_status .eq. MGIS_SUCCESS) then
+       call c_f_pointer(values, v, [nig])
+    end if
+  end function material_state_manager_get_non_uniform_external_state_variable
   !
   function free_material_data_manager(ptr) result(r)
     use, intrinsic :: iso_c_binding, only: c_associated

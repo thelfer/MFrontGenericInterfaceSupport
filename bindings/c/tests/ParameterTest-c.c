@@ -85,7 +85,7 @@ int main(const int argc, const char* const* argv) {
     check_status(mgis_bv_behaviour_get_parameter_name(&n, b, 1));
     check(strcmp(n, "PoissonRatio") == 0, "invalid second parameter");
     check_status(mgis_bv_behaviour_get_parameter_default_value(&v, b, n));
-    check(fabs(v-nu)<eps*nu,"invalid 'YoungModulus' default value");
+    check(fabs(v-nu)<eps*nu,"invalid 'PoissonRatio' default value");
     check_status(mgis_bv_behaviour_get_parameter_name(&n, b, 2));
     check(strcmp(n, "minimal_time_step_scaling_factor") == 0, "invalid third parameter");
     check_status(mgis_bv_behaviour_get_parameter_name(&n, b, 3));

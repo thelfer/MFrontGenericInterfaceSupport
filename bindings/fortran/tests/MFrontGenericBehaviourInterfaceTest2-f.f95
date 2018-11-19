@@ -22,7 +22,7 @@ subroutine test()
   use mgis_behaviour
   use mgis_testing_utilities
   implicit none
-  type(behaviour) b
+  type(Behaviour) b
   logical :: r
   ! library
   character(len=:), allocatable :: l
