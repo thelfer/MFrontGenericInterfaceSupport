@@ -35,6 +35,14 @@ module mgis_behaviour
     private
     type(c_ptr) :: ptr = c_null_ptr
   end type State
+  type :: MaterialStateManager
+    private
+    type(c_ptr) :: ptr = c_null_ptr
+  end type MaterialStateManager
+  type :: MaterialDataManager
+    private
+    type(c_ptr) :: ptr = c_null_ptr
+  end type MaterialDataManager
 contains
   function load_behaviour(b,l,bn,h) result(s)
     use mgis_fortran_utilities
@@ -609,7 +617,7 @@ contains
     s = behaviour_data_set_time_increment_wrapper(d%ptr, dt)
   end function behaviour_data_set_time_increment
   !
-  function update_behaviour_data(ptr) result(r)
+  function update_behaviour_data(d) result(r)
     use mgis
     implicit none
     interface
@@ -622,12 +630,12 @@ contains
          type(mgis_status) :: r
        end function update_behaviour_data_wrapper
     end interface
-    type(BehaviourData), intent(inout) :: ptr
+    type(BehaviourData), intent(in) :: d
     type(mgis_status) :: r
-    r = update_behaviour_data_wrapper(ptr%ptr)
+    r = update_behaviour_data_wrapper(d%ptr)
   end function update_behaviour_data
   !
-  function revert_behaviour_data(ptr) result(r)
+  function revert_behaviour_data(d) result(r)
     use mgis
     implicit none
     interface
@@ -640,9 +648,9 @@ contains
          type(mgis_status) :: r
        end function revert_behaviour_data_wrapper
     end interface
-    type(BehaviourData), intent(inout) :: ptr
+    type(BehaviourData), intent(in) :: d
     type(mgis_status) :: r
-    r = revert_behaviour_data_wrapper(ptr%ptr)
+    r = revert_behaviour_data_wrapper(d%ptr)
   end function revert_behaviour_data
   !
   function free_behaviour_data(ptr) result(r)
@@ -792,6 +800,392 @@ contains
        v = ieee_value(v, ieee_quiet_nan)
     endif
   end function state_get_external_state_variable_by_name
+  !
+  function create_material_data_manager(d, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function create_material_data_manager_wrapper(d, b, n) &
+            bind(c,name = 'mgis_bv_create_material_data_manager') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: d
+         type(c_ptr), intent(in), value :: b
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function create_material_data_manager_wrapper
+    end interface
+    type(MaterialDataManager), intent(out) :: d
+    type(Behaviour), intent(in) :: b
+    integer, intent(in) :: n
+    type(mgis_status) :: s
+    integer(kind=c_size_t) nc
+    if (n.lt.1) then
+       s = report_failure('invalid number of integration points')
+       return
+    end if
+    nc = n
+    s = create_material_data_manager_wrapper(d%ptr, b%ptr, nc)
+  end function create_material_data_manager
+  !
+  function material_data_manager_get_state_0(s0,d) result(s)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function material_data_manager_get_state_0_wrapper(s0, d) &
+            bind(c,name = 'mgis_bv_material_data_manager_get_state_0') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: s0
+         type(c_ptr), intent(in), value :: d
+         type(mgis_status) :: r
+       end function material_data_manager_get_state_0_wrapper
+    end interface
+    type(MaterialStateManager), intent(out) :: s0
+    type(MaterialDataManager), intent(in) :: d
+    type(mgis_status) :: s
+    s = material_data_manager_get_state_0_wrapper(s0%ptr, d%ptr)
+  end function material_data_manager_get_state_0
+  !
+  function material_data_manager_get_state_1(s1,d) result(s)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function material_data_manager_get_state_1_wrapper(s1, d) &
+            bind(c,name = 'mgis_bv_material_data_manager_get_state_1') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: s1
+         type(c_ptr), intent(in), value :: d
+         type(mgis_status) :: r
+       end function material_data_manager_get_state_1_wrapper
+    end interface
+    type(MaterialStateManager), intent(out) :: s1
+    type(MaterialDataManager), intent(in) :: d
+    type(mgis_status) :: s
+    s = material_data_manager_get_state_1_wrapper(s1%ptr, d%ptr)
+  end function material_data_manager_get_state_1
+  !
+  function material_state_manager_get_number_of_integration_points(n, s) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function msm_get_number_of_integration_points_wrapper(nig, s) &
+            bind(c,name = 'mgis_bv_material_state_manager_get_number_of_integration_points') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         integer(kind=c_size_t), intent(out) :: nig
+         type(c_ptr), intent(in),value :: s
+         type(mgis_status) :: r
+       end function msm_get_number_of_integration_points_wrapper
+    end interface
+    integer, intent(out) :: n
+    type(MaterialStateManager), intent(in) :: s
+    type(mgis_status) :: r
+    integer(kind=c_size_t) nig
+    r = msm_get_number_of_integration_points_wrapper(nig, s %ptr)
+    if( r%exit_status .eq. MGIS_SUCCESS) then
+       n = nig
+    else
+       n = -1
+    end if
+  end function material_state_manager_get_number_of_integration_points
+  !
+  function material_state_manager_get_gradients_stride(g_stride, s) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function material_state_manager_get_gradients_stride_wrapper(gs, s) &
+            bind(c,name = 'mgis_bv_material_state_manager_get_gradients_stride') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         integer(kind=c_size_t), intent(out) :: gs
+         type(c_ptr), intent(in),value :: s
+         type(mgis_status) :: r
+       end function material_state_manager_get_gradients_stride_wrapper
+    end interface
+    integer, intent(out) :: g_stride
+    type(MaterialStateManager), intent(in) :: s
+    type(mgis_status) :: r
+    integer(kind=c_size_t) gs
+    r = material_state_manager_get_gradients_stride_wrapper(gs, s %ptr)
+    if( r%exit_status .eq. MGIS_SUCCESS) then
+       g_stride = gs
+    else
+       g_stride = -1
+    end if
+  end function material_state_manager_get_gradients_stride
+  !
+  function material_state_manager_get_gradients(g, s) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_f_pointer
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function material_state_manager_get_gradients_wrapper(g_ptr, s) &
+            bind(c,name = 'mgis_bv_material_state_manager_get_gradients') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         type(c_ptr), intent(out) :: g_ptr
+         type(c_ptr), intent(in),value :: s
+         type(mgis_status) :: r
+       end function material_state_manager_get_gradients_wrapper
+    end interface
+    real(kind=8), dimension(:,:), pointer, intent(out) :: g
+    type(MaterialStateManager), intent(in) :: s
+    type(mgis_status) :: r
+    type(c_ptr) g_ptr
+    integer gs
+    integer n
+    nullify(g)
+    r = material_state_manager_get_gradients_wrapper(g_ptr, s %ptr)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = material_state_manager_get_gradients_stride(gs, s)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = material_state_manager_get_number_of_integration_points(n, s)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    call c_f_pointer(g_ptr, g, [gs, n])
+  end function material_state_manager_get_gradients
+  !
+  function material_state_manager_get_thermodynamic_forces_stride(tf_stride, s) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function msm_get_thermodynamic_forces_stride_wrapper(tfs, s) &
+            bind(c,name = 'mgis_bv_material_state_manager_get_thermodynamic_forces_stride') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         integer(kind=c_size_t), intent(out) :: tfs
+         type(c_ptr), intent(in),value :: s
+         type(mgis_status) :: r
+       end function msm_get_thermodynamic_forces_stride_wrapper
+    end interface
+    integer, intent(out) :: tf_stride
+    type(MaterialStateManager), intent(in) :: s
+    type(mgis_status) :: r
+    integer(kind=c_size_t) tfs
+    r = msm_get_thermodynamic_forces_stride_wrapper(tfs, s %ptr)
+    if( r%exit_status .eq. MGIS_SUCCESS) then
+       tf_stride = tfs
+    else
+       tf_stride = -1
+    end if
+  end function material_state_manager_get_thermodynamic_forces_stride
+  !
+  function material_state_manager_get_thermodynamic_forces(tf, s) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_f_pointer
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function msm_get_thermodynamic_forces_wrapper(tf_ptr, s) &
+            bind(c,name = 'mgis_bv_material_state_manager_get_thermodynamic_forces') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         type(c_ptr), intent(out) :: tf_ptr
+         type(c_ptr), intent(in),value :: s
+         type(mgis_status) :: r
+       end function msm_get_thermodynamic_forces_wrapper
+    end interface
+    real(kind=8), dimension(:,:), pointer, intent(out) :: tf
+    type(MaterialStateManager), intent(in) :: s
+    type(mgis_status) :: r
+    type(c_ptr) tf_ptr
+    integer tfs
+    integer n
+    nullify(tf)
+    r = msm_get_thermodynamic_forces_wrapper(tf_ptr, s %ptr)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = material_state_manager_get_thermodynamic_forces_stride(tfs, s)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = material_state_manager_get_number_of_integration_points(n, s)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    call c_f_pointer(tf_ptr, tf, [tfs, n])
+  end function material_state_manager_get_thermodynamic_forces
+  !
+  function material_state_manager_get_internal_state_variables_stride(n_isvs, s) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function msm_get_internal_state_variables_stride_wrapper(nc_isvs, s) &
+            bind(c,name = 'mgis_bv_material_state_manager_get_internal_state_variables_stride') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         integer(kind=c_size_t), intent(out) :: nc_isvs
+         type(c_ptr), intent(in),value :: s
+         type(mgis_status) :: r
+       end function msm_get_internal_state_variables_stride_wrapper
+    end interface
+    integer, intent(out) :: n_isvs
+    type(MaterialStateManager), intent(in) :: s
+    type(mgis_status) :: r
+    integer(kind=c_size_t) nc_isvs
+    r = msm_get_internal_state_variables_stride_wrapper(nc_isvs, s %ptr)
+    if( r%exit_status .eq. MGIS_SUCCESS) then
+       n_isvs = nc_isvs
+    else
+       n_isvs = -1
+    end if
+  end function material_state_manager_get_internal_state_variables_stride
+  !
+  function material_state_manager_get_internal_state_variables(isvs, s) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_f_pointer
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function msm_get_internal_state_variables_wrapper(isvs_ptr, s) &
+            bind(c,name = 'mgis_bv_material_state_manager_get_internal_state_variables') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         type(c_ptr), intent(out) :: isvs_ptr
+         type(c_ptr), intent(in),value :: s
+         type(mgis_status) :: r
+       end function msm_get_internal_state_variables_wrapper
+    end interface
+    real(kind=8), dimension(:,:), pointer, intent(out) :: isvs
+    type(MaterialStateManager), intent(in) :: s
+    type(mgis_status) :: r
+    type(c_ptr) isvs_ptr
+    integer n_isvs
+    integer n
+    nullify(isvs)
+    r = msm_get_internal_state_variables_wrapper(isvs_ptr, s %ptr)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = material_state_manager_get_internal_state_variables_stride(n_isvs, s)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = material_state_manager_get_number_of_integration_points(n, s)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    call c_f_pointer(isvs_ptr, isvs, [n_isvs, n])
+  end function material_state_manager_get_internal_state_variables
+  !
+  function material_state_manager_set_uniform_external_state_variable(s, n, v) &
+       result(r)
+    use mgis, only: mgis_status
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function msm_set_uniform_external_state_variable_wrapper(s, n, v) &
+            bind(c,name = 'mgis_bv_material_state_manager_set_uniform_external_state_variable') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_char
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         real(kind=c_double), intent(in), value :: v
+         type(mgis_status) :: r
+       end function msm_set_uniform_external_state_variable_wrapper
+    end interface
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    real(kind=8),     intent(in) :: v
+    type(mgis_status) :: r
+    r = msm_set_uniform_external_state_variable_wrapper(s %ptr, &
+         convert_fortran_string(n), v)
+  end function material_state_manager_set_uniform_external_state_variable
+  !
+  function free_material_data_manager(ptr) result(r)
+    use, intrinsic :: iso_c_binding, only: c_associated
+    use mgis
+    implicit none
+    interface
+       function free_material_data_manager_wrapper(ptr) &
+            bind(c, name='mgis_bv_free_material_data_manager') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis
+         implicit none
+         type(c_ptr), intent(inout) :: ptr
+         type(mgis_status) :: r
+       end function free_material_data_manager_wrapper
+    end interface
+    type(MaterialDataManager), intent(inout) :: ptr
+    type(mgis_status) :: r
+    if (c_associated(ptr%ptr)) then
+       r = free_material_data_manager_wrapper(ptr%ptr)
+    end if
+  end function free_material_data_manager
+  !
+  function update_material_data_manager(d) result(r)
+    use mgis
+    implicit none
+    interface
+       function update_material_data_manager_wrapper(ptr) &
+            bind(c, name='mgis_bv_update_material_data_manager') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis
+         implicit none
+         type(c_ptr), intent(in), value :: ptr
+         type(mgis_status) :: r
+       end function update_material_data_manager_wrapper
+    end interface
+    type(MaterialDataManager), intent(in) :: d
+    type(mgis_status) :: r
+    r = update_material_data_manager_wrapper(d%ptr)
+  end function update_material_data_manager
+  !
+  function revert_material_data_manager(d) result(r)
+    use mgis
+    implicit none
+    interface
+       function revert_material_data_manager_wrapper(ptr) &
+            bind(c, name='mgis_bv_revert_material_data_manager') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis
+         implicit none
+         type(c_ptr), intent(in), value :: ptr
+         type(mgis_status) :: r
+       end function revert_material_data_manager_wrapper
+    end interface
+    type(MaterialDataManager), intent(in) :: d
+    type(mgis_status) :: r
+    r = revert_material_data_manager_wrapper(d%ptr)
+  end function revert_material_data_manager
   ! integrate
   function integrate(r, d, b) result(s)
     use mgis, only: mgis_status
@@ -814,4 +1208,71 @@ contains
     type(mgis_status) :: s
     s = integrate_wrapper(r, d%ptr, b%ptr)
   end function integrate
+  ! 
+  function integrate_material_data_manager(r, p, m, dt) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities, only: convert_to_c_index
+    use mgis, only: ThreadPool, mgis_status, report_failure
+    implicit none
+    interface
+       function integrate_material_data_manager_wrapper(r, p, m, dt) &
+            bind(c,name = 'mgis_bv_integrate_material_data_manager') &
+            result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_double
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: r
+         type(c_ptr), intent(in),value :: p
+         type(c_ptr), intent(in),value :: m
+         real(kind = c_double), intent(in),value :: dt
+         type(mgis_status) :: s
+       end function integrate_material_data_manager_wrapper
+    end interface
+    integer, intent(out) :: r
+    type(ThreadPool),          intent(in) :: p
+    type(MaterialDataManager), intent(in) :: m
+    real(kind = 8),            intent(in) :: dt
+    type(mgis_status) :: s
+    s = integrate_material_data_manager_wrapper(r, p%ptr, m%ptr, dt)
+  end function integrate_material_data_manager
+  !
+  function integrate_material_data_manager_part(r, m, dt, ni, ne) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities, only: convert_to_c_index
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function integrate_material_data_manager_part_wrapper(r, m, dt, ni, ne) &
+            bind(c,name = 'mgis_bv_integrate_material_data_manager_part') &
+            result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t, c_int, c_double
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: r
+         type(c_ptr), intent(in),value :: m
+         real(kind = c_double), intent(in),value :: dt
+         integer(kind = c_size_t), intent(in),value :: ni
+         integer(kind = c_size_t), intent(in),value :: ne
+         type(mgis_status) :: s
+       end function integrate_material_data_manager_part_wrapper
+    end interface
+    integer, intent(out) :: r
+    type(MaterialDataManager), intent(in) :: m
+    real(kind = 8),            intent(in) :: dt
+    integer :: ni
+    integer :: ne
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: nic
+    integer(kind=c_size_t) :: nec
+    if(.not. convert_to_c_index(nic, ni)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    if(.not. convert_to_c_index(nec, ne)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    nec = nec + 1
+    s = integrate_material_data_manager_part_wrapper(r, m%ptr, dt, nic, nec)
+  end function integrate_material_data_manager_part
 end module  mgis_behaviour

@@ -39,7 +39,13 @@ typedef enum {
   MGIS_BV_LOCAL_STORAGE,
   MGIS_BV_EXTERNAL_STORAGE,
 } mgis_bv_MaterialStateManagerStorageMode;
-
+/*!
+ * \param[out] n: number of integration points
+ * \param[in]  s: state manager
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_get_number_of_integration_points(
+    mgis_size_type*, mgis_bv_MaterialStateManager* const);
 /*!
  * \param[out] g: a pointer to the array of gradients
  * \param[in]  s: state manager

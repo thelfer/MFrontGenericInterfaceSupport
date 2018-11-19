@@ -1,5 +1,5 @@
 module mgis
-  use, intrinsic :: iso_c_binding, only: c_int, c_ptr, c_char
+  use, intrinsic :: iso_c_binding, only: c_int, c_ptr, c_char, c_null_ptr
   use, intrinsic :: iso_fortran_env, only: int64
   use mgis_fortran_utilities
   ! enumeration
@@ -9,8 +9,11 @@ module mgis
   end enum
   type, bind(c) :: mgis_status
      integer :: exit_status
-     type(c_ptr) :: msg
+     type(c_ptr) :: msg = c_null_ptr
   end type mgis_status
+  type :: ThreadPool
+     type(c_ptr) :: ptr
+  end type ThreadPool
   interface
      function report_success() bind(c,name = 'mgis_report_success') result(r)
        import mgis_status
@@ -42,4 +45,51 @@ contains
     character(len=:), allocatable :: msg
     msg = convert_c_string(s%msg)
   end function get_error_message
+  !
+  function create_thread_pool(p, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_associated
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function create_thread_pool_wrapper(p, n) &
+            bind(c,name = 'mgis_create_thread_pool') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         import mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: p
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function create_thread_pool_wrapper
+    end interface
+    type(ThreadPool), intent(out) :: p
+    integer, intent(in) :: n
+    type(mgis_status) :: s
+    integer(kind=c_size_t) nc
+    if (n.lt.1) then
+       s = report_failure('invalid number of threads')
+       return
+    end if
+    nc = n
+    s = create_thread_pool_wrapper(p%ptr, nc)
+  end function create_thread_pool
+  !
+  function free_thread_pool(p) result(r)
+    use, intrinsic :: iso_c_binding, only: c_associated
+    implicit none
+    interface
+       function free_thread_pool_wrapper(p) &
+            bind(c, name='mgis_free_thread_pool') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         import mgis_status
+         implicit none
+         type(c_ptr), intent(inout) :: p
+         type(mgis_status) :: r
+       end function free_thread_pool_wrapper
+    end interface
+    type(ThreadPool), intent(inout) :: p
+    type(mgis_status) :: r
+    if (c_associated(p%ptr)) then
+       r = free_thread_pool_wrapper(p%ptr)
+    end if
+  end function free_thread_pool
 end module mgis

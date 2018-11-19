@@ -16,6 +16,16 @@
 
 extern "C" {
 
+mgis_status mgis_bv_material_state_manager_get_number_of_integration_points(
+    mgis_size_type* n, mgis_bv_MaterialStateManager* const s) {
+  if (s == nullptr) {
+    *n = mgis_size_type{};
+    return mgis_report_failure("null state manager");
+  }
+  *n = s->n;
+  return mgis_report_success();
+} // end of mgis_bv_material_state_manager_get_number_of_integration_points
+  
 mgis_status mgis_bv_material_state_manager_get_gradients(
     mgis_real** g, mgis_bv_MaterialStateManager* const s) {
   if (s == nullptr) {

@@ -79,8 +79,7 @@ subroutine test()
   end do
   do i = 1, 21
      r = check(abs(p(i)-p_ref(i)) < 1.d-12, &
-          'invalid value for the equivalent plastic strain ' // &
-          ' vs ' )
+          'invalid value for the equivalent plastic strain ')
   end do
   ! free ressources
   call check_status(free_behaviour_data(d))
