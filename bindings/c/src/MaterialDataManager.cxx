@@ -57,6 +57,20 @@ mgis_status mgis_bv_material_data_manager_get_state_1(
   return mgis_report_success();
 }  // end of mgis_bv_material_data_manager_get_state_1
 
+mgis_status mgis_bv_material_data_manager_get_tangent_operator(
+    mgis_real** const K, mgis_bv_MaterialDataManager* const d) {
+  if (d == nullptr) {
+    *K = nullptr;
+    return mgis_report_failure("invalid argument (behaviour data is null)");
+  }
+  if (d->K.empty()) {
+    *K = nullptr;
+    return mgis_report_failure("no tangent operator defined");
+  }
+  *K = &(d->K[0]);
+  return mgis_report_success();
+} // end of mgis_bv_material_data_manager_get_tangent_operator
+  
 mgis_status mgis_bv_update_material_data_manager(mgis_bv_MaterialDataManager* const d){
   try {
     mgis::behaviour::update(*d);

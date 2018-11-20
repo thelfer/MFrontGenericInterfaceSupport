@@ -230,6 +230,55 @@ contains
     end if
   end function behaviour_get_tfel_version
   !
+  function behaviour_get_gradients_size(n,b) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_gradients_size_wrapper(l,b) &
+            bind(c,name = 'mgis_bv_behaviour_get_gradients_size') result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_gradients_size_wrapper
+    end interface
+    integer :: n
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = behaviour_get_gradients_size_wrapper(ns, b%ptr)
+    n = ns
+  end function behaviour_get_gradients_size
+  !
+  function behaviour_get_thermodynamic_forces_size(n,b) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_thermodynamic_forces_size_wrapper(l,b) &
+            bind(c,name = 'mgis_bv_behaviour_get_thermodynamic_forces_size') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_thermodynamic_forces_size_wrapper
+    end interface
+    integer :: n
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = behaviour_get_thermodynamic_forces_size_wrapper(ns, b%ptr)
+    n = ns
+  end function behaviour_get_thermodynamic_forces_size
+  !
   function behaviour_get_number_of_parameters(n,b) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t
     use mgis_fortran_utilities
@@ -604,106 +653,6 @@ contains
     end if
     s = behaviour_get_external_state_variable_type_wrapper(t, b%ptr, nc)
   end function behaviour_get_external_state_variable_type
-  ! free behaviour
-  function free_behaviour(ptr) result(r)
-    use, intrinsic :: iso_c_binding, only: c_associated
-    use mgis
-    implicit none
-    interface
-       function free_behaviour_wrapper(ptr) bind(c, name='mgis_bv_free_behaviour') result(r)
-         use, intrinsic :: iso_c_binding, only: c_ptr
-         use mgis
-         implicit none
-         type(c_ptr), intent(inout) :: ptr
-         type(mgis_status) :: r
-       end function free_behaviour_wrapper
-    end interface
-    type(Behaviour), intent(inout) :: ptr
-    type(mgis_status) :: r
-    if (c_associated(ptr%ptr)) then
-       r = free_behaviour_wrapper(ptr%ptr)
-    end if
-  end function free_behaviour
-  !
-  function allocate_behaviour_data(d,b) result(s)
-    use mgis_fortran_utilities
-    use mgis, only: mgis_status
-    implicit none
-    interface
-       function allocate_behaviour_data_wrapper(d,b) bind(c,name = 'mgis_bv_allocate_behaviour_data') result(r)
-         use, intrinsic :: iso_c_binding, only: c_ptr
-         use mgis, only: mgis_status
-         implicit none
-         type(c_ptr), intent(out) :: d
-         type(c_ptr), intent(in), value :: b
-         type(mgis_status) :: r
-       end function allocate_behaviour_data_wrapper
-    end interface
-    type(BehaviourData), intent(out) :: d
-    type(Behaviour), intent(in) :: b
-    type(mgis_status) :: s
-    s = allocate_behaviour_data_wrapper(d%ptr, b%ptr)
-  end function allocate_behaviour_data
-  !
-  function behaviour_data_get_state_0(s0,d) result(s)
-    use mgis, only: mgis_status
-    implicit none
-    interface
-       function behaviour_data_get_state_0_wrapper(s0, d) &
-            bind(c,name = 'mgis_bv_behaviour_data_get_state_0') result(r)
-         use, intrinsic :: iso_c_binding, only: c_ptr
-         use mgis, only: mgis_status
-         implicit none
-         type(c_ptr), intent(out) :: s0
-         type(c_ptr), intent(in), value :: d
-         type(mgis_status) :: r
-       end function behaviour_data_get_state_0_wrapper
-    end interface
-    type(State), intent(out) :: s0
-    type(BehaviourData), intent(in) :: d
-    type(mgis_status) :: s
-    s = behaviour_data_get_state_0_wrapper(s0%ptr, d%ptr)
-  end function behaviour_data_get_state_0
-  !
-  function behaviour_data_get_state_1(s1,d) result(s)
-    use mgis, only: mgis_status
-    implicit none
-    interface
-       function behaviour_data_get_state_1_wrapper(s1, d) &
-            bind(c,name = 'mgis_bv_behaviour_data_get_state_1') result(r)
-         use, intrinsic :: iso_c_binding, only: c_ptr
-         use mgis, only: mgis_status
-         implicit none
-         type(c_ptr), intent(out) :: s1
-         type(c_ptr), intent(in), value :: d
-         type(mgis_status) :: r
-       end function behaviour_data_get_state_1_wrapper
-    end interface
-    type(State), intent(out) :: s1
-    type(BehaviourData), intent(in) :: d
-    type(mgis_status) :: s
-    s = behaviour_data_get_state_1_wrapper(s1%ptr, d%ptr)
-  end function behaviour_data_get_state_1
-  !
-  function behaviour_data_set_time_increment(d, dt) result(s)
-    use mgis, only: mgis_status
-    implicit none
-    interface
-       function behaviour_data_set_time_increment_wrapper(d, v) &
-            bind(c,name = 'mgis_bv_behaviour_data_set_time_increment') result(r)
-         use, intrinsic :: iso_c_binding, only: c_ptr, c_double
-         use mgis, only: mgis_status
-         implicit none
-         type(c_ptr), intent(in), value :: d
-         real(kind=c_double), intent(in), value :: v
-         type(mgis_status) :: r
-       end function behaviour_data_set_time_increment_wrapper
-    end interface
-    type(BehaviourData), intent(in) :: d
-    real(kind = 8) :: dt
-    type(mgis_status) :: s
-    s = behaviour_data_set_time_increment_wrapper(d%ptr, dt)
-  end function behaviour_data_set_time_increment
   !
   function behaviour_has_bounds(r, b, n) result(s)
     use, intrinsic :: iso_c_binding, only: c_int
@@ -1007,6 +956,189 @@ contains
        v = ieee_value(v, ieee_quiet_nan)
     end if
   end function behaviour_get_upper_physical_bound
+  ! free behaviour
+  function free_behaviour(ptr) result(r)
+    use, intrinsic :: iso_c_binding, only: c_associated
+    use mgis
+    implicit none
+    interface
+       function free_behaviour_wrapper(ptr) bind(c, name='mgis_bv_free_behaviour') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis
+         implicit none
+         type(c_ptr), intent(inout) :: ptr
+         type(mgis_status) :: r
+       end function free_behaviour_wrapper
+    end interface
+    type(Behaviour), intent(inout) :: ptr
+    type(mgis_status) :: r
+    if (c_associated(ptr%ptr)) then
+       r = free_behaviour_wrapper(ptr%ptr)
+    end if
+  end function free_behaviour
+  !
+  function allocate_behaviour_data(d,b) result(s)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function allocate_behaviour_data_wrapper(d,b) bind(c,name = 'mgis_bv_allocate_behaviour_data') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: d
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function allocate_behaviour_data_wrapper
+    end interface
+    type(BehaviourData), intent(out) :: d
+    type(Behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    s = allocate_behaviour_data_wrapper(d%ptr, b%ptr)
+  end function allocate_behaviour_data
+  !
+  function behaviour_data_get_behaviour(b, d) result(s)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_data_get_behaviour_wrapper(b, d) &
+            bind(c,name = 'mgis_bv_behaviour_data_get_behaviour') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: b
+         type(c_ptr), intent(in), value :: d
+         type(mgis_status) :: r
+       end function behaviour_data_get_behaviour_wrapper
+    end interface
+    type(Behaviour), intent(out) :: b
+    type(BehaviourData), intent(in) :: d
+    type(mgis_status) :: s
+    s = behaviour_data_get_behaviour_wrapper(b%ptr, d%ptr)
+  end function behaviour_data_get_behaviour
+  !
+  function behaviour_data_get_state_0(s0,d) result(s)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_data_get_state_0_wrapper(s0, d) &
+            bind(c,name = 'mgis_bv_behaviour_data_get_state_0') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: s0
+         type(c_ptr), intent(in), value :: d
+         type(mgis_status) :: r
+       end function behaviour_data_get_state_0_wrapper
+    end interface
+    type(State), intent(out) :: s0
+    type(BehaviourData), intent(in) :: d
+    type(mgis_status) :: s
+    s = behaviour_data_get_state_0_wrapper(s0%ptr, d%ptr)
+  end function behaviour_data_get_state_0
+  !
+  function behaviour_data_get_state_1(s1,d) result(s)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_data_get_state_1_wrapper(s1, d) &
+            bind(c,name = 'mgis_bv_behaviour_data_get_state_1') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: s1
+         type(c_ptr), intent(in), value :: d
+         type(mgis_status) :: r
+       end function behaviour_data_get_state_1_wrapper
+    end interface
+    type(State), intent(out) :: s1
+    type(BehaviourData), intent(in) :: d
+    type(mgis_status) :: s
+    s = behaviour_data_get_state_1_wrapper(s1%ptr, d%ptr)
+  end function behaviour_data_get_state_1
+  !
+  function behaviour_data_set_time_increment(d, dt) result(s)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_data_set_time_increment_wrapper(d, v) &
+            bind(c,name = 'mgis_bv_behaviour_data_set_time_increment') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: d
+         real(kind=c_double), intent(in), value :: v
+         type(mgis_status) :: r
+       end function behaviour_data_set_time_increment_wrapper
+    end interface
+    type(BehaviourData), intent(in) :: d
+    real(kind = 8) :: dt
+    type(mgis_status) :: s
+    s = behaviour_data_set_time_increment_wrapper(d%ptr, dt)
+  end function behaviour_data_set_time_increment
+  !
+  function behaviour_data_get_time_step_scaling_factor(rdt, d) result(s)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_data_get_time_step_scaling_factor_wrapper(v, d) &
+            bind(c,name = 'mgis_bv_behaviour_data_get_time_step_scaling_factor')&
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double
+         use mgis, only: mgis_status
+         implicit none
+         real(kind=c_double), intent(out) :: v
+         type(c_ptr), intent(in), value :: d
+         type(mgis_status) :: r
+       end function behaviour_data_get_time_step_scaling_factor_wrapper
+    end interface
+    real(kind = 8) :: rdt
+    type(BehaviourData), intent(in) :: d
+    type(mgis_status) :: s
+    s = behaviour_data_get_time_step_scaling_factor_wrapper(rdt, d%ptr)
+  end function behaviour_data_get_time_step_scaling_factor
+  ! \brief return the transpose of the tangent operator
+  function behaviour_data_get_tangent_operator(K, d) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_data_get_tangent_operator_wrapper(K, d) &
+            bind(c,name = 'mgis_bv_behaviour_data_get_tangent_operator')&
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: K
+         type(c_ptr), intent(in), value :: d
+         type(mgis_status) :: r
+       end function behaviour_data_get_tangent_operator_wrapper
+    end interface
+    real(kind=8), dimension(:,:), pointer, intent(out) :: K
+    type(BehaviourData), intent(in) :: d
+    type(mgis_status) :: s
+    type(c_ptr) :: p
+    type(Behaviour) :: b
+    integer gs
+    integer ths
+    nullify(K)
+    s = behaviour_data_get_behaviour(b, d)
+    if( s%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    s = behaviour_get_gradients_size(gs, b)
+    if( s%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    s = behaviour_get_thermodynamic_forces_size(ths, b)
+    if( s%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    s = behaviour_data_get_tangent_operator_wrapper(p, d%ptr)
+    if( s%exit_status .eq. MGIS_SUCCESS) then
+       call c_f_pointer(p,K,[ths,gs])
+    end if
+  end function behaviour_data_get_tangent_operator
   !
   function update_behaviour_data(d) result(r)
     use mgis
@@ -1871,6 +2003,56 @@ contains
        call c_f_pointer(values, v, [nig])
     end if
   end function material_state_manager_get_non_uniform_external_state_variable
+  ! \brief return the transpose of the tangent operator
+  function material_data_manager_get_tangent_operator(K, m) result(r)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function material_data_manager_get_tangent_operator_wrapper(K, m) &
+            bind(c,name = 'mgis_bv_material_data_manager_get_tangent_operator')&
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: K
+         type(c_ptr), intent(in), value :: m
+         type(mgis_status) :: r
+       end function material_data_manager_get_tangent_operator_wrapper
+    end interface
+    real(kind=8), dimension(:,:,:), pointer, intent(out) :: K
+    type(MaterialDataManager), intent(in) :: m
+    type(mgis_status) :: r
+    type(MaterialStateManager) :: s0
+    type(c_ptr) :: p
+    integer n
+    integer gs
+    integer ths
+    nullify(K)
+    r = material_data_manager_get_state_0(s0, m)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = material_data_manager_get_tangent_operator_wrapper(p, m %ptr)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = material_state_manager_get_gradients_stride(gs, s0)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = material_state_manager_get_thermodynamic_forces_stride(gs, s0)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = material_state_manager_get_number_of_integration_points(n, s0)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    if( r%exit_status .eq. MGIS_SUCCESS) then
+       call c_f_pointer(p,K,[ths,gs, n])
+    end if
+  end function material_data_manager_get_tangent_operator
   !
   function free_material_data_manager(ptr) result(r)
     use, intrinsic :: iso_c_binding, only: c_associated

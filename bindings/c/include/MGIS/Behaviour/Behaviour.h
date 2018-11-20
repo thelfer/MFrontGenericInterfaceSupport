@@ -138,6 +138,21 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_behaviour_type(
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_behaviour_kinematic(
     mgis_bv_BehaviourKinematic* const, const mgis_bv_Behaviour* const);
 /*!
+ * \brief return the size of an array able to contain the gradients' value
+ * \param[out] s: size
+ * \param[in]  b: behaviour
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_gradients_size(
+    mgis_size_type* const, const mgis_bv_Behaviour* const);
+/*!
+ * \brief return the size of an array able to contain the
+ * thermodynamic forces' value
+ * \param[out] s: size
+ * \param[in]  b: behaviour
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_thermodynamic_forces_size(
+    mgis_size_type* const, const mgis_bv_Behaviour* const);
+/*!
  * \brief return the number of material properties
  * \param[out] c: number of the material properties
  * \param[in] b: behaviour

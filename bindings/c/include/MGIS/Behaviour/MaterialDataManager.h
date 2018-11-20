@@ -60,6 +60,20 @@ MGIS_C_EXPORT mgis_status mgis_bv_material_data_manager_get_state_0(
 MGIS_C_EXPORT mgis_status mgis_bv_material_data_manager_get_state_1(
     mgis_bv_MaterialStateManager**, mgis_bv_MaterialDataManager* const);
 /*!
+ * \brief return the time step scaling factor
+ * \param[out] rdt: time step scaling factor
+ * \param[in]  d: behaviour data
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_material_data_manager_get_time_step_scaling_factor(
+    mgis_real* const, const mgis_bv_MaterialDataManager* const);
+/*!
+ * \brief return the tangent operator
+ * \param[out] K: tangent operator
+ * \param[in]  d: behaviour data
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_material_data_manager_get_tangent_operator(
+    mgis_real** const, mgis_bv_MaterialDataManager* const);
+/*!
  * \brief update the material data manager
  * \param[in,out] d: data manager
  */

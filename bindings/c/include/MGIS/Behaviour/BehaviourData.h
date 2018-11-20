@@ -45,6 +45,13 @@ typedef struct mgis_bv_BehaviourData mgis_bv_BehaviourData;
 MGIS_C_EXPORT mgis_status mgis_bv_allocate_behaviour_data(
     mgis_bv_BehaviourData**, const mgis_bv_Behaviour* const);
 /*!
+ * \brief get the underlying behaviour
+ * \param[out] b: behaviour
+ * \param[in]  d: behaviour data
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_get_behaviour(
+    const mgis_bv_Behaviour** const, mgis_bv_BehaviourData* const);
+/*!
  * \brief update the behaviour data
  * \param[out] d: pointer to a pointer to the allocated data
  */
@@ -57,21 +64,35 @@ mgis_bv_update_behaviour_data(mgis_bv_BehaviourData* const);
 MGIS_C_EXPORT mgis_status
 mgis_bv_revert_behaviour_data(mgis_bv_BehaviourData* const);
 /*!
- * \brief set the state at the beginning of the time step
+ * \brief get the state at the beginning of the time step
  * \param[out] s: pointer to a pointer to the state
  * \param[in]  d: behaviour data
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_get_state_0(
     mgis_bv_State**, mgis_bv_BehaviourData* const);
 /*!
- * \brief set the state at the end of the time step
+ * \brief get the state at the end of the time step
  * \param[out] s: pointer to a pointer to the state
  * \param[in]  d: behaviour data
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_get_state_1(
     mgis_bv_State**, mgis_bv_BehaviourData* const);
 /*!
- * \set the state at the end of the time step
+ * \brief return the time step scaling factor
+ * \param[out] rdt: time step scaling factor
+ * \param[in]  d: behaviour data
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_get_time_step_scaling_factor(
+    mgis_real* const, const mgis_bv_BehaviourData* const);
+/*!
+ * \brief return the tangent operator
+ * \param[out] K: tangent operator
+ * \param[in]  d: behaviour data
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_get_tangent_operator(
+    mgis_real** const, mgis_bv_BehaviourData* const);
+/*!
+ * \brief state at the end of the time step
  * \param[out] d: behaviour data
  * \param[in]  dt: time increment
  */

@@ -27,6 +27,10 @@ subroutine test()
   character(len=:), allocatable :: f
   ! name of the first external state variable
   character(len=:), allocatable :: T
+  ! size of an array able to hold the gradients' value
+  integer gs_size
+  ! size of an array able to hold the thermodynamic forces' value
+  integer tfs_size
   ! number of material properties
   integer mps_size
   ! number of material properties
@@ -65,6 +69,12 @@ subroutine test()
   ! version
   call check_status(behaviour_get_tfel_version(v, b))
   r = check_string(v, get_tfel_version(), "invalid TFEL version")
+  ! gradients size
+  call check_status(behaviour_get_gradients_size(gs_size,b))
+  r = check(gs_size==6,'invalid gradients size')
+  ! thermodynamic forces size
+  call check_status(behaviour_get_thermodynamic_forces_size(tfs_size,b))
+  r = check(tfs_size==6,'invalid thermodynamic forces size')
   ! material properties
   call check_status(behaviour_get_number_of_material_properties(mps_size, b))
   r = check(mps_size .eq. 0, "invalid number of material properties")

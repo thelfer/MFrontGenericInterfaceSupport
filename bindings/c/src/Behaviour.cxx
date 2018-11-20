@@ -168,6 +168,34 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_behaviour_kinematic(
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_get_behaviour_kinematic
 
+mgis_status mgis_bv_behaviour_get_gradients_size(
+    mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
+    *s = 0;
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *s = mgis::behaviour::getArraySize(b->gradients, b->hypothesis);
+    return mgis_report_success();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+}  // end of mgis_bv_behaviour_get_gradients_size
+
+mgis_status mgis_bv_behaviour_get_thermodynamic_forces_size(
+    mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
+    *s = 0;
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *s = mgis::behaviour::getArraySize(b->thermodynamic_forces, b->hypothesis);
+    return mgis_report_success();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+}  // end of mgis_bv_behaviour_get_thermodynamic_forces_size
+
 mgis_status mgis_bv_behaviour_get_number_of_material_properties(
     mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
   *s = 0;
