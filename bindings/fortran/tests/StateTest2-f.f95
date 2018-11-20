@@ -14,20 +14,20 @@ subroutine test()
        'Gurson', 'Tridimensional'))
   call check_status(allocate_behaviour_data(d,b))
   ! state at the beginning of the time step
-  call check_status(behaviour_data_get_state_0(s0, d));
+  call check_status(behaviour_data_get_state_0(s0, d))
   ! state at the end of the time step
-  call check_status(behaviour_data_get_state_1(s1, d));
+  call check_status(behaviour_data_get_state_1(s1, d))
   ! setting the temperature at the beginning of the time step
   call check_status(state_set_external_state_variable_by_name( &
-       s0, "Temperature", 293.15d0));
+       s0, "Temperature", 293.15d0))
   ! s0 is copied in s1
-  call check_status(revert_behaviour_data(d));
+  call check_status(revert_behaviour_data(d))
   call check_status(state_get_external_state_variable_by_name(T, s0, &
-       "Temperature"));
-  r =check(abs(T - 293.15d0) < 1e-8,"invalid temperature value");
+       "Temperature"))
+  r =check(abs(T - 293.15d0) < 1e-8,"invalid temperature value")
   call check_status(state_get_external_state_variable_by_name(T, s1, &
-       "Temperature"));
-  r =check(abs(T - 293.15d0) < 1e-8,"invalid temperature value");
+       "Temperature"))
+  r =check(abs(T - 293.15d0) < 1e-8,"invalid temperature value")
   ! free ressources
   call check_status(free_behaviour_data(d))
   call check_status(free_behaviour(b))

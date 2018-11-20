@@ -87,7 +87,7 @@ subroutine test()
   call check_status(behaviour_get_source(s, b))
   r = check_string(s, 'FiniteStrainSingleCrystal.mfront', 'invalid source')
   ! version
-  call check_status(behaviour_get_tfel_version(v, b));
+  call check_status(behaviour_get_tfel_version(v, b))
   r = check_string(v, get_tfel_version(), "invalid TFEL version")
   ! material properties
   call check_status(behaviour_get_number_of_material_properties(mps_size, b))

@@ -68,7 +68,7 @@ subroutine test()
   call check_status(material_state_manager_set_uniform_external_state_variable( &
        s1, "Temperature", 293.15d0))
   ! copy s1 in s0
-  call check_status(update_material_data_manager(m));
+  call check_status(update_material_data_manager(m))
   ! Getting a pointer to the gradients.
   call check_status(material_state_manager_get_gradients(g,s1))
   call check_status(material_state_manager_get_gradients_stride(n_g,s1))
@@ -90,7 +90,7 @@ subroutine test()
   do j = 1, 20
      call check_status(integrate_material_data_manager_part(ri, m, dt, 1, n))
      r = check(ri.eq.1, 'integration failed')
-     call check_status(update_material_data_manager(m));
+     call check_status(update_material_data_manager(m))
      ! updating the strain
      do i = 1, N
         g(1,i) = g(1,i) + de

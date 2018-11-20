@@ -705,6 +705,309 @@ contains
     s = behaviour_data_set_time_increment_wrapper(d%ptr, dt)
   end function behaviour_data_set_time_increment
   !
+  function behaviour_has_bounds(r, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_has_bounds_wrapper(r, b, n) &
+            bind(c,name='mgis_bv_behaviour_has_bounds') result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
+         use mgis, only: mgis_status
+         integer(kind=c_int), intent(out) :: r
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: s
+       end function behaviour_has_bounds_wrapper
+    end interface
+    logical, intent(out) :: r
+    type(Behaviour), intent(in) :: b
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: s
+    integer(kind=c_int) :: rc
+    s = behaviour_has_bounds_wrapper( &
+         rc, b%ptr , convert_fortran_string(n))
+    if( s % exit_status .eq. MGIS_SUCCESS) then
+       r = rc .eq. 1
+    else
+       r = .false.
+    end if
+  end function behaviour_has_bounds
+  !
+  function behaviour_has_lower_bound(r, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_has_lower_bound_wrapper(r, b, n) &
+            bind(c,name='mgis_bv_behaviour_has_lower_bound') result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
+         use mgis, only: mgis_status
+         integer(kind=c_int), intent(out) :: r
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: s
+       end function behaviour_has_lower_bound_wrapper
+    end interface
+    logical, intent(out) :: r
+    type(Behaviour), intent(in) :: b
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: s
+    integer(kind=c_int) :: rc
+    s = behaviour_has_lower_bound_wrapper( &
+         rc, b%ptr , convert_fortran_string(n))
+    if( s % exit_status .eq. MGIS_SUCCESS) then
+       r = rc .eq. 1
+    else
+       r = .false.
+    end if
+  end function behaviour_has_lower_bound
+  !
+  function behaviour_get_lower_bound(v, b, n) result(s)
+    use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
+    use, intrinsic :: iso_c_binding, only: c_long_double
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_get_lower_bound_wrapper(v, b, n) &
+            bind(c,name='mgis_bv_behaviour_get_lower_bound') result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_long_double
+         use mgis, only: mgis_status
+         real(kind=c_long_double), intent(out) :: v
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: s
+       end function behaviour_get_lower_bound_wrapper
+    end interface
+    real(kind=8), intent(out) :: v
+    type(Behaviour), intent(in) :: b
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: s
+    real(kind=c_long_double) :: vc
+    s = behaviour_get_lower_bound_wrapper( &
+         vc, b%ptr , convert_fortran_string(n))
+    if( s % exit_status .eq. MGIS_SUCCESS) then
+       v = vc
+    else
+       v = ieee_value(v, ieee_quiet_nan)
+    end if
+  end function behaviour_get_lower_bound
+  !
+  function behaviour_has_upper_bound(r, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_has_upper_bound_wrapper(r, b, n) &
+            bind(c,name='mgis_bv_behaviour_has_upper_bound') result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
+         use mgis, only: mgis_status
+         integer(kind=c_int), intent(out) :: r
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: s
+       end function behaviour_has_upper_bound_wrapper
+    end interface
+    logical, intent(out) :: r
+    type(Behaviour), intent(in) :: b
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: s
+    integer(kind=c_int) :: rc
+    s = behaviour_has_upper_bound_wrapper( &
+         rc, b%ptr , convert_fortran_string(n))
+    if( s % exit_status .eq. MGIS_SUCCESS) then
+       r = rc .eq. 1
+    else
+       r = .false.
+    end if
+  end function behaviour_has_upper_bound
+  !
+  function behaviour_get_upper_bound(v, b, n) result(s)
+    use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
+    use, intrinsic :: iso_c_binding, only: c_long_double
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_get_upper_bound_wrapper(v, b, n) &
+            bind(c,name='mgis_bv_behaviour_get_upper_bound') result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_long_double
+         use mgis, only: mgis_status
+         real(kind=c_long_double), intent(out) :: v
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: s
+       end function behaviour_get_upper_bound_wrapper
+    end interface
+    real(kind=8), intent(out) :: v
+    type(Behaviour), intent(in) :: b
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: s
+    real(kind=c_long_double) :: vc
+    s = behaviour_get_upper_bound_wrapper( &
+         vc, b%ptr , convert_fortran_string(n))
+    if( s % exit_status .eq. MGIS_SUCCESS) then
+       v = vc
+    else
+       v = ieee_value(v, ieee_quiet_nan)
+    end if
+  end function behaviour_get_upper_bound
+  !
+  function behaviour_has_physical_bounds(r, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_has_physical_bounds_wrapper(r, b, n) &
+            bind(c,name='mgis_bv_behaviour_has_physical_bounds') result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
+         use mgis, only: mgis_status
+         integer(kind=c_int), intent(out) :: r
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: s
+       end function behaviour_has_physical_bounds_wrapper
+    end interface
+    logical, intent(out) :: r
+    type(Behaviour), intent(in) :: b
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: s
+    integer(kind=c_int) :: rc
+    s = behaviour_has_physical_bounds_wrapper( &
+         rc, b%ptr , convert_fortran_string(n))
+    if( s % exit_status .eq. MGIS_SUCCESS) then
+       r = rc .eq. 1
+    else
+       r = .false.
+    end if
+  end function behaviour_has_physical_bounds
+  !
+  function behaviour_has_lower_physical_bound(r, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_has_lower_physical_bound_wrapper(r, b, n) &
+            bind(c,name='mgis_bv_behaviour_has_lower_physical_bound') result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
+         use mgis, only: mgis_status
+         integer(kind=c_int), intent(out) :: r
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: s
+       end function behaviour_has_lower_physical_bound_wrapper
+    end interface
+    logical, intent(out) :: r
+    type(Behaviour), intent(in) :: b
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: s
+    integer(kind=c_int) :: rc
+    s = behaviour_has_lower_physical_bound_wrapper( &
+         rc, b%ptr , convert_fortran_string(n))
+    if( s % exit_status .eq. MGIS_SUCCESS) then
+       r = rc .eq. 1
+    else
+       r = .false.
+    end if
+  end function behaviour_has_lower_physical_bound
+  !
+  function behaviour_get_lower_physical_bound(v, b, n) result(s)
+    use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
+    use, intrinsic :: iso_c_binding, only: c_long_double
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_get_lower_physical_bound_wrapper(v, b, n) &
+            bind(c,name='mgis_bv_behaviour_get_lower_physical_bound') result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_long_double
+         use mgis, only: mgis_status
+         real(kind=c_long_double), intent(out) :: v
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: s
+       end function behaviour_get_lower_physical_bound_wrapper
+    end interface
+    real(kind=8), intent(out) :: v
+    type(Behaviour), intent(in) :: b
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: s
+    real(kind=c_long_double) :: vc
+    s = behaviour_get_lower_physical_bound_wrapper( &
+         vc, b%ptr , convert_fortran_string(n))
+    if( s % exit_status .eq. MGIS_SUCCESS) then
+       v = vc
+    else
+       v = ieee_value(v, ieee_quiet_nan)
+    end if
+  end function behaviour_get_lower_physical_bound
+  !
+  function behaviour_has_upper_physical_bound(r, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    interface
+       function behaviour_has_upper_physical_bound_wrapper(r, b, n) &
+            bind(c,name='mgis_bv_behaviour_has_upper_physical_bound') result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
+         use mgis, only: mgis_status
+         integer(kind=c_int), intent(out) :: r
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: s
+       end function behaviour_has_upper_physical_bound_wrapper
+    end interface
+    logical, intent(out) :: r
+    type(Behaviour), intent(in) :: b
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: s
+    integer(kind=c_int) :: rc
+    s = behaviour_has_upper_physical_bound_wrapper( &
+         rc, b%ptr , convert_fortran_string(n))
+    if( s % exit_status .eq. MGIS_SUCCESS) then
+       r = rc .eq. 1
+    else
+       r = .false.
+    end if
+  end function behaviour_has_upper_physical_bound
+  !
+  function behaviour_get_upper_physical_bound(v, b, n) result(s)
+    use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
+    use, intrinsic :: iso_c_binding, only: c_long_double
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_get_upper_physical_bound_wrapper(v, b, n) &
+            bind(c,name='mgis_bv_behaviour_get_upper_physical_bound') result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_long_double
+         use mgis, only: mgis_status
+         real(kind=c_long_double), intent(out) :: v
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: s
+       end function behaviour_get_upper_physical_bound_wrapper
+    end interface
+    real(kind=8), intent(out) :: v
+    type(Behaviour), intent(in) :: b
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: s
+    real(kind=c_long_double) :: vc
+    s = behaviour_get_upper_physical_bound_wrapper( &
+         vc, b%ptr , convert_fortran_string(n))
+    if( s % exit_status .eq. MGIS_SUCCESS) then
+       v = vc
+    else
+       v = ieee_value(v, ieee_quiet_nan)
+    end if
+  end function behaviour_get_upper_physical_bound
+  !
   function update_behaviour_data(d) result(r)
     use mgis
     implicit none

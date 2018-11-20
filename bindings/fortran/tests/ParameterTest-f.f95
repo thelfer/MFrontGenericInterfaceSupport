@@ -15,8 +15,8 @@ subroutine test()
   character(len=:), allocatable :: n
   real(kind=8) :: pv
   real(kind=8) :: yg = 150d9
-  real(kind=8) :: nu = 0.3d0;
-  real(kind=8) :: eps = 1.d-14;
+  real(kind=8) :: nu = 0.3d0
+  real(kind=8) :: eps = 1.d-14
   integer :: nparams
   logical :: r
   ! start of the check
@@ -28,7 +28,7 @@ subroutine test()
   call check_status(behaviour_get_source(s, b))
   r = check_string(s, 'ParameterTest.mfront', 'invalid source')
   ! version
-  call check_status(behaviour_get_tfel_version(v, b));
+  call check_status(behaviour_get_tfel_version(v, b))
   r = check_string(v, get_tfel_version(), "invalid TFEL version")
   call check_status(behaviour_get_number_of_parameters(nparams, b))
   if (check(nparams == 4, 'invalid number of parameters')) then
