@@ -180,6 +180,22 @@ else(enable-doxygen-doc)
   message(STATUS "doxygen documentation is not enabled")
 endif(enable-doxygen-doc)
 
+option(enable-website "enable generation of the website" ON)
+if(enable-website)
+  # Looking for pandoc (http://johnmacfarlane.net/pandoc)
+  include(cmake/modules/pandoc.cmake)
+  if(HAVE_PANDOC)
+    list(APPEND CPACK_COMPONENTS_ALL website)
+    set(CPACK_COMPONENT_WEBSITE_DESCRIPTION
+      "Contains the TFEL web site")
+    set(MGIS_GENERATE_WEBSITE ON)
+  endif(HAVE_PANDOC)
+else(enable-website)
+  message(STATUS "Generation of the TFEL website disabled")
+endif(enable-website)
+
+add_subdirectory(docs)
+
 # testing
 set(CTEST_CONFIGURATION_TYPE "${JOB_BUILD_CONFIGURATION}")
 # (must be placed *before* any add_subdirectory, cmake bug ?)
