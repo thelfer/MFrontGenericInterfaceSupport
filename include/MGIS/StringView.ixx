@@ -233,9 +233,8 @@ namespace mgis{
     const noexcept
   {
     const size_type rlen = std::min(m_size,v.m_size);
-    const int compare = Traits::compare(m_str,v.m_str,rlen);
-
-    return (compare ? compare : (m_size < v.m_size ? -1 : (m_size > v.m_size ? 1 : 0)));
+    const int c = Traits::compare(m_str,v.m_str,rlen);
+    return (c ? c : (m_size < v.m_size ? -1 : (m_size > v.m_size ? 1 : 0)));
   }
 
   template<typename CharT, typename Traits>

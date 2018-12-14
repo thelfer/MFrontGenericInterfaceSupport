@@ -9,16 +9,16 @@ option(enable-portable-build "produce binary that can be shared between various 
 # C-bindings (placed before compiler detection)
 option(enable-c-bindings "enable c bindings support")
 
-# C-bindings (placed before compiler detection)
+# fortran-bindings (placed before compiler detection)
 option(enable-fortran-bindings "enable fortran bindings support")
 if(enable-fortran-bindings)
 	if(NOT enable-c-bindings)
 	    message(FATAL_ERROR "c-bindings must be enabled for fortran bindings.")
 	endif(NOT enable-c-bindings)
+  enable_language (Fortran)
 endif(enable-fortran-bindings)
 
 #python bindings
-
 option(enable-python-bindings "enable  python bindings support" OFF)
 option(enable-broken-boost-python-module-visibility-handling
   "workaround a bug in boost python which occurs on FreeBSD+clang. See https://github.com/boostorg/python/issues/173 for details" OFF)
@@ -103,8 +103,13 @@ if(enable-python-bindings)
   endif(enable-broken-boost-python-module-visibility-handling)
 endif(enable-python-bindings)
 
-# fortran (placed before compiler detection)
-# option(enable-fortran-bindings "enable fortran support")
+# fenics-bindings (placed before compiler detection)
+option(enable-fenics-bindings "enable fenics bindings support")
+if(enable-fenics-bindings)
+  # Find DOLFIN
+  find_package(DOLFIN REQUIRED)
+  include(${DOLFIN_USE_FILE})
+endif(enable-fenics-bindings)
 
 # summary
 
@@ -117,9 +122,12 @@ if(enable-python-bindings)
 endif(enable-python-bindings)
 
 if(enable-fortran-bindings)
-  enable_language (Fortran)
   message(STATUS "fortran bindings support enabled")
 endif(enable-fortran-bindings)
+
+if(enable-fenics-bindings)
+  message(STATUS "FEniCS bindings support enabled")
+endif(enable-fenics-bindings)
 
 find_package(Threads)
 
