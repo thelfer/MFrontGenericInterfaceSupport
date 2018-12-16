@@ -1,0 +1,41 @@
+# Copyright (C) 2009-2017 Kristian B. Oelgaard and Garth N. Wells.
+# Licensed under the GNU LGPL Version 3.
+
+scheme= "default"
+degree = 3
+dx = Measure("dx")
+dx = dx(degree=degree, scheme=scheme)
+
+elementA = VectorElement("Lagrange", tetrahedron, 1)
+elementT = VectorElement("Quadrature", tetrahedron, degree, dim=36, quad_scheme=scheme)
+elementS = VectorElement("Quadrature", tetrahedron, degree, dim=6, quad_scheme=scheme)
+
+v = TestFunction(elementA)
+u = TrialFunction(elementA)
+
+t = Coefficient(elementT)
+s = Coefficient(elementS)
+
+f = Coefficient(elementA)
+h = Coefficient(elementA)
+disp = Coefficient(elementA)
+
+# eps_xx, eps_yy, eps_zz, gam_xy, gam_xz, gam_yz
+def eps(u):
+    return as_vector([u[i].dx(i) for i in range(3)] + [u[i].dx(j) + u[j].dx(i) for i, j in [(0, 1), (0, 2), (1, 2)]])
+
+def sigma(s):
+    return as_matrix([[s[0], s[3], s[4]], [s[3], s[1], s[5]], [s[4], s[5], s[2]]])
+
+def tangent(t):
+  return as_matrix([[t[i*6 + j] for j in range(6)] for i in range(6)])
+
+# Bilinear and linear forms
+a = inner(eps(v), dot(tangent(t), eps(u)) )*dx
+L = inner(grad(v), sigma(s))*dx - dot(v, f)*dx - dot(v, h)*ds(1)
+
+# Functionals to compute displacement and load
+M_d = disp[0]*ds(1)
+M_f = h[0]*ds(1)
+
+forms = [a, L, M_d, M_f]

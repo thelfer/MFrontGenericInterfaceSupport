@@ -1,5 +1,14 @@
 add_library(MFrontGenericInterface-FEniCS SHARED
-            QuadratureFunction.cxx)
+  Utils.cxx
+  NonLinearMaterial.cxx
+  NonLinearMaterialFunctionBase.cxx
+  NonLinearMaterialThermodynamicForcesFunction.cxx
+  NonLinearMaterialTangentOperatorFunction.cxx)
 target_include_directories(MFrontGenericInterface-FEniCS
-  SYSTEM ${DOLFIN_INCLUDE_DIRS} ${DOLFIN_3RD_PARTY_INCLUDE_DIRS})
-target_link_libraries(MFrontGenericInterface-FEniCS ${DOLFIN_LIBRARIES})
+  PUBLIC "${CMAKE_SOURCE_DIR}/include"
+  PUBLIC "${CMAKE_SOURCE_DIR}/bindings/fenics/include")
+target_include_directories(MFrontGenericInterface-FEniCS
+  SYSTEM PUBLIC ${DOLFIN_INCLUDE_DIRS} ${DOLFIN_3RD_PARTY_INCLUDE_DIRS})
+target_link_libraries(MFrontGenericInterface-FEniCS
+  PUBLIC MFrontGenericInterface
+  PUBLIC ${DOLFIN_LIBRARIES})
