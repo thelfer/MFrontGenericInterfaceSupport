@@ -26,6 +26,18 @@
 extern "C" {
 #endif /*  __cplusplus */
 
+//! kinematic of the behaviour treated
+typedef enum {
+  MGIS_BV_PREDICTION_TANGENT_OPERATOR = -3,
+  MGIS_BV_PREDICTION_SECANT_OPERATOR = -2,
+  MGIS_BV_PREDICTION_ELASTIC_OPERATOR = -1,
+  MGIS_BV_INTEGRATION_NO_TANGENT_OPERATOR = 0,
+  MGIS_BV_INTEGRATION_ELASTIC_OPERATOR = 1,
+  MGIS_BV_INTEGRATION_SECANT_OPERATOR = 2,
+  MGIS_BV_INTEGRATION_TANGENT_OPERATOR = 3,
+  MGIS_BV_INTEGRATION_CONSITENT_TANGENT_OPERATOR = 4,
+} mgis_bv_IntegrationType;
+
 /*!
  * \brief integrate the behaviour. The returned value has the following
  * meaning:
@@ -69,6 +81,7 @@ MGIS_C_EXPORT mgis_status mgis_bv_integrate_2(int* const,
  *
  * \param[out] r: result
  * \param[in,out] m: material data manager
+ * \param[in] i: type of integration to be performed
  * \param[in] dt: time step
  * \param[in] b: first index of the range
  * \param[in] e: last index of the range
@@ -76,6 +89,7 @@ MGIS_C_EXPORT mgis_status mgis_bv_integrate_2(int* const,
 MGIS_C_EXPORT mgis_status
 mgis_bv_integrate_material_data_manager_part(int* const,
                                              mgis_bv_MaterialDataManager* const,
+                                             const mgis_bv_IntegrationType,
                                              const mgis_real,
                                              const mgis_size_type,
                                              const mgis_size_type);
@@ -90,12 +104,14 @@ mgis_bv_integrate_material_data_manager_part(int* const,
  * \param[out] r: result
  * \param[in,out] p: thread pool
  * \param[in,out] m: material data manager
+ * \param[in] i: type of integration to be performed
  * \param[in] dt: time step
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_integrate_material_data_manager(int* const,
                                         mgis_ThreadPool* const,
                                         mgis_bv_MaterialDataManager* const,
+                                        const mgis_bv_IntegrationType,
                                         const mgis_real);
 
 #ifdef __cplusplus

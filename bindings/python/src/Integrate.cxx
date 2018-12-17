@@ -13,6 +13,7 @@
  */
 
 #include <boost/python/def.hpp>
+#include <boost/python/enum.hpp>
 #include "MGIS/ThreadPool.hxx"
 #include "MGIS/Behaviour/BehaviourData.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
@@ -29,14 +30,50 @@ static int integrateBehaviourData1(mgis::behaviour::BehaviourData& d,
 }  // end of integrateBehaviourData
 
 void declareIntegrate() {
+  boost::python::enum_<mgis::behaviour::IntegrationType>("IntegrationType")
+      .value("PREDICTION_TANGENT_OPERATOR",
+             mgis::behaviour::IntegrationType::PREDICTION_TANGENT_OPERATOR)
+      .value("PredictionWithTangentOperator",
+             mgis::behaviour::IntegrationType::PREDICTION_TANGENT_OPERATOR)
+      .value("PREDICTION_SECANT_OPERATOR",
+             mgis::behaviour::IntegrationType::PREDICTION_SECANT_OPERATOR)
+      .value("PredictionWithSecantOperator",
+             mgis::behaviour::IntegrationType::PREDICTION_SECANT_OPERATOR)
+      .value("PREDICTION_ELASTIC_OPERATOR",
+             mgis::behaviour::IntegrationType::PREDICTION_ELASTIC_OPERATOR)
+      .value("PredictionWithElasticOperator",
+             mgis::behaviour::IntegrationType::PREDICTION_ELASTIC_OPERATOR)
+      .value("INTEGRATION_NO_TANGENT_OPERATOR",
+             mgis::behaviour::IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR)
+      .value("IntegrationWithoutTangentOperator",
+             mgis::behaviour::IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR)
+      .value("INTEGRATION_ELASTIC_OPERATOR",
+             mgis::behaviour::IntegrationType::INTEGRATION_ELASTIC_OPERATOR)
+      .value("IntegrationWithElasticOperator",
+             mgis::behaviour::IntegrationType::INTEGRATION_ELASTIC_OPERATOR)
+      .value("INTEGRATION_SECANT_OPERATOR",
+             mgis::behaviour::IntegrationType::INTEGRATION_SECANT_OPERATOR)
+      .value("IntegrationWithSecantOperator",
+             mgis::behaviour::IntegrationType::INTEGRATION_SECANT_OPERATOR)
+      .value("INTEGRATION_TANGENT_OPERATOR",
+             mgis::behaviour::IntegrationType::INTEGRATION_TANGENT_OPERATOR)
+      .value("IntegrationWithTangentOperator",
+             mgis::behaviour::IntegrationType::INTEGRATION_TANGENT_OPERATOR)
+      .value("INTEGRATION_CONSITENT_TANGENT_OPERATOR",
+             mgis::behaviour::IntegrationType::INTEGRATION_CONSITENT_TANGENT_OPERATOR)
+      .value("IntegrationWithConsitentTangentOperator",
+             mgis::behaviour::IntegrationType::INTEGRATION_CONSITENT_TANGENT_OPERATOR);
+
   int (*integrate_ptr1)(mgis::behaviour::BehaviourDataView&,
                         const mgis::behaviour::Behaviour&) =
       mgis::behaviour::integrate;
-  int (*integrate_ptr2)(mgis::behaviour::MaterialDataManager&, const mgis::real,
-                        const mgis::size_type, const mgis::size_type) =
-      mgis::behaviour::integrate;
+  int (*integrate_ptr2)(mgis::behaviour::MaterialDataManager&,
+                        const mgis::behaviour::IntegrationType,
+                        const mgis::real, const mgis::size_type,
+                        const mgis::size_type) = mgis::behaviour::integrate;
   int (*integrate_ptr3)(mgis::ThreadPool&,
                         mgis::behaviour::MaterialDataManager&,
+                        const mgis::behaviour::IntegrationType,
                         const mgis::real) = mgis::behaviour::integrate;
 
   boost::python::def("integrate", &integrateBehaviourData1);

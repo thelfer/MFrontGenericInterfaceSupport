@@ -53,7 +53,7 @@ int main(const int argc, const char* const* argv) {
     pe[0] = m.s0.internal_state_variables[ne];
     const auto dt = real(180);
     for (size_type i = 0; i != 20; ++i) {
-      integrate(m, dt, 0, m.n);
+      integrate(m, IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR, dt, 0, m.n);
       update(m);
       for (size_type idx = 0; idx != m.n; ++idx) {
 	m.s1.gradients[idx * m.s1.gradients_stride] += de;

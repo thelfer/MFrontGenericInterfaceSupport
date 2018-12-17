@@ -38,7 +38,8 @@ namespace mgis{
        * \brief constructor
        * \param[in] nlm: material 
        */
-      NonLinearMaterialFunctionBase(NonLinearMaterial&);
+      NonLinearMaterialFunctionBase(NonLinearMaterial&,
+				    std::shared_ptr<const dolfin::FiniteElement>);
 
       std::shared_ptr<const dolfin::FunctionSpace> function_space() const override;
 
@@ -56,6 +57,7 @@ namespace mgis{
 
     protected:
       NonLinearMaterial& m;
+      std::shared_ptr<const dolfin::FiniteElement> elements;
     private:
       // disallow copying
       NonLinearMaterialFunctionBase(const NonLinearMaterialFunctionBase&) = delete;

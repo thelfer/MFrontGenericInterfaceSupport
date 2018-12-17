@@ -74,7 +74,8 @@ class IntegrateTest3(unittest.TestCase):
         p = mgis.ThreadPool(2)
         ## integration
         for i in range(0,20):
-            mgis_bv.integrate(p,m, dt);
+            it = mgis_bv.IntegrationType.IntegrationWithoutTangentOperator
+            mgis_bv.integrate(p, m, it, dt);
             mgis_bv.update(m);
             for j in range(0,nig):
                 m.s1.gradients[j][0] += de

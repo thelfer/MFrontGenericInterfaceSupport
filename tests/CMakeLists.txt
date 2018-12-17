@@ -1,5 +1,6 @@
 mfront_behaviours_check_library(BehaviourTest
   Norton
+  Plasticity
   Gurson
   BoundsCheckTest
   ParameterTest

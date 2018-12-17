@@ -55,6 +55,7 @@ namespace mgis {
     }  // end of getIntegrateWorkSpace
 
     int integrate(MaterialDataManager& m,
+                  const IntegrationType it,
                   const real dt,
                   const size_type b,
                   const size_type e) {
@@ -154,6 +155,7 @@ namespace mgis {
         v.s1.dissipated_energy = m.s1.dissipated_energies.data() + i;
         v.s0.external_state_variables = ws.esvs0.data();
         v.s1.external_state_variables = ws.esvs1.data();
+        v.K[0] = static_cast<int>(it);
         switch (integrate(v, m.b)) {
           case 1:
             r = std::min(r, 1);
@@ -168,7 +170,10 @@ namespace mgis {
       return r;
     }  // end of integrate
 
-    int integrate(ThreadPool& p, MaterialDataManager& m, const real dt) {
+    int integrate(ThreadPool& p,
+                  MaterialDataManager& m,
+                  const IntegrationType it,
+                  const real dt) {
       // get number of threads
       const auto nth = p.getNumberOfThreads();
       const auto d = m.n / nth;
@@ -177,13 +182,13 @@ namespace mgis {
       std::vector<std::future<ThreadedTaskResult<int>>> tasks;
       tasks.reserve(nth);
       for (size_type i = 0; i != r; ++i) {
-        tasks.push_back(
-            p.addTask([&m, dt, b, d] { return integrate(m, dt, b, b+d+1); }));
+        tasks.push_back(p.addTask(
+            [&m, it, dt, b, d] { return integrate(m, it, dt, b, b + d + 1); }));
         b += d+1;
       }
       for (size_type i = r; i != nth; ++i) {
-        tasks.push_back(
-            p.addTask([&m, dt, b, d] { return integrate(m, dt, b, b+d); }));
+        tasks.push_back(p.addTask(
+            [&m, it, dt, b, d] { return integrate(m, it, dt, b, b + d); }));
         b += d ;
       }
       //      p.wait();

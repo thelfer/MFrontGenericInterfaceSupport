@@ -30,6 +30,17 @@ namespace mgis {
     // forward declaration
     struct MaterialDataManager;
 
+    enum struct IntegrationType {
+      PREDICTION_TANGENT_OPERATOR = -3,
+      PREDICTION_SECANT_OPERATOR = -2,
+      PREDICTION_ELASTIC_OPERATOR = -1,
+      INTEGRATION_NO_TANGENT_OPERATOR = 0,
+      INTEGRATION_ELASTIC_OPERATOR = 1,
+      INTEGRATION_SECANT_OPERATOR = 2,
+      INTEGRATION_TANGENT_OPERATOR = 3,
+      INTEGRATION_CONSITENT_TANGENT_OPERATOR = 4,
+    };  // end of enum IntegrationType
+
     /*!
      * \brief structure in charge of handling temporary memory access.
      */
@@ -86,6 +97,7 @@ namespace mgis {
      * \param[in] e: last index of the range
      */
     MGIS_EXPORT int integrate(MaterialDataManager&,
+                              const IntegrationType,
                               const real,
                               const size_type,
                               const size_type);
@@ -104,6 +116,7 @@ namespace mgis {
      */
     MGIS_EXPORT int integrate(mgis::ThreadPool&,
                               MaterialDataManager&,
+                              const IntegrationType it,
                               const real);
 
   }  // end of namespace behaviour

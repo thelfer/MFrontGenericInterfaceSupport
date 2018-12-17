@@ -12,6 +12,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <dolfin/mesh/Cell.h>
+#include <dolfin/fem/FiniteElement.h>
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
 #include "MGIS/FEniCS/NonLinearMaterial.hxx"
@@ -21,13 +23,32 @@ namespace mgis{
   
   namespace fenics {
 
-    void NonLinearMaterialTangentOperatorFunction::restrict(double* const values,
-							    const dolfin::FiniteElement&,
-							    const dolfin::Cell& c,
-							    const double* nc,
-							    const ufc::cell&) const{
+    void NonLinearMaterialTangentOperatorFunction::restrict(
+        double* const values,
+        const dolfin::FiniteElement&,
+        const dolfin::Cell& c,
+        const double* nc,
+        const ufc::cell&) const {
+      // behaviour integration
       this->m.update(c,nc);
-      std::copy(this->m.K.begin(),this->m.K.end(), values);
+      const auto gs  = this->m.s1.gradients_stride;
+      const auto ths = this->m.s1.thermodynamic_forces_stride;
+      // updating the tangent operator
+      const std::size_t cell_index = c.index();
+      const std::size_t num_ip_dofs = this->elements->value_dimension(0);
+      dolfin_assert(num_ip_dofs == gs * ths);
+      const std::size_t num_ip_per_cell =
+          this->elements->space_dimension() / num_ip_dofs;
+      for (std::size_t ip = 0; ip != num_ip_per_cell; ++ip) {
+        const auto gip = cell_index * num_ip_per_cell + ip;
+        const auto Kb = this->m.K.data() + gip * num_ip_dofs;
+        for (mgis::size_type i = 0; i != ths; ++i) {
+          for (mgis::size_type j = 0; j != gs; ++j) {
+            const std::size_t pos = i * gs + j;
+            values[num_ip_per_cell * pos + ip] = Kb[pos];
+          }
+        }
+      }
     } // end of NonLinearMaterialTangentOperatorFunction::restrict
 
     NonLinearMaterialTangentOperatorFunction::~NonLinearMaterialTangentOperatorFunction() = default;

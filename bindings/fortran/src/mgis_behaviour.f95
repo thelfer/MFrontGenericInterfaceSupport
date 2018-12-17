@@ -27,6 +27,16 @@ module mgis_behaviour
      enumerator :: LOCAL_STORAGE    = 0
      enumerator :: EXTERNAL_STORAGE = 1
   end enum
+  enum, bind(C)
+     enumerator :: PREDICTION_TANGENT_OPERATOR = -3
+     enumerator :: PREDICTION_SECANT_OPERATOR = -2
+     enumerator :: PREDICTION_ELASTIC_OPERATOR = -1
+     enumerator :: INTEGRATION_NO_TANGENT_OPERATOR = 0
+     enumerator :: INTEGRATION_ELASTIC_OPERATOR = 1
+     enumerator :: INTEGRATION_SECANT_OPERATOR = 2
+     enumerator :: INTEGRATION_TANGENT_OPERATOR = 3
+     enumerator :: INTEGRATION_CONSITENT_TANGENT_OPERATOR = 4
+  end enum
   type :: Behaviour
     private
     type(c_ptr) :: ptr = c_null_ptr
@@ -2133,13 +2143,13 @@ contains
     s = integrate_wrapper(r, d%ptr, b%ptr)
   end function integrate
   ! 
-  function integrate_material_data_manager(r, p, m, dt) result(s)
+  function integrate_material_data_manager(r, p, m, i, dt) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t
     use mgis_fortran_utilities, only: convert_to_c_index
     use mgis, only: ThreadPool, mgis_status, report_failure
     implicit none
     interface
-       function integrate_material_data_manager_wrapper(r, p, m, dt) &
+       function integrate_material_data_manager_wrapper(r, p, m, i, dt) &
             bind(c,name = 'mgis_bv_integrate_material_data_manager') &
             result(s)
          use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_double
@@ -2148,6 +2158,7 @@ contains
          integer(kind=c_int), intent(out) :: r
          type(c_ptr), intent(in),value :: p
          type(c_ptr), intent(in),value :: m
+         integer,     intent(in),value :: i
          real(kind = c_double), intent(in),value :: dt
          type(mgis_status) :: s
        end function integrate_material_data_manager_wrapper
@@ -2155,18 +2166,19 @@ contains
     integer, intent(out) :: r
     type(ThreadPool),          intent(in) :: p
     type(MaterialDataManager), intent(in) :: m
+    integer,                   intent(in) :: i
     real(kind = 8),            intent(in) :: dt
     type(mgis_status) :: s
-    s = integrate_material_data_manager_wrapper(r, p%ptr, m%ptr, dt)
+    s = integrate_material_data_manager_wrapper(r, p%ptr, m%ptr, i, dt)
   end function integrate_material_data_manager
   !
-  function integrate_material_data_manager_part(r, m, dt, ni, ne) result(s)
+  function integrate_material_data_manager_part(r, m, i, dt, ni, ne) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t
     use mgis_fortran_utilities, only: convert_to_c_index
     use mgis, only: mgis_status, report_failure
     implicit none
     interface
-       function integrate_material_data_manager_part_wrapper(r, m, dt, ni, ne) &
+       function integrate_material_data_manager_part_wrapper(r, m, i, dt, ni, ne) &
             bind(c,name = 'mgis_bv_integrate_material_data_manager_part') &
             result(s)
          use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t, c_int, c_double
@@ -2174,6 +2186,7 @@ contains
          implicit none
          integer(kind=c_int), intent(out) :: r
          type(c_ptr), intent(in),value :: m
+         integer,     intent(in),value :: i
          real(kind = c_double), intent(in),value :: dt
          integer(kind = c_size_t), intent(in),value :: ni
          integer(kind = c_size_t), intent(in),value :: ne
@@ -2182,6 +2195,7 @@ contains
     end interface
     integer, intent(out) :: r
     type(MaterialDataManager), intent(in) :: m
+    integer,     intent(in),value :: i
     real(kind = 8),            intent(in) :: dt
     integer :: ni
     integer :: ne
@@ -2197,6 +2211,6 @@ contains
        return
     end if
     nec = nec + 1
-    s = integrate_material_data_manager_part_wrapper(r, m%ptr, dt, nic, nec)
+    s = integrate_material_data_manager_part_wrapper(r, m%ptr, i, dt, nic, nec)
   end function integrate_material_data_manager_part
 end module  mgis_behaviour

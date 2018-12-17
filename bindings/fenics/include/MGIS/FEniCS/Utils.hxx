@@ -25,9 +25,9 @@ namespace mgis{
      * \return the number of integration points of the finite elements
      * \param[in] e: finite elements
      */
-    MGIS_FENICS_EXPORT mgis::size_type
-    getNumberOfIntegrationPoints(const dolfin::FiniteElement&);
-    
+    MGIS_FENICS_EXPORT mgis::size_type getNumberOfIntegrationPoints(
+        const dolfin::Mesh&, const dolfin::FiniteElement&);
+
   }  // end of namespace fenics
 
 }  // end of namespace mgis

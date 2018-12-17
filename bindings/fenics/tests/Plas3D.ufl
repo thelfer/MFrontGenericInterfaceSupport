@@ -1,6 +1,8 @@
 # Copyright (C) 2009-2017 Kristian B. Oelgaard and Garth N. Wells.
 # Licensed under the GNU LGPL Version 3.
 
+from math import sqrt
+
 scheme= "default"
 degree = 3
 dx = Measure("dx")
@@ -22,7 +24,7 @@ disp = Coefficient(elementA)
 
 # eps_xx, eps_yy, eps_zz, gam_xy, gam_xz, gam_yz
 def eps(u):
-    return as_vector([u[i].dx(i) for i in range(3)] + [u[i].dx(j) + u[j].dx(i) for i, j in [(0, 1), (0, 2), (1, 2)]])
+    return as_vector([u[i].dx(i) for i in range(3)] + [(u[i].dx(j) + u[j].dx(i))/sqrt(2) for i, j in [(0, 1), (0, 2), (1, 2)]])
 
 def sigma(s):
     return as_matrix([[s[0], s[3], s[4]], [s[3], s[1], s[5]], [s[4], s[5], s[2]]])

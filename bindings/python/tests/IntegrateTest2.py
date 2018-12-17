@@ -71,7 +71,8 @@ class IntegrateTest2(unittest.TestCase):
             m.s1.gradients[i][0] = de
         ## integration
         for i in range(0,20):
-            mgis_bv.integrate(m, dt, 0, m.n);
+            it = mgis_bv.IntegrationType.IntegrationWithoutTangentOperator
+            mgis_bv.integrate(m, it, dt, 0, m.n)
             mgis_bv.update(m);
             for p in range(0,nig):
                 m.s1.gradients[p][0] += de

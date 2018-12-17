@@ -116,7 +116,8 @@ int main(const int argc, const char* const* argv) {
   pi[0] = isvs0[ni];
   pe[0] = isvs0[ne];
   for (i = 0; i != 20; ++i) {
-    check_status(mgis_bv_integrate_material_data_manager_part(&r, m, dt, 0, n));
+    check_status(mgis_bv_integrate_material_data_manager_part(
+        &r, m, MGIS_BV_INTEGRATION_NO_TANGENT_OPERATOR, dt, 0, n));
     check_status(mgis_bv_update_material_data_manager(m));
     for (idx = 0; idx != n; ++idx) {
       g[idx * g_stride] += de;

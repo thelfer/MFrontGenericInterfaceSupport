@@ -36,10 +36,12 @@ namespace mgis{
       : public mgis::behaviour::MaterialDataManager {
       /*!
        * \param[in] u: unknowns space
-       * \param[in] e: finite elements
+       * \param[in] t: tangent operator finite elements
+       * \param[in] e: stress finite elements
        * \param[in] bv: behaviour
        */
       NonLinearMaterial(std::shared_ptr<const dolfin::Function>,
+			std::shared_ptr<const dolfin::FiniteElement>,
 			std::shared_ptr<const dolfin::FiniteElement>,
 			const mgis::behaviour::Behaviour&);
       //! set time increment
@@ -54,11 +56,13 @@ namespace mgis{
       getTangentOperatorFunction();
       //! \brief displacements unknowns
       std::shared_ptr<const dolfin::Function> unknowns;
-      //! \brief underlying elements
-      std::shared_ptr<const dolfin::FiniteElement> elements;
       //! \brief destructor
       ~NonLinearMaterial();
     private:
+      //! \brief underlying elements for the thermodynamic forces
+      std::shared_ptr<const dolfin::FiniteElement> tangent_operator_elements;
+      //! \brief underlying elements for the tangent operator
+      std::shared_ptr<const dolfin::FiniteElement> thf_elements;
       //! 
       void update_gradients(const dolfin::Cell&,
 			    const double*);

@@ -88,7 +88,7 @@ subroutine test()
   dt = 180d0
   ! integration
   do j = 1, 20
-     call check_status(integrate_material_data_manager_part(ri, m, dt, 1, n))
+     call check_status(integrate_material_data_manager_part(ri, m, INTEGRATION_NO_TANGENT_OPERATOR, dt, 1, n))
      r = check(ri.eq.1, 'integration failed')
      call check_status(update_material_data_manager(m))
      ! updating the strain

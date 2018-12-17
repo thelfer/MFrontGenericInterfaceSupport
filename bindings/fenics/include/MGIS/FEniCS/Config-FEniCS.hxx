@@ -37,6 +37,12 @@ namespace dolfin {
   class FiniteElement;
   class Function;
   class Mesh;
+  class DirichletBC;
+  class GenericDofMap;
+  class GenericMatrix;
+  class GenericVector;
+  class Form;
+  class NewtonSolver;
 } // end of namespace dolphin
 
 #endif /* LIB_MGIS_FENICS_CONFIG_HXX */
