@@ -33,14 +33,16 @@ the `mgis::behaviour::MaterialStateManager` class.
 
 The following bindings are available:
 
-- `c` binding (mostly complete)
-- `python` binding (under current work in the `master` branch)
+- `c` bindings (mostly complete)
+- `python` bindings (under current work in the `master` branch)
+- `fortran03` bindings (under current work in the `master` branch)
+- `fenics` bindings. Those bindings are strongly inspired by the
+  `fenics-solid-mechanics` project.
 
 ### Future bindings (contributors are welcomed)
 
 The following bindings are under consideration:
 
-- `fortran90` binding
 - `octave` binding
 - `julia` binding
 
@@ -62,3 +64,5 @@ This project uses code extracted from the following projects:
 - https://github.com/progschj/ThreadPool by Jakob Progsch and Václav
   Zeman
 - https://github.com/martinmoene/span-lite by Martin Moene
+- https://bitbucket.org/fenics-apps/fenics-solid-mechanics/ by
+  Kristian B. Ølgaard and Garth N. Wells
