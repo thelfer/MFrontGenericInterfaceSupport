@@ -34,10 +34,13 @@ the `mgis::behaviour::MaterialStateManager` class.
 The following bindings are available:
 
 - `c` bindings (mostly complete)
-- `python` bindings (under current work in the `master` branch)
-- `fortran03` bindings (under current work in the `master` branch)
-- `fenics` bindings. Those bindings are strongly inspired by the
-  `fenics-solid-mechanics` project.
+- `python` bindings (mostly complete, under current work in the
+  `master` branch)
+- `fortran03` bindings (mostly complete, under current work in the
+  `master` branch)
+- `fenics` bindings (under current work in the `master` branch). Those
+  bindings are strongly inspired by the `fenics-solid-mechanics`
+  project.
 
 ### Future bindings (contributors are welcomed)
 
@@ -65,4 +68,4 @@ This project uses code extracted from the following projects:
   Zeman
 - https://github.com/martinmoene/span-lite by Martin Moene
 - https://bitbucket.org/fenics-apps/fenics-solid-mechanics/ by
-  Kristian B. Ølgaard and Garth N. Wells
+  Kristian B. Ølgaard and Garth N. Wells.
