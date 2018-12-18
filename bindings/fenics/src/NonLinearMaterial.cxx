@@ -12,6 +12,10 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#ifdef _MSC_VER
+#define  _USE_MATH_DEFINES
+#endif /* MSC_VER */
+#include <cmath>
 #include <dolfin/log/log.h>
 #include <dolfin/la/GenericVector.h>
 #include <dolfin/function/Function.h>
@@ -30,6 +34,7 @@ namespace mgis {
     static void compute_strain2D(double* const e,
                                  const boost::multi_array<double, 2>& dsf,
                                  const std::vector<double>& ecs) {
+      constexpr const double icste = M_SQRT1_2;
       const std::size_t space_dim = dsf.shape()[0];
       e[0] = e[1] = e[2] = e[3] = 0;
       for (unsigned int dim = 0; dim < space_dim; dim++) {
@@ -37,14 +42,16 @@ namespace mgis {
         e[0] += dsf[dim][0] * ecs[dim];
         // Uy,y (eps_yy)
         e[1] += dsf[dim][1] * ecs[space_dim + dim];
-        // Ux,y + Uy,x (gamma_xy)
-        e[3] += (dsf[dim][1] * ecs[dim] + dsf[dim][0] * ecs[space_dim + dim]);
+        // Ux,y + Uy,x (sqrt(2)*eps_xy)
+        e[3] += (dsf[dim][1] * ecs[dim] +
+		 dsf[dim][0] * ecs[space_dim + dim]) * icste;
       }
     }  // end of compute_strain2D
 
     static void compute_strain3D(double* const e,
                                  const boost::multi_array<double, 2>& dsf,
                                  const std::vector<double>& ecs) {
+      constexpr const double icste = M_SQRT1_2;
       // Zero strain vector
       e[0] = e[1] = e[2] = e[3] = e[4] = e[5] = 0;
       const std::size_t space_dim = dsf.shape()[0];
@@ -55,14 +62,15 @@ namespace mgis {
         e[1] += dsf[dim][1] * ecs[space_dim + dim];
         // Uz,z (eps_zz)
         e[2] += dsf[dim][2] * ecs[2 * space_dim + dim];
-        // Ux,y + Uy,x (gamma_xy)
-        e[3] += (dsf[dim][1] * ecs[dim] + dsf[dim][0] * ecs[space_dim + dim]);
-        // Ux,z + Uz,x (gamma_xz)
-        e[4] +=
-            (dsf[dim][2] * ecs[dim] + dsf[dim][0] * ecs[2 * space_dim + dim]);
-        // Uy,z + Uz,y (gamma_yz)
+        // sqrt(2)*(Ux,y + Uy,x) (sqrt(2)*eps_xy)
+        e[3] += (dsf[dim][1] * ecs[dim] +
+		 dsf[dim][0] * ecs[space_dim + dim]) * icste;
+        // sqrt(2)*(Ux,z + Uz,x) (sqrt(2)*eps_xz)
+        e[4] += (dsf[dim][2] * ecs[dim] +
+		 dsf[dim][0] * ecs[2 * space_dim + dim]) * icste;
+        // sqrt(2)*(Uy,z + Uz,y) (sqrt(2)*eps_yz)
         e[5] += (dsf[dim][2] * ecs[space_dim + dim] +
-                 dsf[dim][1] * ecs[2 * space_dim + dim]);
+                 dsf[dim][1] * ecs[2 * space_dim + dim]) * icste;
       }
     }  // end of compute_strain3D
 
@@ -223,7 +231,7 @@ namespace mgis {
       const auto bc = cell_index * num_ip_per_cell;
       const auto ec = (cell_index + 1) * num_ip_per_cell;
       this->update_gradients(c, nc);
-      integrate(*this, it, this->dt, bc, ec);
+      mgis::behaviour::integrate(*this, it, this->dt, bc, ec);
     }  // end of NonLinearMaterial::update
 
     NonLinearMaterial::~NonLinearMaterial() = default;

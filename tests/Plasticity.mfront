@@ -3,6 +3,8 @@
 @Author    Helfer Thomas;
 @Date      17/12/2018;
 
+@Epsilon 1.e-16;
+
 @ElasticMaterialProperties {20000.0, 0.3};
 @Parameter s0 =  200.0;
 @Parameter H  = 2222.22222222;

@@ -23,7 +23,7 @@
 #include <dolfin/mesh/MeshFunction.h>
 #include <dolfin/mesh/SubDomain.h>
 
-#include "Plas3D.h"
+#include "MGISSmallStrainFormulation3D.h"
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/FEniCS/NonLinearMaterial.hxx"
 #include "MGIS/FEniCS/NonLinearMechanicalProblem.hxx"
@@ -68,24 +68,24 @@ int main(){
     std::exit(EXIT_FAILURE);
   }
   // create mesh
-  // auto mesh = std::make_shared<dolfin::UnitCubeMesh>(4, 4, 4);
-  auto mesh = std::make_shared<dolfin::UnitCubeMesh>(1, 1, 1);
+  auto mesh = std::make_shared<dolfin::UnitCubeMesh>(4, 4, 4);
+  // auto mesh = std::make_shared<dolfin::UnitCubeMesh>(1, 1, 1);
   // Time parameter
   double t = 0.0;
   // Source term, RHS
   auto f = std::make_shared<dolfin::Constant>(0.0, 0.0, 0.0);
   // function space
-  auto V = std::make_shared<Plas3D::FunctionSpace>(mesh);
+  auto V = std::make_shared<MGISSmallStrainFormulation3D::FunctionSpace>(mesh);
 
   // Extract elements for stress and tangent
   std::shared_ptr<const dolfin::FiniteElement> element_t;
   std::shared_ptr<const dolfin::FiniteElement> element_s;
   {
-    Plas3D::BilinearForm::CoefficientSpace_t Vt(mesh);
+    MGISSmallStrainFormulation3D::BilinearForm::CoefficientSpace_t Vt(mesh);
     element_t = Vt.element();
   }
 
-  Plas3D::LinearForm::CoefficientSpace_s Vs(mesh);
+  MGISSmallStrainFormulation3D::LinearForm::CoefficientSpace_s Vs(mesh);
   element_s = Vs.element();
 
   // Create boundary conditions (use SubSpace to apply simply
@@ -119,10 +119,10 @@ int main(){
   setExternalStateVariable(m.s1,"Temperature", 293.15);
   
   // // Create forms and attach functions
-  auto a = std::make_shared<Plas3D::BilinearForm>(V, V);
+  auto a = std::make_shared<MGISSmallStrainFormulation3D::BilinearForm>(V, V);
   a->t =  m.getTangentOperatorFunction();
   a->ds = load_marker;
-  auto L = std::make_shared<Plas3D::LinearForm>(V);
+  auto L = std::make_shared<MGISSmallStrainFormulation3D::LinearForm>(V);
   L->f = f;
   L->h = boundary_load;
   L->s = m.getThermodynamicForcesFunction();
@@ -131,8 +131,8 @@ int main(){
   mgis::fenics::NonLinearMechanicalProblem nonlinear_problem(a, L, u, bcs);
 
   // // Displacement and load integration functionals
-  auto M_d = std::make_shared<Plas3D::Form_M_d>(mesh, u);
-  auto M_f = std::make_shared<Plas3D::Form_M_f>(mesh, boundary_load);
+  auto M_d = std::make_shared<MGISSmallStrainFormulation3D::Form_M_d>(mesh, u);
+  auto M_f = std::make_shared<MGISSmallStrainFormulation3D::Form_M_f>(mesh, boundary_load);
   M_d->ds = load_marker;
   M_f->ds = load_marker;
 
@@ -144,9 +144,10 @@ int main(){
   nonlinear_solver.parameters["absolute_tolerance"] = 1.0e-15;
 
   // Structures to hold load-disp data
-  std::vector<double> disp, load;
+  std::vector<double> disp, load,p;
   disp.push_back(0.0);
   load.push_back(0.0);
+  p.push_back(0.0);
 
   // Solver loop
   mgis::size_type step = 0;
@@ -167,10 +168,11 @@ int main(){
     disp.push_back(u_avg);
     const double force = assemble(*M_f);
     load.push_back(force);
+    p.push_back(m.s0.internal_state_variables[6]);
   }
 
   for (mgis::size_type i = 0; i != disp.size(); ++i) {
-    std::cout << disp[i] << " " << load[i] << '\n';
+    std::cout << disp[i] << " " << load[i] << " " << p[i] << '\n';
   }
 
   return 0;

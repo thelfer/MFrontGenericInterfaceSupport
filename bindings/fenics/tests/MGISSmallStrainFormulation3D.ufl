@@ -9,8 +9,8 @@ dx = Measure("dx")
 dx = dx(degree=degree, scheme=scheme)
 
 elementA = VectorElement("Lagrange", tetrahedron, 1)
-elementT = VectorElement("Quadrature", tetrahedron, degree, dim=36, quad_scheme=scheme)
 elementS = VectorElement("Quadrature", tetrahedron, degree, dim=6, quad_scheme=scheme)
+elementT = VectorElement("Quadrature", tetrahedron, degree, dim=36, quad_scheme=scheme)
 
 v = TestFunction(elementA)
 u = TrialFunction(elementA)
@@ -22,12 +22,15 @@ f = Coefficient(elementA)
 h = Coefficient(elementA)
 disp = Coefficient(elementA)
 
-# eps_xx, eps_yy, eps_zz, gam_xy, gam_xz, gam_yz
+# eps_xx, eps_yy, eps_zz, sqrt(2)*eps_xy, sqrt(2)*eps_xz, sqrt(2)*eps_yz
 def eps(u):
-    return as_vector([u[i].dx(i) for i in range(3)] + [(u[i].dx(j) + u[j].dx(i))/sqrt(2) for i, j in [(0, 1), (0, 2), (1, 2)]])
+    return as_vector([u[i].dx(i) for i in range(3)] +
+                     [(u[i].dx(j) + u[j].dx(i))/sqrt(2) for i, j in [(0, 1), (0, 2), (1, 2)]])
 
 def sigma(s):
-    return as_matrix([[s[0], s[3], s[4]], [s[3], s[1], s[5]], [s[4], s[5], s[2]]])
+    return as_matrix([[s[0], s[3]/sqrt(2), s[4]/sqrt(2)],
+                      [s[3]/sqrt(2), s[1], s[5]/sqrt(2)],
+                      [s[4]/sqrt(2), s[5]/sqrt(2), s[2]]])
 
 def tangent(t):
   return as_matrix([[t[i*6 + j] for j in range(6)] for i in range(6)])

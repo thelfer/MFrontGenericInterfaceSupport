@@ -1,10 +1,10 @@
-add_custom_command(OUTPUT Plas3D.cpp Plas3D.h
-                   COMMAND ffc -l dolfin -O -fno-evaluate_basis -fsplit ${CMAKE_CURRENT_SOURCE_DIR}/Plas3D.ufl
-                   MAIN_DEPENDENCY Plas3D.ufl)
+add_custom_command(OUTPUT MGISSmallStrainFormulation3D.cpp MGISSmallStrainFormulation3D.h
+                   COMMAND ffc -l dolfin -O -fno-evaluate_basis -fsplit ${CMAKE_CURRENT_SOURCE_DIR}/MGISSmallStrainFormulation3D.ufl
+                   MAIN_DEPENDENCY MGISSmallStrainFormulation3D.ufl)
 
 function(test_fenics_bindings test)
   add_executable(${test}_fenics
-    EXCLUDE_FROM_ALL ${test}.cxx Plas3D.cpp)
+    EXCLUDE_FROM_ALL ${test}.cxx MGISSmallStrainFormulation3D.cpp)
   target_include_directories(${test}_fenics
    SYSTEM PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
   target_link_libraries(${test}_fenics
