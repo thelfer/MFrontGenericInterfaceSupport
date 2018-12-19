@@ -47,7 +47,7 @@ namespace mgis{
       for (std::size_t ip = 0; ip != num_ip_per_cell; ++ip) {
         const auto gip = cell_index * num_ip_per_cell + ip;
         const auto Kb = this->m.K.data() + gip * num_ip_dofs;
-        for (mgis::size_type i = 0; i != ths; ++i) {
+	for (mgis::size_type i = 0; i != ths; ++i) {
           for (mgis::size_type j = 0; j != gs; ++j) {
             const std::size_t pos = i * gs + j;
             values[num_ip_per_cell * pos + ip] = Kb[pos];

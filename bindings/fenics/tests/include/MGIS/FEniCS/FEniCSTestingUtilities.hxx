@@ -44,6 +44,16 @@ namespace mgis{
   namespace fenics{
 
     /*!
+     * \return all the boundaries associated with a unit square
+     * The following boundaries are defined:
+     * - sx1: defined by the points satisfying x==0
+     * - sx2: defined by the points satisfying x==1
+     * - sy1: defined by the points satisfying y==0
+     * - sy2: defined by the points satisfying y==1
+     */
+    MGIS_VISIBILITY_EXPORT std::map<std::string,std::shared_ptr<dolfin::SubDomain>>
+    getUnitSquareBoundaries();
+    /*!
      * \return all the boundaries associated with a unit cube
      * The following boundaries are defined:
      * - sx1: defined by the points satisfying x==0

@@ -67,6 +67,16 @@ namespace mgis{
     }; // end of sz2
     
     std::map<std::string,std::shared_ptr<dolfin::SubDomain>>
+    getUnitSquareBoundaries(){
+      auto boundaries = std::map<std::string,std::shared_ptr<dolfin::SubDomain>>{};
+      boundaries.insert({"sx1",std::make_shared<sx1>()});
+      boundaries.insert({"sx2",std::make_shared<sx2>()});
+      boundaries.insert({"sy1",std::make_shared<sy1>()});
+      boundaries.insert({"sy2",std::make_shared<sy2>()});
+      return boundaries;
+    } // end of getUnitSquareBoundaries
+
+        std::map<std::string,std::shared_ptr<dolfin::SubDomain>>
     getUnitCubeBoundaries(){
       auto boundaries = std::map<std::string,std::shared_ptr<dolfin::SubDomain>>{};
       boundaries.insert({"sx1",std::make_shared<sx1>()});

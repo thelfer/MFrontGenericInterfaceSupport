@@ -1,6 +1,6 @@
 /*!
  * \file
- * bindings/fenics/tests/ElasticityUniaxialTensileTestImposedStrain-exy.cxx
+ * bindings/fenics/tests/ElasticityUniaxialTensileTestImposedStrain3D-exy.cxx
  * \brief  This program tests the elastic response of an unit cube.
  * \date   14/12/2018
  * \copyright (C) Copyright Thomas Helfer 2018.

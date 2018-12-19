@@ -42,7 +42,7 @@ namespace mgis {
       constexpr const double icste = M_SQRT1_2;
       const std::size_t space_dim = dsf.shape()[0];
       e[0] = e[1] = e[2] = e[3] = 0;
-      for (unsigned int dim = 0; dim < space_dim; dim++) {
+      for (unsigned int dim = 0; dim < space_dim; ++dim) {
         // Ux,x (eps_xx)
         e[0] += dsf[dim][0] * ecs[dim];
         // Uy,y (eps_yy)
@@ -105,7 +105,6 @@ namespace mgis {
       this->ip_coordinates.resize(boost::extents[dim][tdim]);
       ufc_element_sigma->tabulate_reference_dof_coordinates(
           this->ip_coordinates.data());
-
       // Get displacement UFC element (single component)
       const dolfin::FiniteElement& u_element_new =
           *(*this->unknowns)[0].function_space()->element();
@@ -113,13 +112,7 @@ namespace mgis {
       dolfin_assert(ufc_element_u);
       // Compute basis function derivatives on reference element and store
       const std::size_t dim_u = ufc_element_u->space_dimension();
-      //      const std::size_t gdim_u = ufc_element_u->geometric_dimension();
       const std::size_t num_points = this->ip_coordinates.shape()[0];
-      //      const std::size_t value_size =
-      //      ufc_element_u->reference_value_size();
-
-      // boost::multi_array<double, 3>
-      // derivatives(boost::extents[num_points][dim_u][tdim]);
       this->dsf.resize(boost::extents[num_points][dim_u][tdim]);
       ufc_element_u->evaluate_reference_basis_derivatives(
           this->dsf.data(), 1, this->ip_coordinates.shape()[0],
@@ -179,8 +172,8 @@ namespace mgis {
       }
       // duplicate data at each point
       auto num_points = this->dsf.shape()[0];
-      boost::multi_array<double, 2> gJ(boost::extents[num_points][9]);
       std::vector<double> gDetJ(num_points, lDetJ);
+      boost::multi_array<double, 2> gJ(boost::extents[num_points][9]);
       boost::multi_array<double, 2> gK(boost::extents[num_points][9]);
       for (std::size_t i = 0; i < num_points; ++i) {
         for (std::size_t j = 0; j < 9; ++j) {

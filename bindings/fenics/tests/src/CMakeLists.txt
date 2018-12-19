@@ -1,16 +1,14 @@
 add_custom_command(OUTPUT MGISSmallStrainFormulation3D.cpp MGISSmallStrainFormulation3D.h
                    COMMAND ffc -l dolfin -O -fno-evaluate_basis -fsplit ${CMAKE_CURRENT_SOURCE_DIR}/MGISSmallStrainFormulation3D.ufl
                    MAIN_DEPENDENCY MGISSmallStrainFormulation3D.ufl)
-add_custom_command(OUTPUT MGISSmallStrainFormulationPlaneStrain.cpp MGISSmallStrainFormulationPlaneStrain.h
-                   COMMAND ffc -l dolfin -O -fno-evaluate_basis -fsplit ${CMAKE_CURRENT_SOURCE_DIR}/MGISSmallStrainFormulationPlaneStrain.ufl
-                   MAIN_DEPENDENCY MGISSmallStrainFormulationPlaneStrain.ufl)
+add_custom_command(OUTPUT MGISSmallStrainFormulation2D.cpp MGISSmallStrainFormulation2D.h
+                   COMMAND ffc -l dolfin -O -fno-evaluate_basis -fsplit ${CMAKE_CURRENT_SOURCE_DIR}/MGISSmallStrainFormulation2D.ufl
+                   MAIN_DEPENDENCY MGISSmallStrainFormulation2D.ufl)
 
-
-		 
 add_library(MFrontGenericInterfaceFEniCSTestingUtilities SHARED
   EXCLUDE_FROM_ALL
   FEniCSTestingUtilities.cxx
-#  MGISSmallStrainFormulation2D.cpp
+  MGISSmallStrainFormulation2D.cpp
   MGISSmallStrainFormulation3D.cpp)
 if (COMPILER_DEFAULT_VISIBILITY_FLAG)
   target_compile_options(MFrontGenericInterfaceFEniCSTestingUtilities
@@ -54,12 +52,14 @@ function(test_fenics_bindings test)
   endif(CMAKE_CONFIGURATION_TYPES)
 endfunction(test_fenics_bindings)
 
-test_fenics_bindings(ElasticityUniaxialTensileTestImposedStress-sxx)
-test_fenics_bindings(ElasticityUniaxialTensileTestImposedStrain-exx)
-test_fenics_bindings(ElasticityUniaxialTensileTestImposedStrain-eyy)
-test_fenics_bindings(ElasticityUniaxialTensileTestImposedStrain-ezz)
-test_fenics_bindings(ElasticityUniaxialTensileTestImposedStrain-exz)
-test_fenics_bindings(ElasticityUniaxialTensileTestImposedStrain-exy)
-test_fenics_bindings(ElasticityUniaxialTensileTestImposedStrain-eyz)
-test_fenics_bindings(PlasticityUniaxialTensileTestImposedStress-sxx)
+# test_fenics_bindings(ElasticityUniaxialTensileTestImposedStrainPlaneStress-exx)
+
+test_fenics_bindings(ElasticityUniaxialTensileTestImposedStress3D-sxx)
+test_fenics_bindings(ElasticityUniaxialTensileTestImposedStrain3D-exx)
+test_fenics_bindings(ElasticityUniaxialTensileTestImposedStrain3D-eyy)
+test_fenics_bindings(ElasticityUniaxialTensileTestImposedStrain3D-ezz)
+test_fenics_bindings(ElasticityUniaxialTensileTestImposedStrain3D-exz)
+test_fenics_bindings(ElasticityUniaxialTensileTestImposedStrain3D-exy)
+test_fenics_bindings(ElasticityUniaxialTensileTestImposedStrain3D-eyz)
+test_fenics_bindings(PlasticityUniaxialTensileTestImposedStress3D-sxx)
 # test_fenics_bindings(PlasticCylinderExpansion)

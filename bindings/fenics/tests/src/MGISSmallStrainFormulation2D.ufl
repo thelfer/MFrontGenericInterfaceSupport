@@ -8,7 +8,7 @@ degree = 2
 dx = Measure("dx")
 dx = dx(degree=degree, scheme=scheme)
 
-elementA = VectorElement("CG", triangle, 2)
+elementA = VectorElement("Lagrange", triangle, 2)
 elementS = VectorElement("Quadrature", triangle, degree, dim=4, quad_scheme=scheme)
 elementT = VectorElement("Quadrature", triangle, degree, dim=16, quad_scheme=scheme)
 

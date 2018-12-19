@@ -1,6 +1,6 @@
 /*!
  * \file
- * bindings/fenics/tests/ElasticityUniaxialTensileTestImposedStrain-eyz.cxx
+ * bindings/fenics/tests/ElasticityUniaxialTensileTestImposedStrain3D-ezz.cxx
  * \brief  This program tests the elastic response of an unit cube.
  * \author Thomas Helfer
  * \date   14/12/2018
@@ -61,12 +61,10 @@ int main() {
     std::exit(EXIT_FAILURE);
   }
   // create mesh and boundaries
-  auto mesh = std::make_shared<dolfin::UnitCubeMesh>(1, 1, 1);
+  auto mesh = std::make_shared<dolfin::UnitCubeMesh>(4, 4, 4);
   auto boundaries = mgis::fenics::getUnitCubeBoundaries();
   // Time parameter
   double t = 0.0;
-  // Source term, RHS
-  auto f = std::make_shared<dolfin::Constant>(0.0, 0.0, 0.0);
   // function space
   auto V = std::make_shared<MGISSmallStrainFormulation3D::FunctionSpace>(mesh);
 
@@ -81,22 +79,20 @@ int main() {
   MGISSmallStrainFormulation3D::LinearForm::CoefficientSpace_s Vs(mesh);
   element_s = Vs.element();
 
-  // boundary conditions
+  // Create boundary conditions (use SubSpace to apply simply
+  // supported BCs)
   auto zero = std::make_shared<dolfin::Constant>(0.0);
+
   std::vector<std::shared_ptr<const dolfin::DirichletBC>> bcs;
   bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(0), zero,
-                                                      boundaries["sy1"]));
+                                                      boundaries["sx1"]));
   bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(1), zero,
                                                       boundaries["sy1"]));
   bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(2), zero,
-                                                      boundaries["sy1"]));
+                                                      boundaries["sz1"]));
   bcs.push_back(std::make_shared<dolfin::DirichletBC>(
       V->sub(2), std::make_shared<ImposedDisplacementValue>(t),
-      boundaries["sy2"]));
-  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(1), zero,
-                                                      boundaries["sy2"]));
-  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(0), zero,
-                                                      boundaries["sy2"]));
+      boundaries["sz2"]));
 
   // Solution function
   auto u = std::make_shared<dolfin::Function>(V);
@@ -171,23 +167,23 @@ int main() {
     }
   };
   constexpr const auto eps = 1.e-14;
-  constexpr const auto mu = yg / (2 * (1 + nu));
   for (mgis::size_type i = 0; i != e.size(); ++i) {
     // check strain values
-    check(std::abs(e[i][0]) < eps, "invalid strain value");
-    check(std::abs(e[i][1]) < eps, "invalid strain value");
-    check(std::abs(e[i][2]) < eps, "invalid strain value");
-    check(std::abs(e[i][3]) < eps, "invalid strain value");
-    check(std::abs(e[i][4]) < eps, "invalid strain value");
+    check(std::abs(e[i][0] + nu * e[i][2]) < eps,
+          "invalid orthoradial strain value");
+    check(std::abs(e[i][1] + nu * e[i][2]) < eps,
+          "invalid orthoradial strain value");
+    check(std::abs(e[i][3]) < eps, "invalid shear strain value");
+    check(std::abs(e[i][4]) < eps, "invalid shear strain value");
+    check(std::abs(e[i][5]) < eps, "invalid shear strain value");
     // check stress values
+    check(std::abs(s[i][2] - yg * e[i][2]) < eps * yg,
+          "invalid axial stress value");
     check(std::abs(s[i][0]) < eps * yg, "invalid stress value");
     check(std::abs(s[i][1]) < eps * yg, "invalid stress value");
-    check(std::abs(s[i][2]) < eps * yg, "invalid stress value");
     check(std::abs(s[i][3]) < eps * yg, "invalid stress value");
     check(std::abs(s[i][4]) < eps * yg, "invalid stress value");
-    // checking behaviour
-    check(std::abs(s[i][5] - 2 * mu * e[i][5]) < eps * yg,
-          "invalid stress value");
+    check(std::abs(s[i][5]) < eps * yg, "invalid stress value");
   }
   // reporting
   std::cout << "Number of tests: " << nb_tests << '\n';

@@ -6,11 +6,17 @@
  (the most simple one in fact).
 }
 
+@ModellingHypotheses {".+"};
+@ProvidesSymmetricTangentOperator;
+
 // Material properties
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
-@MaterialProperty real nu;
+@MaterialProperty real   nu;
 nu.setGlossaryName("PoissonRatio");
+
+@ExternalStateVariable<AxisymmetricalGeneralisedPlaneStress> stress sigzz;
+AxisymmetricalGeneralisedPlaneStress::sigzz.setGlossaryName("AxialStress");
 
 // Lame Coefficients
 @LocalVariable stress lambda,mu;
@@ -30,4 +36,19 @@ nu.setGlossaryName("PoissonRatio");
   if(computeTangentOperator_){
     Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
   }
+}
+
+@Integrator<PlaneStress,Replace>{
+  // here we compute the tangent operator even if we don't need too
+  static_cast<void>(computeTangentOperator_);
+  computeAlteredElasticStiffness<hypothesis,real>::exe(Dt,lambda,mu);
+  sig = Dt*(eto+deto);
+}
+
+@Integrator<AxisymmetricalGeneralisedPlaneStress,Replace>{
+  // here we compute the tangent operator even if we don't need too
+  static_cast<void>(computeTangentOperator_);
+  computeAlteredElasticStiffness<hypothesis,real>::exe(Dt,lambda,mu);
+  sig = Dt*(eto+deto);
+  sig(2)=this->sigzz+this->dsigzz;
 }
