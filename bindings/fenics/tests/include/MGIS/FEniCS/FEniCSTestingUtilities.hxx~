@@ -1,0 +1,67 @@
+/*!
+ * \file   bindings/fencis/include/MGIS/FEniCS/FenicsTestingUtilities.hxx
+ * \brief    
+ * \author Thomas Helfer
+ * \date   14/12/2018
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
+ *
+ * \note This file contains material strongly inspired by the
+ * fenics-solid-materials by Kristian Oelgaard and Garth N. Wells.
+ * See <https://bitbucket.org/fenics-apps/fenics-solid-mechanics> for
+ * details.
+ */
+
+#ifndef LIB_MGIS_FENICS_TESTINGUTILITIES_HXX
+#define LIB_MGIS_FENICS_TESTINGUTILITIES_HXX
+
+#include<map>
+
+namespace mgis{
+
+  namespace fenics{
+
+    /*!
+     * \return all the boundaries associated with a unit cube
+     * The following boundaries are defined:
+     * - sx1: defined by the points satisfying x==0
+     * - sx2: defined by the points satisfying x==1
+     * - sy1: defined by the points satisfying y==0
+     * - sy2: defined by the points satisfying y==1
+     * - sz1: defined by the points satisfying z==0
+     * - sz2: defined by the points satisfying z==1
+     */
+    std::map<std::string,std::shared_ptr<dolfin::SubDomain>>
+    getUnitCubeBoundaries();
+
+    
+    // sx2 boundary (x=1)
+    struct Right : public dolfin::SubDomain
+    {
+      bool inside(const dolfin::Array<double>& x, bool on_boundary) const {
+	return std::abs(x[0] - 1.0) < DOLFIN_EPS;
+      }
+    };
+    
+    // Left boundary (x=1)
+    struct Left : public dolfin::SubDomain {
+      bool inside(const dolfin::Array<double>& x, bool on_boundary) const
+      { return x[0] < DOLFIN_EPS; }
+    };
+    
+    // Point x = (0, 0, 0)
+    struct CornerPoint : public dolfin::SubDomain {
+      bool inside(const dolfin::Array<double>& x, bool on_boundary) const
+      { return (x[0] < DOLFIN_EPS) && (x[1] < DOLFIN_EPS) && (x[2] < DOLFIN_EPS); }
+    };
+
+  } // end of namespace fenics
+
+} // end of namespace mgis
+
+#endif /* LIB_MGIS_FENICS_TESTINGUTILITIES_HXX */

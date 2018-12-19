@@ -1,10 +1,23 @@
-// Copyright (C) 2013-2017 Kristian Oelgaard and Garth N. Wells.
-// Licensed under the GNU LGPL Version 3.
-
-// This program tests the elastic and plastic load-displacement
-// responses for a unit cube in uniaxial tension with an Von Mises
-// (J2) model with linear strain hardening. The program will throw an
-// error is any problems are detected. It uses P2 elements.
+/*!
+ * \file   bindings/fenics/tests/ElasticityUniaxialTensileTest.cxx
+ * \brief  This program tests the elastic and plastic load-displacement
+ * responses for a unit cube in uniaxial tension with an Von Mises
+ * (J2) plastic behaviour with linear strain hardening.
+ * \author Thomas Helfer
+ * \date   14/12/2018
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
+ *
+ * \note This file contains material strongly inspired by the
+ * fenics-solid-materials by Kristian Oelgaard and Garth N. Wells.
+ * See <https://bitbucket.org/fenics-apps/fenics-solid-mechanics> for
+ * details.
+ */
 
 #include <memory>
 #include <cstdlib>
@@ -27,37 +40,18 @@
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/FEniCS/NonLinearMaterial.hxx"
 #include "MGIS/FEniCS/NonLinearMechanicalProblem.hxx"
+#include "MGIS/FEniCS/FEniCSTestingUtilities.hxx"
 
-// Displacement right end
+// force at the right end
 struct Load : public dolfin::Expression {
   Load(const double& t) : dolfin::Expression(3), t(t) {}
   void eval(dolfin::Array<double>& values,
-            const dolfin::Array<double>& x) const {
-    values[0] = 1.0e5 * t;
-    values[1] = 0.0;
-    values[2] = 0.0;
+	    const dolfin::Array<double>& x) const {
+    values[0] = 100e6 * t;
+    values[1] = values[2] = 0.0;
   }
+private:
   const double& t;
-};
-
-// Right boundary (x=1)
-struct Right : public dolfin::SubDomain
-{
-  bool inside(const dolfin::Array<double>& x, bool on_boundary) const {
-    return std::abs(x[0] - 1.0) < DOLFIN_EPS;
-  }
-};
-
-// Left boundary (x=1)
-struct Left : public dolfin::SubDomain {
-  bool inside(const dolfin::Array<double>& x, bool on_boundary) const
-  { return x[0] < DOLFIN_EPS; }
-};
-
-// Point x = (0, 0, 0)
-struct CornerPoint : public dolfin::SubDomain {
-  bool inside(const dolfin::Array<double>& x, bool on_boundary) const
-  { return (x[0] < DOLFIN_EPS) && (x[1] < DOLFIN_EPS) && (x[2] < DOLFIN_EPS); }
 };
 
 
@@ -67,9 +61,9 @@ int main(){
   if(library==nullptr){
     std::exit(EXIT_FAILURE);
   }
-  // create mesh
+  // create mesh and boundaries
   auto mesh = std::make_shared<dolfin::UnitCubeMesh>(4, 4, 4);
-  // auto mesh = std::make_shared<dolfin::UnitCubeMesh>(1, 1, 1);
+  auto boundaries = mgis::fenics::getUnitCubeBoundaries();
   // Time parameter
   double t = 0.0;
   // Source term, RHS
@@ -91,30 +85,29 @@ int main(){
   // Create boundary conditions (use SubSpace to apply simply
   // supported BCs)
   auto zero = std::make_shared<dolfin::Constant>(0.0);
-  auto zero_vector = std::make_shared<dolfin::Constant>(0.0, 0.0, 0.0);
   auto boundary_load = std::make_shared<Load>(t);
-  auto Vx = V->sub(0);
 
-  auto left = std::make_shared<Left>();
-  auto corner = std::make_shared<CornerPoint>();
-  auto left_bc = std::make_shared<dolfin::DirichletBC>(Vx, zero, left);
-  auto corner_bc = std::make_shared<dolfin::DirichletBC>(V, zero_vector, corner,
-                                                         "pointwise");
   std::vector<std::shared_ptr<const dolfin::DirichletBC>> bcs;
-  bcs.push_back(left_bc);
-  bcs.push_back(corner_bc);
+  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(0), zero, boundaries["sx1"]));
+  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(1), zero, boundaries["sy1"]));
+  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(2), zero, boundaries["sz1"]));
 
   // Mark loading boundary
-  Right right;
   auto load_marker = std::make_shared<dolfin::MeshFunction<std::size_t>>(mesh,mesh->topology().dim()-1, 0);
-  right.mark(*load_marker, 1);
+  boundaries["sx2"]->mark(*load_marker, 1);
 
   // Solution function
   auto u = std::make_shared<dolfin::Function>(V);
 
-  auto b = mgis::behaviour::load(library, "Plasticity",
+  auto b = mgis::behaviour::load(library, "Elasticity",
                                  mgis::behaviour::Hypothesis::TRIDIMENSIONAL);
   auto m = mgis::fenics::NonLinearMaterial(u,element_t,element_s,b);
+  const auto yg = 150e9;
+  const auto nu = 0.3;
+  setMaterialProperty(m.s0, "YoungModulus", yg);
+  setMaterialProperty(m.s1, "YoungModulus", yg);
+  setMaterialProperty(m.s0, "PoissonRatio", nu);
+  setMaterialProperty(m.s1, "PoissonRatio", nu);
   setExternalStateVariable(m.s0,"Temperature", 293.15);
   setExternalStateVariable(m.s1,"Temperature", 293.15);
   
@@ -127,7 +120,7 @@ int main(){
   L->h = boundary_load;
   L->s = m.getThermodynamicForcesFunction();
 
-  // Create PlasticityProblem
+  // create non linear material problem
   mgis::fenics::NonLinearMechanicalProblem nonlinear_problem(a, L, u, bcs);
 
   // // Displacement and load integration functionals
@@ -143,16 +136,18 @@ int main(){
   nonlinear_solver.parameters["relative_tolerance"] = 1.0e-6;
   nonlinear_solver.parameters["absolute_tolerance"] = 1.0e-15;
 
-  // Structures to hold load-disp data
-  std::vector<double> disp, load,p;
-  disp.push_back(0.0);
-  load.push_back(0.0);
-  p.push_back(0.0);
+  // post-processings data
+  std::vector<double> ux, fx, sxx, exx, eyy;
+  ux.push_back(0.0);
+  fx.push_back(0.0);
+  sxx.push_back(0.0);
+  exx.push_back(0.0);
+  eyy.push_back(0.0);
 
   // Solver loop
   mgis::size_type step = 0;
   mgis::size_type steps = 10;
-  double dt = 0.001;
+  double dt = 0.1;
   while (step < steps) {
     m.setTimeIncrement(dt);
     t += dt;
@@ -165,15 +160,34 @@ int main(){
     mgis::behaviour::update(m);
     // post-processings
     const double u_avg = assemble(*M_d);
-    disp.push_back(u_avg);
+    ux.push_back(u_avg);
     const double force = assemble(*M_f);
-    load.push_back(force);
-    p.push_back(m.s0.internal_state_variables[6]);
+    fx.push_back(force);
+    sxx.push_back(m.s1.thermodynamic_forces[0]);
+    exx.push_back(m.s1.gradients[0]);
+    eyy.push_back(m.s1.gradients[1]);
   }
 
-  for (mgis::size_type i = 0; i != disp.size(); ++i) {
-    std::cout << disp[i] << " " << load[i] << " " << p[i] << '\n';
+  auto status = EXIT_SUCCESS;
+  auto nb_tests    = mgis::size_type{};
+  auto nb_failures = mgis::size_type{};
+  auto check = [&status,&nb_tests,&nb_failures](const bool c, const mgis::string_view msg){
+    ++nb_tests;
+    if(!c){
+      std::cerr << msg << '\n';
+      status = EXIT_FAILURE;
+      ++nb_failures;
+    }
+  };
+  for (mgis::size_type i = 0; i != ux.size(); ++i) {
+    check(std::abs(ux[i]-exx[i])<1.e-14, "invalid axial strain value");
+    check(std::abs(fx[i]-sxx[i])<1.e-14*yg, "invalid axial stress value");
+    check(std::abs(sxx[i]-yg*exx[i])<1.e-14*yg, "invalid axial stress value");
+    check(std::abs(eyy[i]+nu*exx[i])<1.e-14, "invalid orthoradial strain value");
+    //    std::cout << u[i] << " " << f[i] << '\n';
   }
-
-  return 0;
+  // reporting
+  std::cout << "Number of tests: " << nb_tests << '\n';
+  std::cout << "Number of failures: " << nb_failures << '\n';
+  return status;
 }

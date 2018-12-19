@@ -10,6 +10,11 @@
  *   file LGPL-3.0.txt)
  * - CECILL-C,  Version 1.0 (See accompanying files
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
+ *
+ * \note This file contains material strongly inspired by the
+ * fenics-solid-materials by Kristian Oelgaard and Garth N. Wells.
+ * See <https://bitbucket.org/fenics-apps/fenics-solid-mechanics> for
+ * details.
  */
 
 #ifndef LIB_MGIS_FENICS_NONLINEARMATERIALFUNCTIONBASE_HXX

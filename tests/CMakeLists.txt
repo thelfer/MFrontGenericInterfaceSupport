@@ -1,4 +1,5 @@
 mfront_behaviours_check_library(BehaviourTest
+  Elasticity
   Norton
   Plasticity
   Gurson
