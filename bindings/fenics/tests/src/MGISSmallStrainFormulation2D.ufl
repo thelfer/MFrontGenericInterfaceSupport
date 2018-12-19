@@ -1,0 +1,40 @@
+# Copyright (C) 2009-2017 Kristian B. Oelgaard and Garth N. Wells.
+# Licensed under the GNU LGPL Version 3.
+
+from math import sqrt
+
+scheme= "default"
+degree = 2
+dx = Measure("dx")
+dx = dx(degree=degree, scheme=scheme)
+
+elementA = VectorElement("CG", triangle, 2)
+elementS = VectorElement("Quadrature", triangle, degree, dim=4, quad_scheme=scheme)
+elementT = VectorElement("Quadrature", triangle, degree, dim=16, quad_scheme=scheme)
+
+v = TestFunction(elementA)
+u = TrialFunction(elementA)
+
+t = Coefficient(elementT)
+s = Coefficient(elementS)
+
+f = Coefficient(elementA)
+h = Coefficient(elementA)
+
+# eps_xx, eps_yy, eps_zz, sqrt(2)*eps_xy
+def eps(u):
+    return as_vector([u[i].dx(i) for i in range(2)] +
+                     [0]+[(u[0].dx(1) + u[1].dx(0))/sqrt(2)])
+
+def sigma(s):
+    return as_matrix([[s[0], s[3]/sqrt(2)],
+                      [s[3]/sqrt(2), s[1]]])
+
+def tangent(t):
+  return as_matrix([[t[i*4 + j] for j in range(4)] for i in range(4)])
+
+# Bilinear and linear forms
+a = inner(eps(v), dot(tangent(t), eps(u)) )*dx
+L = inner(grad(v), sigma(s))*dx - dot(v, f)*dx - dot(v, h)*ds(1)
+
+forms = [a, L]

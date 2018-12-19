@@ -1,5 +1,5 @@
 /*!
- * \file   bindings/fenics/tests/ElasticityUniaxialTensileTest.cxx
+ * \file   bindings/fenics/tests/PlasticityUniaxialTensileTestImposedStress-sxx.cxx
  * \brief  This program tests the elastic and plastic load-displacement
  * responses for a unit cube in uniaxial tension with an Von Mises
  * (J2) plastic behaviour with linear strain hardening.
@@ -44,12 +44,14 @@
 
 // force at the right end
 struct Load : public dolfin::Expression {
-  Load(const double& t) : dolfin::Expression(3), t(t) {}
-  void eval(dolfin::Array<double>& values,
-	    const dolfin::Array<double>& x) const {
-    values[0] = 100e6 * t;
-    values[1] = values[2] = 0.0;
+  Load(const double& t_) : dolfin::Expression(3), t(t_) {}
+  void eval(Eigen::Ref<Eigen::VectorXd>  values,
+	    Eigen::Ref<const Eigen::VectorXd>) const override{
+    values[0] = 1.0e5 * t;
+    values[1] = 0.0;
+    values[2] = 0.0;
   }
+  ~Load() override = default;
 private:
   const double& t;
 };
@@ -61,9 +63,10 @@ int main(){
   if(library==nullptr){
     std::exit(EXIT_FAILURE);
   }
-  // create mesh and boundaries
+  // create mesh
   auto mesh = std::make_shared<dolfin::UnitCubeMesh>(4, 4, 4);
   auto boundaries = mgis::fenics::getUnitCubeBoundaries();
+  // auto mesh = std::make_shared<dolfin::UnitCubeMesh>(1, 1, 1);
   // Time parameter
   double t = 0.0;
   // Source term, RHS
@@ -99,15 +102,9 @@ int main(){
   // Solution function
   auto u = std::make_shared<dolfin::Function>(V);
 
-  auto b = mgis::behaviour::load(library, "Elasticity",
+  auto b = mgis::behaviour::load(library, "Plasticity",
                                  mgis::behaviour::Hypothesis::TRIDIMENSIONAL);
   auto m = mgis::fenics::NonLinearMaterial(u,element_t,element_s,b);
-  const auto yg = 150e9;
-  const auto nu = 0.3;
-  setMaterialProperty(m.s0, "YoungModulus", yg);
-  setMaterialProperty(m.s1, "YoungModulus", yg);
-  setMaterialProperty(m.s0, "PoissonRatio", nu);
-  setMaterialProperty(m.s1, "PoissonRatio", nu);
   setExternalStateVariable(m.s0,"Temperature", 293.15);
   setExternalStateVariable(m.s1,"Temperature", 293.15);
   
@@ -136,18 +133,16 @@ int main(){
   nonlinear_solver.parameters["relative_tolerance"] = 1.0e-6;
   nonlinear_solver.parameters["absolute_tolerance"] = 1.0e-15;
 
-  // post-processings data
-  std::vector<double> ux, fx, sxx, exx, eyy;
-  ux.push_back(0.0);
-  fx.push_back(0.0);
-  sxx.push_back(0.0);
-  exx.push_back(0.0);
-  eyy.push_back(0.0);
+  // Structures to hold load-disp data
+  std::vector<double> disp, load,p;
+  disp.push_back(0.0);
+  load.push_back(0.0);
+  p.push_back(0.0);
 
   // Solver loop
   mgis::size_type step = 0;
   mgis::size_type steps = 10;
-  double dt = 0.1;
+  double dt = 0.001;
   while (step < steps) {
     m.setTimeIncrement(dt);
     t += dt;
@@ -160,34 +155,15 @@ int main(){
     mgis::behaviour::update(m);
     // post-processings
     const double u_avg = assemble(*M_d);
-    ux.push_back(u_avg);
+    disp.push_back(u_avg);
     const double force = assemble(*M_f);
-    fx.push_back(force);
-    sxx.push_back(m.s1.thermodynamic_forces[0]);
-    exx.push_back(m.s1.gradients[0]);
-    eyy.push_back(m.s1.gradients[1]);
+    load.push_back(force);
+    p.push_back(m.s0.internal_state_variables[6]);
   }
 
-  auto status = EXIT_SUCCESS;
-  auto nb_tests    = mgis::size_type{};
-  auto nb_failures = mgis::size_type{};
-  auto check = [&status,&nb_tests,&nb_failures](const bool c, const mgis::string_view msg){
-    ++nb_tests;
-    if(!c){
-      std::cerr << msg << '\n';
-      status = EXIT_FAILURE;
-      ++nb_failures;
-    }
-  };
-  for (mgis::size_type i = 0; i != ux.size(); ++i) {
-    check(std::abs(ux[i]-exx[i])<1.e-14, "invalid axial strain value");
-    check(std::abs(fx[i]-sxx[i])<1.e-14*yg, "invalid axial stress value");
-    check(std::abs(sxx[i]-yg*exx[i])<1.e-14*yg, "invalid axial stress value");
-    check(std::abs(eyy[i]+nu*exx[i])<1.e-14, "invalid orthoradial strain value");
-    //    std::cout << u[i] << " " << f[i] << '\n';
+  for (mgis::size_type i = 0; i != disp.size(); ++i) {
+    std::cout << disp[i] << " " << load[i] << " " << p[i] << '\n';
   }
-  // reporting
-  std::cout << "Number of tests: " << nb_tests << '\n';
-  std::cout << "Number of failures: " << nb_failures << '\n';
-  return status;
+
+  return EXIT_SUCCESS;
 }

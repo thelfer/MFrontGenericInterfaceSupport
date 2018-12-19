@@ -22,6 +22,7 @@ endif(enable-fast-math)
 
 tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility=hidden")
 tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility-inlines-hidden")
+set(COMPILER_DEFAULT_VISIBILITY_FLAG "-fvisibility=default")
 
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 

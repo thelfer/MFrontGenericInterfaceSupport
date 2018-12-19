@@ -8,7 +8,7 @@ tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wdisabled-optimization")
 if(NOT i586-mingw32msvc_COMPILER)
   tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility=hidden")
   tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility-inlines-hidden")
-  set(COMPILER_DEFAULT_VISIBILITY "-fvisibility=default")
+  set(COMPILER_DEFAULT_VISIBILITY_FLAG "-fvisibility=default")
 endif(NOT i586-mingw32msvc_COMPILER)
 
 tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS_MARCH "march=native")
