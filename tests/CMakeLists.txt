@@ -5,7 +5,8 @@ mfront_behaviours_check_library(BehaviourTest
   Gurson
   BoundsCheckTest
   ParameterTest
-  FiniteStrainSingleCrystal)
+  FiniteStrainSingleCrystal
+  StandardElastoViscoPlasticityPlasticityTest11)
 
 add_executable(MFrontGenericBehaviourInterfaceTest
   EXCLUDE_FROM_ALL
