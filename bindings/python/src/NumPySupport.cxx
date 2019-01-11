@@ -23,7 +23,7 @@ namespace mgis {
 #if PY_MAJOR_VERSION == 2
     static void wrapInitializeNumPy() { import_array(); }
 #else
-    static void* wrapInitializeNumPy() { import_array(); }
+    static void* wrapInitializeNumPy() { import_array(); return nullptr;}
 #endif
 
     void initializeNumPy() { wrapInitializeNumPy(); }  // end of initializeNumPy

@@ -103,8 +103,8 @@ int main() {
   auto b = mgis::behaviour::load(library, "Elasticity",
                                  mgis::behaviour::Hypothesis::TRIDIMENSIONAL);
   auto m = mgis::fenics::NonLinearMaterial(u, element_t, element_s, b);
-  const auto yg = 150e9;
-  const auto nu = 0.3;
+  constexpr const auto yg = 150e9;
+  constexpr const auto nu = 0.3;
   setMaterialProperty(m.s0, "YoungModulus", yg);
   setMaterialProperty(m.s1, "YoungModulus", yg);
   setMaterialProperty(m.s0, "PoissonRatio", nu);
