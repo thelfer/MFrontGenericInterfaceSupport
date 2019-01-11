@@ -36,6 +36,13 @@ if(enable-python-bindings)
   string(REGEX REPLACE "[a-z]+.*$" "" PYTHONLIBS_VERSION_CLEANED ${PYTHONLIBS_VERSION_STRING})
   find_package(PythonInterp ${PYTHONLIBS_VERSION_CLEANED} REQUIRED)
   message(STATUS "python interpreter    ${PYTHON_EXECUTABLE}")
+  # numpy detection
+  execute_process(
+    COMMAND "${PYTHON_EXECUTABLE}" -c
+            "from __future__ import print_function\ntry: import numpy; print(numpy.get_include(), end='')\nexcept:pass\n"
+            OUTPUT_VARIABLE NUMPY_INCLUDE_PATH)
+  find_path(PYTHON_NUMPY_INCLUDE_DIR numpy/arrayobject.h
+    HINTS "${NUMPY_INCLUDE_PATH}" "${PYTHON_INCLUDE_PATH}" NO_DEFAULT_PATH)
 endif(enable-python-bindings)
 
 if(enable-python-bindings)
