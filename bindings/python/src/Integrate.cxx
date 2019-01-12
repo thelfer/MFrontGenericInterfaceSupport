@@ -59,10 +59,10 @@ void declareIntegrate() {
              mgis::behaviour::IntegrationType::INTEGRATION_TANGENT_OPERATOR)
       .value("IntegrationWithTangentOperator",
              mgis::behaviour::IntegrationType::INTEGRATION_TANGENT_OPERATOR)
-      .value("INTEGRATION_CONSITENT_TANGENT_OPERATOR",
-             mgis::behaviour::IntegrationType::INTEGRATION_CONSITENT_TANGENT_OPERATOR)
-      .value("IntegrationWithConsitentTangentOperator",
-             mgis::behaviour::IntegrationType::INTEGRATION_CONSITENT_TANGENT_OPERATOR);
+      .value("INTEGRATION_CONSISTENT_TANGENT_OPERATOR",
+             mgis::behaviour::IntegrationType::INTEGRATION_CONSISTENT_TANGENT_OPERATOR)
+      .value("IntegrationWithConsistentTangentOperator",
+             mgis::behaviour::IntegrationType::INTEGRATION_CONSISTENT_TANGENT_OPERATOR);
 
   int (*integrate_ptr1)(mgis::behaviour::BehaviourDataView&,
                         const mgis::behaviour::Behaviour&) =

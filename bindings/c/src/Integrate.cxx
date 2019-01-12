@@ -36,8 +36,8 @@ static mgis::behaviour::IntegrationType convertIntegrationType(
       return mgis::behaviour::IntegrationType::INTEGRATION_SECANT_OPERATOR;
     case MGIS_BV_INTEGRATION_TANGENT_OPERATOR:
       return mgis::behaviour::IntegrationType::INTEGRATION_TANGENT_OPERATOR;
-    case MGIS_BV_INTEGRATION_CONSITENT_TANGENT_OPERATOR:
-      return mgis::behaviour::IntegrationType::INTEGRATION_CONSITENT_TANGENT_OPERATOR;
+    case MGIS_BV_INTEGRATION_CONSISTENT_TANGENT_OPERATOR:
+      return mgis::behaviour::IntegrationType::INTEGRATION_CONSISTENT_TANGENT_OPERATOR;
     default:
       mgis::raise("convertIntegrationType: invalid integration type");
   }

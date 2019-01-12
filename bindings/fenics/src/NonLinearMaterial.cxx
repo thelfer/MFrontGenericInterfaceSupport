@@ -221,7 +221,7 @@ namespace mgis {
 
     void NonLinearMaterial::update(const dolfin::Cell& c, const double* nc) {
       constexpr const auto it =
-	mgis::behaviour::IntegrationType::INTEGRATION_CONSITENT_TANGENT_OPERATOR;
+	mgis::behaviour::IntegrationType::INTEGRATION_CONSISTENT_TANGENT_OPERATOR;
       const std::size_t cell_index = c.index();
       const std::size_t num_ip_dofs = this->thf_elements->value_dimension(0);
       const std::size_t num_ip_per_cell =

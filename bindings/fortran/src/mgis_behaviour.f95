@@ -35,7 +35,7 @@ module mgis_behaviour
      enumerator :: INTEGRATION_ELASTIC_OPERATOR = 1
      enumerator :: INTEGRATION_SECANT_OPERATOR = 2
      enumerator :: INTEGRATION_TANGENT_OPERATOR = 3
-     enumerator :: INTEGRATION_CONSITENT_TANGENT_OPERATOR = 4
+     enumerator :: INTEGRATION_CONSISTENT_TANGENT_OPERATOR = 4
   end enum
   type :: Behaviour
     private

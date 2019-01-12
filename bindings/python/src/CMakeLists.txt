@@ -23,6 +23,10 @@ function(mgis_python_module name output_name)
   endif(${ARGC} LESS 3)
   set(module "py_${name}")
   add_library(${module} MODULE ${ARGN})
+  if(enable-broken-boost-python-module-visibility-handling)
+    target_compile_definitions(${module}
+      PRIVATE BOOST_PYTHON_USE_GCC_SYMBOL_VISIBILITY)
+  endif(enable-broken-boost-python-module-visibility-handling)
   if(WIN32)
     set_target_properties(${module} PROPERTIES
       COMPILE_FLAGS "-DHAVE_ROUND")
