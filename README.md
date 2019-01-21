@@ -9,6 +9,9 @@ developers. This tools are *not* linked to the `TFEL` libraries.
 Permissive licences have been chosen to allow integration in open-source
 and proprietary codes.
 
+The official website can be found here:
+<https://thelfer.github.io/mgis/web/index.html>.
+
 ## The `MFrontGenericInterface` `C++` library
 
 The project is build around the `MFrontGenericInterface` library. This
@@ -33,14 +36,17 @@ the `mgis::behaviour::MaterialStateManager` class.
 
 The following bindings are available:
 
-- `c` bindings (mostly complete)
+- `c` bindings (mostly complete).
 - `python` bindings (mostly complete, under current work in the
-  `master` branch)
+  `master` branch).
 - `fortran03` bindings (mostly complete, under current work in the
-  `master` branch)
+  `master` branch).
 - `fenics` bindings (under current work in the `master` branch). Those
   bindings are strongly inspired by the `fenics-solid-mechanics`
-  project.
+  project. Those bindings are currently quite limited as mostly serve
+  as a proof of concept. Note that `MGIS` can also be used in `FEniCS`
+  through the `python` interface. This is discussed here:
+  <https://thelfer.github.io/mgis/web/FEniCSBindings.html>.
 
 ### Future bindings (contributors are welcomed)
 

@@ -75,13 +75,9 @@ namespace mgis {
        * \brief proposed time step increment increase factor
        */
       real rdt;
-      /*!
-       * \brief state at the beginning of the time step
-       */
+      //! \brief state at the beginning of the time step
       State s0;
-      /*!
-       * \brief state at the end of the time step
-       */
+      //! \brief state at the end of the time step
       State s1;
     };  // end of struct BehaviourData
 

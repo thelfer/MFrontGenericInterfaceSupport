@@ -31,6 +31,7 @@ add_custom_target(website)
 add_dependencies(doc website)
 
 mgis_generate_html_page(index)
+mgis_generate_html_page(FEniCSBindings)
 
 if(MGIS_APPEND_SUFFIX)
   install(DIRECTORY css

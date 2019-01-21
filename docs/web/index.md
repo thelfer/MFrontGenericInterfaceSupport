@@ -37,12 +37,14 @@ The following bindings are available:
 
 - `c` binding (mostly complete)
 - `python` binding (under current work in the `master` branch)
+- `fortran` binding (under current work in the `master` branch)
+- `FEniCS` binding (under current work in the `master` branch). This
+  binding is described [here](FEniCSBindings.html)
 
 ## Future bindings (contributors are welcomed)
 
 The following bindings are under consideration:
 
-- `fortran90` binding
 - `octave` binding
 - `julia` binding
 

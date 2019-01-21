@@ -56,7 +56,7 @@ namespace mgis {
       ~MaterialDataManager();
       //! \brief state at the beginning of the time step
       MaterialStateManager s0;
-      //! \brief state at the beginning of the time step
+      //! \brief state at the end of the time step
       MaterialStateManager s1;
       //! \brief the stiffness matrices.
       std::vector<real> K;
