@@ -10,7 +10,7 @@ option(enable-portable-build "produce binary that can be shared between various 
 option(enable-c-bindings "enable c bindings support")
 
 # fortran-bindings (placed before compiler detection)
-option(enable-fortran-bindings "enable fortran bindings support")
+option(enable-fortran-bindings "enable fortran bindings support" ON)
 if(enable-fortran-bindings)
 	if(NOT enable-c-bindings)
 	    message(FATAL_ERROR "c-bindings must be enabled for fortran bindings.")
@@ -111,7 +111,7 @@ if(enable-python-bindings)
 endif(enable-python-bindings)
 
 # fenics-bindings (placed before compiler detection)
-option(enable-fenics-bindings "enable fenics bindings support")
+option(enable-fenics-bindings "enable fenics bindings support" OFF)
 if(enable-fenics-bindings)
   # Find DOLFIN
   find_package(DOLFIN REQUIRED)
