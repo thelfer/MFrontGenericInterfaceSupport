@@ -12,9 +12,9 @@ option(enable-c-bindings "enable c bindings support")
 # fortran-bindings (placed before compiler detection)
 option(enable-fortran-bindings "enable fortran bindings support" ON)
 if(enable-fortran-bindings)
-	if(NOT enable-c-bindings)
-	    message(FATAL_ERROR "c-bindings must be enabled for fortran bindings.")
-	endif(NOT enable-c-bindings)
+  if(NOT enable-c-bindings)
+    message(FATAL_ERROR "c-bindings must be enabled for fortran bindings.")
+  endif(NOT enable-c-bindings)
   enable_language (Fortran)
 endif(enable-fortran-bindings)
 
@@ -36,6 +36,9 @@ if(enable-python-bindings)
   string(REGEX REPLACE "[a-z]+.*$" "" PYTHONLIBS_VERSION_CLEANED ${PYTHONLIBS_VERSION_STRING})
   find_package(PythonInterp ${PYTHONLIBS_VERSION_CLEANED} REQUIRED)
   message(STATUS "python interpreter    ${PYTHON_EXECUTABLE}")
+  if(NOT HAVE_PYTHON)
+    message(FATAL_ERROR "python not found. python is mandatory for python bindings.")
+  endif(NOT HAVE_PYTHON)
   # numpy detection
   execute_process(
     COMMAND "${PYTHON_EXECUTABLE}" -c
@@ -43,12 +46,10 @@ if(enable-python-bindings)
             OUTPUT_VARIABLE NUMPY_INCLUDE_PATH)
   find_path(PYTHON_NUMPY_INCLUDE_DIR numpy/arrayobject.h
     HINTS "${NUMPY_INCLUDE_PATH}" "${PYTHON_INCLUDE_PATH}" NO_DEFAULT_PATH)
-endif(enable-python-bindings)
-
-if(enable-python-bindings)
-  if(NOT HAVE_PYTHON)
-    message(FATAL_ERROR "python not found. python is mandatory for python bindings.")
-  endif(NOT HAVE_PYTHON)
+  if(NOT PYTHON_NUMPY_INCLUDE_DIR)
+    message(FATAL_ERROR "numpy not found. numpy is mandatory for python bindings.")
+  endif(NOT PYTHON_NUMPY_INCLUDE_DIR)
+  # boost python detection
   message(STATUS "Trying to find libboost_python-py${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
   find_package(Boost 1.36.0 COMPONENTS
                "python-py${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
