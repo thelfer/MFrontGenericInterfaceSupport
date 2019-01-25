@@ -25,6 +25,7 @@ void declareBehaviourDataView();
 void declareMaterialDataManager();
 void declareMaterialStateManager();
 void declareIntegrate();
+void declareFiniteStrainSupport();
 
 BOOST_PYTHON_MODULE(behaviour) {
   mgis::python::initializeNumPy();
@@ -37,4 +38,5 @@ BOOST_PYTHON_MODULE(behaviour) {
   declareMaterialDataManager();
   declareMaterialStateManager();
   declareIntegrate();
+  declareFiniteStrainSupport();
 }  // end of module behaviour

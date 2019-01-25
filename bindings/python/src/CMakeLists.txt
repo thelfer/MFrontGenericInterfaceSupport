@@ -76,7 +76,8 @@ mgis_python_module(mgis_behaviour behaviour
  BehaviourDataView.cxx
  MaterialDataManager.cxx
  MaterialStateManager.cxx
- Integrate.cxx)
+ Integrate.cxx
+ FiniteStrainSupport.cxx)
 
 install(FILES __init__.py
         DESTINATION ${MGIS_PYTHON_MODULES_INSTALL_DIRECTORY}
