@@ -302,6 +302,12 @@ namespace mgis {
       return d;
     }  // end of load
 
+    mgis::size_type getTangentOperatorArraySize(const Behaviour &b) {
+      const auto gs = getArraySize(b.gradients, b.hypothesis);
+      const auto ths = getArraySize(b.thermodynamic_forces, b.hypothesis);
+      return gs * ths;
+    }  // end of getTangentOperatorArraySize
+
     void setParameter(const Behaviour &b,
                       const std::string &n,
                       const double v) {

@@ -20,6 +20,36 @@
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/MaterialStateManager.hxx"
 
+static void MaterialStateManagerInitializer_bindGradients(
+    mgis::behaviour::MaterialStateManagerInitializer& i,
+    boost::python::object K) {
+  i.gradients = mgis::python::mgis_convert_to_span(K);
+} // end of MaterialStateManagerInitializer_bindGradients
+
+static void MaterialStateManagerInitializer_bindThermodynamicForces(
+    mgis::behaviour::MaterialStateManagerInitializer& i,
+    boost::python::object K) {
+  i.thermodynamic_forces = mgis::python::mgis_convert_to_span(K);
+} // end of MaterialStateManagerInitializer_bindThermodynamicForces
+
+static void MaterialStateManagerInitializer_bindInternalStateVariables(
+    mgis::behaviour::MaterialStateManagerInitializer& i,
+    boost::python::object K) {
+  i.internal_state_variables = mgis::python::mgis_convert_to_span(K);
+} // end of MaterialStateManagerInitializer_bindInternalStateVariables
+
+static void MaterialStateManagerInitializer_bindStoredEnergies(
+    mgis::behaviour::MaterialStateManagerInitializer& i,
+    boost::python::object K) {
+  i.stored_energies = mgis::python::mgis_convert_to_span(K);
+} // end of MaterialStateManagerInitializer_bindStoredEnergies
+
+static void MaterialStateManagerInitializer_bindDissipatedEnergies(
+    mgis::behaviour::MaterialStateManagerInitializer& i,
+    boost::python::object K) {
+  i.dissipated_energies = mgis::python::mgis_convert_to_span(K);
+}  // end of MaterialStateManagerInitializer_bindDissipatedEnergies
+
 static boost::python::object MaterialStateManager_getGradients(
     mgis::behaviour::MaterialStateManager& s) {
   return mgis::python::wrapInNumPyArray(s.gradients, s.gradients_stride);
@@ -83,6 +113,7 @@ void declareMaterialStateManager() {
   using mgis::size_type;
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::MaterialStateManager;
+  using mgis::behaviour::MaterialStateManagerInitializer;
   // wrapping the MaterialStateManager::StorageMode enum
   boost::python::enum_<MaterialStateManager::StorageMode>(
       "MaterialStateManagerStorageMode")
@@ -95,10 +126,29 @@ void declareMaterialStateManager() {
              MaterialStateManager::StorageMode::EXTERNAL_STORAGE)
       .value("ExternalStorage",
              MaterialStateManager::StorageMode::EXTERNAL_STORAGE);
+  // wrapping the MaterialStateManagerInitializer class
+  boost::python::class_<MaterialStateManagerInitializer>(
+      "MaterialStateManagerInitializer")
+      .def("bindGradients", &MaterialStateManagerInitializer_bindGradients,
+           "use the given array to store the gradients")
+      .def("bindThermodynamicForces",
+           &MaterialStateManagerInitializer_bindThermodynamicForces,
+           "use the given array to store the thermodynamic forces")
+      .def("bindInternalStateVariables",
+           &MaterialStateManagerInitializer_bindInternalStateVariables,
+           "use the given array to store the internal state variables")
+      .def("bindStoredEnergies",
+           &MaterialStateManagerInitializer_bindStoredEnergies,
+           "use the given array to store the stored energies")
+      .def("bindDissipatedEnergies",
+           &MaterialStateManagerInitializer_bindDissipatedEnergies,
+           "use the given array to store the dissipated energies");
   // wrapping the MaterialStateManager class
-  boost::python::class_<MaterialStateManager>(
+  boost::python::class_<MaterialStateManager, boost::noncopyable>(
       "MaterialStateManager",
       boost::python::init<const Behaviour&, const size_type>())
+      .def(boost::python::init<const Behaviour&, const size_type,
+                               const MaterialStateManagerInitializer&>())
       .def_readonly("n", &MaterialStateManager::n)
       .def_readonly("number_of_integration_points", &MaterialStateManager::n)
       .add_property("gradients", &MaterialStateManager_getGradients)

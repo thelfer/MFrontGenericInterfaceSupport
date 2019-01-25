@@ -108,6 +108,11 @@ namespace mgis {
                                const std::string &,
                                const Hypothesis);
     /*!
+     * \return the size of an array able to contain all the values of the tangent operator
+     * \param[in] b: behaviour
+     */
+    MGIS_EXPORT mgis::size_type getTangentOperatorArraySize(const Behaviour &);
+    /*!
      * \brief set the value of a parameter
      * \param[in] b: behaviour description
      * \param[in] n: parameter name

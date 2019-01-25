@@ -20,6 +20,12 @@
 
 void declareMaterialDataManager();
 
+static void MaterialDataManagerInitializer_bindTangentOperator(
+    mgis::behaviour::MaterialDataManagerInitializer& i,
+    boost::python::object K) {
+  i.K = mgis::python::mgis_convert_to_span(K);
+} // end of MaterialDataManagerInitializer_bindTangentOperator
+
 static boost::python::object MaterialDataManager_getK(
     mgis::behaviour::MaterialDataManager& d) {
   const auto nl = d.s0.gradients_stride;
@@ -31,13 +37,24 @@ void declareMaterialDataManager() {
   using mgis::size_type;
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::MaterialDataManager;
+  using mgis::behaviour::MaterialDataManagerInitializer;
   // pointers to free functions to disambiguate the function resolution
   void (*ptr_update)(MaterialDataManager&) = &mgis::behaviour::update;
   void (*ptr_revert)(MaterialDataManager&) = &mgis::behaviour::revert;
-  // exporting the BehaviourData class
-  boost::python::class_<MaterialDataManager>(
+  // exporting the MaterialDataManager class
+  boost::python::class_<MaterialDataManagerInitializer>(
+      "MaterialDataManagerInitializer")
+      .add_property("s0", &MaterialDataManagerInitializer::s0)
+      .add_property("s1", &MaterialDataManagerInitializer::s1)
+      .def("bindTangentOperator",
+           &MaterialDataManagerInitializer_bindTangentOperator,
+           "use the given array to store the tangent operator");
+  // exporting the MaterialDataManager class
+  boost::python::class_<MaterialDataManager, boost::noncopyable>(
       "MaterialDataManager",
       boost::python::init<const Behaviour&, const size_type>())
+      .def(boost::python::init<const Behaviour&, const size_type,
+                               const MaterialDataManagerInitializer&>())
       .def_readonly("n", &MaterialDataManager::n)
       .def_readonly("number_of_integration_points", &MaterialDataManager::n)
       .add_property("s0", &MaterialDataManager::s0)

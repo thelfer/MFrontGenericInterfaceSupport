@@ -28,6 +28,33 @@ namespace mgis {
     struct Behaviour;
 
     /*!
+     * \brief a structure in charge of holding information on how a material
+     * data manager shall be initialized.
+     * It may contain pointers to externally allocated data, that won't be
+     * handled by the final data manager.
+     * If a pointer is not initialized, the material data manager will allocate
+     * and handle memory internally.
+     */
+    struct MaterialDataManagerInitializer {
+      /*!
+       * \brief view to an externally allocated memory used to store the
+       * tangent operator. If empty, the material data manager will
+       * initialize the required memory internally.
+       */
+      mgis::span<mgis::real> K;
+      /*!
+       * \brief object used to initalize the state manager associated with the
+       * beginning of the time step.
+       */
+      MaterialStateManagerInitializer s0;
+      /*!
+       * \brief object used to initalize the state manager associated with the
+       * end of the time step.
+       */
+      MaterialStateManagerInitializer s1;
+    };  // end of MaterialDataManagerInitializer
+
+    /*!
      * \brief structure in charge of handling the data associated with a
      * material in an optimized way. Here, the "material" is defined by a
      * behaviour and a number of integration points.
@@ -44,22 +71,23 @@ namespace mgis {
        * \param[in] s: number of integration points
        */
       MaterialDataManager(const Behaviour&, const size_type);
-      //! move constructor
-      MaterialDataManager(MaterialDataManager&&);
-      //! copy constructor
-      MaterialDataManager(const MaterialDataManager&);
-      //! move assignement
-      MaterialDataManager& operator=(MaterialDataManager&&);
-      //! copy assignement
-      MaterialDataManager& operator=(const MaterialDataManager&);
+      /*!
+       * \brief main constructor
+       * \param[in] behaviour: behaviour
+       * \param[in] s: number of integration points
+       * \param[in] i: initializer
+       */
+      MaterialDataManager(const Behaviour&,
+                          const size_type,
+                          const MaterialDataManagerInitializer&);
       //! destructor
       ~MaterialDataManager();
       //! \brief state at the beginning of the time step
       MaterialStateManager s0;
       //! \brief state at the end of the time step
       MaterialStateManager s1;
-      //! \brief the stiffness matrices.
-      std::vector<real> K;
+      //! \brief view of the stiffness matrices.
+      mgis::span<real> K;
       //! \brief number of integration points
       const size_type n;
       /*!
@@ -69,6 +97,19 @@ namespace mgis {
       const size_type K_stride;
       //! underlying behaviour
       const Behaviour& b;
+
+     private:
+      //! \brief values of the stiffness matrices, if hold internally.
+      std::vector<real> K_values;
+      //! move constructor
+      MaterialDataManager(MaterialDataManager&&) = delete;
+      //! copy constructor
+      MaterialDataManager(const MaterialDataManager&) = delete;
+      //! move assignement
+      MaterialDataManager& operator=(MaterialDataManager&&) = delete;
+      //! copy assignement
+      MaterialDataManager& operator=(const MaterialDataManager&) = delete;
+
     };  // end of struct MaterialDataManager
 
     /*!

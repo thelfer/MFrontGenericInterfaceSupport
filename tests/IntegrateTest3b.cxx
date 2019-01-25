@@ -1,5 +1,5 @@
 /*!
- * \file   IntegrateTest2.cxx
+ * \file   IntegrateTest3.cxx
  * \brief
  * \author Thomas Helfer
  * \date   24/08/2018
@@ -19,6 +19,7 @@
 #include "MGIS/Behaviour/State.hxx"
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
+#include "MGIS/ThreadPool.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
 
 int main(const int argc, const char* const* argv) {
@@ -29,8 +30,14 @@ int main(const int argc, const char* const* argv) {
     std::exit(-1);
   }
   try{
+    constexpr const auto n = mgis::size_type{100};
     const auto b = load(argv[1], "Norton", Hypothesis::TRIDIMENSIONAL);
-    MaterialDataManager m{b, 100};
+    ThreadPool p{2};
+    auto init = MaterialDataManagerInitializer{};
+    auto isvs0 = std::vector<mgis::real>(n * getArraySize(b.isvs, b.hypothesis),
+                                         real{0});
+    init.s0.internal_state_variables = isvs0;
+    MaterialDataManager m{b, n, init};
     const auto o =
       getVariableOffset(b.isvs, "EquivalentViscoplasticStrain", b.hypothesis);
     const auto de = 5.e-5;
@@ -42,6 +49,10 @@ int main(const int argc, const char* const* argv) {
       m.s1.gradients[idx * m.s1.gradients_stride] = de;
     }
     // integration
+    auto pi0 = std::array<real, 21>{};  // values of the equivalent plastic strain
+    // for the first integration point at the beginning of the time step
+    auto pe0 = std::array<real, 21>{};  // values of the equivalent plastic strain
+    // for the last integration point at the beginning of the time step
     auto pi = std::array<real, 21>{};  // values of the equivalent plastic strain
     // for the first integration point
     auto pe = std::array<real, 21>{};  // values of the equivalent plastic strain
@@ -53,7 +64,9 @@ int main(const int argc, const char* const* argv) {
     pe[0] = m.s0.internal_state_variables[ne];
     const auto dt = real(180);
     for (size_type i = 0; i != 20; ++i) {
-      integrate(m, IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR, dt, 0, m.n);
+      pi0[i] = isvs0[ni];
+      pe0[i] = isvs0[ne];
+      integrate(p, m,IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR, dt);
       update(m);
       for (size_type idx = 0; idx != m.n; ++idx) {
         m.s1.gradients[idx * m.s1.gradients_stride] += de;
@@ -83,6 +96,22 @@ int main(const int argc, const char* const* argv) {
 					    0.00053302523730979,
 					    0.00056635857064313};
     std::cout.precision(14);
+    for (size_type i = 0; i != 20; ++i) {
+      if (std::abs(pi0[i] - p_ref[i]) > 1.e-12) {
+        std::cerr << "IntegrateTest: invalid value for the equivalent "
+                     "viscoplastic strain at the first integration point"
+                  << "(expected '" << p_ref[i] << "', computed '" << pi0[i]
+                  << "')\n";
+        return EXIT_FAILURE;
+      }
+      if (std::abs(pe0[i] - p_ref[i]) > 1.e-12) {
+        std::cerr << "IntegrateTest: invalid value for the equivalent "
+                     "viscoplastic strain at the last integration point"
+                  << "(expected '" << p_ref[i] << "', computed '" << pe0[i]
+                  << "')\n";
+        return EXIT_FAILURE;
+      }
+    }
     for (size_type i = 0; i != 21; ++i) {
       if (std::abs(pi[i] - p_ref[i]) > 1.e-12) {
         std::cerr << "IntegrateTest: invalid value for the equivalent "
@@ -99,7 +128,7 @@ int main(const int argc, const char* const* argv) {
         return EXIT_FAILURE;
       }
     }
-  } catch (std::exception& e) {
+  } catch(std::exception& e){
     std::cerr << e.what() << '\n';
     return EXIT_FAILURE;
   }

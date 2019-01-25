@@ -16,6 +16,124 @@
 
 extern "C" {
 
+mgis_status mgis_bv_material_state_manager_initializer_bind_gradients(
+    mgis_bv_MaterialStateManagerInitializer* i,
+    mgis_real* const p,
+    mgis_size_type s) {
+  if (i == nullptr) {
+    return mgis_report_failure(
+        "invalid argument "
+        "(material state manager initializer is null)");
+  }
+  if (p == nullptr) {
+    return mgis_report_failure(
+        "invalid argument "
+        "(memory pointer is null)");
+  }
+  try {
+    i->gradients = mgis::span<mgis::real>(p, s);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_material_state_manager_initializer_bind_gradients
+
+mgis_status
+mgis_bv_material_state_manager_initializer_bind_thermodynamic_forces(
+    mgis_bv_MaterialStateManagerInitializer* i,
+    mgis_real* const p,
+    mgis_size_type s) {
+  if (i == nullptr) {
+    return mgis_report_failure(
+        "invalid argument "
+        "(material state manager initializer is null)");
+  }
+  if (p == nullptr) {
+    return mgis_report_failure(
+        "invalid argument "
+        "(memory pointer is null)");
+  }
+  try {
+    i->thermodynamic_forces = mgis::span<mgis::real>(p, s);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of
+   // mgis_bv_material_state_manager_initializer_bind_thermodynamic_forces
+
+mgis_status
+mgis_bv_material_state_manager_initializer_bind_internal_state_variables(
+    mgis_bv_MaterialStateManagerInitializer* i,
+    mgis_real* const p,
+    mgis_size_type s) {
+  if (i == nullptr) {
+    return mgis_report_failure(
+        "invalid argument "
+        "(material state manager initializer is null)");
+  }
+  if (p == nullptr) {
+    return mgis_report_failure(
+        "invalid argument "
+        "(memory pointer is null)");
+  }
+  try {
+    i->internal_state_variables = mgis::span<mgis::real>(p, s);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of
+   // mgis_bv_material_state_manager_initializer_bind_internal_state_variables
+
+mgis_status
+mgis_bv_material_state_manager_initializer_bind_stored_energies(
+    mgis_bv_MaterialStateManagerInitializer* i,
+    mgis_real* const p,
+    mgis_size_type s) {
+  if (i == nullptr) {
+    return mgis_report_failure(
+        "invalid argument "
+        "(material state manager initializer is null)");
+  }
+  if (p == nullptr) {
+    return mgis_report_failure(
+        "invalid argument "
+        "(memory pointer is null)");
+  }
+  try {
+    i->stored_energies = mgis::span<mgis::real>(p, s);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of
+   // mgis_bv_material_state_manager_initializer_bind_stored_energies
+
+mgis_status
+mgis_bv_material_state_manager_initializer_bind_dissipated_energies(
+    mgis_bv_MaterialStateManagerInitializer* i,
+    mgis_real* const p,
+    mgis_size_type s) {
+  if (i == nullptr) {
+    return mgis_report_failure(
+        "invalid argument "
+        "(material state manager initializer is null)");
+  }
+  if (p == nullptr) {
+    return mgis_report_failure(
+        "invalid argument "
+        "(memory pointer is null)");
+  }
+  try {
+    i->dissipated_energies = mgis::span<mgis::real>(p, s);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of
+   // mgis_bv_material_state_manager_initializer_bind_dissipated_energies
+
 mgis_status mgis_bv_material_state_manager_get_number_of_integration_points(
     mgis_size_type* n, mgis_bv_MaterialStateManager* const s) {
   if (s == nullptr) {
@@ -33,6 +151,9 @@ mgis_status mgis_bv_material_state_manager_get_gradients(
     return mgis_report_failure("null state manager");
   }
   *g = s->gradients.data();
+  if (*g == nullptr) {
+    return mgis_report_failure("no gradients defined");
+  }
   return mgis_report_success();
 }  // end of mgis_bv_material_state_manager_get_gradients
 
@@ -47,12 +168,15 @@ mgis_status mgis_bv_material_state_manager_get_gradients_stride(
 }  // end of mgis_bv_material_state_manager_get_gradients_stride
 
 mgis_status mgis_bv_material_state_manager_get_thermodynamic_forces(
-    mgis_real** g, mgis_bv_MaterialStateManager* const s) {
+    mgis_real** f, mgis_bv_MaterialStateManager* const s) {
   if (s == nullptr) {
-    *g = nullptr;
+    *f = nullptr;
     return mgis_report_failure("null state manager");
   }
-  *g = s->thermodynamic_forces.data();
+  *f = s->thermodynamic_forces.data();
+  if (*f == nullptr) {
+    return mgis_report_failure("no thermodynamic forces defined");
+  }
   return mgis_report_success();
 }  // end of mgis_bv_material_state_manager_get_thermodynamic_forces
 
@@ -67,12 +191,15 @@ mgis_status mgis_bv_material_state_manager_get_thermodynamic_forces_stride(
 }  // end of mgis_bv_material_state_manager_get_thermodynamic_forces_stride
 
 mgis_status mgis_bv_material_state_manager_get_internal_state_variables(
-    mgis_real** g, mgis_bv_MaterialStateManager* const s) {
+    mgis_real** ivs, mgis_bv_MaterialStateManager* const s) {
   if (s == nullptr) {
-    *g = nullptr;
+    *ivs = nullptr;
     return mgis_report_failure("null state manager");
   }
-  *g = s->internal_state_variables.data();
+  *ivs = s->internal_state_variables.data();
+  if (*ivs == nullptr) {
+    return mgis_report_failure("no internal state variables defined");
+  }
   return mgis_report_success();
 }  // end of mgis_bv_material_state_manager_get_internal_state_variables
 
@@ -300,6 +427,5 @@ mgis_bv_material_state_manager_get_non_uniform_external_state_variable(
   }
   return mgis_report_success();
 } // end of mgis_bv_material_state_manager_get_non_uniform_external_state_variable
-
 
 }  // end of extern "C"

@@ -39,6 +39,7 @@ mgis_status mgis_bv_behaviour_data_get_behaviour(
     return mgis_report_failure("invalid argument (behaviour data is null)");
   }
   *b = &(d->s0.b);
+  return mgis_report_success();
 }  // end of mgis_bv_update_behaviour_data
 
 mgis_status mgis_bv_update_behaviour_data(mgis_bv_BehaviourData* const d){

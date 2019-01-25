@@ -31,6 +31,47 @@ namespace mgis {
     struct Behaviour;
 
     /*!
+     * \brief a structure in charge of holding information on how a material
+     * state manager shall be initialized.
+     * It may contain pointers to externally allocated data, that won't be
+     * handled by the final state manager.
+     * If a pointer is not initialized, the material state manager will allocate
+     * and handle memory internally.
+     */
+    struct MaterialStateManagerInitializer {
+      /*!
+       * \brief view to an externally allocated memory used to store the
+       * gradients. If empty, the material state manager will
+       * initialize the required memory internally. 
+       */
+      mgis::span<mgis::real> gradients;
+      /*!
+       * \brief view to an externally allocated memory used to store the
+       * thermodynamic forces. If empty, the material state manager will
+       * initialize the required memory internally.
+       */
+      mgis::span<mgis::real> thermodynamic_forces;
+      /*!
+       * \brief view to an externally allocated memory used to store the
+       * internal state variables. If empty, the material state manager will
+       * initialize the required memory internally.
+       */
+      mgis::span<mgis::real> internal_state_variables;
+      /*!
+       * \brief view to an externally allocated memory used to store the stored
+       * energies. If empty, the material state manager will initialize the
+       * required memory internally.
+       */
+      mgis::span<mgis::real> stored_energies;
+      /*!
+       * \brief view to an externally allocated memory used to store the
+       * dissipated energies. If empty, the material state manager will
+       * initialize the required memory internally.
+       */
+      mgis::span<mgis::real> dissipated_energies;
+    };  // end of MaterialStateManagerInitializer
+
+    /*!
      * \brief structure in charge of handling the state of a
      * material in an optimized way. Here, the "material" is defined by a
      * behaviour and a number of integration points.
@@ -43,7 +84,7 @@ namespace mgis {
     struct MGIS_EXPORT MaterialStateManager {
       //! a simple alias
       using FieldHolder =
-          mgis::variant<real, mgis::span<real>, std::vector<real>>;
+          mgis::variant<real, mgis::span<mgis::real>, std::vector<mgis::real>>;
       /*!
        * \brief storage option for a non uniform material property or non
        * uniform external state variable.
@@ -57,42 +98,43 @@ namespace mgis {
        * \param[in] s: number of integration points
        */
       MaterialStateManager(const Behaviour&, const size_type);
-      //! move constructor
-      MaterialStateManager(MaterialStateManager&&);
-      //! copy constructor
-      MaterialStateManager(const MaterialStateManager&);
-      //! move assignement
-      MaterialStateManager& operator=(MaterialStateManager&&);
-      //! copy assignement
-      MaterialStateManager& operator=(const MaterialStateManager&);
+      /*!
+       * \param[in] behaviour: behaviour
+       * \param[in] s: number of integration points
+       * \param[in] i: initializer
+       */
+      MaterialStateManager(const Behaviour&,
+                           const size_type,
+                           const MaterialStateManagerInitializer&);
       //! \brief destructor
       ~MaterialStateManager();
-      //! \brief value of the gradients
-      std::vector<real> gradients;
+      //! \brief view to the values of the gradients
+      mgis::span<mgis::real> gradients;
       //! stride associate with the gradients
       const size_type gradients_stride;
-      //! \brief values of the thermodynamic_forces
-      std::vector<real> thermodynamic_forces;
+      //! \brief view to the values of the thermodynamic_forces
+      mgis::span<mgis::real> thermodynamic_forces;
       //! stride associate with the thermodynamic forces
       const size_type thermodynamic_forces_stride;
       /*!
-       * \brief stored energy.
+       * \brief view to the values to the stored energy.
        */
-      std::vector<real> stored_energies;
+      mgis::span<mgis::real> stored_energies;
       /*!
-       * \brief dissipated energies
+       * \brief view to the values to the dissipated energies
        */
-      std::vector<real> dissipated_energies;
+      mgis::span<mgis::real> dissipated_energies;
       /*!
        * \brief material properties
        * The material properties can be uniform or not.
        * In the non uniform case, the data can be hold by the structure
-       * (std::vector<real>) or simply borrow a reference (mgis::span<real>
+       * (std::vector<real>) or simply borrow a reference
+       * (mgis::span<mgis::real>
        * case).
        */
       std::map<std::string, FieldHolder> material_properties;
-      //! \brief values of the internal state variables
-      std::vector<real> internal_state_variables;
+      //! \brief view to the values of the internal state variables
+      mgis::span<mgis::real> internal_state_variables;
       /*!
        * \brief stride associate with internal state variables.
        * \note this is also the size of an array containing all the internal
@@ -103,7 +145,8 @@ namespace mgis {
        * \brief values of the external state variables
        * The external state variables can be uniform or not.
        * In the non uniform case, the data can be hold by the structure
-       * (std::vector<real>) or simply borrow a reference (mgis::span<real>
+       * (std::vector<real>) or simply borrow a reference
+       * (mgis::span<mgis::real>
        * case).
        */
       std::map<std::string, FieldHolder> external_state_variables;
@@ -111,6 +154,27 @@ namespace mgis {
       const size_type n;
       //! underlying behaviour
       const Behaviour& b;
+
+     private:
+      //! \brief value of the gradients, if hold internally
+      std::vector<mgis::real> gradients_values;
+      //! \brief value of the thermodynamic forces, if hold internally
+      std::vector<mgis::real> thermodynamic_forces_values;
+      //! \brief value of the internal state variables, if hold internally
+      std::vector<mgis::real> internal_state_variables_values;
+      //! \brief value of the stored energies, if hold internally
+      std::vector<mgis::real> stored_energies_values;
+      //! \brief value of the dissipated energies, if hold internally
+      std::vector<mgis::real> dissipated_energies_values;
+      //! move constructor
+      MaterialStateManager(MaterialStateManager&&) = delete;
+      //! copy constructor
+      MaterialStateManager(const MaterialStateManager&) = delete;
+      //! move assignement
+      MaterialStateManager& operator=(MaterialStateManager&&) = delete;
+      //! copy assignement
+      MaterialStateManager& operator=(const MaterialStateManager&) = delete;
+
     };  // end of struct MaterialStateManager
 
     /*!
@@ -132,7 +196,7 @@ namespace mgis {
     MGIS_EXPORT void setMaterialProperty(
         MaterialStateManager&,
         const mgis::string_view&,
-        const mgis::span<real>&,
+        const mgis::span<mgis::real>&,
         const MaterialStateManager::StorageMode =
             MaterialStateManager::LOCAL_STORAGE);
     /*!
@@ -172,7 +236,7 @@ namespace mgis {
      * \param[in] m: material data manager
      * \param[in] n: name
      */
-    MGIS_EXPORT mgis::span<real> getNonUniformMaterialProperty(
+    MGIS_EXPORT mgis::span<mgis::real> getNonUniformMaterialProperty(
         MaterialStateManager&, const mgis::string_view&);
     /*!
      * \return the values of the material property with the given name
@@ -200,7 +264,7 @@ namespace mgis {
     MGIS_EXPORT void setExternalStateVariable(
         MaterialStateManager&,
         const mgis::string_view&,
-        const mgis::span<real>&,
+        const mgis::span<mgis::real>&,
         const MaterialStateManager::StorageMode =
             MaterialStateManager::LOCAL_STORAGE);
     /*!
@@ -222,7 +286,8 @@ namespace mgis {
     MGIS_EXPORT bool isExternalStateVariableUniform(const MaterialStateManager&,
                                                     const mgis::string_view&);
     /*!
-     * \return the value of the uniform external state variable with the given name.
+     * \return the value of the uniform external state variable with the given
+     * name.
      * \param[in] m: material data manager
      * \param[in] n: name
      */
@@ -240,7 +305,7 @@ namespace mgis {
      * \param[in] m: material data manager
      * \param[in] n: name
      */
-    MGIS_EXPORT mgis::span<real> getNonUniformExternalStateVariable(
+    MGIS_EXPORT mgis::span<mgis::real> getNonUniformExternalStateVariable(
         MaterialStateManager&, const mgis::string_view&);
     /*!
      * \return the values of the external state variable with the given name.
@@ -249,6 +314,13 @@ namespace mgis {
      */
     MGIS_EXPORT mgis::span<const real> getNonUniformExternalStateVariable(
         const MaterialStateManager&, const mgis::string_view&);
+    /*!
+     * \brief update the values of a state from another state
+     * \param[out] o: output state
+     * \param[out] i: input state
+     */
+    MGIS_EXPORT void update_values(MaterialStateManager&,
+                                   const MaterialStateManager&);
 
   }  // end of namespace behaviour
 

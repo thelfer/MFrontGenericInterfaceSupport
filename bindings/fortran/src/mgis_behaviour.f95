@@ -49,10 +49,18 @@ module mgis_behaviour
     private
     type(c_ptr) :: ptr = c_null_ptr
   end type State
+  type :: MaterialStateManagerInitializer
+    private
+    type(c_ptr) :: ptr = c_null_ptr
+  end type MaterialStateManagerInitializer
   type :: MaterialStateManager
     private
     type(c_ptr) :: ptr = c_null_ptr
   end type MaterialStateManager
+  type :: MaterialDataManagerInitializer
+    private
+    type(c_ptr) :: ptr = c_null_ptr
+  end type MaterialDataManagerInitializer
   type :: MaterialDataManager
     private
     type(c_ptr) :: ptr = c_null_ptr
@@ -83,6 +91,31 @@ contains
          convert_fortran_string(bn), &
          convert_fortran_string(h))
   end function load_behaviour
+  ! behaviour_get_tangent_operator_array_size
+  function behaviour_get_tangent_operator_array_size(n,b) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_tangent_operator_array_size_wrapper(l,b) &
+            bind(c,name = 'mgis_bv_behaviour_get_tangent_operator_array_size') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_tangent_operator_array_size_wrapper
+    end interface
+    integer :: n
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = behaviour_get_tangent_operator_array_size_wrapper(ns, b%ptr)
+    n = ns
+  end function behaviour_get_tangent_operator_array_size
   ! behaviour_get_library
   function behaviour_get_library(l,b) result(s)
     use mgis_fortran_utilities
@@ -1394,6 +1427,77 @@ contains
        v = ieee_value(v, ieee_quiet_nan)
     endif
   end function state_get_external_state_variable_by_name
+  !
+  function create_material_data_manager_initializer(d) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function create_material_data_manager_initializer_wrapper(d) &
+            bind(c,name = 'mgis_bv_create_material_data_manager_initializer') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: d
+         type(mgis_status) :: r
+       end function create_material_data_manager_initializer_wrapper
+    end interface
+    type(MaterialDataManagerInitializer), intent(out) :: d
+    type(mgis_status) :: s
+    s = create_material_data_manager_initializer_wrapper(d%ptr)
+  end function create_material_data_manager_initializer
+  !
+  function material_data_manager_initializer_bind_tangent_operator(d,K,n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function material_data_manager_initializer_bind_tangent_operator_wrapper(d,K,s) &
+            bind(c,name = 'mgis_bv_material_data_manager_initializer_bind_tangent_operator') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: d
+         type(c_ptr), intent(in), value :: K
+         integer(kind=c_size_t), intent(in), value :: s
+         type(mgis_status) :: r
+       end function material_data_manager_initializer_bind_tangent_operator_wrapper
+    end interface
+    type(MaterialDataManagerInitializer), intent(in) :: d
+    real(kind=8), dimension(:,:), target, intent(out) :: K
+    integer, intent(in) :: n
+    type(mgis_status) :: s
+    type(c_ptr) K_ptr
+    integer(kind=c_size_t) nc
+    nc=n
+    K_ptr = c_loc(K)
+    s = material_data_manager_initializer_bind_tangent_operator_wrapper(d%ptr,K_ptr,nc)
+  end function material_data_manager_initializer_bind_tangent_operator
+  !
+  function free_material_data_manager_initializer(ptr) result(r)
+    use, intrinsic :: iso_c_binding, only: c_associated
+    use mgis
+    implicit none
+    interface
+       function free_material_data_manager_initializer_wrapper(ptr) &
+            bind(c, name='mgis_bv_free_material_data_manager_initializer') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis
+         implicit none
+         type(c_ptr), intent(inout) :: ptr
+         type(mgis_status) :: r
+       end function free_material_data_manager_initializer_wrapper
+    end interface
+    type(MaterialDataManagerInitializer), intent(inout) :: ptr
+    type(mgis_status) :: r
+    if (c_associated(ptr%ptr)) then
+       r = free_material_data_manager_initializer_wrapper(ptr%ptr)
+    end if
+  end function free_material_data_manager_initializer
   !
   function create_material_data_manager(d, b, n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t

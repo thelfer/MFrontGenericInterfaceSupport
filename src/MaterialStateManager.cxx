@@ -12,6 +12,7 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <algorithm>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/MaterialStateManager.hxx"
@@ -19,11 +20,6 @@
 namespace mgis {
 
   namespace behaviour {
-
-    MaterialStateManager::MaterialStateManager(MaterialStateManager&&) =
-        default;
-    MaterialStateManager::MaterialStateManager(const MaterialStateManager&) =
-        default;
 
     MaterialStateManager::MaterialStateManager(const Behaviour& behaviour,
                                                const size_type s)
@@ -35,57 +31,65 @@ namespace mgis {
               getArraySize(behaviour.isvs, behaviour.hypothesis)),
           n(s),
           b(behaviour) {
-      auto init = [this](std::vector<real>& values, const size_type vs) {
+      auto init = [this](mgis::span<mgis::real>& view,
+                         std::vector<mgis::real>& values, const size_type vs) {
         constexpr const auto zero = real{0};
         values.resize(this->n * vs, zero);
+        view = mgis::span<mgis::real>(values);
       };
-      init(this->gradients, this->gradients_stride);
-      init(this->thermodynamic_forces, this->thermodynamic_forces_stride);
+      init(this->gradients, this->gradients_values, this->gradients_stride);
+      init(this->thermodynamic_forces, this->thermodynamic_forces_values,
+           this->thermodynamic_forces_stride);
       init(this->internal_state_variables,
+           this->internal_state_variables_values,
            this->internal_state_variables_stride);
-      init(this->stored_energies, 1u);
-      init(this->dissipated_energies, 1u);
+      init(this->stored_energies, this->stored_energies_values, 1u);
+      init(this->dissipated_energies, this->dissipated_energies_values, 1u);
     }  // end of MaterialStateManager::MaterialStateManager
 
-    MaterialStateManager& MaterialStateManager::operator=(
-        MaterialStateManager&& src) {
-      mgis::raise_if(&src.b != &this->b,
-                     "MaterialStateManager::operator=: unmatched behaviour");
-      mgis::raise_if(src.n != this->n,
-                     "MaterialStateManager::operator=: unmatched number "
-                     "of integration points");
-      if (&src != this) {
-        this->gradients = std::move(src.gradients);
-        this->thermodynamic_forces = std::move(src.thermodynamic_forces);
-        this->material_properties = std::move(src.material_properties);
-        this->internal_state_variables =
-            std::move(src.internal_state_variables);
-        this->stored_energies = std::move(src.stored_energies);
-        this->dissipated_energies = std::move(src.dissipated_energies);
-        this->external_state_variables =
-            std::move(src.external_state_variables);
-      }
-      return *this;
-    }  // end of MaterialStateManager::operator=
-
-    MaterialStateManager& MaterialStateManager::operator=(
-        const MaterialStateManager& src) {
-      mgis::raise_if(&src.b != &this->b,
-                     "MaterialStateManager::operator=: unmatched behaviour");
-      mgis::raise_if(src.n != this->n,
-                     "MaterialStateManager::operator=: unmatched number "
-                     "of integration points");
-      if (&src != this) {
-        this->gradients = src.gradients;
-        this->thermodynamic_forces = src.thermodynamic_forces;
-        this->material_properties = src.material_properties;
-        this->internal_state_variables = src.internal_state_variables;
-        this->stored_energies = src.stored_energies;
-        this->dissipated_energies = src.dissipated_energies;
-        this->external_state_variables = src.external_state_variables;
-      }
-      return *this;
-    }  // end of MaterialStateManager::operator=
+    MaterialStateManager::MaterialStateManager(
+        const Behaviour& behaviour,
+        const size_type s,
+        const MaterialStateManagerInitializer& i)
+        : gradients_stride(
+              getArraySize(behaviour.gradients, behaviour.hypothesis)),
+          thermodynamic_forces_stride(getArraySize(
+              behaviour.thermodynamic_forces, behaviour.hypothesis)),
+          internal_state_variables_stride(
+              getArraySize(behaviour.isvs, behaviour.hypothesis)),
+          n(s),
+          b(behaviour) {
+      auto init = [this](mgis::span<mgis::real>& view,
+                         std::vector<mgis::real>& values,
+                         const mgis::span<mgis::real>& evalues,
+                         const size_type vs, const char* const vn) {
+        if (evalues.empty()) {
+          constexpr const auto zero = real{0};
+          values.resize(this->n * vs, zero);
+          view = mgis::span<mgis::real>(values);
+        } else {
+          if (evalues.size() != this->n * vs) {
+            mgis::raise(
+                "MaterialStateManager::MaterialStateManager: "
+                "the memory associated with the " +
+                std::string(vn) + " has not been allocated properly");
+          }
+          view = evalues;
+        }
+      };
+      init(this->gradients, this->gradients_values, i.gradients,
+           this->gradients_stride, "gradients");
+      init(this->thermodynamic_forces, this->thermodynamic_forces_values,
+           i.thermodynamic_forces, this->thermodynamic_forces_stride,
+           "thermodynamic forces");
+      init(this->internal_state_variables,
+           this->internal_state_variables_values, i.internal_state_variables,
+           this->internal_state_variables_stride, "internal state variables");
+      init(this->stored_energies, this->stored_energies_values,
+           i.stored_energies, 1u, "stored energies");
+      init(this->dissipated_energies, this->dissipated_energies_values,
+           i.dissipated_energies, 1u, "dissipated energies");
+    }  // end of MaterialStateManager::MaterialStateManager
 
     MaterialStateManager::~MaterialStateManager() = default;
 
@@ -350,6 +354,111 @@ namespace mgis {
       }
       return mgis::get<span<real>>(p->second);
     }  // end of getUniformExternalStateVariable
+
+    void update_values(MaterialStateManager& o, const MaterialStateManager& i) {
+      auto check_size = [](const mgis::size_type s1, const mgis::size_type s2) {
+        if (s1 != s2) {
+          mgis::raise(
+              "mgis::behaviour::update_values: "
+              "arrays' size does not match");
+        }
+      };  // end of check_size
+      auto update_span = [&check_size](mgis::span<real>& to,
+                                       const mgis::span<const real>& from) {
+        check_size(from.size(), to.size());
+        std::copy(from.begin(), from.end(), to.begin());
+      };  // end update_span
+      auto update_field_holder = [&check_size](
+          MaterialStateManager::FieldHolder& to,
+          const MaterialStateManager::FieldHolder& from) {
+        if (mgis::holds_alternative<mgis::real>(from)) {
+          to = mgis::get<mgis::real>(from);
+        } else if(mgis::holds_alternative<std::vector<mgis::real>>(from)){
+          const auto& from_v = mgis::get<std::vector<mgis::real>>(from);
+          if (mgis::holds_alternative<mgis::span<mgis::real>>(to)) {
+            // reuse existing memory
+            auto& to_v = mgis::get<mgis::span<mgis::real>>(to);
+            check_size(from_v.size(), to_v.size());
+            std::copy(from_v.begin(), from_v.end(), to_v.begin());
+          } else if(mgis::holds_alternative<std::vector<mgis::real>>(to)) {
+            // reuse existing memory
+            auto& to_v = mgis::get<std::vector<mgis::real>>(to);
+            check_size(from_v.size(), to_v.size());
+            std::copy(from_v.begin(), from_v.end(), to_v.begin());
+          } else {
+            // to contains a real value, so overwrite it with a new vector
+            to = mgis::get<std::vector<mgis::real>>(from);
+          }
+        } else {
+          const auto from_v = mgis::get<mgis::span<mgis::real>>(from);
+          if (mgis::holds_alternative<mgis::span<mgis::real>>(to)) {
+            // reuse existing memory
+            auto to_v = mgis::get<mgis::span<mgis::real>>(to);
+            check_size(from_v.size(), to_v.size());
+            std::copy(from_v.begin(), from_v.end(),
+                      to_v.begin());
+          } else if (mgis::holds_alternative<std::vector<mgis::real>>(to)) {
+            // reuse existing memory
+            auto to_v = mgis::get<std::vector<mgis::real>>(to);
+            check_size(from_v.size(), to_v.size());
+            std::copy(from_v.begin(), from_v.end(),
+                      to_v.begin());
+          } else {
+            to = from_v;
+          }
+        }
+      };  // end of update_field_holder
+      auto check_mps = [](
+          const Behaviour& b,
+          const std::map<std::string, MaterialStateManager::FieldHolder>& mps) {
+        for (const auto& mp : mps) {
+          auto find_mp = [&mp](const Variable& d) {
+            return mp.first == d.name;
+          };
+          if (std::find_if(b.mps.begin(), b.mps.end(), find_mp) ==
+              b.mps.end()) {
+            mgis::raise(
+                "mgis::behaviour::update_values: "
+                "material property '" +
+                mp.first +
+                "' defined in the material state manager is not defined "
+                " by the behaviour");
+          }
+        }
+      };
+      if (&i.b != &o.b) {
+        mgis::raise(
+            "mgis::behaviour::update_values: the material state managers "
+            "do not holds the same behaviour");
+      }
+      check_mps(o.b, i.material_properties);
+      check_mps(o.b, o.material_properties);
+      update_span(o.gradients, i.gradients);
+      update_span(o.thermodynamic_forces, i.thermodynamic_forces);
+      update_span(o.internal_state_variables, i.internal_state_variables);
+      auto pmp = o.material_properties.begin();
+      while (pmp != o.material_properties.end()) {
+        if (i.material_properties.count(pmp->first) == 0) {
+          pmp = o.material_properties.erase(pmp);
+        } else {
+          ++pmp;
+        }
+      }
+      for (const auto& mp : i.material_properties) {
+        update_field_holder(o.material_properties[mp.first], mp.second);
+      }
+      auto pev = o.external_state_variables.begin();
+      while (pev != o.external_state_variables.end()) {
+        if (i.external_state_variables.count(pev->first) == 0) {
+          pev = o.external_state_variables.erase(pev);
+        } else {
+          ++pev;
+        }
+      }
+      for (const auto& ev : i.external_state_variables) {
+        update_field_holder(o.external_state_variables[ev.first], ev.second);
+        }
+    }  // end of update_values
 
   }  // end of namespace behaviour
 

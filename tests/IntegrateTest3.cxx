@@ -32,7 +32,7 @@ int main(const int argc, const char* const* argv) {
   try{
     const auto b = load(argv[1], "Norton", Hypothesis::TRIDIMENSIONAL);
     ThreadPool p{2};
-    auto m = MaterialDataManager{b, 100};
+    MaterialDataManager m{b, 100};
     const auto o =
       getVariableOffset(b.isvs, "EquivalentViscoplasticStrain", b.hypothesis);
     const auto de = 5.e-5;

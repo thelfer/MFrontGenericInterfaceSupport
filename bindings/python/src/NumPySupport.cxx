@@ -28,7 +28,7 @@ namespace mgis {
 
     void initializeNumPy() { wrapInitializeNumPy(); }  // end of initializeNumPy
 
-    boost::python::object wrapInNumPyArray(std::vector<double>& v) {
+    boost::python::object wrapInNumPyArray(mgis::span<double>& v) {
       npy_intp dims[1] = {v.size()};
       auto* const arr =
           PyArray_SimpleNewFromData(1, dims, NPY_DOUBLE, v.data());
@@ -36,7 +36,20 @@ namespace mgis {
       return boost::python::object(handle);
     }  // end of wrapInNumPyArray
 
-    boost::python::object wrapInNumPyArray(std::vector<double>& v,
+    boost::python::object wrapInNumPyArray(std::vector<double>& v) {
+      auto view = mgis::span<double>(v);
+      return wrapInNumPyArray(view);
+    }  // end of wrapInNumPyArray
+
+    boost::python::object wrapInNumPyArray(
+        mgis::variant<mgis::span<double>, std::vector<double>>& v) {
+      if (mgis::holds_alternative<std::vector<double>>(v)) {
+        return wrapInNumPyArray(mgis::get<std::vector<double>>(v));
+      }
+      return wrapInNumPyArray(mgis::get<mgis::span<double>>(v));
+    }  // end of wrapInNumPyArray
+
+    boost::python::object wrapInNumPyArray(mgis::span<double>& v,
                                            const size_type nc) {
       npy_intp dims[2] = {v.size() / nc, nc};
       auto* const arr =
@@ -46,6 +59,21 @@ namespace mgis {
     }  // end of wrapInNumPyArray
 
     boost::python::object wrapInNumPyArray(std::vector<double>& v,
+                                           const size_type nc) {
+      auto view = mgis::span<double>(v);
+      return wrapInNumPyArray(view, nc);
+    }  // end of wrapInNumPyArray
+
+    boost::python::object wrapInNumPyArray(
+        mgis::variant<mgis::span<double>, std::vector<double>>& v,
+        const size_type nc) {
+      if (mgis::holds_alternative<std::vector<double>>(v)) {
+        return wrapInNumPyArray(mgis::get<std::vector<double>>(v), nc);
+      }
+      return wrapInNumPyArray(mgis::get<mgis::span<double>>(v), nc);
+    }  // end of wrapInNumPyArray
+
+    boost::python::object wrapInNumPyArray(mgis::span<double>& v,
                                            const size_type nl,
                                            const size_type nc) {
       npy_intp dims[3] = {v.size() / (nc * nl), nl, nc};
@@ -53,6 +81,23 @@ namespace mgis {
           PyArray_SimpleNewFromData(3, dims, NPY_DOUBLE, v.data());
       boost::python::handle<> handle(arr);
       return boost::python::object(handle);
+    }  // end of wrapInNumPyArray
+
+    boost::python::object wrapInNumPyArray(std::vector<double>& v,
+                                           const size_type nl,
+                                           const size_type nc) {
+      auto view = mgis::span<double>(v);
+      return wrapInNumPyArray(view, nl, nc);
+    }  // end of wrapInNumPyArray
+
+    boost::python::object wrapInNumPyArray(
+        mgis::variant<mgis::span<double>, std::vector<double>>& v,
+        const size_type nl,
+        const size_type nc) {
+      if (mgis::holds_alternative<std::vector<double>>(v)) {
+        return wrapInNumPyArray(mgis::get<std::vector<double>>(v), nl, nc);
+      }
+      return wrapInNumPyArray(mgis::get<mgis::span<double>>(v), nl, nc);
     }  // end of wrapInNumPyArray
 
     mgis::span<mgis::real> mgis_convert_to_span(

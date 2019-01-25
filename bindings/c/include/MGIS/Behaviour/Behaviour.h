@@ -75,6 +75,14 @@ MGIS_C_EXPORT mgis_status mgis_bv_load_behaviour(mgis_bv_Behaviour**,
                                                  const char* const,
                                                  const char* const);
 /*!
+ * \brief retrieve the size of an array able to contain all the values of the
+ * tangent operator
+ * \param[out] s: size
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_tangent_operator_array_size(
+    mgis_size_type* const, const mgis_bv_Behaviour* const);
+/*!
  * \brief retrieve the library
  * \param[out] l: library
  * \param[in] b: behaviour
@@ -173,10 +181,10 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_material_property_name(
  * \param[in] b: behaviour
  * \param[in] i: material property index
  */
-MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_material_property_type(
-    mgis_bv_VariableType* const,
-    const mgis_bv_Behaviour* const,
-    const mgis_size_type);
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_material_property_type(mgis_bv_VariableType* const,
+                                             const mgis_bv_Behaviour* const,
+                                             const mgis_size_type);
 /*!
  * \brief return the number of internal state variables
  * \param[out] c: number of the internal state variables
@@ -226,7 +234,7 @@ mgis_bv_behaviour_get_number_of_external_state_variables(
  * \param[in] i: external state variable index
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_external_state_variable_name(
-    const char **, const mgis_bv_Behaviour *const, const mgis_size_type);
+    const char**, const mgis_bv_Behaviour* const, const mgis_size_type);
 /*!
  * \brief return the type of an external state variable
  * \param[out] t: external state variable type
@@ -259,7 +267,7 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_parameter_name(
  * \param[in] v: parameter value
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_set_parameter(
-    const mgis_bv_Behaviour *const, const char *const, const double);
+    const mgis_bv_Behaviour* const, const char* const, const double);
 /*!
  * \brief return the number of integer parameters
  * \param[out] c: number of the integer parameters
@@ -282,7 +290,7 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_integer_parameter_name(
  * \param[in] v: parameter value
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_set_integer_parameter(
-    const mgis_bv_Behaviour *const, const char *const, const int);
+    const mgis_bv_Behaviour* const, const char* const, const int);
 /*!
  * \brief return the number of unsigned short parameters
  * \param[out] c: number of the unsigned short parameters
@@ -306,7 +314,7 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_unsigned_short_parameter_name(
  * \param[in] v: parameter value
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_set_unsigned_short_parameter(
-    const mgis_bv_Behaviour *const, const char *const, const unsigned short);
+    const mgis_bv_Behaviour* const, const char* const, const unsigned short);
 /*!
  * \brief grant access to the default value of a parameter
  * \param[out] v: default value of the parameter
@@ -314,7 +322,7 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_set_unsigned_short_parameter(
  * \param[in] n: parameter name
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_parameter_default_value(
-    double *const, const mgis_bv_Behaviour *const, const char *const);
+    double* const, const mgis_bv_Behaviour* const, const char* const);
 /*!
  * \brief grant access to the default value of a parameter
  * \param[out] v: default value of the parameter
@@ -322,7 +330,7 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_parameter_default_value(
  * \param[in] n: parameter name
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_integer_parameter_default_value(
-    int *const, const mgis_bv_Behaviour *const, const char *const);
+    int* const, const mgis_bv_Behaviour* const, const char* const);
 /*!
  * \brief grant access to the default value of a parameter
  * \param[out] v: default value of the parameter
@@ -331,7 +339,7 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_integer_parameter_default_value(
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_behaviour_get_unsigned_short_parameter_default_value(
-    unsigned short *const, const mgis_bv_Behaviour *const, const char *const);
+    unsigned short* const, const mgis_bv_Behaviour* const, const char* const);
 /*!
  * \brief return true if the given variable has bounds
  * \param[out] r: returned value

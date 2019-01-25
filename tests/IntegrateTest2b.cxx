@@ -1,5 +1,5 @@
 /*!
- * \file   IntegrateTest2.cxx
+ * \file   IntegrateTest2b.cxx
  * \brief
  * \author Thomas Helfer
  * \date   24/08/2018
@@ -29,8 +29,13 @@ int main(const int argc, const char* const* argv) {
     std::exit(-1);
   }
   try{
+    constexpr const auto n = mgis::size_type{100};
     const auto b = load(argv[1], "Norton", Hypothesis::TRIDIMENSIONAL);
-    MaterialDataManager m{b, 100};
+    auto init = MaterialDataManagerInitializer{};
+    auto isvs = std::vector<mgis::real>(n * getArraySize(b.isvs, b.hypothesis),
+                                        real{0});
+    init.s1.internal_state_variables = isvs;
+    MaterialDataManager m{b, n, init};
     const auto o =
       getVariableOffset(b.isvs, "EquivalentViscoplasticStrain", b.hypothesis);
     const auto de = 5.e-5;
@@ -58,8 +63,8 @@ int main(const int argc, const char* const* argv) {
       for (size_type idx = 0; idx != m.n; ++idx) {
         m.s1.gradients[idx * m.s1.gradients_stride] += de;
       }
-      pi[i + 1] = m.s1.internal_state_variables[ni];
-      pe[i + 1] = m.s1.internal_state_variables[ne];
+      pi[i + 1] = isvs[ni];
+      pe[i + 1] = isvs[ne];
     }
     const auto p_ref = std::array<real, 21>{0,
 					    1.3523277308229e-11,

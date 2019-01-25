@@ -27,8 +27,15 @@ extern "C" {
 #endif /*  __cplusplus */
 
 #ifdef __cplusplus
+using mgis_bv_MaterialStateManagerInitializer =
+    mgis::behaviour::MaterialStateManagerInitializer;
 using mgis_bv_MaterialStateManager = mgis::behaviour::MaterialStateManager;
 #else
+/*!
+ * \brief an opaque structure which can only be accessed through the MGIS' API.
+ */
+typedef struct mgis_bv_MaterialStateManagerInitializer
+    mgis_bv_MaterialStateManagerInitializer;
 /*!
  * \brief an opaque structure which can only be accessed through the MGIS' API.
  */
@@ -36,9 +43,60 @@ typedef struct mgis_bv_MaterialStateManager mgis_bv_MaterialStateManager;
 #endif
 
 typedef enum {
-  MGIS_BV_LOCAL_STORAGE    = 0,
+  MGIS_BV_LOCAL_STORAGE = 0,
   MGIS_BV_EXTERNAL_STORAGE = 1,
 } mgis_bv_MaterialStateManagerStorageMode;
+/*!
+ * \brief bind the gradients to the given array
+ * \param[in,out] s: initializer
+ * \param[in] g: pointer to a memory area meant to store the gradients values
+ * \param[in] s: size of the memory area
+ */
+MGIS_C_EXPORT
+mgis_status mgis_bv_material_state_manager_initializer_bind_gradients(
+    mgis_bv_MaterialStateManagerInitializer*, mgis_real* const, mgis_size_type);
+/*!
+ * \brief bind the thermodynamic forces to the given array
+ * \param[in,out] s: initializer
+ * \param[in] p: pointer to a memory area meant to store the thermodynamic
+ * forces values
+ * \param[in] s: size of the memory area
+ */
+MGIS_C_EXPORT
+mgis_status
+mgis_bv_material_state_manager_initializer_bind_thermodynamic_forces(
+    mgis_bv_MaterialStateManagerInitializer*, mgis_real* const, mgis_size_type);
+/*!
+ * \brief bind the internal state variables to the given array
+ * \param[in,out] s: initializer
+ * \param[in] p: pointer to a memory area meant to store the internal
+ * state variables values
+ * \param[in] s: size of the memory area
+ */
+MGIS_C_EXPORT
+mgis_status
+mgis_bv_material_state_manager_initializer_bind_internal_state_variables(
+    mgis_bv_MaterialStateManagerInitializer*, mgis_real* const, mgis_size_type);
+/*!
+ * \brief bind the stored energies to the given array
+ * \param[in,out] s: initializer
+ * \param[in] p: pointer to a memory area meant to store the stored energies
+ * values.
+ * \param[in] s: size of the memory area
+ */
+MGIS_C_EXPORT
+mgis_status mgis_bv_material_state_manager_initializer_bind_stored_energies(
+    mgis_bv_MaterialStateManagerInitializer*, mgis_real* const, mgis_size_type);
+/*!
+ * \brief bind the dissipated energies to the given array
+ * \param[in,out] s: initializer
+ * \param[in] p: pointer to a memory area meant to store the dissipated energies
+ * values.
+ * \param[in] s: size of the memory area
+ */
+MGIS_C_EXPORT
+mgis_status mgis_bv_material_state_manager_initializer_bind_dissipated_energies(
+    mgis_bv_MaterialStateManagerInitializer*, mgis_real* const, mgis_size_type);
 /*!
  * \param[out] n: number of integration points
  * \param[in]  s: state manager
@@ -74,7 +132,7 @@ MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_get_thermodynamic_forces_stride(
     mgis_size_type* const, mgis_bv_MaterialStateManager* const);
 /*!
- * \param[out] f: a pointer to the array of internal state variables
+ * \param[out] ivs: a pointer to the array of internal state variables
  * \param[in]  s: state manager
  */
 MGIS_C_EXPORT mgis_status

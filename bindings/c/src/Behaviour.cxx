@@ -38,6 +38,20 @@ mgis_status mgis_bv_load_behaviour(mgis_bv_Behaviour** ptr,
   return mgis_report_success();
 }  // end of load
 
+mgis_status mgis_bv_behaviour_get_tangent_operator_array_size(
+    mgis::size_type* const s, const mgis_bv_Behaviour* const b){
+  if (b == nullptr) {
+    *s = mgis::size_type{};
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *s = mgis::behaviour::getTangentOperatorArraySize(*b);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+} // end of mgis_bv_behaviour_get_tangent_operator_array_size
+
 mgis_status mgis_bv_behaviour_get_library(const char** l,
                                           const mgis_bv_Behaviour* const b) {
   if (b == nullptr) {
@@ -176,10 +190,10 @@ mgis_status mgis_bv_behaviour_get_gradients_size(
   }
   try {
     *s = mgis::behaviour::getArraySize(b->gradients, b->hypothesis);
-    return mgis_report_success();
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
+  return mgis_report_success();
 }  // end of mgis_bv_behaviour_get_gradients_size
 
 mgis_status mgis_bv_behaviour_get_thermodynamic_forces_size(
