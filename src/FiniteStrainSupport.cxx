@@ -84,9 +84,9 @@ namespace mgis {
       const auto* const F = m.s1.gradients.data();
       const auto* const s = m.s1.thermodynamic_forces.data();
       // symmetric tensor size
-      const auto ss = getTensorSize(Hypothesis::TRIDIMENSIONAL);
+      const auto ss = getStensorSize(Hypothesis::PLANESTRAIN);
       // non symmetric tensor size
-      const auto ts = getTensorSize(Hypothesis::TRIDIMENSIONAL);
+      const auto ts = getTensorSize(Hypothesis::PLANESTRAIN);
       for (auto i = b; i != e; ++i) {
         auto* const P_l = P + ts * i;
         const auto* const F_l = F + ts * i;
@@ -103,7 +103,7 @@ namespace mgis {
       const auto* const F = m.s1.gradients.data();
       const auto* const s = m.s1.thermodynamic_forces.data();
       // symmetric tensor size
-      const auto ss = getTensorSize(Hypothesis::TRIDIMENSIONAL);
+      const auto ss = getStensorSize(Hypothesis::TRIDIMENSIONAL);
       // non symmetric tensor size
       const auto ts = getTensorSize(Hypothesis::TRIDIMENSIONAL);
       for (auto i = b; i != e; ++i) {
@@ -628,13 +628,13 @@ namespace mgis {
       const auto* const F = m.s1.gradients.data();
       const auto* const s = m.s1.thermodynamic_forces.data();
       // symmetric tensor size
-      const auto ss = getTensorSize(Hypothesis::PLANESTRAIN);
+      const auto ss = getStensorSize(Hypothesis::PLANESTRAIN);
       // non symmetric tensor size
       const auto ts = getTensorSize(Hypothesis::PLANESTRAIN);
       // stride associated with Kd
       const auto dP_stride = ts * ts;
       // stride associated with m.K
-      const auto ds_stride = ts * ts;
+      const auto ds_stride = ss * ts;
       for (auto i = b; i != e; ++i) {
         auto* const dP_l = dP + dP_stride * i;
         const auto* const ds_l = ds + ds_stride * i;
@@ -654,13 +654,13 @@ namespace mgis {
       const auto* const F = m.s1.gradients.data();
       const auto* const s = m.s1.thermodynamic_forces.data();
       // symmetric tensor size
-      const auto ss = getTensorSize(Hypothesis::TRIDIMENSIONAL);
+      const auto ss = getStensorSize(Hypothesis::TRIDIMENSIONAL);
       // non symmetric tensor size
       const auto ts = getTensorSize(Hypothesis::TRIDIMENSIONAL);
       // stride associated with Kd
       const auto dP_stride = ts * ts;
       // stride associated with m.K
-      const auto ds_stride = ts * ts;
+      const auto ds_stride = ss * ts;
       for (auto i = b; i != e; ++i) {
         auto* const dP_l = dP + dP_stride * i;
         const auto* const ds_l = ds + ds_stride * i;

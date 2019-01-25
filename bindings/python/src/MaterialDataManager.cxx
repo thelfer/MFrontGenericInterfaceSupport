@@ -30,7 +30,7 @@ static boost::python::object MaterialDataManager_getK(
     mgis::behaviour::MaterialDataManager& d) {
   const auto nl = d.s0.gradients_stride;
   const auto nc = d.s1.thermodynamic_forces_stride;
-  return mgis::python::wrapInNumPyArray(d.K, nl, nc);
+  return mgis::python::wrapInNumPyArray(d.K, nc, nl);
 }  // end of MaterialDataManager_getK
 
 void declareMaterialDataManager() {
