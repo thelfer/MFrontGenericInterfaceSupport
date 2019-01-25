@@ -50,11 +50,10 @@ namespace mgis {
               "MaterialDataManager::MaterialDataManager: "
               "the consistent tangent operator has not been allocated "
               "properly");
-          this->K = i.K;
         }
+	this->K = i.K;
       }
     }  // end of Behaviour::Behaviour
-
 
     MaterialDataManager::~MaterialDataManager() = default;
 

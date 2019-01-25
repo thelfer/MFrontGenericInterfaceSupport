@@ -11,8 +11,6 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
-
 #include <map>
 #include <tuple>
 #include <thread>
