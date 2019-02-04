@@ -24,6 +24,8 @@ namespace mgis {
 
     // forward declaration
     struct MaterialDataManager;
+    // forward declaration
+    struct BehaviourData;
 
     /*!
      * \brief list of the finite strain stress available
@@ -39,6 +41,7 @@ namespace mgis {
       DPK1_DF /*!< derivate of the first Piola-Kirchhoff with respect to the
                *   deformation gradient */
     };        // end of enum struct FiniteStrainTangentOperator
+
 
     /*!
      * \brief convert the Cauchy stress to the first Piola-Kirchhoff stress in
@@ -79,6 +82,23 @@ namespace mgis {
     MGIS_EXPORT void convertFiniteStrainTangentOperator(
         mgis::span<real>&,
         const MaterialDataManager&,
+        const FiniteStrainTangentOperator);
+    /*!
+     * \param[out] s: new stress
+     * \param[in] d: behaviour data
+     * \param[in] t: expected finite strain stress type
+     */
+    MGIS_EXPORT void convertFiniteStrainStress(mgis::span<real>&,
+                                               const BehaviourData&,
+                                               const FiniteStrainStress);
+    /*!
+     * \param[out] K: new tangent operator
+     * \param[in] d: behaviour data
+     * \param[in] t: expected finite strain operator type
+     */
+    MGIS_EXPORT void convertFiniteStrainTangentOperator(
+        mgis::span<real>&,
+        const BehaviourData&,
         const FiniteStrainTangentOperator);
 
   }  // end of namespace behaviour
