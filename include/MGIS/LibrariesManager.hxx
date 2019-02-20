@@ -186,6 +186,16 @@ namespace mgis {
                                                          const std::string &,
                                                          const Hypothesis);
     /*!
+     * \return the names of the tangent operator blocks names.
+     * \param[in] l: library name
+     * \param[in] b: behaviour name
+     * \param[in] h: modelling hypothesis
+     */
+    std::vector<std::pair<std::string, std::string>>
+    getTangentOperatorBlocksNames(const std::string &,
+                                  const std::string &,
+                                  const Hypothesis);
+    /*!
      * \return the types of the thermodynamic forces associated with a
      * behaviour.
      * \param[in] l: library name

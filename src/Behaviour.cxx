@@ -12,6 +12,9 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <iterator>
+#include <iostream>
+
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/LibrariesManager.hxx"
 #include "MGIS/Raise.hxx"
@@ -75,6 +78,52 @@ namespace mgis {
       raise_if(thermodynamic_forces[0].type != t.type,
                "invalid thermodynamic force type");
     }  // end of checkGradientsAndThermodynamicForcesConsistency
+
+    static std::pair<Variable, Variable> getJacobianBlockVariables(
+        const Behaviour &b, const std::pair<std::string, std::string> &block) {
+      auto found = false;
+      std::pair<Variable, Variable> v;
+      auto assign_if = [&found, &block, &v](const Variable &v1,
+                                            const Variable &v2) {
+        mgis::raise_if(found,
+                       "getJacobianBlockVariables: "
+                       "multiple definition for block {" +
+                           block.first + "," + block.second + "}");
+        found = true;
+        v = {v1, v2};
+      };
+      for (const auto &f : b.thermodynamic_forces) {
+        for (const auto &g : b.gradients) {
+          if ((block.first == f.name) && (block.second == g.name)) {
+            assign_if(f, g);
+          }
+        }
+        for (const auto &e : b.esvs) {
+          if ((block.first == f.name) && (block.second == e.name)) {
+            assign_if(f, e);
+          }
+        }
+      }
+      for (const auto &i : b.isvs){
+        for (const auto &g : b.gradients) {
+          if ((block.first == i.name) && (block.second == g.name)) {
+            assign_if(i, g);
+          }
+        }
+        for (const auto &e : b.esvs) {
+          if ((block.first == i.name) && (block.second == e.name)) {
+            assign_if(i, e);
+          }
+        }
+      }
+      if (!found) {
+        mgis::raise(
+            "getJacobianBlockVariables: "
+            "tangent operator block {" +
+            block.first + "," + block.second + "} is invalid");
+      }
+      return v;
+    }  // end of getJacobianBlockVariables
 
     Behaviour::Behaviour() = default;
     Behaviour::Behaviour(Behaviour &&) = default;
@@ -282,6 +331,10 @@ namespace mgis {
       for (const auto &esv : lm.getExternalStateVariablesNames(l, b, h)) {
         d.esvs.push_back({esv, Variable::SCALAR});
       }
+      // tangent operator blocks
+      for (const auto &block : lm.getTangentOperatorBlocksNames(l, b, h)) {
+        d.to_blocks.push_back(getJacobianBlockVariables(d,block));
+      }
       //! parameters
       const auto pn = lm.getParametersNames(l, b, h);
       const auto pt = lm.getParametersTypes(l, b, h);
@@ -303,10 +356,14 @@ namespace mgis {
     }  // end of load
 
     mgis::size_type getTangentOperatorArraySize(const Behaviour &b) {
-      const auto gs = getArraySize(b.gradients, b.hypothesis);
-      const auto ths = getArraySize(b.thermodynamic_forces, b.hypothesis);
-      return gs * ths;
+      auto s = mgis::size_type{};
+      for (const auto &block : b.to_blocks) {
+        s += getVariableSize(block.first, b.hypothesis) *
+             getVariableSize(block.second, b.hypothesis);
+      }
+      return s;
     }  // end of getTangentOperatorArraySize
+    
 
     void setParameter(const Behaviour &b,
                       const std::string &n,

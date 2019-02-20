@@ -316,6 +316,23 @@ namespace mgis {
     return types;
   }  // end of LibrariesManager::getThermodynamicForcesTypes
 
+  std::vector<std::pair<std::string, std::string>>
+  LibrariesManager::getTangentOperatorBlocksNames(const std::string &l,
+                                                  const std::string &b,
+                                                  const Hypothesis h) {
+    std::vector<std::pair<std::string, std::string>> blocks;
+    const auto names = this->getNames(l, b, h, "TangentOperatorBlocks");
+    const auto s = names.size();
+    mgis::raise_if(
+        s % 2 != 0,
+        "ExternalLibraryManager::getUMATTangentOperatorBlocksNames: "
+        "invalid declaration of the tangent operator blocks is invalid");
+    for (decltype(names.size()) i = 0; i != s / 2; ++i) {
+      blocks.push_back({names[2 * i], names[2 * i + 1]});
+    }
+    return blocks;
+  }  // end of LibrariesManager::getTangentOperatorBlocksNames
+
   std::vector<std::string> LibrariesManager::getMaterialPropertiesNames(
       const std::string &l, const std::string &b, const Hypothesis h) {
     return this->getNames(l, b, h, "MaterialProperties");

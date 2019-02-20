@@ -22,8 +22,12 @@ void declareBehaviourData();
 
 static boost::python::object BehaviourData_getK(
     mgis::behaviour::BehaviourData& d) {
-  const auto s = d.s0.thermodynamic_forces.size();
-  return mgis::python::wrapInNumPyArray(d.K, s);
+  if (d.s0.b.to_blocks.size() == 1u) {
+    const auto s =
+        getVariableSize(d.s0.b.to_blocks.front().first, d.s0.b.hypothesis);
+    return mgis::python::wrapInNumPyArray(d.K, s);
+  }
+  return mgis::python::wrapInNumPyArray(d.K);
 }  // end of MaterialStateManager_getK
 
 void declareBehaviourData() {

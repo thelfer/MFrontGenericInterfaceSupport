@@ -28,9 +28,15 @@ static void MaterialDataManagerInitializer_bindTangentOperator(
 
 static boost::python::object MaterialDataManager_getK(
     mgis::behaviour::MaterialDataManager& d) {
-  const auto nl = d.s0.gradients_stride;
-  const auto nc = d.s1.thermodynamic_forces_stride;
-  return mgis::python::wrapInNumPyArray(d.K, nc, nl);
+  if (d.b.to_blocks.size() == 1u) {
+    const auto nl =
+        getVariableSize(d.b.to_blocks.front().second, d.b.hypothesis);
+    const auto nc =
+        getVariableSize(d.b.to_blocks.front().first, d.b.hypothesis);
+    return mgis::python::wrapInNumPyArray(d.K, nc, nl);
+  }
+  const auto s = getTangentOperatorArraySize(d.b);
+  return mgis::python::wrapInNumPyArray(d.K, s);
 }  // end of MaterialDataManager_getK
 
 void declareMaterialDataManager() {

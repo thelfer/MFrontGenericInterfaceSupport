@@ -87,6 +87,8 @@ namespace mgis {
       std::vector<Variable> isvs;
       //! external state variables
       std::vector<Variable> esvs;
+      //! tangent operator blocks
+      std::vector<std::pair<Variable, Variable>> to_blocks;
       //! real parameters
       std::vector<std::string> params;
       //! integer parameters
@@ -108,7 +110,8 @@ namespace mgis {
                                const std::string &,
                                const Hypothesis);
     /*!
-     * \return the size of an array able to contain all the values of the tangent operator
+     * \return the size of an array able to contain all the values of the
+     * tangent operator
      * \param[in] b: behaviour
      */
     MGIS_EXPORT mgis::size_type getTangentOperatorArraySize(const Behaviour &);
