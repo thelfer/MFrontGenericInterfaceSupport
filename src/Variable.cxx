@@ -22,6 +22,8 @@ namespace mgis {
     size_type getVariableSize(const Variable &v, const Hypothesis h) {
       if (v.type == Variable::SCALAR) {
         return 1;
+      } else if (v.type == Variable::VECTOR) {
+        return getSpaceDimension(h);
       } else if (v.type == Variable::STENSOR) {
         return getStensorSize(h);
       }
