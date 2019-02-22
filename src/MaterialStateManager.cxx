@@ -68,7 +68,7 @@ namespace mgis {
           values.resize(this->n * vs, zero);
           view = mgis::span<mgis::real>(values);
         } else {
-          if (evalues.size() != this->n * vs) {
+          if (static_cast<size_type>(evalues.size()) != this->n * vs) {
             mgis::raise(
                 "MaterialStateManager::MaterialStateManager: "
                 "the memory associated with the " +
@@ -147,7 +147,7 @@ namespace mgis {
                      "setMaterialProperty: "
                      "invalid material property "
                      "(only scalar material property is supported)");
-      mgis::raise_if(v.size() != m.n,
+      mgis::raise_if(static_cast<mgis::size_type>(v.size()) != m.n,
                      "setMaterialProperty: invalid number of values "
                      "(does not match the number of integration points)");
       if (s == MaterialStateManager::LOCAL_STORAGE) {
@@ -262,7 +262,7 @@ namespace mgis {
                      "setExternalStateVariable: "
                      "invalid external state variable "
                      "(only scalar external state variable is supported)");
-      mgis::raise_if(v.size() != m.n,
+      mgis::raise_if(static_cast<mgis::size_type>(v.size()) != m.n,
                      "setExternalStateVariable: invalid number of values "
                      "(does not match the number of integration points)");
       if (s == MaterialStateManager::LOCAL_STORAGE) {

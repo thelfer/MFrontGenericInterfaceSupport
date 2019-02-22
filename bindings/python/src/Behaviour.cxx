@@ -70,10 +70,8 @@ static const char* Behaviour_getSymmetry(const mgis::behaviour::Behaviour& b) {
   switch (b.symmetry) {
     case Behaviour::ISOTROPIC:
       return "Isotropic";
-      break;
     case Behaviour::ORTHOTROPIC:
       return "Orthotropic";
-      break;
     default:
       mgis::raise("unsupported symmetry type");
       break;

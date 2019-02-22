@@ -172,16 +172,12 @@ namespace mgis {
         switch (lm.getBehaviourType(l, b)) {
           case 0:
             return Behaviour::GENERALBEHAVIOUR;
-            break;
           case 1:
             return Behaviour::STANDARDSTRAINBASEDBEHAVIOUR;
-            break;
           case 2:
             return Behaviour::STANDARDFINITESTRAINBEHAVIOUR;
-            break;
           case 3:
             return Behaviour::COHESIVEZONEMODEL;
-            break;
         }
         raise("unsupported behaviour type");
       }();
@@ -197,16 +193,12 @@ namespace mgis {
         switch (lm.getBehaviourKinematic(l, b)) {
           case 0:
             return Behaviour::UNDEFINEDKINEMATIC;
-            break;
           case 1:
             return Behaviour::SMALLSTRAINKINEMATIC;
-            break;
           case 2:
             return Behaviour::COHESIVEZONEKINEMATIC;
-            break;
           case 3:
             return Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY;
-            break;
           case 4:
             if (((h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) &&
                  (h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))) {
@@ -215,7 +207,6 @@ namespace mgis {
                   "the eto-pk1 kinematic");
             }
             return Behaviour::FINITESTRAINKINEMATIC_ETO_PK1;
-            break;
         }
         raise("unsupported behaviour kinematic");
       }();

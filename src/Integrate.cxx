@@ -107,7 +107,7 @@ namespace mgis {
       auto eval = [](std::vector<real>& v,
                      const std::vector<std::tuple<size_type, real*>>& evs,
                      const size_type i) {
-        for (const auto ev : evs) {
+        for (const auto& ev : evs) {
           v[std::get<0>(ev)] = std::get<1>(ev)[i];
         }
       };  // end of eval

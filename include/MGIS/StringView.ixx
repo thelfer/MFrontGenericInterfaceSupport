@@ -291,19 +291,16 @@ namespace mgis{
                                            size_type pos )
     const
   {
-    const size_type max_index = m_size - v.size();
-
-    for( size_type i = pos; i < max_index; ++i ) {
-      size_type j = v.size()-1;
-      for( ; j >= 0; --j ) {
-        if( v[j] != m_str[i+j] ) {
-          break;
-        }
-      }
-      if((j+1)==0) return i;
+    if(pos >= this->size()){
+      return npos;
     }
-    return npos;
-  }
+    const auto p = std::search(this->cbegin() + pos, this->cend(), v.cbegin(),
+                               v.cend(), Traits::eq);
+    if(p == this->cend()){
+      return npos;
+    }
+    return static_cast<size_type>(p - this->cbegin());
+  } // end of basic_string_view<CharT,Traits>::find
 
   template<typename CharT, typename Traits>
   inline typename basic_string_view<CharT,Traits>::size_type
@@ -334,22 +331,22 @@ namespace mgis{
 
   //--------------------------------------------------------------------------
 
-  template<typename CharT, typename Traits>
-  inline typename basic_string_view<CharT,Traits>::size_type
-    basic_string_view<CharT,Traits>::rfind( basic_string_view v,
-                                            size_type pos )
-    const
-  {
-    const size_type max_index = m_size - v.size();
-
-    for( size_type i = std::min(max_index-1,pos); i >= 0; --i ) {
-      size_type j = 0;
-      for( ; j < v.size(); ++j ) {
-        if( v[j] != m_str[i-j] ) {
-          break;
-        }
-      }
-      if(j==v.size()) return i;
+  template <typename CharT, typename Traits>
+  inline typename basic_string_view<CharT, Traits>::size_type
+  basic_string_view<CharT, Traits>::rfind(basic_string_view v,
+                                          size_type pos) const {
+    if (size() < v.size()) {
+      return npos;
+    }
+    if (v.empty()) {
+      return std::min(this->size(), pos);
+    }
+    const auto last =
+        cbegin() + std::min(this->size() - v.size(), pos) + v.size();
+    const auto result =
+        std::find_end(this->cbegin(), last, v.cbegin(), v.cend(), Traits::eq);
+    if (result != last) {
+      return static_cast<size_type>(result - this->cbegin());
     }
     return npos;
   }
@@ -428,20 +425,23 @@ namespace mgis{
 
   //--------------------------------------------------------------------------
 
-  template<typename CharT, typename Traits>
-  inline typename basic_string_view<CharT,Traits>::size_type
-    basic_string_view<CharT,Traits>::find_last_of( basic_string_view v,
-                                                   size_type pos )
-    const
-  {
-    for( size_type i = std::min(m_size-1,pos); i >= 0; --i ) {
-      for( size_type j = 0; j < v.size(); ++j ) {
-        if( v[j] == m_str[i] ) {
-          return i;
-        }
-      }
+  template <typename CharT, typename Traits>
+  inline typename basic_string_view<CharT, Traits>::size_type
+  basic_string_view<CharT, Traits>::find_last_of(basic_string_view v,
+                                                 size_type pos) const {
+    if (this->empty()) {
+      return npos;
     }
-    return npos;
+    if (pos >= size()) {
+      return find_last_of(v, this->size() - 1);
+    }
+    const auto p =
+        std::find_first_of(const_reverse_iterator(this->cbegin() + pos + 1),
+                           this->crend(), v.cbegin(), v.cend(), Traits::eq);
+    if (p == this->crend()) {
+      return npos;
+    }
+    return static_cast<size_type>(this->crend() - p - 1);
   }
 
   template<typename CharT, typename Traits>
@@ -525,15 +525,19 @@ namespace mgis{
                                                        size_type pos )
     const
   {
-    for( size_type i = std::min(m_size-1,pos); i >= 0; --i ) {
-      for( size_type j = 0; j < v.size(); ++j ) {
-        if( v[j] == m_str[i] ) {
-          break;
-        }
-        return i;
-      }
+    if (this->empty()) {
+      return npos;
     }
-    return npos;
+    if (pos >= this->size()) {
+      return this->find_last_not_of(v, size() - 1);
+    }
+    const auto p =
+        std::find_if(const_reverse_iterator(this->cbegin() + pos + 1),
+                     this->crend(), not_in_view(v));
+    if (p == this->crend()) {
+      return npos;
+    }
+    return static_cast<size_type>(this->crend() - p - 1);
   }
 
   template<typename CharT, typename Traits>

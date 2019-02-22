@@ -51,7 +51,8 @@ namespace mgis {
 
     boost::python::object wrapInNumPyArray(mgis::span<double>& v,
                                            const size_type nc) {
-      npy_intp dims[2] = {v.size() / nc, nc};
+      npy_intp dims[2] = {static_cast<npy_intp>(v.size() / nc),
+			  static_cast<npy_intp>(nc)};
       auto* const arr =
           PyArray_SimpleNewFromData(2, dims, NPY_DOUBLE, v.data());
       boost::python::handle<> handle(arr);
@@ -76,7 +77,9 @@ namespace mgis {
     boost::python::object wrapInNumPyArray(mgis::span<double>& v,
                                            const size_type nl,
                                            const size_type nc) {
-      npy_intp dims[3] = {v.size() / (nc * nl), nl, nc};
+      npy_intp dims[3] = {static_cast<npy_intp>(v.size() / (nc * nl)),
+			  static_cast<npy_intp>(nl),
+			  static_cast<npy_intp>(nc)};
       auto* const arr =
           PyArray_SimpleNewFromData(3, dims, NPY_DOUBLE, v.data());
       boost::python::handle<> handle(arr);

@@ -44,7 +44,7 @@ typedef struct mgis_bv_MaterialStateManager mgis_bv_MaterialStateManager;
 
 typedef enum {
   MGIS_BV_LOCAL_STORAGE = 0,
-  MGIS_BV_EXTERNAL_STORAGE = 1,
+  MGIS_BV_EXTERNAL_STORAGE = 1
 } mgis_bv_MaterialStateManagerStorageMode;
 /*!
  * \brief bind the gradients to the given array
