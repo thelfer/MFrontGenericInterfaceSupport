@@ -205,13 +205,14 @@ endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 #detecting TFEL and MFront
 include(cmake/modules/tfel.cmake)
 
-#documentations
-add_custom_target(doc)
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/docs)
-
 # add a target to generate API documentation with Doxygen
 option(enable-doxygen-doc "enable generation of the Doxygen documentation" OFF)
+
+#documentations
+
 if(enable-doxygen-doc)
+  add_custom_target(doc)
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/docs)
   find_package(Doxygen)
   if(DOXYGEN_FOUND)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
