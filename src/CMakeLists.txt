@@ -17,7 +17,7 @@ mgis_library(MFrontGenericInterface SHARED
       Model.cxx)
 target_include_directories(MFrontGenericInterface
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
 if(UNIX)
   if(Threads_FOUND)
