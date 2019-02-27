@@ -15,6 +15,7 @@ function(add_mfront_behaviour_sources lib  file)
 endfunction(add_mfront_behaviour_sources)
 
 function(mfront_behaviours_check_library name)
+  unset(SOURCES)    # Potentially set on the caller side.
   set ( _CMD SOURCES )
   set ( _SOURCES )
   set ( _DEPENDENCIES )
