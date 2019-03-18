@@ -121,7 +121,7 @@ int main(){
   auto b = mgis::behaviour::load(library, "StandardElastoViscoPlasticityPlasticityTest11",
     // auto b = mgis::behaviour::load(library, "Elasticity",
                                  mgis::behaviour::Hypothesis::TRIDIMENSIONAL);
-  auto m = mgis::fenics::NonLinearMaterial(u,element_t,element_s,b);
+  mgis::fenics::NonLinearMaterial m(u,element_t,element_s,b);
   // setMaterialProperty(m.s0,"YoungModulus", 160e9);
   // setMaterialProperty(m.s1,"YoungModulus", 160e9);
   // setMaterialProperty(m.s0,"PoissonRatio", 0.3);
@@ -157,7 +157,7 @@ int main(){
   mgis::size_type steps = 100;
   double dt = 0.01;
   while (step < steps) {
-    auto extract = [](const std::vector<double> v) {
+    auto extract = [](const mgis::span<double>& v) {
       return std::array<double, 6>{v[0], v[1], v[2], v[3], v[4], v[5]};
     };
     m.setTimeIncrement(dt);

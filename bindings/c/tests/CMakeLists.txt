@@ -4,25 +4,25 @@ add_executable(MFrontGenericBehaviourInterfaceTest-c
 target_compile_definitions(MFrontGenericBehaviourInterfaceTest-c
   PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
 target_link_libraries(MFrontGenericBehaviourInterfaceTest-c
-  PRIVATE MFrontGenericInterface-c)
+  PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
 add_executable(MFrontGenericBehaviourInterfaceTest2-c
   EXCLUDE_FROM_ALL
   MFrontGenericBehaviourInterfaceTest2-c.c)
 target_link_libraries(MFrontGenericBehaviourInterfaceTest2-c
-  PRIVATE MFrontGenericInterface-c)
+  PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
 add_executable(BehaviourDataTest-c
   EXCLUDE_FROM_ALL
   BehaviourDataTest-c.c)
 target_link_libraries(BehaviourDataTest-c
-  PRIVATE MFrontGenericInterface-c)
+  PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
 add_executable(StateTest-c
   EXCLUDE_FROM_ALL StateTest-c.c)
 target_link_libraries(StateTest-c
-  PRIVATE MFrontGenericInterface-c)
+  PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
 add_executable(StateTest2-c
   EXCLUDE_FROM_ALL StateTest2-c.c)
 target_link_libraries(StateTest2-c
-  PRIVATE MFrontGenericInterface-c)
+  PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
 
 add_executable(BoundsCheckTest-c
   EXCLUDE_FROM_ALL
@@ -30,7 +30,7 @@ add_executable(BoundsCheckTest-c
 target_compile_definitions(BoundsCheckTest-c
   PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
 target_link_libraries(BoundsCheckTest-c
-  PRIVATE MFrontGenericInterface-c)
+  PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
 
 add_executable(ParameterTest-c
   EXCLUDE_FROM_ALL
@@ -38,23 +38,23 @@ add_executable(ParameterTest-c
 target_compile_definitions(ParameterTest-c
   PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
 target_link_libraries(ParameterTest-c
-  PRIVATE MFrontGenericInterface-c)
+  PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
 
 add_executable(IntegrateTest-c
   EXCLUDE_FROM_ALL
   IntegrateTest-c.c)
 target_link_libraries(IntegrateTest-c
-  PRIVATE MFrontGenericInterface-c)
+  PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
 add_executable(IntegrateTest2-c
   EXCLUDE_FROM_ALL
   IntegrateTest2-c.c)
 target_link_libraries(IntegrateTest2-c
-  PRIVATE MFrontGenericInterface-c)
+  PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
 add_executable(IntegrateTest3-c
   EXCLUDE_FROM_ALL
   IntegrateTest3-c.c)
 target_link_libraries(IntegrateTest3-c
-  PRIVATE MFrontGenericInterface-c)
+  PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
 
 add_test(NAME MFrontGenericBehaviourInterfaceTest-c
  COMMAND MFrontGenericBehaviourInterfaceTest-c

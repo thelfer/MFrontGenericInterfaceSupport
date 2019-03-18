@@ -99,7 +99,7 @@ int main() {
 
   auto b = mgis::behaviour::load(library, "Elasticity",
                                  mgis::behaviour::Hypothesis::TRIDIMENSIONAL);
-  auto m = mgis::fenics::NonLinearMaterial(u, element_t, element_s, b);
+  mgis::fenics::NonLinearMaterial m(u, element_t, element_s, b);
   const auto yg = 150e9;
   const auto nu = 0.3;
   setMaterialProperty(m.s0, "YoungModulus", yg);
@@ -137,7 +137,7 @@ int main() {
   mgis::size_type steps = 10;
   double dt = 0.1;
   while (step < steps) {
-    auto extract = [](const std::vector<double> v) {
+    auto extract = [](const mgis::span<double>& v) {
       return std::array<double, 6>{v[0], v[1], v[2], v[3], v[4], v[5]};
     };
     m.setTimeIncrement(dt);

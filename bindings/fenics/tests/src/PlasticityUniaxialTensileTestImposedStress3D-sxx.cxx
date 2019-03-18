@@ -104,7 +104,7 @@ int main(){
 
   auto b = mgis::behaviour::load(library, "Plasticity",
                                  mgis::behaviour::Hypothesis::TRIDIMENSIONAL);
-  auto m = mgis::fenics::NonLinearMaterial(u,element_t,element_s,b);
+  mgis::fenics::NonLinearMaterial m(u,element_t,element_s,b);
   setExternalStateVariable(m.s0,"Temperature", 293.15);
   setExternalStateVariable(m.s1,"Temperature", 293.15);
   

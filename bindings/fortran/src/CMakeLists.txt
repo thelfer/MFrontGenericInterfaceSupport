@@ -8,4 +8,4 @@ target_include_directories(MFrontGenericInterface-fortran
 	PRIVATE "${CMAKE_SOURCE_DIR}/include"
 	PRIVATE "${CMAKE_SOURCE_DIR}/bindings/c/include")
 target_link_libraries(MFrontGenericInterface-fortran
-   PUBLIC MFrontGenericInterface-c)
+   PUBLIC MFrontGenericInterface-c MFrontGenericInterface)
