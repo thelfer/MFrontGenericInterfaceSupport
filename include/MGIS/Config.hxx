@@ -17,6 +17,9 @@
 
 #include"MGIS/Config-c.h"
 
+#define MGIS_INLINE inline
+#define MGIS_NORETURN [[noreturn]]
+
 namespace mgis {
 
   //! a simple alias

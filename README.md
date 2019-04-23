@@ -1,6 +1,6 @@
 # MFrontGenericInterfaceSupport
 
-This project aims at proving tools (functions, classes, bindings,
+This project aims at providing tools (functions, classes, bindings,
 etc...) to handle behaviours written using `MFront` generic interface.
 For information about `MFront`, see <http://tfel.sourceforge.net>.
 

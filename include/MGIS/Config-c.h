@@ -63,9 +63,6 @@ typedef double mgis_real;
 //! alias to the index type type used in the library
 typedef size_t mgis_size_type; 
 
-#define MGIS_INLINE inline
-#define MGIS_NORETURN [[noreturn]]
-
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #if defined MFrontGenericInterface_EXPORTS
 #define MGIS_EXPORT MGIS_VISIBILITY_EXPORT

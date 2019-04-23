@@ -10,7 +10,7 @@ option(enable-portable-build "produce binary that can be shared between various 
 option(enable-c-bindings "enable c bindings support")
 
 # fortran-bindings (placed before compiler detection)
-option(enable-fortran-bindings "enable fortran bindings support" ON)
+option(enable-fortran-bindings "enable fortran bindings support" OFF)
 if(enable-fortran-bindings)
   if(NOT enable-c-bindings)
     message(FATAL_ERROR "c-bindings must be enabled for fortran bindings.")
