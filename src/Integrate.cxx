@@ -130,9 +130,14 @@ namespace mgis {
       auto r = int{1};
       for (auto i = b; i != e ; ++i) {
         BehaviourDataView v;
+	auto K = real{}; 
         v.rdt = real(1);
         v.dt = dt;
-        v.K = m.K.data() + m.K_stride * i;
+	if(it!=IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR){
+	  v.K = m.K.data() + m.K_stride * i;
+	} else {
+	  v.K = &K;
+	}
         eval(ws.mps0, vmps0, i);
         eval(ws.mps1, vmps1, i);
         eval(ws.esvs0, vesvs0, i);
@@ -156,6 +161,9 @@ namespace mgis {
         v.s0.external_state_variables = ws.esvs0.data();
         v.s1.external_state_variables = ws.esvs1.data();
         v.K[0] = static_cast<int>(it);
+	if(it!=IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR){
+	  v.K[1] = 0;
+	}
         switch (integrate(v, m.b)) {
           case 1:
             r = std::min(r, 1);

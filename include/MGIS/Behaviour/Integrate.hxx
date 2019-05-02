@@ -80,6 +80,32 @@ namespace mgis {
      *
      * \param[in,out] d: behaviour data
      * \param[in,out] b: behaviour
+     *
+
+     * \note: the type of integration to be performed, must be
+     * explicitely set in d.K[0], as follows (see the IntegrationType finite ):
+     * - d.K[0]<-2.5, one computes a prediction and request the tangent operator
+     * - -2.5<d.K[0]<-1.5: one computes a prediction and request the secant operator
+     * - -1.5<d.K[0]<-0.5: one computes a prediction and request the elastic operator
+     * - -0.5<d.K[0]< 0.5: one integrates the behaviour over the time step 
+     *                     but does not compute an stiffness tensor
+     * -  0.5<d.K[0]< 1.5: one integrates the behaviour over the time step 
+     *                     and computes an elastic stiffness
+     * -  1.5<d.K[0]< 2.5: one integrates the behaviour over the time step 
+     *                     and computes a secant stiffness
+     * -  2.5<d.K[0]< 3.5: one integrates the behaviour over the time step 
+     *                     and computes a tangent stiffness
+     * -  2.5<d.K[0]< 3.5: one integrates the behaviour over the time step 
+     *                     and computes a consistent tangent stiffness
+     *
+     * In finite strain, if one request any stiffness matrix, d.K[1]
+     * must be set as follows to choose the tangent operator, as follows:
+     * -       d.K[1] < 0.5: returns the derivative of the Cauchy stress
+     *                       with respect to the deformation gradient.
+     * - 0.5 < d.K[1] < 1.5: returns the derivative of the second Piola-Kirchhoff stress
+     *                       with respect to the green lagrange strain.
+     * - 1.5 < d.K[1] < 2.5: returns the derivative of the first Piola-Kirchhoff stress 
+     *                       with respect to the deformation gradient.
      */
     int integrate(BehaviourDataView&, const Behaviour&);
 
