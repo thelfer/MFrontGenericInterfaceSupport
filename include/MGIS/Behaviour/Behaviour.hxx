@@ -26,9 +26,38 @@ namespace mgis {
   namespace behaviour {
 
     /*!
+     * \brief option available for finite strain behaviours
+     */
+    struct FiniteStrainBehaviourOptions {
+      //! \brief stress measure requested for finite strain behaviours
+      enum {
+        CAUCHY,  //!< Cauchy stress
+        PK2,     //!< Second Piola-Kirchoff stress
+        PK1      //!< First Piola-Kirchoff stress
+      } stress_measure = CAUCHY;
+      /*!
+       * \brief type of finite strain tangent operator requested for finite
+       * strain behaviours
+       */
+      enum {
+        DSIG_DF, /*!< derivative of the Cauchy stress with respect to the
+                      deformation gradient */
+        DS_DEGL, /*!< derivative of the second Piola-Kirchoff stress with
+                      respect to the Green-Lagrange strain */
+        DPK1_DF  /*!< derivative of the first Piola-Kirchoff stress with
+                      respect to the deformation gradient  */
+      } tangent_operator = DSIG_DF;
+    };  // end of struct FiniteStrainBehaviourOptions
+
+    /*!
      * \brief structure describing a behaviour
      */
     struct MGIS_EXPORT Behaviour {
+      /*!
+       * \brief maximum number of behaviour options, whatever the kind of
+       * behaviour treated.
+       */
+      static constexpr const mgis::size_type nopts = 2;
       //! \behaviour symmetry
       enum Symmetry { ISOTROPIC, ORTHOTROPIC };
       //! \brief constructor
@@ -95,6 +124,31 @@ namespace mgis {
       std::vector<std::string> iparams;
       //! unsigned short parameters
       std::vector<std::string> usparams;
+      /*!
+       * \brief behaviour options
+       *
+       * This is currently only meaningfull for finite strain
+       * behaviours where the options stores:
+       * - the stress measure used
+       * - the consistent tangent operator expected
+       *
+       * For finite strain behaviours, options[1] holds the stress measure
+       * used:
+       * - if options[1] < 0.5, the Cauchy stress is used
+       * - if 0.5 < options[1] < 1.5, the second Piola-Kirchoff stress is used
+       * - if 1.5 < options[1] < 2.5, the first Piola-Kirchoff stress is used
+       *
+       * For finite strain behaviours, options[2] holds the consitent tangent
+       * operator returned by the behaviour:
+       * - if options[2]<0.5, the derivative of the Cauchy stress with respect
+       *   to the deformation gradient is returned
+       * - if 0.5<options[2]<1.5, the derivative of the second Piola-Kirchoff
+       *   stress with respect to the Green-Lagrange strain
+       *   is returned
+       * - if 1.5<options[2]<2.5, the derivative of the first Piola-Kirchoff
+       *   stress with respect to the deformation gradient is returned
+       */
+      std::vector<mgis::real> options;
     };  // end of struct Behaviour
 
     /*!
@@ -107,6 +161,20 @@ namespace mgis {
      * meaningfull here
      */
     MGIS_EXPORT Behaviour load(const std::string &,
+                               const std::string &,
+                               const Hypothesis);
+    /*!
+     * \brief load the description of a finite strain behaviour from a library
+     * \param[in] o: options
+     * \param[in] l: library name
+     * \param[in] b: behaviour name
+     * \param[in] h: modelling hypothesis
+     * \return the behaviour description
+     * \note: use of `std::string` rather than `mgis::string_view` is
+     * meaningfull here
+     */
+    MGIS_EXPORT Behaviour load(const FiniteStrainBehaviourOptions &,
+                               const std::string &,
                                const std::string &,
                                const Hypothesis);
     /*!

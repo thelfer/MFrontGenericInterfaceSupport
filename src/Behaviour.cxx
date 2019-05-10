@@ -181,6 +181,9 @@ namespace mgis {
         }
         raise("unsupported behaviour type");
       }();
+      if(d.btype==Behaviour::STANDARDFINITESTRAINBEHAVIOUR){
+        d.options.resize(2, mgis::real(0));
+      }
       // behaviour kinematic
       d.kinematic = [&l, &b, &lm, h, &raise] {
         /* - 0: undefined kinematic
@@ -346,6 +349,51 @@ namespace mgis {
       return d;
     }  // end of load
 
+    Behaviour load(const FiniteStrainBehaviourOptions &o,
+                   const std::string &l,
+                   const std::string &b,
+                   const Hypothesis h) {
+      auto d = load(l, b, h);
+      if (d.btype != Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
+        mgis::raise(
+            "mgis::behaviour::load: "
+            "This method shall only be called for finite strain behaviour");
+      }
+      if (o.stress_measure == FiniteStrainBehaviourOptions::CAUCHY) {
+        d.options[1] = mgis::real(0);
+      } else if (o.stress_measure == FiniteStrainBehaviourOptions::PK2) {
+        d.options[1] = mgis::real(1);
+        d.thermodynamic_forces[0] = {"SecondPiolaKirchhoffStress",
+                                     Variable::STENSOR};
+      } else if (o.stress_measure == FiniteStrainBehaviourOptions::PK1) {
+        d.options[1] = mgis::real(2);
+        d.thermodynamic_forces[0] = {"FirstPiolaKirchhoffStress",
+                                     Variable::TENSOR};
+      } else {
+        mgis::raise(
+            "mgis::behaviour::load: "
+            "interal error (unsupported stress measure)");
+      }
+      if (o.tangent_operator == FiniteStrainBehaviourOptions::DSIG_DF) {
+        d.options[2] = mgis::real(0);
+
+      } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DS_DEGL) {
+        d.options[2] = mgis::real(1);
+        d.to_blocks[0] = {{"SecondPiolaKirchhoffStress", Variable::STENSOR},
+                          {"GreenLagrangeStrain", Variable::STENSOR}};
+
+      } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DPK1_DF) {
+        d.options[2] = mgis::real(2);
+        d.to_blocks[0] = {{"FirstPiolaKirchhoffStress", Variable::TENSOR},
+                          {"DeformationGradient", Variable::TENSOR}};
+      } else {
+        mgis::raise(
+            "mgis::behaviour::load: "
+            "interal error (unsupported stress measure)");
+      }
+      return d;
+    }  // end of load
+
     mgis::size_type getTangentOperatorArraySize(const Behaviour &b) {
       auto s = mgis::size_type{};
       for (const auto &block : b.to_blocks) {
@@ -353,105 +401,104 @@ namespace mgis {
              getVariableSize(block.second, b.hypothesis);
       }
       return s;
-    }  // end of getTangentOperatorArraySize
-    
+      }  // end of getTangentOperatorArraySize
 
-    void setParameter(const Behaviour &b,
-                      const std::string &n,
-                      const double v) {
-      auto &lm = mgis::LibrariesManager::get();
-      lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
-    } // end of setParameter
+      void setParameter(const Behaviour &b, const std::string &n,
+                        const double v) {
+        auto &lm = mgis::LibrariesManager::get();
+        lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
+      }  // end of setParameter
 
-    void setParameter(const Behaviour &b,
-                      const std::string &n,
-                      const int v) {
-      auto &lm = mgis::LibrariesManager::get();
-      lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
-    } // end of setParameter
+      void setParameter(const Behaviour &b, const std::string &n, const int v) {
+        auto &lm = mgis::LibrariesManager::get();
+        lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
+      }  // end of setParameter
 
-    void setParameter(const Behaviour &b,
-                      const std::string &n,
-                      const unsigned short v) {
-      auto &lm = mgis::LibrariesManager::get();
-      lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
-    } // end of setParameter
+      void setParameter(const Behaviour &b, const std::string &n,
+                        const unsigned short v) {
+        auto &lm = mgis::LibrariesManager::get();
+        lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
+      }  // end of setParameter
 
-    template <>
-    double getParameterDefaultValue<double>(const Behaviour &b,
-                                            const std::string &n) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.getParameterDefaultValue(b.library, b.behaviour, b.hypothesis,
-                                         n);
-    }  // end of getParameterDefaultValue<double>
+      template <>
+      double getParameterDefaultValue<double>(const Behaviour &b,
+                                              const std::string &n) {
+        auto &lm = mgis::LibrariesManager::get();
+        return lm.getParameterDefaultValue(b.library, b.behaviour, b.hypothesis,
+                                           n);
+      }  // end of getParameterDefaultValue<double>
 
-    template <>
-    int getParameterDefaultValue<int>(const Behaviour &b,
-                                      const std::string &n) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.getIntegerParameterDefaultValue(b.library, b.behaviour,
-                                                b.hypothesis, n);
-    }  // end of getParameterDefaultValue<int>
+      template <>
+      int getParameterDefaultValue<int>(const Behaviour &b,
+                                        const std::string &n) {
+        auto &lm = mgis::LibrariesManager::get();
+        return lm.getIntegerParameterDefaultValue(b.library, b.behaviour,
+                                                  b.hypothesis, n);
+      }  // end of getParameterDefaultValue<int>
 
-    template <>
-    unsigned short getParameterDefaultValue<unsigned short>(
-        const Behaviour &b, const std::string &n) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.getUnsignedShortParameterDefaultValue(b.library, b.behaviour,
-                                                      b.hypothesis, n);
-    }  // end of getParameterDefaultValue<unsigned short>
+      template <>
+      unsigned short getParameterDefaultValue<unsigned short>(
+          const Behaviour &b, const std::string &n) {
+        auto &lm = mgis::LibrariesManager::get();
+        return lm.getUnsignedShortParameterDefaultValue(b.library, b.behaviour,
+                                                        b.hypothesis, n);
+      }  // end of getParameterDefaultValue<unsigned short>
 
-    bool hasBounds(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.hasBounds(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of hasBounds
+      bool hasBounds(const Behaviour &b, const std::string &v) {
+        auto &lm = mgis::LibrariesManager::get();
+        return lm.hasBounds(b.library, b.behaviour, b.hypothesis, v);
+      }  // end of hasBounds
 
-    bool hasLowerBound(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.hasLowerBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of hasLowerBound
+      bool hasLowerBound(const Behaviour &b, const std::string &v) {
+        auto &lm = mgis::LibrariesManager::get();
+        return lm.hasLowerBound(b.library, b.behaviour, b.hypothesis, v);
+      }  // end of hasLowerBound
 
-    bool hasUpperBound(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.hasUpperBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of hasUpperBound
+      bool hasUpperBound(const Behaviour &b, const std::string &v) {
+        auto &lm = mgis::LibrariesManager::get();
+        return lm.hasUpperBound(b.library, b.behaviour, b.hypothesis, v);
+      }  // end of hasUpperBound
 
-    long double getLowerBound(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.getLowerBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of getLowerBound
+      long double getLowerBound(const Behaviour &b, const std::string &v) {
+        auto &lm = mgis::LibrariesManager::get();
+        return lm.getLowerBound(b.library, b.behaviour, b.hypothesis, v);
+      }  // end of getLowerBound
 
-    long double getUpperBound(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.getUpperBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of getUpperBound
+      long double getUpperBound(const Behaviour &b, const std::string &v) {
+        auto &lm = mgis::LibrariesManager::get();
+        return lm.getUpperBound(b.library, b.behaviour, b.hypothesis, v);
+      }  // end of getUpperBound
 
-    bool hasPhysicalBounds(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.hasPhysicalBounds(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of hasPhysicalBounds
+      bool hasPhysicalBounds(const Behaviour &b, const std::string &v) {
+        auto &lm = mgis::LibrariesManager::get();
+        return lm.hasPhysicalBounds(b.library, b.behaviour, b.hypothesis, v);
+      }  // end of hasPhysicalBounds
 
-    bool hasLowerPhysicalBound(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.hasLowerPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of hasLowerPhysicalBound
+      bool hasLowerPhysicalBound(const Behaviour &b, const std::string &v) {
+        auto &lm = mgis::LibrariesManager::get();
+        return lm.hasLowerPhysicalBound(b.library, b.behaviour, b.hypothesis,
+                                        v);
+      }  // end of hasLowerPhysicalBound
 
-    bool hasUpperPhysicalBound(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.hasUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of hasUpperPhysicalBound
+      bool hasUpperPhysicalBound(const Behaviour &b, const std::string &v) {
+        auto &lm = mgis::LibrariesManager::get();
+        return lm.hasUpperPhysicalBound(b.library, b.behaviour, b.hypothesis,
+                                        v);
+      }  // end of hasUpperPhysicalBound
 
-    long double getLowerPhysicalBound(const Behaviour &b,
-                                      const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.getLowerPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of getLowerPhysicalBound
+      long double getLowerPhysicalBound(const Behaviour &b,
+                                        const std::string &v) {
+        auto &lm = mgis::LibrariesManager::get();
+        return lm.getLowerPhysicalBound(b.library, b.behaviour, b.hypothesis,
+                                        v);
+      }  // end of getLowerPhysicalBound
 
-    long double getUpperPhysicalBound(const Behaviour &b,
-                                      const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.getUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of getUpperPhysicalBound
+      long double getUpperPhysicalBound(const Behaviour &b,
+                                        const std::string &v) {
+        auto &lm = mgis::LibrariesManager::get();
+        return lm.getUpperPhysicalBound(b.library, b.behaviour, b.hypothesis,
+                                        v);
+      }  // end of getUpperPhysicalBound
 
   }  // end of namespace behaviour
 

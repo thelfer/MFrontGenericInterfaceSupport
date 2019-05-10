@@ -46,7 +46,7 @@ namespace mgis {
       //! copy assignement
       BehaviourData& operator=(const BehaviourData&);
       //! time increment
-      real dt;
+      mgis::real dt;
       /*!
        * \brief the stiffness matrix.
        * On input, the first element of K must contain the type of type

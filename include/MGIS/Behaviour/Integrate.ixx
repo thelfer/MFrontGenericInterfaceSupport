@@ -14,6 +14,7 @@
 #ifndef LIB_MGIS_BEHAVIOUR_INTEGRATE_IXX
 #define LIB_MGIS_BEHAVIOUR_INTEGRATE_IXX
 
+#include <algorithm>
 #include "MGIS/Behaviour/Behaviour.hxx"
 
 namespace mgis{
@@ -21,6 +22,7 @@ namespace mgis{
   namespace behaviour {
 
     inline int integrate(BehaviourDataView& d, const Behaviour& b) {
+      std::copy(b.options.begin(),b.options.end(),d.K+1);
       return b.b(&d);
     }  // end of integrate
 
