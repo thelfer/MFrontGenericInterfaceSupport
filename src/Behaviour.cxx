@@ -360,13 +360,13 @@ namespace mgis {
             "This method shall only be called for finite strain behaviour");
       }
       if (o.stress_measure == FiniteStrainBehaviourOptions::CAUCHY) {
-        d.options[1] = mgis::real(0);
+        d.options[0] = mgis::real(0);
       } else if (o.stress_measure == FiniteStrainBehaviourOptions::PK2) {
-        d.options[1] = mgis::real(1);
+        d.options[0] = mgis::real(1);
         d.thermodynamic_forces[0] = {"SecondPiolaKirchhoffStress",
                                      Variable::STENSOR};
       } else if (o.stress_measure == FiniteStrainBehaviourOptions::PK1) {
-        d.options[1] = mgis::real(2);
+        d.options[0] = mgis::real(2);
         d.thermodynamic_forces[0] = {"FirstPiolaKirchhoffStress",
                                      Variable::TENSOR};
       } else {
@@ -375,15 +375,15 @@ namespace mgis {
             "internal error (unsupported stress measure)");
       }
       if (o.tangent_operator == FiniteStrainBehaviourOptions::DSIG_DF) {
-        d.options[2] = mgis::real(0);
+        d.options[1] = mgis::real(0);
 
       } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DS_DEGL) {
-        d.options[2] = mgis::real(1);
+        d.options[1] = mgis::real(1);
         d.to_blocks[0] = {{"SecondPiolaKirchhoffStress", Variable::STENSOR},
                           {"GreenLagrangeStrain", Variable::STENSOR}};
 
       } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DPK1_DF) {
-        d.options[2] = mgis::real(2);
+        d.options[1] = mgis::real(2);
         d.to_blocks[0] = {{"FirstPiolaKirchhoffStress", Variable::TENSOR},
                           {"DeformationGradient", Variable::TENSOR}};
       } else {
