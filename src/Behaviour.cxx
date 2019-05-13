@@ -372,7 +372,7 @@ namespace mgis {
       } else {
         mgis::raise(
             "mgis::behaviour::load: "
-            "interal error (unsupported stress measure)");
+            "internal error (unsupported stress measure)");
       }
       if (o.tangent_operator == FiniteStrainBehaviourOptions::DSIG_DF) {
         d.options[2] = mgis::real(0);
@@ -389,7 +389,7 @@ namespace mgis {
       } else {
         mgis::raise(
             "mgis::behaviour::load: "
-            "interal error (unsupported stress measure)");
+            "internal error (unsupported tangent operator)");
       }
       return d;
     }  // end of load

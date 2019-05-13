@@ -10,6 +10,11 @@ add_executable(MFrontGenericBehaviourInterfaceTest2-c
   MFrontGenericBehaviourInterfaceTest2-c.c)
 target_link_libraries(MFrontGenericBehaviourInterfaceTest2-c
   PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
+add_executable(MFrontGenericBehaviourInterfaceTest3-c
+  EXCLUDE_FROM_ALL
+  MFrontGenericBehaviourInterfaceTest3-c.c)
+target_link_libraries(MFrontGenericBehaviourInterfaceTest3-c
+  PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
 add_executable(BehaviourDataTest-c
   EXCLUDE_FROM_ALL
   BehaviourDataTest-c.c)
@@ -79,6 +84,19 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;$ENV{PATH}")
 else((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST MFrontGenericBehaviourInterfaceTest2-c
+    PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME MFrontGenericBehaviourInterfaceTest3-c
+ COMMAND MFrontGenericBehaviourInterfaceTest3-c
+ "$<TARGET_FILE:BehaviourTest>" "FiniteStrainSingleCrystal")
+add_dependencies(check MFrontGenericBehaviourInterfaceTest3-c)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST MFrontGenericBehaviourInterfaceTest3-c
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;$ENV{PATH}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST MFrontGenericBehaviourInterfaceTest3-c
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 

@@ -30,7 +30,7 @@ namespace mgis {
      */
     struct FiniteStrainBehaviourOptions {
       //! \brief stress measure requested for finite strain behaviours
-      enum {
+      enum StressMeasure {
         CAUCHY,  //!< Cauchy stress
         PK2,     //!< Second Piola-Kirchoff stress
         PK1      //!< First Piola-Kirchoff stress
@@ -39,7 +39,7 @@ namespace mgis {
        * \brief type of finite strain tangent operator requested for finite
        * strain behaviours
        */
-      enum {
+      enum TangentOperator {
         DSIG_DF, /*!< derivative of the Cauchy stress with respect to the
                       deformation gradient */
         DS_DEGL, /*!< derivative of the second Piola-Kirchoff stress with
@@ -153,6 +153,7 @@ namespace mgis {
 
     /*!
      * \brief load the description of a behaviour from a library
+     *
      * \param[in] l: library name
      * \param[in] b: behaviour name
      * \param[in] h: modelling hypothesis
@@ -165,6 +166,12 @@ namespace mgis {
                                const Hypothesis);
     /*!
      * \brief load the description of a finite strain behaviour from a library
+     *
+     * \note This method can also be used to load a finite strain behaviour.
+     * In this case, the default options are used (the stress measure is Cauchy,
+     * the tangent operator is the derivative of the Cauchy stress with respect
+     * to the deformation gradient).
+     *
      * \param[in] o: options
      * \param[in] l: library name
      * \param[in] b: behaviour name

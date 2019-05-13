@@ -34,6 +34,17 @@ extern "C" {
 #endif /*  __cplusplus */
 
 #ifdef __cplusplus
+using mgis_bv_FiniteStrainBehaviourOptions =
+    mgis::behaviour::FiniteStrainBehaviourOptions;
+#else
+/*!
+ * \brief an opaque structure which can only be accessed through the MGIS' API.
+ */
+typedef struct mgis_bv_FiniteStrainBehaviourOptions
+    mgis_bv_FiniteStrainBehaviourOptions;
+#endif
+
+#ifdef __cplusplus
 using mgis_bv_Behaviour = mgis::behaviour::Behaviour;
 #else
 /*!
@@ -63,8 +74,90 @@ typedef enum {
   MGIS_BV_FINITESTRAINKINEMATIC_ETO_PK1 = 4
 } mgis_bv_BehaviourKinematic;
 
+//! available stress measures for finite strain behaviours
+typedef enum {
+  MGIS_BV_CAUCHY = 0,  //!< Cauchy stress
+  MGIS_BV_PK2 = 1,     //!< Second Piola-Kirchhoff stress
+  MGIS_BV_PK1 = 2      //!< First Piola-Kirchhoff stress
+} mgis_bv_FiniteStrainBehavourStressMeasure;
+
+//! available tangent operators for finite strain behaviours
+typedef enum {
+  MGIS_BV_DSIG_DF = 0, /*!< \brief derivative of the Cauchy stress with respect
+                        *   to the deformation gradient */
+  MGIS_BV_DS_DEGL =
+      1,              /*!< \brief derivative of the second Piola-Kirchoff stress
+                       *   with respect to the Green-Lagrange strain */
+  MGIS_BV_DPK1_DF = 2 /*!< \brief derivative of the first Piola-Kirchoff stress
+                       *   with respect to the deformation gradient  */
+} mgis_bv_FiniteStrainBehavourTangentOperator;
+
+/*!
+ * \brief allocate a new
+ * `mgis_bv_FiniteStrainBehaviourOptions` object
+ *
+ * \param[in] o: finite strain behaviour options
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_create_finite_strain_behaviour_options(
+    mgis_bv_FiniteStrainBehaviourOptions**);
+/*!
+ * \brief set the stress measure option
+ * \param[in] o: finite strain behaviour options
+ * \param[in] s: stress measure
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_finite_strain_behaviour_options_set_stress_measure(
+    mgis_bv_FiniteStrainBehaviourOptions* const,
+    const mgis_bv_FiniteStrainBehavourStressMeasure);
+/*!
+ * \brief set the stress measure option
+ * \param[in] o: finite strain behaviour options
+ * \param[in] s: stress measure
+ * s must be have the following values:
+ * - `CauchyStress` (or `CAUCHY`)
+ * - `SecondPiolaKirchhoffStress` (or `PK2` or `S`)
+ * - `FirstPiolaKirchhoffStress` (or `PK1`)
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_finite_strain_behaviour_options_set_stress_measure_by_string(
+    mgis_bv_FiniteStrainBehaviourOptions* const, const char* const);
+/*!
+ * \brief set the stress tangent operator
+ * \param[in] o: finite strain behaviour options
+ * \param[in] t: tangent operator
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_finite_strain_behaviour_options_set_tangent_operator(
+    mgis_bv_FiniteStrainBehaviourOptions* const,
+    const mgis_bv_FiniteStrainBehavourTangentOperator);
+/*!
+ * \brief set the stress tangent operator
+ * \param[in] o: finite strain behaviour options
+ * \param[in] t: tangent operator
+ * t must be have the following values:
+ * - `DSIG_DF` (or `DCAUCHY_DF`)
+ * - `DS_DEGL`
+ * - `DPK1_DF`
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_finite_strain_behaviour_options_set_tangent_operator_by_string(
+    mgis_bv_FiniteStrainBehaviourOptions* const, const char* const);
+/*!
+ * \brief free the ressources associated with a
+ * `mgis_bv_FiniteStrainBehaviourOptions` object
+ *
+ * \param[in] o: finite strain behaviour options
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_free_finite_strain_behaviour_options(
+    mgis_bv_FiniteStrainBehaviourOptions**);
 /*!
  * \brief load a behaviour
+ *
+ * \note This method can also be used to load a finite strain behaviour.
+ * In this case, the default options are used (the stress measure is Cauchy,
+ * the tangent operator is the derivative of the Cauchy stress with respect to
+ * the deformation gradient).
+ *
  * \param[out] ptr: behaviour
  * \param[in] l: library name
  * \param[in] b: behaviour name
@@ -74,6 +167,20 @@ MGIS_C_EXPORT mgis_status mgis_bv_load_behaviour(mgis_bv_Behaviour**,
                                                  const char* const,
                                                  const char* const,
                                                  const char* const);
+/*!
+ * \brief load a finite strain behaviour
+ * \param[out] ptr: behaviour
+ * \param[in] o: options
+ * \param[in] l: library name
+ * \param[in] b: behaviour name
+ * \param[in] h: hypothesis
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_load_finite_strain_behaviour(
+    mgis_bv_Behaviour**,
+    const mgis_bv_FiniteStrainBehaviourOptions* const,
+    const char* const,
+    const char* const,
+    const char* const);
 /*!
  * \brief retrieve the size of an array able to contain all the values of the
  * tangent operator

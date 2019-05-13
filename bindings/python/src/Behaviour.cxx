@@ -120,10 +120,14 @@ static boost::python::list Behaviour_getUnsignedShortParameters(
 }  // end of Behaviour_getUnsignedShortParameters
 
 void declareBehaviour() {
+  using mgis::behaviour::FiniteStrainBehaviourOptions;
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::Hypothesis;
   Behaviour (*load_ptr)(const std::string&, const std::string&,
                         const Hypothesis) = &mgis::behaviour::load;
+  Behaviour (*load_ptr2)(const FiniteStrainBehaviourOptions&,
+			 const std::string&, const std::string&,
+			 const Hypothesis) = &mgis::behaviour::load;
   void (*setParameter1)(const Behaviour&, const std::string&, const double) =
       &mgis::behaviour::setParameter;
   void (*setParameter2)(const Behaviour&, const std::string&, const int) =
@@ -196,6 +200,26 @@ void declareBehaviour() {
              Behaviour::Kinematic::FINITESTRAINKINEMATIC_ETO_PK1)
       .value("FiniteStrainKinematic_Eto_PK1",
              Behaviour::Kinematic::FINITESTRAINKINEMATIC_ETO_PK1);
+  // wrapping the FiniteStrainBehaviourOptions::StressMeasure enum
+  boost::python::enum_<FiniteStrainBehaviourOptions::StressMeasure>("FiniteStrainBehaviourOptionsStressMeasure")
+    .value("CAUCHY",FiniteStrainBehaviourOptions::CAUCHY)
+    .value("PK1",FiniteStrainBehaviourOptions::PK1)
+    .value("PK2",FiniteStrainBehaviourOptions::PK2)
+    ;
+  // wrapping the FiniteStrainBehaviourOptions::TangentOperator enum
+  boost::python::enum_<FiniteStrainBehaviourOptions::TangentOperator>("FiniteStrainBehaviourOptionsTangentOperator")
+    .value("DSIG_DF",FiniteStrainBehaviourOptions::DSIG_DF)
+    .value("DCAUCHY_DF",FiniteStrainBehaviourOptions::DSIG_DF)
+    .value("DPK1_DF",FiniteStrainBehaviourOptions::DPK1_DF)
+    .value("DS_DEGL",FiniteStrainBehaviourOptions::DS_DEGL)
+    ;
+  // wrapping the FiniteStrainBehaviourOptions class
+  boost::python::class_<FiniteStrainBehaviourOptions>("FiniteStrainBehaviourOptions")
+    .def_readwrite("stress_measure", &FiniteStrainBehaviourOptions::stress_measure,
+		   "defines the stress measure")
+    .def_readwrite("tangent_operator", &FiniteStrainBehaviourOptions::tangent_operator,
+		   "defines the tangent operator")
+    ;
   // wrapping the Behaviour class
   boost::python::class_<Behaviour>("Behaviour")
       .def_readonly("library", &Behaviour::library,
@@ -268,6 +292,7 @@ void declareBehaviour() {
       .def("getUpperPhysicalBound ", getUpperPhysicalBound);
   // wrapping free functions
   boost::python::def("load", load_ptr);
+  boost::python::def("load", load_ptr2);
   boost::python::def("setParameter", setParameter1);
   boost::python::def("setIntegerParameter", setParameter2);
   boost::python::def("setUnsignedShortParameter", setParameter3);

@@ -49,6 +49,7 @@ endfunction(test_python_bindings)
 
 test_python_bindings(MFrontGenericBehaviourInterfaceTest)
 test_python_bindings(MFrontGenericBehaviourInterfaceTest2)
+test_python_bindings(MFrontGenericBehaviourInterfaceTest3)
 test_python_bindings(BoundsCheckTest)
 test_python_bindings(ParameterTest)
 test_python_bindings(IntegrateTest)

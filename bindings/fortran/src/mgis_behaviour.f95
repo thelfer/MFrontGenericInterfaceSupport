@@ -37,6 +37,20 @@ module mgis_behaviour
      enumerator :: INTEGRATION_TANGENT_OPERATOR = 3
      enumerator :: INTEGRATION_CONSISTENT_TANGENT_OPERATOR = 4
   end enum
+  enum, bind(C)
+     enumerator :: CAUCHY = 0
+     enumerator :: PK2 = 1
+     enumerator :: PK1 = 2
+  end enum
+  enum, bind(C)
+     enumerator :: DSIG_DF = 0
+     enumerator :: DS_DEGL = 1
+     enumerator :: DPK1_DF = 2
+  end enum
+  type :: FiniteStrainBehaviourOptions
+    private
+    type(c_ptr) :: ptr = c_null_ptr
+  end type FiniteStrainBehaviourOptions
   type :: Behaviour
     private
     type(c_ptr) :: ptr = c_null_ptr
@@ -66,12 +80,148 @@ module mgis_behaviour
     type(c_ptr) :: ptr = c_null_ptr
   end type MaterialDataManager
 contains
+  !
+  function create_finite_strain_behaviour_options(o) result(s)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function create_finite_strain_behaviour_options_wrapper(ptr) &
+            bind(c,name = 'mgis_bv_create_finite_strain_behaviour_options') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: ptr
+         type(mgis_status) :: r
+       end function create_finite_strain_behaviour_options_wrapper
+    end interface
+    type(FiniteStrainBehaviourOptions), intent(out) :: o
+    type(mgis_status) :: s
+    s = create_finite_strain_behaviour_options_wrapper(o%ptr)
+  end function create_finite_strain_behaviour_options
+  !
+  function finite_strain_behaviour_options_set_stress_measure(o, ss) result(s)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function fsb_opts_set_stress_measure_wrapper(o,ss) &
+            bind(c,name = 'mgis_bv_finite_strain_behaviour_options_set_stress_measure') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: o
+         integer(kind=c_int), intent(in),value :: ss
+         type(mgis_status) :: r
+       end function fsb_opts_set_stress_measure_wrapper
+    end interface
+    type(FiniteStrainBehaviourOptions), intent(in) :: o
+    integer(kind=c_int), intent(in) :: ss
+    type(mgis_status) :: s
+    s = fsb_opts_set_stress_measure_wrapper(o%ptr,ss)
+  end function finite_strain_behaviour_options_set_stress_measure
+  !
+  function finite_strain_behaviour_options_set_stress_measure_by_string(o, ss) result(s)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function fsb_opts_set_stress_measure_by_string_wrapper(o,ss) &
+            bind(c,name = 'mgis_bv_finite_strain_behaviour_options_set_stress_measure_by_string') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: o
+         character(len=1,kind=c_char), dimension(*), intent(in) :: ss
+         type(mgis_status) :: r
+       end function fsb_opts_set_stress_measure_by_string_wrapper
+    end interface
+    type(FiniteStrainBehaviourOptions), intent(in) :: o
+    character(len=*), intent(in) :: ss
+    type(mgis_status) :: s
+    write(*,*) 'finite_strain_behaviour_options_set_stress_measure_by_string: '
+    s = fsb_opts_set_stress_measure_by_string_wrapper(o%ptr, convert_fortran_string(ss))
+  end function finite_strain_behaviour_options_set_stress_measure_by_string
+  !
+  function finite_strain_behaviour_options_set_tangent_operator(o, to) result(s)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function fsb_opts_set_tangent_operator_wrapper(o,to) &
+            bind(c,name = 'mgis_bv_finite_strain_behaviour_options_set_tangent_operator') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: o
+         integer(kind=c_int), intent(in),value :: to
+         type(mgis_status) :: r
+       end function fsb_opts_set_tangent_operator_wrapper
+    end interface
+    type(FiniteStrainBehaviourOptions), intent(in) :: o
+    integer(kind=c_int), intent(in) :: to
+    type(mgis_status) :: s
+    s = fsb_opts_set_tangent_operator_wrapper(o%ptr,to)
+  end function finite_strain_behaviour_options_set_tangent_operator
+  !
+  function finite_strain_behaviour_options_set_tangent_operator_by_string(o, to) result(s)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function fsb_opts_set_tangent_operator_by_string_wrapper(o,to) &
+            bind(c,name = 'mgis_bv_finite_strain_behaviour_options_set_tangent_operator_by_string') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: o
+         character(len=1,kind=c_char), dimension(*), intent(in) :: to
+         type(mgis_status) :: r
+       end function fsb_opts_set_tangent_operator_by_string_wrapper
+    end interface
+    type(FiniteStrainBehaviourOptions), intent(in) :: o
+    character(len=*), intent(in) :: to
+    type(mgis_status) :: s
+    s = fsb_opts_set_tangent_operator_by_string_wrapper(o%ptr,convert_fortran_string(to))
+  end function finite_strain_behaviour_options_set_tangent_operator_by_string
+  !
+  function free_finite_strain_behaviour_options(ptr) result(r)
+    use, intrinsic :: iso_c_binding, only: c_associated
+    use mgis
+    implicit none
+    interface
+       function free_finite_strain_behaviour_options_wrapper(ptr) &
+            bind(c, name='mgis_bv_free_finite_strain_behaviour_options') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis
+         implicit none
+         type(c_ptr), intent(inout) :: ptr
+         type(mgis_status) :: r
+       end function free_finite_strain_behaviour_options_wrapper
+    end interface
+    type(FiniteStrainBehaviourOptions), intent(inout) :: ptr
+    type(mgis_status) :: r
+    if (c_associated(ptr%ptr)) then
+       r = free_finite_strain_behaviour_options_wrapper(ptr%ptr)
+    end if
+  end function free_finite_strain_behaviour_options
+  !
   function load_behaviour(b,l,bn,h) result(s)
     use mgis_fortran_utilities
     use mgis, only: mgis_status
     implicit none
     interface
-       function load_behaviour_wrapper(ptr,l,b,h) bind(c,name = 'mgis_bv_load_behaviour') result(r)
+       function load_behaviour_wrapper(ptr,l,b,h) &
+            bind(c,name = 'mgis_bv_load_behaviour') result(r)
          use, intrinsic :: iso_c_binding, only: c_char, c_ptr
          use mgis, only: mgis_status
          implicit none
@@ -91,6 +241,37 @@ contains
          convert_fortran_string(bn), &
          convert_fortran_string(h))
   end function load_behaviour
+  !
+  function load_finite_strain_behaviour(b,o,l,bn,h) result(s)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function load_finite_strain_behaviour_wrapper(ptr,o,l,b,h) &
+            bind(c,name = 'mgis_bv_load_finite_strain_behaviour') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_char, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: ptr
+         type(c_ptr), intent(in), value :: o
+         character(len=1,kind=c_char), dimension(*), intent(in) :: l
+         character(len=1,kind=c_char), dimension(*), intent(in) :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: h
+         type(mgis_status) :: r
+       end function load_finite_strain_behaviour_wrapper
+    end interface
+    type(Behaviour), intent(out) :: b
+    type(FiniteStrainBehaviourOptions), intent(in) :: o
+    character(len=*), intent(in) :: l
+    character(len=*), intent(in) :: bn
+    character(len=*), intent(in) :: h
+    type(mgis_status) :: s
+    s = load_finite_strain_behaviour_wrapper(b%ptr, o%ptr, &
+         convert_fortran_string(l), &
+         convert_fortran_string(bn), &
+         convert_fortran_string(h))
+  end function load_finite_strain_behaviour
   ! behaviour_get_tangent_operator_array_size
   function behaviour_get_tangent_operator_array_size(n,b) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t
