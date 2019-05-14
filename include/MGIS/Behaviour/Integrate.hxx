@@ -97,15 +97,6 @@ namespace mgis {
      *                     and computes a tangent stiffness
      * -  2.5<d.K[0]< 3.5: one integrates the behaviour over the time step 
      *                     and computes a consistent tangent stiffness
-     *
-     * In finite strain, if one request any stiffness matrix, d.K[1]
-     * must be set as follows to choose the tangent operator, as follows:
-     * -       d.K[1] < 0.5: returns the derivative of the Cauchy stress
-     *                       with respect to the deformation gradient.
-     * - 0.5 < d.K[1] < 1.5: returns the derivative of the second Piola-Kirchhoff stress
-     *                       with respect to the green lagrange strain.
-     * - 1.5 < d.K[1] < 2.5: returns the derivative of the first Piola-Kirchhoff stress 
-     *                       with respect to the deformation gradient.
      */
     int integrate(BehaviourDataView&, const Behaviour&);
 

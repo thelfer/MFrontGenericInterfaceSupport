@@ -32,9 +32,10 @@ namespace mgis {
       this->K = mgis::span<real>(this->K_values);
     }  // end of Behaviour::Behaviour
 
-    MaterialDataManager::MaterialDataManager(const Behaviour& behaviour,
-                                             const size_type s,
-                                             const MaterialDataManagerInitializer& i)
+    MaterialDataManager::MaterialDataManager(
+        const Behaviour& behaviour,
+        const size_type s,
+        const MaterialDataManagerInitializer& i)
         : s0(behaviour, s, i.s0),
           s1(behaviour, s, i.s1),
           n(s),
@@ -51,7 +52,7 @@ namespace mgis {
               "the consistent tangent operator has not been allocated "
               "properly");
         }
-	this->K = i.K;
+        this->K = i.K;
       }
     }  // end of Behaviour::Behaviour
 

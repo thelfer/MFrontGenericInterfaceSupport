@@ -7,7 +7,7 @@ macro(mgis_generate_html_page file)
     COMMAND   ${PANDOC}
     ARGS      -f markdown-markdown_in_html_blocks+tex_math_single_backslash
     ARGS      --filter pandoc-crossref -M crossrefYaml=${CMAKE_CURRENT_SOURCE_DIR}/pandoc-crossref.yaml
-#    ARGS      --bibliography=${CMAKE_CURRENT_SOURCE_DIR}/bibliography.bib --filter pandoc-citeproc
+    ARGS      --bibliography=${CMAKE_CURRENT_SOURCE_DIR}/bibliography.bib --filter pandoc-citeproc
     ARGS      --template=${CMAKE_CURRENT_SOURCE_DIR}/mgis-template.html
     ARGS      --mathjax
     ARGS      --email-obfuscation=javascript
@@ -31,6 +31,7 @@ add_custom_target(website)
 add_dependencies(doc website)
 
 mgis_generate_html_page(index)
+mgis_generate_html_page(bindings-cxx "--toc" "--toc-depth=3")
 mgis_generate_html_page(FEniCSBindings)
 
 if(MGIS_APPEND_SUFFIX)
