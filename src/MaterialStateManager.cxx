@@ -96,22 +96,22 @@ namespace mgis {
     static MaterialStateManager::FieldHolder& getFieldHolder(
         std::map<std::string, MaterialStateManager::FieldHolder>& m,
         const mgis::string_view& n) {
-#if __cplusplus > 201103L
-      return m[n];
-#else  /* __cplusplus > 201103L */
+// #if __cplusplus > 201103L
+//       return m[n];
+// #else  /* __cplusplus > 201103L */
       return m[n.to_string()];
-#endif /* __cplusplus > 201103L */
+// #endif /* __cplusplus > 201103L */
     } // end of getFieldHolder
 
     static std::map<std::string, MaterialStateManager::FieldHolder>::iterator
     getFieldHolderIterator(
         std::map<std::string, MaterialStateManager::FieldHolder>& m,
         const mgis::string_view& n) {
-#if __cplusplus > 201103L
-      return m.find(n);
-#else  /* __cplusplus > 201103L */
+// #if __cplusplus > 201103L
+//       return m.find(n);
+// #else  /* __cplusplus > 201103L */
       return m.find(n.to_string());
-#endif /* __cplusplus > 201103L */
+      // #endif /* __cplusplus > 201103L */
     } // end of getFieldHolder
 
     static std::map<std::string,
@@ -119,11 +119,11 @@ namespace mgis {
     getFieldHolderIterator(
         const std::map<std::string, MaterialStateManager::FieldHolder>& m,
         const mgis::string_view& n) {
-#if __cplusplus > 201103L
-      return m.find(n);
-#else  /* __cplusplus > 201103L */
+// #if __cplusplus > 201103L
+//       return m.find(n);
+// #else  /* __cplusplus > 201103L */
       return m.find(n.to_string());
-#endif /* __cplusplus > 201103L */
+// #endif /* __cplusplus > 201103L */
     } // end of getFieldHolder
 
     void setMaterialProperty(MaterialStateManager& m,

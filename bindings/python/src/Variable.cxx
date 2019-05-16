@@ -36,9 +36,10 @@ static const char* Variable_getType(const mgis::behaviour::Variable& v) {
 }  // end of Variable_getType
 
 // mgis::string_view is not exposed
-static mgis::size_type getVariableOffsetByString(const std::vector<mgis::behaviour::Variable>& vs,
-                                                 const std::string& n,
-                                                 const mgis::behaviour::Hypothesis h) {
+static mgis::size_type getVariableOffsetByString(
+    const std::vector<mgis::behaviour::Variable>& vs,
+    const std::string& n,
+    const mgis::behaviour::Hypothesis h) {
   return mgis::behaviour::getVariableOffset(vs, n, h);
 }  // getVariableOffsetByString
 
@@ -47,7 +48,7 @@ void declareVariable();
 
 void declareVariable() {
   using mgis::behaviour::Variable;
-// wrapping the Variable::Type enum
+  // wrapping the Variable::Type enum
   boost::python::enum_<Variable::Type>("VariableType")
       .value("Scalar", Variable::SCALAR)
       .value("SCALAR", Variable::SCALAR)

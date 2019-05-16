@@ -13,3 +13,7 @@ endif(enable-python-bindings)
 if(enable-fenics-bindings)
   add_subdirectory("fenics")
 endif(enable-fenics-bindings)
+
+if(enable-julia-bindings)
+  add_subdirectory("julia")
+endif(enable-julia-bindings)

@@ -119,6 +119,13 @@ if(enable-fenics-bindings)
   include(${DOLFIN_USE_FILE})
 endif(enable-fenics-bindings)
 
+# julia-bindings (placed before compiler detection)
+option(enable-julia-bindings "enable julia bindings support" OFF)
+if(enable-julia-bindings)
+  find_package(JlCxx REQUIRED)
+endif(enable-julia-bindings)
+
+
 # summary
 
 if(enable-c-bindings)
