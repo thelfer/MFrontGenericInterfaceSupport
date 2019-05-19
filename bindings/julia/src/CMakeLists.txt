@@ -50,5 +50,15 @@ mgis_julia_module(mgis
  behaviour-module.cxx
  Hypothesis.cxx
  Variable.cxx
- Behaviour.cxx)
+ Behaviour.cxx
+ State.cxx
+ BehaviourData.cxx
+)
+
+# BehaviourData.cxx
+# BehaviourDataView.cxx
+# MaterialDataManager.cxx
+# MaterialStateManager.cxx
+# Integrate.cxx
+# FiniteStrainSupport.cxx)
 

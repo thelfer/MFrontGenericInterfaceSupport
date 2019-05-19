@@ -9,11 +9,7 @@
 #include <jlcxx/jlcxx.hpp>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/Variable.hxx"
-
-namespace jlcxx {
-  template <>
-  struct IsBits<mgis::behaviour::Variable::Type> : std::true_type {};
-} // end of namespace jlcxx
+#include "MGIS/Julia/JuliaUtilities.hxx"
 
 void declareVariable(jlcxx::Module& m) {
   using mgis::behaviour::Variable;
@@ -29,14 +25,6 @@ void declareVariable(jlcxx::Module& m) {
   m.add_type<Variable>("Variable")
       .method("get_name", [](const Variable& v) { return v.name; })
       .method("get_type", [](const Variable& v) { return v.type; });
-  m.add_type<std::vector<Variable>>("VariablesVector")
-      .method("length", &std::vector<Variable>::size)
-      .method("getindex", [](const std::vector<Variable>& v,
-                             const int i) {
-        if (i == 0) {
-          mgis::raise<std::range_error>("invalid index");
-        }
-        return v.at(i-1);
-      });
+  mgis::julia::expose_std_vector<Variable>(m, "VariablesVector");
 }  // end of declareVariable
 

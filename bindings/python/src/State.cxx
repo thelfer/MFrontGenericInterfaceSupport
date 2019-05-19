@@ -12,8 +12,6 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include<iostream>
-
 #include <boost/python/def.hpp>
 #include <boost/python/class.hpp>
 #include "MGIS/Python/NumPySupport.hxx"
