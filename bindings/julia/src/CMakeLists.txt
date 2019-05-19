@@ -53,9 +53,9 @@ mgis_julia_module(mgis
  Behaviour.cxx
  State.cxx
  BehaviourData.cxx
+ BehaviourDataView.cxx
 )
 
-# BehaviourData.cxx
 # BehaviourDataView.cxx
 # MaterialDataManager.cxx
 # MaterialStateManager.cxx

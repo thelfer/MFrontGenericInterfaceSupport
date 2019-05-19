@@ -19,7 +19,13 @@
 void declareBehaviourData();
 
 void declareBehaviourData(jlcxx::Module& m) {
+  using mgis::behaviour::State;
   using mgis::behaviour::BehaviourData;
+  void (*update)(BehaviourData&) = &mgis::behaviour::update;
+  void (*revert)(BehaviourData&) = &mgis::behaviour::revert;
+  mgis::behaviour::BehaviourDataView (*make_view)(BehaviourData&) =
+      &mgis::behaviour::make_view;
+
   m.add_type<BehaviourData>("BehaviourData")
       .constructor<const mgis::behaviour::Behaviour&>()
       .method("get_time_increment",
@@ -27,23 +33,22 @@ void declareBehaviourData(jlcxx::Module& m) {
       .method("set_time_increment!",
               [](BehaviourData& d, const mgis::real v) { d.dt = v; })
       .method("get_tangent_operator",
-              [](BehaviourData& d) -> std::vector<mgis::real>& { return d.K; });
-  //       .method("set_tangent_operator!",
-  //               [](BehaviourData& d, const std::vector<mgis::real>& K) {
-  //                 if (d.K.size() != K.size()) {
-  //                   mgis::raise<std::range_error>(
-  //                       "set_tangent_operator!: "
-  //                       "unmatched size");
-  //                 }
-  //                 std::copy(K.begin(), K.end(), d.K.begin());
-  //               })
-  //       .method("set_tangent_operator!",
-  //               [](BehaviourData& d, const jlcxx::ArrayRef<mgis::real>& K) {
-  //                 if (d.K.size() != K.size()) {
-  //                   mgis::raise<std::range_error>(
-  //                       "set_tangent_operator!: "
-  //                       "unmatched size");
-  //                 }
-  //                 std::copy(K.begin(), K.end(), d.K.begin());
-  //               });
+              [](BehaviourData& d) -> std::vector<mgis::real>& { return d.K; })
+      .method("set_tangent_operator!",
+              [](BehaviourData& d, const jlcxx::ArrayRef<mgis::real>& a) {
+                mgis::julia::assign(d.K, a);
+              })
+      .method("get_time_increment_increase_factor",
+              [](BehaviourData& d) -> mgis::real& { return d.rdt; })
+      .method("set_time_increment_increase_factor!",
+              [](BehaviourData& d, const mgis::real& v) -> void { d.rdt = v; })
+      .method("get_s0", [](BehaviourData& d) -> State& { return d.s0; })
+      .method("get_s1", [](BehaviourData& d) -> State& { return d.s1; })
+      .method("get_initial_state",
+              [](BehaviourData& d) -> State& { return d.s0; })
+      .method("get_final_state",
+              [](BehaviourData& d) -> State& { return d.s1; })
+      .method("update", update)
+      .method("revert", revert)
+      .method("make_view", make_view);
 }  // end of declareBehaviourData
