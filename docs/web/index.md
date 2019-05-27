@@ -29,17 +29,22 @@ library provides two main functions:
 The library also supports handling a group of integration points though
 the `mgis::behaviour::MaterialStateManager` class.
 
+An introduction to the `C++` library may be found [here](bindings-cxx.html)
+
 # Bindings
 
-## Existing 
+## Existing bindings
 
 The following bindings are available:
 
-- `c` binding (mostly complete)
-- `python` binding (under current work in the `master` branch)
-- `fortran` binding (under current work in the `master` branch)
-- `FEniCS` binding (under current work in the `master` branch). This
-  binding is described [here](FEniCSBindings.html)
+- `c` binding
+- `python` binding 
+- `fortran` binding
+- `fenics` bindings (experimental). Those bindings are strongly inspired
+  by the `fenics-solid-mechanics` project. Those bindings are currently
+  quite limited as mostly serve as a proof of concept. Note that `MGIS`
+  can also be used in `FEniCS` through the `python` interface. This is
+  discussed [here](FEniCSBindings.html).
 
 ## Future bindings (contributors are welcomed)
 
@@ -50,11 +55,17 @@ The following bindings are under consideration:
 
 # Versions, branches
 
+## Branches
+
 - the `master` branch follows the evolution of the `master` branch of
   the `TFEL` project
 - the `rliv-1.0` follows the evolution of the 3.2.x series of the `TFEL`
   project. Note that this branch is **not** compatible with
   `TFEL-3.2.0`.
+
+## Release notes
+
+- [Version 1.1](release-notes-1.1.html)
 
 # Acknowledgement
 

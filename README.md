@@ -36,24 +36,22 @@ the `mgis::behaviour::MaterialStateManager` class.
 
 The following bindings are available:
 
-- `c` bindings (mostly complete).
-- `python` bindings (mostly complete, under current work in the
-  `master` branch).
-- `fortran03` bindings (mostly complete, under current work in the
-  `master` branch).
+- `c` bindings.
+- `python` bindings .
+- `fortran03` bindings.
 - `fenics` bindings (under current work in the `master` branch). Those
   bindings are strongly inspired by the `fenics-solid-mechanics`
   project. Those bindings are currently quite limited as mostly serve
   as a proof of concept. Note that `MGIS` can also be used in `FEniCS`
   through the `python` interface. This is discussed here:
   <https://thelfer.github.io/mgis/web/FEniCSBindings.html>.
+- `julia` bindings (experimental)
 
 ### Future bindings (contributors are welcomed)
 
 The following bindings are under consideration:
 
 - `octave` binding
-- `julia` binding
 
 # Versions, branches, tags
 

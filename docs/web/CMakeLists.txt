@@ -33,6 +33,7 @@ add_dependencies(doc website)
 mgis_generate_html_page(index)
 mgis_generate_html_page(bindings-cxx "--toc" "--toc-depth=3")
 mgis_generate_html_page(FEniCSBindings)
+mgis_generate_html_page(release-notes-1.1 "--toc" "--toc-depth=3")
 
 if(MGIS_APPEND_SUFFIX)
   install(DIRECTORY css
