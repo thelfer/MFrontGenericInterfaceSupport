@@ -72,8 +72,13 @@ namespace mgis {
     MGIS_EXPORT size_type getVariableOffset(const std::vector<Variable> &,
                                             const string_view,
                                             const Hypothesis);
+    /*!
+     * \return the type of the given variable as a string
+     * \param[in] v: variable
+     */
+    MGIS_EXPORT std::string getVariableTypeAsString(const Variable &);
 
-  }  // end of namespace behaviour
+    }  // end of namespace behaviour
 
 }  // end of namespace mgis
 

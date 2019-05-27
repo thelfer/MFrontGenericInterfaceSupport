@@ -500,6 +500,9 @@ namespace mgis {
                                         v);
       }  // end of getUpperPhysicalBound
 
+      void print_markdown(std::ostream &, const Behaviour &, const mgis::size_type) {
+      }  // end of print_markdown
+
   }  // end of namespace behaviour
 
 }  // end of namespace mgis

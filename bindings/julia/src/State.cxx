@@ -68,6 +68,26 @@ void declareState(jlcxx::Module& m) {
       .method("set_external_state_variables!",
               [](State& s, const jlcxx::ArrayRef<mgis::real>& a) {
                 mgis::julia::assign(s.external_state_variables, a);
+              })
+      .method("set_gradient!",
+              [](State& s, const std::string& n, const mgis::real v) {
+                mgis::behaviour::setGradient(s, n, v);
+              })
+      .method("set_thermodynamic_force!",
+              [](State& s, const std::string& n, const mgis::real v) {
+                mgis::behaviour::setThermodynamicForce(s, n, v);
+              })
+      .method("set_material_property!",
+              [](State& s, const std::string& n, const mgis::real v) {
+                mgis::behaviour::setMaterialProperty(s, n, v);
+              })
+      .method("set_internal_state_variable!",
+              [](State& s, const std::string& n, const mgis::real v) {
+                mgis::behaviour::setInternalStateVariable(s, n, v);
+              })
+      .method("set_external_state_variable!",
+              [](State& s, const std::string& n, const mgis::real v) {
+                mgis::behaviour::setExternalStateVariable(s, n, v);
               });
 
 } // end of declareState

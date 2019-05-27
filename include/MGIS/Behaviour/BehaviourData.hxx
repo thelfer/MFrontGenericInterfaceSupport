@@ -15,6 +15,7 @@
 #ifndef LIB_MGIS_BEHAVIOUR_BEHAVIOURDATA_HXX
 #define LIB_MGIS_BEHAVIOUR_BEHAVIOURDATA_HXX
 
+#include <iosfwd>
 #include <vector>
 #include "MGIS/Config.hxx"
 #include "MGIS/Behaviour/State.hxx"
@@ -71,9 +72,7 @@ namespace mgis {
        *   must be computed.
        */
       std::vector<real> K;
-      /*!
-       * \brief proposed time step increment increase factor
-       */
+      //! \brief proposed time step increment increase factor
       real rdt;
       //! \brief state at the beginning of the time step
       State s0;
@@ -93,7 +92,6 @@ namespace mgis {
      * - filling the stiffness matrix with 0
      */
     MGIS_EXPORT void revert(BehaviourData&);
-
     /*!
      * \brief make a view from a behaviour data
      * \param[in] d: data
@@ -101,6 +99,18 @@ namespace mgis {
      * \note the view has at most the same life time as the data.
      */
     MGIS_EXPORT BehaviourDataView make_view(BehaviourData&);
+    /*!
+     * \brief print a detailled (verbose) description of the data associated
+     * with an integration point using a markdown format
+     * \param[in] os: ouptut stream
+     * \param[in] b: behaviour
+     * \param[in] d: behaviour data
+     * \param[in] l: title level
+     */
+    MGIS_EXPORT void print_markdown(std::ostream&,
+                                    const Behaviour&,
+                                    const BehaviourData&,
+                                    const mgis::size_type);
 
   }  // end of namespace behaviour
 

@@ -1,5 +1,5 @@
 /*!
- * \file   JuliaUtilities.ixx
+ * \file   bindings/julia/include/MGIS/Julia/ArrayView.hxx
  * \brief    
  * \author Thomas Helfer
  * \date   17/05/2019
@@ -42,25 +42,7 @@ namespace mgis {
     /// Wrap a const pointer
     template <typename T>
     struct Ptr {
-      const T* ptr;
-    };
-
-    template <typename T>
-    struct IsBits<Ptr<T>> : std::true_type {};
-
-    template <typename T>
-    struct InstantiateParametricType<Ptr<T>> {
-      int operator()(Module&) const {
-        // Register the Julia type if not already instantiated
-        if (!static_type_mapping<Ptr<T>>::has_julia_type()) {
-          jl_datatype_t* dt = (jl_datatype_t*)apply_type(
-              (jl_value_t*)julia_type("Ptr"),
-              jl_svec1(static_type_mapping<T>::julia_type()));
-          set_julia_type<Ptr<T>>(dt);
-          protect_from_gc(dt);
-        }
-        return 0;
-      }
+      T* ptr;
     };
 
     /// Wrap a pointer, providing the Julia array interface for it
@@ -71,7 +53,7 @@ namespace mgis {
       typedef typename detail::LongNTuple<N>::type size_t;
 
       template <typename... SizesT>
-      ArrayView(const T* ptr, const SizesT... sizes)
+      ArrayView(T* const ptr, const SizesT... sizes)
           : m_arr(ptr), m_sizes(sizes...) {}
 
       T getindex(const std::int64_t i) const { return m_arr[i - 1]; }
@@ -84,55 +66,74 @@ namespace mgis {
       T* m_arr;
       const size_t m_sizes;
     };
+  }
+}
 
-    template <typename T, index_t N>
-    struct InstantiateParametricType<ArrayView<T, N>>
-        : InstantiateParametricType<Ptr<T>> {};
+namespace jlcxx {
 
-    template <typename T, typename... SizesT>
-    ArrayView<T, sizeof...(SizesT)> make_array_view(const T* p,
-                                                    const SizesT... sizes) {
-      return ArrayView<T, sizeof...(SizesT)>(p, sizes...);
+  template <typename T>
+  struct IsBits<mgis::julia::Ptr<T>> : std::true_type {};
+
+  template <typename T>
+  struct InstantiateParametricType<mgis::julia::Ptr<T>> {
+    int operator()(Module&) const {
+      // Register the Julia type if not already instantiated
+      if (!static_type_mapping<mgis::julia::Ptr<T>>::has_julia_type()) {
+        jl_datatype_t* dt = (jl_datatype_t*)apply_type(
+            (jl_value_t*)julia_type("Ptr"),
+            jl_svec1(static_type_mapping<T>::julia_type()));
+        set_julia_type<mgis::julia::Ptr<T>>(dt);
+        protect_from_gc(dt);
+      }
+      return 0;
     }
+  };
 
-    template <typename T, index_t N>
-    struct IsImmutable<ArrayView<T, N>> : std::false_type {};
+  template <typename T, std::int64_t N>
+  struct InstantiateParametricType<mgis::julia::ArrayView<T, N>>
+      : InstantiateParametricType<mgis::julia::Ptr<T>> {};
 
-    template <typename T, index_t N>
-    struct ConvertToJulia<ArrayView<T, N>> {
-      jl_value_t* operator()(const ArrayView<T, N>& arr) {
-        jl_value_t* result = nullptr;
-        jl_value_t* ptr = nullptr;
-        jl_value_t* size = nullptr;
-        JL_GC_PUSH3(&result, &ptr, &size);
-        ptr = box(Ptr<T>({arr.ptr()}));
-        size = convert_to_julia(arr.size());
-        result = jl_new_struct(julia_type<ArrayView<T, N>>(), ptr, size);
+  template <typename T, typename... SizesT>
+  mgis::julia::ArrayView<T, sizeof...(SizesT)> make_array_view(const T* p,
+                                                  const SizesT... sizes) {
+    return mgis::julia::ArrayView<T, sizeof...(SizesT)>(p, sizes...);
+  }
+
+  template <typename T, std::int64_t N>
+  struct IsImmutable<mgis::julia::ArrayView<T, N>> : std::false_type {};
+
+  template <typename T, std::int64_t N>
+  struct ConvertToJulia<mgis::julia::ArrayView<T, N>> {
+    jl_value_t* operator()(const mgis::julia::ArrayView<T, N>& arr) {
+      jl_value_t* result = nullptr;
+      jl_value_t* ptr = nullptr;
+      jl_value_t* size = nullptr;
+      JL_GC_PUSH3(&result, &ptr, &size);
+      ptr = box(mgis::julia::Ptr<T>({arr.ptr()}));
+      size = convert_to_julia(arr.size());
+      result = jl_new_struct(julia_type<mgis::julia::ArrayView<T, N>>(), ptr, size);
+      JL_GC_POP();
+      return result;
+    }
+  };
+
+  template <typename T, std::int64_t N>
+  struct static_type_mapping<mgis::julia::ArrayView<T, N>> {
+    typedef jl_value_t* type;
+    static jl_datatype_t* julia_type() {
+      static jl_datatype_t* app_dt = nullptr;
+      if (app_dt == nullptr) {
+        jl_datatype_t* pdt = (jl_datatype_t*)::jlcxx::julia_type("ArrayView");
+        jl_value_t* boxed_n = box(N);
+        JL_GC_PUSH1(&boxed_n);
+        app_dt = (jl_datatype_t*)apply_type(
+            (jl_value_t*)pdt, jl_svec2(::jlcxx::julia_type<T>(), boxed_n));
+        protect_from_gc(app_dt);
         JL_GC_POP();
-        return result;
       }
-    };
-
-    template <typename T, index_t N>
-    struct static_type_mapping<ArrayView<T, N>> {
-      typedef jl_value_t* type;
-      static jl_datatype_t* julia_type() {
-        static jl_datatype_t* app_dt = nullptr;
-        if (app_dt == nullptr) {
-          jl_datatype_t* pdt =
-              (jl_datatype_t*)::jlcxx::julia_type("ArrayView");
-          jl_value_t* boxed_n = box(N);
-          JL_GC_PUSH1(&boxed_n);
-          app_dt = (jl_datatype_t*)apply_type(
-              (jl_value_t*)pdt, jl_svec2(::jlcxx::julia_type<T>(), boxed_n));
-          protect_from_gc(app_dt);
-          JL_GC_POP();
-        }
-        return app_dt;
-      }
-    };
-
-  }  // namespace julia
+      return app_dt;
+    }
+  };
 
 }  // namespace mgis
 

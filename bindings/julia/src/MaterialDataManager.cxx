@@ -1,5 +1,5 @@
 /*!
- * \file   bindings/julia/src/BehaviourDataView.cxx
+ * \file   bindings/julia/src/MaterialDataManager.cxx
  * \brief    
  * \author Thomas Helfer
  * \date   19/05/2019
@@ -13,11 +13,11 @@
  */
 
 #include <jlcxx/jlcxx.hpp>
-#include "MGIS/Behaviour/BehaviourDataView.hxx"
+#include "MGIS/Behaviour/MaterialDataManager.hxx"
 #include "MGIS/Julia/JuliaUtilities.hxx"
 
-void declareBehaviourDataView();
+void declareMaterialDataManager();
 
-void declareBehaviourDataView(jlcxx::Module& m) {
-  m.add_type<mgis::behaviour::BehaviourDataView>("BehaviourDataView");
-} // end of declareBehaviourDataView
+void declareMaterialDataManager(jlcxx::Module& m) {
+  m.add_type<mgis::behaviour::MaterialDataManager>("MaterialDataManager");
+} // end of declareMaterialDataManager

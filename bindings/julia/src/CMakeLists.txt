@@ -54,11 +54,8 @@ mgis_julia_module(mgis
  State.cxx
  BehaviourData.cxx
  BehaviourDataView.cxx
+ MaterialStateManager.cxx
+ MaterialDataManager.cxx
+ Integrate.cxx
 )
-
-# BehaviourDataView.cxx
-# MaterialDataManager.cxx
-# MaterialStateManager.cxx
-# Integrate.cxx
-# FiniteStrainSupport.cxx)
 

@@ -12,7 +12,10 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <ostream>
 #include <algorithm>
+#include "MGIS/Utilities/Markdown.hxx"
+#include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/BehaviourDataView.hxx"
 #include "MGIS/Behaviour/BehaviourData.hxx"
 
@@ -35,10 +38,7 @@ namespace mgis {
     // mem-initializers).
     BehaviourData::BehaviourData(const Behaviour& b)
         : dt(0), rdt(1), s0(b), s1(s0) {
-      constexpr const auto zero = real{0};
-      const auto ng = this->s0.gradients.size();
-      const auto nth = this->s0.thermodynamic_forces.size();
-      this->K.resize(ng * nth, zero);
+      this->K.resize(getTangentOperatorArraySize(b));
     }  // end of Behaviour::Behaviour
 
     void update(BehaviourData& d) {
@@ -68,6 +68,21 @@ namespace mgis {
       v.s1 = make_view(d.s1);
       return v;
     }  // end of make_view
+
+    void print_markdown(std::ostream& os,
+                       const Behaviour& b,
+                       const BehaviourData& d,
+                       const mgis::size_type l) {
+      os << mgis::utilities::get_heading_signs(l + 1)
+         << " Behaviour description\n\n";
+      print_markdown(os, b, l + 1);
+      os << mgis::utilities::get_heading_signs(l + 1)
+         << " State at the beginning of the time step\n";
+      print_markdown(os, b, d.s0, l + 1);
+      os << mgis::utilities::get_heading_signs(l + 1)
+         << " State at the end of the time step\n";
+      print_markdown(os, b, d.s1, l + 1);
+    }  // end of print_markdown
 
   }  // end of namespace behaviour
 

@@ -23,6 +23,10 @@ void declareBehaviour(jlcxx::Module&);
 void declareState(jlcxx::Module&);
 void declareBehaviourData(jlcxx::Module&);
 void declareBehaviourDataView(jlcxx::Module&);
+void declareMaterialStateManager(jlcxx::Module&);
+void declareMaterialDataManager(jlcxx::Module&);
+void declareIntegrate(jlcxx::Module&);
+
 
 JLCXX_MODULE define_mgis_behaviour_module(jlcxx::Module& m) {
   mgis::julia::expose_std_vector<std::string>(m, "StringsVector");
@@ -33,4 +37,7 @@ JLCXX_MODULE define_mgis_behaviour_module(jlcxx::Module& m) {
   declareState(m);
   declareBehaviourData(m);
   declareBehaviourDataView(m);
+  declareMaterialStateManager(m);
+  declareMaterialDataManager(m);
+  declareIntegrate(m);
 }

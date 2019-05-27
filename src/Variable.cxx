@@ -19,6 +19,20 @@ namespace mgis {
 
   namespace behaviour {
 
+    std::string getVariableTypeAsString(const Variable &v) {
+      if (v.type == Variable::SCALAR) {
+        return "Scalar";
+      } else if (v.type == Variable::VECTOR) {
+        return "Vector";
+      } else if (v.type == Variable::STENSOR) {
+        return "Stensor";
+      }
+      if (v.type != Variable::TENSOR) {
+        mgis::raise("getVariableTypeAsString: unsupported variable type");
+      }
+      return "Tensor";
+    }
+
     size_type getVariableSize(const Variable &v, const Hypothesis h) {
       if (v.type == Variable::SCALAR) {
         return 1;

@@ -15,6 +15,7 @@
 #ifndef LIB_MGIS_BEHAVIOUR_STATE_HXX
 #define LIB_MGIS_BEHAVIOUR_STATE_HXX
 
+#include <iosfwd>
 #include <vector>
 #include "MGIS/Config.hxx"
 #include "MGIS/StringView.hxx"
@@ -386,6 +387,18 @@ namespace mgis {
      * \note the view has at most the same life time as the state.
      */
     MGIS_EXPORT StateView make_view(State&);
+    /*!
+     * \brief print a detailled (verbose) description of the integration point
+     * state using a markdown format
+     * \param[in] os: ouptut stream
+     * \param[in] b: behaviour
+     * \param[in] s: state
+     * \param[in] l: title level
+     */
+    MGIS_EXPORT void print_markdown(std::ostream&,
+                                    const Behaviour&,
+                                    const State&,
+                                    const mgis::size_type);
 
   }  // end of namespace behaviour
 

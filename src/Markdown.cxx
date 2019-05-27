@@ -1,8 +1,8 @@
 /*!
- * \file   bindings/julia/src/BehaviourDataView.cxx
+ * \file   Markdown.cxx
  * \brief    
  * \author Thomas Helfer
- * \date   19/05/2019
+ * \date   26/05/2019
  * \copyright (C) Copyright Thomas Helfer 2018.
  * Use, modification and distribution are subject
  * to one of the following licences:
@@ -12,12 +12,16 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <jlcxx/jlcxx.hpp>
-#include "MGIS/Behaviour/BehaviourDataView.hxx"
-#include "MGIS/Julia/JuliaUtilities.hxx"
+#include "MGIS/Utilities/Markdown.hxx"
 
-void declareBehaviourDataView();
+namespace mgis{
 
-void declareBehaviourDataView(jlcxx::Module& m) {
-  m.add_type<mgis::behaviour::BehaviourDataView>("BehaviourDataView");
-} // end of declareBehaviourDataView
+  namespace utilities {
+
+    std::string get_heading_signs(const mgis::size_type l) {
+      return std::string(1, '#');
+    }  // end of get_heading_signs
+
+  }  // end of namespace utilities
+
+} // end of namespace mgis

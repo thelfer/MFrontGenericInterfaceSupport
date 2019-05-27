@@ -36,7 +36,7 @@ namespace mgis {
   /*!
    * \brief structure handling a fixed-size pool of threads
    */
-  struct MGIS_VISIBILITY_EXPORT ThreadPool {
+  struct MGIS_EXPORT ThreadPool {
     /*!
      * \brief constructor
      * \param[in] n: number of thread to be created

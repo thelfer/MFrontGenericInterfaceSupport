@@ -23,6 +23,7 @@
 #include "MGIS/Behaviour/Variable.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
 #include "MGIS/Behaviour/Behaviour.hxx"
+#include "MGIS/Behaviour/Integrate.hxx"
 
 namespace jlcxx {
 
@@ -49,7 +50,9 @@ namespace jlcxx {
   template <>
   struct IsBits<mgis::behaviour::FiniteStrainBehaviourOptions::TangentOperator>
       : std::true_type {};
-
+  //! \brief 
+  template <>
+  struct IsBits<mgis::behaviour::IntegrationType> : std::true_type {};
 } // end of namespace jlcxx
 
 namespace mgis {

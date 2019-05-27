@@ -15,6 +15,7 @@
 #ifndef LIB_MGIS_BEHAVIOUR_DESCRIPTION_HXX
 #define LIB_MGIS_BEHAVIOUR_DESCRIPTION_HXX
 
+#include <iosfwd>
 #include <vector>
 #include "MGIS/Config.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
@@ -315,6 +316,16 @@ namespace mgis {
      */
     MGIS_EXPORT long double getUpperPhysicalBound(const Behaviour &,
                                                   const std::string &);
+    /*!
+     * \brief print a detailled (verbose) description of the behaviour using
+     * a markdown format
+     * \param[in] os: ouptut stream
+     * \param[in] b: behaviour
+     * \param[in] l: title level
+     */
+    MGIS_EXPORT void print_markdown(std::ostream &,
+                                   const Behaviour &,
+                                   const mgis::size_type);
 
   }  // end of namespace behaviour
 

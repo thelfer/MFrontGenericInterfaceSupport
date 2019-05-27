@@ -14,9 +14,21 @@
 
 #include <jlcxx/jlcxx.hpp>
 
+// #include <array>
+// #include "MGIS/Julia/ArrayView.hxx"
+
 // forward declarations
 void declareThreadPool(jlcxx::Module& m);
 
+// std::array<double, 3>& test() {
+//   static std::array<double, 3> a = {1, 2, 3};
+//   return a;
+// }
+
 JLCXX_MODULE define_mgis_module(jlcxx::Module& m){
+  //   m.method("test", []() {
+  //     auto& a = test();
+  //     return mgis::julia::ArrayView<double, 1>(a.data(), a.size());
+  //   });
   declareThreadPool(m);
 }
