@@ -68,6 +68,10 @@ namespace mgis {
       };
       constexpr const auto zero = real{0};
       init(this->gradients, this->b.gradients);
+      if ((this->b.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) &&
+          (this->b.kinematic == Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY)) {
+        this->gradients[0] = this->gradients[1] = this->gradients[2] = real{1};
+      }
       init(this->thermodynamic_forces, this->b.thermodynamic_forces);
       init(this->material_properties, this->b.mps);
       init(this->internal_state_variables, this->b.isvs);
