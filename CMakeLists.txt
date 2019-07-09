@@ -145,6 +145,17 @@ if(enable-fenics-bindings)
 endif(enable-fenics-bindings)
 
 find_package(Threads)
+# if(MINGW)
+#   file(WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/thread-mingw.cxx"
+#     "int main(){std::thread t; return 0;}")
+#   try_compile(MGIS_MINGW_HAVE_NATIVE_STD_THREAD
+#     ${CMAKE_BINARY_DIR}
+#     ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/thread-mingw.cxx
+#     COMPILE_DEFINITIONS ${COMPILER_CXXFLAGS})
+#   if(MGIS_MINGW_HAVE_NATIVE_STD_THREAD)
+#     set(MGIS_USE_MINGW_STD_THREADS ON)
+#   endif(MGIS_MINGW_HAVE_NATIVE_STD_THREAD)
+# endif(MINGW)
 
 # Looking for libdl...
 if(UNIX)
