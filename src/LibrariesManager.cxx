@@ -371,7 +371,7 @@ namespace mgis {
                                            const std::string &n) {
     auto lib = this->loadLibrary(l);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-    return ::GetProcAddress(lib, n.c_str());
+    return reinterpret_cast<void*>(::GetProcAddress(lib, n.c_str()));
 #else  /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)*/
     return ::dlsym(lib, n.c_str());
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
