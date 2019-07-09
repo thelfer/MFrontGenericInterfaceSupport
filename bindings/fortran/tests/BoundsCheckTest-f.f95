@@ -41,7 +41,6 @@ subroutine test()
   call check_status(behaviour_has_upper_bound(hasUpperBound, b, "YoungModulus"))
   r = check(hasUpperBound, "'YoungModulus' shall have an upper bound")
   call check_status(behaviour_get_upper_bound(upperBound, b, "YoungModulus"))
-  write(*,*) 'upperBound: ', upperBound, yg_max, abs(upperBound - yg_max)
   r = check(abs(upperBound - yg_max) < eps * yg_max, &
        "invalid upper bound for 'YoungModulus'")
   ! physical bounds
@@ -50,7 +49,7 @@ subroutine test()
   call check_status(behaviour_has_lower_physical_bound(hasLowerPhysicalBound, b, "YoungModulus"))
   r = check(hasLowerPhysicalBound, "'YoungModulus' shall have a lower bound")
   call check_status(behaviour_get_lower_physical_bound(lowerPhysicalBound, &
-        b, "YoungModulus"))
+         b, "YoungModulus"))
   r = check(abs(lowerPhysicalBound) < eps * yg_min, &
        "invalid physical lower bound for 'YoungModulus'")
   call check_status(behaviour_has_upper_physical_bound(hasUpperPhysicalBound, b, "YoungModulus"))
