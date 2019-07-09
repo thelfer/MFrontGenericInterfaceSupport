@@ -12,8 +12,9 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <algorithm>
+#include <cctype>
 #include <cstring>
+#include <algorithm>
 #if !((defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__))
 #include <dlfcn.h>
 #endif /* !((defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)) */
