@@ -1,21 +1,23 @@
 # store the location of the julia modules in the MGIS_JULIA_MODULES_INSTALL_DIRECTORY variable
-if(MGIS_APPEND_SUFFIX)
-  if(WIN32)
-    set(MGIS_JULIA_MODULES_INSTALL_DIRECTORY
-        bin/julia/mgis_${MGIS_SUFFIX_FOR_JULIA_MODULES})
-  else(WIN32)
-    set(MGIS_JULIA_MODULES_INSTALL_DIRECTORY
-        "lib${LIB_SUFFIX}/julia/mgis_${MGIS_SUFFIX_FOR_JULIA_MODULES}")
-  endif(WIN32)
-else(MGIS_APPEND_SUFFIX)
-  if(WIN32)
-    set(MGIS_JULIA_MODULES_INSTALL_DIRECTORY
-        "bin/julia/mgis")
-  else(WIN32)
-    set(MGIS_JULIA_MODULES_INSTALL_DIRECTORY
-        "lib${LIB_SUFFIX}/julia/mgis")
-  endif(WIN32)
-endif(MGIS_APPEND_SUFFIX)
+if(NOT DEFINED MGIS_JULIA_MODULES_INSTALL_DIRECTORY)
+  if(MGIS_APPEND_SUFFIX)
+    if(WIN32)
+      set(MGIS_JULIA_MODULES_INSTALL_DIRECTORY
+          bin/julia/mgis_${MGIS_SUFFIX_FOR_JULIA_MODULES})
+    else(WIN32)
+      set(MGIS_JULIA_MODULES_INSTALL_DIRECTORY
+          "lib${LIB_SUFFIX}/julia/mgis_${MGIS_SUFFIX_FOR_JULIA_MODULES}")
+    endif(WIN32)
+  else(MGIS_APPEND_SUFFIX)
+    if(WIN32)
+      set(MGIS_JULIA_MODULES_INSTALL_DIRECTORY
+          "bin/julia/mgis")
+    else(WIN32)
+      set(MGIS_JULIA_MODULES_INSTALL_DIRECTORY
+          "lib${LIB_SUFFIX}/julia/mgis")
+    endif(WIN32)
+  endif(MGIS_APPEND_SUFFIX)
+endif(NOT DEFINED MGIS_JULIA_MODULES_INSTALL_DIRECTORY)
 
 function(mgis_julia_module name)
   if(${ARGC} LESS 3)
