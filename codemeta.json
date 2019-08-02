@@ -6,7 +6,7 @@
       "@id": "https://orcid.org/0000-0003-2460-5816",
       "@type": "Person",
       "email": "thomas.helfer@cea.fr",
-      "name": "Thmas Helfer",
+      "name": "Thomas Helfer",
       "affiliation": "French Alternative Energies and Atomic Energy Commission"
     },
     {
@@ -14,7 +14,7 @@
       "@type": "Person",
       "email": "",
       "name": "Tero Frondelius",
-      "affiliation": ""
+      "affiliation": "Wärtsilä"
     }
   ],
   "identifier": "",
