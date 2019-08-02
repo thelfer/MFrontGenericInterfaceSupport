@@ -1,0 +1,30 @@
+{
+  "@context": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld",
+  "@type": "Code",
+  "author": [
+    {
+      "@id": "https://orcid.org/0000-0003-2460-5816",
+      "@type": "Person",
+      "email": "thomas.helfer@cea.fr",
+      "name": "Thmas Helfer",
+      "affiliation": "French Alternative Energies and Atomic Energy Commission"
+    },
+    {
+      "@id": "",
+      "@type": "Person",
+      "email": "",
+      "name": "Tero Frondelius",
+      "affiliation": ""
+    }
+  ],
+  "identifier": "",
+  "codeRepository": "https://github.com/thelfer/MFrontGenericInterfaceSupport",
+  "datePublished": "2019-08-02",
+  "dateModified": "2019-08-02",
+  "dateCreated": "2019-08-02",
+  "description": "This project aims at providing tools (functions, classes, bindings, etc...) to handle behaviours written using MFront generic interface.",
+  "keywords": "Mechanical solvers, mechanical behaviours, MFront",
+  "license": "LGPL v3.0",
+  "title": "MFrontGenericInterfaceSupport",
+  "version": "v1.0.1"
+}
