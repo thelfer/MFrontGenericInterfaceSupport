@@ -20,74 +20,89 @@ date: 2 August 2019
 bibliography: bibliography.bib
 ---
 
+<!--
+pandoc -f markdown_strict --bibliography=bibliography.bib --filter pandoc-citeproc paper.md -o paper.pdf
+-->
+
 # Introduction
 
 The behaviour of solid materials is modelled using so-called
 constitutive equations which describes how the internal state of the
 material evolves with time. The knowledge of those internal state
 variables allows the computation of local thermodynamic forces which
-affects the material equilibrium at the structural scale. Du to the
-large number of phenomena that needs to be described (plasticity,
-viscoplasticy, damage, etc...), computational mechanics is one of most
-demanding domain for advanced constitutive equations.
+affects the material equilibrium at the structural scale.
+
+Du to the large number of phenomena that needs to be described
+(plasticity, viscoplasticy, damage, etc...), computational mechanics is
+one of most demanding domain for advanced constitutive equations.
 
 The ability to easily integrate user defined constitutive equations
-plays a major role in the versatility of solvers.
+plays a major role in the versatility of (mechanical) solvers^[Here we
+use the term solver to emphasize that the numerical method used to
+discretize the equilibrium equations is not significant here (Finite
+Element Method (FEM), Fast Fourier Transform (FFT), etc.).].
 
-The `MFront` code generator has been designed to simplify the process of
-implementing constitutive equations
+The `MFront` open-source code generator has been designed to simplify
+the process of implementing constitutive equations
 [@helfer_introducing_2015;@cea_mfront_2019]. From a source file,
 `MFront` generates `C++` code specific to many well-established (mostly
 thermomechanical) solvers through dedicated interfaces: `Cast3M`,
-`Code_Aster`, etc...
+`Code_Aster`, etc... Those sources are then compiled into shared
+libraries.
 
-The aim of this paper is to describe a side project of `MFront` called
-`MFrontGenericInterfaceSupport` which aims at proving tools (functions,
-classes, bindings, etc…) to handle behaviours written using `MFront`'
-`generic` interface [@helfer_mgis_2019]. Those tools are meant to be
-used by (FEM, FFT, etc.) solver developers. Permissive licences have
-been chosen to allow integration in open-source and proprietary codes.
+`MFront` recently introduced a so-called `generic` interface. The aim of
+this paper is to describe the `MFrontGenericInterfaceSupport` project
+(denoted `MGIS` in the following), which aims at proving tools (functions,
+classes, bindings, etc…) to handle behaviours generated using `MFront`'
+`generic` interface [@helfer_mgis_2019]. Those tools are meant to
+alleviate the work required by solvers' developers. Permissive licences
+have been chosen to allow integration in open-source and proprietary
+codes.
+
+This paper is divided in three parts:
+
+1. Section 1 gives a brief overiew of `MGIS`.
+2. Section 2 describes the various bindings available.
+3. Section 3 describes some example of usage in various open-source
+  solvers: `FEniCS`, `OpenGeoSys` and `JuliaFEM`.
 
 # Overview
 
-The expected workflow is meant to be:
+The aims of the `MFrontGenericInterfaceSupport` project is twofold:
 
-1. The user implements its constitutive equations using one of the
-  domain specific languages provided by `MFront` and generates a set of
-  `C++` files using the `generic` interface and compiles those sources
-  into a shared library.
-2. In the solver input files, the user indicates that he/she wants to
-  use this behaviour.
+1. At the pre-processing state, allow retrieving meta data about a
+  particular behaviours and proper memory allocation. At the
+  post-processing stage, ease access to internal state variables. This
+  is described in Section @sec:prepost.
+2. During computations, simplify the integration the behaviour at
+  integration points^[Integration points is used here as a generic
+  placeholder. When using FFT for solving the equilibrium equations, the
+  integration points are voxels. When using FEM, the integrations points
+  are the usual Gauss points of the elements. etc.] and the update of
+  the internal state variables.
 
-At this stage, the solver must load the shared library and the function
-implementing the behaviour. During the pre-processing stage, i.e. before
-actually running the simulation, the solver must:
+## Preprocessing and post-processing stages{#sec:prepost}
 
-- Check if the behaviour is consistent with the computation to be
-  performed. For example, one shall not use a finite strain behaviours
-  in a small strain analysis.
-- Check if all the information required by the behaviour are available.
-  In practice, a behaviour can require that the solver provides a set of
-  values describing the material to be treated: those value are called
-  material properties. In general, those material properties must be
-  given by the user in the input file. For multi-physics modelling, a
-  behaviour may also need to know how
-
-computation the memory holding the internal state variables at each
-  integration points.
-- allocate the memory holding the internal state variables at each
-  integration points.
+### Retrieving meta-data
 
 # Available bindings
 
-# Usage
+# Example of usage
 
 ## `FEniCS`
 
 ## `OpenGeoSys`
 
-## `XPer`
-
 ## `JuliaFEM`
 
 # Conclusions
+
+
+# Acknowledgements
+
+This research was conducted in the framework of the `PLEIADES`
+project,which is supported financially by the CEA (Commissariat à
+l’Energie Atomique et aux Energies Alternatives), EDF (Electricité de
+France) and Framatome.Acknowledgements
+
+# References
