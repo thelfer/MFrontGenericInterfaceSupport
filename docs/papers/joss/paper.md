@@ -87,9 +87,14 @@ The aims of the `MFrontGenericInterfaceSupport` project is twofold:
 
 # Available bindings
 
+`[@helfer_brief_2019]`
+
+
 # Example of usage
 
 ## `FEniCS`
+
+[@bleyer_elasto-plastic_2019;@bleyer_fenics_nodate]
 
 ## `OpenGeoSys`
 
