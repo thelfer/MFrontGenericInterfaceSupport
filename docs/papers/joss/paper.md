@@ -11,11 +11,20 @@ authors:
  - name: Tero Frondelius
    orcid: 0000-0003-0872-7098
    affiliation: 2
+ - name: Thomas Nagel
+   orcid: 0000-0001-8459-4616
+   affiliation: 3
+ - name: Dmitri Naumov
+   affiliation: 4
 affiliations:
  - name: French Alternative Energies and Atomic Energy Commission
    index: 1
  - name: Wärtsilä
    index: 2
+ - name: Technische Universität Bergakademie Freiberg
+   index: 3
+ - name: Helmholtz Centre for Environmental Research -- UFZ
+   index: 4
 date: 2 August 2019
 bibliography: bibliography.bib
 ---
