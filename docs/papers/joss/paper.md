@@ -138,9 +138,17 @@ points are independent: thus, when handling a set of integration points,
 `MGIS` can parallelize the integrations using a granularity chosen by
 the solver.
 
-# Available bindings
+# Main language and available bindings
 
-[@helfer_brief_2019]
+`MGIS` is written in `C++-11`. The `C++` API is described in another
+report, see [@helfer_brief_2019].
+
+The following bindings are available:
+
+- `python`.
+- `Julia`.
+- `Fortran 2003`.
+- `C`.
 
 # Example of usage
 
@@ -148,23 +156,24 @@ the solver.
 
 !["Large strain elasto-plastic modelling of a notched
 bar"](img/FEniCS.png "Large strain elasto-plastic modelling of a notched
-bar"){width=100%}
+bar")
 
 `FEniCS` is a popular open-source computing platform for solving partial
-differential equations [@logg_automated_2012;@alnaes_fenics_2015].
-
-Non linear mechanics computations combining `FEniCS` at the equilibrium
+differential equations [@logg_automated_2012;@alnaes_fenics_2015]. Non
+linear mechanics computations combining `FEniCS` at the equilibrium
 scale and `MFront` to describe the constitutive equations can be
 performed through the `python` bindings of `MGIS` as demonstrated by
 Bleyer et al (see [@bleyer_elasto-plastic_2019;@bleyer_fenics_2019]).
+Extensions to finite strain elasto-plasticity as been recently added as
+shown on Figure 1 which models a tensile test on a notched bar^[This
+case is adapted from a non-regression test of `Code_Aster` finite
+element solver, see @edf_ssna303_2011 for details].
 
 ## `OpenGeoSys`
 
 [@kolditz_opengeosys:_2012]
 
 ## `JuliaFEM`
-
-
 
 # Conclusions
 
