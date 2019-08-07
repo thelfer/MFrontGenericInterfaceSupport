@@ -38,20 +38,22 @@ pandoc -f markdown_strict --bibliography=bibliography.bib --filter pandoc-citepr
 # Introduction
 
 The behaviour of solid materials is modelled using so-called
-constitutive equations which describes how the internal state of the
-material evolves with time. Those state variables can describe many
+constitutive equations which describe how the internal state of the
+material evolves with changing external conditions. Those state variables can describe many
 microstructural aspects of the material: grain size, dislocation
-density, hardening state, etc.
+density, hardening state, etc. or be considered purely phenomenologically.
 
 The knowledge of those internal state variables allows the computation
 of local thermodynamic forces which affects the material equilibrium at
 the structural scale.
+<!-- refine later -->
 
-Du to the large number of phenomena that needs to be described
-(plasticity, viscoplasticy, damage, etc...), computational mechanics is
-one of most demanding domain for advanced constitutive equations.
+Due to the large number of phenomena that needs to be described
+(plasticity, viscoplasticy, damage, etc...) for a tremendous range of natural
+and man-made materials, computational mechanics is
+one of most demanding domains for advanced constitutive equations.
 
-The ability to easily integrate user defined constitutive equations
+The ability to easily integrate user-defined constitutive equations
 plays a major role in the versatility of (mechanical) solvers^[Here we
 use the term solver to emphasize that the numerical method used to
 discretize the equilibrium equations is not significant here (Finite
@@ -61,14 +63,14 @@ The `MFront` open-source code generator has been designed to simplify
 the process of implementing constitutive equations
 [@helfer_introducing_2015;@cea_mfront_2019]. From a source file,
 `MFront` generates `C++` code specific to many well-established (mostly
-thermomechanical) solvers through dedicated interfaces: `Cast3M`,
+thermo-mechanical) solvers through dedicated interfaces: `Cast3M`,
 `Code_Aster`, etc... Those sources are then compiled into shared
 libraries.
 
 `MFront` recently introduced a so-called `generic` interface. The aim of
 this paper is to describe the `MFrontGenericInterfaceSupport` project
 (denoted `MGIS` in the following), which aims at proving tools
-(functions, classes, bindings, etc…) to handle constitutive equations
+(functions, classes, bindings, etc.) to handle constitutive equations
 generated using `MFront`' `generic` interface [@helfer_mgis_2019]. Those
 tools are meant to alleviate the work required by solvers' developers.
 Permissive licences have been chosen to allow integration in open-source
@@ -98,31 +100,32 @@ The aims of the `MFrontGenericInterfaceSupport` project is twofold:
 ## Preprocessing and post-processing stages{#sec:prepost}
 
 When dealing with user defined behaviours, most solvers, including
-`Abaqus/Standard` for example, require that the user describes the
-behaviour in the input file (eg. number of internal state variables) and
+`Abaqus/Standard` for example, require that the user describe the
+behaviour in the input file (e.g. number of internal state variables) and
 take care of the consistency of the behaviour with the hypothesis made
-during the computation (eg. a finite strain behaviour must be used in a
-finite strain analysis). This is error-prone and may lead to spurious
-and/or undefined behaviour of the behaviour in case of mistake. Most of the time, the 
+during the computation (e.g. a finite strain behaviour must be used in a
+finite strain analysis based on the appropriate deformation and stress measures
+as well as reference configurations). This is an error-prone task and may lead to spurious
+and/or undefined behaviour in case of conceptual or coding errors. Most of the time, the 
 
 In `MGIS`, the logic is quite different: the user must only declare the
 shared library, the behaviour and the modelling hypothesis
-(tridimensional, plane strain, etc.). With those information, the
+(tridimensional, plane strain, etc.). With this information, the
 library can retrieve various metadata from the shared library which
 fully describe how to interact with the behaviour. The solver using
 `MGIS` can then check if the behaviour is consistent with the
 computations to be performed.
 
-Those metadata can also be used to allocate the memory required to store
-the state of the material at each integration points. Note that `MGIS`
-has been designed to allow the following storages of the state:
+The metadata can also be used to allocate the memory required to store
+the state of the material at each integration point. Note that `MGIS`
+has been designed to allow the following storage types of the state:
 
-- an `MGIS` data structure per integration point. Which this causes
+- an `MGIS` data structure per integration point. While this causes
   memory fragmentation, this is the most frequent choice. The memory is
-  be automatically be allocated by `MGIS`.
+  automatically allocated by `MGIS`.
 - an `MGIS` data structure that stores the states of an arbitrary number
   of integration points. `MGIS` can allocate the memory associated with
-  the state of all those integrations points or borrow memory allocated
+  the state of all specified integrations points or borrow memory allocated
   by the solver.
 
 For post-processing a set of functions are provided to retrieve
@@ -133,19 +136,20 @@ structures.
 ## Computation stage
 
 At each time step, the constitutive equations must be integrated to get
-the state of the material at the end of the time step. As most phenomena
+the state of the material at the end of the time step based on alterations of 
+corresponding driving forces. As most phenomena
 are nonlinear, an iterative scheme is required at the equilibrium scale
 to find the local loading of the material: the integration of the
 constitutive equations is thus called several times with different
 estimates of the loading of the material.
 
-`MGIS` provides function to integrate the constitutive equations at one
-integration points or on a set of integrations points^[This strongly
+`MGIS` provides a function to integrate the constitutive equations at one
+integration point or on a set of integration points^[This strongly
 depends on the data structure chosen to store the internal state
 variables.].
 
 The integration of the constitutive equations at different integration
-points are independent: thus, when handling a set of integration points,
+points are usually independent: thus, when handling a set of integration points,
 `MGIS` can parallelize the integrations using a granularity chosen by
 the solver.
 
@@ -183,6 +187,28 @@ element solver, see @edf_ssna303_2011 for details].
 ## `OpenGeoSys`
 
 [@kolditz_opengeosys:_2012]
+[@Bilke2019]
+
+<!-- may need to be shortened. I'll add references once paragraph is finalized.-->
+OpenGeoSys (OGS) is a scientific open-source initiative for the numerical simulation of thermo-hydro-mechanical/
+chemical (THMC) processes in porous and fractured media, inspired by FEFLOW and ROCKFLOW concepts
+and continuously developed since the mid-eighties, see Kolditz (1990), Wollrath (1990), Kroehn (1991) and Helmig
+(1993). The OGS framework is targeting applications in environmental geoscience, e.g., in the fields of contaminant
+hydrology (Walther et al, 2014), water resources and waste management (Kalbacher et al, 2012), geotechnical
+applications (Xu et al, 2013; Böttcher et al, 2017; Nagel et al, 2017), geothermal energy systems (Hein et al,
+2016) and energy storage (Nagel et al, 2016; Wang et al, 2017; Lehmann et al, 2017). The most recent version, OpenGeoSys-6 (OGS-6)
+(Naumov et al, 2018, Bilke et al 2019), is a fundamental re-implementation of the multi-physics code OpenGeoSys-4/5 (Kolditz
+and Bauer, 2004; Wang and Kolditz, 2006) using advanced methods in software engineering and architecture
+with a focus on code quality, modularity, performance and comprehensive documentation. Particular emphasis is put on 
+the implementation of advanced numerical methods for the propagation of discontinuities, such as enriched
+finite element function spaces (Watanabe et al, 2012), non-local formulations (Parisio et al, 2018) and phase-field
+models for fracture (Yoshioka et al, 2018) with the ability to utilize HPC platforms (Wang et al, 2015, 2017).
+To simplify the implementation of new constitutive models for solid phases, `MFront` has been integrated through the `C` 
+bindings of `MGIS`. Current tests include elastic (isotropic and anisotropic), elasto-plastic (see Fig. 2) and visco-plastic
+materials.
+
+!["Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material."](img/MCAS_disc_hole_cyclic_show_axes.png "Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material.")
+
 
 ## `JuliaFEM`
 
