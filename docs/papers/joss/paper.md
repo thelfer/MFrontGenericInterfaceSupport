@@ -189,25 +189,43 @@ element solver, see @edf_ssna303_2011 for details].
 [@kolditz_opengeosys:_2012]
 [@Bilke2019]
 
-<!-- may need to be shortened. I'll add references once paragraph is finalized.-->
 OpenGeoSys (OGS) is a scientific open-source initiative for the numerical simulation of thermo-hydro-mechanical/
 chemical (THMC) processes in porous and fractured media, inspired by FEFLOW and ROCKFLOW concepts
 and continuously developed since the mid-eighties, see Kolditz (1990), Wollrath (1990), Kroehn (1991) and Helmig
-(1993). The OGS framework is targeting applications in environmental geoscience, e.g., in the fields of contaminant
+(1993).
+
+The OGS framework is targeting applications in environmental geoscience, e.g., in the fields of contaminant
 hydrology (Walther et al, 2014), water resources and waste management (Kalbacher et al, 2012), geotechnical
 applications (Xu et al, 2013; Böttcher et al, 2017; Nagel et al, 2017), geothermal energy systems (Hein et al,
-2016) and energy storage (Nagel et al, 2016; Wang et al, 2017; Lehmann et al, 2017). The most recent version, OpenGeoSys-6 (OGS-6)
+2016) and energy storage (Nagel et al, 2016; Wang et al, 2017; Lehmann et al, 2017).
+
+The most recent version, OpenGeoSys-6 (OGS-6)
 (Naumov et al, 2018, Bilke et al 2019), is a fundamental re-implementation of the multi-physics code OpenGeoSys-4/5 (Kolditz
 and Bauer, 2004; Wang and Kolditz, 2006) using advanced methods in software engineering and architecture
-with a focus on code quality, modularity, performance and comprehensive documentation. Particular emphasis is put on 
+with a focus on code quality, modularity, performance and comprehensive documentation.
+
+<!--
+Particular emphasis is put on 
 the implementation of advanced numerical methods for the propagation of discontinuities, such as enriched
 finite element function spaces (Watanabe et al, 2012), non-local formulations (Parisio et al, 2018) and phase-field
 models for fracture (Yoshioka et al, 2018) with the ability to utilize HPC platforms (Wang et al, 2015, 2017).
-To simplify the implementation of new constitutive models for solid phases, `MFront` has been integrated through the `C` 
-bindings of `MGIS`. Current tests include elastic (isotropic and anisotropic), elasto-plastic (see Fig. 2) and visco-plastic
-materials.
+-->
 
-!["Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material."](img/MCAS_disc_hole_cyclic_show_axes.png "Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material.")
+To simplify the implementation of new constitutive models for solid
+phases, `MFront` has been integrated through the `C` bindings of `MGIS`.
+
+!["Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material."](img/MCAS_disc_hole_cyclic_show_axes.png "Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material."){#fig:OpenGeoSys}
+
+Figure @fig:OpenGeoSys shows the results of a a cyclically loaded cavity
+in a cohesive-frictional material modelled by a non-associated plastic
+behaviour based on the Mohr-Coulomb criterion.
+
+
+<!--
+Current tests include elastic (isotropic and anisotropic),
+elasto-plastic (see Fig. 2) and visco-plastic materials.
+-->
+
 
 
 ## `JuliaFEM`
