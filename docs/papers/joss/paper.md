@@ -169,7 +169,7 @@ The following bindings are available:
 
 ## `FEniCS`
 
-!["Large strain elasto-plastic modelling of a notched
+!["Figure 1: Large strain elasto-plastic modelling of a notched
 bar"](img/FEniCS.png "Large strain elasto-plastic modelling of a notched
 bar")
 
@@ -214,11 +214,11 @@ models for fracture (Yoshioka et al, 2018) with the ability to utilize HPC platf
 To simplify the implementation of new constitutive models for solid
 phases, `MFront` has been integrated through the `C` bindings of `MGIS`.
 
-!["Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material."](img/MCAS_disc_hole_cyclic_show_axes.png "Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material."){#fig:OpenGeoSys}
+!["Figure 2: Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material."](img/MCAS_disc_hole_cyclic_show_axes.png "Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material."){#fig:OpenGeoSys}
 
-Figure @fig:OpenGeoSys shows the results of a a cyclically loaded cavity
-in a cohesive-frictional material modelled by a non-associated plastic
-behaviour based on the Mohr-Coulomb criterion.
+Figure 2 shows the results of a a cyclically loaded cavity in a
+cohesive-frictional material modelled by a non-associated plastic
+behaviour based on the Mohr-Coulomb criterion (see @Nagel2016).
 
 
 <!--
