@@ -61,7 +61,7 @@ Element Method (FEM), Fast Fourier Transform (FFT), etc.).].
 
 The `MFront` open-source code generator has been designed to simplify
 the process of implementing constitutive equations
-[@helfer_introducing_2015;@cea_mfront_2019]. From a source file,
+`[@helfer_introducing_2015;@cea_mfront_2019]`. From a source file,
 `MFront` generates `C++` code specific to many well-established (mostly
 thermo-mechanical) solvers through dedicated interfaces: `Cast3M`,
 `Code_Aster`, etc... Those sources are then compiled into shared
