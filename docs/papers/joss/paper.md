@@ -8,25 +8,30 @@ authors:
  - name: Thomas Helfer
    orcid: 0000-0003-2460-5816
    affiliation: 1
+ - name: Jeremy Bleyer
+   orcid: 0000-0001-8212-9921
+   affiliation: 2
  - name: Tero Frondelius
    orcid: 0000-0003-2288-0902
-   affiliation: "2, 3"
+   affiliation: "3, 4"
  - name: Thomas Nagel
    orcid: 0000-0001-8459-4616
-   affiliation: 4
- - name: Dmitri Naumov
    affiliation: 5
+ - name: Dmitri Naumov
+   affiliation: 6
 affiliations:
  - name: French Alternative Energies and Atomic Energy Commission
    index: 1
- - name: Wärtsilä
+ - name: École des Ponts ParisTech
    index: 2
- - name: University of Oulu
+ - name: Wärtsilä
    index: 3
- - name: Technische Universität Bergakademie Freiberg
+ - name: University of Oulu
    index: 4
- - name: Helmholtz Centre for Environmental Research -- UFZ
+ - name: Technische Universität Bergakademie Freiberg
    index: 5
+ - name: Helmholtz Centre for Environmental Research -- UFZ
+   index: 6
 date: 2 August 2019
 bibliography: bibliography.bib
 ---
@@ -214,7 +219,7 @@ models for fracture (Yoshioka et al, 2018) with the ability to utilize HPC platf
 To simplify the implementation of new constitutive models for solid
 phases, `MFront` has been integrated through the `C` bindings of `MGIS`.
 
-!["Figure 2: Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material."](img/MCAS_disc_hole_cyclic_show_axes.png "Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material."){#fig:OpenGeoSys}
+!["Figure 2: Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material."](img/MCAS_disc_hole_cyclic_show_axes.png "Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material.")
 
 Figure 2 shows the results of a a cyclically loaded cavity in a
 cohesive-frictional material modelled by a non-associated plastic
