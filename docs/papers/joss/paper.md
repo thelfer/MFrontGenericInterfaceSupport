@@ -244,7 +244,7 @@ elasto-plastic (see Fig. 2) and visco-plastic materials.
 ## `JuliaFEM`
 
 !["Figure 3: Block diagram showing the software layers involved in using
-`MFront` behaviours in `JuliaFEM`")(img/MFrontInterface.svg "Software
+`MFront` behaviours in `JuliaFEM`"}(img/MFrontInterface.svg "Software
 layers.")
 
 The `MFrontInterface.jl` package wraps `MGIS`' `Julia` bindings to make
