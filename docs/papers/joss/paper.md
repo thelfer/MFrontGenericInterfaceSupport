@@ -175,7 +175,7 @@ The following bindings are available:
 - `Fortran 2003`.
 - `C`.
 
-# Example of usage
+# Examples of usage
 
 ## `FEniCS`
 
@@ -184,11 +184,13 @@ bar"](img/FEniCS.png "Large strain elasto-plastic modelling of a notched
 bar")
 
 `FEniCS` is a popular open-source computing platform for solving partial
-differential equations [@logg_automated_2012;@alnaes_fenics_2015]. Non
-linear mechanics computations combining `FEniCS` at the equilibrium
+differential equations [@logg_automated_2012;@alnaes_fenics_2015].
+
+Non linear mechanics computations combining `FEniCS` at the equilibrium
 scale and `MFront` to describe the constitutive equations can be
 performed through the `python` bindings of `MGIS` as demonstrated by
 Bleyer et al (see [@bleyer_elasto-plastic_2019;@bleyer_fenics_2019]).
+
 Extensions to finite strain elasto-plasticity as been recently added as
 shown on Figure 1 which models a tensile test on a notched bar^[This
 case is adapted from a non-regression test of `Code_Aster` finite
@@ -225,7 +227,7 @@ models for fracture (Yoshioka et al, 2018) with the ability to utilize HPC platf
 -->
 
 To simplify the implementation of new constitutive models for solid
-phases developped with `MFront`, `OGS-6` relies on `C` bindings of
+phases developed with `MFront`, `OGS-6` relies on `C` bindings of
 `MGIS`.
 
 !["Figure 2: Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material."](img/MCAS_disc_hole_cyclic_show_axes.png "Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material.")
