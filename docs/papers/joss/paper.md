@@ -4,35 +4,41 @@ tags:
   - MFront
   - Mechanical solvers
   - Mechanical behaviours
-authors:
- - name: Thomas Helfer
-   orcid: 0000-0003-2460-5816
-   affiliation: 1
- - name: Jeremy Bleyer
-   orcid: 0000-0001-8212-9921
-   affiliation: 2
- - name: Tero Frondelius
-   orcid: 0000-0003-2288-0902
-   affiliation: "3, 4"
- - name: Thomas Nagel
-   orcid: 0000-0001-8459-4616
-   affiliation: 5
- - name: Dmitri Naumov
-   affiliation: 6
-affiliations:
- - name: French Alternative Energies and Atomic Energy Commission
-   index: 1
- - name: École des Ponts ParisTech
-   index: 2
- - name: Wärtsilä
-   index: 3
- - name: University of Oulu
-   index: 4
- - name: Technische Universität Bergakademie Freiberg
-   index: 5
- - name: Helmholtz Centre for Environmental Research -- UFZ
-   index: 6
-date: 2 August 2019
+  authors:
+   - name: Thomas Helfer
+     orcid: 0000-0003-2460-5816
+     affiliation: 1
+   - name: Jeremy Bleyer
+     orcid: 0000-0001-8212-9921
+     affiliation: 2
+   - name: Tero Frondelius
+     orcid: 0000-0003-2288-0902
+     affiliation: "3, 4"
+   - name: Ivan Yashchuk
+     affiliation: "5, 6"
+   - name: Thomas Nagel
+     orcid: 0000-0001-8459-4616
+     affiliation: 7
+   - name: Dmitri Naumov
+     affiliation: 8
+  affiliations:
+   - name: French Alternative Energies and Atomic Energy Commission
+     index: 1
+   - name: École des Ponts ParisTech
+     index: 2
+   - name: Wärtsilä
+     index: 3
+   - name: University of Oulu
+     index: 4
+   - name: VTT Technical Research Centre of Finland
+     index: 5
+   - name: Aalto University
+     index: 6
+   - name: Technische Universität Bergakademie Freiberg
+     index: 7
+   - name: Helmholtz Centre for Environmental Research -- UFZ
+     index: 8
+  date: 8 October 2019
 bibliography: bibliography.bib
 ---
 
@@ -220,7 +226,7 @@ architecture with a focus on code quality, modularity, performance and
 comprehensive documentation.
 
 <!--
-Particular emphasis is put on 
+Particular emphasis is put on
 the implementation of advanced numerical methods for the propagation of discontinuities, such as enriched
 finite element function spaces (Watanabe et al, 2012), non-local formulations (Parisio et al, 2018) and phase-field
 models for fracture (Yoshioka et al, 2018) with the ability to utilize HPC platforms (Wang et al, 2015, 2017).
@@ -245,14 +251,26 @@ elasto-plastic (see Fig. 2) and visco-plastic materials.
 
 ## `JuliaFEM`
 
+JuliaFEM [@frondelius_juliafem_2017;@rapo_natural_2017;@rapo_implementing_2018;@aho_introduction_2019;@rapo_pipe_2019;@aho_juliafem_2019]
+is an open-source finite element solver written in the Julia programming
+language [@bezanson_julia:_2017]. JuliaFEM enables flexible simulation models,
+takes advantage of the scripting language interface, which is easy to learn and
+embrace. Besides, it is a real programming environment where other analyses and
+workflows combine with simulation.
+
 !["Figure 3: Block diagram showing the software layers involved in using
 `MFront` behaviours in `JuliaFEM`"](img/MFrontInterface.svg "Software
 layers.")
 
-The `MFrontInterface.jl` package wraps `MGIS`' `Julia` bindings to make
-its usage much more convenient and consistent with the `Julia` language,
-in other words make `MFront` behaviours available in `JuliaFEM` (see
-[@frondelius2017juliafem]).
+The `MFrontInterface.jl` [@frondelius_mfrontinterface_2019] is a julia package where `MFront`
+material models are brought to julia via wrapping `MGIS`, see Fig. 3.
+Installation is, as easy as any julia packages, i.e., `pkg> add MFrontInterface`.
+For example `TFEL` and `MGIS` cross-compiled binary dependencies are automatically downloaded and extracted.
+Lastly, Fig. 4. shows a simple 3D geometry example using JuliaFEM and MFrontInterface
+together.
+
+!["Figure 4: Simple isotropic plasticity modelling of 3D beam in JuliaFEM with MFrontInterface."](img/3dbeam_mfront.png "Simple JuliaFEM plus MFrontInterface 3D demo")
+
 
 # Conclusions
 
