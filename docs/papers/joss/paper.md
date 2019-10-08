@@ -262,7 +262,6 @@ workflows combine with simulation.
 `MFront` behaviours in `JuliaFEM`"](img/MFrontInterface.svg "Software
 layers.")
 
-
 The `MFrontInterface.jl` [@frondelius_mfrontinterface_2019] is a julia package where `MFront`
 material models are brought to julia via wrapping `MGIS`, see Fig. 3.
 Installation is, as easy as any julia packages, i.e., `pkg> add MFrontInterface`.
@@ -270,7 +269,7 @@ For example `TFEL` and `MGIS` cross-compiled binary dependencies are automatical
 Lastly, Fig. 4. shows a simple 3D geometry example using JuliaFEM and MFrontInterface
 together.
 
-!["Figure 4: Simple JuliaFEM plus MFrontInterface 3D demo"](img/3dbeam_mfront.png "Simple JuliaFEM plus MFrontInterface 3D demo")
+!["Figure 4: Simple isotropic plasticity modelling of 3D beam in JuliaFEM with MFrontInterface."](img/3dbeam_mfront.png "Simple JuliaFEM plus MFrontInterface 3D demo")
 
 
 # Conclusions
