@@ -288,11 +288,12 @@ This project uses code extracted from the following projects:
 - https://bitbucket.org/fenics-apps/fenics-solid-mechanics/ by
   Kristian B. Ølgaard and Garth N. Wells.
 
-We would like to express our thanks to the community of developers and users of 
-OpenGeoSys(OGS). We thank the Helmholtz Centre for Environmental Research -- UFZ 
-for long-term funding and continuous support of the OpenGeoSys initiative. 
-OGS has been supported by various projects funded by Federal Ministries (BMBF, BMWi) 
-as well as the German Research Foundation (DFG). We further thank the 
-Federal Institute for Geosciences and Natural Resources (BGR) for funding.
+We would like to express our thanks to Olaf Kolditz and the entire community 
+of developers and users of OpenGeoSys(OGS). We thank the Helmholtz Centre for 
+Environmental Research -- UFZ for long-term funding and continuous support of the 
+OpenGeoSys initiative. OGS has been supported by various projects funded by 
+Federal Ministries (BMBF, BMWi) as well as the German Research Foundation (DFG). 
+We further thank the Federal Institute for Geosciences and Natural Resources 
+(BGR) for funding.
 
 # References
