@@ -207,9 +207,8 @@ element solver, see @edf_ssna303_2011 for details].
 OpenGeoSys (OGS) is a scientific open-source initiative for the
 numerical simulation of thermo-hydro-mechanical/ chemical (THMC)
 processes in porous and fractured media, inspired by FEFLOW and ROCKFLOW
-concepts and continuously developed since the mid-eighties, see Kolditz
-(1990), Wollrath (1990), Kroehn (1991) and Helmig (1993) (see
-[@kolditz_opengeosys:_2012;@Bilke2019]).
+concepts and continuously developed since the mid-eighties, see 
+([@Kolditz:1990;@Wollrath:1990;@Kroehn:1991;@Helmig:1993, @kolditz_opengeosys:_2012;@Bilke2019]).
 
 The OGS framework is targeting applications in environmental geoscience,
 e.g., in the fields of contaminant hydrology (Walther et al, 2014),
