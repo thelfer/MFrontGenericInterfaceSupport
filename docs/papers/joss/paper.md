@@ -49,15 +49,15 @@ pandoc -f markdown_strict --bibliography=bibliography.bib --filter pandoc-citepr
 # Introduction
 
 Constitutive equations describe how the internal state variables of a
-material evolves with changing external conditions or mechanical
+material evolve with changing external conditions or mechanical
 loadings. Those state variables can describe many microstructural
 aspects of the material (grain size, dislocation density, hardening
-state, etc.) or be phenomenological (equivalent plastic strain). The
+state, etc.) or be phenomenological in nature (equivalent plastic strain). The
 knowledge of those internal state variables allows the computation of
-local thermodynamic forces which affects the material equilibrium at the
+local thermodynamic forces which affect the material equilibrium at the
 structural scale.
 
-At each time step, the constitutive equations must be integrated to get
+At each time step, the constitutive equations must be integrated to obtain
 the state of the material at the end of the time step. As most phenomena
 are nonlinear, an iterative scheme is required at the equilibrium scale
 to find the local loading of the material: the integration of the
