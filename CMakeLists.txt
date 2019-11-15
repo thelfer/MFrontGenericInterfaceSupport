@@ -6,6 +6,11 @@ project("mfront-generic-interface")
 # portable-build
 option(enable-portable-build "produce binary that can be shared between various machine (same architecture, same gcc version, different processors" OFF)
 
+# option(enable-eigen-bindings "enable eigen bindings support" OFF)
+# if(enable-eigen-bindings)
+#   find_package (Eigen3 REQUIRED)
+# endif (enable-eigen-bindings)
+
 # C-bindings (placed before compiler detection)
 option(enable-c-bindings "enable c bindings support")
 
@@ -51,6 +56,12 @@ if(enable-python-bindings)
   endif(NOT PYTHON_NUMPY_INCLUDE_DIR)
   # boost python detection
   message(STATUS "Trying to find libboost_python-py${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
+  # Fix a bug in FindBoost 1.70
+  # https://github.com/boostorg/boost_install/issues/5
+  if(NOT DEFINED BUILD_SHARED_LIBS)
+    set(TFEL_TMP_BUILD_SHARED_LIBS ON)
+    set(BUILD_SHARED_LIBS ON)
+  endif(NOT DEFINED BUILD_SHARED_LIBS)
   find_package(Boost 1.36.0 COMPONENTS
                "python-py${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
   if(Boost_PYTHON-PY${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_FOUND)
@@ -102,6 +113,10 @@ if(enable-python-bindings)
     message(FATAL_ERROR "Boost python libraries not found.\n"
       "Required packages are :" ${BOOST_MANDATORY_COMPONENTS})
   endif(Boost_PYTHON_FOUND)
+  if(DEFINED TFEL_TMP_BUILD_SHARED_LIBS)
+    unset(TFEL_TMP_BUILD_SHARED_LIBS)
+    unset(BUILD_SHARED_LIBS)
+  endif(DEFINED TFEL_TMP_BUILD_SHARED_LIBS)
   list(APPEND CPACK_COMPONENTS_ALL python_bindings)
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DESCRIPTION 
     "Contains the python bindings for TFEL, MFront and MTest")
