@@ -4,7 +4,7 @@ tags:
   - MFront
   - Mechanical solvers
   - Mechanical behaviours
-  authors:
+authors:
    - name: Thomas Helfer
      orcid: 0000-0003-2460-5816
      affiliation: 1
@@ -21,7 +21,7 @@ tags:
      affiliation: 7
    - name: Dmitri Naumov
      affiliation: 8
-  affiliations:
+affiliations:
    - name: French Alternative Energies and Atomic Energy Commission
      index: 1
    - name: École des Ponts ParisTech
@@ -38,7 +38,7 @@ tags:
      index: 7
    - name: Helmholtz Centre for Environmental Research -- UFZ
      index: 8
-  date: 8 October 2019
+date: 8 October 2019
 bibliography: bibliography.bib
 ---
 
@@ -269,6 +269,13 @@ together.
 
 # Conclusions
 
+This paper introduces the `MFrontGenericInterfaceSupport` library which
+considerably eases the integration of `MFront` generated behaviours in
+any solver. In particular, the library provides a way of retrieving the
+metadata associated with a behaviour, data structures to store the
+physical informations, functions to perform the behaviour integration
+over a time step. Examples of usage in various open-source solvers
+(`FEniCS`, `OpenGeoSys`, `JuliaFEM`) have been provided.
 
 # Acknowledgements
 

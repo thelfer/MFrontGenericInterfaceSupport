@@ -326,7 +326,7 @@ namespace mgis {
     const auto s = names.size();
     mgis::raise_if(
         s % 2 != 0,
-        "LibrariesManager::getUMATTangentOperatorBlocksNames: "
+        "LibrariesManager::getTangentOperatorBlocksNames: "
         "invalid declaration of the tangent operator blocks is invalid");
     for (decltype(names.size()) i = 0; i != s / 2; ++i) {
       blocks.push_back({names[2 * i], names[2 * i + 1]});
