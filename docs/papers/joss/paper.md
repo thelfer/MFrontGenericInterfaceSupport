@@ -303,4 +303,7 @@ Federal Ministries (BMBF, BMWi) as well as the German Research Foundation (DFG).
 We further thank the Federal Institute for Geosciences and Natural Resources 
 (BGR) for funding.
 
+In addition, we would like to acknowledge the financial support of Business Finland
+for both ISA Wärtsilä Dnro 7734/31/2018, and ISA VTT Dnro 7980/31/2018 projects.
+
 # References
