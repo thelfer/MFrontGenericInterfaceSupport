@@ -14,6 +14,7 @@
 
 #include <cctype>
 #include <cstring>
+#include <iterator>
 #include <algorithm>
 #if !((defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__))
 #include <dlfcn.h>
