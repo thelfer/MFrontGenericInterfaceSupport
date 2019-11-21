@@ -26,6 +26,7 @@
 #include <windows.h>
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 
+#include "MGIS/Config.hxx"
 #include "MGIS/Behaviour/BehaviourFctPtr.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
 
@@ -35,7 +36,7 @@ namespace mgis {
    * \brief structure in charge of handling libraries and querying MGIS'
    * meta-data
    */
-  struct LibrariesManager {
+  struct MGIS_VISIBILITY_EXPORT LibrariesManager {
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
     //! a simple alias
     using libhandler = HINSTANCE__ *;
