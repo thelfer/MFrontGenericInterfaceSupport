@@ -232,7 +232,8 @@ phases developed with `MFront`, `OGS-6` relies on `C` bindings of
 `MGIS`.
 
 !["Figure 2: Elasto-plastic modelling of a cyclically loaded cavity in a
-cohesive-frictional material."](img/MCAS_disc_hole_cyclic_show_axes.png
+cohesive-frictional material (left). Shear bands forming beneath an 
+applied traction load on a frictional material."](img/MCAS_disc_hole_cyclic_show_axes.png
 "Elasto-plastic modelling of a cyclically loaded cavity in a
 cohesive-frictional material.")
 
@@ -240,7 +241,11 @@ Figure 2 shows the results of a test simulation of a cavity in a
 cohesive-frictional material modelled by a non-associated plastic
 behaviour based on the Mohr-Coulomb yield criterion and subjected to a
 cyclically varying anisotropic stress field (see @Nagel2016 for a
-complete description and verification against an analytical solution).
+complete description and verification against an analytical solution
+in the isotropic case). The right hand side of Figure 2 shows a compressive
+load applied to a non-associated frictional material in the presence of
+gravitational loading.
+
 
 
 <!--
