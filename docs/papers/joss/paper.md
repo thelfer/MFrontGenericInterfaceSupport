@@ -24,7 +24,7 @@ authors:
 affiliations:
   - name: French Alternative Energies and Atomic Energy Commission
     index: 1
-  - name: École des Ponts ParisTech
+  - name: Laboratoire Navier UMR 8205 (École des Ponts ParisTech-IFSTTAR-CNRS)
     index: 2
   - name: Wärtsilä
     index: 3
