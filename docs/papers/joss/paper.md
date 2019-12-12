@@ -264,7 +264,7 @@ easy to learn and embrace. Besides, it is a real programming environment
 where other analyses and workflows combine with simulation.
 
 !["Figure 3: Block diagram showing the software layers involved in using
-`MFront` behaviours in `JuliaFEM`"](img/MFrontInterface.svg "Software
+`MFront` behaviours in `JuliaFEM`"](img/MFrontInterface.png "Software
 layers.")
 
 The `MFrontInterface.jl` [@frondelius_mfrontinterface_2019] is a julia
