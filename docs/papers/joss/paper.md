@@ -231,11 +231,7 @@ To simplify the implementation of new constitutive models for solid
 phases developed with `MFront`, `OGS-6` relies on `C` bindings of
 `MGIS`.
 
-!["Figure 2: Elasto-plastic modelling of a cyclically loaded cavity in a
-cohesive-frictional material (left). Shear bands forming beneath an 
-applied traction load on a frictional material."](img/MCAS_disc_hole_cyclic_show_axes.png
-"Elasto-plastic modelling of a cyclically loaded cavity in a
-cohesive-frictional material.")
+!["Figure 2: Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material (left). Shear bands forming beneath an  applied traction load on a frictional material."](img/MCAS_disc_hole_cyclic_show_axes.png "Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material.")
 
 Figure 2 shows the results of a test simulation of a cavity in a
 cohesive-frictional material modelled by a non-associated plastic
