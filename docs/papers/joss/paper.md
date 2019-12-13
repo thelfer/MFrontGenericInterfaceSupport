@@ -251,7 +251,7 @@ elasto-plastic (see Fig. 2) and visco-plastic materials.
 
 ## `JuliaFEM`
 
-JuliaFEM
+`JuliaFEM`
 [@frondelius_juliafem_2017;@rapo_natural_2017;@rapo_implementing_2018;@aho_introduction_2019;@rapo_pipe_2019;@aho_juliafem_2019]
 is an open-source finite element solver written in the Julia programming
 language [@bezanson_julia:_2017]. JuliaFEM enables flexible simulation
@@ -263,8 +263,8 @@ where other analyses and workflows combine with simulation.
 `MFront` behaviours in `JuliaFEM`"](img/MFrontInterface.png "Software
 layers.")
 
-The `MFrontInterface.jl` [@frondelius_mfrontinterface_2019] is a julia
-package where `MFront` material models are brought to julia via wrapping
+The `MFrontInterface.jl` [@frondelius_mfrontinterface_2019] is a `Julia`
+package where `MFront` material models are brought to `Julia` via wrapping
 `MGIS`, see Fig. 3. Installation is, as easy as any julia packages,
 i.e., `pkg> add MFrontInterface`. For example `TFEL` and `MGIS`
 cross-compiled binary dependencies are automatically downloaded and
