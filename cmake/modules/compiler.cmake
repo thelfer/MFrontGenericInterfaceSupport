@@ -152,9 +152,6 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
 else(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   message(FATAL_ERROR "unsupported compiler id ${CMAKE_CXX_COMPILER_ID}")
 endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-			  
-set(CMAKE_C_FLAGS   "${COMPILER_FLAGS} ${COMPILER_CFLAGS} ${COMPILER_C_WARNINGS}")
-set(CMAKE_CXX_FLAGS "${VISIBILITY_FLAGS} ${COMPILER_WARNINGS} ${COMPILER_FLAGS} ${COMPILER_CXXFLAGS}")
 
 # This option has been added for building conda package.
 # It circumvents the following issue: `cmake` discards `Boost_INCLUDEDIRS`
