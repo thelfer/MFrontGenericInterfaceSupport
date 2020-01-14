@@ -64,7 +64,7 @@ The following bindings are under consideration:
   `TFEL-3.2.0`.
 
 - tag `MFrontGenericInterfaceSupport-1.1` is meant to be build against
-  `TFEL` 3.2.0
+  `TFEL` 3.3.0
 - tag `MFrontGenericInterfaceSupport-1.0` is meant to be build against
   `TFEL` 3.2.0
 - tag `MFrontGenericInterfaceSupport-1.0.1` is meant to be build

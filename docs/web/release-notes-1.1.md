@@ -1,8 +1,32 @@
 % MFrontGenericInterfaceSupport Version 1.1 
 % Thomas Helfer
+% 17/12/2019
 
 Version 1.1 of `MFrontGenericInterfaceSupport` is compatible with the
-version 3.3 of `TFEL/MFront`.
+Version 3.3 of `TFEL/MFront`.
+
+This version has been used in many projects:
+
+- `Mefisto`. See it in action [here](https://www.youtube.com/watch?v=7YvqhzGagt0).
+- [Modelling non-linear constitutive material laws in FEniCS with
+  MFront](https://github.com/thelfer/tfel-doc/tree/master/MFrontUserDays/FifthUserDays/FEniCS-Bleyer-MFrontUserDays-2019.pdf),
+  by J. Bleyer (Laboratoire Navier, UMR 8205, École des Ponts
+  ParisTech-IFSTTAR-CNRS). See also
+  [@bleyer_fenics_2019;@bleyer_elasto-plastic_2019]. See it in action
+  [here](https://www.youtube.com/watch?v=LyRq6_Q15D0).
+- [MFront and OpenGeoSys Connecting two open-source initiatives for
+  simulations in environmental geosciences and energy
+  geotechnics](https://github.com/thelfer/tfel-doc/tree/master/MFrontUserDays/FifthUserDays/OpenGeoSys-Nagel-MFrontUserDays-2019.pdf),
+  by T. Nagel, F. Parisio, D. Naumov, C. Lehmann, and O. Kolditz
+  (Technische Universität Bergakademie Freiberg/Helmholtz Zentrum für
+  Umweltforschung GmbH/Technische Universität Dresden/Competence Centre
+  for Environmental Geosciences). See it action [here](https://www.youtube.com/watch?v=juWMIkJ64iE).
+- [Xper: a software dedicated to the fracture of nonlinear heterogeneous
+  materials. Coupling with MFront using
+  MGIS](https://github.com/thelfer/tfel-doc/tree/master/MFrontUserDays/FifthUserDays/Xper-Perales-MFrontUserDays-2019.pdf),
+  by F. Péralès (IRNS).
+- `JuliaFEM`. See @frondelius_mfrontinterface_2019 for details.
+- `Kratos Multiphysics`. See it in action [here](https://www.youtube.com/watch?v=402rqrygT4k).
 
 # New functionalities
 
@@ -85,3 +109,5 @@ b = mgis.behaviour.load("src/libBehaviour.so","Norton2",h)
 @test mgis.behaviour.get_behaviour_type(b)== 
     mgis.behaviour.StandardStrainBasedBehaviour
 ~~~~
+
+# References
