@@ -164,9 +164,7 @@ set(CMAKE_CXX_FLAGS "${VISIBILITY_FLAGS} ${COMPILER_WARNINGS} ${COMPILER_FLAGS} 
 # `conda` adds `-I$PREFIX/include` in the `CFLAGS` and `CXXFLAGS`,
 # thus, using those variables `CFLAGS` and `CXXFLAGS` solves the issue and is more
 # consistent with other `conda` packages.
-#
-# See https://github.com/thelfer/staged-recipes/tree/master/recipes/tfel for a recipe
-# showing how to build `TFEL` with `conda`.
+
 if(USE_EXTERNAL_COMPILER_FLAGS)
   set(CMAKE_C_FLAGS "$ENV{CFLAGS}")
   set(CMAKE_CXX_FLAGS "${COMPILER_WARNINGS} $ENV{CXXFLAGS}")
