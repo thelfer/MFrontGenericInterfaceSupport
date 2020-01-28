@@ -40,6 +40,7 @@ The following bindings are available:
 - `c` binding
 - `python` binding 
 - `fortran` binding
+- `julia` binding
 - `fenics` bindings (experimental). Those bindings are strongly inspired
   by the `fenics-solid-mechanics` project. Those bindings are currently
   quite limited as mostly serve as a proof of concept. Note that `MGIS`
@@ -51,7 +52,6 @@ The following bindings are available:
 The following bindings are under consideration:
 
 - `octave` binding
-- `julia` binding
 
 # Versions, branches
 

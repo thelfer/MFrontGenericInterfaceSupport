@@ -53,6 +53,8 @@ Options
   pandoc is found)
 - `enable-portable-build`: do not use processor specific flags.
 - `enable-static`: compiles static libraries
+- `enable-doxygen-doc`: enable the generation of the API documentation
+  using with `Doxygen`.
 
 cmake usefull variables
 =======================
