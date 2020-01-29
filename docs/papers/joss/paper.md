@@ -30,9 +30,9 @@ affiliations:
     index: 3
   - name: University of Oulu
     index: 4
-  - name: VTT Technical Research Centre of Finland
+  - name: VTT Technical Research Centre of Finland, Kivimiehentie 3, 02150 Espoo, Finland
     index: 5
-  - name: Aalto University
+  - name: Department of Computer Science, Aalto University, Konemiehentie 2, 02150 Espoo, Finland
     index: 6
   - name: Technische Universität Bergakademie Freiberg
     index: 7
