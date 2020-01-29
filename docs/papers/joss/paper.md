@@ -26,9 +26,9 @@ affiliations:
     index: 1
   - name: Laboratoire Navier UMR 8205 (École des Ponts ParisTech-IFSTTAR-CNRS)
     index: 2
-  - name: Wärtsilä
+  - name: R&D and Engineering, Wärtsilä, P.O. Box 244, 65101 Vaasa, Finland
     index: 3
-  - name: University of Oulu
+  - name: University of Oulu, Erkki Koiso-Kanttilan katu 1, 90014 Oulu, Finland
     index: 4
   - name: VTT Technical Research Centre of Finland, Kivimiehentie 3, 02150 Espoo, Finland
     index: 5
