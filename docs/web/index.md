@@ -69,6 +69,10 @@ The following bindings are under consideration:
 
 - [Version 1.1](release-notes-1.1.html)
 
+# Installation
+
+The installation process is discussed [here](install.html).
+
 # Acknowledgement
 
 This project uses code extracted from the following projects:
