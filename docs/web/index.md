@@ -95,7 +95,7 @@ please respect the following restrictions:
 
 * Please **do not** use the issue tracker for personal support requests
   (contact directly the authors
-  [mailto:tfel-contact@cea.fr](tfel-contact@cea.fr)
+  [tfel-contact@cea.fr](mailto:tfel-contact@cea.fr)
 
 ## Bug reports
 
@@ -104,14 +104,14 @@ Good bug reports are extremely helpful - thank you!
 
 Guidelines for bug reports:
 
-1. **Use the GitHub issue search** &mdash; check if the issue has already been
+1. **Use the GitHub issue search**: check if the issue has already been
    reported.
 
-2. **Check if the issue has been fixed** &mdash; try to reproduce it using the
+2. **Check if the issue has been fixed**: try to reproduce it using the
    latest `master` or development branch in the repository.
 
-3. **Isolate the problem** &mdash; ideally create a [reduced test
-   case] and a live example.
+3. **Isolate the problem**: ideally create a [reduced test
+   case].
 
 A good bug report shouldn't leave others needing to chase you up for more
 information. Please try to be as detailed as possible in your report. What is
