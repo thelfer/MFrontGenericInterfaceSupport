@@ -18,9 +18,9 @@ authors:
     affiliation: "5, 6"
   - name: Thomas Nagel
     orcid: 0000-0001-8459-4616
-    affiliation: 7
+    affiliation: "7, 8"
   - name: Dmitri Naumov
-    affiliation: 8
+    affiliation: "7, 8"
 affiliations:
   - name: French Alternative Energies and Atomic Energy Commission, DEN/DEC/SESC, Département d'Études des Combustibles, Centre de Cadarache, Saint Paul Lez Durance 13 108 CEDEX, France
     index: 1
@@ -34,9 +34,9 @@ affiliations:
     index: 5
   - name: Department of Computer Science, Aalto University, Konemiehentie 2, 02150 Espoo, Finland
     index: 6
-  - name: Technische Universität Bergakademie Freiberg
+  - name: Geotechnical Institute, Technische Universität Bergakademie Freiberg, Gustav-Zeuner-Str. 1, 09599 Freiberg, Germany
     index: 7
-  - name: Helmholtz Centre for Environmental Research -- UFZ
+  - name: Department of Environmental Informatics, Helmholtz Centre for Environmental Research -- UFZ, Permoserstr. 15, 04318 Leipzig, Germany
     index: 8
 date: 8 October 2019
 bibliography: bibliography.bib
