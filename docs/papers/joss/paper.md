@@ -22,7 +22,7 @@ authors:
   - name: Dmitri Naumov
     affiliation: 8
 affiliations:
-  - name: French Alternative Energies and Atomic Energy Commission, DEN/DEC/SESC, Département d'Études des Combustibles, Centre de Cadarache, Saint Paul Lez Durance 13 108 CEDEX, France
+  - name: CEA, DES, IRESNE, DEC, Cadarache F-13108 Saint-Paul-Lez-Durance, France
     index: 1
   - name: Laboratoire Navier UMR 8205 (École des Ponts ParisTech-IFSTTAR-CNRS)
     index: 2
