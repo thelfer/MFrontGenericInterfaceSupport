@@ -475,6 +475,19 @@ mgis_bv_finite_strain_behaviour_options_set_tangent_operator_by_string(
     return mgis_report_success();
   }  // end of mgis_bv_behaviour_get_internal_state_variable_type
 
+  mgis_status mgis_bv_behaviour_get_internal_state_variables_size(
+      mgis_size_type * const s, const mgis_bv_Behaviour* const b) {
+    if (b == nullptr) {
+      return mgis_report_failure("invalid argument");
+    }
+    try {
+      *s = getArraySize(b->isvs, b->hypothesis);
+    } catch (...) {
+      return mgis_handle_cxx_exception();
+    }
+    return mgis_report_success();
+  }  // end of mgis_bv_behaviour_get_internal_state_variables_size
+  
   mgis_status mgis_bv_behaviour_get_number_of_external_state_variables(
       mgis_size_type * const s, const mgis_bv_Behaviour* const b) {
     *s = 0;

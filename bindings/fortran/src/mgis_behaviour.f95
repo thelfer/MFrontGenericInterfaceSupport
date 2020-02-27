@@ -675,6 +675,31 @@ contains
     s = behaviour_get_material_property_type_wrapper(t, b%ptr, nc)
   end function behaviour_get_material_property_type
   !
+  function behaviour_get_internal_state_variables_size(n,b) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_internal_state_variables_size_wrapper(l,b) &
+            bind(c,name = 'mgis_bv_behaviour_get_internal_state_variables_size') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_internal_state_variables_size_wrapper
+    end interface
+    integer :: n
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = behaviour_get_internal_state_variables_size_wrapper(ns, b%ptr)
+    n = ns
+  end function behaviour_get_internal_state_variables_size
+  !
   function behaviour_get_number_of_internal_state_variables(n,b) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t
     use mgis_fortran_utilities
