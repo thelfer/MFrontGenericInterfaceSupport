@@ -298,6 +298,15 @@ mgis_bv_behaviour_get_material_property_type(mgis_bv_VariableType* const,
  * \param[in] b: behaviour
  */
 MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_internal_state_variables_size(
+    mgis_size_type* const, const mgis_bv_Behaviour* const);
+/*!
+ * \brief return the size of internal state variables global array
+ * \param[out] c: internal state variables array size
+ * \param[in] b: behaviour
+ * \param[in] i: internal state variable index
+ */
+MGIS_C_EXPORT mgis_status
 mgis_bv_behaviour_get_number_of_internal_state_variables(
     mgis_size_type* const, const mgis_bv_Behaviour* const);
 /*!
