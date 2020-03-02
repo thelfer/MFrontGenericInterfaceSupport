@@ -35,6 +35,7 @@ mgis_generate_html_page(install)
 mgis_generate_html_page(bindings-cxx "--toc" "--toc-depth=3")
 mgis_generate_html_page(FEniCSBindings)
 mgis_generate_html_page(release-notes-1.1 "--toc" "--toc-depth=3")
+mgis_generate_html_page(release-notes-1.2 "--toc" "--toc-depth=3")
 
 if(MGIS_APPEND_SUFFIX)
   install(DIRECTORY css

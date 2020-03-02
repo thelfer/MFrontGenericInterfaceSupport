@@ -1,6 +1,8 @@
 mgis_library(MFrontGenericInterface-c SHARED
   Status.cxx
   ThreadPool.cxx
+  Hypothesis.cxx
+  Variable.cxx
   Behaviour.cxx
   State.cxx
   BehaviourData.cxx

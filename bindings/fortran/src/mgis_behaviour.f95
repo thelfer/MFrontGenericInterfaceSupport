@@ -81,6 +81,108 @@ module mgis_behaviour
   end type MaterialDataManager
 contains
   !
+  function get_space_dimension(vs, h) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function get_space_dimension_wrapper(vs,h) &
+            bind(c,name = 'mgis_bv_get_space_dimension') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: vs
+         character(len=1,kind=c_char), dimension(*), intent(in) :: h
+         type(mgis_status) :: r
+       end function get_space_dimension_wrapper
+    end interface
+    integer(kind=c_int), intent(out) :: vs
+    character(len=*), intent(in) :: h
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = get_space_dimension_wrapper(ns, convert_fortran_string(h))
+    vs = ns
+  end function get_space_dimension
+  !
+  function get_stensor_size(vs, h) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function get_stensor_size_wrapper(vs,h) &
+            bind(c,name = 'mgis_bv_get_stensor_size') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: vs
+         character(len=1,kind=c_char), dimension(*), intent(in) :: h
+         type(mgis_status) :: r
+       end function get_stensor_size_wrapper
+    end interface
+    integer(kind=c_int), intent(out) :: vs
+    character(len=*), intent(in) :: h
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = get_stensor_size_wrapper(ns, convert_fortran_string(h))
+    vs = ns
+  end function get_stensor_size
+  !
+  function get_tensor_size(vs, h) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function get_tensor_size_wrapper(vs,h) &
+            bind(c,name = 'mgis_bv_get_tensor_size') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: vs
+         character(len=1,kind=c_char), dimension(*), intent(in) :: h
+         type(mgis_status) :: r
+       end function get_tensor_size_wrapper
+    end interface
+    integer(kind=c_int), intent(out) :: vs
+    character(len=*), intent(in) :: h
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = get_tensor_size_wrapper(ns, convert_fortran_string(h))
+    vs = ns
+  end function get_tensor_size
+  !
+  function get_variable_size(vs, h, t) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function get_variable_size_wrapper(vs,h,t) &
+            bind(c,name = 'mgis_bv_get_variable_size') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_char, c_int
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: vs
+         character(len=1,kind=c_char), dimension(*), intent(in) :: h
+         integer(kind=c_int), intent(in), value :: t
+         type(mgis_status) :: r
+       end function get_variable_size_wrapper
+    end interface
+    integer(kind=c_int), intent(out) :: vs
+    character(len=*), intent(in) :: h
+    integer(kind=c_int), intent(in) :: t
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = get_variable_size_wrapper(ns, convert_fortran_string(h), t)
+    vs = ns
+  end function get_variable_size
+  !
   function create_finite_strain_behaviour_options(o) result(s)
     use mgis_fortran_utilities
     use mgis, only: mgis_status, report_failure
@@ -144,7 +246,6 @@ contains
     type(FiniteStrainBehaviourOptions), intent(in) :: o
     character(len=*), intent(in) :: ss
     type(mgis_status) :: s
-    write(*,*) 'finite_strain_behaviour_options_set_stress_measure_by_string: '
     s = fsb_opts_set_stress_measure_by_string_wrapper(o%ptr, convert_fortran_string(ss))
   end function finite_strain_behaviour_options_set_stress_measure_by_string
   !

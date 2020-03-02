@@ -67,6 +67,7 @@ The following bindings are under consideration:
 
 ## Release notes
 
+- [Version 1.2](release-notes-1.2.html)
 - [Version 1.1](release-notes-1.1.html)
 
 # Installation
