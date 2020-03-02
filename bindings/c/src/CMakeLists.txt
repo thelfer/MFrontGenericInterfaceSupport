@@ -11,7 +11,8 @@ mgis_library(MFrontGenericInterface-c SHARED
   MaterialDataManager.cxx
   Integrate.cxx)
 target_include_directories(MFrontGenericInterface-c
-  PUBLIC "${CMAKE_SOURCE_DIR}/include"
-  PUBLIC "${CMAKE_SOURCE_DIR}/bindings/c/include")
+  PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+  PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/bindings/c/include>
+  PUBLIC $<INSTALL_INTERFACE:include>)
 target_link_libraries(MFrontGenericInterface-c
    PRIVATE MFrontGenericInterface)

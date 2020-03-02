@@ -29,11 +29,11 @@ namespace mgis {
      * \brief structure describing a variable
      */
     struct Variable {
-      //! name of the variable
+      //! \brief name of the variable
       std::string name;
-      //! type of the variable
-      enum Type { SCALAR = 0, VECTOR = 1, STENSOR = 2, TENSOR = 3} type;
-    };  // end of struct Description
+      //! \brief type of the variable
+      enum Type { SCALAR = 0, VECTOR = 1, STENSOR = 2, TENSOR = 3 } type;
+    };  // end of struct Variable
 
     /*!
      * \return a boolean stating that a variable with the given name
