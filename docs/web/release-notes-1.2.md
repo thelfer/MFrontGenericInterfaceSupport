@@ -44,4 +44,58 @@ The `get_variable_size` function is now available in the
 
 For details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/30>
 
+## Issue #28: Missing block jacobian info in `python` bindings
+
+The tangent operator blocks are now available in the `python` bindings
+under the `tangent_operator_blocks` property of the `Behaviour` class.
+
+Those blocks are accessible as an array of tuples of instances of the
+`Variable` class.
+
+This feature can be used as follows:
+
+~~~~{.python}
+import mgis.behaviour as mgis_bv
+
+h = mgis_bv.Hypothesis.Tridimensional
+b = mgis_bv.load('src/libBehaviour.so','StationaryHeatTransfer2',h)
+for t in b.tangent_operator_blocks:
+    print('d{}_d{}'.format(t[0].name,t[1].name))
+~~~~
+
+For details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/28>
+
+## Issue #27: Get internal state variables array size via fortran bindings
+
+For details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/27>
+
+## Issue #25: Exporting MGIS build tree for use by external projects
+
+The following files are now generated and exported:
+
+- `MFrontGenericInterfaceConfig.cmake`: configuration file for the
+  `MFrontGenericInterface` library which contains the `C++` core library
+  of `MGIS`.
+- `MFrontGenericInterface-cConfig.cmake`: configuration file for the
+  `MFrontGenericInterface` library which contains the `c` binding of
+  `MGIS`.
+- `MFrontGenericInterface-fortranConfig.cmake`: configuration file for
+  the `MFrontGenericInterface-fortran` library which contains the
+  `fortran` bindings of `MGIS`.
+
+Those files can be used as follows:
+
+~~~~{.cmake}
+find_package (MFrontGenericInterface REQUIRED)
+~~~~
+
+The previous instruction imports the `mgis::MFrontGenericInterface` target, which can be used as follows:
+
+~~~~{.cmake}
+  target_link_libraries(HybridHighOrder
+	PRIVATE mgis::MFrontGenericInterface)
+~~~~
+
+For details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/25>
+
 # References

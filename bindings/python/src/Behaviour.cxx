@@ -119,6 +119,13 @@ static boost::python::list Behaviour_getUnsignedShortParameters(
   return mgis::python::convert_vector_to_list(b.usparams);
 }  // end of Behaviour_getUnsignedShortParameters
 
+static std::vector<
+    std::pair<mgis::behaviour::Variable, mgis::behaviour::Variable>>
+Behaviour_getTangentOperatorBlocks(const mgis::behaviour::Behaviour &b) {
+  return b.to_blocks;
+}  // end of Behaviour_getUnsignedShortParameters
+
+
 void declareBehaviour() {
   using mgis::behaviour::FiniteStrainBehaviourOptions;
   using mgis::behaviour::Behaviour;
@@ -274,6 +281,8 @@ void declareBehaviour() {
                     "list of unsigned short parameters")
       .add_property("usparams", &Behaviour_getUnsignedShortParameters,
                     "list of unsigned short parameters")
+      .add_property("tangent_operator_blocks",
+                    Behaviour_getTangentOperatorBlocks)
       .def("setParameter", setParameter1)
       .def("setIntegerParameter", setParameter2)
       .def("setUnsignedShortParameter", setParameter3)

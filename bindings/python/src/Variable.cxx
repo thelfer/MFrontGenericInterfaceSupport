@@ -16,6 +16,7 @@
 #include <boost/python/def.hpp>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/Variable.hxx"
+#include "MGIS/Python/PairConverter.hxx"
 #include "MGIS/Python/VectorConverter.hxx"
 
 static const char* Variable_getType(const mgis::behaviour::Variable& v) {
@@ -67,6 +68,11 @@ void declareVariable() {
            "Possible values are `Scalar`, `Vector`, `Stensor`, `Tensor`");
   // wrapping std::vector<Variable>
   mgis::python::initializeVectorConverter<std::vector<Variable>>();
+  //
+  mgis::python::initializePairConverter<Variable, Variable>();
+  // wrapping std::vector<std::pair<Variable,Variable>>
+  mgis::python::initializeVectorConverter<
+      std::vector<std::pair<Variable, Variable>>>();
   // free functions
   boost::python::def("getVariable", &mgis::behaviour::getVariable,
                      boost::python::return_internal_reference<>());
