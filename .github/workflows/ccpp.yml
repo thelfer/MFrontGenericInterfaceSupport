@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: cmake
-      run: cmake -DCMAKE_BUILD_TYPE=Release . -Denable-c-bindings=ON  -Denable-fortran-bindings=ON -Denable-python-bindings=OFF -Denable-portable-build=ON -Denable-julia-bindings=OFF
+      run: cmake -DCMAKE_BUILD_TYPE=Release . -Denable-c-bindings=ON  -Denable-fortran-bindings=OFF -Denable-python-bindings=OFF -Denable-portable-build=ON -Denable-julia-bindings=OFF
     - name: make
       run: make
     - name: make check
