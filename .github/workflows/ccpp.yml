@@ -1,0 +1,17 @@
+name: C/C++ CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: [ubuntu-latest, windows-latest, macOS-latest]
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: cmake
+      run: cmake -DCMAKE_BUILD_TYPE=Release
+    - name: make
+      run: make
+    - name: make check
+      run: make check
