@@ -36,6 +36,23 @@ module:
 
 # Issues solved
 
+## Issue #32: Better `const` correctness
+
+This issue follows this evolution in the generic interface of MFront:
+<https://sourceforge.net/p/tfel/tickets/212/>
+
+The state at the beginning of the time step is now described in a
+structure called `mgis_bv_InitialStateView`, the fields of which are all
+const.
+
+The following fields of the `mgis_bv_StateView` are now `const`:
+
+- `gradients`
+- `material_properties`
+- `external_state_variables`
+
+For details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/32>
+
 ## Issue #30: Variables array size depending on type and modelling hypothesis
 
 The `get_variable_size` function is now available in the
