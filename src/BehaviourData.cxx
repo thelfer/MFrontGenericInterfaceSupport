@@ -64,7 +64,7 @@ namespace mgis {
       v.dt = d.dt;
       v.rdt = d.rdt;
       v.K = get_ptr(d.K);
-      v.s0 = make_view(d.s0);
+      v.s0 = make_view(static_cast<const State&>(d.s0));
       v.s1 = make_view(d.s1);
       return v;
     }  // end of make_view
