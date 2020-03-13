@@ -132,6 +132,13 @@ namespace mgis {
     Behaviour &Behaviour::operator=(const Behaviour &) = default;
     Behaviour::~Behaviour() = default;
 
+    bool isStandardFiniteStrainBehaviour(const std::string &l,
+                                         const std::string &b) {
+      auto &lm = mgis::LibrariesManager::get();
+      return (lm.getBehaviourType(l, b) == 2) &&
+             (lm.getBehaviourKinematic(l, b) == 3);
+    }  // end of isStandardFiniteStrainBehaviour
+
     Behaviour load(const std::string &l,
                    const std::string &b,
                    const Hypothesis h) {

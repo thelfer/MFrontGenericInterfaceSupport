@@ -150,7 +150,20 @@ namespace mgis {
        *   stress with respect to the deformation gradient is returned
        */
       std::vector<mgis::real> options;
-    };  // end of struct Behaviour
+    }; // end of struct Behaviour
+
+    /*!
+     * \return if the given behaviour is a standard finite strain behaviour,
+     * i.e. is a finite strain behaviour using the standard finite strain kinematic
+     * (called F-Cauchy although the stress measure can be chosen when
+     * loading the behaviour)
+     * \param[in] l: library name
+     * \param[in] b: behaviour name
+     * \note: use of `std::string` rather than `mgis::string_view` is
+     * meaningfull here
+     */
+    MGIS_EXPORT bool isStandardFiniteStrainBehaviour(const std::string &,
+                                                     const std::string &);
 
     /*!
      * \brief load the description of a behaviour from a library
@@ -162,8 +175,7 @@ namespace mgis {
      * \note: use of `std::string` rather than `mgis::string_view` is
      * meaningfull here
      */
-    MGIS_EXPORT Behaviour load(const std::string &,
-                               const std::string &,
+    MGIS_EXPORT Behaviour load(const std::string &, const std::string &,
                                const Hypothesis);
     /*!
      * \brief load the description of a finite strain behaviour from a library
@@ -182,8 +194,7 @@ namespace mgis {
      * meaningfull here
      */
     MGIS_EXPORT Behaviour load(const FiniteStrainBehaviourOptions &,
-                               const std::string &,
-                               const std::string &,
+                               const std::string &, const std::string &,
                                const Hypothesis);
     /*!
      * \return the size of an array able to contain all the values of the

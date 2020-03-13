@@ -300,6 +300,13 @@ void declareBehaviour() {
       .def("getLowerPhysicalBound ", getLowerPhysicalBound)
       .def("getUpperPhysicalBound ", getUpperPhysicalBound);
   // wrapping free functions
+  boost::python::def(
+      "isStandardFiniteStrainBehaviour",
+      mgis::behaviour::isStandardFiniteStrainBehaviour,
+      "return if the given behaviour is a standard finite strain behaviour, "
+      "i.e. is a finite strain behaviour using the standard finite strain "
+      "kinematic (called F-Cauchy although the stress measure can be chosen "
+      "when loading the behaviour)");
   boost::python::def("load", load_ptr);
   boost::python::def("load", load_ptr2);
   boost::python::def("setParameter", setParameter1);
