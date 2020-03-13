@@ -43,6 +43,16 @@ check if a behaviour is a finite strain behaviour and if its kinematic
 is also standard (i.e. is of the `F-Cauchy` kind although the stress
 measure can be chosen when loading the behaviour).
 
+This function is exposed as:
+
+- `mgis_bv_is_standard_finite_strain_behaviour` in the `C`' bindings.
+- `is_standard_finite_strain_behaviour` in the `mgis_behaviour` module
+  in the `Fortran`' bindings.
+- `isStandardFiniteStrainBehaviour` in in the `mgis.behaviour` module in
+  the `Python`' bindings.
+
+For details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/33>
+
 ## Issue #32: Better `const` correctness
 
 This issue follows this evolution in the generic interface of MFront:
