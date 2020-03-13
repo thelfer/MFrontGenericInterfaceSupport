@@ -316,6 +316,38 @@ contains
     end if
   end function free_finite_strain_behaviour_options
   !
+  function is_standard_finite_strain_behaviour(b,l,bn) result(s)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function is_standard_finite_strain_behaviour_wrapper(b,l,bn) &
+            bind(c,name = 'mgis_bv_is_standard_finite_strain_behaviour') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_char, c_ptr, c_int
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: l
+         character(len=1,kind=c_char), dimension(*), intent(in) :: bn
+         type(mgis_status) :: r
+       end function is_standard_finite_strain_behaviour_wrapper
+    end interface
+    logical, intent(out) :: b
+    character(len=*), intent(in) :: l
+    character(len=*), intent(in) :: bn
+    type(mgis_status) :: s
+    integer(kind=c_int) :: r
+    s = is_standard_finite_strain_behaviour_wrapper(r, convert_fortran_string(l), &
+         convert_fortran_string(bn))
+    if (r .eq. 0) then
+       b = .false.
+    else
+       b = .true.
+    end if
+  end function is_standard_finite_strain_behaviour
+  !
   function load_behaviour(b,l,bn,h) result(s)
     use mgis_fortran_utilities
     use mgis, only: mgis_status

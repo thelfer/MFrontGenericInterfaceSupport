@@ -36,6 +36,13 @@ module:
 
 # Issues solved
 
+## Issue #33: Function for checking if the behaviour is a Finite Strain one
+
+The `mgis::behaviour::isStandardFiniteStrainBehaviour` has been added to
+check if a behaviour is a finite strain behaviour and if its kinematic
+is also standard (i.e. is of the `F-Cauchy` kind although the stress
+measure can be chosen when loading the behaviour).
+
 ## Issue #32: Better `const` correctness
 
 This issue follows this evolution in the generic interface of MFront:

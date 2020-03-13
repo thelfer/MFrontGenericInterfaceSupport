@@ -153,6 +153,20 @@ MGIS_C_EXPORT mgis_status mgis_bv_free_finite_strain_behaviour_options(
 /*!
  * \brief load a behaviour
  *
+ * This function checks if the given behaviour is a standard finite strain
+ * behaviour, i.e. is a finite strain behaviour using the standard finite strain
+ * kinematic (called F-Cauchy although the stress measure can be chosen when
+ * loading the behaviour)
+ *
+ * \param[out] r: boolean value
+ * \param[in] l: library name
+ * \param[in] b: behaviour name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_is_standard_finite_strain_behaviour(
+    int*, const char* const, const char* const);
+/*!
+ * \brief load a behaviour
+ *
  * \note This method can also be used to load a finite strain behaviour.
  * In this case, the default options are used (the stress measure is Cauchy,
  * the tangent operator is the derivative of the Cauchy stress with respect to
@@ -297,8 +311,7 @@ mgis_bv_behaviour_get_material_property_type(mgis_bv_VariableType* const,
  * \param[out] c: number of the internal state variables
  * \param[in] b: behaviour
  */
-MGIS_C_EXPORT mgis_status
-mgis_bv_behaviour_get_internal_state_variables_size(
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_internal_state_variables_size(
     mgis_size_type* const, const mgis_bv_Behaviour* const);
 /*!
  * \brief return the size of internal state variables global array

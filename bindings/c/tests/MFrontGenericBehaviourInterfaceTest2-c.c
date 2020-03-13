@@ -49,6 +49,10 @@ int main(const int argc, const char* const* argv) {
   if (!check(argc == 3, "expected three arguments")) {
     return EXIT_FAILURE;
   }
+  int btype;
+  check_status(
+      mgis_bv_is_standard_finite_strain_behaviour(&btype, argv[1], argv[2]));
+  check(btype, "invalid type");
   mgis_bv_Behaviour* b;
   check_status(mgis_bv_load_behaviour(&b, argv[1], argv[2], "Tridimensional"));
   mgis_size_type mps_size;

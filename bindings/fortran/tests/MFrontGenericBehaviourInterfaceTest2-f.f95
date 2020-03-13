@@ -24,6 +24,7 @@ subroutine test()
   implicit none
   type(Behaviour) b
   logical :: r
+  logical :: r2
   ! library
   character(len=:), allocatable :: l
   ! behaviour name
@@ -71,6 +72,10 @@ subroutine test()
   ! loop index
   integer i
   ! start of the check
+  call check_status(is_standard_finite_strain_behaviour(r2, &
+       get_mfront_behaviour_test_library_path(), &
+       'FiniteStrainSingleCrystal'))
+  r = check(r2, 'invalid behaviour type')
   call check_status(load_behaviour(b, &
        get_mfront_behaviour_test_library_path(), &
        'FiniteStrainSingleCrystal', 'Tridimensional'))

@@ -31,6 +31,8 @@ int main(const int argc, const char* const* argv) {
     return EXIT_FAILURE;
   }
   try{
+    check(isStandardFiniteStrainBehaviour(argv[1], argv[2]),
+          "invalid behaviour type");
     const auto d = load(argv[1], argv[2], h);
     check(d.behaviour == "FiniteStrainSingleCrystal", "invalid behaviour name");
     check(d.hypothesis == h, "invalid hypothesis");

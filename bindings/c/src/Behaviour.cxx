@@ -129,6 +129,19 @@ mgis_bv_finite_strain_behaviour_options_set_tangent_operator_by_string(
     return mgis_report_success();
   }  // end of mgis_bv_free_finite_strain_behaviour_options
 
+  mgis_status mgis_bv_is_standard_finite_strain_behaviour(int* r,
+                                                          const char* const l,
+                                                          const char* const b) {
+    *r = static_cast<int>(false);
+    try {
+      *r = static_cast<int>(
+          mgis::behaviour::isStandardFiniteStrainBehaviour(l, b));
+    } catch (...) {
+      return mgis_handle_cxx_exception();
+    }
+    return mgis_report_success();
+  }  // end of mgis_bv_is_standard_finite_strain_behaviour
+
   mgis_status mgis_bv_load_behaviour(mgis_bv_Behaviour * *ptr,
                                      const char* const l, const char* const b,
                                      const char* const h) {
