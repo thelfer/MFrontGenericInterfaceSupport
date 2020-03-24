@@ -231,16 +231,16 @@ To simplify the implementation of new constitutive models for solid
 phases developed with `MFront`, `OGS-6` relies on `C` bindings of
 `MGIS`.
 
-!["Figure 2: Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material (left). Shear bands forming beneath an  applied traction load on a frictional material."](img/MCAS_disc_hole_cyclic_show_axes.png "Elasto-plastic modelling of a cyclically loaded cavity in a cohesive-frictional material.")
+!["Figure 2: Slope stability analysis with strength reduction performed in OpenGeoSys. The image on the left shows the norm of the displacement vector for a low top load. The image on the right shows the equivalent plastic strain for a setting with an increased top load."](img/ogs_strength_reduction.png "Strength reduction for slope stability analysis in OpenGeoSys.")
 
-Figure 2 shows the results of a test simulation of a cavity in a
-cohesive-frictional material modelled by a non-associated plastic
-behaviour based on the Mohr-Coulomb yield criterion and subjected to a
-cyclically varying anisotropic stress field (see @Nagel2016 for a
-complete description and verification against an analytical solution
-in the isotropic case). The right hand side of Figure 2 shows a compressive
-load applied to a non-associated frictional material in the presence of
-gravitational loading.
+Figure 2 shows the results of a $\varphi-c$ reduction approach to slope stability analysis.
+The soil is modelled by a non-associated plastic behaviour based on the Mohr-Coulomb 
+yield criterion. The implementation presented in @Nagel2016 was extended by a tension cut-off.
+The image on the left shows the norm of the displacement vector for a low top load. 
+The failure kinematics are clearly visible. 
+The image on the right shows the equivalent plastic strain for a setting with an increased top load. 
+It can be seen that the failure mechanism becomes more complex with an additional 
+slip surface forming beneath the load.
 
 
 
