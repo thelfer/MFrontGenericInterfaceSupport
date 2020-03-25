@@ -180,7 +180,7 @@ chosen by the solver.
 `MGIS` is written in `C++-11`. The `C++` API is described in another
 report, see [@helfer_brief_2019].
 
-The following bindings are available:
+The following bindings are currently available:
 
 - `python`.
 - `Julia`.
@@ -205,18 +205,18 @@ Bleyer et al. (see [@bleyer_elasto-plastic_2019;@bleyer_fenics_2019]).
 
 Extensions to finite strain elastoplasticity have been recently added as
 shown in Figure 1 which models a tensile test on a notched bar^[This
-case is adapted from a non-regression test of `Code_Aster` finite
+case is adapted from a non-regression test of the `Code_Aster` finite
 element solver, see @edf_ssna303_2011 for details].
 
 ## `OpenGeoSys`
 
 OpenGeoSys (OGS) is a scientific open-source initiative for the
-numerical simulation of thermo-hydro-mechanical/ chemical (THMC)
+numerical simulation of thermo-hydro-mechanical/chemical (THMC)
 processes in porous and fractured media, inspired by FEFLOW and ROCKFLOW
 concepts and continuously developed since the mid-eighties, see
 ([@Kolditz:1990;@Wollrath:1990;@Kroehn:1991;@Helmig:1993;@kolditz_opengeosys:_2012;@Bilke2019]).
 
-The OGS framework is targeting applications in environmental geoscience,
+The OGS framework is targeting applications in the environmental geosciences,
 e.g., in the fields of contaminant hydrology, water resources and waste management,
 geotechnical applications, geothermal energy systems and energy
 storage.
@@ -233,8 +233,8 @@ for the propagation of discontinuities, such as enriched finite element
 function spaces, non-local formulations and phase-field models for
 fracture ([@Watanabe2012;@Parisio2018;@Yoshioka2019]).
 
-To simplify the implementation of new constitutive models for solid
-phases developed with `MFront`, `OGS-6` relies on `C` bindings of
+To simplify the implementation of new constitutive models for solids
+ developed with `MFront`, `OGS-6` relies on the `C` bindings of
 `MGIS`.
 
 !["Figure 2: Slope stability analysis with strength reduction performed in OpenGeoSys. The image on the left shows the norm of the displacement vector for a low top load. The image on the right shows the equivalent plastic strain for a setting with an increased top load."](img/ogs_strength_reduction.png "Strength reduction for slope stability analysis in OpenGeoSys.")
@@ -284,12 +284,18 @@ plus MFrontInterface 3D demo")
 # Conclusions
 
 This paper introduces the `MFrontGenericInterfaceSupport` library which
-considerably eases the integration of `MFront` generated behaviours in
+considerably eases the integration of `MFront`-generated behaviours in
 any solver. In particular, the library provides a way of retrieving the
 metadata associated with a behaviour, data structures to store the
-physical information, functions to perform the behaviour integration
+physical information and functions to perform the behaviour integration
 over a time step. Examples of usage in various open-source solvers
-(`FEniCS`, `OpenGeoSys`, `JuliaFEM`) have been provided.
+(`FEniCS`, `OpenGeoSys`, `JuliaFEM`) have been provided. 
+
+The models implemented for one code can easily be used in another without
+the need for re-implementation. This offers great benefits for code
+quality assurance. Since the constitutive integration is 
+handled by MFront, this step of the computation is equally efficient across
+the different solver platforms.
 
 # Acknowledgements
 
@@ -298,7 +304,8 @@ which is supported financially by the CEA (Commissariat à l’Energie
 Atomique et aux Energies Alternatives), EDF (Electricité de France) and
 Framatome.Acknowledgements
 
-We would like to express our thanks to Olaf Kolditz and the entire
+We would like to express our thanks to Christoph Lehmann, Francesco Parisio,
+Olaf Kolditz and the entire
 community of developers and users of OpenGeoSys(OGS). We thank the
 Helmholtz Centre for Environmental Research -- UFZ for long-term funding
 and continuous support of the OpenGeoSys initiative. OGS has been
