@@ -50,48 +50,53 @@ pandoc -f markdown_strict --bibliography=bibliography.bib --filter pandoc-citepr
 
 Constitutive equations describe how the internal state variables of a
 material evolve with changing external conditions or mechanical
-loadings. Those state variables can describe many microstructural
+loading. Those state variables can describe many microstructural
 aspects of the material (grain size, dislocation density, hardening
 state, etc.) or be phenomenological in nature (equivalent plastic
 strain). The knowledge of those internal state variables allows the
 computation of local thermodynamic forces which affect the material
-equilibrium at the structural scale.
+equilibrium at the structural scale. 
+Due to the large number of phenomena that can be described 
+in this manner, such as plasticity,
+viscoplasticity, or damage, computational mechanics is one of the
+most demanding domains for advanced constitutive equations.
 
 At each time step, the constitutive equations must be integrated to
 obtain the state of the material at the end of the time step. As most
 phenomena are nonlinear, an iterative scheme is required at the
 equilibrium scale to find the local loading of the material: the
 integration of the constitutive equations is thus called several times
-with different estimates of the loading of the material.
-
-Due to the large number of phenomena described (plasticity,
-viscoplasticity, damage, etc.), computational mechanics is one of the
-most demanding domains for advanced constitutive equations.
+with different estimates of the loading of the material. 
+Algorithmic efficiency at the constitutive level is therefore key
+for the overall efficiency of a code.
 
 The ability to easily integrate user-defined constitutive equations
 plays a major role in the versatility of (mechanical) solvers^[The term
 solver emphasizes that the numerical method used to discretize the
-equilibrium equations is not significant.].
+equilibrium equations is not significant in the present context.].
 
 The `MFront` open-source code generator has been designed to simplify
 the implementation of the integration of the constitutive equations over
-a time step [@helfer_introducing_2015;@cea_mfront_2019].
-
-From a source file, `MFront` generates `C++` code specific to many
+a time step, to minimize errors during implementation, to facilitate the
+change of the underlying solver, and to help achieve
+ reproducible and efficient code [@helfer_introducing_2015;@cea_mfront_2019].
+For that purpose, `MFront` departs from a source file with a syntax very
+close to an engineering description of the constitutive model, 
+from that generates `C++` code specific to many 
 well-established (mostly thermo-mechanical) solvers through dedicated
 interfaces and compiles them into shared libraries. For example,
 `MFront` provides interfaces for `Cast3M`, `code_aster`, `Europlexus`,
 `Abaqus/Standard`, `Abaqus/Explicit`, `CalculiX`, etc.
 
-In the following, we use the term "behaviour" to denote the result of
-the implementation and compilation of the constitutive equations.
-
+To further facilitate this cross-software integration, 
 `MFront` recently introduced a so-called `generic` interface. This paper
 describes the `MFrontGenericInterfaceSupport` project, which is denoted
 `MGIS` in the following. `MGIS` aims at proving tools (functions,
-classes, bindings to various programming languages) to handle behaviours
-generated using `MFront`' `generic` interface [@helfer_mgis_2019]. Those
-tools alleviate the work required by solvers' developers. Permissive
+classes, bindings to various programming languages) to handle behaviours^[
+In the following, we use the term "behaviour" to denote the result of
+the implementation and compilation of the constitutive equations.]
+generated using `MFront`'s `generic` interface [@helfer_mgis_2019]. Those
+tools alleviate the work required by solver developers. Permissive
 licences have been chosen to allow integration in open-source and
 proprietary codes.
 
