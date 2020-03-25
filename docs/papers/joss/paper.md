@@ -111,21 +111,22 @@ This paper is divided into three parts:
 
 The aims of the `MFrontGenericInterfaceSupport` project are twofold:
 
-1. At the pre-processing state, allow retrieving metadata about a
-  particular behaviour and perform proper memory allocation. At the
-  post-processing stage, ease access to internal state variables.
-2. During computations, simplify the integration of the behaviour at
+1. At the pre-processing state `MGIS` shall provide the possibility 
+of retrieving metadata about a
+  particular behaviour and performing proper memory allocation. At the
+  post-processing stage, easy access to internal state variables is desired.
+2. During computations, `MGIS` shall simplify the integration of the behaviour at
   integration points^[The term "integration points" is used here as a
   generic placeholder. When using FFT for solving the equilibrium
   equations, the integration points are voxels. When using FEM, the
-  integrations points are the usual Gauss points of the elements.] and
+  integration points are typically the Gauss points of the elements.] and
   the update of the internal state variables from one time step to the
-  other.
+  next.
 
 ## Preprocessing and post-processing stages{#sec:prepost}
 
-When dealing with user defined behaviours, most solvers, including
-`Abaqus/Standard` for example, deleguates part of the work to the
+When dealing with user-defined behaviours, most solvers, including
+`Abaqus/Standard` for example, delegates part of the work to the
 user. The user must:
 
 1. describe the behaviour in the input
@@ -134,8 +135,9 @@ user. The user must:
   used in a finite strain analysis based on the appropriate deformation
   and stress measures as well as reference configurations).
 
-This is error-prone and may lead to spurious or even worse inexact
-results.
+In the authors' experience, this is error-prone in particular for 
+inexperienced users and may lead to spurious 
+or even worse inexact results.
 
 `MGIS` introduces a very different approach: the user only declares the
 shared library, the behaviour and the modelling hypothesis
@@ -143,8 +145,7 @@ shared library, the behaviour and the modelling hypothesis
 retrieves various metadata which fully describe how to interact with the
 behaviour. The solver using `MGIS` can then check if the behaviour is
 consistent with the computations to be performed and checks that the
-data provided by the user are correct.
-
+data provided by the user are correct. 
 The metadata can also be used to allocate the memory required to store
 the state of the material at each integration point. `MGIS`' design
 allows the following types of storage:
@@ -154,12 +155,12 @@ allows the following types of storage:
   automatically allocated by `MGIS`.
 - An `MGIS` data structure that stores the states of an arbitrary number
   of integration points. `MGIS` can allocate the memory associated with
-  the state of all specified integrations points or borrow memory
+  the state of all specified integration points or borrow memory
   allocated by the solver.
 
 For post-processing, `MGIS` provides a set of functions to retrieve
 information about the state of the material. For example, one can
-retrieve the value of a state variable from the previous data
+retrieve the value of a state variable from the described data
 structures.
 
 ## Computation stage
@@ -167,11 +168,11 @@ structures.
 `MGIS` provides a function to integrate the constitutive equations at
 one integration point or on a set of integration points^[This strongly
 depends on the data structure chosen to store the internal state
-variables.].
-
+variables.]. 
 The integration of the constitutive equations at different integration
-points are usually independent: thus, when handling a set of integration
-points, `MGIS` can parallelize the integrations using a granularity
+points are usually independent of each other; in other words, in most
+models the constitutive behaviour is local. Thus, when handling a set of integration
+points, `MGIS` can parallelize the integration calls using a granularity
 chosen by the solver.
 
 # Main language and available bindings
