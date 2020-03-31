@@ -156,9 +156,8 @@ The metadata can also be used to allocate the memory required to store
 the state of the material at each integration point. `MGIS`' design
 allows the following types of storage:
 
-- An `MGIS` data structure per integration point. While this causes
-  memory fragmentation, this is the most frequent choice. The memory is
-  automatically allocated by `MGIS`.
+- An `MGIS` data structure per integration point. This is the most
+  frequent choice. The memory is automatically allocated by `MGIS`.
 - An `MGIS` data structure that stores the states of an arbitrary number
   of integration points. `MGIS` can allocate the memory associated with
   the state of all specified integration points or borrow memory
