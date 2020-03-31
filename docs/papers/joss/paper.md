@@ -111,17 +111,17 @@ This paper is divided into three parts:
 
 The aims of the `MFrontGenericInterfaceSupport` project are twofold:
 
-1. At the pre-processing state `MGIS` shall provide the possibility 
-of retrieving metadata about a
-  particular behaviour and performing proper memory allocation. At the
-  post-processing stage, easy access to internal state variables is desired.
-2. During computations, `MGIS` shall simplify the integration of the behaviour at
-  integration points^[The term "integration points" is used here as a
-  generic placeholder. When using FFT for solving the equilibrium
-  equations, the integration points are voxels. When using FEM, the
-  integration points are typically the Gauss points of the elements.] and
-  the update of the internal state variables from one time step to the
-  next.
+1. At the pre-processing state `MGIS` shall provide the possibility of
+  retrieving metadata about a particular behaviour and performing proper
+  memory allocation. At the post-processing stage, easy access to
+  internal state variables is desired.
+2. During computations, `MGIS` shall simplify the integration of the
+  behaviour at integration points^[The term "integration points" is used
+  here as a generic placeholder. When using FFT for solving the
+  equilibrium equations, the integration points are voxels. When using
+  FEM, the integration points are typically the Gauss points of the
+  elements.] and the update of the internal state variables from one
+  time step to the next.
 
 ## Preprocessing and post-processing stages{#sec:prepost}
 
@@ -129,15 +129,21 @@ When dealing with user-defined behaviours, most solvers, including
 `Abaqus/Standard` for example, delegates part of the work to the
 user. The user must:
 
-1. describe the behaviour in the input
+1. describe the behaviour in the input. 
 2. take care of the consistency of the behaviour with the hypothesis
   made during the computation (e.g. a finite strain behaviour must be
   used in a finite strain analysis based on the appropriate deformation
   and stress measures as well as reference configurations).
 
-In the authors' experience, this is error-prone in particular for 
-inexperienced users and may lead to spurious 
-or even worse inexact results.
+In the authors' experience, this is error-prone in particular for
+inexperienced users and may lead to spurious or even worse inexact
+results. For example, when material properties such as the Young Modulus
+or the Poission ratio, are required by the behaviour, those are
+generally defined in the solver input file by an array of values and
+potentiel checks are limited to the size of the array. An user may thus
+invert two material properties. If those two material properties have
+the same order of magnitudes, computations might lead to a physically
+consistent result, altough a wrong result.
 
 `MGIS` introduces a very different approach: the user only declares the
 shared library, the behaviour and the modelling hypothesis

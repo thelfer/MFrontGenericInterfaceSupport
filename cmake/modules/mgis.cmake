@@ -42,5 +42,7 @@ function(mgis_library name)
     else(WIN32)
       install(TARGETS ${name}-static DESTINATION lib${LIB_SUFFIX})
     endif(WIN32)
+    install(EXPORT ${name}-static DESTINATION ${export_install_path}
+            NAMESPACE mgis:: FILE ${name}Config.cmake)
   endif(enable-static)
 endfunction(mgis_library)
