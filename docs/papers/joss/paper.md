@@ -70,7 +70,7 @@ At each time step, the constitutive equations must be integrated to
 obtain the state of the material at the end of the time step. As most
 phenomena are nonlinear, an iterative scheme is required at the
 equilibrium scale to find the local loading of the material: the
-integration of the constitutive equations is thus called several times
+integration of the constitutive equations is thus therefore called several times
 with different estimates of the loading of the material. Algorithmic
 efficiency at the constitutive level is therefore a key aspect for the
 overall efficiency of a code.
@@ -79,7 +79,7 @@ The `MFront` open-source code generator has been designed to simplify
 the implementation of the integration of the constitutive equations over
 a time step, to minimize errors during implementation, to facilitate the
 portability of constitutive equations between solvers, and to help
-achieve reproducible and efficient code
+achieve a reproducible and efficient code
 [@helfer_introducing_2015;@cea_mfront_2019]. For that purpose, `MFront`
 uses a source file with a syntax very close to a physical/engineering
 description of the constitutive model, and generates `C++` code specific
@@ -140,10 +140,10 @@ inexperienced users and may lead to spurious or even worse inexact
 results. For example, when material properties such as the Young Modulus
 or the Poission ratio, are required by the behaviour, those are
 generally defined in the solver input file by an array of values and
-potentiel checks are limited to the size of the array. An user may thus
+potential checks are limited to the size of the array. An user may thus
 invert two material properties. If those two material properties have
 the same order of magnitudes, computations might lead to a physically
-consistent result, altough a wrong result.
+consistent result, despite this result being false.
 
 `MGIS` introduces a very different approach: the user only declares the
 shared library, the behaviour and the modelling hypothesis
@@ -222,10 +222,10 @@ processes in porous and fractured media, inspired by FEFLOW and ROCKFLOW
 concepts and continuously developed since the mid-eighties, see
 ([@Kolditz:1990;@Wollrath:1990;@Kroehn:1991;@Helmig:1993;@kolditz_opengeosys:_2012;@Bilke2019]).
 
-The OGS framework is targeting applications in the environmental geosciences,
-e.g., in the fields of contaminant hydrology, water resources and waste management,
-geotechnical applications, geothermal energy systems and energy
-storage.
+The OGS framework is targeting applications in the environmental
+geosciences, e.g., in the fields of contaminant hydrology, water
+resources and waste management, geotechnical applications, geothermal
+energy systems and energy storage.
 
 The most recent version, `OpenGeoSys-6` (`OGS-6`)
 ([@Naumov:2018;@Bilke2019]), is a fundamental re-implementation of the
@@ -240,19 +240,24 @@ function spaces, non-local formulations and phase-field models for
 fracture ([@Watanabe2012;@Parisio2018;@Yoshioka2019]).
 
 To simplify the implementation of new constitutive models for solids
- developed with `MFront`, `OGS-6` relies on the `C` bindings of
-`MGIS`.
+developed with `MFront`, `OGS-6` relies on the `C` bindings of `MGIS`.
 
-!["Figure 2: Slope stability analysis with strength reduction performed in OpenGeoSys. The image on the left shows the norm of the displacement vector for a low top load. The image on the right shows the equivalent plastic strain for a setting with an increased top load."](img/ogs_strength_reduction.png "Strength reduction for slope stability analysis in OpenGeoSys.")
+!["Figure 2: Slope stability analysis with strength reduction performed
+in OpenGeoSys. The image on the left shows the norm of the displacement
+vector for a low top load. The image on the right shows the equivalent
+plastic strain for a setting with an increased top
+load."](img/ogs_strength_reduction.png "Strength reduction for slope
+stability analysis in OpenGeoSys.")
 
-Figure 2 shows the results of a $\varphi-c$ reduction approach to slope stability analysis.
-The soil is modelled by a non-associated plastic behaviour based on the Mohr-Coulomb 
-yield criterion. The implementation presented in @Nagel2016 was extended by a tension cut-off.
-The image on the left shows the norm of the displacement vector for a low top load. 
-The failure kinematics are clearly visible. 
-The image on the right shows the equivalent plastic strain for a setting with an increased top load. 
-It can be seen that the failure mechanism becomes more complex with an additional 
-slip surface forming beneath the load.
+Figure 2 shows the results of a $\varphi-c$ reduction approach to slope
+stability analysis. The soil is modelled by a non-associated plastic
+behaviour based on the Mohr-Coulomb yield criterion. The implementation
+presented in @Nagel2016 was extended by a tension cut-off. The image on
+the left shows the norm of the displacement vector for a low top load.
+The failure kinematics are clearly visible. The image on the right shows
+the equivalent plastic strain for a setting with an increased top load.
+It can be seen that the failure mechanism becomes more complex with an
+additional slip surface forming beneath the load.
 
 
 
