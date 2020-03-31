@@ -48,6 +48,11 @@ pandoc -f markdown_strict --bibliography=bibliography.bib --filter pandoc-citepr
 
 # Introduction
 
+The ability to easily integrate user-defined constitutive equations
+plays a major role in the versatility of (mechanical) solvers^[The term
+solver emphasizes that the numerical method used to discretize the
+equilibrium equations is not significant in the present context.].
+
 Constitutive equations describe how the internal state variables of a
 material evolve with changing external conditions or mechanical
 loading. Those state variables can describe many microstructural
@@ -66,27 +71,22 @@ obtain the state of the material at the end of the time step. As most
 phenomena are nonlinear, an iterative scheme is required at the
 equilibrium scale to find the local loading of the material: the
 integration of the constitutive equations is thus called several times
-with different estimates of the loading of the material. 
-Algorithmic efficiency at the constitutive level is therefore key
-for the overall efficiency of a code.
-
-The ability to easily integrate user-defined constitutive equations
-plays a major role in the versatility of (mechanical) solvers^[The term
-solver emphasizes that the numerical method used to discretize the
-equilibrium equations is not significant in the present context.].
+with different estimates of the loading of the material. Algorithmic
+efficiency at the constitutive level is therefore a key aspect for the
+overall efficiency of a code.
 
 The `MFront` open-source code generator has been designed to simplify
 the implementation of the integration of the constitutive equations over
 a time step, to minimize errors during implementation, to facilitate the
-change of the underlying solver, and to help achieve
- reproducible and efficient code [@helfer_introducing_2015;@cea_mfront_2019].
-For that purpose, `MFront` departs from a source file with a syntax very
-close to an engineering description of the constitutive model, 
-from that generates `C++` code specific to many 
-well-established (mostly thermo-mechanical) solvers through dedicated
-interfaces and compiles them into shared libraries. For example,
-`MFront` provides interfaces for `Cast3M`, `code_aster`, `Europlexus`,
-`Abaqus/Standard`, `Abaqus/Explicit`, `CalculiX`, etc.
+portability of constitutive equations between solvers, and to help
+achieve reproducible and efficient code
+[@helfer_introducing_2015;@cea_mfront_2019]. For that purpose, `MFront`
+uses a source file with a syntax very close to a physical/engineering
+description of the constitutive model, and generates `C++` code specific
+to many well-established (mostly thermo-mechanical) solvers through
+dedicated interfaces and compiles them into shared libraries. For
+example, `MFront` provides interfaces for `Cast3M`, `code_aster`,
+`Europlexus`, `Abaqus/Standard`, `Abaqus/Explicit`, `CalculiX`, etc.
 
 To further facilitate this cross-software integration, 
 `MFront` recently introduced a so-called `generic` interface. This paper
