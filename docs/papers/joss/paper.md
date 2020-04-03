@@ -251,7 +251,7 @@ stability analysis in OpenGeoSys.")
 Figure 2 shows the results of a $\varphi-c$ reduction approach to slope
 stability analysis. The soil is modelled by a non-associated plastic
 behaviour based on the Mohr-Coulomb yield criterion
-([@zienkiewicz-pande-77;@abbo_smooth_1995]). The implementation
+[@zienkiewicz-pande-77;@abbo_smooth_1995]. The implementation
 presented in @Nagel2016 was extended by a tension cut-off. The image on
 the left shows the norm of the displacement vector for a low top load.
 The failure kinematics are clearly visible. The image on the right shows
