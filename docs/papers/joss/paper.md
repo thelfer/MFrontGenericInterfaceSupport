@@ -313,7 +313,7 @@ the different solver platforms.
 This research was conducted in the framework of the `PLEIADES` project,
 which is supported financially by the CEA (Commissariat à l’Energie
 Atomique et aux Energies Alternatives), EDF (Electricité de France) and
-Framatome.Acknowledgements
+Framatome.
 
 We would like to express our thanks to Christoph Lehmann, Francesco Parisio,
 Olaf Kolditz and the entire
