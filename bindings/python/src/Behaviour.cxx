@@ -271,16 +271,17 @@ void declareBehaviour() {
           "list of external state variables (same as the `esvs` property)")
       .add_property("params", &Behaviour_getParameters, "list of parameters")
       .add_property("parameters", &Behaviour_getParameters,
-                    "list of parameters")
+                    "list of parameters (same as the `params` property")
       .add_property("iparams", &Behaviour_getIntegerParameters,
                     "list of integer parameters")
-      .add_property("integer_parameters", &Behaviour_getIntegerParameters,
-                    "list of integer parameters")
-      .add_property("unsigned_short_parameters",
-                    &Behaviour_getUnsignedShortParameters,
-                    "list of unsigned short parameters")
+      .add_property(
+          "integer_parameters", &Behaviour_getIntegerParameters,
+          "list of integer parameters (same as the `integer_params` property")
       .add_property("usparams", &Behaviour_getUnsignedShortParameters,
                     "list of unsigned short parameters")
+      .add_property(
+          "unsigned_short_parameters", &Behaviour_getUnsignedShortParameters,
+          "list of unsigned short parameters (same as the `usparams` property)")
       .add_property("tangent_operator_blocks",
                     Behaviour_getTangentOperatorBlocks)
       .def("setParameter", setParameter1)
