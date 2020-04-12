@@ -1767,6 +1767,151 @@ contains
     endif
   end function state_get_external_state_variable_by_name
   !
+  function msm_initializer_bind_gradients(st,a,n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function msm_initializer_bind_gradients_wrapper(stc,ac,nc) &
+            bind(c,name = 'mgis_bv_material_state_manager_initializer_bind_gradients') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: stc
+         type(c_ptr), intent(in), value :: ac
+         integer(kind=c_size_t), intent(in), value :: nc
+         type(mgis_status) :: r
+       end function msm_initializer_bind_gradients_wrapper
+    end interface
+    type(MaterialStateManagerInitializer), intent(in) :: st
+    real(kind=8), dimension(*), target, intent(out) :: a
+    integer, intent(in) :: n
+    type(mgis_status) :: s
+    type(c_ptr) a_ptr
+    integer(kind=c_size_t) nc
+    nc=n
+    a_ptr = c_loc(a)
+    s = msm_initializer_bind_gradients_wrapper(st%ptr,a_ptr,nc)
+  end function msm_initializer_bind_gradients
+  !
+  function msm_initializer_bind_thermodynamic_forces(st,a,n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function msm_initializer_bind_thermodynamic_forces_wrapper(stc,ac,nc) &
+            bind(c,name = 'mgis_bv_material_state_manager_initializer_bind_thermodynamic_forces') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: stc
+         type(c_ptr), intent(in), value :: ac
+         integer(kind=c_size_t), intent(in), value :: nc
+         type(mgis_status) :: r
+       end function msm_initializer_bind_thermodynamic_forces_wrapper
+    end interface
+    type(MaterialStateManagerInitializer), intent(in) :: st
+    real(kind=8), dimension(*), target, intent(out) :: a
+    integer, intent(in) :: n
+    type(mgis_status) :: s
+    type(c_ptr) a_ptr
+    integer(kind=c_size_t) nc
+    nc=n
+    a_ptr = c_loc(a)
+    s = msm_initializer_bind_thermodynamic_forces_wrapper(st%ptr,a_ptr,nc)
+  end function msm_initializer_bind_thermodynamic_forces
+  !
+  function msm_initializer_bind_internal_state_variables(st,a,n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function msm_initializer_bind_internal_state_variables_wrapper(stc,ac,nc) &
+            bind(c,name = 'mgis_bv_material_state_manager_initializer_bind_internal_state_variables') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: stc
+         type(c_ptr), intent(in), value :: ac
+         integer(kind=c_size_t), intent(in), value :: nc
+         type(mgis_status) :: r
+       end function msm_initializer_bind_internal_state_variables_wrapper
+    end interface
+    type(MaterialStateManagerInitializer), intent(in) :: st
+    real(kind=8), dimension(*), target, intent(out) :: a
+    integer, intent(in) :: n
+    type(mgis_status) :: s
+    type(c_ptr) a_ptr
+    integer(kind=c_size_t) nc
+    nc=n
+    a_ptr = c_loc(a)
+    s = msm_initializer_bind_internal_state_variables_wrapper(st%ptr,a_ptr,nc)
+  end function msm_initializer_bind_internal_state_variables
+  !
+  function msm_initializer_bind_stored_energies(st,a,n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function msm_initializer_bind_stored_energies_wrapper(stc,ac,nc) &
+            bind(c,name = 'mgis_bv_material_state_manager_initializer_bind_stored_energies') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: stc
+         type(c_ptr), intent(in), value :: ac
+         integer(kind=c_size_t), intent(in), value :: nc
+         type(mgis_status) :: r
+       end function msm_initializer_bind_stored_energies_wrapper
+    end interface
+    type(MaterialStateManagerInitializer), intent(in) :: st
+    real(kind=8), dimension(*), target, intent(out) :: a
+    integer, intent(in) :: n
+    type(mgis_status) :: s
+    type(c_ptr) a_ptr
+    integer(kind=c_size_t) nc
+    nc=n
+    a_ptr = c_loc(a)
+    s = msm_initializer_bind_stored_energies_wrapper(st%ptr,a_ptr,nc)
+  end function msm_initializer_bind_stored_energies
+  !
+  function msm_initializer_bind_dissipated_energies(st,a,n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function msm_initializer_bind_dissipated_energies_wrapper(stc,ac,nc) &
+            bind(c,name = 'mgis_bv_material_state_manager_initializer_bind_dissipated_energies') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: stc
+         type(c_ptr), intent(in), value :: ac
+         integer(kind=c_size_t), intent(in), value :: nc
+         type(mgis_status) :: r
+       end function msm_initializer_bind_dissipated_energies_wrapper
+    end interface
+    type(MaterialStateManagerInitializer), intent(in) :: st
+    real(kind=8), dimension(*), target, intent(out) :: a
+    integer, intent(in) :: n
+    type(mgis_status) :: s
+    type(c_ptr) a_ptr
+    integer(kind=c_size_t) nc
+    nc=n
+    a_ptr = c_loc(a)
+    s = msm_initializer_bind_dissipated_energies_wrapper(st%ptr,a_ptr,nc)
+  end function msm_initializer_bind_dissipated_energies
+  !
   function create_material_data_manager_initializer(d) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t
     use mgis_fortran_utilities
@@ -1787,6 +1932,46 @@ contains
     type(mgis_status) :: s
     s = create_material_data_manager_initializer_wrapper(d%ptr)
   end function create_material_data_manager_initializer
+  !
+  function material_data_manager_initializer_get_state_0_initializer(s0,d) result(s)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function mdm_initializer_get_state_0_initializer_wrapper(s0c,dc) &
+            bind(c,name = 'mgis_bv_material_data_manager_initializer_get_state_0_initializer') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: s0c
+         type(c_ptr), intent(in), value :: dc
+         type(mgis_status) :: r
+       end function mdm_initializer_get_state_0_initializer_wrapper
+    end interface
+    type(MaterialDataManagerInitializer), intent(in) :: d
+    type(MaterialStateManagerInitializer), intent(out) :: s0
+    type(mgis_status) :: s
+    s = mdm_initializer_get_state_0_initializer_wrapper(s0%ptr, d%ptr)
+  end function material_data_manager_initializer_get_state_0_initializer
+  !
+  function material_data_manager_initializer_get_state_1_initializer(s1,d) result(s)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function mdm_initializer_get_state_1_initializer_wrapper(s1c,dc) &
+            bind(c,name = 'mgis_bv_material_data_manager_initializer_get_state_1_initializer') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: s1c
+         type(c_ptr), intent(in), value :: dc
+         type(mgis_status) :: r
+       end function mdm_initializer_get_state_1_initializer_wrapper
+    end interface
+    type(MaterialDataManagerInitializer), intent(in) :: d
+    type(MaterialStateManagerInitializer), intent(out) :: s1
+    type(mgis_status) :: s
+    s = mdm_initializer_get_state_1_initializer_wrapper(s1%ptr, d%ptr)
+  end function material_data_manager_initializer_get_state_1_initializer 
   !
   function material_data_manager_initializer_bind_tangent_operator(d,K,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
@@ -1867,6 +2052,38 @@ contains
     nc = n
     s = create_material_data_manager_wrapper(d%ptr, b%ptr, nc)
   end function create_material_data_manager
+  !
+  function create_material_data_manager_with_initializer(d, b, i, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function create_material_data_manager_with_initializer_wrapper(d, b, n, i) &
+            bind(c,name = 'mgis_bv_create_material_data_manager_with_initializer') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: d
+         type(c_ptr), intent(in), value :: b
+         type(c_ptr), intent(in), value :: i
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function create_material_data_manager_with_initializer_wrapper
+    end interface
+    type(MaterialDataManager), intent(out) :: d
+    type(Behaviour), intent(in) :: b
+    type(MaterialDataManagerInitializer), intent(in) :: i
+    integer, intent(in) :: n
+    type(mgis_status) :: s
+    integer(kind=c_size_t) nc
+    if (n.lt.1) then
+       s = report_failure('invalid number of integration points')
+       return
+    end if
+    nc = n
+    s = create_material_data_manager_with_initializer_wrapper(d%ptr, b%ptr, nc, i%ptr)
+  end function create_material_data_manager_with_initializer
   !
   function material_data_manager_get_state_0(s0,d) result(s)
     use mgis, only: mgis_status
