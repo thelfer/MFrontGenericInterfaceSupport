@@ -2030,7 +2030,7 @@ contains
     type(mgis_status) :: r
     r = msm_get_uniform_material_property(&
          v, s%ptr, convert_fortran_string(n))
-    if( r % exit_status .eq. MGIS_SUCCESS) then
+    if( r % exit_status .ne. MGIS_SUCCESS) then
        v = ieee_value(v, ieee_quiet_nan)
     end if
   end function material_state_manager_get_uniform_material_property
@@ -2256,7 +2256,7 @@ contains
     type(mgis_status) :: r
     r = msm_get_uniform_external_state_variable(&
          v, s%ptr, convert_fortran_string(n))
-    if( r % exit_status .eq. MGIS_SUCCESS) then
+    if( r % exit_status .ne. MGIS_SUCCESS) then
        v = ieee_value(v, ieee_quiet_nan)
     end if
   end function material_state_manager_get_uniform_external_state_variable
