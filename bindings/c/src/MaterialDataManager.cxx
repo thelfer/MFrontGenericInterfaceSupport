@@ -54,7 +54,7 @@ mgis_status mgis_bv_material_data_manager_initializer_bind_tangent_operator(
   return mgis_report_success();
 }  // end of mgis_bv_create_material_data_manager_initializer
 
-mgis_status mgis_bv_material_data_manager_get_state_0_initializer(
+mgis_status mgis_bv_material_data_manager_initializer_get_state_0_initializer(
     mgis_bv_MaterialStateManagerInitializer** s,
     mgis_bv_MaterialDataManagerInitializer* const d) {
   if (d == nullptr) {
@@ -64,7 +64,7 @@ mgis_status mgis_bv_material_data_manager_get_state_0_initializer(
   return mgis_report_success();
 }  // end of mgis_bv_material_data_manager_get_state_0_initializer
 
-mgis_status mgis_bv_material_data_manager_get_state_1_initializer(
+mgis_status mgis_bv_material_data_manager_initializer_get_state_1_initializer(
     mgis_bv_MaterialStateManagerInitializer** s,
     mgis_bv_MaterialDataManagerInitializer* const d) {
   if (d == nullptr) {
