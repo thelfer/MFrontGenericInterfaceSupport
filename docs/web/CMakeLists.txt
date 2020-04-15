@@ -1,4 +1,4 @@
-if(MGIS_HAVE_PANDOC)
+if(HAVE_PANDOC)
   function(mgis_pandoc_generate_html_page file)
     ADD_CUSTOM_COMMAND(
       OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${file}.html
@@ -27,7 +27,7 @@ if(MGIS_HAVE_PANDOC)
         COMPONENT website)
     endif(MGIS_APPEND_SUFFIX)
   endfunction(mgis_pandoc_generate_html_page)
-endif(MGIS_HAVE_PANDOC)
+endif(HAVE_PANDOC)
 
 if(MGIS_HAVE_JUPYTER_NBCONVERT)
   function(mgis_jupyter_nbconvert_generate_html_page file)
@@ -56,14 +56,15 @@ endif(MGIS_HAVE_JUPYTER_NBCONVERT)
 add_custom_target(website)
 add_dependencies(doc website)
 
-if(MGIS_HAVE_PANDOC)
+if(HAVE_PANDOC)
   mgis_pandoc_generate_html_page(index)
   mgis_pandoc_generate_html_page(install)
   mgis_pandoc_generate_html_page(bindings-cxx "--toc" "--toc-depth=3")
+  mgis_pandoc_generate_html_page(mgis_fenics "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(FEniCSBindings)
   mgis_pandoc_generate_html_page(release-notes-1.1 "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(release-notes-1.2 "--toc" "--toc-depth=3")
-endif(MGIS_HAVE_PANDOC)
+endif(HAVE_PANDOC)
 
 if(MGIS_HAVE_JUPYTER_NBCONVERT)
   mgis_jupyter_nbconvert_generate_html_page(mgis_fenics_multiphase_model)
