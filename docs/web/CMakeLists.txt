@@ -9,7 +9,7 @@ if(HAVE_PANDOC)
       ARGS      -f markdown-markdown_in_html_blocks+tex_math_single_backslash
       ARGS      --filter pandoc-crossref -M crossrefYaml=${CMAKE_CURRENT_SOURCE_DIR}/pandoc-crossref.yaml
       ARGS      --bibliography=${CMAKE_CURRENT_SOURCE_DIR}/bibliography.bib --filter pandoc-citeproc
-      ARGS      --template=${CMAKE_CURRENT_SOURCE_DIR}/mgis-template.html
+      ARGS      --template=${CMAKE_CURRENT_SOURCE_DIR}/mgis-template.html --css=${CMAKE_CURRENT_SOURCE_DIR}/css/main.css
       ARGS      --mathjax
       ARGS      --email-obfuscation=javascript
       ARGS       --default-image-extension=svg
@@ -64,10 +64,16 @@ if(HAVE_PANDOC)
   mgis_pandoc_generate_html_page(FEniCSBindings)
   mgis_pandoc_generate_html_page(release-notes-1.1 "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(release-notes-1.2 "--toc" "--toc-depth=3")
+  mgis_pandoc_generate_html_page(mgis_fenics_nonlinear_heat_transfer)
+  mgis_pandoc_generate_html_page(mgis_fenics_nonlinear_heat_transfer_3D)
+  mgis_pandoc_generate_html_page(mgis_fenics_small_strain_elastoplasticity)
+  mgis_pandoc_generate_html_page(mgis_fenics_finite_strain_elastoplasticity)
+  mgis_pandoc_generate_html_page(mgis_fenics_multiphase_model)
+  mgis_pandoc_generate_html_page(mgis_fenics_phase_field)
 endif(HAVE_PANDOC)
 
 if(MGIS_HAVE_JUPYTER_NBCONVERT)
-  mgis_jupyter_nbconvert_generate_html_page(mgis_fenics_multiphase_model)
+#  mgis_jupyter_nbconvert_generate_html_page(mgis_fenics_multiphase_model)
 endif(MGIS_HAVE_JUPYTER_NBCONVERT)
 
 
