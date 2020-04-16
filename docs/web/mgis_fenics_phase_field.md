@@ -273,7 +273,7 @@ Psi_d += Gc/2/l₀*(d*d + l₀*l₀*(g|g));
 %matplotlib notebook
 from dolfin import *
 from mshr import *
-import mfront_wrapper as mf
+import mgis.fenics as mf
 import numpy as np
 import matplotlib.pyplot as plt
 

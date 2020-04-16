@@ -51,6 +51,7 @@ We define a box mesh representing half of a beam oriented along the $x$-directio
 
 
 ```python
+%matplotlib notebook
 import matplotlib.pyplot as plt
 from dolfin import *
 import mgis.fenics as mf
@@ -198,5 +199,5 @@ plt.ylabel("Load");
 ```
 
 
-![png](finite_strain_elastoplasticity_files/finite_strain_elastoplasticity_9_0.png)
+![png](mgis_fenics_finite_strain_elastoplasticity_files/mgis_fenics_finite_strain_elastoplasticity_9_0.png)
 

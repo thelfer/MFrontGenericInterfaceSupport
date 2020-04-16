@@ -128,9 +128,15 @@ class AbstractNonlinearProblem:
         self.compute_tangent_form()
 
     def compute_tangent_form(self):
-        # tangent bilinear form
+        """Computes derivative of residual"""
+        # derivatives of fluxes
         self.tangent_a = sum([derivative(self.residual, f.function, t*dg.variation(self.du))
                       for f in self.fluxes.values()  for (t, dg) in zip(f.tangent_blocks.values(), f.gradients)])
+        # derivatives of internal state variables
+        self.tangent_a += sum([derivative(self.residual, f.function, t*dg.variation(self.du))
+                      for f in self.fluxes.values() for (t, dg) in zip(f.tangent_blocks.values(), f.gradients)])
+        # derivatives of variable u
+        self.tangent_a += derivative(self.residual, self.u, self.du)
 
 
     def register_gradient(self, name, expression):
@@ -270,7 +276,7 @@ class AbstractNonlinearProblem:
         self.flattened_block_shapes = [s[0]*s[1] if len(s)==2 else s[0] for s in self.block_shapes]
         self.update_tangent_blocks()
 
-        self._init = True
+        self._init = False
 
     def update_tangent_blocks(self):
         buff = 0
@@ -292,8 +298,10 @@ class AbstractNonlinearProblem:
         for (i, f) in enumerate(self.material.get_flux_names()):
             flux = self.fluxes[f]
             block_shape = self.material.get_flux_sizes()[i]
+            print(flux.function.id())
             flux.function.vector().set_local(self.material.data_manager.s1.thermodynamic_forces[:,buff:buff+block_shape].flatten())
             buff += block_shape
+            # print( flux.function.vector().get_local())
 
     def update_gradients(self):
         buff = 0
@@ -382,10 +390,9 @@ class AbstractNonlinearProblem:
         s0 = self.state_variables["internal"].get(name + " (previous)", None)
         if s0 is None:
             s = self.state_variables["internal"][name]
-            s0 = s.copy()
-            print(s0.name())
+            s0 = s.copy(deepcopy=True)
             s0.rename(s.name() + " (previous)", s.name() + " (previous)")
-            print(s0.name())
+            self.state_variables["internal"].update({s0.name(): s0})
         return s0
 
     def get_flux(self, name):
@@ -394,8 +401,8 @@ class AbstractNonlinearProblem:
 
     def get_previous_flux(self, name):
         f = self.fluxes[name].function
-        f0 = f.copy()
-        self.fluxes[name].previous = f0
+        f0 = f.copy(deepcopy=True)
+        # self.fluxes[name].previous = f0
         f0.rename(f.name() + " (previous)", f.name() + " (previous)")
         return f0
 
