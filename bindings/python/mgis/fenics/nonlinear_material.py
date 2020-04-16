@@ -89,7 +89,7 @@ class MFrontNonlinearMaterial:
                     mgis_bv.setExternalStateVariable(s, key, float(value))
                 else:
                     if isinstance(value, dolfin.Function):
-                        value = value.vector().get_local()
+                        values = value.vector().get_local()
                     elif isinstance(value, Var):
                         value.update()
                         values = value.function.vector().get_local()

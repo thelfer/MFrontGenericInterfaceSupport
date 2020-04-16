@@ -91,8 +91,6 @@ class AbstractNonlinearProblem:
         self.gradients = dict.fromkeys(self.material.get_gradient_names(), None)
         self.fluxes = {}
 
-        self.initialize_internal_state_variables()
-
     def automatic_registration(self):
         """
         Performs automatic registration of predefined Gradients or external state variables.
@@ -131,10 +129,10 @@ class AbstractNonlinearProblem:
         """Computes derivative of residual"""
         # derivatives of fluxes
         self.tangent_a = sum([derivative(self.residual, f.function, t*dg.variation(self.du))
-                      for f in self.fluxes.values()  for (t, dg) in zip(f.tangent_blocks.values(), f.gradients)])
+                      for f in self.fluxes.values()  for (t, dg) in zip(f.tangent_blocks.values(), f.variables)])
         # derivatives of internal state variables
-        self.tangent_a += sum([derivative(self.residual, f.function, t*dg.variation(self.du))
-                      for f in self.fluxes.values() for (t, dg) in zip(f.tangent_blocks.values(), f.gradients)])
+        self.tangent_a += sum([derivative(self.residual, s.function, t*dg.variation(self.du))
+                      for s in self.state_variables["internal"].values() for (t, dg) in zip(s.tangent_blocks.values(), s.variables)])
         # derivatives of variable u
         self.tangent_a += derivative(self.residual, self.u, self.du)
 
@@ -215,11 +213,44 @@ class AbstractNonlinearProblem:
         # tangent matrix quadrature space
         self.WCt = FunctionSpace(self.mesh, Wce)
 
+    def initialize_fluxes(self):
+        for (f, size) in zip(self.material.get_flux_names(), self.material.get_flux_sizes()):
+            flux_gradients = []
+            for t in self.material.get_tangent_block_names():
+                if t[0]==f:
+                    try:
+                        flux_gradients.append(self.gradients[t[1]])
+                    except:
+                        value = self.state_variables["external"].get(t[1], None)
+                        if value is not None and isinstance(value, Var):
+                                flux_gradients.append(value)
+                        else:
+                            raise ValueError("'{}' could not be associated with a registered gradient or state variable.".format(t[1]))
+            flux = Flux(f, size, flux_gradients)
+            flux.initialize_functions(self.mesh, self.quadrature_degree)
+            self.fluxes.update({f: flux})
+
     def initialize_internal_state_variables(self):
         for (s, size) in zip(self.material.get_internal_state_variable_names(), self.material.get_internal_state_variable_sizes()):
             We = get_quadrature_element(self.mesh.ufl_cell(), self.quadrature_degree, size)
             W = FunctionSpace(self.mesh, We)
             self.state_variables["internal"][s] = Function(W, name=s)
+
+        for (s, size) in zip(self.material.get_internal_state_variable_names(), self.material.get_internal_state_variable_sizes()):
+            state_var_gradients = []
+            for t in self.material.get_tangent_block_names():
+                if t[0]==s:
+                    try:
+                        state_var_gradients.append(self.gradients[t[1]])
+                    except:
+                        value = self.state_variables["external"].get(t[1], None)
+                        if value is not None and isinstance(value, Var):
+                                state_var_gradients.append(value)
+                        else:
+                            raise ValueError("'{}' could not be associated with a registered gradient or state variable.".format(t[1]))
+            state_variable = InternalStateVariable(s, size, state_var_gradients)
+            state_variable.initialize_functions(self.mesh, self.quadrature_degree)
+            self.state_variables["internal"][s] = state_variable
 
     def initialize_fields(self):
         """
@@ -249,32 +280,24 @@ class AbstractNonlinearProblem:
             except:
                 raise ValueError("Gradient '{}' has not been registered.".format(g))
 
-        for (f, size) in zip(self.material.get_flux_names(), self.material.get_flux_sizes()):
-            flux_gradients = []
-            for t in self.material.get_tangent_block_names():
-                if t[0]==f:
-                    try:
-                        flux_gradients.append(self.gradients[t[1]])
-                    except:
-                        value = self.state_variables["external"].get(t[1], None)
-                        if value is not None and isinstance(value, Var):
-                                flux_gradients.append(value)
-                        else:
-                            raise ValueError("'{}' could not be associated with a registered gradient or state variable.".format(t[1]))
-            flux = Flux(f, size, flux_gradients)
-            flux.initialize_functions(self.mesh, self.quadrature_degree)
-            self.fluxes.update({f: flux})
+        self.initialize_fluxes()
+
+        self.initialize_internal_state_variables()
 
         self.define_form()
 
-        self.material.update_external_state_variables(self.state_variables["external"])
-        mgis_bv.integrate(self.material.data_manager,
-                          self.integration_type, 0, 0, self.material.data_manager.n)
-        self.affect_gradients()
         self.block_names = self.material.get_tangent_block_names()
         self.block_shapes = self.material.get_tangent_block_sizes()
         self.flattened_block_shapes = [s[0]*s[1] if len(s)==2 else s[0] for s in self.block_shapes]
-        self.update_tangent_blocks()
+
+        self.update_constitutive_law()
+        # self.material.update_external_state_variables(self.state_variables["external"])
+        # mgis_bv.integrate(self.material.data_manager,
+        #                   self.integration_type, 0, 0, self.material.data_manager.n)
+        # self.affect_gradients()
+        # self.update_fluxes()
+        # self.update_tangent_blocks()
+        # self.update_internal_state_variables()
 
         self._init = False
 
@@ -286,7 +309,7 @@ class AbstractNonlinearProblem:
                 t = self.fluxes[f].tangent_blocks[g]
             except KeyError:
                 try:
-                    t = self.state_variables["internal"][f]
+                    t = self.state_variables["internal"][f].tangent_blocks[g]
                 except KeyError:
                     raise KeyError("'{}' could not be found as a flux or an internal state variable.")
             block_shape = self.flattened_block_shapes[i]
@@ -298,10 +321,8 @@ class AbstractNonlinearProblem:
         for (i, f) in enumerate(self.material.get_flux_names()):
             flux = self.fluxes[f]
             block_shape = self.material.get_flux_sizes()[i]
-            print(flux.function.id())
             flux.function.vector().set_local(self.material.data_manager.s1.thermodynamic_forces[:,buff:buff+block_shape].flatten())
             buff += block_shape
-            # print( flux.function.vector().get_local())
 
     def update_gradients(self):
         buff = 0
@@ -334,7 +355,7 @@ class AbstractNonlinearProblem:
     def affect_internal_state_variables(self):
         buff = 0
         for (i, s) in enumerate(self.material.get_internal_state_variable_names()):
-            state_var = self.state_variables["internal"][s]
+            state_var = self.state_variables["internal"][s].function
             if state_var is None:
                 raise ValueError("The state variable '{}' has not been initialized.".format(s))
             block_shape = self.material.get_internal_state_variable_sizes()[i]
@@ -345,12 +366,12 @@ class AbstractNonlinearProblem:
         """Performs update of internal state variables"""
         buff = 0
         for (i, s) in enumerate(self.material.get_internal_state_variable_names()):
-            state_var = self.state_variables["internal"][s]
+            state_var = self.state_variables["internal"][s].function
             block_shape = self.material.get_internal_state_variable_sizes()[i]
             state_var.vector().set_local(self.material.data_manager.s1.internal_state_variables[:,buff:buff+block_shape].flatten())
             buff += block_shape
 
-    def update_constitutive_law(self, u):
+    def update_constitutive_law(self):
         """Performs the consitutive law update"""
         self.update_gradients()
         self.material.update_external_state_variables(self.state_variables["external"])
@@ -378,21 +399,12 @@ class AbstractNonlinearProblem:
             A function defined on the corresponding Quadrature function space
 
         """
-        if self.state_variables["internal"][name] is None:
-            position = self.material.get_internal_state_variable_names().index(name)
-            shape = self.material.get_internal_state_variable_sizes()[position]
-            We = get_quadrature_element(self.mesh.ufl_cell(), self.quadrature_degree, shape)
-            W = FunctionSpace(self.mesh, We)
-            self.state_variables["internal"][name] = Function(W, name=name)
-        return self.state_variables["internal"][name]
+        return self.state_variables["internal"][name].function
 
     def get_previous_state_variable(self, name):
-        s0 = self.state_variables["internal"].get(name + " (previous)", None)
-        if s0 is None:
-            s = self.state_variables["internal"][name]
-            s0 = s.copy(deepcopy=True)
-            s0.rename(s.name() + " (previous)", s.name() + " (previous)")
-            self.state_variables["internal"].update({s0.name(): s0})
+        s = self.state_variables["internal"][name].function
+        s0 = s.copy(deepcopy=True)
+        s0.rename(s.name() + " (previous)", s.name() + " (previous)")
         return s0
 
     def get_flux(self, name):
@@ -444,7 +456,7 @@ class MFrontNonlinearProblem(NonlinearProblem, AbstractNonlinearProblem):
 
     def form(self, A, P, b, x):
         # this function is called before calling F or J
-        self.update_constitutive_law(self.u)
+        self.update_constitutive_law()
         assemble_system(self.tangent_a, self.residual, A_tensor=A, b_tensor=b, bcs=self.bcs, x0=x)
 
     def F(self,b,x):
@@ -491,7 +503,7 @@ class MFrontOptimisationProblem(OptimisationProblem, AbstractNonlinearProblem):
     def f(self, x):
         """Objective function"""
         self.u.vector()[:] = x
-        self.update_constitutive_law(self.u)
+        self.update_constitutive_law()
         mgis_bv.update(self.material.data_manager)
         return self.get_total_energy()
 
