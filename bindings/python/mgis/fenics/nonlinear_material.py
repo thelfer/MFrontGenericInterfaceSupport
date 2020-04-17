@@ -62,7 +62,6 @@ class MFrontNonlinearMaterial:
         # Setting the material data manager
         self.data_manager = mgis_bv.MaterialDataManager(self.behaviour, ngauss)
         self.update_material_properties()
-        # self.update_external_state_variables()
 
     def update_parameters(self, parameters):
         for (key, value) in parameters.items():

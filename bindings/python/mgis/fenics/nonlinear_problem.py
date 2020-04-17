@@ -384,7 +384,7 @@ class AbstractNonlinearProblem:
         self.update_tangent_blocks()
         self.update_internal_state_variables()
 
-    def get_state_variable(self, name):
+    def get_state_variable(self, name, project_on=None):
         """
         Returns the function associated with an internal state variable
 
@@ -392,31 +392,43 @@ class AbstractNonlinearProblem:
         ----------
         name : str
             Name of the internal state variable
+        project_on : {None, (space, degree)}
+            Either None or a tuple (space, degree) such as ("CG", 1), ("DG", 0), etc.
 
         Returns
         -------
         `dolfin.Function`
-            A function defined on the corresponding Quadrature function space
+            A function defined on the corresponding Quadrature function space if project_on=None (default).
+            Otherwise a classical function belonging to the FunctionSpace (space, degree)
 
         """
-        return self.state_variables["internal"][name].function
+        if project_on is None:
+            return self.state_variables["internal"][name].function
+        else:
+            return self.state_variables["internal"][name].project_on(*project_on)
 
-    def get_previous_state_variable(self, name):
-        s = self.state_variables["internal"][name].function
-        s0 = s.copy(deepcopy=True)
-        s0.rename(s.name() + " (previous)", s.name() + " (previous)")
-        return s0
+    def get_flux(self, name, project_on=None):
+        """
+        Returns the function associated with a flux
 
-    def get_flux(self, name):
-        """Returns the Quadrature function associated with a flux"""
-        return self.fluxes[name].function
+        Parameters
+        ----------
+        name : str
+            Name of the flux
+        project_on : {None, (space, degree)}
+            Either None or a tuple (space, degree) such as ("CG", 1), ("DG", 0), etc.
 
-    def get_previous_flux(self, name):
-        f = self.fluxes[name].function
-        f0 = f.copy(deepcopy=True)
-        # self.fluxes[name].previous = f0
-        f0.rename(f.name() + " (previous)", f.name() + " (previous)")
-        return f0
+        Returns
+        -------
+        `dolfin.Function`
+            A function defined on the corresponding Quadrature function space if project_on=None (default).
+            Otherwise a classical function belonging to the FunctionSpace (space, degree)
+
+        """
+        if project_on is None:
+            return self.fluxes[name].function
+        else:
+            return self.fluxes[name].project_on(*project_on)
 
     def get_dissipated_energy(self):
         """Dissipated energy computed from MFront @DissipatedEnergy"""
