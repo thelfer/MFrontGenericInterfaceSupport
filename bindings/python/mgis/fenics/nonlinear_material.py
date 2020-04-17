@@ -10,6 +10,7 @@ Laboratoire Navier (ENPC,IFSTTAR,CNRS UMR 8205)
 import mgis.behaviour as mgis_bv
 from .gradient_flux import Var
 import dolfin
+import subprocess
 
 mgis_hypothesis = {"plane_strain": mgis_bv.Hypothesis.PlaneStrain,
                    "plane_stress": mgis_bv.Hypothesis.PlaneStress,
@@ -46,17 +47,26 @@ class MFrontNonlinearMaterial:
         # Defining the modelling hypothesis
         self.hypothesis = mgis_hypothesis[hypothesis]
         self.material_properties = material_properties
-        # finite strain options
-        bopts = mgis_bv.FiniteStrainBehaviourOptions()
-        bopts.stress_measure = mgis_bv.FiniteStrainBehaviourOptionsStressMeasure.PK1
-        bopts.tangent_operator = mgis_bv.FiniteStrainBehaviourOptionsTangentOperator.DPK1_DF
         # Loading the behaviour
         self.is_finite_strain = mgis_bv.isStandardFiniteStrainBehaviour(self.path, self.name)
-        if self.is_finite_strain:
-            self.behaviour = mgis_bv.load(bopts, self.path, self.name, self.hypothesis)
-        else:
-            self.behaviour = mgis_bv.load(self.path, self.name, self.hypothesis)
+        try:
+            self.load_behaviour()
+        except:
+            print("Behaviour '{}' has not been found '{}' in '{}'.".format(self.name, self.path))
+            print("Attempting to compile '{}.mfront'...".format(self.name))
+            subprocess.run(["mfront", "--obuild", "--interface=generic", self.name+".mfront"])
+            self.load_behaviour()
         self.update_parameters(parameters)
+
+    def load_behaviour(self):
+            if self.is_finite_strain:
+                # finite strain options
+                bopts = mgis_bv.FiniteStrainBehaviourOptions()
+                bopts.stress_measure = mgis_bv.FiniteStrainBehaviourOptionsStressMeasure.PK1
+                bopts.tangent_operator = mgis_bv.FiniteStrainBehaviourOptionsTangentOperator.DPK1_DF
+                self.behaviour = mgis_bv.load(bopts, self.path, self.name, self.hypothesis)
+            else:
+                self.behaviour = mgis_bv.load(self.path, self.name, self.hypothesis)
 
     def set_data_manager(self, ngauss):
         # Setting the material data manager

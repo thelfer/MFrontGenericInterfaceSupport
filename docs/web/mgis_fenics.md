@@ -32,7 +32,7 @@ This class handles the loading of a MFront behaviour through MGIS. In particular
 
 * `behaviour`: an instance of MGIS `Behaviour` class which handles all the information about a specific MFront behaviour. It is created by the `load` function which takes the path to a library, the name of a behaviour and a modelling hypothesis.
 
-> Note that before loading the behaviour, it is checked if the behaviour is a finite-strain one or not. In the former case, specific finite-strain options are used when calling `load`. Such options specify that the stress measure will be post-processed by MGIS from Cauchy to First Piola Kirchhoff (PK1) stress and that the tangent operator will be given by $\dfrac{\partial \text{PK1}}{\partial F}$ (`DPK1_DF`).
+  Note that before loading the behaviour, it is checked if the behaviour is a finite-strain one or not. In the former case, specific finite-strain options are used when calling `load`. Such options specify that the stress measure will be post-processed by MGIS from Cauchy to First Piola Kirchhoff (PK1) stress and that the tangent operator will be given by $\dfrac{\partial \text{PK1}}{\partial F}$ (`DPK1_DF`).
 
 * `data_manager`: an instance of MGIS `MaterialDataManager` class which handles a bunch of integration points. It is instantiated using `behaviour`and the number of integration points
 
@@ -127,7 +127,7 @@ Two helper classes have been defined to handle flux and gradient objects:
 
 ### The registration concept
 
-Inspecting the default case $\eqref{residual}$, MFront provides access to the flux names, shapes and values when performing the constitutive update and the corresponding gradient. The definition of the tangent operator blocks inside the MFront behaviour also gives access to the block structure $\text{blocks}(i)$ for each flux. The remaining information which must be provided from the FEniCS side are the unknown field $u$ and its discretization space $V$, the chosen integration measure $\dx$ (through the `quadrature_degree` keyword) and, finally, the expression of each declared gradients $\bg_i$ in terms of the unknown field $u$. This step is what we call *registration* of each gradient which will be discussed in depth in the demos. Let us just mention that the gradients can registered using the `register_gradient` method of the `MFrontNonlinearProblem` class or via an automatic procedure if the gradient name matches predefined common gradient objects e.g. `"Strain"`, `"TemperatureGradient"`, etc. 
+Inspecting the default case $\eqref{residual}$, MFront provides access to the flux names, shapes and values when performing the constitutive update and also to the corresponding gradient. The definition of the tangent operator blocks inside the MFront behaviour also gives access to the block structure $\text{blocks}(i)$ for each flux. The remaining information which must be provided from the FEniCS side are the unknown field $u$ and its discretization space $V$, the chosen integration measure $\dx$ (through the `quadrature_degree` keyword) and, finally, the expression of each declared gradients $\bg_i$ in terms of the unknown field $u$. This step is what we call *registration* of each gradient which will be discussed in depth in the demos. Let us just mention that the gradients can registered using the `register_gradient` method of the `MFrontNonlinearProblem` class or via an automatic procedure if the gradient name matches predefined common gradient objects e.g. `"Strain"`, `"TemperatureGradient"`, etc. 
 
 ## The `MFrontOptimisationProblem` class
 
