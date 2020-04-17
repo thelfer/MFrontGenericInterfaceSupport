@@ -282,7 +282,7 @@ class AbstractNonlinearProblem:
         """
         self.automatic_registration()
 
-        self.initialize_external_state_variables
+        self.initialize_external_state_variables()
         self.initialize_gradients()
         self.initialize_fluxes()
         self.initialize_internal_state_variables()

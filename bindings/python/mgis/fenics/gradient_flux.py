@@ -79,6 +79,9 @@ class Var(Gradient):
     def __init__(self, variable, name):
         return Gradient.__init__(self, variable, variable, name)
 
+    def _evaluate_at_quadrature_points(self, x):
+        local_project(x, self.function_space, self.dx, self.function)
+
 class QuadratureFunction:
     """An abstract class for Flux and InternalStateVariables"""
     def __init__(self, name, shape, variables=[]):
