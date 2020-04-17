@@ -128,13 +128,13 @@ class AbstractNonlinearProblem:
     def compute_tangent_form(self):
         """Computes derivative of residual"""
         # derivatives of fluxes
-        self.tangent_a = sum([derivative(self.residual, f.function, t*dg.variation(self.du))
+        self.tangent_form = sum([derivative(self.residual, f.function, t*dg.variation(self.du))
                       for f in self.fluxes.values()  for (t, dg) in zip(f.tangent_blocks.values(), f.variables)])
         # derivatives of internal state variables
-        self.tangent_a += sum([derivative(self.residual, s.function, t*dg.variation(self.du))
+        self.tangent_form += sum([derivative(self.residual, s.function, t*dg.variation(self.du))
                       for s in self.state_variables["internal"].values() for (t, dg) in zip(s.tangent_blocks.values(), s.variables)])
         # derivatives of variable u
-        self.tangent_a += derivative(self.residual, self.u, self.du)
+        self.tangent_form += derivative(self.residual, self.u, self.du)
 
 
     def register_gradient(self, name, expression):
@@ -469,7 +469,7 @@ class MFrontNonlinearProblem(NonlinearProblem, AbstractNonlinearProblem):
     def form(self, A, P, b, x):
         # this function is called before calling F or J
         self.update_constitutive_law()
-        assemble_system(self.tangent_a, self.residual, A_tensor=A, b_tensor=b, bcs=self.bcs, x0=x)
+        assemble_system(self.tangent_form, self.residual, A_tensor=A, b_tensor=b, bcs=self.bcs, x0=x)
 
     def F(self,b,x):
         pass
@@ -532,7 +532,7 @@ class MFrontOptimisationProblem(OptimisationProblem, AbstractNonlinearProblem):
     def J(self, A, x):
         """Objective function Hessian"""
         self.u.vector()[:] = x
-        assemble(self.tangent_a, A)
+        assemble(self.tangent_form, A)
         if type(self.bcs) == list:
             for bc in self.bcs:
                 bc.apply(A)

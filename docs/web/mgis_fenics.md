@@ -59,7 +59,7 @@ This class handles the definition and resolution of a nonlinear problem associat
 
 * `residual`: the nonlinear residual $F(u)$
 
-* `tangent_a`: the tangent bilinear form associated with the residual
+* `tangent_form`: the tangent bilinear form associated with the residual
 
 ### Residual and tangent bilinear form
 By default, the nonlinear residual is assumed to take the following form: Find $u\in V$ such that:
