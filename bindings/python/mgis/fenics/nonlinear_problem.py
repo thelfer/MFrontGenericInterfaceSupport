@@ -213,6 +213,23 @@ class AbstractNonlinearProblem:
         # tangent matrix quadrature space
         self.WCt = FunctionSpace(self.mesh, Wce)
 
+    def initialize_external_state_variables(self):
+        for (s, size) in zip(self.material.get_external_state_variable_names(), self.material.get_external_state_variable_sizes()):
+            state_var = self.state_variables["external"][s]
+            if isinstance(state_var, Gradient):
+                state_var.initialize_function(self.mesh, self.quadrature_degree)
+            elif isinstance(state_var, Constant):
+                pass
+            else:
+                raise ValueError("External state variable '{}' has not been registered.".format(s))
+
+    def initialize_gradients(self):
+        for (g, size) in zip(self.material.get_gradient_names(), self.material.get_gradient_sizes()):
+            try:
+                gradient = self.gradients[g].initialize_function(self.mesh, self.quadrature_degree)
+            except:
+                raise ValueError("Gradient '{}' has not been registered.".format(g))
+
     def initialize_fluxes(self):
         for (f, size) in zip(self.material.get_flux_names(), self.material.get_flux_sizes()):
             flux_gradients = []
@@ -252,10 +269,10 @@ class AbstractNonlinearProblem:
             state_variable.initialize_functions(self.mesh, self.quadrature_degree)
             self.state_variables["internal"][s] = state_variable
 
-    def initialize_fields(self):
+    def initialize(self):
         """
-        Initializes Quadrature functions associated with Gradient/Flux objects
-        and the corresponding tangent blocks.
+        Initializes the functions associated with gradients, fluxes, external
+        and internal state variables objects and the corresponding tangent blocks.
 
         All gradients and external state variables must have been registered first.
 
@@ -265,23 +282,9 @@ class AbstractNonlinearProblem:
         """
         self.automatic_registration()
 
-        for (s, size) in zip(self.material.get_external_state_variable_names(), self.material.get_external_state_variable_sizes()):
-            state_var = self.state_variables["external"][s]
-            if isinstance(state_var, Gradient):
-                state_var.initialize_function(self.mesh, self.quadrature_degree)
-            elif isinstance(state_var, Constant):
-                pass
-            else:
-                raise ValueError("External state variable '{}' has not been registered.".format(s))
-
-        for (g, size) in zip(self.material.get_gradient_names(), self.material.get_gradient_sizes()):
-            try:
-                gradient = self.gradients[g].initialize_function(self.mesh, self.quadrature_degree)
-            except:
-                raise ValueError("Gradient '{}' has not been registered.".format(g))
-
+        self.initialize_external_state_variables
+        self.initialize_gradients()
         self.initialize_fluxes()
-
         self.initialize_internal_state_variables()
 
         self.define_form()
@@ -291,13 +294,6 @@ class AbstractNonlinearProblem:
         self.flattened_block_shapes = [s[0]*s[1] if len(s)==2 else s[0] for s in self.block_shapes]
 
         self.update_constitutive_law()
-        # self.material.update_external_state_variables(self.state_variables["external"])
-        # mgis_bv.integrate(self.material.data_manager,
-        #                   self.integration_type, 0, 0, self.material.data_manager.n)
-        # self.affect_gradients()
-        # self.update_fluxes()
-        # self.update_tangent_blocks()
-        # self.update_internal_state_variables()
 
         self._init = False
 
@@ -336,30 +332,6 @@ class AbstractNonlinearProblem:
             else:
                 grad_vals = grad_vals[:, np.newaxis]
             self.material.data_manager.s1.gradients[:, buff:buff+block_shape] = grad_vals
-            buff += block_shape
-
-    def affect_gradients(self):
-        buff = 0
-        for (i, g) in enumerate(self.material.get_gradient_names()):
-            gradient = self.gradients[g]
-            gradient.update()
-            block_shape = self.material.get_gradient_sizes()[i]
-            grad_vals = gradient.function.vector().get_local()
-            if gradient.shape > 0:
-                grad_vals = grad_vals.reshape((self.material.data_manager.n, gradient.shape))
-            else:
-                grad_vals = grad_vals[:, np.newaxis]
-            self.material.data_manager.s0.gradients[:, buff:buff+block_shape] = grad_vals
-            buff += block_shape
-
-    def affect_internal_state_variables(self):
-        buff = 0
-        for (i, s) in enumerate(self.material.get_internal_state_variable_names()):
-            state_var = self.state_variables["internal"][s].function
-            if state_var is None:
-                raise ValueError("The state variable '{}' has not been initialized.".format(s))
-            block_shape = self.material.get_internal_state_variable_sizes()[i]
-            self.material.data_manager.s0.internal_state_variables[:,buff:buff+block_shape] = state_var.vector().get_local().reshape(self.material.data_manager.n, block_shape)
             buff += block_shape
 
     def update_internal_state_variables(self):
@@ -479,7 +451,7 @@ class MFrontNonlinearProblem(NonlinearProblem, AbstractNonlinearProblem):
 
     def solve(self, x):
         if self._init:
-            self.initialize_fields()
+            self.initialize()
         solv_out = self.solver.solve(self, x)
         mgis_bv.update(self.material.data_manager)
         return solv_out
@@ -556,5 +528,5 @@ class MFrontOptimisationProblem(OptimisationProblem, AbstractNonlinearProblem):
 
         """
         if self._init:
-            self.initialize_fields()
+            self.initialize()
         self.solver.solve(self, x, lx, ux)
