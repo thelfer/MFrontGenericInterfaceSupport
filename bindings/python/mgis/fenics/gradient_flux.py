@@ -84,20 +84,22 @@ class Var(Gradient):
 
 class QuadratureFunction:
     """An abstract class for Flux and InternalStateVariables"""
-    def __init__(self, name, shape, variables=[]):
+    def __init__(self, name, shape):
         self.shape = shape
         self.name = name
-        self.variables = variables
 
-    def initialize_functions(self, mesh, quadrature_degree):
+    def initialize_function(self, mesh, quadrature_degree):
         self.quadrature_degree = quadrature_degree
         self.mesh = mesh
         We = get_quadrature_element(mesh.ufl_cell(), quadrature_degree, self.shape)
         W = FunctionSpace(mesh, We)
         self.function = Function(W, name=self.name)
-        values = [Function(FunctionSpace(mesh,
-                          get_quadrature_element(mesh.ufl_cell(),
-                          quadrature_degree, dim=(self.shape, v.shape))),
+
+    def initialize_tangent_blocks(self, variables):
+        self.variables = variables
+        values = [Function(FunctionSpace(self.mesh,
+                          get_quadrature_element(self.mesh.ufl_cell(),
+                          self.quadrature_degree, dim=(self.shape, v.shape))),
                            name="d{}_d{}".format(self.name, v.name))
                           for v in self.variables]
         keys = [v.name for v in self.variables]

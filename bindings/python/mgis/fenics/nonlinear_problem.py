@@ -86,10 +86,11 @@ class AbstractNonlinearProblem:
         self._Fext = None
         self._init = True
 
-        self.state_variables =  {"internal": dict.fromkeys(self.material.get_internal_state_variable_names(), None),
+        self.state_variables =  {"internal": None,
                                  "external": dict.fromkeys(self.material.get_external_state_variable_names(), None)}
         self.gradients = dict.fromkeys(self.material.get_gradient_names(), None)
-        self.fluxes = {}
+        self.initialize_fluxes()
+        self.initialize_internal_state_variables()
 
     def automatic_registration(self):
         """
@@ -231,6 +232,22 @@ class AbstractNonlinearProblem:
                 raise ValueError("Gradient '{}' has not been registered.".format(g))
 
     def initialize_fluxes(self):
+        fluxes = []
+        for (f, size) in zip(self.material.get_flux_names(), self.material.get_flux_sizes()):
+            flux = Flux(f, size)
+            flux.initialize_function(self.mesh, self.quadrature_degree)
+            fluxes.append(flux)
+        self.fluxes = dict(zip(self.material.get_flux_names(), fluxes))
+
+    def initialize_internal_state_variables(self):
+        state_variables = []
+        for (s, size) in zip(self.material.get_internal_state_variable_names(), self.material.get_internal_state_variable_sizes()):
+            state_variable = InternalStateVariable(s, size)
+            state_variable.initialize_function(self.mesh, self.quadrature_degree)
+            state_variables.append(state_variable)
+        self.state_variables["internal"] = dict(zip(self.material.get_internal_state_variable_names(), state_variables))
+
+    def initialize_tangent_blocks(self):
         for (f, size) in zip(self.material.get_flux_names(), self.material.get_flux_sizes()):
             flux_gradients = []
             for t in self.material.get_tangent_block_names():
@@ -243,15 +260,8 @@ class AbstractNonlinearProblem:
                                 flux_gradients.append(value)
                         else:
                             raise ValueError("'{}' could not be associated with a registered gradient or state variable.".format(t[1]))
-            flux = Flux(f, size, flux_gradients)
-            flux.initialize_functions(self.mesh, self.quadrature_degree)
-            self.fluxes.update({f: flux})
+            self.fluxes[f].initialize_tangent_blocks(flux_gradients)
 
-    def initialize_internal_state_variables(self):
-        for (s, size) in zip(self.material.get_internal_state_variable_names(), self.material.get_internal_state_variable_sizes()):
-            We = get_quadrature_element(self.mesh.ufl_cell(), self.quadrature_degree, size)
-            W = FunctionSpace(self.mesh, We)
-            self.state_variables["internal"][s] = Function(W, name=s)
 
         for (s, size) in zip(self.material.get_internal_state_variable_names(), self.material.get_internal_state_variable_sizes()):
             state_var_gradients = []
@@ -265,9 +275,8 @@ class AbstractNonlinearProblem:
                                 state_var_gradients.append(value)
                         else:
                             raise ValueError("'{}' could not be associated with a registered gradient or state variable.".format(t[1]))
-            state_variable = InternalStateVariable(s, size, state_var_gradients)
-            state_variable.initialize_functions(self.mesh, self.quadrature_degree)
-            self.state_variables["internal"][s] = state_variable
+            self.state_variables["internal"][s].initialize_tangent_blocks(state_var_gradients)
+
 
     def initialize(self):
         """
@@ -284,8 +293,7 @@ class AbstractNonlinearProblem:
 
         self.initialize_external_state_variables()
         self.initialize_gradients()
-        self.initialize_fluxes()
-        self.initialize_internal_state_variables()
+        self.initialize_tangent_blocks()
 
         self.define_form()
 

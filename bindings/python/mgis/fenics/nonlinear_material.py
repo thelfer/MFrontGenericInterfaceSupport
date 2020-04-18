@@ -107,6 +107,8 @@ class MFrontNonlinearMaterial:
                     elif isinstance(value, Var):
                         value.update()
                         values = value.function.vector().get_local()
+                    else:
+                        raise NotImplementedError("{} type is not supported for external state variables".format(type(value)))
                     mgis_bv.setExternalStateVariable(s, key, values, mgis_bv.MaterialStateManagerStorageMode.LocalStorage)
 
     def get_parameter(self, name):
