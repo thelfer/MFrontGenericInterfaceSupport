@@ -60,6 +60,7 @@ class Gradient:
         We = get_quadrature_element(mesh.ufl_cell(), self.quadrature_degree, self.shape)
         self.function_space = FunctionSpace(mesh, We)
         self.function = Function(self.function_space, name=self.name)
+        self.update()
 
     def update(self, x=None):
         if x is None:

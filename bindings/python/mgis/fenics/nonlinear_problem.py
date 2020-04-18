@@ -225,11 +225,20 @@ class AbstractNonlinearProblem:
                 raise ValueError("External state variable '{}' has not been registered.".format(s))
 
     def initialize_gradients(self):
+        buff=0
         for (g, size) in zip(self.material.get_gradient_names(), self.material.get_gradient_sizes()):
+            gradient = self.gradients[g]
             try:
-                gradient = self.gradients[g].initialize_function(self.mesh, self.quadrature_degree)
+                gradient.initialize_function(self.mesh, self.quadrature_degree)
             except:
                 raise ValueError("Gradient '{}' has not been registered.".format(g))
+            grad_vals = gradient.function.vector().get_local()
+            if gradient.shape > 0:
+                grad_vals = grad_vals.reshape((self.material.data_manager.n, gradient.shape))
+            else:
+                grad_vals = grad_vals[:, np.newaxis]
+            self.material.data_manager.s0.gradients[:, buff:buff+size] = grad_vals
+            buff += size
 
     def initialize_fluxes(self):
         fluxes = []
