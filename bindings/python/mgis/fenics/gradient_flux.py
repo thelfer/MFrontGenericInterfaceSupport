@@ -49,10 +49,12 @@ class Gradient:
         self.name = name
 
     def __call__(self, v):
-        return ufl.replace(self.expression, {self.variable:v})
+        return ufl.replace(self.expression, {self.variable: v})
     def variation(self, v):
         """ Directional derivative in direction v """
-        return ufl.algorithms.expand_derivatives(ufl.derivative(self.expression, self.variable, v))
+        # return ufl.algorithms.expand_derivatives(ufl.derivative(self.expression, self.variable, v))
+        deriv = sum([ufl.derivative(self.expression, var, v_) for (var, v_) in zip(split(self.variable), split(v))])
+        return ufl.algorithms.expand_derivatives(deriv)
 
     def initialize_function(self, mesh, quadrature_degree):
         self.quadrature_degree = quadrature_degree
@@ -77,8 +79,8 @@ class Gradient:
 
 class Var(Gradient):
     """ A simple variable """
-    def __init__(self, variable, name):
-        return Gradient.__init__(self, variable, variable, name)
+    # def __init__(self, variable, name):
+    #     return Gradient.__init__(self, variable, variable, name)
 
     def _evaluate_at_quadrature_points(self, x):
         local_project(x, self.function_space, self.dx, self.function)
