@@ -128,10 +128,15 @@ class AbstractNonlinearProblem:
 
     def compute_tangent_form(self):
         """Computes derivative of residual"""
+        # derivatives of variable u
+        self.tangent_form = derivative(self.residual, self.u, self.du)
         # derivatives of fluxes
-        self.tangent_form = sum([derivative(self.residual, f.function, t*dg.variation(self.du))
-                      for f in self.fluxes.values()
-                      for (t, dg) in zip(f.tangent_blocks.values(), f.variables)])
+        for f in self.fluxes.values():
+            for (t, dg) in zip(f.tangent_blocks.values(), f.variables):
+                tdg = t*dg.variation(self.du)
+                if len(shape(t)) >0 and shape(t)[0] == 1:
+                    tdg = tdg[0]
+                self.tangent_form += derivative(self.residual, f.function, tdg)
         # derivatives of internal state variables
         for s in self.state_variables["internal"].values():
             for (t, dg) in zip(s.tangent_blocks.values(), s.variables):
@@ -139,8 +144,7 @@ class AbstractNonlinearProblem:
                 if len(shape(t)) >0 and shape(t)[0] == 1:
                     tdg = tdg[0]
                 self.tangent_form += derivative(self.residual, s.function, tdg)
-        # derivatives of variable u
-        self.tangent_form += derivative(self.residual, self.u, self.du)
+
 
 
     def register_gradient(self, name, expression):
