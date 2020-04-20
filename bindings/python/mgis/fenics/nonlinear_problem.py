@@ -138,9 +138,6 @@ class AbstractNonlinearProblem:
                 tdg = t*dg.variation(self.du)
                 if len(shape(t)) >0 and shape(t)[0] == 1:
                     tdg = tdg[0]
-                # print(s.name, t.name())
-                # print(shape(t), shape(dg.variation(self.du)))
-                # derivative(self.residual, ss, tdg)
                 self.tangent_form += derivative(self.residual, s.function, tdg)
         # derivatives of variable u
         self.tangent_form += derivative(self.residual, self.u, self.du)
