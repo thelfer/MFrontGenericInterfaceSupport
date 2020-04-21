@@ -144,6 +144,8 @@ By default, the objective function $f(u)$ corresponds to the material total ener
 
 The module has been developed using FEniCS version 2019.1.0. An important reimplementation will be planned once the [`dolfinx` project](https://github.com/FEniCS/dolfinx) will officially release a stable version. In particular, it will aim at fixing the following current limitations:
 
+* Quadrature elements cannot be used with quadrilateral or hexahedral mesh cells
+
 * the constitutive update is performed before any assembly procedure of the tangent and residual forms. This adds an extra cost of looping over quadrature points and, more importantly, an important memory cost since all tangent blocks at all quadrature points must be saved. The `dolfinx` project should offer the possibity of using custom assemblers in which constitutive integration should be possible at the local assembly level
 
 * multi-materials are not completely supported yet. More precisely, spatially varying material properties can be defined but it is not possible to define two different constitutive behaviours on two disting parts of the mesh. This feature has not been supported since it is not possible to define functions on sub-meshes yet. This should also be available soon in the next developments.
