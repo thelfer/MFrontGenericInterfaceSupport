@@ -98,12 +98,17 @@ class AbstractNonlinearProblem:
         """
         for (name, value) in self.gradients.items():
             if value is None:
-                if self.axisymmetric:
-                    var = (self._r, self.u)
-                else:
-                    var = (self.u,)
                 case = predefined_gradients.get(name, None)
                 if case is not None:
+                    if len(split(self.u)) == 1:
+                        if self.axisymmetric:
+                            var = (self._r, self.u)
+                        else:
+                            var = (self.u,)
+                    else:
+                        error_msg = "Automatic registration cannot be used with mixed function spaces.\n"
+                        error_msg += "Gradient '{}' must be registered explicitly.".format(name)
+                        raise NotImplementedError(error_msg)
                     expr = case[self.material.hypothesis](*var)
                     self.register_gradient(name, expr)
                     print("Automatic registration of '{}' as {}.\n".format(name, str(expr)))
