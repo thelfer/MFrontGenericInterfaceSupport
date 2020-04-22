@@ -388,6 +388,13 @@ namespace mgis {
      */
     MGIS_EXPORT StateView make_view(State&);
     /*!
+     * \brief make a view from a behaviour data
+     * \param[in] s: state
+     * \return the view
+     * \note the view has at most the same life time as the state.
+     */
+    MGIS_EXPORT InitialStateView make_view(const State&);
+    /*!
      * \brief print a detailled (verbose) description of the integration point
      * state using a markdown format
      * \param[in] os: ouptut stream

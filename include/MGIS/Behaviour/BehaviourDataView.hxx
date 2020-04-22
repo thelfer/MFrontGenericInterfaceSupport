@@ -87,7 +87,7 @@ struct mgis_bv_BehaviourDataView {
   /*!
    * \brief state at the beginning of the time step
    */
-  mgis_bv_StateView s0;
+  mgis_bv_InitialStateView s0;
   /*!
    * \brief state at the end of the time step
    */

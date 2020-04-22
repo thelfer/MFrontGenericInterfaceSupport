@@ -39,6 +39,8 @@ subroutine test()
   integer esvs_size
   ! type of the first internal state variable
   integer eel_t
+  ! size of the first internal state variable
+  integer eel_s
   ! type of the second internal state variable
   integer p_t
   ! type of the third internal state variable
@@ -85,6 +87,8 @@ subroutine test()
      r = check_string(eel, "ElasticStrain", "invalid internal state variable name")
      call check_status(behaviour_get_internal_state_variable_type(eel_t, b, 1))
      r = check(eel_t == STENSOR,"invalid type for internal state variable 'ElasticStrain'")
+     call check_status(get_variable_size(eel_s, h, eel_t))
+     r = check(eel_s == 6,"invalid size for internal state variable 'ElasticStrain'")
      call check_status(behaviour_get_internal_state_variable_name(p, b, 2))
      r = check_string(p, "EquivalentPlasticStrain", "invalid internal state variable name")
      call check_status(behaviour_get_internal_state_variable_type(p_t, b, 2))

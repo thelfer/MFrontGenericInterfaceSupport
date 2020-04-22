@@ -129,15 +129,15 @@ namespace mgis {
       // loop over integration points
       auto r = int{1};
       real opts[Behaviour::nopts + 1];  // option passed to the behaviour
-      for (auto i = b; i != e ; ++i) {
+      for (auto i = b; i != e; ++i) {
         BehaviourDataView v;
         v.rdt = real(1);
         v.dt = dt;
-	if(it!=IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR){
-	  v.K = m.K.data() + m.K_stride * i;
-	} else {
-	  v.K = &opts[0];
-	}
+        if (it != IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR) {
+          v.K = m.K.data() + m.K_stride * i;
+        } else {
+          v.K = &opts[0];
+        }
         eval(ws.mps0, vmps0, i);
         eval(ws.mps1, vmps1, i);
         eval(ws.esvs0, vesvs0, i);
@@ -189,12 +189,12 @@ namespace mgis {
       for (size_type i = 0; i != r; ++i) {
         tasks.push_back(p.addTask(
             [&m, it, dt, b, d] { return integrate(m, it, dt, b, b + d + 1); }));
-        b += d+1;
+        b += d + 1;
       }
       for (size_type i = r; i != nth; ++i) {
         tasks.push_back(p.addTask(
             [&m, it, dt, b, d] { return integrate(m, it, dt, b, b + d); }));
-        b += d ;
+        b += d;
       }
       //      p.wait();
       auto res = int{1};

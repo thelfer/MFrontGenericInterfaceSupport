@@ -59,7 +59,7 @@ namespace mgis {
        * behaviour treated.
        */
       static constexpr const mgis::size_type nopts = 2;
-      //! \behaviour symmetry
+      //! \brief behaviour symmetry
       enum Symmetry { ISOTROPIC, ORTHOTROPIC };
       //! \brief constructor
       Behaviour();
@@ -90,14 +90,14 @@ namespace mgis {
       std::string tfel_version;
       //! pointer to the function implementing the behaviour
       BehaviourFctPtr b;
-      //! \behaviour type
+      //! \brief behaviour type
       enum BehaviourType {
         GENERALBEHAVIOUR,
         STANDARDSTRAINBASEDBEHAVIOUR,
         STANDARDFINITESTRAINBEHAVIOUR,
         COHESIVEZONEMODEL
       } btype;
-      //! kinematic of the behaviour treated
+      //! \brief kinematic of the behaviour treated
       enum Kinematic {
         UNDEFINEDKINEMATIC,
         SMALLSTRAINKINEMATIC,

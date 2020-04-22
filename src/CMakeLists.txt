@@ -15,7 +15,9 @@ mgis_library(MFrontGenericInterface SHARED
 	  Integrate.cxx
 	  FiniteStrainSupport.cxx)
 target_include_directories(MFrontGenericInterface
-	PUBLIC "${CMAKE_SOURCE_DIR}/include")
+   PUBLIC 
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)
 if(UNIX)
   if(Threads_FOUND)
     target_link_libraries(MFrontGenericInterface
