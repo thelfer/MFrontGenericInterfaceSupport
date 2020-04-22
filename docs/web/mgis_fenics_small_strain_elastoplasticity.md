@@ -1,4 +1,4 @@
-# Small-strain von Mises elastoplasticity
+% Small-strain von Mises elastoplasticity
 
 This demo is the third installment in a series of two previous demos considering the implementation of von Mises elastoplasticity in FEniCS published on [Numerical tours of continuum mechanics using FEniCS](https://comet-fenics.readthedocs.io):
 
@@ -9,15 +9,15 @@ This demo is the third installment in a series of two previous demos considering
 
 The present demo therefore directly follows up on this second installment by offering to the use a much more compact syntax, especially avoiding the cumbersome definition of `Quadrature` spaces and the implementation of a Newton method by hand. The mechanical problem is exactly the same as in these two demos, namely the expansion of a hollow cylinder under internal pressure. The main difference in the present demo is that the same problem will also be solved in axisymmetric conditions, referring therefore to the expansion of a hollow sphere under internal pressure.
 
-## MFront implementation
+# MFront implementation
 
-### Optimised implementation
+## Optimised implementation
 
 In this document, we consider a $J_2$ isotropic plastic model with linear isotropic hardening. As the hardening is linear and the von Mises stress is quadratic, the behaviour integration is explicit, as described [here](http://tfel.sourceforge.net/gallery/plasticity/IsotropicLinearHardeningPlasticity.html).
 
 The implementation used here is modified to use material properties instead of parameters. The difference between material properties and parameters is that material properties are allowed to be distinct on each integration points and may evolve over time, whereas parameters are global values.
 
-### Usage of the `StandardElastoViscoPlasticity` brick
+## Usage of the `StandardElastoViscoPlasticity` brick
 
 Another approach, less efficient in this case, is to use the [`StandardElastoViscoPlasticity` brick](http://tfel.sourceforge.net/StandardElastoViscoPlasticityBrick.html) which allows for a very compact and declarative implementation but relies on a general implicit scheme.
 
@@ -50,7 +50,7 @@ H0.setEntryName("HardeningSlope");
 
 Since we did not explicitely specify the values of the elastic properties, those are automatically declared as material properties. To use material properties to define yield stress and the hardening slope, one uses here a small trick, which consists in defining the material properties before the brick declaration and declare the plastic coefficients `H` and `R0` as functions of those material properties.
 
-## FEniCS implementation
+# FEniCS implementation
 
 We first load the mesh and define values for the material properties. We will see later how to pass them to MFront. We will use a standard $P_2$ Lagrange interpolation for the displacement field and roller conditions are defined on the horizontal (tagged `1`) and vertical boundaries (tagged `3`) of the domain. The inner surface is tagged as `4` in the `facets` MeshFunction.
 
@@ -64,13 +64,13 @@ import numpy as np
 import ufl
 
 Re, Ri = 1.3, 1.   # external/internal radius
-# elastic parameters
+% elastic parameters
 E = 70e3
 nu = 0.3
-# yield strength
+% yield strength
 sig0 = 250.
 Et = E/100.
-# hardening slope
+% hardening slope
 H = E*Et/(E-Et)
 
 mesh = Mesh("../meshes/thick_cylinder.xml")

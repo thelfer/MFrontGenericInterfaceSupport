@@ -5,7 +5,7 @@ $\newcommand{\bvarepsilon}{\boldsymbol{\varepsilon}}
 \DeclareMathOperator*{\argmin}{arg min}$
 
 
-# Phase-field approach to brittle fracture
+% Phase-field approach to brittle fracture
 
 
 The present demo illustrates how multi-physics problems can be coupled and solved in a staggered fashion. This problematic is illustrated on a phase-field approach to brittle fracture in which two different mechanical problems are involved:
@@ -22,7 +22,7 @@ The problem is that of a stiff circular inclusion embedded in a square plate und
 <img src="supplementary_files/phase_field.gif" width="300">
 </p>
 
-## Introduction on phase-field approaches to brittle fracture
+# Introduction on phase-field approaches to brittle fracture
 
 The phase-field approach to brittle fracture originates from the mathematical regularization of Francfort \& Marigo variational approach of fracture  <cite data-cite="francfort1998revisiting">(Francfort & Marigo, 1998)</cite>. Following mathematical works of <cite data-cite="ambrosio1990approximation">(Ambrosio & Tortorelli, 1990)</cite>, the regularization proposed by <cite data-cite="bourdin2000numerical">(Bourdin et al., 2000)</cite> relies on the following total energy $\mathcal{E}(u, d) = \mathcal{E}_\text{pot}(u,d)+\mathcal{E}_\text{frac}(d)$ where the potential and fracture energies respectively read as:
 
@@ -74,7 +74,7 @@ in which the constant $c_w$ is chosen so that analytical localized solution prof
 In this demo we will use the AT2 model.
 
 
-## Numerical resolution techniques
+# Numerical resolution techniques
 
 A classical approach for computing the solution at load increment $n$ is to resort to a so-called *alternate minimization* scheme which involves the following steps embedded in an iterative procedure:
 
@@ -106,7 +106,7 @@ $$
 
 > Note that this approach loses the original variational for of the phase-field formulation. In particular, no theoretical results establishing the equivalence with the original constrained minimization problem exist. This approach is however widespread due to its simplicity.
 
-## MFront behaviour for the displacement problem
+# MFront behaviour for the displacement problem
 
 For the retained choice of models, the stress/strain constitutive equation at fixed damage reads as:
 
@@ -189,7 +189,7 @@ Finally, we compute the internal stored energy using `@InternalEnergy`:
 }
 ```
 
-## MFront behaviour for the damage problem
+# MFront behaviour for the damage problem
 
 The damage problem variational form using the history function approach for the AT2 model writes:
 
@@ -265,7 +265,7 @@ Psi_d += Gc/2/l₀*(d*d + l₀*l₀*(g|g));
 }
 ```
 
-## FEniCS implementation
+# FEniCS implementation
 
 
 

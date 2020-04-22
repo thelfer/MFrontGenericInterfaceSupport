@@ -1,12 +1,12 @@
-# Finite-strain elastoplasticity within the logarithmic strain framework
+% Finite-strain elastoplasticity within the logarithmic strain framework
 
 This demo is dedicated to the resolution of a finite-strain elastoplastic problem using the logarithmic strain framework proposed in <cite data-cite="miehe_anisotropic_2002">(Miehe et al., 2002)</cite>. 
 
-## Logarithmic strains 
+# Logarithmic strains 
 
 This framework expresses constitutive relations between the Hencky strain measure $\boldsymbol{H} = \dfrac{1}{2}\log (\boldsymbol{F}^T\cdot\boldsymbol{F})$ and its dual stress measure $\boldsymbol{T}$. This approach makes it possible to extend classical small strain constitutive relations to a finite-strain setting. In particular, the total (Hencky) strain can be split **additively** into many contributions (elastic, plastic, thermal, swelling, etc.). Its trace is also linked with the volume change $J=\exp(\operatorname{tr}(\boldsymbol{H}))$. As a result, the deformation gradient $\boldsymbol{F}$ is used for expressing the Hencky strain $\boldsymbol{H}$, a small-strain constitutive law is then written for the $(\boldsymbol{H},\boldsymbol{T})$-pair and the dual stress $\boldsymbol{T}$ is then post-processed to an appropriate stress measure such as the Cauchy stress $\boldsymbol{\sigma}$ or Piola-Kirchhoff stresses.
 
-## MFront implementation
+# `MFront` implementation
 
 The logarithmic strain framework discussed in the previous paragraph consists merely as a pre-processing and a post-processing stages of the behaviour integration. The pre-processing stage compute the logarithmic strain and its increment and the post-processing stage inteprets the stress resulting from the behaviour integration as the dual stress $\boldsymbol{T}$ and convert it to the Cauchy stress.
 
@@ -41,7 +41,7 @@ H0.setEntryName("HardeningSlope");
 };
 ```
 
-## FEniCS implementation
+# `FEniCS` implementation
 
 We define a box mesh representing half of a beam oriented along the $x$-direction. The beam will be fully clamped on its left side and symmetry conditions will be imposed on its right extremity. The loading consists of a uniform self-weight.
 
@@ -80,7 +80,7 @@ file_results.parameters["flush_output"] = True
 file_results.parameters["functions_share_mesh"] = True
 ```
 
-The `MFrontNonlinearMaterial` instance is loaded from the MFront `LogarithmicStrainPlasticity` behaviour. This behaviour is a finite-strain behaviour (`material.finite_strain=True`) which relies on a kinematic description using the total deformation gradient $\boldsymbol{F}$. By default, a MFront behaviour always returns the Cauchy stress as the stress measure after integration. However, the stress variable dual to the deformation gradient is the first Piloa-Kirchhoff (PK1) stress. An internal option of the MGIS interface is therefore used in the finite-strain context to return the PK1 stress as the "flux" associated to the "gradient" $\boldsymbol{F}$. Both quantities are non-symmetric tensors, aranged as a 9-dimensional vector in 3D following [MFront conventions on tensors](http://tfel.sourceforge.net/tensors.html).
+The `MFrontNonlinearMaterial` instance is loaded from the `MFront` `LogarithmicStrainPlasticity` behaviour. This behaviour is a finite-strain behaviour (`material.finite_strain=True`) which relies on a kinematic description using the total deformation gradient $\boldsymbol{F}$. By default, a `MFront` behaviour always returns the Cauchy stress as the stress measure after integration. However, the stress variable dual to the deformation gradient is the first Piola-Kirchhoff (PK1) stress. An internal option of the MGIS interface is therefore used in the finite-strain context to return the PK1 stress as the "flux" associated to the "gradient" $\boldsymbol{F}$. Both quantities are non-symmetric tensors, aranged as a 9-dimensional vector in 3D following [`MFront` conventions on tensors](http://tfel.sourceforge.net/tensors.html).
 
 
 ```python
@@ -102,7 +102,7 @@ The `MFrontNonlinearProblem` instance must therefore register the deformation gr
 ```
 Automatic registration of 'DeformationGradient' as I + (grad(Displacement)).
 ```
-The loading is then defined and, as for the [small-strain elastoplasticity example](small_strain_elastoplasticity.html), state variables include the `ElasticStrain` and `EquivalentPlasticStrain` since the same behaviour is used as in the small-strain case with the only difference that the total strain is now given by the Hencky strain measure. In particular, the `ElasticStrain` is still a symmetric tensor (vector of dimension 6). Note that it has not been explicitly defined as a state variable in the MFront behaviour file since this is done automatically when using the `IsotropicPlasticMisesFlow` parser.
+The loading is then defined and, as for the [small-strain elastoplasticity example](small_strain_elastoplasticity.html), state variables include the `ElasticStrain` and `EquivalentPlasticStrain` since the same behaviour is used as in the small-strain case with the only difference that the total strain is now given by the Hencky strain measure. In particular, the `ElasticStrain` is still a symmetric tensor (vector of dimension 6). Note that it has not been explicitly defined as a state variable in the `MFront` behaviour file since this is done automatically when using the `IsotropicPlasticMisesFlow` parser.
 
 Finally, we setup a few parameters of the Newton non-linear solver.
 
@@ -136,7 +136,7 @@ mpirun -np 4 python3 finite_strain_elastoplasticity.py
 P0 = FunctionSpace(mesh, "DG", 0)
 p_avg = Function(P0, name="Plastic strain")
 
-Nincr = 30
+Nincr = 300
 load_steps = np.linspace(0., 1., Nincr+1)
 results = np.zeros((Nincr+1, 3))
 for (i, t) in enumerate(load_steps[1:]):
@@ -153,39 +153,50 @@ for (i, t) in enumerate(load_steps[1:]):
 ```
 
     Increment  1
-    Automatic registration of 'DeformationGradient' as I + (grad(Displacement)).
+
+
+
+    ---------------------------------------------------------------------------
+
+    RuntimeError                              Traceback (most recent call last)
+
+    <ipython-input-7-7cf38c4ffbd9> in <module>
+          8     selfweight.t = t
+          9     print("Increment ", i+1)
+    ---> 10     problem.solve(u.vector())
+         11 
+         12     results[i+1, 0] = -u(length, 0, 0)[2]
+
+
+    /usr/local/lib/python3.6/site-packages/mgis/fenics/nonlinear_problem.py in solve(self, x)
+        461         if self._init:
+        462             self.initialize()
+    --> 463         solv_out = self.solver.solve(self, x)
+        464         mgis_bv.update(self.material.data_manager)
+        465         return solv_out
+
+
+    RuntimeError: 
     
-    Automatic registration of 'Temperature' as a Constant value = 293.15.
-    
-    Increment  2
-    Increment  3
-    Increment  4
-    Increment  5
-    Increment  6
-    Increment  7
-    Increment  8
-    Increment  9
-    Increment  10
-    Increment  11
-    Increment  12
-    Increment  13
-    Increment  14
-    Increment  15
-    Increment  16
-    Increment  17
-    Increment  18
-    Increment  19
-    Increment  20
-    Increment  21
-    Increment  22
-    Increment  23
-    Increment  24
-    Increment  25
-    Increment  26
-    Increment  27
-    Increment  28
-    Increment  29
-    Increment  30
+    *** -------------------------------------------------------------------------
+    *** DOLFIN encountered an error. If you are not able to resolve this issue
+    *** using the information listed below, you can ask for help at
+    ***
+    ***     fenics-support@googlegroups.com
+    ***
+    *** Remember to include the error message listed below and, if possible,
+    *** include a *minimal* running example to reproduce the error.
+    ***
+    *** -------------------------------------------------------------------------
+    *** Error:   Unable to solve linear system using PETSc Krylov solver.
+    *** Reason:  Solution failed to converge in 0 iterations (PETSc reason DIVERGED_PCSETUP_FAILED, residual norm ||r|| = 0.000000e+00).
+    *** Where:   This error was encountered inside PETScKrylovSolver.cpp.
+    *** Process: 0
+    *** 
+    *** DOLFIN version: 2019.1.0
+    *** Git changeset:  unknown
+    *** -------------------------------------------------------------------------
+
 
 
 The load-displacement curve exhibits a classical elastoplastic behaviour rapidly followed by a stiffening behaviour due to membrane catenary effects. 
@@ -199,5 +210,18 @@ plt.ylabel("Load");
 ```
 
 
-![png](mgis_fenics_finite_strain_elastoplasticity_files/mgis_fenics_finite_strain_elastoplasticity_9_0.png)
+```python
+assemble(problem.residual).norm("l2")
+```
 
+
+
+
+    112.6470232711502
+
+
+
+
+```python
+
+```

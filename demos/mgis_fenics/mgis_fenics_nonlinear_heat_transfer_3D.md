@@ -1,14 +1,18 @@
-% Stationnary non-linear heat transfer: 3D problem and performance comparisons
+<title>Hello World</title>
+<meta name="description" content="The quick brown fox jumped over the lazy dog.">
+<meta name="author" content="John Smith">
 
-# Description of the non-linear constitutive heat transfer law
+# Stationnary non-linear heat transfer: 3D problem and performance comparisons
 
-This example is a direct continuation of the [previous 2D example on non-linear heat transfer](mgis_fenics_nonlinear_heat_transfer.html). The present computations will use the same behaviour `StationaryHeatTransfer.mfront` which will be loaded with a `"3d"` hypothesis (default case).
+## Description of the non-linear constitutive heat transfer law
+
+This example is a direct continuation of the [previous 2D example on non-linear heat transfer](mgis_fenics_nonlinear_heat_transfer.ipynb). The present computations will use the same behaviour `StationaryHeatTransfer.mfront` which will be loaded with a `"3d"` hypothesis (default case).
 
 
 <img src="supplementary_files/fuel_rod_solution.png" width="300">
 
 
-# `FEniCS` implementation
+## `FEniCS` implementation
 
 We now consider a portion of nuclear fuel rod (Uranium Dioxide $\text{UO}_2$) subject to an external imposed temperature $T_{ext}=1000\text{ K}$ and uniform volumetric heat source $r=300 \text{ MW/m}^3$. From the steady state heat balance equation $\operatorname{div}\mathbf{j} = r$, the variational formulation is now:
 
@@ -81,7 +85,7 @@ The temperature field along a radial direction along the top surface has been co
 <img src="supplementary_files/Temperature_Castem_FEniCS.png" width="500">
 
 
-# Performance comparison
+## Performance comparison
 
 For the purpose of performance comparison, we also implement a direct non-linear variational problem with pure UFL expressions. This is possible in the present case since the non-linear heat constitutive law is very simple. Note that we enfore the use of the same quadrature rule degree. The temperature field is also reinterpolated to its previous initial value for a fair comparison between both solution strategies.
 
@@ -113,7 +117,7 @@ We can observe that both methods, relying on the same default Newton solver, yie
 
 The difference is slightly larger for large quadrature degrees, however, the difference is moderate when compared to the total computing time for large scale problems.
 
-# On the use of the correct tangent operator
+## On the use of the correct tangent operator
 
 Most FE software do not take into account the contribution of $\dfrac{\partial \mathbf{j}}{\partial T}$ to the tangent operator. One can easily test this variant by assigning `dj_ddT` in the `MFront` behaviour or change the expression of the jacobian in the pure `FEniCS` implementation by:
 ```
