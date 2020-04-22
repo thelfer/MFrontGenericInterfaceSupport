@@ -60,8 +60,8 @@ aspects of the material (grain size, dislocation density, hardening
 state, etc.) or be phenomenological in nature (equivalent plastic
 strain). The knowledge of those internal state variables allows the
 computation of local thermodynamic forces which affect the material
-equilibrium at the structural scale. 
-Due to the large number of phenomena that can be described 
+equilibrium at the structural scale.
+Due to the large number of phenomena that can be described
 in this manner, such as plasticity,
 viscoplasticity, or damage, computational mechanics is one of the
 most demanding domains for advanced constitutive equations.
@@ -88,7 +88,7 @@ dedicated interfaces and compiles them into shared libraries. For
 example, `MFront` provides interfaces for `Cast3M`, `code_aster`,
 `Europlexus`, `Abaqus/Standard`, `Abaqus/Explicit`, `CalculiX`, etc.
 
-To further facilitate this cross-software integration, 
+To further facilitate this cross-software integration,
 `MFront` recently introduced a so-called `generic` interface. This paper
 describes the `MFrontGenericInterfaceSupport` project, which is denoted
 `MGIS` in the following. `MGIS` aims at proving tools (functions,
@@ -102,9 +102,9 @@ proprietary codes.
 
 This paper is divided into three parts:
 
-1. Section 1 gives a brief overview of `MGIS`.
-2. Section 2 describes the various bindings available.
-3. Section 3 describes some examples of usage in various open-source
+1. A brief overview of `MGIS`.
+2. A description of the various bindings available.
+3. Some examples of usage in various open-source
   solvers: `FEniCS`, `OpenGeoSys` and `JuliaFEM`.
 
 # Overview
@@ -129,8 +129,8 @@ When dealing with user-defined behaviours, most solvers, including
 `Abaqus/Standard` for example, delegates part of the work to the
 user. The user must:
 
-1. describe the behaviour in the input. 
-2. take care of the consistency of the behaviour with the hypothesis
+1. Describe the behaviour in the input.
+2. Take care of the consistency of the behaviour with the hypothesis
   made during the computation (e.g. a finite strain behaviour must be
   used in a finite strain analysis based on the appropriate deformation
   and stress measures as well as reference configurations).
@@ -151,7 +151,7 @@ shared library, the behaviour and the modelling hypothesis
 retrieves various metadata which fully describe how to interact with the
 behaviour. The solver using `MGIS` can then check if the behaviour is
 consistent with the computations to be performed and checks that the
-data provided by the user are correct. 
+data provided by the user are correct.
 The metadata can also be used to allocate the memory required to store
 the state of the material at each integration point. `MGIS`' design
 allows the following types of storage:
@@ -173,7 +173,7 @@ structures.
 `MGIS` provides a function to integrate the constitutive equations at
 one integration point or on a set of integration points^[This strongly
 depends on the data structure chosen to store the internal state
-variables.]. 
+variables.].
 The integration of the constitutive equations at different integration
 points are usually independent of each other; in other words, in most
 models the constitutive behaviour is local. Thus, when handling a set of integration
@@ -183,7 +183,7 @@ chosen by the solver.
 # Main language and available bindings
 
 `MGIS` is written in `C++-11`. The `C++` API is described in another
-report, see [@helfer_brief_2019].
+report, see @helfer_brief_2019.
 
 The following bindings are currently available:
 
@@ -196,17 +196,17 @@ The following bindings are currently available:
 
 ## `FEniCS`
 
-!["Figure 1: Large strain elasto-plastic modelling of a notched
-bar"](img/FEniCS.png "Large strain elasto-plastic modelling of a notched
+![Large strain elasto-plastic modelling of a notched
+bar.](img/FEniCS.png "Large strain elasto-plastic modelling of a notched
 bar")
 
 `FEniCS` is a popular open-source computing platform for solving partial
-differential equations [@logg_automated_2012;@alnaes_fenics_2015].
+differential equations [@logg_automated_2012; @alnaes_fenics_2015].
 
 Non linear mechanics computations combining `FEniCS` at the equilibrium
 scale and `MFront` to describe the constitutive equations can be
 performed through the `python` bindings of `MGIS` as demonstrated by
-Bleyer et al. (see [@bleyer_elasto-plastic_2019;@bleyer_fenics_2019]).
+Bleyer et al. (see @bleyer_elasto-plastic_2019; @bleyer_fenics_2019).
 
 Extensions to finite strain elastoplasticity have been recently added as
 shown in Figure 1 which models a tensile test on a notched bar^[This
@@ -218,8 +218,8 @@ element solver, see @edf_ssna303_2011 for details].
 OpenGeoSys (OGS) is a scientific open-source initiative for the
 numerical simulation of thermo-hydro-mechanical/chemical (THMC)
 processes in porous and fractured media, inspired by FEFLOW and ROCKFLOW
-concepts and continuously developed since the mid-eighties, see
-([@Kolditz:1990;@Wollrath:1990;@Kroehn:1991;@Helmig:1993;@kolditz_opengeosys:_2012;@Bilke2019]).
+concepts and continuously developed since the mid-eighties (see
+@Kolditz:1990; @Wollrath:1990; @Kroehn:1991; @Helmig:1993; @kolditz_opengeosys:_2012; @Bilke2019).
 
 The OGS framework is targeting applications in the environmental
 geosciences, e.g., in the fields of contaminant hydrology, water
@@ -227,8 +227,8 @@ resources and waste management, geotechnical applications, geothermal
 energy systems and energy storage.
 
 The most recent version, `OpenGeoSys-6` (`OGS-6`)
-([@Naumov:2018;@Bilke2019]), is a fundamental re-implementation of the
-multi-physics code `OpenGeoSys-4/5` ([@Kolditz2004225;@Wang:2006]) using
+(@Naumov:2018; @Bilke2019), is a fundamental re-implementation of the
+multi-physics code `OpenGeoSys-4/5` (@Kolditz2004225; @Wang:2006) using
 advanced methods in software engineering and architecture with a focus
 on code quality, modularity, performance and comprehensive
 documentation.
@@ -236,16 +236,16 @@ documentation.
 Among its recent extensions are the implementation of numerical methods
 for the propagation of discontinuities, such as enriched finite element
 function spaces, non-local formulations and phase-field models for
-fracture ([@Watanabe2012;@Parisio2018;@Yoshioka2019]).
+fracture (@Watanabe2012; @Parisio2018; @Yoshioka2019).
 
 To simplify the implementation of new constitutive models for solids
 developed with `MFront`, `OGS-6` relies on the `C` bindings of `MGIS`.
 
-!["Figure 2: Slope stability analysis with strength reduction performed
+![Slope stability analysis with strength reduction performed
 in OpenGeoSys. The image on the left shows the norm of the displacement
 vector for a low top load. The image on the right shows the equivalent
 plastic strain for a setting with an increased top
-load."](img/ogs_strength_reduction.png "Strength reduction for slope
+load.](img/ogs_strength_reduction.png "Strength reduction for slope
 stability analysis in OpenGeoSys.")
 
 Figure 2 shows the results of a $\varphi-c$ reduction approach to slope
@@ -276,20 +276,20 @@ models, takes advantage of the scripting language interface, which is
 easy to learn and embrace. Besides, it is a real programming environment
 where other analyses and workflows combine with simulation.
 
-!["Figure 3: Block diagram showing the software layers involved in using
-`MFront` behaviours in `JuliaFEM`"](img/MFrontInterface.png "Software
+![Block diagram showing the software layers involved in using
+`MFront` behaviours in `JuliaFEM`.](img/MFrontInterface.png "Software
 layers.")
 
 The `MFrontInterface.jl` [@frondelius_mfrontinterface_2019] is a `Julia`
 package where `MFront` material models are brought to `Julia` via wrapping
-`MGIS`, see Fig. 3. Installation is, as easy as any julia packages,
+`MGIS`, see Figure 3. Installation is, as easy as any julia packages,
 i.e., `pkg> add MFrontInterface`. For example `TFEL` and `MGIS`
 cross-compiled binary dependencies are automatically downloaded and
-extracted. Lastly, Fig. 4. shows a simple 3D geometry example using
+extracted. Lastly, Figure 4. shows a simple 3D geometry example using
 JuliaFEM and MFrontInterface together.
 
-!["Figure 4: Simple isotropic plasticity modelling of a 3D beam in
-JuliaFEM with MFrontInterface."](img/3dbeam_mfront.png "Simple JuliaFEM
+![Simple isotropic plasticity modelling of a 3D beam in
+JuliaFEM with MFrontInterface.](img/3dbeam_mfront.png "Simple JuliaFEM
 plus MFrontInterface 3D demo")
 
 # Conclusions
@@ -300,11 +300,11 @@ any solver. In particular, the library provides a way of retrieving the
 metadata associated with a behaviour, data structures to store the
 physical information and functions to perform the behaviour integration
 over a time step. Examples of usage in various open-source solvers
-(`FEniCS`, `OpenGeoSys`, `JuliaFEM`) have been provided. 
+(`FEniCS`, `OpenGeoSys`, `JuliaFEM`) have been provided.
 
 The models implemented for one code can easily be used in another without
 the need for re-implementation. This offers great benefits for code
-quality assurance. Since the constitutive integration is 
+quality assurance. Since the constitutive integration is
 handled by MFront, this step of the computation is equally efficient across
 the different solver platforms.
 
