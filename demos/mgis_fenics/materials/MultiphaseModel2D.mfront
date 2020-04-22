@@ -1,0 +1,86 @@
+@DSL DefaultGenericBehaviour;
+@Behaviour MultiphaseModel;
+@Author Jeremy Bleyer;
+@Date 04/04/2020;
+
+@ModellingHypotheses {PlaneStrain};
+
+@Gradient StrainStensor e₁;
+e₁.setEntryName("MatrixStrain");
+@Flux StressStensor σ₁;
+σ₁.setEntryName("MatrixStress");
+
+@Gradient StrainStensor e₂;
+e₂.setEntryName("FiberStrain");
+@Flux StressStensor σ₂;
+σ₂.setEntryName("FiberStress");
+
+@Gradient TVector V;
+V.setEntryName("RelativeDisplacement");
+@Flux TVector I;
+I.setEntryName("InteractionForce");
+
+@TangentOperatorBlocks{∂σ₁∕∂Δe₁,∂σ₁∕∂Δe₂,∂σ₂∕∂Δe₁,∂σ₂∕∂Δe₂,∂I∕∂ΔV};
+
+@MaterialProperty stress Y1;
+Y1.setEntryName("MatrixYoungModulus");
+@MaterialProperty real nu1;
+nu1.setEntryName("MatrixPoissonRatio");
+@MaterialProperty stress Y2;
+Y2.setEntryName("FiberYoungModulus");
+@MaterialProperty real nu2;
+nu2.setEntryName("FiberPoissonRatio");
+@MaterialProperty real ρ;
+ρ.setEntryName("FiberVolumeFraction");
+@MaterialProperty real s;
+s.setEntryName("Size");
+
+@ProvidesTangentOperator;
+@Integrator {
+  // remove useless warnings, as we always compute the tangent operator
+  static_cast<void>(computeTangentOperator_);
+
+  const auto λ₁ = computeLambda(Y1,nu1);
+  const auto μ₁ = computeMu(Y1,nu1);
+  const auto λ₂ = computeLambda(Y2,nu2);
+  const auto μ₂ = computeMu(Y2,nu2);
+  const auto Eₒₑ¹ = λ₁+2*μ₁;
+  const auto Eₒₑ² = λ₂+2*μ₂;
+  const auto Eₒₑ = (1-ρ)*Eₒₑ¹ + ρ*Eₒₑ²;
+  const auto iEₒₑ = (1-ρ)/Eₒₑ¹ + ρ/Eₒₑ²;
+  const auto λ = (1-ρ)*λ₁ + ρ*λ₂;
+  const auto λiEₒₑ = (1-ρ)*λ₁/Eₒₑ¹ + ρ*λ₂/Eₒₑ²;
+  const auto λ2iEₒₑ = (1-ρ)*λ₁*λ₁/Eₒₑ¹ + ρ*λ₂*λ₂/Eₒₑ²;
+  const auto iμ = (1-ρ)/μ₁ + ρ/μ₂;
+  const auto C₁₁₁₁ʰᵒᵐ = Eₒₑ - λ2iEₒₑ + λiEₒₑ*λiEₒₑ/iEₒₑ;
+  const auto C₁₁₂₂ʰᵒᵐ = λiEₒₑ/iEₒₑ;
+  const Stensor4 Cʰᵒᵐ = {
+      C₁₁₁₁ʰᵒᵐ , C₁₁₂₂ʰᵒᵐ, C₁₁₂₂ʰᵒᵐ, 0., //
+      C₁₁₂₂ʰᵒᵐ, 1/iEₒₑ, λ, 0., //
+      C₁₁₂₂ʰᵒᵐ, λ, Eₒₑ, 0., //
+      0., 0., 0., 2/iμ
+  };
+  const auto C¹ = λ₁ ⋅ (I₂ ⊗ I₂) + 2 ⋅ μ₁ ⋅ I₄;
+  const auto C² = λ₂ ⋅ (I₂⊗I₂) + 2 ⋅ μ₂ ⋅ I₄;
+  const auto iΔC = invert(C²-C¹);
+  const auto Cᵃᵛᵍ = (1-ρ)⋅C¹ + ρ⋅C²;
+  const auto H = iΔC ⋅ (Cᵃᵛᵍ-Cʰᵒᵐ) ⋅ iΔC;
+  const auto D¹¹ = (1-ρ)⋅C¹-(C¹ ⋅ H ⋅ C¹);
+  const auto D²² = ρ⋅C²-(C² ⋅ H ⋅ C²);
+  const auto D¹² = C¹ ⋅ H ⋅ C²;
+  ∂σ₁∕∂Δe₁ = D¹¹;
+  ∂σ₁∕∂Δe₂ = D¹²;
+  ∂σ₂∕∂Δe₁ = transpose(D¹²);
+  ∂σ₂∕∂Δe₂ = D²²;
+  σ₁ = ∂σ₁∕∂Δe₁ ⋅ (e₁ + Δe₁) + ∂σ₁∕∂Δe₂ ⋅ (e₂ + Δe₂);
+  σ₂ = ∂σ₂∕∂Δe₁ ⋅ (e₁ + Δe₁) + ∂σ₂∕∂Δe₂ ⋅ (e₂ + Δe₂);
+
+  const auto κʰ = 12/iμ/s/s; // horizontal interaction stiffness
+  const auto κᵛ = 12/iEₒₑ/s/s; // vertical interaction stiffness
+  const tmatrix<N, N, real> κ = {
+      κʰ, 0., 
+      0., κᵛ
+  };
+  ∂I∕∂ΔV = κ;
+  I = κ ⋅ (V + ΔV);
+}

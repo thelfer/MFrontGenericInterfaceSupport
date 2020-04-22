@@ -1,0 +1,38 @@
+{
+library : {
+name   : "Behaviour";
+type   : SHARED_LIBRARY;
+prefix : "lib";
+suffix : "so";
+install_path : "";
+sources : {
+"StationaryHeatTransfer-generic.cxx",
+"StationaryHeatTransfer.cxx"
+};
+cppflags : {
+"$(shell tfel-config --cppflags --compiler-flags)"
+};
+include_directories : {
+"$(shell tfel-config --include-path)"
+};
+link_directories : {
+"$(shell tfel-config --library-path)"
+};
+link_libraries : {
+"$(shell tfel-config --library-dependency --material --mfront-profiling --physical-constants)"
+};
+epts : {
+"StationaryHeatTransfer_AxisymmetricalGeneralisedPlaneStrain",
+"StationaryHeatTransfer_Axisymmetrical",
+"StationaryHeatTransfer_PlaneStrain",
+"StationaryHeatTransfer_GeneralisedPlaneStrain",
+"StationaryHeatTransfer_Tridimensional"
+};
+};
+headers : {
+"MFront/GenericBehaviour/StationaryHeatTransfer-generic.hxx",
+"TFEL/Material/StationaryHeatTransfer.hxx",
+"TFEL/Material/StationaryHeatTransferBehaviourData.hxx",
+"TFEL/Material/StationaryHeatTransferIntegrationData.hxx"
+};
+};

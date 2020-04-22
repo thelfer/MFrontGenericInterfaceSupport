@@ -1,0 +1,23 @@
+@DSL Implicit;
+
+@Behaviour IsotropicLinearHardeningPlasticityBrick;
+@Author Thomas Helfer/Jérémy Bleyer;
+@Date 07 / 04 / 2020;
+
+@Algorithm NewtonRaphson;
+@Epsilon 1.e-14;
+
+@Theta 1.;
+
+@MaterialProperty stress s0;
+s0.setGlossaryName("YieldStress");
+@MaterialProperty stress H0;
+H0.setEntryName("HardeningSlope");
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke",
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {H : "H0", R0 : "s0"}
+  }
+};

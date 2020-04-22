@@ -1,0 +1,24 @@
+@DSL IsotropicPlasticMisesFlow;
+@Behaviour LogarithmicStrainPlasticity;
+@Author    Helfer Thomas;
+@Date      5/12/13;
+
+@StrainMeasure Hencky;
+
+@ElasticMaterialProperties {210e11,0.};
+
+@Parameter s0 = 250e6;
+@Parameter Et = 1e6;
+
+@LocalVariable stress R;
+
+@InitLocalVariables{
+  // hardening slope
+  R  = young*Et/(young-Et);
+}
+
+@FlowRule{
+  f       = seq-R*p-s0;
+  df_dseq = 1;
+  df_dp   = -R;
+}

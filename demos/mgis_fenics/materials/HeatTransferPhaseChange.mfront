@@ -1,0 +1,65 @@
+@DSL DefaultGenericBehaviour;
+@Behaviour HeatTransferPhaseChange;
+@Author Thomas Helfer / Jérémy Bleyer;
+@Date 15 / 02 / 2019;
+
+@Gradient TemperatureGradient ∇T;
+∇T.setGlossaryName("TemperatureGradient");
+
+@Flux HeatFlux j;
+j.setGlossaryName("HeatFlux");
+
+@StateVariable real h;
+h.setEntryName("Enthalpy");
+
+@AdditionalTangentOperatorBlock ∂j∕∂ΔT;
+@AdditionalTangentOperatorBlock ∂h∕∂ΔT;
+
+@Parameter Tₘ = 933.15;  
+Tₘ.setEntryName("MeltingTemperature");
+@Parameter kₛ = 210;
+kₛ.setEntryName("SolidConductivity");
+@Parameter cₛ = 3.e6;
+cₛ.setEntryName("SolidHeatCapacity");
+@Parameter kₗ = 95;
+kₗ.setEntryName("LiquidConductivity");
+@Parameter cₗ = 2.58e6;
+cₗ.setEntryName("LiquidHeatCapacity");
+@Parameter Δhₛₗ = 1.08048e9;
+Δhₛₗ.setEntryName("FusionEnthalpy");
+@Parameter Tₛₘₒₒₜₕ = 0.1; // smoothing temperature width
+Tₛₘₒₒₜₕ.setEntryName("Tsmooth");
+
+@LocalVariable thermalconductivity k;
+@LocalVariable real c;
+@LocalVariable real ∂k∕∂T;
+
+@Integrator {
+  const auto T_ = T + ΔT;     // current temperature
+  const auto Tₛ = Tₘ-Tₛₘₒₒₜₕ/2; // solidus temperature
+  const auto Tₗ = Tₘ+Tₛₘₒₒₜₕ/2; // liquidus temperature
+  if(T_<Tₛ){                  // solid state
+    k = kₛ;
+    c = cₛ;
+    h = cₛ*T_;
+    ∂k∕∂T = 0.;
+  } else if (T_ > Tₗ) {        // liquid state
+    k = kₗ;
+    c = cₗ;
+    h = cₗ*(T_-Tₗ)+Δhₛₗ+cₛ*Tₛ;
+    ∂k∕∂T = 0.;
+  } else {                    // solid/liquid smooth transition
+    k = kₛ + (kₗ-kₛ)*(T_-Tₛ)/Tₛₘₒₒₜₕ;
+    h = cₛ*Tₛ+Δhₛₗ*(T_-Tₛ)/Tₛₘₒₒₜₕ;
+    c = Δhₛₗ/(Tₗ-Tₛ);
+    ∂k∕∂T = -(kₗ-kₛ)/Tₛₘₒₒₜₕ;
+  }
+  // heat flux
+  j = -k ⋅ (∇T + Δ∇T);
+}  // end of @Integrator
+
+@TangentOperator {
+  ∂j∕∂Δ∇T = -k * tmatrix<N, N, real>::Id();
+  ∂j∕∂ΔT = ∂k∕∂T * (∇T + Δ∇T);
+  ∂h∕∂ΔT = c;
+}  // end of @TangentOperator
