@@ -13,11 +13,16 @@ $\newcommand{\bsig}{\boldsymbol{\sigma}}
 \newcommand{\div}{\operatorname{div}}
 \newcommand{\jump}[1]{[\![#1]\!]}
 \newcommand{\avg}[1]{\left\langle#1\right\rangle}$
-This demo explores the full capability of MFront's recent extension to handling generalized behaviours, namely involving different pairs of fluxes and gradients, as well as FEniCS versatility to solve generic PDEs.
+This demo explores the full capability of `MFront`'s recent extension to handling generalized behaviours, namely involving different pairs of fluxes and gradients, as well as `FEniCS` versatility to solve generic PDEs.
 
 This will be illustrated on a generalized continuum model called *multiphase model* in the context of fiber-reinforced materials [@bleyer2018multiphase].
 
 # A quick primer on the multiphase model
+
+<figure>
+<img src="supplementary_files/multiphase_kinematics.svg" width="500">
+  <figcaption>Kinematics of the multiphase model</figcaption>
+</figure>
 
 The multiphase model is a higher-grade (i.e. with enhanced kinematics) generalized continuum which represents a biphasic material (the main application being fiber-reinforced materials) by a superposition of two phases (say *matrix* and *fiber* phases), each possessing their own kinematics and in mutual interaction. Each phase kinematics is described by a displacement field $\bU^1$ and $\bU^2$ for the matrix and fiber phase respectively.
 
@@ -60,9 +65,9 @@ which will be particularized for the present demo to the following *elastic beha
 \end{align*}
 in which $\DD^{ij}$ are partial stiffness tensors and $\kappa$ can be seen as an interaction stiffness between both phases.
 
-# MFront implementation
+# `MFront` implementation
 
-The MFront implementation expands upon the detailed MFront implementation of the [stationnary heat transfer demo](mgis_fenics_nonlinear_heat_transfer.html). Again, the  `DefaultGenericBehaviour` is used here and specify that the following implementation will only handle the 2D plane strain case.
+The `MFront` implementation expands upon the detailed `MFront` implementation of the [stationnary heat transfer demo](mgis_fenics_nonlinear_heat_transfer.html). Again, the  `DefaultGenericBehaviour` is used here and specify that the following implementation will only handle the 2D plane strain case.
 ``` cpp
 @DSL DefaultGenericBehaviour;
 @Behaviour MultiphaseModel;
@@ -72,6 +77,7 @@ The MFront implementation expands upon the detailed MFront implementation of the
 @ModellingHypotheses {PlaneStrain};
 ```
 
+## Flux/Gradient dual pairs
 The three pairs of generalized flux/gradient of the multiphase model are then defined, namely $(\bsig^1,\beps^1)$, $(\bsig^2,\beps^2)$ and $(\bI,\bV)$: 
 
 ```cpp
@@ -115,6 +121,8 @@ nu2.setEntryName("FiberPoissonRatio");
 s.setEntryName("Size");
 ```
 
+## Generalized elastic behaviour
+
 It has been shown in [@bleyer2018multiphase] that, for materials made of two constituents, the partial stiffness tensors $\DD^{ij}$ can be expressed as functions of the material individual stiffness $\CC^1,\CC^2$ and the macroscopic stiffness $\CC^{hom}$ of the composite (obtained from classical homogenization theory) as follows:
 
 \begin{align*}
@@ -126,7 +134,7 @@ It has been shown in [@bleyer2018multiphase] that, for materials made of two con
 
 with $\phi_1=1-\rho$, $\phi_2 = \rho$ are the phases volume fractions, $\jump{\CC}=\CC^2-\CC^1$ and $\Delta\CC = \phi_1\CC^1+\phi_2\CC^2-\CC^{hom}$. They satisfy the following property $\DD^{11}+\DD^{22}+\DD^{12}+(\DD^{21})\T=\CC^{hom}$.
 
-In the present case of a 2D bilayered material made of isotropic constituents, the macroscopic stiffness is given by <cite data-cite="debuhan2017elastic">(de Buhan et al., 2017)</cite>:
+In the present case of a 2D bilayered material made of isotropic constituents, the macroscopic stiffness is given by [@debuhan2017elastic]:
 
 \begin{equation}
 \CC^{hom} = \begin{bmatrix}
@@ -202,7 +210,9 @@ These relations are all implemented in the behaviour `@Integrator` which also de
 }
 ```
 
-# FEniCS implementation
+# `FEniCS` implementation
+
+## Geometry and generalized boundary conditions
 
 We consider a rectangular domain with a standard $P_1$ Lagrange interpolation for both displacement fields $\bU^1,\bU^2$. The total mixed function space `V` is therefore made of two vectorial $P_1$ Lagrange elementary spaces. The same boundary conditions will be applied for both phases: fixed vertical displacement on the bottom boundary, imposed vertical displacement on the top boundary and fixed horizontal displacement on the left boundary. The considered problem corresponds to the pure compression of a multilayered block, an example treated in the previously mentioned references.
 
@@ -248,6 +258,8 @@ ds = Measure("ds", subdomain_data=facets)
 
 ```
 
+## Generalized gradients registration
+
 After having defined the `MFrontNonlinearMaterial` and `MFrontNonlinearProblem` instances, one must register the UFL expression of the gradients defined in the MFront file since, in this case, automatic registration is not available for this specific model. The matrix (resp. fiber) strains $\beps^1$ (resp. $\beps^2$) is simply given by `sym(grad(u1))` (resp. `sym(grad(u2))`) whereas the relative displacement $\bV$ is the vector `u2-u1`:
 
 
@@ -289,7 +301,9 @@ problem.solve(u.vector())
 
 
 
-We compare the horizontal displacements in both phases with respect to known analytical solutions for this problem in the case of very stiff inclusions $E_2 \gg E_1$ in small volume fraction $\eta \ll 1$ (see <cite data-cite="debuhan2017elastic">de Buhan et al., 2017</cite>). Note that the more complete solution for the general case can be found in  <cite data-cite="bleyer2018multiphase">(Bleyer, 2018)</cite>.
+## Comparison with an analytical solution
+
+We compare the horizontal displacements in both phases with respect to known analytical solutions for this problem in the case of very stiff inclusions $E_2 \gg E_1$ in small volume fraction $\eta \ll 1$ (see  [@debuhan2017elastic]). Note that the more complete solution for the general case can be found in   [@bleyer2018multiphase].
 
 
 ```python

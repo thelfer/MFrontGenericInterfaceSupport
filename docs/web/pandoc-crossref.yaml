@@ -8,3 +8,4 @@ loftitle: "# List of figures"
 lotTitle: "# List of tables"
 listings: True
 reference-section-title: References
+link-citations: True

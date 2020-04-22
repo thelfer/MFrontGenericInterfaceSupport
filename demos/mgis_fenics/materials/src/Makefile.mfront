@@ -12,7 +12,7 @@ INCLUDES := -I../include \
 
 CXXFLAGS := -Wall -Wfatal-errors -ansi $(shell tfel-config --oflags) -fPIC $(INCLUDES) 
 
-SRCCXX = StationaryHeatTransfer-generic.cxx StationaryHeatTransfer.cxx
+SRCCXX = IsotropicLinearHardeningPlasticity-generic.cxx IsotropicLinearHardeningPlasticity.cxx LogarithmicStrainPlasticity-generic.cxx LogarithmicStrainPlasticity.cxx PhaseFieldDamage-generic.cxx PhaseFieldDamage.cxx PhaseFieldDisplacementDeviatoricSplit-generic.cxx PhaseFieldDisplacementDeviatoricSplit.cxx StationaryHeatTransfer-generic.cxx StationaryHeatTransfer.cxx
 
 makefiles1 = $(SRCCXX:.cxx=.d)
 makefiles2 = $(makefiles1:.cpp=.d)
@@ -22,7 +22,7 @@ makefiles  = $(makefiles2)
 
 all : libBehaviour.so 
 
-libBehaviour.so : StationaryHeatTransfer-generic.o StationaryHeatTransfer.o 
+libBehaviour.so : StationaryHeatTransfer-generic.o StationaryHeatTransfer.o IsotropicLinearHardeningPlasticity-generic.o IsotropicLinearHardeningPlasticity.o LogarithmicStrainPlasticity-generic.o LogarithmicStrainPlasticity.o PhaseFieldDisplacementDeviatoricSplit-generic.o PhaseFieldDisplacementDeviatoricSplit.o PhaseFieldDamage-generic.o PhaseFieldDamage.o 
 	@$(CXX) -shared $^  -o $@ -L"$(strip $(shell tfel-config --library-path))" $(patsubst %,-l%,$(shell tfel-config --library-dependency --material --mfront-profiling --physical-constants)) 
 
 install : 

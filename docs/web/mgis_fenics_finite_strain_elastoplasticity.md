@@ -1,10 +1,12 @@
 % Finite-strain elastoplasticity within the logarithmic strain framework
 
-This demo is dedicated to the resolution of a finite-strain elastoplastic problem using the logarithmic strain framework proposed in <cite data-cite="miehe_anisotropic_2002">(Miehe et al., 2002)</cite>. 
+This demo is dedicated to the resolution of a finite-strain elastoplastic problem using the logarithmic strain framework proposed in [@miehe_anisotropic_2002].
+
+**TODO: get stress with different measures**
 
 # Logarithmic strains 
 
-This framework expresses constitutive relations between the Hencky strain measure $\boldsymbol{H} = \dfrac{1}{2}\log (\boldsymbol{F}^T\cdot\boldsymbol{F})$ and its dual stress measure $\boldsymbol{T}$. This approach makes it possible to extend classical small strain constitutive relations to a finite-strain setting. In particular, the total (Hencky) strain can be split **additively** into many contributions (elastic, plastic, thermal, swelling, etc.). Its trace is also linked with the volume change $J=\exp(\operatorname{tr}(\boldsymbol{H}))$. As a result, the deformation gradient $\boldsymbol{F}$ is used for expressing the Hencky strain $\boldsymbol{H}$, a small-strain constitutive law is then written for the $(\boldsymbol{H},\boldsymbol{T})$-pair and the dual stress $\boldsymbol{T}$ is then post-processed to an appropriate stress measure such as the Cauchy stress $\boldsymbol{\sigma}$ or Piola-Kirchhoff stresses.
+This framework expresses constitutive relations between the Hencky strain measure $\boldsymbol{H} = \dfrac{1}{2}\log (\boldsymbol{F}^T\cdot\boldsymbol{F})$ and its dual stress measure $\boldsymbol{T}$. This approach makes it possible to extend classical small strain constitutive relations to a finite-strain setting. In particular, the total (Hencky) strain can be split additively into many contributions (elastic, plastic, thermal, swelling, etc.) e.g. $\boldsymbol{H}=\boldsymbol{H}^e+\boldsymbol{H}^p$. Its trace is also linked with the volume change $J=\exp(\operatorname{tr}(\boldsymbol{H}))$. As a result, the deformation gradient $\boldsymbol{F}$ is used for expressing the Hencky strain $\boldsymbol{H}$, a small-strain constitutive law is then written for the $(\boldsymbol{H},\boldsymbol{T})$-pair and the dual stress $\boldsymbol{T}$ is then post-processed to an appropriate stress measure such as the Cauchy stress $\boldsymbol{\sigma}$ or Piola-Kirchhoff stresses.
 
 # `MFront` implementation
 
@@ -84,7 +86,7 @@ The `MFrontNonlinearMaterial` instance is loaded from the `MFront` `LogarithmicS
 
 
 ```python
-material = mf.MFrontNonlinearMaterial("../materials/src/libBehaviour.so",
+material = mf.MFrontNonlinearMaterial("materials/src/libBehaviour.so",
                                       "LogarithmicStrainPlasticity")
 print(material.behaviour.getBehaviourType())
 print(material.behaviour.getKinematic())
@@ -111,7 +113,6 @@ Finally, we setup a few parameters of the Newton non-linear solver.
 problem = mf.MFrontNonlinearProblem(u, material, bcs=bc)
 problem.set_loading(dot(selfweight, u)*dx)
 
-p = problem.get_state_variable("EquivalentPlasticStrain")
 epsel = problem.get_state_variable("ElasticStrain")
 print("'ElasticStrain' shape:", ufl.shape(epsel))
 
@@ -133,26 +134,53 @@ mpirun -np 4 python3 finite_strain_elastoplasticity.py
 
 
 ```python
-P0 = FunctionSpace(mesh, "DG", 0)
-p_avg = Function(P0, name="Plastic strain")
-
-Nincr = 300
+Nincr = 30
 load_steps = np.linspace(0., 1., Nincr+1)
 results = np.zeros((Nincr+1, 3))
 for (i, t) in enumerate(load_steps[1:]):
     selfweight.t = t
     print("Increment ", i+1)
     problem.solve(u.vector())
-
-    results[i+1, 0] = -u(length, 0, 0)[2]
-    results[i+1, 1] = t
+    p0 = problem.get_state_variable("EquivalentPlasticStrain", project_on=("DG", 0))
 
     file_results.write(u, t)
-    p_avg.assign(project(p, P0))
-    file_results.write(p_avg, t)
+    file_results.write(p0, t)
+    
+    results[i+1, 0] = -u(length, 0, 0)[2]
+    results[i+1, 1] = t
 ```
 
     Increment  1
+    Automatic registration of 'DeformationGradient' as I + (grad(Displacement)).
+    
+    Automatic registration of 'Temperature' as a Constant value = 293.15.
+    
+    Calling FFC just-in-time (JIT) compiler, this may take some time.
+      Ignoring precision in integral metadata compiled using quadrature representation. Not implemented.
+    Calling FFC just-in-time (JIT) compiler, this may take some time.
+    Calling FFC just-in-time (JIT) compiler, this may take some time.
+    Calling FFC just-in-time (JIT) compiler, this may take some time.
+    Calling FFC just-in-time (JIT) compiler, this may take some time.
+    Calling FFC just-in-time (JIT) compiler, this may take some time.
+      Ignoring precision in integral metadata compiled using quadrature representation. Not implemented.
+    Calling FFC just-in-time (JIT) compiler, this may take some time.
+    Increment  2
+    Increment  3
+    Increment  4
+    Increment  5
+    Increment  6
+    Increment  7
+    Increment  8
+    Increment  9
+    Increment  10
+    Increment  11
+    Increment  12
+    Increment  13
+    Increment  14
+    Increment  15
+    Increment  16
+    Increment  17
+    Increment  18
 
 
 
@@ -160,20 +188,20 @@ for (i, t) in enumerate(load_steps[1:]):
 
     RuntimeError                              Traceback (most recent call last)
 
-    <ipython-input-7-7cf38c4ffbd9> in <module>
-          8     selfweight.t = t
-          9     print("Increment ", i+1)
-    ---> 10     problem.solve(u.vector())
-         11 
-         12     results[i+1, 0] = -u(length, 0, 0)[2]
+    <ipython-input-4-7a2d1b4b8645> in <module>
+          5     selfweight.t = t
+          6     print("Increment ", i+1)
+    ----> 7     problem.solve(u.vector())
+          8     p0 = problem.get_state_variable("EquivalentPlasticStrain", project_on=("DG", 0))
+          9 
 
 
     /usr/local/lib/python3.6/site-packages/mgis/fenics/nonlinear_problem.py in solve(self, x)
-        461         if self._init:
-        462             self.initialize()
-    --> 463         solv_out = self.solver.solve(self, x)
-        464         mgis_bv.update(self.material.data_manager)
-        465         return solv_out
+        484         if self._init:
+        485             self.initialize()
+    --> 486         solv_out = self.solver.solve(self, x)
+        487         mgis_bv.update(self.material.data_manager)
+        488         return solv_out
 
 
     RuntimeError: 
@@ -213,13 +241,6 @@ plt.ylabel("Load");
 ```python
 assemble(problem.residual).norm("l2")
 ```
-
-
-
-
-    112.6470232711502
-
-
 
 
 ```python

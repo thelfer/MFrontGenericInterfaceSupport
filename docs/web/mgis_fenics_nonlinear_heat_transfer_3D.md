@@ -69,11 +69,7 @@ print("MFront/FEniCS solve time:", time()-tic)
     
     Automatic registration of 'Temperature' as an external state variable.
     
-    Calling FFC just-in-time (JIT) compiler, this may take some time.
-      Ignoring precision in integral metadata compiled using quadrature representation. Not implemented.
-    Calling FFC just-in-time (JIT) compiler, this may take some time.
-      Ignoring precision in integral metadata compiled using quadrature representation. Not implemented.
-    MFront/FEniCS solve time: 51.4562623500824
+    MFront/FEniCS solve time: 73.61229634284973
 
 
 The temperature field along a radial direction along the top surface has been compared with computations using [`Cast3M` finite-element solver](http://www-cast3m.cea.fr/). Both solutions agree perfectly:
@@ -99,7 +95,7 @@ solve(F == 0, T, bc, J=J)
 print("Pure FEniCS solve time:", time()-tic)
 ```
 
-    Pure FEniCS solve time: 47.62119770050049
+    Pure FEniCS solve time: 70.16801738739014
 
 
 We can observe that both methods, relying on the same default Newton solver, yield the same total iteration counts and residual values. As regards computing time, the pure `FEniCS` implementation is slightly faster as expected. In the following table, comparison has been made for a coarse (approx 4 200 cells) and a refined (approx 34 000 cells) mesh with quadrature degrees equal either to 2 or 5.

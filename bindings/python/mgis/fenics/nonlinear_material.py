@@ -56,7 +56,7 @@ class MFrontNonlinearMaterial:
             install_path = "/".join(path.split("/")[:-2])+"/"
             os.chdir(install_path)
             print("Behaviour '{}' has not been found in '{}'.".format(self.name, self.path))
-            print("Attempting to compile '{}.mfront' in {}...".format(self.name, install_path))
+            print("Attempting to compile '{}.mfront' in '{}'...".format(self.name, install_path))
             subprocess.run(["mfront", "--obuild", "--interface=generic", self.name+".mfront"])
             os.chdir(cwd)
             self.load_behaviour()
