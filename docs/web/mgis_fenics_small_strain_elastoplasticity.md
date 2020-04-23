@@ -1,11 +1,11 @@
 % Small-strain von Mises elastoplasticity
 
-This demo is the third installment in a series of two previous demos considering the implementation of von Mises elastoplasticity in ̀FEniCS` published on [Numerical tours of continuum mechanics using FEniCS](https://comet-fenics.readthedocs.io):
+This demo is the third installment in a series of two previous demos considering the implementation of von Mises elastoplasticity in `FEniCS` published on [Numerical tours of continuum mechanics using FEniCS](https://comet-fenics.readthedocs.io):
 
-1. [Elasto-plastic analysis of a 2D von Mises material](https://comet-fenics.readthedocs.io/en/latest/demo/2D_plasticity/vonMises_plasticity.py.html): this first installment presents a pure ̀FEniCS` implementation of von Mises plasticity which uses UFL operators for implementing the return mapping procedure. It is therefore not general since it relies heavily on the fact that the return mapping can be expressed in closed-form analytic expression in the case of von Mises plasticity with linear isotropic hardening. It nevertheless shows how to integrate the constitutive relation using `Quadrature` elements, including the use of consistent tangent operators, inside a global Newton-Raphson method.
+1. [Elasto-plastic analysis of a 2D von Mises material](https://comet-fenics.readthedocs.io/en/latest/demo/2D_plasticity/vonMises_plasticity.py.html): this first installment presents a pure `FEniCS` implementation of von Mises plasticity which uses UFL operators for implementing the return mapping procedure. It is therefore not general since it relies heavily on the fact that the return mapping can be expressed in closed-form analytic expression in the case of von Mises plasticity with linear isotropic hardening. It nevertheless shows how to integrate the constitutive relation using `Quadrature` elements, including the use of consistent tangent operators, inside a global Newton-Raphson method.
 
 
-2. [Elasto-plastic analysis implemented using the `MFront` code generator](https://comet-fenics.readthedocs.io/en/latest/demo/plasticity_mfront/plasticity_mfront.py.html): this second installment is in fact the original demo which led to the development of the proposed FEniCS/MFront interface. It shows how to rely on `MFront` for the constitutive relation update using the MGIS interface. The way how information is exchanged between ̀FEniCS` and `MFront` in this demo is extremely similar to how the `MFrontNonlinearProblem` class is implemented.
+2. [Elasto-plastic analysis implemented using the `MFront` code generator](https://comet-fenics.readthedocs.io/en/latest/demo/plasticity_mfront/plasticity_mfront.py.html): this second installment is in fact the original demo which led to the development of the proposed `FEniCS`/`MFront` interface. It shows how to rely on `MFront` for the constitutive relation update using the MGIS interface. The way how information is exchanged between ̀FEniCS` and `MFront` in this demo is extremely similar to how the `MFrontNonlinearProblem` class is implemented.
 
 The present demo therefore directly follows up on this second installment by offering to the use a much more compact syntax, especially avoiding the cumbersome definition of `Quadrature` spaces and the implementation of a Newton method by hand. The mechanical problem is exactly the same as in these two demos, namely the expansion of a hollow cylinder under internal pressure. The main difference in the present demo is that the same problem will also be solved in axisymmetric conditions, referring therefore to the expansion of a hollow sphere under internal pressure.
 
@@ -50,7 +50,7 @@ H0.setEntryName("HardeningSlope");
 
 Since we did not explicitely specify the values of the elastic properties, those are automatically declared as material properties. To use material properties to define yield stress and the hardening slope, one uses here a small trick, which consists in defining the material properties before the brick declaration and declare the plastic coefficients `H` and `R0` as functions of those material properties.
 
-# ̀FEniCS` implementation
+# `FEniCS` implementation
 
 ## Geometry
 
@@ -112,7 +112,7 @@ The `MFrontNonlinearProblem` instance is then defined by specifying the quadratu
 ```
 Automatic registration of 'Strain' as sym(grad(Displacement)).
 ```
-whereas for the `"axisymmetric"` hypothesis (see [the ̀FEniCS` tour on axisymmetric computations](https://comet-fenics.readthedocs.io/en/latest/demo/elasticity/axisymmetric_elasticity.html)), we get:
+whereas for the `"axisymmetric"` hypothesis (see [the `FEniCS` tour on axisymmetric computations](https://comet-fenics.readthedocs.io/en/latest/demo/elasticity/axisymmetric_elasticity.html)), we get:
 ```
 Automatic registration of 'Strain' as sym([
   [(grad(Displacement[0]))[0], (grad(Displacement[0]))[1], 0],

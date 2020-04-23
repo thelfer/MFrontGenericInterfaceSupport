@@ -19,10 +19,7 @@ This will be illustrated on a generalized continuum model called *multiphase mod
 
 # A quick primer on the multiphase model
 
-<figure>
 <img src="supplementary_files/multiphase_kinematics.svg" width="500">
-  <figcaption>Kinematics of the multiphase model</figcaption>
-</figure>
 
 The multiphase model is a higher-grade (i.e. with enhanced kinematics) generalized continuum which represents a biphasic material (the main application being fiber-reinforced materials) by a superposition of two phases (say *matrix* and *fiber* phases), each possessing their own kinematics and in mutual interaction. Each phase kinematics is described by a displacement field $\bU^1$ and $\bU^2$ for the matrix and fiber phase respectively.
 
