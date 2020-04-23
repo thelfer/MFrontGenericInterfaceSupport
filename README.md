@@ -82,3 +82,5 @@ This project uses code extracted from the following projects:
 - https://github.com/martinmoene/span-lite by Martin Moene
 - https://bitbucket.org/fenics-apps/fenics-solid-mechanics/ by
   Kristian B. Ølgaard and Garth N. Wells.
+
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.02003/status.svg)](https://doi.org/10.21105/joss.02003)
