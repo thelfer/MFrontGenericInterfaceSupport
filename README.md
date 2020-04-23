@@ -9,6 +9,9 @@ developers. This tools are *not* linked to the `TFEL` libraries.
 Permissive licences have been chosen to allow integration in open-source
 and proprietary codes.
 
+This project is described in this paper:
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.02003/status.svg)](https://doi.org/10.21105/joss.02003)
+
 The official website can be found here:
 <https://thelfer.github.io/mgis/web/index.html>.
 
@@ -82,5 +85,3 @@ This project uses code extracted from the following projects:
 - https://github.com/martinmoene/span-lite by Martin Moene
 - https://bitbucket.org/fenics-apps/fenics-solid-mechanics/ by
   Kristian B. Ølgaard and Garth N. Wells.
-
-[![DOI](https://joss.theoj.org/papers/10.21105/joss.02003/status.svg)](https://doi.org/10.21105/joss.02003)
