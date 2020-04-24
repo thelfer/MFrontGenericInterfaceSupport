@@ -1,3 +1,0 @@
-<Xdmf Version="3.0"><Domain><Grid Name="Grid"><Information Name="Information" Value="0">
-<![CDATA[<main />]]>
-</Information><Geometry GeometryType="XYZ"><DataItem DataType="Float" Dimensions="7215 3" Format="HDF" Precision="8">fuel_rod_mf.h5:/data0</DataItem></Geometry><Topology NodesPerElement="3" NumberOfElements="6548" TopologyType="Triangle"><DataItem DataType="Int" Dimensions="6548 3" Format="HDF" Precision="4">fuel_rod_mf.h5:/data1</DataItem></Topology><Attribute AttributeType="Scalar" Center="Cell" Name="facets"><DataItem DataType="Int" Dimensions="6548" Format="HDF" Precision="4">fuel_rod_mf.h5:/data2</DataItem></Attribute></Grid></Domain></Xdmf>
