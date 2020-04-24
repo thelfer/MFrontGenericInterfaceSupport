@@ -82,7 +82,7 @@ file_results.parameters["flush_output"] = True
 file_results.parameters["functions_share_mesh"] = True
 ```
 
-The `MFrontNonlinearMaterial` instance is loaded from the `MFront` `LogarithmicStrainPlasticity` behaviour. This behaviour is a finite-strain behaviour (`material.finite_strain=True`) which relies on a kinematic description using the total deformation gradient $\boldsymbol{F}$. By default, a `MFront` behaviour always returns the Cauchy stress as the stress measure after integration. However, the stress variable dual to the deformation gradient is the first Piola-Kirchhoff (PK1) stress. An internal option of the MGIS interface is therefore used in the finite-strain context to return the PK1 stress as the "flux" associated to the "gradient" $\boldsymbol{F}$. Both quantities are non-symmetric tensors, aranged as a 9-dimensional vector in 3D following [`MFront` conventions on tensors](http://tfel.sourceforge.net/tensors.html).
+The `MFrontNonlinearMaterial` instance is loaded from the `MFront` `LogarithmicStrainPlasticity` behaviour. This behaviour is a finite-strain behaviour (`material.is_finite_strain=True`) which relies on a kinematic description using the total deformation gradient $\boldsymbol{F}$. By default, a `MFront` behaviour always returns the Cauchy stress as the stress measure after integration. However, the stress variable dual to the deformation gradient is the first Piola-Kirchhoff (PK1) stress. An internal option of the MGIS interface is therefore used in the finite-strain context to return the PK1 stress as the "flux" associated to the "gradient" $\boldsymbol{F}$. Both quantities are non-symmetric tensors, aranged as a 9-dimensional vector in 3D following [`MFront` conventions on tensors](http://tfel.sourceforge.net/tensors.html).
 
 
 ```python
@@ -155,15 +155,6 @@ for (i, t) in enumerate(load_steps[1:]):
     
     Automatic registration of 'Temperature' as a Constant value = 293.15.
     
-    Calling FFC just-in-time (JIT) compiler, this may take some time.
-      Ignoring precision in integral metadata compiled using quadrature representation. Not implemented.
-    Calling FFC just-in-time (JIT) compiler, this may take some time.
-    Calling FFC just-in-time (JIT) compiler, this may take some time.
-    Calling FFC just-in-time (JIT) compiler, this may take some time.
-    Calling FFC just-in-time (JIT) compiler, this may take some time.
-    Calling FFC just-in-time (JIT) compiler, this may take some time.
-      Ignoring precision in integral metadata compiled using quadrature representation. Not implemented.
-    Calling FFC just-in-time (JIT) compiler, this may take some time.
     Increment  2
     Increment  3
     Increment  4
@@ -235,14 +226,4 @@ plt.figure()
 plt.plot(results[:, 0], results[:, 1], "-o")
 plt.xlabel("Displacement")
 plt.ylabel("Load");
-```
-
-
-```python
-assemble(problem.residual).norm("l2")
-```
-
-
-```python
-
 ```

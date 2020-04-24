@@ -20,7 +20,7 @@ The provided documented demos have been designed to progressively illustrate the
 * [Finite-strain elastoplasticity within the logarithmic strain framework](mgis_fenics_finite_strain_elastoplasticity.html)
 * [Multiphase model for fiber-reinforced materials](mgis_fenics_multiphase_model.html)
 * [Phase-field approach to brittle fracture](mgis_fenics_phase_field.html)
-* [Transient non-linear heat equation](mgis_fenics_transient_nonlinear_heat_equation.html)
+* [Transient heat equation with phase change](mgis_fenics_heat_equation_phase_change.html)
 
 # A brief overview of the `mgis.fenics` module
 

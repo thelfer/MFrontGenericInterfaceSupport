@@ -70,6 +70,7 @@ if(MGIS_HAVE_PANDOC)
   mgis_pandoc_generate_html_page(mgis_fenics_finite_strain_elastoplasticity "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(mgis_fenics_multiphase_model "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(mgis_fenics_phase_field "--toc" "--toc-depth=3")
+  mgis_pandoc_generate_html_page(mgis_fenics_heat_equation_phase_change "--toc" "--toc-depth=3")
 endif(MGIS_HAVE_PANDOC)
 
 if(MGIS_HAVE_JUPYTER_NBCONVERT)
