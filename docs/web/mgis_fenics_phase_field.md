@@ -69,7 +69,7 @@ As regards the fracture energy density, two choices originating from the work of
 
 $$
 \begin{align*}
-\text{AT2 model:} \quad & w(d) = d^2, \quad c_w=2\dx\\
+\text{AT2 model:} \quad & w(d) = d^2, \quad c_w=2\\
 \text{AT1 model:} \quad & w(d) = d, \quad c_w=\dfrac{8}{3}
 \end{align*}
 $$
