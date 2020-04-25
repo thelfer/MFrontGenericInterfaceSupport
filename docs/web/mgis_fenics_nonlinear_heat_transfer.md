@@ -1,4 +1,9 @@
 % Stationnary non-linear heat transfer
+> **Source files:**
+>
+> * Jupyter notebook: [mgis_fenics_nonlinear_heat_transfer.ipynb](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/mgis_fenics_nonlinear_heat_transfer.ipynb)
+> * Python file: [mgis_fenics_nonlinear_heat_transfer.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/mgis_fenics_nonlinear_heat_transfer.py)
+> * MFront behaviour file: [StationaryHeatTransfer.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/StationaryHeatTransfer.mfront)
 
 # Description of the non-linear constitutive heat transfer law
 
@@ -178,16 +183,47 @@ The computation of the tangent operator blocks is equally simple:
 
 We consider a rectanglar domain with imposed temperatures `Tl` (resp. `Tr`) on the left (resp. right) boundaries. We want to solve for the temperature field `T` inside the domain using a $P^1$-interpolation. We initialize the temperature at value `Tl` throughout the domain.
 
+
+```python
+%matplotlib notebook
+import matplotlib.pyplot as plt
+from dolfin import *
+import mgis.fenics as mf
+
+length = 30e-3
+width = 5.4e-3
+mesh = RectangleMesh(Point(0., 0.), Point(length, width), 100, 10)
+
+V = FunctionSpace(mesh, "CG", 1)
+T = Function(V, name="Temperature")
+
+def left(x, on_boundary):
+    return near(x[0], 0) and on_boundary
+def right(x, on_boundary):
+    return near(x[0], length) and on_boundary
+
+Tl = 300
+Tr = 800
+T.interpolate(Constant(Tl))
+
+bc = [DirichletBC(V, Constant(Tl), left),
+      DirichletBC(V, Constant(Tr), right)]
+```
+
 ## Loading the material behaviour
 
 We use the `MFrontNonlinearMaterial` class for describing the material behaviour. The first argument corresponds to the path where material librairies have been compiled, the second correspond to the name of the behaviour (declared with `@Behaviour`). Finally, the modelling hypothesis is specified (default behaviour is `"3d"`).
 
 
 ```python
-material = mf.MFrontNonlinearMaterial("materials/src/libBehaviour.so",
+material = mf.MFrontNonlinearMaterial("./src/libBehaviour.so",
                                       "StationaryHeatTransfer",
                                       hypothesis="plane_strain")
 ```
+
+    Behaviour 'StationaryHeatTransfer' has not been found in './src/libBehaviour.so'.
+    Attempting to compile 'StationaryHeatTransfer.mfront' in './'...
+
 
 The `MFront` behaviour declares the field `"TemperatureGradient"` as a Gradient variable, with its associated Flux called `"HeatFlux"`. We can check that the `material` object retrieves `MFront`'s gradient and flux names, as well as the different tangent operator blocks which have been defined, namely `dj_ddgT` and `dj_ddT` in the present case:
 
@@ -274,8 +310,6 @@ problem.solve(T.vector())
 
     Automatic registration of 'Temperature' as an external state variable.
     
-    Calling FFC just-in-time (JIT) compiler, this may take some time.
-      Ignoring precision in integral metadata compiled using quadrature representation. Not implemented.
 
 
 

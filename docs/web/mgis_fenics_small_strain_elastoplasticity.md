@@ -1,11 +1,17 @@
 % Small-strain von Mises elastoplasticity
+> **Source files:**
+>
+> * Jupyter notebook: [mgis_fenics_small_strain_elastoplasticity.ipynb](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/small_strain_elastoplasticity/mgis_fenics_small_strain_elastoplasticity.ipynb)
+> * Python file: [mgis_fenics_small_strain_elastoplasticity.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/small_strain_elastoplasticity/mgis_fenics_small_strain_elastoplasticity.py)
+> * MFront behaviour file: [IsotropicLinearHardeningPlasticity.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/small_strain_elastoplasticity/IsotropicLinearHardeningPlasticity.mfront)
+> * MFront behaviour file: [IsotropicLinearHardeningPlasticityBrick.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/small_strain_elastoplasticity/IsotropicLinearHardeningPlasticityBrick.mfront)
 
 This demo is the third installment in a series of two previous demos considering the implementation of von Mises elastoplasticity in `FEniCS` published on [Numerical tours of continuum mechanics using FEniCS](https://comet-fenics.readthedocs.io):
 
 1. [Elasto-plastic analysis of a 2D von Mises material](https://comet-fenics.readthedocs.io/en/latest/demo/2D_plasticity/vonMises_plasticity.py.html): this first installment presents a pure `FEniCS` implementation of von Mises plasticity which uses UFL operators for implementing the return mapping procedure. It is therefore not general since it relies heavily on the fact that the return mapping can be expressed in closed-form analytic expression in the case of von Mises plasticity with linear isotropic hardening. It nevertheless shows how to integrate the constitutive relation using `Quadrature` elements, including the use of consistent tangent operators, inside a global Newton-Raphson method.
 
 
-2. [Elasto-plastic analysis implemented using the `MFront` code generator](https://comet-fenics.readthedocs.io/en/latest/demo/plasticity_mfront/plasticity_mfront.py.html): this second installment is in fact the original demo which led to the development of the proposed `FEniCS`/`MFront` interface. It shows how to rely on `MFront` for the constitutive relation update using the MGIS interface. The way how information is exchanged between ̀FEniCS` and `MFront` in this demo is extremely similar to how the `MFrontNonlinearProblem` class is implemented.
+2. [Elasto-plastic analysis implemented using the `MFront` code generator](https://comet-fenics.readthedocs.io/en/latest/demo/plasticity_mfront/plasticity_mfront.py.html): this second installment is in fact the original demo which led to the development of the proposed `FEniCS`/`MFront` interface. It shows how to rely on `MFront` for the constitutive relation update using the MGIS interface. The way how information is exchanged between `FEniCS` and `MFront` in this demo is extremely similar to how the `MFrontNonlinearProblem` class is implemented.
 
 The present demo therefore directly follows up on this second installment by offering to the use a much more compact syntax, especially avoiding the cumbersome definition of `Quadrature` spaces and the implementation of a Newton method by hand. The mechanical problem is exactly the same as in these two demos, namely the expansion of a hollow cylinder under internal pressure. The main difference in the present demo is that the same problem will also be solved in axisymmetric conditions, referring therefore to the expansion of a hollow sphere under internal pressure.
 
@@ -26,13 +32,14 @@ The advantage of using the [`StandardElastoViscoPlasticity` brick](http://tfel.s
 ```cpp
 @DSL Implicit;
 
-@Behaviour IsotropicLinearHardeningPlasticity;
+@Behaviour IsotropicLinearHardeningPlasticityBrick;
 @Author Thomas Helfer/Jérémy Bleyer;
 @Date 07 / 04 / 2020;
 
 @Algorithm NewtonRaphson;
 @Epsilon 1.e-14;
-@Theta 1;
+
+@Theta 1.;
 
 @MaterialProperty stress s0;
 s0.setGlossaryName("YieldStress");
@@ -66,13 +73,9 @@ import numpy as np
 import ufl
 
 Re, Ri = 1.3, 1.   # external/internal radius
-% elastic parameters
-E = 70e3
-nu = 0.3
-% yield strength
-sig0 = 250.
-Et = E/100.
-% hardening slope
+E, nu = 70e3, 0.3  # elastic parameters
+sig0 = 250.        # yield strength
+Et = E/100.        # hardening slope
 H = E*Et/(E-Et)
 
 mesh = Mesh("meshes/thick_cylinder.xml")
@@ -156,7 +159,7 @@ for hypothesis in ["plane_strain", "axisymmetric"]:
                "PoissonRatio": nu,
                "HardeningSlope": H,
                "YieldStrength": sig0}
-    material = mf.MFrontNonlinearMaterial("materials/src/libBehaviour.so",
+    material = mf.MFrontNonlinearMaterial("./src/libBehaviour.so",
                                           "IsotropicLinearHardeningPlasticity",
                                           hypothesis=hypothesis,
                                           material_properties=mat_prop)
@@ -196,6 +199,8 @@ for hypothesis in ["plane_strain", "axisymmetric"]:
 
     Expansion of a thick cylinder in plane strain conditions
     --------------------------------------------------------
+    Behaviour 'IsotropicLinearHardeningPlasticity' has not been found in './src/libBehaviour.so'.
+    Attempting to compile 'IsotropicLinearHardeningPlasticity.mfront' in './'...
     Automatic registration of 'Strain' as sym(grad(Displacement)).
     
     Automatic registration of 'Temperature' as a Constant value = 293.15.

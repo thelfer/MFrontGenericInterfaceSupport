@@ -1,11 +1,16 @@
 % Stationnary non-linear heat transfer: 3D problem and performance comparisons
+> **Source files:**
+>
+> * Jupyter notebook: [mgis_fenics_nonlinear_heat_transfer_3D.ipynb](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/mgis_fenics_nonlinear_heat_transfer_3D.ipynb)
+> * Python file: [mgis_fenics_nonlinear_heat_transfer_3D.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/mgis_fenics_nonlinear_heat_transfer_3D.py)
+> * MFront behaviour file: [StationaryHeatTransfer.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/StationaryHeatTransfer.mfront)
 
 # Description of the non-linear constitutive heat transfer law
 
-This example is a direct continuation of the [previous 2D example on non-linear heat transfer](mgis_fenics_nonlinear_heat_transfer.html). The present computations will use the same behaviour `StationaryHeatTransfer.mfront` which will be loaded with a `"3d"` hypothesis (default case).
+This example is a direct continuation of the [previous 2D example on non-linear heat transfer](./mgis_fenics_nonlinear_heat_transfer.html). The present computations will use the same behaviour `StationaryHeatTransfer.mfront` which will be loaded with a `"3d"` hypothesis (default case).
 
 
-<img src="supplementary_files/fuel_rod_solution.png" width="300">
+<img src="fuel_rod_solution.png" width="300">
 
 
 # `FEniCS` implementation
@@ -50,7 +55,7 @@ bc = DirichletBC(V, Text, facets, 12)
 r = Constant(3e8)
 
 quad_deg = 2
-material = mf.MFrontNonlinearMaterial("materials/src/libBehaviour.so",
+material = mf.MFrontNonlinearMaterial("./src/libBehaviour.so",
                                       "StationaryHeatTransfer")
 problem = mf.MFrontNonlinearProblem(T, material, quadrature_degree=quad_deg, bcs=bc)
 problem.set_loading(-r*T*dx)
@@ -69,12 +74,12 @@ print("MFront/FEniCS solve time:", time()-tic)
     
     Automatic registration of 'Temperature' as an external state variable.
     
-    MFront/FEniCS solve time: 73.61229634284973
+    MFront/FEniCS solve time: 53.746278047561646
 
 
 The temperature field along a radial direction along the top surface has been compared with computations using [`Cast3M` finite-element solver](http://www-cast3m.cea.fr/). Both solutions agree perfectly:
 
-<img src="supplementary_files/Temperature_Castem_FEniCS.png" width="500">
+<img src="Temperature_Castem_FEniCS.png" width="500">
 
 
 # Performance comparison
@@ -95,7 +100,7 @@ solve(F == 0, T, bc, J=J)
 print("Pure FEniCS solve time:", time()-tic)
 ```
 
-    Pure FEniCS solve time: 70.16801738739014
+    Pure FEniCS solve time: 49.15058135986328
 
 
 We can observe that both methods, relying on the same default Newton solver, yield the same total iteration counts and residual values. As regards computing time, the pure `FEniCS` implementation is slightly faster as expected. In the following table, comparison has been made for a coarse (approx 4 200 cells) and a refined (approx 34 000 cells) mesh with quadrature degrees equal either to 2 or 5.

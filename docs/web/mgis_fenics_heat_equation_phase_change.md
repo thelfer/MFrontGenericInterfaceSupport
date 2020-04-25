@@ -1,10 +1,16 @@
 % Transient heat equation with phase change
+> **Source files:**
+>
+> * Jupyter notebook: [mgis_fenics_heat_equation_phase_change.ipynb](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/heat_equation_phase_change/mgis_fenics_heat_equation_phase_change.ipynb)
+> * Python file: [mgis_fenics_heat_equation_phase_change.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/heat_equation_phase_change/mgis_fenics_heat_equation_phase_change.py)
+> * MFront behaviour file: [HeatTransferPhaseChange.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/heat_equation_phase_change/HeatTransferPhaseChange.mfront)
+
 $\newcommand{\bj}{\mathbf{j}}
 \renewcommand{\div}{\operatorname{div}}$
-In this demo, we expand on the [stationnary nonlinear heat transfer demo](mgis_fenics_nonlinear_heat_transfer.html) and consider a transient heat equation with non-linear heat transfer law including solid/liquid phase change. This demo corresponds to the [TTNL02 elementary test case](https://www.code-aster.org/V2/doc/default/fr/man_v/v4/v4.22.002.pdf) of the [*Code_Aster* finite-element software](https://www.code-aster.org).
+In this demo, we expand on the [stationnary nonlinear heat transfer demo](https://thelfer.github.io/mgis/web/mgis_fenics_nonlinear_heat_transfer.html) and consider a transient heat equation with non-linear heat transfer law including solid/liquid phase change. This demo corresponds to the [TTNL02 elementary test case](https://www.code-aster.org/V2/doc/default/fr/man_v/v4/v4.22.002.pdf) of the [*Code_Aster* finite-element software](https://www.code-aster.org).
 
 <p align="center">
-<img src="supplementary_files/solidification_front.gif" width="300">
+<img src="solidification_front.gif" width="300">
 </p>
 
 # Transient heat equation using an enthalpy formulation
@@ -55,7 +61,7 @@ $$
 where $c_s=\rho_sC_{p,s}$ (resp. $c_l=\rho_lC_{p,l}$) is the volumic heat capacity of the solid (resp. liquid) phase. It can be observed that the enthalpy exhibits a discontinuity at the phase transition equal to $\Delta h_{s/l}$ which represents the latent heat of fusion per unit volume.
 
 <p align="center">
-<img src="supplementary_files/phase_change_law.svg" width="500">
+<img src="phase_change_law.svg" width="500">
 </p>
 
 # A smoothed version
@@ -83,7 +89,7 @@ where $T_{smooth}=T_l-T_s$ is a small transition temperature interval between $T
 
 ## Gradient, flux and tangent operator blocks
 
-Similarly to the [stationnary nonlinear heat transfer demo](mgis_fenics_nonlinear_heat_transfer.html), the `MFront` implementation relies on  the `DefaultGenericBehaviour` DSL and declares the pair of temperature gradient and heat flux. In addition, the volumic enthalpy $h$ is also declared as an internal state variable. In addition to the two tangent operator blocks `∂j∕∂Δ∇T` and `∂j∕∂ΔT` already discussed in the first demo, we also declare the additional block `∂h∕∂ΔT`, referring to the fact that the enthalpy will vary with the temperature and will enter the transient heat equation.
+Similarly to the [stationnary nonlinear heat transfer demo](https://thelfer.github.io/mgis/web/mgis_fenics_nonlinear_heat_transfer.html), the `MFront` implementation relies on  the `DefaultGenericBehaviour` DSL and declares the pair of temperature gradient and heat flux. In addition, the volumic enthalpy $h$ is also declared as an internal state variable. In addition to the two tangent operator blocks `∂j∕∂Δ∇T` and `∂j∕∂ΔT` already discussed in the first demo, we also declare the additional block `∂h∕∂ΔT`, referring to the fact that the enthalpy will vary with the temperature and will enter the transient heat equation.
 
 ``` cpp
 @DSL DefaultGenericBehaviour;
@@ -124,13 +130,14 @@ Tₛₘₒₒₜₕ.setEntryName("Tsmooth");
 ```
 
 We define some local variables corresponding to the values of the conductivity $k$, the volumic heat capacity $c$ and the derivative of the heat conductivity with respect to the temperature.
+
 ```cpp
 @LocalVariable thermalconductivity k;
 @LocalVariable real c;
 @LocalVariable real ∂k∕∂T;
 ```
 
-### Integration of the behaviour
+## Integration of the behaviour
 
 Again, the behaviour integration is straightforward: after computing the temperature at the end of the time step `T_`, we compute the thermal
 conductivity, its derivative with respect to the temperature, the volumic enthalpy and the volumic heat capacity depending on whether `T_` belongs to the solid state ($T\leq T_s$), the liquid state ($T\geq T_l$) or to the transition region ($T_s \leq T \leq T_l$). We finish by computing the heat flux.
@@ -161,10 +168,10 @@ conductivity, its derivative with respect to the temperature, the volumic enthal
 }  // end of @Integrator
 ```
 
-## Tangent operator
+# Tangent operator
 
 The computation of the tangent operator blocks is then straightforward:
-```
+```cpp
 @TangentOperator {
   ∂j∕∂Δ∇T = -k * tmatrix<N, N, real>::Id();
   ∂j∕∂ΔT = ∂k∕∂T * (∇T + Δ∇T);
@@ -213,7 +220,7 @@ We now load the material behaviour `HeatTransferPhaseChange` and also change the
 
 
 ```python
-material = mf.MFrontNonlinearMaterial("materials/src/libBehaviour.so",
+material = mf.MFrontNonlinearMaterial("./src/libBehaviour.so",
                                       "HeatTransferPhaseChange",
                                       hypothesis="plane_strain",
                                        parameters={"Tsmooth": 1.})

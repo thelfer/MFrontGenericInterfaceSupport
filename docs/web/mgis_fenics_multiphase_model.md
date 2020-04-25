@@ -1,4 +1,10 @@
 % Multiphase model for fiber-reinforced materials
+> **Source files:**
+>
+> * Jupyter notebook: [mgis_fenics_multiphase_model.ipynb](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/multiphase_model/mgis_fenics_multiphase_model.ipynb)
+> * Python file: [mgis_fenics_multiphase_model.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/multiphase_model/mgis_fenics_multiphase_model.py)
+> * MFront behaviour file: [MultiphaseModel.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/multiphase_model/MultiphaseModel.mfront)
+
 $\newcommand{\bsig}{\boldsymbol{\sigma}}
 \newcommand{\beps}{\boldsymbol{\varepsilon}}
 \newcommand{\bkappa}{\boldsymbol{\kappa}}
@@ -19,7 +25,7 @@ This will be illustrated on a generalized continuum model called *multiphase mod
 
 # A quick primer on the multiphase model
 
-<img src="supplementary_files/multiphase_kinematics.svg" width="500">
+<img src="multiphase_kinematics.svg" width="500">
 
 The multiphase model is a higher-grade (i.e. with enhanced kinematics) generalized continuum which represents a biphasic material (the main application being fiber-reinforced materials) by a superposition of two phases (say *matrix* and *fiber* phases), each possessing their own kinematics and in mutual interaction. Each phase kinematics is described by a displacement field $\bU^1$ and $\bU^2$ for the matrix and fiber phase respectively.
 
@@ -64,7 +70,7 @@ in which $\DD^{ij}$ are partial stiffness tensors and $\kappa$ can be seen as an
 
 # `MFront` implementation
 
-The `MFront` implementation expands upon the detailed `MFront` implementation of the [stationnary heat transfer demo](mgis_fenics_nonlinear_heat_transfer.html). Again, the  `DefaultGenericBehaviour` is used here and specify that the following implementation will only handle the 2D plane strain case.
+The `MFront` implementation expands upon the detailed `MFront` implementation of the [stationnary heat transfer demo](https://thelfer.github.io/mgis/web/mgis_fenics_nonlinear_heat_transfer.html). Again, the  `DefaultGenericBehaviour` is used here and specify that the following implementation will only handle the 2D plane strain case.
 ``` cpp
 @DSL DefaultGenericBehaviour;
 @Behaviour MultiphaseModel;
@@ -251,8 +257,6 @@ bc = [DirichletBC(V.sub(0).sub(0), Constant(0), left),
 
 facets = MeshFunction("size_t", mesh, 1)
 ds = Measure("ds", subdomain_data=facets)
-
-
 ```
 
 ## Generalized gradients registration
@@ -268,7 +272,7 @@ mat_prop = {"MatrixYoungModulus": 10.,
             "FiberVolumeFraction": 0.01,
             "Size": 1/20.}
 
-material = mf.MFrontNonlinearMaterial("../materials/src/libBehaviour.so",
+material = mf.MFrontNonlinearMaterial("./src/libBehaviour.so",
                                       "MultiphaseModel",
                                       hypothesis="plane_strain",
                                       material_properties=mat_prop)
@@ -283,12 +287,6 @@ problem.solve(u.vector())
 
     Automatic registration of 'Temperature' as a Constant value = 293.15.
     
-    Calling FFC just-in-time (JIT) compiler, this may take some time.
-      Ignoring precision in integral metadata compiled using quadrature representation. Not implemented.
-    Calling FFC just-in-time (JIT) compiler, this may take some time.
-      Ignoring precision in integral metadata compiled using quadrature representation. Not implemented.
-    Calling FFC just-in-time (JIT) compiler, this may take some time.
-      Ignoring precision in integral metadata compiled using quadrature representation. Not implemented.
 
 
 
