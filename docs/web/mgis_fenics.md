@@ -8,21 +8,39 @@
 \newcommand{\dS}{\,\text{dS}}
 \newcommand{\TT}{\mathbb{T}}
 
-These pages are intended to describe the FEniCS interface to MGIS available in the `mgis.fenics` Python module. This module has been developed in the spirit of providing sa upport to the implementation of generalized nonlinear behaviours i.e. including multiple gradients and dual flux variables. It can also be used as a simple interface to standard mechanical behaviours (see the plasticity demos). We briefly describe [here](#a-brief-overview-of-the-mgis.fenics-module) the general concepts underlying the module implementation.
+These pages are intended to describe the `FEniCS` interface to `MGIS`
+available in the `mgis.fenics` Python module. This module has been
+developed in the spirit of providing sa upport to the implementation of
+generalized nonlinear behaviours i.e. including multiple gradients and
+dual flux variables. It can also be used as a simple interface to
+standard mechanical behaviours (see the plasticity demos). We briefly
+describe [here](#a-brief-overview-of-the-mgis.fenics-module) the general
+concepts underlying the module implementation.
 
 # Documented demos
 
 > **Repository**: a repository containing the demos sources files is [available here](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos)
 
-The provided documented demos have been designed to progressively illustrate the use of the interface and the versatility of the approach when implementing complex generalized behaviours, both on the MFront and FEniCS sides. We recommend browsing the demos in the following order:
+The provided documented demos have been designed to progressively
+illustrate the use of the interface and the versatility of the approach
+when implementing complex generalized behaviours, both on the `MFront`
+and `FEniCS` sides. We recommend browsing the demos in the following
+order:
 
-* [Stationnary non-linear heat transfer](mgis_fenics_nonlinear_heat_transfer.html)
-* [Stationnary non-linear heat transfer: 3D problem and performance comparisons](mgis_fenics_nonlinear_heat_transfer_3D.html)
-* [Small-strain von Mises elastoplasticity](mgis_fenics_small_strain_elastoplasticity.html)
-* [Finite-strain elastoplasticity within the logarithmic strain framework](mgis_fenics_finite_strain_elastoplasticity.html)
-* [Multiphase model for fiber-reinforced materials](mgis_fenics_multiphase_model.html)
-* [Phase-field approach to brittle fracture](mgis_fenics_phase_field.html)
-* [Transient heat equation with phase change](mgis_fenics_heat_equation_phase_change.html)
+* [Stationnary non-linear heat
+  transfer](mgis_fenics_nonlinear_heat_transfer.html)
+* [Stationnary non-linear heat transfer: 3D problem and performance
+  comparisons](mgis_fenics_nonlinear_heat_transfer_3D.html)
+* [Small-strain von Mises
+  elastoplasticity](mgis_fenics_small_strain_elastoplasticity.html)
+* [Finite-strain elastoplasticity within the logarithmic strain
+  framework](mgis_fenics_finite_strain_elastoplasticity.html)
+* [Multiphase model for fiber-reinforced
+  materials](mgis_fenics_multiphase_model.html)
+* [Phase-field approach to brittle
+  fracture](mgis_fenics_phase_field.html)
+* [Transient heat equation with phase 
+  change](mgis_fenics_heat_equation_phase_change.html)
 
 # A brief overview of the `mgis.fenics` module
 
