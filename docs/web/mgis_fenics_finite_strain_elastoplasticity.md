@@ -2,7 +2,15 @@
 % Jérémy Bleyer, Thomas Helfer
 % 17/04/2020
 
-This demo is dedicated to the resolution of a finite-strain elastoplastic problem using the logarithmic strain framework proposed in <cite data-cite="miehe_anisotropic_2002">(Miehe et al., 2002)</cite>. 
+This demo is dedicated to the resolution of a finite-strain
+elastoplastic problem using the logarithmic strain framework proposed in
+@miehe_anisotropic_2002.
+
+> **Source files:**
+>
+> * Jupyter notebook: [mgis_fenics_finite_strain_elastoplasticity.ipynb](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/finite_strain_elastoplasticity/mgis_fenics_finite_strain_elastoplasticity.ipynb)
+> * Python file: [mgis_fenics_finite_strain_elastoplasticity.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/finite_strain_elastoplasticity/mgis_fenics_finite_strain_elastoplasticity.py)
+> * MFront behaviour file: [LogarithmicStrainPlasticity.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/finite_strain_elastoplasticity/LogarithmicStrainPlasticity.mfront)
 
 # Logarithmic strains 
 
@@ -230,3 +238,4 @@ plt.ylabel("Load");
 
 ![png](mgis_fenics_finite_strain_elastoplasticity_files/mgis_fenics_finite_strain_elastoplasticity_9_0.png)
 
+# References

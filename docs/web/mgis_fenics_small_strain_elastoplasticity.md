@@ -39,6 +39,13 @@ demo is that the same problem will also be solved in axisymmetric
 conditions, referring therefore to the expansion of a hollow sphere
 under internal pressure.
 
+> **Source files:**
+>
+> * Jupyter notebook: [mgis_fenics_small_strain_elastoplasticity.ipynb](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/small_strain_elastoplasticity/mgis_fenics_small_strain_elastoplasticity.ipynb)
+> * Python file: [mgis_fenics_small_strain_elastoplasticity.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/small_strain_elastoplasticity/mgis_fenics_small_strain_elastoplasticity.py)
+> * MFront behaviour file: [IsotropicLinearHardeningPlasticity.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/small_strain_elastoplasticity/IsotropicLinearHardeningPlasticity.mfront)
+> * MFront behaviour file: [IsotropicLinearHardeningPlasticityBrick.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/small_strain_elastoplasticity/IsotropicLinearHardeningPlasticityBrick.mfront)
+
 # MFront implementation
 
 ## Optimised implementation

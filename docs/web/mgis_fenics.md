@@ -20,6 +20,9 @@ underlying the module implementation.
 
 # Documented demos
 
+> **Repository**: a repository containing the demos sources files is 
+> [available here](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos)
+
 The provided documented demos have been designed to progressively
 illustrate the use of the interface and the versatility of the approach
 when implementing complex generalized behaviours, both on the `MFront`
@@ -38,11 +41,8 @@ order:
   materials](mgis_fenics_multiphase_model.html)
 * [Phase-field approach to brittle
   fracture](mgis_fenics_phase_field.html)
-
-<!--
-* [Transient non-linear heat
-  equation](mgis_fenics_transient_nonlinear_heat_equation.html)
--->
+* [Transient heat equation with phase 
+  change](mgis_fenics_heat_equation_phase_change.html)
 
 # A brief overview of the `mgis.fenics` module
 

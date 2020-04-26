@@ -2,6 +2,12 @@
 % Jérémy Bleyer, Thomas Helfer
 % 17/04/2020
 
+> **Source files:**
+>
+> * Jupyter notebook: [mgis_fenics_nonlinear_heat_transfer_3D.ipynb](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/mgis_fenics_nonlinear_heat_transfer_3D.ipynb)
+> * Python file: [mgis_fenics_nonlinear_heat_transfer_3D.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/mgis_fenics_nonlinear_heat_transfer_3D.py)
+> * MFront behaviour file: [StationaryHeatTransfer.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/StationaryHeatTransfer.mfront)
+
 # Description of the non-linear constitutive heat transfer law
 
 This example is a direct continuation of the [previous 2D example on

@@ -38,7 +38,8 @@ An introduction to the `C++` library may be found [here](bindings-cxx.html)
 The following bindings are available:
 
 - `c` binding
-- `python` binding 
+- `python` binding: this binding also provide an interface to `FEniCS` which is 
+  discussed [here along with a collection of commented demos](mgis_fenics.html)
 - `fortran` binding
 - `julia` binding
 - `fenics` bindings (experimental). Those bindings are strongly inspired

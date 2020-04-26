@@ -2,6 +2,12 @@
 % Jérémy Bleyer, Thomas Helfer
 % 17/04/2020
 
+> **Source files:**
+>
+> * Jupyter notebook: [mgis_fenics_nonlinear_heat_transfer.ipynb](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/mgis_fenics_nonlinear_heat_transfer.ipynb)
+> * Python file: [mgis_fenics_nonlinear_heat_transfer.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/mgis_fenics_nonlinear_heat_transfer.py)
+> * MFront behaviour file: [StationaryHeatTransfer.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/StationaryHeatTransfer.mfront)
+
 # Description of the non-linear constitutive heat transfer law
 
 The thermal material is described by the following non linear Fourier
