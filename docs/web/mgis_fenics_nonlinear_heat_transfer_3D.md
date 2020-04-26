@@ -4,15 +4,20 @@
 
 # Description of the non-linear constitutive heat transfer law
 
-This example is a direct continuation of the [previous 2D example on non-linear heat transfer](nonlinear_heat_transfer.html). The present computations will use the same behaviour `StationaryHeatTransfer.mfront`.
+This example is a direct continuation of the [previous 2D example on
+non-linear heat transfer](mgis_fenics_nonlinear_heat_transfer.html). The
+present computations will use the same behaviour
+`StationaryHeatTransfer.mfront`.
 
-
-![]("img/fuel_rod_solution.png"){width=75%)
-
+![](img/fuel_rod_solution.png ""){width=50%}
 
 # FEniCS implementation
 
-We now consider a portion of nuclear fuel rod (Uranium Dioxide $\text{UO}_2$) subject to an external imposed temperature $T_{ext}=1000\text{ K}$ and uniform volumetric heat source $r=300 \text{ MW/m}^3$. From the steady state heat balance equation $\operatorname{div}\mathbf{j} = r$, the variational formulation is now:
+We now consider a portion of nuclear fuel rod (Uranium Dioxide
+$\text{UO}_2$) subject to an external imposed temperature
+$T_{ext}=1000\text{ K}$ and uniform volumetric heat source $r=300 \text{
+MW/m}^3$. From the steady state heat balance equation
+$\operatorname{div}\mathbf{j} = r$, the variational formulation is now:
 
 \begin{equation}
 F(\widehat{T}) = \int_\Omega \mathbf{j}(T,\nabla T)\cdot\nabla \widehat{T}\,\text{dx} + \int_\Omega r \widehat{T} \,\text{dx}=0 \quad \forall \widehat{T}
@@ -23,7 +28,14 @@ which fits the general default format of a `MFrontNonlinearProblem`:
 F(\widehat{u}) = \sum_i \int_\Omega \boldsymbol{\sigma}_i(u)\cdot \mathbf{g}_i(\widehat{u})\,\text{dx} -L(\widehat{u}) =0 \quad \forall \widehat{u}
 \end{equation}
 
-where $(\boldsymbol{\sigma}_i,\mathbf{g}_i)$ are pairs of dual flux/gradient and here the external loading form $L$ is given by $-\int_\Omega r \widehat{T} \,\text{dx}$. Compared to the previous example, we just add this source term using the `set_loading` method. Here we use a quadratic interpolation for the temperature field and external temperature is imposed on the surface numbered 12. Finally, we also rely on automatic registration of the gradient and external state variables as explained in the previous demo.
+where $(\boldsymbol{\sigma}_i,\mathbf{g}_i)$ are pairs of dual
+flux/gradient and here the external loading form $L$ is given by
+$-\int_\Omega r \widehat{T} \,\text{dx}$. Compared to the previous
+example, we just add this source term using the `set_loading` method.
+Here we use a quadratic interpolation for the temperature field and
+external temperature is imposed on the surface numbered 12. Finally, we
+also rely on automatic registration of the gradient and external state
+variables as explained in the previous demo.
 
 
 ```python
@@ -65,23 +77,14 @@ The `solve` method computing time is monitored:
 tic = time()
 problem.solve(T.vector())
 print("MFront/FEniCS solve time:", time()-tic)
+    MFront/FEniCS solve time: 51.4562623500824
 ```
 
-    Automatic registration of 'TemperatureGradient' as grad(Temperature).
-    
-    Automatic registration of 'Temperature' as an external state variable.
-    
-    Calling FFC just-in-time (JIT) compiler, this may take some time.
-      Ignoring precision in integral metadata compiled using quadrature representation. Not implemented.
-    Calling FFC just-in-time (JIT) compiler, this may take some time.
-      Ignoring precision in integral metadata compiled using quadrature representation. Not implemented.
-    MFront/FEniCS solve time: 51.4562623500824
+The temperature field along a radial direction along the top surface has
+been compared with computations using [Cast3M finite-element
+solver](http://www-cast3m.cea.fr/). Both solutions agree perfectly:
 
-
-The temperature field along a radial direction along the top surface has been compared with computations using [Cast3M finite-element solver](http://www-cast3m.cea.fr/). Both solutions agree perfectly:
-
-![]("img/Temperature_Castem_FEniCS.png){width=75%)
-
+![](img/Temperature_Castem_FEniCS.png ""){width=75%}
 
 # Performance comparison
 
@@ -104,10 +107,8 @@ T.interpolate(T0)
 tic = time()
 solve(F == 0, T, bc, J=J)
 print("Pure FEniCS solve time:", time()-tic)
-```
-
     Pure FEniCS solve time: 47.62119770050049
-
+```
 
 We can observe that both methods, relying on the same default Newton
 solver, yield the same total iteration counts and residual values. As
@@ -129,8 +130,16 @@ large scale problems.
 
 # On the use of the correct tangent operator
 
-Most FE software do not take into account the contribution of $\dfrac{\partial \mathbf{j}}{\partial T}$ to the tangent operator. One can easily test this variant by assigning `dj_ddT` in the MFront behaviour or change the expression of the jacobian in the pure FEniCS implementation by:
+Most FE software do not take into account the contribution of
+$\dfrac{\partial \mathbf{j}}{\partial T}$ to the tangent operator. One
+can easily test this variant by assigning `dj_ddT` in the MFront
+behaviour or change the expression of the jacobian in the pure FEniCS
+implementation by:
+
 ```
 J = dot(grad(T_), -grad(dT)/(A+B*T))*dx(metadata={'quadrature_degree': quad_deg})
 ```
-In the present case, using this partial tangent operator yields a convergence in 4 iterations instead of 3, giving a computational cost increase by roughly 25%.
+
+In the present case, using this partial tangent operator yields a
+convergence in 4 iterations instead of 3, giving a computational cost
+increase by roughly 25%.

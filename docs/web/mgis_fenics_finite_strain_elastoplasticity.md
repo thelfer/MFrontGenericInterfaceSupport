@@ -22,7 +22,7 @@ $\boldsymbol{T}$ is then post-processed to an appropriate stress measure
 such as the Cauchy stress $\boldsymbol{\sigma}$ or Piola-Kirchhoff
 stresses.
 
-# MFront implementation
+# `MFront` implementation
 
 The logarithmic strain framework discussed in the previous paragraph
 consists merely as a pre-processing and a post-processing stages of the
@@ -69,7 +69,7 @@ H0.setEntryName("HardeningSlope");
 };
 ```
 
-# FEniCS implementation
+# `FEniCS` implementation
 
 We define a box mesh representing half of a beam oriented along the
 $x$-direction. The beam will be fully clamped on its left side and
@@ -108,54 +108,63 @@ file_results.parameters["flush_output"] = True
 file_results.parameters["functions_share_mesh"] = True
 ```
 
-The `MFrontNonlinearMaterial` instance is loaded from the MFront
-`LogarithmicStrainPlasticity` behaviour. This behaviour is a
-finite-strain behaviour (`material.finite_strain=True`) which relies on
-a kinematic description using the total deformation gradient
-$\boldsymbol{F}$. By default, a MFront behaviour always returns the
-Cauchy stress as the stress measure after integration. However, the
-stress variable dual to the deformation gradient is the first
-Piloa-Kirchhoff (PK1) stress. An internal option of the MGIS interface
-is therefore used in the finite-strain context to return the PK1 stress
-as the "flux" associated to the "gradient" $\boldsymbol{F}$. Both
-quantities are non-symmetric tensors, aranged as a 9-dimensional vector
-in 3D following [MFront conventions on
-tensors](http://tfel.sourceforge.net/tensors.html).
+The `MFrontNonlinearMaterial` instance loads the `MFront`
+`LogarithmicStrainPlasticity` behaviour.
+
+This behaviour is a finite-strain behaviour
+(`material.finite_strain=True`) which relies on a kinematic description
+using the total deformation gradient $\boldsymbol{F}$. By default, a
+`MFront` behaviour always returns the Cauchy stress as the stress
+measure after integration. However, the stress variable dual to the
+deformation gradient is the first Piloa-Kirchhoff (PK1) stress. An
+internal option of the MGIS interface is therefore used in the
+finite-strain context to return the PK1 stress as the "flux" associated
+to the "gradient" $\boldsymbol{F}$. Both quantities are non-symmetric
+tensors, arranged as a 9-dimensional vector in 3D following [`MFront`
+conventions on tensors](http://tfel.sourceforge.net/tensors.html).
 
 
 ```python
 material = mf.MFrontNonlinearMaterial("../materials/src/libBehaviour.so",
                                       "LogarithmicStrainPlasticity")
-print(material.behaviour.getBehaviourType())
-print(material.behaviour.getKinematic())
-print(material.get_gradient_names(), material.get_gradient_sizes())
-print(material.get_flux_names(), material.get_flux_sizes())
 ```
 
-    StandardFiniteStrainBehaviour
-    F_CAUCHY
-    ['DeformationGradient'] [9]
-    ['FirstPiolaKirchhoffStress'] [9]
+At this stage, one can retrieve some information about the behaviour:
 
+```python
+print(material.behaviour.getBehaviourType())
+    StandardFiniteStrainBehaviour
+print(material.behaviour.getKinematic())
+    F_CAUCHY
+print(material.get_gradient_names(), material.get_gradient_sizes())
+    ['DeformationGradient'] [9]
+print(material.get_flux_names(), material.get_flux_sizes())
+    ['FirstPiolaKirchhoffStress'] [9]
+```
 
 The `MFrontNonlinearProblem` instance must therefore register the
 deformation gradient as `Identity(3)+grad(u)`. This again done
 automatically since `"DeformationGradient"` is a predefined gradient.
-The following message will be shown upon calling `solve`: ``` Automatic
-registration of 'DeformationGradient' as I + (grad(Displacement)). ```
+The following message will be shown upon calling `solve`:
+
+```
+Automatic registration of 'DeformationGradient' as I + (grad(Displacement)).
+```
+
 The loading is then defined and, as for the [small-strain
 elastoplasticity
 example](mgis_fenics_small_strain_elastoplasticity.html), state
 variables include the `ElasticStrain` and `EquivalentPlasticStrain`
 since the same behaviour is used as in the small-strain case with the
 only difference that the total strain is now given by the Hencky strain
-measure. In particular, the `ElasticStrain` is still a symmetric tensor
-(vector of dimension 6). Note that it has not been explicitly defined as
-a state variable in the MFront behaviour file since this is done
-automatically when using the `IsotropicPlasticMisesFlow` parser.
+measure.
+
+In particular, the `ElasticStrain` is still a symmetric tensor (vector
+of dimension 6). Note that it has not been explicitly defined as a state
+variable in the `MFront` behaviour file since this is done automatically
+when using the `IsotropicPlasticMisesFlow` domain specific language.
 
 Finally, we setup a few parameters of the Newton non-linear solver.
-
 
 ```python
 problem = mf.MFrontNonlinearProblem(u, material, bcs=bc)
@@ -163,7 +172,6 @@ problem.set_loading(dot(selfweight, u)*dx)
 
 p = problem.get_state_variable("EquivalentPlasticStrain")
 epsel = problem.get_state_variable("ElasticStrain")
-print("'ElasticStrain' shape:", ufl.shape(epsel))
 
 prm = problem.solver.parameters
 prm["absolute_tolerance"] = 1e-6
@@ -171,16 +179,16 @@ prm["relative_tolerance"] = 1e-6
 prm["linear_solver"] = "mumps"
 ```
 
+Information about how the elastic strain is stored can be retrieved as
+follows:
+
+```python
+print("'ElasticStrain' shape:", ufl.shape(epsel))
     'ElasticStrain' shape: (6,)
-
-
-During the load incrementation, we monitor the evolution of the vertical downwards displacement at the middle of the right extremity.
-
-This simulation is a bit heavy to run so we suggest running it in parallel:
-```bash
-mpirun -np 4 python3 finite_strain_elastoplasticity.py
 ```
 
+During the load incrementation, we monitor the evolution of the vertical
+downwards displacement at the middle of the right extremity.
 
 ```python
 P0 = FunctionSpace(mesh, "DG", 0)
@@ -202,43 +210,15 @@ for (i, t) in enumerate(load_steps[1:]):
     file_results.write(p_avg, t)
 ```
 
-    Increment  1
-    Automatic registration of 'DeformationGradient' as I + (grad(Displacement)).
-    
-    Automatic registration of 'Temperature' as a Constant value = 293.15.
-    
-    Increment  2
-    Increment  3
-    Increment  4
-    Increment  5
-    Increment  6
-    Increment  7
-    Increment  8
-    Increment  9
-    Increment  10
-    Increment  11
-    Increment  12
-    Increment  13
-    Increment  14
-    Increment  15
-    Increment  16
-    Increment  17
-    Increment  18
-    Increment  19
-    Increment  20
-    Increment  21
-    Increment  22
-    Increment  23
-    Increment  24
-    Increment  25
-    Increment  26
-    Increment  27
-    Increment  28
-    Increment  29
-    Increment  30
+This simulation is a bit heavy to run so we suggest running it in parallel:
 
+```bash
+mpirun -np 4 python3 finite_strain_elastoplasticity.py
+```
 
-The load-displacement curve exhibits a classical elastoplastic behaviour rapidly followed by a stiffening behaviour due to membrane catenary effects. 
+The load-displacement curve exhibits a classical elastoplastic behaviour
+rapidly followed by a stiffening behaviour due to membrane catenary
+effects.
 
 
 ```python
@@ -247,7 +227,6 @@ plt.plot(results[:, 0], results[:, 1], "-o")
 plt.xlabel("Displacement")
 plt.ylabel("Load");
 ```
-
 
 ![png](mgis_fenics_finite_strain_elastoplasticity_files/mgis_fenics_finite_strain_elastoplasticity_9_0.png)
 
