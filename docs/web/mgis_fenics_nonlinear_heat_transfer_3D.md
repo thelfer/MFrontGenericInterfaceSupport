@@ -1,14 +1,14 @@
 % Stationnary non-linear heat transfer: 3D problem and performance comparisons
-% Jérémy Bleyer, Thomas Helfer
-% 17/04/2020
+
+# Description of the non-linear constitutive heat transfer law
+
+This example is a direct continuation of the [previous 2D example on non-linear heat transfer](./mgis_fenics_nonlinear_heat_transfer.html). The present computations will use the same behaviour `StationaryHeatTransfer.mfront` which will be loaded with a `"3d"` hypothesis (default case).
 
 > **Source files:**
 >
 > * Jupyter notebook: [mgis_fenics_nonlinear_heat_transfer_3D.ipynb](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/mgis_fenics_nonlinear_heat_transfer_3D.ipynb)
 > * Python file: [mgis_fenics_nonlinear_heat_transfer_3D.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/mgis_fenics_nonlinear_heat_transfer_3D.py)
 > * MFront behaviour file: [StationaryHeatTransfer.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/StationaryHeatTransfer.mfront)
-
-# Description of the non-linear constitutive heat transfer law
 
 This example is a direct continuation of the [previous 2D example on
 non-linear heat transfer](mgis_fenics_nonlinear_heat_transfer.html). The
@@ -17,7 +17,7 @@ present computations will use the same behaviour
 
 ![](img/fuel_rod_solution.png ""){width=50%}
 
-# FEniCS implementation
+# `FEniCS` implementation
 
 We now consider a portion of nuclear fuel rod (Uranium Dioxide
 $\text{UO}_2$) subject to an external imposed temperature
@@ -50,10 +50,10 @@ import mgis.fenics as mf
 from time import time
 
 mesh = Mesh()
-with XDMFFile("fuel_rod_mesh.xdmf") as infile:
+with XDMFFile("meshes/fuel_rod_mesh.xdmf") as infile:
     infile.read(mesh)
 mvc = MeshValueCollection("size_t", mesh, 2)
-with XDMFFile("fuel_rod_mf.xdmf") as infile:
+with XDMFFile("meshes/fuel_rod_mf.xdmf") as infile:
     infile.read(mvc, "facets")
 facets = cpp.mesh.MeshFunctionSizet(mesh, mvc)
 
@@ -70,7 +70,7 @@ bc = DirichletBC(V, Text, facets, 12)
 r = Constant(3e8)
 
 quad_deg = 2
-material = mf.MFrontNonlinearMaterial("../materials/src/libBehaviour.so",
+material = mf.MFrontNonlinearMaterial("./src/libBehaviour.so",
                                       "StationaryHeatTransfer")
 problem = mf.MFrontNonlinearProblem(T, material, quadrature_degree=quad_deg, bcs=bc)
 problem.set_loading(-r*T*dx)
@@ -83,8 +83,14 @@ The `solve` method computing time is monitored:
 tic = time()
 problem.solve(T.vector())
 print("MFront/FEniCS solve time:", time()-tic)
-    MFront/FEniCS solve time: 51.4562623500824
 ```
+
+    Automatic registration of 'TemperatureGradient' as grad(Temperature).
+    
+    Automatic registration of 'Temperature' as an external state variable.
+    
+    MFront/FEniCS solve time: 53.746278047561646
+
 
 The temperature field along a radial direction along the top surface has
 been compared with computations using [Cast3M finite-element
@@ -94,12 +100,7 @@ solver](http://www-cast3m.cea.fr/). Both solutions agree perfectly:
 
 # Performance comparison
 
-For the purpose of performance comparison, we also implement a direct
-non-linear variational problem with pure UFL expressions. This is
-possible in the present case since the non-linear heat constitutive law
-is very simple. Note that we enfore the use of the same quadrature rule
-degree. The temperature field is also reinterpolated to its previous
-initial value for a fair comparison between both solution strategies.
+For the purpose of performance comparison, we also implement a direct non-linear variational problem with pure UFL expressions. This is possible in the present case since the non-linear heat constitutive law is very simple. Note that we enfore the use of the same quadrature rule degree. The temperature field is also reinterpolated to its previous initial value for a fair comparison between both solution strategies.
 
 
 ```python
@@ -113,26 +114,21 @@ T.interpolate(T0)
 tic = time()
 solve(F == 0, T, bc, J=J)
 print("Pure FEniCS solve time:", time()-tic)
-    Pure FEniCS solve time: 47.62119770050049
 ```
 
-We can observe that both methods, relying on the same default Newton
-solver, yield the same total iteration counts and residual values. As
-regards computing time, the pure FEniCS implementation is slightly
-faster as expected. In the following table, comparison has been made for
-a coarse (approx 4 200 cells) and a refined (approx 34 000 cells) mesh
-with quadrature degrees equal either to 2 or 5.
+    Pure FEniCS solve time: 49.15058135986328
 
-|Mesh type | Quadrature degree | FEniCS/MFront | Pure FEniCS |
-|:--------:|:-----------------:|:-------------:|:-----------:|
-| coarse   | 2                 |     1.2 s     | 0.8 s       |
-| coarse   | 5                 |     2.2 s     | 1.0 s       |
-| fine     | 2                 |     62.8 s    | 58.4 s      |
-| fine     | 5                 |     77.0 s    | 66.3 s      | 
 
-The difference is slightly larger for large quadrature degrees, however,
-the difference is moderate when compared to the total computing time for
-large scale problems.
+We can observe that both methods, relying on the same default Newton solver, yield the same total iteration counts and residual values. As regards computing time, the pure `FEniCS` implementation is slightly faster as expected. In the following table, comparison has been made for a coarse (approx 4 200 cells) and a refined (approx 34 000 cells) mesh with quadrature degrees equal either to 2 or 5.
+
+|Mesh type | Quadrature degree | `FEniCS`/`MFront` | Pure `FEniCS` |
+|:--------:|:-----------------:|:-----------------:|:-------------:|
+| coarse   | 2                 |     1.2 s         | 0.8 s         |
+| coarse   | 5                 |     2.2 s         | 1.0 s         |
+| fine     | 2                 |     62.8 s        | 58.4 s        |
+| fine     | 5                 |     77.0 s        | 66.3 s        | 
+
+The difference is slightly larger for large quadrature degrees, however, the difference is moderate when compared to the total computing time for large scale problems.
 
 # On the use of the correct tangent operator
 

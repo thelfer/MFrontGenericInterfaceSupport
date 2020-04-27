@@ -42,11 +42,6 @@ The following bindings are available:
   discussed [here along with a collection of commented demos](mgis_fenics.html)
 - `fortran` binding
 - `julia` binding
-- `fenics` bindings (experimental). Those bindings are strongly inspired
-  by the `fenics-solid-mechanics` project. Those bindings are currently
-  quite limited as mostly serve as a proof of concept. Note that `MGIS`
-  can also be used in `FEniCS` through the `python` interface. This is
-  discussed [here](FEniCSBindings.html).
 
 ## Future bindings (contributors are welcomed)
 
