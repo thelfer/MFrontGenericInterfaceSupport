@@ -60,11 +60,10 @@ if(MGIS_HAVE_PANDOC)
   mgis_pandoc_generate_html_page(index)
   mgis_pandoc_generate_html_page(install)
   mgis_pandoc_generate_html_page(bindings-cxx "--toc" "--toc-depth=3")
-  mgis_pandoc_generate_html_page(mgis_fenics "--toc" "--toc-depth=3")
-  mgis_pandoc_generate_html_page(FEniCSBindings)
-  mgis_pandoc_generate_html_page(mgis_fenics "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(release-notes-1.1 "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(release-notes-1.2 "--toc" "--toc-depth=3")
+  mgis_pandoc_generate_html_page(FEniCSBindings)
+  mgis_pandoc_generate_html_page(mgis_fenics "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(mgis_fenics_nonlinear_heat_transfer "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(mgis_fenics_nonlinear_heat_transfer_3D "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(mgis_fenics_small_strain_elastoplasticity "--toc" "--toc-depth=3")
@@ -84,27 +83,9 @@ if(MGIS_APPEND_SUFFIX)
     DESTINATION share/doc/mgis-${MGIS_SUFFIX}/web
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
-#  install(DIRECTORY js css doc img media downloads
-#    DESTINATION share/doc/mgis-${MGIS_SUFFIX}/web
-#    COMPONENT website
-#    PATTERN ".svn" EXCLUDE)
-#  install(FILES 404.html apple-touch-icon-precomposed.png 
-#    CHANGELOG.md CONTRIBUTING.md crossdomain.xml favicon.ico
-#    humans.txt LICENSE.md README.md robots.txt TODO.md
-#    DESTINATION share/doc/mgis-${MGIS_SUFFIX}/web
-#    COMPONENT website)
 else(MGIS_APPEND_SUFFIX)
   install(DIRECTORY css img
     DESTINATION share/doc/mgis/web
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
-#  install(DIRECTORY js css doc img media downloads
-#    DESTINATION share/doc/mgis/web
-#    COMPONENT website
-#    PATTERN ".svn" EXCLUDE)
-#  install(FILES 404.html apple-touch-icon-precomposed.png 
-#    CHANGELOG.md CONTRIBUTING.md crossdomain.xml favicon.ico
-#    humans.txt LICENSE.md README.md robots.txt TODO.md
-#    DESTINATION share/doc/mgis/web
-#    COMPONENT website)
 endif(MGIS_APPEND_SUFFIX)

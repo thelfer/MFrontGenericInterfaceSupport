@@ -1,17 +1,19 @@
 % Transient heat equation with phase change
+
+$\newcommand{\bj}{\mathbf{j}}
+\renewcommand{\div}{\operatorname{div}}$
+
+In this demo, we expand on the [stationnary nonlinear heat transfer demo](https://thelfer.github.io/mgis/web/mgis_fenics_nonlinear_heat_transfer.html) and consider a transient heat equation with non-linear heat transfer law including solid/liquid phase change. This demo corresponds to the [TTNL02 elementary test case](https://www.code-aster.org/V2/doc/default/fr/man_v/v4/v4.22.002.pdf) of the [*Code_Aster* finite-element software](https://www.code-aster.org).
+
+<p align="center">
+<img src="img/solidification_front.gif" width="500">
+</p>
+
 > **Source files:**
 >
 > * Jupyter notebook: [mgis_fenics_heat_equation_phase_change.ipynb](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/heat_equation_phase_change/mgis_fenics_heat_equation_phase_change.ipynb)
 > * Python file: [mgis_fenics_heat_equation_phase_change.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/heat_equation_phase_change/mgis_fenics_heat_equation_phase_change.py)
 > * MFront behaviour file: [HeatTransferPhaseChange.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/heat_equation_phase_change/HeatTransferPhaseChange.mfront)
-
-$\newcommand{\bj}{\mathbf{j}}
-\renewcommand{\div}{\operatorname{div}}$
-In this demo, we expand on the [stationnary nonlinear heat transfer demo](https://thelfer.github.io/mgis/web/mgis_fenics_nonlinear_heat_transfer.html) and consider a transient heat equation with non-linear heat transfer law including solid/liquid phase change. This demo corresponds to the [TTNL02 elementary test case](https://www.code-aster.org/V2/doc/default/fr/man_v/v4/v4.22.002.pdf) of the [*Code_Aster* finite-element software](https://www.code-aster.org).
-
-<p align="center">
-<img src="solidification_front.gif" width="300">
-</p>
 
 # Transient heat equation using an enthalpy formulation
 
@@ -20,9 +22,14 @@ The transient heat equation writes:
 $$
 \rho C_p \dfrac{\partial T}{\partial t} = r-\div\bj
 $$
-where $\rho$ is the material density, $C_p$ the heat capacity (at constant pressure) per unit of mass, $r$ represents heat sources and $\bj$ is the heat flux.
 
-In the case of phase changes, the heat capacity exhibits large discontinuities near the transition temperature. It is therefore more suitable to work with the enthalpy density defined as:
+where $\rho$ is the material density, $C_p$ the heat capacity (at
+constant pressure) per unit of mass, $r$ represents heat sources and
+$\bj$ is the heat flux.
+
+In the case of phase changes, the heat capacity exhibits large
+discontinuities near the transition temperature. It is therefore more
+suitable to work with the enthalpy density defined as:
 
 $$
 h(T) = \int_{T_0}^{T} \rho C_p dT
@@ -49,24 +56,33 @@ k_s & \text{if }T < T_m \\
 k_l & \text{if }T > T_m 
 \end{cases}
 $$
-where $k_s$ (resp. $k_l$) denotes the solid (resp. liquid) phase conductivity and $T_m$ is the solid/liquid transition temperature.
+where $k_s$ (resp. $k_l$) denotes the solid (resp. liquid) phase
+conductivity and $T_m$ is the solid/liquid transition temperature.
 
 The enthalpy is assumed to be given by:
+
 $$
 h\left(T\right)=\begin{cases}
 c_sT & \text{if }T < T_m \\
 c_l(T-T_m)+c_sT_m+\Delta h_{s/l} & \text{if }T > T_m 
 \end{cases}
 $$
-where $c_s=\rho_sC_{p,s}$ (resp. $c_l=\rho_lC_{p,l}$) is the volumic heat capacity of the solid (resp. liquid) phase. It can be observed that the enthalpy exhibits a discontinuity at the phase transition equal to $\Delta h_{s/l}$ which represents the latent heat of fusion per unit volume.
+
+where $c_s=\rho_sC_{p,s}$ (resp. $c_l=\rho_lC_{p,l}$) is the volumic
+heat capacity of the solid (resp. liquid) phase. It can be observed that
+the enthalpy exhibits a discontinuity at the phase transition equal to
+$\Delta h_{s/l}$ which represents the latent heat of fusion per unit
+volume.
 
 <p align="center">
-<img src="phase_change_law.svg" width="500">
+<img src="img/phase_change_law.svg" width="500">
 </p>
 
 # A smoothed version
 
-The ethalpy discontinuity $\Delta h_{s/l}$ poses convergence difficulties for the Newton resolution. A classical remedy consists in considering a smoothed version of the previous law, such as:
+The enthalpy discontinuity $\Delta h_{s/l}$ poses convergence
+difficulties for the Newton resolution. A classical remedy consists in
+considering a smoothed version of the previous law, such as:
 
 $$
 k\left(T\right)=\begin{cases}
@@ -83,13 +99,23 @@ c_sT_s+\left(\dfrac{cs+cl}{2}+\dfrac{\Delta h_{s/l}}{T_\text{smooth}}\right)(T-T
 c_l(T-T_l)+c_sT_s+\dfrac{cs+cl}{2}T_\text{smooth}+\Delta h_{s/l} & \text{if }T > T_l 
 \end{cases}
 $$
-where $T_{smooth}=T_l-T_s$ is a small transition temperature interval between $T_s=T_m-T_\text{smooth}/2$ the solidus temperature and $T_l=T_m+T_\text{smooth}/2$ the liquidus temperature.
+where $T_{smooth}=T_l-T_s$ is a small transition temperature interval
+between $T_s=T_m-T_\text{smooth}/2$ the solidus temperature and
+$T_l=T_m+T_\text{smooth}/2$ the liquidus temperature.
 
 # `MFront` implementation
 
 ## Gradient, flux and tangent operator blocks
 
-Similarly to the [stationnary nonlinear heat transfer demo](https://thelfer.github.io/mgis/web/mgis_fenics_nonlinear_heat_transfer.html), the `MFront` implementation relies on  the `DefaultGenericBehaviour` DSL and declares the pair of temperature gradient and heat flux. In addition, the volumic enthalpy $h$ is also declared as an internal state variable. In addition to the two tangent operator blocks `∂j∕∂Δ∇T` and `∂j∕∂ΔT` already discussed in the first demo, we also declare the additional block `∂h∕∂ΔT`, referring to the fact that the enthalpy will vary with the temperature and will enter the transient heat equation.
+Similarly to the [stationnary nonlinear heat transfer
+demo](mgis_fenics_nonlinear_heat_transfer.html), the `MFront`
+implementation relies on the `DefaultGenericBehaviour` DSL and declares
+the pair of temperature gradient and heat flux. In addition, the volumic
+enthalpy $h$ is also declared as an internal state variable. In addition
+to the two tangent operator blocks `∂j∕∂Δ∇T` and `∂j∕∂ΔT` already
+discussed in the first demo, we also declare the additional block
+`∂h∕∂ΔT`, referring to the fact that the enthalpy will vary with the
+temperature and will enter the transient heat equation.
 
 ``` cpp
 @DSL DefaultGenericBehaviour;
@@ -139,8 +165,13 @@ We define some local variables corresponding to the values of the conductivity $
 
 ## Integration of the behaviour
 
-Again, the behaviour integration is straightforward: after computing the temperature at the end of the time step `T_`, we compute the thermal
-conductivity, its derivative with respect to the temperature, the volumic enthalpy and the volumic heat capacity depending on whether `T_` belongs to the solid state ($T\leq T_s$), the liquid state ($T\geq T_l$) or to the transition region ($T_s \leq T \leq T_l$). We finish by computing the heat flux.
+Again, the behaviour integration is straightforward: after computing the
+temperature at the end of the time step `T_`, we compute the thermal
+conductivity, its derivative with respect to the temperature, the
+volumic enthalpy and the volumic heat capacity depending on whether `T_`
+belongs to the solid state ($T\leq T_s$), the liquid state ($T\geq T_l$)
+or to the transition region ($T_s \leq T \leq T_l$). We finish by
+computing the heat flux.
 
 ``` cpp
 @Integrator {
@@ -183,8 +214,10 @@ The computation of the tangent operator blocks is then straightforward:
 
 ## Geometry and material
 
-We consider a rectanglar domain of length 0.1 with imposed temperatures `T0` (resp. `Ti`) on the left (resp. right) boundaries. We look here for the temperature field `T` using a $P^2$-interpolation which is initially at the uniform temperature `Ti`.
-
+We consider a rectanglar domain of length 0.1 with imposed temperatures
+`T0` (resp. `Ti`) on the left (resp. right) boundaries. We look here for
+the temperature field `T` using a $P^2$-interpolation which is initially
+at the uniform temperature `Ti`.
 
 ```python
 %matplotlib notebook
@@ -216,8 +249,14 @@ bc = [DirichletBC(V, T0, left),
       DirichletBC(V, Ti, right)]
 ```
 
-We now load the material behaviour `HeatTransferPhaseChange` and also change the default value of `Tsmooth` to a slightly larger one (but still sufficiently small). Note that the mesh must be sufficiently refined to use a smaller value. Indeed, the spatial resolution must be able to capture with a few elements the sharp transition which will occur during the phase change. We also verify that 3 different tangent blocks have indeed been defined, the last one involving the internal state variable `Enthalpy` with respect to the temperature.
-
+We now load the material behaviour `HeatTransferPhaseChange` and also
+change the default value of `Tsmooth` to a slightly larger one (but
+still sufficiently small). Note that the mesh must be sufficiently
+refined to use a smaller value. Indeed, the spatial resolution must be
+able to capture with a few elements the sharp transition which will
+occur during the phase change. We also verify that 3 different tangent
+blocks have indeed been defined, the last one involving the internal
+state variable `Enthalpy` with respect to the temperature.
 
 ```python
 material = mf.MFrontNonlinearMaterial("./src/libBehaviour.so",
@@ -232,26 +271,47 @@ print(["d{}_d{}".format(*t) for t in material.get_tangent_block_names()])
 
 ## Time discretization of the heat equation
 
-The heat equation must also be discretized in time. We use here the $\theta$-method and approximate:
+The heat equation must also be discretized in time. We use here the
+$\theta$-method and approximate:
+
 $$
 \left.\dfrac{\partial h}{\partial t}\right|_{t=t_{n+\theta}} \approx \dfrac{h_{t=t_{n+1}}-h_{t=t_{n}}}{\Delta t} = r_{t=t_{n+\theta}}-\div\bj_{t=t_{n+\theta}}
 $$
-where $\star_{t=t_{n+\theta}}= \theta\star_{t=t_{n+1}}+(1-\theta)\star_{t=t_{n}}$.
 
-The weak formulation therefore reads (in the absence of source terms): Find $T\in V$ such that:
+where $\star_{t=t_{n+\theta}}=
+\theta\star_{t=t_{n+1}}+(1-\theta)\star_{t=t_{n}}$.
+
+The weak formulation therefore reads (in the absence of source terms):
+Find $T\in V$ such that:
+
 $$
 \int_\Omega \left((h_{t=t_{n+1}}(T)-h_{t=t_{n}})\widehat{T} - \Delta t (\theta\mathbf{j}_{t=t_{n+1}}(T, \nabla T)+(1-\theta)\mathbf{j}_{t=t_{n}})\cdot \nabla \widehat{T} \right)\text{ dx} = 0
 $$
-in which, at time $t_{n+1}$, both the enthalpy $h_{t=t_{n+1}}$ and the heat flux $\mathbf{j}_{t=t_{n+1}}$ are non-linear functions of the unknown temperature.
+
+in which, at time $t_{n+1}$, both the enthalpy $h_{t=t_{n+1}}$ and the
+heat flux $\mathbf{j}_{t=t_{n+1}}$ are non-linear functions of the
+unknown temperature.
 
 ## Problem formulation
 
-We therefore see that the above non-linear problem does not fit into the default form of a `MFrontNonlinearProblem` residual. We will therefore have to specify its form manually. To do so, we need to get the functions `h` and `j` associated to the current values of the enthalpy and the heat flux.
+We therefore see that the above non-linear problem does not fit into the
+default form of a `MFrontNonlinearProblem` residual. We will therefore
+have to specify its form manually. To do so, we need to get the
+functions `h` and `j` associated to the current values of the enthalpy
+and the heat flux.
 
-Second, we must call the `initialize` method which initializes the functions associated with gradients, fluxes, external and internal state variables objects and the corresponding tangent blocks. All gradients and external state variables must have been registered before calling this method. In this case, we rely on the automatic registration of the temperature and its gradient.
+Second, we must call the `initialize` method which initializes the
+functions associated with gradients, fluxes, external and internal state
+variables objects and the corresponding tangent blocks. All gradients
+and external state variables must have been registered before calling
+this method. In this case, we rely on the automatic registration of the
+temperature and its gradient.
 
-Finally, to implement the $\theta$ time discretization scheme, we will also need to keep track of the enthalpy and heat flux values at the previous time step. We can simply define these new functions as deep copies of `h` and `j`. Doing so, `h_old` and `j_old` will also be Quadrature functions.
-
+Finally, to implement the $\theta$ time discretization scheme, we will
+also need to keep track of the enthalpy and heat flux values at the
+previous time step. We can simply define these new functions as deep
+copies of `h` and `j`. Doing so, `h_old` and `j_old` will also be
+Quadrature functions.
 
 ```python
 problem = mf.MFrontNonlinearProblem(T, material, quadrature_degree=2, bcs=bc)
@@ -271,7 +331,13 @@ h_old = h.copy(deepcopy=True)
 
 ## Residual definition and tangent form computation
 
-We are now ready to define the expression of the above residual. Note that we must use the integration measure `dx` associated with the `MFrontNonlinearProblem` containing the correct quadrature degree matching that of the various Quadrature functions. Finally, the tangent form can be automatically computed using the `compute_tangent_form` method from the residual expression and the structure of the different tangent blocks. 
+We are now ready to define the expression of the above residual. Note
+that we must use the integration measure `dx` associated with the
+`MFrontNonlinearProblem` containing the correct quadrature degree
+matching that of the various Quadrature functions. Finally, the tangent
+form can be automatically computed using the `compute_tangent_form`
+method from the residual expression and the structure of the different
+tangent blocks.
 
 
 ```python
@@ -285,8 +351,11 @@ problem.compute_tangent_form()
 
 ## Time-stepping loop and comparison with *code_Aster* results
 
-We now implement the time-stepping loop which simply solves the non-linear problem and update the fields corresponding to the values at the previous time step. We also load the values of the one-dimensional temperature field $T(x, t)$ given in the *code_Aster* test-case and compare them with what we obtain every second.
-
+We now implement the time-stepping loop which simply solves the
+non-linear problem and update the fields corresponding to the values at
+the previous time step. We also load the values of the one-dimensional
+temperature field $T(x, t)$ given in the *code_Aster* test-case and
+compare them with what we obtain every second.
 
 ```python
 cA_results = np.loadtxt("results_code_Aster.csv", delimiter=",")
@@ -316,7 +385,6 @@ for (t, delta_t) in zip(times[1:], np.diff(times)):
         plt.legend()
         plt.show()
 ```
-
 
     <IPython.core.display.Javascript object>
 
