@@ -33,6 +33,8 @@ order:
   transfer](mgis_fenics_nonlinear_heat_transfer.html)
 * [Stationnary non-linear heat transfer: 3D problem and performance
   comparisons](mgis_fenics_nonlinear_heat_transfer_3D.html)
+* [Transient heat equation with phase 
+  change](mgis_fenics_heat_equation_phase_change.html)
 * [Small-strain von Mises
   elastoplasticity](mgis_fenics_small_strain_elastoplasticity.html)
 * [Finite-strain elastoplasticity within the logarithmic strain
@@ -41,8 +43,6 @@ order:
   materials](mgis_fenics_multiphase_model.html)
 * [Phase-field approach to brittle
   fracture](mgis_fenics_phase_field.html)
-* [Transient heat equation with phase 
-  change](mgis_fenics_heat_equation_phase_change.html)
 
 # A brief overview of the `mgis.fenics` module
 
@@ -150,13 +150,10 @@ Its main methods are:
 
 By default, the nonlinear residual is assumed to take the following form: Find $u\in V$ such that:
 
-$$
-\begin{equation}
+\[
  \sum_{i=1}^p \int_{\Omega}\bsig_i(u)\cdot\delta\bg_i(v) \dx - L(v) = 0 \quad \forall v\in V 
-\tag{residual}
-\label{residual}
-\end{equation}
-$$
+\]{#eq:residual}
+
 
 where the $\bsig_i(u)$ are a set of **fluxes** as defined in the `MFront`
 behaviour using `@Flux` and $\bg_i$ are the corresponding set of
@@ -173,7 +170,7 @@ particular, evolution equations such as transient heat transfer cannot
 be expressed in this form. However, this is not a limitation since the
 residual can also be redefined explicitly by the user (see [Transient
 non-linear heat
-equation](demos/transient_nonlinear_heat_equation.html)).
+equation](mgis_fenics_nonlinear_heat_transfer.html)).
 
 Either for the default or a user-defined one, the tangent operator
 associated with the residual is computed automatically using either the
@@ -222,7 +219,7 @@ Two helper classes have been defined to handle flux and gradient objects:
 
 ### The registration concept
 
-Inspecting the default case $\eqref{residual}$, `MFront` provides access
+Inspecting the default case @eq:residual, `MFront` provides access
 to the flux names, shapes and values when performing the constitutive
 update and also to the corresponding gradient. The definition of the
 tangent operator blocks inside the `MFront` behaviour also gives access to
@@ -257,7 +254,7 @@ By default, the objective function $f(u)$ corresponds to the material
 total energy (stored + dissipated) computed from the
 `get_total_energy()` method. The optimisation problem requires the
 definition of the gradient $F(u)$ which, by default, corresponds to
-$\eqref{residual}$ and its jacobian which is computed as discussed
+@eq:residual and its jacobian which is computed as discussed
 before.
 
 # Current limitations
