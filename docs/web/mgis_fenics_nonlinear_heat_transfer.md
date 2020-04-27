@@ -1,6 +1,9 @@
 % Stationnary non-linear heat transfer
-% Jérémy Bleyer, Thomas Helfer
-% 17/04/2020
+> **Source files:**
+>
+> * Jupyter notebook: [mgis_fenics_nonlinear_heat_transfer.ipynb](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/mgis_fenics_nonlinear_heat_transfer.ipynb)
+> * Python file: [mgis_fenics_nonlinear_heat_transfer.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/mgis_fenics_nonlinear_heat_transfer.py)
+> * MFront behaviour file: [StationaryHeatTransfer.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/StationaryHeatTransfer.mfront)
 
 # Description of the non-linear constitutive heat transfer law
 
@@ -176,10 +179,9 @@ The computation of the tangent operator blocks is equally simple:
   ∂j∕∂ΔT  =  B ⋅ k ⋅ k ⋅ (∇T + Δ∇T);
 } // end of @TangentOperator 
 ```
+# `FEniCS` implementation
 
-# FEniCS implementation
-
-We consider a rectanglar domain with imposed temperatures `Tl` (resp. `Tr`) on the left (resp. right boundaries). We want to solve for the temperature field `T` inside the domain using a $P^1$-interpolation. We initialize the temperature at value `Tl` throughout the domain. We finally load the material library with a `plane_strain` hypothesis.
+We consider a rectanglar domain with imposed temperatures `Tl` (resp. `Tr`) on the left (resp. right) boundaries. We want to solve for the temperature field `T` inside the domain using a $P^1$-interpolation. We initialize the temperature at value `Tl` throughout the domain.
 
 
 ```python
@@ -206,45 +208,24 @@ T.interpolate(Constant(Tl))
 
 bc = [DirichletBC(V, Constant(Tl), left),
       DirichletBC(V, Constant(Tr), right)]
+```
 
-material = mf.MFrontNonlinearMaterial("../materials/src/libBehaviour.so",
+## Loading the material behaviour
+
+We use the `MFrontNonlinearMaterial` class for describing the material behaviour. The first argument corresponds to the path where material librairies have been compiled, the second correspond to the name of the behaviour (declared with `@Behaviour`). Finally, the modelling hypothesis is specified (default behaviour is `"3d"`).
+
+
+```python
+material = mf.MFrontNonlinearMaterial("./src/libBehaviour.so",
                                       "StationaryHeatTransfer",
                                       hypothesis="plane_strain")
 ```
 
-The MFront behaviour implicitly declares the temperature as an external
-state variable called `"Temperature"`. We must therefore associate this
-external state variable to a known mechanical field. This can be
-achieved explicitly using the `register_external_state_variable` method.
-In the present case, this can be donc automatically since the name of
-the unknown temperature field matches the [TFEL
-Glossary](http://tfel.sourceforge.net/glossary.html) name
-`"Temperature"`. In this case, the following message is printed:
+    Behaviour 'StationaryHeatTransfer' has not been found in './src/libBehaviour.so'.
+    Attempting to compile 'StationaryHeatTransfer.mfront' in './'...
 
-```
-Automatic registration of 'Temperature' as an external state variable.
-```
 
-For problems in which the temperature only acts as a parameter (no
-jacobian blocks with respect to the temperature), the temperature can be
-automatically registered as a constant value ($293.15 \text{ K}$ by
-default) or to any other (`dolfin.Constant` or `float`) value using the
-`register_external_state_variable` method.
-
-In the FEniCS interface, we instantiate the main mechanical unknown,
-here the temperature field `T` which has to be named `"Temperature"` in
-order to match MFront's predefined name. Using another name than this
-will later result in an error saying:
-
-```
-ValueError: 'Temperature' could not be associated with a registered gradient or a known state variable.
-```
-
-The MFront behaviour declares the field `"TemperatureGradient"` as a
-Gradient variable, with its associated Flux called `"HeatFlux"`. We can
-check that the `material` object retrieves MFront's gradient and flux
-names, as well as the different tangent operator blocks which have been
-defined, namely `dj_ddgT` and `dj_ddT` in the present case:
+The `MFront` behaviour declares the field `"TemperatureGradient"` as a Gradient variable, with its associated Flux called `"HeatFlux"`. We can check that the `material` object retrieves `MFront`'s gradient and flux names, as well as the different tangent operator blocks which have been defined, namely `dj_ddgT` and `dj_ddT` in the present case:
 
 
 ```python
@@ -258,43 +239,35 @@ print(["d{}_d{}".format(*t) for t in material.get_tangent_block_names()])
     ['dHeatFlux_dTemperatureGradient', 'dHeatFlux_dTemperature']
 
 
-When defining the non-linear problem, we will specify the boundary
-conditions and the requested quadrature degree which will control the
-number of quadrature points used in each cell to compute the non-linear
-constitutive law. Here, we specify a quadrature of degree 2 (i.e. 3
-Gauss points for a triangular element). Finally, we need to associate to
-MFront gradient object the corresponding UFL expression as a function of
-the unknown field `T`. To do so, we use the `register_gradient` method
-linking MFront `"TemperatureGradient"` object to the UFL expression
-`grad(T)`. Doing so, the corresponding non-linear variational problem
-will be automatically be built:
+## Non-linear problem definition
 
-\begin{equation}
-F(\widehat{T}) = \int_\Omega \mathbf{j}\cdot \nabla \widehat{T} \text{dx} = 0 \quad \forall \widehat{T}
-\end{equation}
+When defining the non-linear problem, we will specify the boundary conditions and the requested quadrature degree which will control the number of quadrature points used in each cell to compute the non-linear constitutive law. Here, we specify a quadrature of degree 2 (i.e. 3 Gauss points for a triangular element). 
 
 
 ```python
 problem = mf.MFrontNonlinearProblem(T, material, quadrature_degree=2, bcs=bc)
+```
+
+## Variable registration
+
+The `MFront` behaviour implicitly declares the temperature as an external state variable called `"Temperature"`. We must therefore associate this external state variable to a known mechanical field. This can be achieved explicitly using the `register_external_state_variable` method. In the present case, this can be done automatically since the name of the unknown temperature field matches the [TFEL Glossary](http://tfel.sourceforge.net/glossary.html) name `"Temperature"` which is a predefined external state variable. In this case, the following message will be printed:
+```
+Automatic registration of 'Temperature' as an external state variable.
+```
+For problems in which the temperature only acts as a parameter (no jacobian blocks with respect to the temperature), the temperature can be automatically registered as a constant value ($293.15 \text{ K}$ by default) or to any other (`dolfin.Constant`, `float` or `dolfin.Function`) value using the `register_external_state_variable` method.
+
+In the `FEniCS` interface, we instantiate the main mechanical unknown, here the temperature field `T` which has to be named `"Temperature"` in order to match `MFront`'s predefined name. Using another name than this will later result in an error saying:
+```
+ValueError: 'Temperature' could not be associated with a registered gradient or a known state variable.
+```
+Finally, we need to associate to `MFront` gradient object the corresponding UFL expression as a function of the unknown field `T`. To do so, we use the `register_gradient` method linking `MFront` `"TemperatureGradient"` object to the UFL expression `grad(T)`.
+
+
+```python
 problem.register_gradient("TemperatureGradient", grad(T))
 ```
 
-From the two tangent operator blocks `dj_ddgT` and `dj_ddT`, it will
-automatically be deduced that the heat flux $\mathbf{j}$ is a function
-of both the temperature gradient $\mathbf{g}=\nabla T$ and the
-temperature itself i.e. $\mathbf{j}=\mathbf{j}(\mathbf{g}, T)$. The
-following tangent bilinear form will therefore be used when solving the
-above non-linear problem:
-
-\begin{equation}
-J(\widehat{T},T^*) = \int_{\Omega} \nabla \widehat{T}\cdot\left(\dfrac{\partial \mathbf{j}}{\partial \mathbf{g}}\cdot \nabla T^*+\dfrac{\partial \mathbf{j}}{\partial T}\cdot T^*\right) \text{dx}
-\end{equation}
-
-Similarly to the case of external state variables, common gradient
-expressions for some [TFEL
-Glossary](http://tfel.sourceforge.net/glossary.html) names have been
-already predefined which avoid calling explicitly the
-`register_gradient` method. Predefined expressions can be obtained from:
+Similarly to the case of external state variables, common gradient expressions for some [TFEL Glossary](http://tfel.sourceforge.net/glossary.html) names have been already predefined which avoid calling explicitly the `register_gradient` method. Predefined expressions can be obtained from:
 
 
 ```python
@@ -309,20 +282,26 @@ mf.list_predefined_gradients()
     
 
 
-We can see that the name `"Temperature Gradient"` is in fact a
-predefined gradient. Omitting calling the `register_gradient` method
-will in this case print the following message upon calling `solve`:
-
+We can see that the name `"Temperature Gradient"` is in fact a predefined gradient. Omitting calling the `register_gradient` method will in this case print the following message upon calling `solve`:
 ```
 Automatic registration of 'TemperatureGradient' as grad(Temperature).
 ```
+meaning that a predefined gradient name has been found and registered as the UFL expression $\nabla T$. 
+> Note that automatic registration is not supported when using mixed function spaces.
 
-meaning that a predefined gradient name has been found and registered as
-the UFL expression $\nabla T$.
+## Problem resolution
+No external loading has been specified so that the residual form is automatically defined as:
+\begin{equation}
+F(\widehat{T}) = \int_\Omega \mathbf{j}\cdot \nabla \widehat{T} \text{dx} = 0 \quad \forall \widehat{T}
+\end{equation}
 
-We finally solve the non-linear problem using a default Newton
-non-linear solver. The `solve` method returns the number of Newton
-iterations (4 in the present case) and converged status .
+From the two tangent operator blocks `dj_ddgT` and `dj_ddT`, it will automatically be deduced that the heat flux $\mathbf{j}$ is a function of both the temperature gradient $\mathbf{g}=\nabla T$ and the temperature itself i.e. $\mathbf{j}=\mathbf{j}(\mathbf{g}, T)$. The following tangent bilinear form will therefore be used  when solving the above non-linear problem:
+
+\begin{equation}
+a_\text{tangent}(\widehat{T},T^*) = \int_{\Omega} \nabla \widehat{T}\cdot\left(\dfrac{\partial \mathbf{j}}{\partial \mathbf{g}}\cdot \nabla T^*+\dfrac{\partial \mathbf{j}}{\partial T}\cdot T^*\right) \text{dx}
+\end{equation}
+
+We finally solve the non-linear problem using a default Newton non-linear solver. The `solve` method returns the number of Newton iterations (4 in the present case) and converged status .
 
 
 ```python
@@ -340,7 +319,7 @@ problem.solve(T.vector())
 
 
 
-We finally check that the thermal conductivity coefficient $k$, computed from the ratio between the horizontal heat flux and temperature gradient matches the temperature-dependent expressions implemented in the MFront behaviour.
+We finally check that the thermal conductivity coefficient $k$, computed from the ratio between the horizontal heat flux and temperature gradient matches the temperature-dependent expressions implemented in the `MFront` behaviour.
 
 
 ```python

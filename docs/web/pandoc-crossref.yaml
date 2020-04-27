@@ -1,0 +1,11 @@
+figureTitle: "Figure"
+tableTitle: "Table"
+figPrefixTemplate: "$$i$$"
+tabPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+loftitle: "# List of figures"
+lotTitle: "# List of tables"
+listings: True
+reference-section-title: References
+link-citations: True

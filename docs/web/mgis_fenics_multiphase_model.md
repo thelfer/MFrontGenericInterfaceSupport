@@ -1,3 +1,10 @@
+% Multiphase model for fiber-reinforced materials
+> **Source files:**
+>
+> * Jupyter notebook: [mgis_fenics_multiphase_model.ipynb](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/multiphase_model/mgis_fenics_multiphase_model.ipynb)
+> * Python file: [mgis_fenics_multiphase_model.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/multiphase_model/mgis_fenics_multiphase_model.py)
+> * MFront behaviour file: [MultiphaseModel.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/multiphase_model/MultiphaseModel.mfront)
+
 $\newcommand{\bsig}{\boldsymbol{\sigma}}
 \newcommand{\beps}{\boldsymbol{\varepsilon}}
 \newcommand{\bkappa}{\boldsymbol{\kappa}}
@@ -12,20 +19,17 @@ $\newcommand{\bsig}{\boldsymbol{\sigma}}
 \newcommand{\div}{\operatorname{div}}
 \newcommand{\jump}[1]{[\![#1]\!]}
 \newcommand{\avg}[1]{\left\langle#1\right\rangle}$
+This demo explores the full capability of `MFront`'s recent extension to handling generalized behaviours, namely involving different pairs of fluxes and gradients, as well as `FEniCS` versatility to solve generic PDEs.
 
+This will be illustrated on a generalized continuum model called *multiphase model* in the context of fiber-reinforced materials [@bleyer2018multiphase].
 
-# Multiphase model for fiber-reinforced materials
+# A quick primer on the multiphase model
 
-
-This demo explores the full capability of MFront's recent extension to handling generalized behaviours, namely involving different pairs of fluxes and gradients, as well as FEniCS versatility to solve generic PDEs.
-
-This will be illustrated on a generalized continuum model called *multiphase model* in the context of fiber-reinforced materials <cite data-cite="bleyer2018multiphase">(Bleyer, 2018)</cite>.
-
-## A quick primer on the multiphase model
+<img src="multiphase_kinematics.svg" width="500">
 
 The multiphase model is a higher-grade (i.e. with enhanced kinematics) generalized continuum which represents a biphasic material (the main application being fiber-reinforced materials) by a superposition of two phases (say *matrix* and *fiber* phases), each possessing their own kinematics and in mutual interaction. Each phase kinematics is described by a displacement field $\bU^1$ and $\bU^2$ for the matrix and fiber phase respectively.
 
-In the present case, each phase is a standard Cauchy continuum but other variants, including fiber bending effects for instance, exist, see <cite data-cite="debuhan2017elastic">(de Buhan et al., 2017)</cite> for more details.
+In the present case, each phase is a standard Cauchy continuum but other variants, including fiber bending effects for instance, exist, see [@debuhan2017elastic] for more details.
 
 * **Generalized strains**: infinitesimal strain in each phase $\beps^j=\nabla^s \bU^j$ and relative displacement between both phases $\bV = \bU^2-\bU^1$
 
@@ -64,9 +68,9 @@ which will be particularized for the present demo to the following *elastic beha
 \end{align*}
 in which $\DD^{ij}$ are partial stiffness tensors and $\kappa$ can be seen as an interaction stiffness between both phases.
 
-## MFront implementation
+# `MFront` implementation
 
-The MFront implementation expands upon the detailed MFront implementation of the [stationnary heat transfer demo](nonlinear_heat_transfer.html). Again, the  `DefaultGenericBehaviour` is used here and specify that the following implementation will only handle the 2D plane strain case.
+The `MFront` implementation expands upon the detailed `MFront` implementation of the [stationnary heat transfer demo](https://thelfer.github.io/mgis/web/mgis_fenics_nonlinear_heat_transfer.html). Again, the  `DefaultGenericBehaviour` is used here and specify that the following implementation will only handle the 2D plane strain case.
 ``` cpp
 @DSL DefaultGenericBehaviour;
 @Behaviour MultiphaseModel;
@@ -76,6 +80,7 @@ The MFront implementation expands upon the detailed MFront implementation of the
 @ModellingHypotheses {PlaneStrain};
 ```
 
+## Flux/Gradient dual pairs
 The three pairs of generalized flux/gradient of the multiphase model are then defined, namely $(\bsig^1,\beps^1)$, $(\bsig^2,\beps^2)$ and $(\bI,\bV)$: 
 
 ```cpp
@@ -89,24 +94,19 @@ e₂.setEntryName("FiberStrain");
 @Flux StressStensor σ₂;
 σ₂.setEntryName("FiberStress");
 
-@Gradient Stensor V;
+@Gradient TVector V;
 V.setEntryName("RelativeDisplacement");
-@Flux Stensor I;
+@Flux TVector I;
 I.setEntryName("InteractionForce");
 ```
-Note that $\bI$ and $\bV$ should normally be declared as vectors whereas here they have been declared as symmetric tensors. This has been done due to the current (version <= 3.4) MFront limitation of handling derivatives of tensors with respect to vectors (and vice versa). We therefore made the choice of representing both $\bI$ and $\bV$ as tensorial variables, the diagonal of which corresponding to the original vector, so that all gradient and fluxes are tensors.
 
 We now declare the various tangent operator blocks which will be needed to express the generalized tangent operator. Of the nine possible blocks, only 5 are needed here since the partial stresses do not depend on the relative displacement and, similarly, the interaction force does not depend on the phase strains:
 
 ```cpp
-@TangentOperatorBlock ∂σ₁∕∂Δe₁;
-@AdditionalTangentOperatorBlock ∂σ₁∕∂Δe₂;
-@AdditionalTangentOperatorBlock ∂σ₂∕∂Δe₁;
-@AdditionalTangentOperatorBlock ∂σ₂∕∂Δe₂;
-@AdditionalTangentOperatorBlock ∂I∕∂ΔV;
+@TangentOperatorBlocks{∂σ₁∕∂Δe₁,∂σ₁∕∂Δe₂,∂σ₂∕∂Δe₁,∂σ₂∕∂Δe₂,∂I∕∂ΔV};
 ```
 
-### Defining material properties
+## Defining material properties
 We consider the case of a 2D plane strain bilayered material made of isotropic materials for both the matrix and fiber phases. In addition to the four material constants need for both constituents, the volume fraction of both phases (here we ask for the volume fraction $\rho$ of the fiber phase) and the size $s$ of the material unit cell (i.e. the spacing between two consecutive matrix layers for instance) are the two other parameters characterizing the multiphase elastic model.
 
 ```cpp
@@ -124,7 +124,9 @@ nu2.setEntryName("FiberPoissonRatio");
 s.setEntryName("Size");
 ```
 
-It has been shown in <cite data-cite="bleyer2018multiphase">(Bleyer, 2018)</cite> that, for materials made of two constituents, the partial stiffness tensors $\DD^{ij}$ can be expressed as functions of the material individual stiffness $\CC^1,\CC^2$ and the macroscopic stiffness $\CC^{hom}$ of the composite (obtained from classical homogenization theory) as follows:
+## Generalized elastic behaviour
+
+It has been shown in [@bleyer2018multiphase] that, for materials made of two constituents, the partial stiffness tensors $\DD^{ij}$ can be expressed as functions of the material individual stiffness $\CC^1,\CC^2$ and the macroscopic stiffness $\CC^{hom}$ of the composite (obtained from classical homogenization theory) as follows:
 
 \begin{align*}
 \DD^{11} &= \phi_1\CC^1-\CC^1:\jump{\CC}^{-1}:\Delta\CC:\jump{\CC}^{-1}:\CC^1\\ 
@@ -135,7 +137,7 @@ It has been shown in <cite data-cite="bleyer2018multiphase">(Bleyer, 2018)</cite
 
 with $\phi_1=1-\rho$, $\phi_2 = \rho$ are the phases volume fractions, $\jump{\CC}=\CC^2-\CC^1$ and $\Delta\CC = \phi_1\CC^1+\phi_2\CC^2-\CC^{hom}$. They satisfy the following property $\DD^{11}+\DD^{22}+\DD^{12}+(\DD^{21})\T=\CC^{hom}$.
 
-In the present case of a 2D bilayered material made of isotropic constituents, the macroscopic stiffness is given by <cite data-cite="debuhan2017elastic">(de Buhan et al., 2017)</cite>:
+In the present case of a 2D bilayered material made of isotropic constituents, the macroscopic stiffness is given by [@debuhan2017elastic]:
 
 \begin{equation}
 \CC^{hom} = \begin{bmatrix}
@@ -148,7 +150,7 @@ In the present case of a 2D bilayered material made of isotropic constituents, t
 
 where $\avg{\star}=\phi_1\star_1+\phi_2\star_2$ denotes the averaging operator and $E_\text{oe}=\lambda+2\mu$ is the oedometric modulus.
 
-As regards the interaction stiffness tensor, it is obtained from the resolution of an auxiliary homogenization problem formulated on the heterogeneous material unit cell. In the present case, one obtains <cite data-cite="bleyer2018multiphase">(Bleyer, 2018)</cite>:
+As regards the interaction stiffness tensor, it is obtained from the resolution of an auxiliary homogenization problem formulated on the heterogeneous material unit cell. In the present case, one obtains [@bleyer2018multiphase]:
 
 \begin{equation}
 \bkappa = \begin{bmatrix}
@@ -202,19 +204,18 @@ These relations are all implemented in the behaviour `@Integrator` which also de
 
   const auto κʰ = 12/iμ/s/s; // horizontal interaction stiffness
   const auto κᵛ = 12/iEₒₑ/s/s; // vertical interaction stiffness
-  const Stensor4 κ = {
-      κʰ, 0., 0., 0., //
-      0., κᵛ, 0., 0., //
-      0., 0., 0., 0., //
-      0., 0., 0., 0.
+  const tmatrix<N, N, real> κ = {
+      κʰ, 0., 
+      0., κᵛ
   };
   ∂I∕∂ΔV = κ;
   I = κ ⋅ (V + ΔV);
 }
 ```
-Let us finally remark that since $\bI$ and $\bV$ have been represented by second-order tensors, the stiffness interaction tensor $\bkappa$ is itself represented as a fourth-order tensor, with only its first two diagonal components which are useful.
 
-## FEniCS implementation
+# `FEniCS` implementation
+
+## Geometry and generalized boundary conditions
 
 We consider a rectangular domain with a standard $P_1$ Lagrange interpolation for both displacement fields $\bU^1,\bU^2$. The total mixed function space `V` is therefore made of two vectorial $P_1$ Lagrange elementary spaces. The same boundary conditions will be applied for both phases: fixed vertical displacement on the bottom boundary, imposed vertical displacement on the top boundary and fixed horizontal displacement on the left boundary. The considered problem corresponds to the pure compression of a multilayered block, an example treated in the previously mentioned references.
 
@@ -256,11 +257,11 @@ bc = [DirichletBC(V.sub(0).sub(0), Constant(0), left),
 
 facets = MeshFunction("size_t", mesh, 1)
 ds = Measure("ds", subdomain_data=facets)
-
-
 ```
 
-After having defined the `MFrontNonlinearMaterial` and `MFrontNonlinearProblem` instances, one must register the UFL expression of the gradients defined in the MFront file since, in this case, automatic registration is not available for this specific model. The matrix (resp. fiber) strains $\beps^1$ (resp. $\beps^2$) is simply given by `sym(grad(u1))` (resp. `sym(grad(u2))`) whereas the relative displacement $\bV$ should be `u2-u1`. Again, since $\bV$ has been represented as a tensor on the MFront side, we register it as `ufl.diag(u2-u1)` i.e. a tensor whose diagonal is `u2-u1`:
+## Generalized gradients registration
+
+After having defined the `MFrontNonlinearMaterial` and `MFrontNonlinearProblem` instances, one must register the UFL expression of the gradients defined in the MFront file since, in this case, automatic registration is not available for this specific model. The matrix (resp. fiber) strains $\beps^1$ (resp. $\beps^2$) is simply given by `sym(grad(u1))` (resp. `sym(grad(u2))`) whereas the relative displacement $\bV$ is the vector `u2-u1`:
 
 
 ```python
@@ -271,7 +272,7 @@ mat_prop = {"MatrixYoungModulus": 10.,
             "FiberVolumeFraction": 0.01,
             "Size": 1/20.}
 
-material = mf.MFrontNonlinearMaterial("../materials/src/libBehaviour.so",
+material = mf.MFrontNonlinearMaterial("./src/libBehaviour.so",
                                       "MultiphaseModel",
                                       hypothesis="plane_strain",
                                       material_properties=mat_prop)
@@ -279,7 +280,7 @@ material = mf.MFrontNonlinearMaterial("../materials/src/libBehaviour.so",
 problem = mf.MFrontNonlinearProblem(u, material, quadrature_degree=0, bcs=bc)
 problem.register_gradient("MatrixStrain", sym(grad(u1)))
 problem.register_gradient("FiberStrain", sym(grad(u2)))
-problem.register_gradient("RelativeDisplacement", diag(u2-u1))
+problem.register_gradient("RelativeDisplacement", u2-u1)
 
 problem.solve(u.vector())
 ```
@@ -295,7 +296,9 @@ problem.solve(u.vector())
 
 
 
-We compare the horizontal displacements in both phases with respect to known analytical solutions for this problem in the case of very stiff inclusions $E_2 \gg E_1$ in small volume fraction $\eta \ll 1$ (see <cite data-cite="debuhan2017elastic">de Buhan et al., 2017</cite>). Note that the more complete solution for the general case can be found in  <cite data-cite="bleyer2018multiphase">(Bleyer, 2018)</cite>.
+## Comparison with an analytical solution
+
+We compare the horizontal displacements in both phases with respect to known analytical solutions for this problem in the case of very stiff inclusions $E_2 \gg E_1$ in small volume fraction $\eta \ll 1$ (see  [@debuhan2017elastic]). Note that the more complete solution for the general case can be found in   [@bleyer2018multiphase].
 
 
 ```python

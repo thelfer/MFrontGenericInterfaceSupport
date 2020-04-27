@@ -19,6 +19,8 @@ concepts underlying the module implementation.
 
 # Documented demos
 
+> **Repository**: a repository containing the demos sources files is [available here](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos)
+
 The provided documented demos have been designed to progressively
 illustrate the use of the interface and the versatility of the approach
 when implementing complex generalized behaviours, both on the `MFront`
@@ -37,8 +39,8 @@ order:
   materials](mgis_fenics_multiphase_model.html)
 * [Phase-field approach to brittle
   fracture](mgis_fenics_phase_field.html)
-* [Transient non-linear heat
-  equation](mgis_fenics_transient_nonlinear_heat_equation.html)
+* [Transient heat equation with phase 
+  change](mgis_fenics_heat_equation_phase_change.html)
 
 # A brief overview of the `mgis.fenics` module
 
@@ -161,6 +163,8 @@ By default, the objective function $f(u)$ corresponds to the material total ener
 ## Current limitations
 
 The module has been developed using FEniCS version 2019.1.0. An important reimplementation will be planned once the [`dolfinx` project](https://github.com/FEniCS/dolfinx) will officially release a stable version. In particular, it will aim at fixing the following current limitations:
+
+* Quadrature elements cannot be used with quadrilateral or hexahedral mesh cells
 
 * the constitutive update is performed before any assembly procedure of the tangent and residual forms. This adds an extra cost of looping over quadrature points and, more importantly, an important memory cost since all tangent blocks at all quadrature points must be saved. The `dolfinx` project should offer the possibity of using custom assemblers in which constitutive integration should be possible at the local assembly level
 
