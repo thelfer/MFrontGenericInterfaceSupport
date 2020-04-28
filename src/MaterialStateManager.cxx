@@ -436,6 +436,8 @@ namespace mgis {
       update_span(o.gradients, i.gradients);
       update_span(o.thermodynamic_forces, i.thermodynamic_forces);
       update_span(o.internal_state_variables, i.internal_state_variables);
+      update_span(o.stored_energies, i.stored_energies);
+      update_span(o.dissipated_energies, i.dissipated_energies);
       auto pmp = o.material_properties.begin();
       while (pmp != o.material_properties.end()) {
         if (i.material_properties.count(pmp->first) == 0) {
@@ -457,7 +459,7 @@ namespace mgis {
       }
       for (const auto& ev : i.external_state_variables) {
         update_field_holder(o.external_state_variables[ev.first], ev.second);
-        }
+      }
     }  // end of update_values
 
   }  // end of namespace behaviour
