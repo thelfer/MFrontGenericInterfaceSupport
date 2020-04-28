@@ -226,7 +226,7 @@ Finally, we compute the internal stored energy using `@InternalEnergy`:
 ```cpp
 @InternalEnergy {
   const auto gᵈ = ((1 - d) ⋅ (1 - d)) + kres;
-  Psi_s += gᵈ ⋅ Ψ₊;
+  Psi_s = gᵈ ⋅ Ψ₊;
 }
 ```
 
@@ -302,7 +302,7 @@ Finally, the integrator writes the linear behaviour and defines the expressions 
 }
 
 @DissipatedEnergy{
-Psi_d += Gc/2/l₀*(d*d + l₀*l₀*(g|g));
+Psi_d = Gc/2/l₀*(d*d + l₀*l₀*(g|g));
 }
 ```
 
