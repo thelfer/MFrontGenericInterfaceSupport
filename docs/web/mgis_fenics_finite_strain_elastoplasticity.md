@@ -83,8 +83,7 @@ H0.setEntryName("HardeningSlope");
 We define a box mesh representing half of a beam oriented along the $x$-direction. The beam will be fully clamped on its left side and symmetry conditions will be imposed on its right extremity. The loading consists of a uniform self-weight.
 
 
-<img src="finite_strain_plasticity_solution.png" width="500">
-
+![](img/finite_strain_plasticity_solution.png){width=75%}
 
 
 ```python
