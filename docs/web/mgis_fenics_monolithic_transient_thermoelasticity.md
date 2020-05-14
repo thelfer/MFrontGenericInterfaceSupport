@@ -1,14 +1,43 @@
-% Monolithic transient thermo-elasticity
+---
+title: Monolithic transient thermo-elasticity
+author:
+  - Jérémy Bleyer
+  - Thomas Helfer
+date: 2020
+lang: en-EN
+numbersections: true
+toc: true
+from: markdown+tex_math_single_backslash
+table-of-contents: true
+geometry: margin=2cm
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+highlight-style: tango
+bibliography: bibliography.bib
+monofont: DejaVuSansMono.ttf 
+mathfont: texgyredejavu-math.otf
+---
+
+\newcommand{\bsig}{\boldsymbol{\sigma}}
+\newcommand{\beps}{\boldsymbol{\varepsilon}}
+\newcommand{\bj}{\mathbf{j}}
+
+This demo is a direct transposition of the [transient thermo-elasticity
+demo](https://comet-fenics.readthedocs.io/en/latest/demo/thermoelasticity/thermoelasticity_transient.html)
+using a pure `FEniCS` formulation. We will show how to compute fully
+coupled thermo-mechanical problems using `MFront`, which can pave the
+way to more complex thermo-mechanical behaviours including plasticity
+for instance.
+
 > **Source files:**
 >
 > * Jupyter notebook: [mgis_fenics_monolithic_transient_thermoelasticity.ipynb](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/transient_thermoelasticity/mgis_fenics_monolithic_transient_thermoelasticity.ipynb)
 > * Python file: [mgis_fenics_monolithic_transient_thermoelasticity.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/transient_thermoelasticity/mgis_fenics_monolithic_transient_thermoelasticity.py)
 > * MFront behaviour file: [ThermoElasticity.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/transient_thermoelasticity/ThermoElasticity.mfront)
-$\newcommand{\bsig}{\boldsymbol{\sigma}}
-\newcommand{\beps}{\boldsymbol{\varepsilon}}
-\newcommand{\bj}{\mathbf{j}}$
-
-This demo is a direct transposition of the [transient thermo-elasticity demo](https://comet-fenics.readthedocs.io/en/latest/demo/thermoelasticity/thermoelasticity_transient.html) using a pure `FEniCS` formulation. We will show how to compute fully coupled thermo-mechanical problems using `MFront`, which can pave the way to more complex thermo-mechanical behaviours including plasticity for instance.
 
 # Constitutive equations
 
@@ -25,11 +54,11 @@ $$
 
 where:
 
--   $\lambda$ and $\mu$ are the Lamé coefficients
--   $\rho$ is the mass density
--   $\alpha$ is mean linear thermal expansion coefficient
--   $C_{\varepsilon}$ is the specific heat at constant strain (per unit
-    of mass).
+- $\lambda$ and $\mu$ are the Lamé coefficients
+- $\rho$ is the mass density
+- $\alpha$ is mean linear thermal expansion coefficient
+- $C_{\varepsilon}$ is the specific heat at constant strain (per unit
+  of mass).
 
 This expression leads to the following expressions of the stress tensor
 $\bsig$ and entropy per unit of mass $s$:
@@ -39,7 +68,8 @@ $$
 \bsig&=\rho \dfrac{\partial \Phi}{\partial \beps^{\mathrm{to}}}=\lambda\,{\mathrm{tr}{\left(\beps^{\mathrm{to}}\right)}}\,\mathbf{I}+2\,\mu\,\beps^{\mathrm{to}}-\kappa\,{\left(T-T^{\mathrm{ref}}\right)}\,\mathbf{I}\\
 s&={\displaystyle \frac{\displaystyle \partial \Phi}{\displaystyle \partial T}}={{\displaystyle \frac{\displaystyle C_{\varepsilon}}{\displaystyle T^{\mathrm{ref}}}}}\,{\left(T-T^{\mathrm{ref}}\right)}+{{\displaystyle \frac{\displaystyle \kappa}{\displaystyle \rho}}}\,{\mathrm{tr}{\left(\beps^{\mathrm{to}}\right)}}\\
 \end{aligned}
-\tag{1}\label{eq:constitutive_equations}$$
+\tag{1}
+$${#eq:constitutive_equations}
 
 where $\kappa=\alpha\,{\left(3\,\lambda+2\,\mu\right)}$.
 
@@ -48,18 +78,17 @@ $\nabla\, T$ by the linear Fourier law:
 
 $$
 \bj=-k\,\nabla\, T
-\tag{2}\label{eq:constitutive_equations_2}$$
-
+\tag{2}
+$${#eq:constitutive_equations_2}
 
 # `MFront` implementation
 
 ## Choice of the domain specific language
 
-The constitutive equations $\eqref{eq:constitutive_equations}$ and  $\eqref{eq:constitutive_equations_2}$ exhibit an explicit expression 
-of the thermodynamic forces
-${\left(\bsig\, \bj, s\right)}$ as a function of the
-gradients
-${\left(\beps^{\mathrm{to}}, \nabla T, T\right)}$.
+The constitutive equations @eq:constitutive_equations
+and @eq:constitutive_equations_2 exhibit an explicit expression of the
+thermodynamic forces ${\left(\bsig\, \bj, s\right)}$ as a function of
+the gradients ${\left(\beps^{\mathrm{to}}, \nabla T, T\right)}$.
 
 The most suitable domain specific language for this kind of behaviour if
 the `DefaultGenericBehaviour`.
@@ -147,7 +176,7 @@ In this case, this is not appropriate as:
 -   some derivatives are known to be null, such as
     ${\displaystyle \frac{\displaystyle \partial \bsig}{\displaystyle \partial \Delta\,\nabla\,T}}$
     and
-    ${\displaystyle \frac{\displaystyle \partial \bj}{\displaystyle \partial \Delta\,\beps^{\mathrm{to}}}}$[1].
+    ${\displaystyle \frac{\displaystyle \partial \bj}{\displaystyle \partial \Delta\,\beps^{\mathrm{to}}}}$.
 -   the derivative
     ${\displaystyle \frac{\displaystyle \partial s}{\displaystyle \partial \Delta\,\beps^{\mathrm{to}}}}$
     of the entropy with respect to strain and the derivative
@@ -220,7 +249,8 @@ follows:
 ```
 
 The computation of the thermodynamic forces is then straightforward and
-closely looks like the constitutive equations $\eqref{eq:constitutive_equations}$ and $\eqref{eq:constitutive_equations_2}$:
+closely looks like the constitutive equations @eq:constitutive_equations
+and @eq:constitutive_equations_2:
 
 ``` cxx
   σ = λ ⋅ trace(ε) ⋅ I₂ + 2 ⋅ μ ⋅ ε - κ ⋅ (T + ΔT - Tʳᵉᶠ) ⋅ I₂;
@@ -258,7 +288,15 @@ type used, which depends on the interface used.
 
 ## Problem position
 
-The problem consists of a quarter of a square plate perforated by a circular hole. A temperature increase of $\Delta T=+10^{\circ}\text{C}$ will be applied on the hole boundary. Symmetry conditions are applied on the corresponding symmetry planes and stress and flux-free boundary conditions are adopted on the plate outer boundary. Similarly to the [original demo](https://comet-fenics.readthedocs.io/en/latest/demo/thermoelasticity/thermoelasticity_transient.html), we will formulate the problem using the temperature variation as the main unknown.
+The problem consists of a quarter of a square plate perforated by a
+circular hole. A temperature increase of $\Delta T=+10^{\circ}\text{C}$
+will be applied on the hole boundary. Symmetry conditions are applied on
+the corresponding symmetry planes and stress and flux-free boundary
+conditions are adopted on the plate outer boundary. Similarly to the
+[original
+demo](https://comet-fenics.readthedocs.io/en/latest/demo/thermoelasticity/thermoelasticity_transient.html),
+we will formulate the problem using the temperature variation as the
+main unknown.
 
 We first import the relevant modules then define the mesh and some constants.
 
@@ -283,7 +321,11 @@ DThole = Constant(10.0)
 dt = Constant(0)  # time step
 ```
 
-We now define the relevant FunctionSpace for the considered problem. Since we will adopt a monolithic approach i.e. in which both fields are coupled and solved at the same time, we will need to resort to a Mixed FunctionSpace for both the displacement $\boldsymbol{u}$ and the temperature variation $\Theta = T-T^\text{ref}$.
+We now define the relevant FunctionSpace for the considered problem.
+Since we will adopt a monolithic approach i.e. in which both fields are
+coupled and solved at the same time, we will need to resort to a Mixed
+FunctionSpace for both the displacement $\boldsymbol{u}$ and the
+temperature variation $\Theta = T-T^\text{ref}$.
 
 
 ```python
@@ -311,39 +353,56 @@ bcs = [DirichletBC(V.sub(0).sub(1), Constant(0.0), bottom),
 
 ## Variational formulation and time discretization
 
-The constitutive equations described earlier are completed by the quasi-static equilibrium equation:
+The constitutive equations described earlier are completed by the
+quasi-static equilibrium equation:
 
-$$\begin{equation}
+$$
 \text{div} \bsig = 0
-\end{equation}$$
+$$
 
 and the transient heat equation (without source terms):
 
-$$\begin{equation}
+$$
 \rho T^\text{ref} \dfrac{\partial s}{\partial t} + \text{div} \bj= 0
-\end{equation}$$
+$$
 
 which can both be written in the following weak form:
 
-$$\begin{align}
+$$
+\begin{aligned}
 \int_{\Omega}\bsig :\nabla^s\widehat{\boldsymbol{u}}\text{ d} \Omega &=\int_{\partial \Omega} (\bsig\cdot\boldsymbol{n})\cdot\widehat{\boldsymbol{u}} dS \quad \forall \widehat{\boldsymbol{u}}\in V_U \\
 \int_{\Omega}\rho T^\text{ref} \dfrac{\partial s}{\partial t}\widehat{T}d\Omega - \int_{\Omega} \bj\cdot\nabla \widehat{T}d\Omega &= -\int_{\partial \Omega} \bj\cdot\boldsymbol{n} \widehat{T} dS \quad \forall \widehat{T} \in V_T
-\end{align} \tag{3}\label{eq:coupled-system}$$
+\end{aligned} \tag{3}
+$${#eq:coupled-system}
 
 with $V_U$ and $V_T$ being the displacement and temperature function spaces.
 
-The time derivative in the heat equation is now replaced by an implicit Euler scheme, so that the previous weak form at the time increment $n+1$ is now:
+The time derivative in the heat equation is now replaced by an implicit
+Euler scheme, so that the previous weak form at the time increment $n+1$
+is now:
 
-$$\begin{equation}
+$$
 \int_{\Omega}\rho T^\text{ref} \dfrac{s^{n+1}-s^n}{\Delta t}\widehat{T}d\Omega - \int_{\Omega} \bj^{n+1}\cdot\nabla \widehat{T}d\Omega = -\int_{\partial \Omega} \bj^{n+1}\cdot\boldsymbol{n} \widehat{T} dS \quad \forall \widehat{T} \in V_T
-\end{equation}$$
+$$
 
-where $s^{n+1},\bj^{n+1}$ correspond to the *unknown* entropy and heat flux at time $t_{n+1}$.
+where $s^{n+1},\bj^{n+1}$ correspond to the *unknown* entropy and heat
+flux at time $t_{n+1}$.
 
-Since both the entropy and the stress tensor depend on the temperature and the total strain, we obtain a fully coupled problem at $t=t_{n+1}$ for $(\boldsymbol{u}_{n+1},T_{n+1})\in V_U\times V_T$. With the retained boundary conditions both right-hand sides in $\eqref{eq:coupled-system}$.
+Since both the entropy and the stress tensor depend on the temperature
+and the total strain, we obtain a fully coupled problem at $t=t_{n+1}$
+for $(\boldsymbol{u}_{n+1},T_{n+1})\in V_U\times V_T$. With the retained
+boundary conditions both right-hand sides in
+@eq:coupled-system.
 
-We now load the material behaviour and define the corresponding `MFrontNonlinearProblem`. One notable specificity of the present example is that the unknown field `v` belongs to a mixed function space. Therefore, we cannot rely on automatic registration for the strain and temperature gradient. We will have to specify explicitly their UFL expression with respect to the displacement `u` and temperature variation `Theta` sub-functions of the mixed unknown `v`. We also register the `"Temperature"` external state variable with respect to `Theta`.
-
+We now load the material behaviour and define the corresponding
+`MFrontNonlinearProblem`. One notable specificity of the present example
+is that the unknown field `v` belongs to a mixed function space.
+Therefore, we cannot rely on automatic registration for the strain and
+temperature gradient. We will have to specify explicitly their UFL
+expression with respect to the displacement `u` and temperature
+variation `Theta` sub-functions of the mixed unknown `v`. We also
+register the `"Temperature"` external state variable with respect to
+`Theta`.
 
 ```python
 material = mf.MFrontNonlinearMaterial("./src/libBehaviour.so",
@@ -358,7 +417,20 @@ problem.register_gradient("TemperatureGradient", grad(Theta))
 problem.register_external_state_variable("Temperature", Theta + Tref)
 ```
 
-Similarly to the [Transient heat equation with phase change demo](https://thelfer.github.io/mgis/web/mgis_fenics_heat_equation_phase_change.html), we need to specify explicitly the coupled thermo-mechanical residual expression using the stress, heat flux and entropy variables. For the implicit Euler scheme, we will need to define the entropy at the previous time step. For the mechanical residual, note that the stress variable `sig` is represented in the form of its vector of components. The computation of $\bsig :\nabla^s\widehat{\boldsymbol{u}}$ therefore requires to express $\widehat{\beps}=\nabla^s\widehat{\boldsymbol{u}}$ in the same way. For this purpose, we could use the `mgis.fenics.utils.symmetric_tensor_to_vector` on the tensorial UFL expression `sym(grad(u))`. Another possibility is to get the corresponding `"Strain"` gradient object (expressed in vectorial form) and get his variation with respect to `v_`. 
+Similarly to the [Transient heat equation with phase change
+demo](https://thelfer.github.io/mgis/web/mgis_fenics_heat_equation_phase_change.html),
+we need to specify explicitly the coupled thermo-mechanical residual
+expression using the stress, heat flux and entropy variables. For the
+implicit Euler scheme, we will need to define the entropy at the
+previous time step. For the mechanical residual, note that the stress
+variable `sig` is represented in the form of its vector of components.
+The computation of $\bsig :\nabla^s\widehat{\boldsymbol{u}}$ therefore
+requires to express $\widehat{\beps}=\nabla^s\widehat{\boldsymbol{u}}$
+in the same way. For this purpose, we could use the
+`mgis.fenics.utils.symmetric_tensor_to_vector` on the tensorial UFL
+expression `sym(grad(u))`. Another possibility is to get the
+corresponding `"Strain"` gradient object (expressed in vectorial form)
+and get his variation with respect to `v_`.
 
 
 ```python
@@ -379,7 +451,11 @@ problem.compute_tangent_form()
 
 # Resolution
 
-The problem is now solved by looping over time increments. Because of the typical exponential time variation of temperature evolution of the heat equation, time steps are discretized on a non-uniform (logarithmic) scale. $\Delta t$ is therefore updated at each time step. The previous entropy field `s_old` is updated at the end of each step.
+The problem is now solved by looping over time increments. Because of
+the typical exponential time variation of temperature evolution of the
+heat equation, time steps are discretized on a non-uniform (logarithmic)
+scale. $\Delta t$ is therefore updated at each time step. The previous
+entropy field `s_old` is updated at the end of each step.
 
 
 ```python
@@ -409,8 +485,12 @@ for (i, dti) in enumerate(np.diff(t)):
     Increment 9
     Increment 10
 
-
-At each time increment, the variation of the temperature increase $\Delta T$ along a line $(x, y=0)$ is saved in the `T_res` array. This evolution is plotted below. As expected, the temperature gradually increases over time, reaching eventually a uniform value of $+10^{\circ}\text{C}$ over infinitely long waiting time. We check that we obtain the same solution as the pure `FEniCS` demo.
+At each time increment, the variation of the temperature increase
+$\Delta T$ along a line $(x, y=0)$ is saved in the `T_res` array. This
+evolution is plotted below. As expected, the temperature gradually
+increases over time, reaching eventually a uniform value of
+$+10^{\circ}\text{C}$ over infinitely long waiting time. We check that
+we obtain the same solution as the pure `FEniCS` demo.
 
 
 ```python
@@ -423,7 +503,6 @@ plt.ylabel("Temperature variation $\Delta T$")
 plt.legend(["$t={:.0f}$".format(ti) for ti in t[1::Nincr // 10]], ncol=2)
 plt.show()
 ```
-
 
     <IPython.core.display.Javascript object>
 
