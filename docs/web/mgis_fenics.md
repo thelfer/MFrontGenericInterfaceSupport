@@ -33,6 +33,10 @@ order:
   transfer](mgis_fenics_nonlinear_heat_transfer.html)
 * [Stationnary non-linear heat transfer: 3D problem and performance
   comparisons](mgis_fenics_nonlinear_heat_transfer_3D.html)
+* [Transient heat equation with phase 
+  change](mgis_fenics_heat_equation_phase_change.html)
+* [Monolithic transient
+  elasto-plasticity](mgis_fenics_monolithic_transient_thermoelasticity.html)
 * [Small-strain von Mises
   elastoplasticity](mgis_fenics_small_strain_elastoplasticity.html)
 * [Finite-strain elastoplasticity within the logarithmic strain
@@ -41,8 +45,6 @@ order:
   materials](mgis_fenics_multiphase_model.html)
 * [Phase-field approach to brittle
   fracture](mgis_fenics_phase_field.html)
-* [Transient heat equation with phase 
-  change](mgis_fenics_heat_equation_phase_change.html)
 
 # A brief overview of the `mgis.fenics` module
 

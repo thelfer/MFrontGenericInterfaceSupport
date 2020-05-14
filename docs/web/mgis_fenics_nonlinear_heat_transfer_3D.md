@@ -2,6 +2,8 @@
 
 # Description of the non-linear constitutive heat transfer law
 
+![](img/fuel_rod_solution.png ""){width=50%}
+
 This example is a direct continuation of the [previous 2D example on non-linear heat transfer](./mgis_fenics_nonlinear_heat_transfer.html). The present computations will use the same behaviour `StationaryHeatTransfer.mfront` which will be loaded with a `"3d"` hypothesis (default case).
 
 > **Source files:**
@@ -10,12 +12,6 @@ This example is a direct continuation of the [previous 2D example on non-linear 
 > * Python file: [mgis_fenics_nonlinear_heat_transfer_3D.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/mgis_fenics_nonlinear_heat_transfer_3D.py)
 > * MFront behaviour file: [StationaryHeatTransfer.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/StationaryHeatTransfer.mfront)
 
-This example is a direct continuation of the [previous 2D example on
-non-linear heat transfer](mgis_fenics_nonlinear_heat_transfer.html). The
-present computations will use the same behaviour
-`StationaryHeatTransfer.mfront`.
-
-![](img/fuel_rod_solution.png ""){width=50%}
 
 # `FEniCS` implementation
 
@@ -100,7 +96,12 @@ solver](http://www-cast3m.cea.fr/). Both solutions agree perfectly:
 
 # Performance comparison
 
-For the purpose of performance comparison, we also implement a direct non-linear variational problem with pure UFL expressions. This is possible in the present case since the non-linear heat constitutive law is very simple. Note that we enfore the use of the same quadrature rule degree. The temperature field is also reinterpolated to its previous initial value for a fair comparison between both solution strategies.
+For the purpose of performance comparison, we also implement a direct
+non-linear variational problem with pure UFL expressions. This is
+possible in the present case since the non-linear heat constitutive law
+is very simple. Note that we enforce the use of the same quadrature rule
+degree. The temperature field is also reinterpolated to its previous
+initial value for a fair comparison between both solution strategies.
 
 
 ```python
