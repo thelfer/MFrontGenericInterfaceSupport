@@ -11,6 +11,7 @@ if(MGIS_HAVE_PANDOC)
       ARGS      --bibliography=${CMAKE_CURRENT_SOURCE_DIR}/bibliography.bib --filter pandoc-citeproc
       ARGS      --template=${CMAKE_CURRENT_SOURCE_DIR}/mgis-template.html --css=${CMAKE_CURRENT_SOURCE_DIR}/css/main.css
       ARGS      --mathjax
+      ARGS      --highlight-style=tango
       ARGS      --email-obfuscation=javascript
       ARGS       --default-image-extension=svg
       ARGS      ${ARGN}

@@ -1,6 +1,25 @@
-% Stationnary non-linear heat transfer: 3D problem and performance comparisons
+---
+title: Stationnary non-linear heat transfer using `mgis.fenics`, 3D problem and performance comparisons
+author:
+  - Jérémy Bleyer
+  - Thomas Helfer
+date: 2020
+lang: en-EN
+numbersections: true
+toc: true
+from: markdown+tex_math_single_backslash
+table-of-contents: true
+geometry: margin=2cm
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+highlight-style: tango
+bibliography: bibliography.bib
+---
 
-# Description of the non-linear constitutive heat transfer law
 
 ![](img/fuel_rod_solution.png ""){width=50%}
 
@@ -11,7 +30,6 @@ This example is a direct continuation of the [previous 2D example on non-linear 
 > * Jupyter notebook: [mgis_fenics_nonlinear_heat_transfer_3D.ipynb](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/mgis_fenics_nonlinear_heat_transfer_3D.ipynb)
 > * Python file: [mgis_fenics_nonlinear_heat_transfer_3D.py](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/mgis_fenics_nonlinear_heat_transfer_3D.py)
 > * MFront behaviour file: [StationaryHeatTransfer.mfront](https://gitlab.enpc.fr/navier-fenics/mgis-fenics-demos/raw/master/demos/nonlinear_heat_transfer/StationaryHeatTransfer.mfront)
-
 
 # `FEniCS` implementation
 
@@ -90,9 +108,10 @@ print("MFront/FEniCS solve time:", time()-tic)
 
 The temperature field along a radial direction along the top surface has
 been compared with computations using [Cast3M finite-element
-solver](http://www-cast3m.cea.fr/). Both solutions agree perfectly:
+solver](http://www-cast3m.cea.fr/). Both solutions agree perfectly, as
+shown on Figure @fig:NonLinearHeatTransfer3D:TemperatureProfile.
 
-![](img/Temperature_Castem_FEniCS.png ""){width=75%}
+![Temperature profile in the mid-pellet plane. Comparison of the results obtained with `FEniCS`](img/Temperature_Castem_FEniCS.png ""){#fig:NonLinearHeatTransfer3D:TemperatureProfile width=75%}
 
 # Performance comparison
 
@@ -102,7 +121,6 @@ possible in the present case since the non-linear heat constitutive law
 is very simple. Note that we enforce the use of the same quadrature rule
 degree. The temperature field is also reinterpolated to its previous
 initial value for a fair comparison between both solution strategies.
-
 
 ```python
 A = Constant(material.get_parameter("A"))
@@ -119,9 +137,6 @@ print("Pure FEniCS solve time:", time()-tic)
 
     Pure FEniCS solve time: 49.15058135986328
 
-
-We can observe that both methods, relying on the same default Newton solver, yield the same total iteration counts and residual values. As regards computing time, the pure `FEniCS` implementation is slightly faster as expected. In the following table, comparison has been made for a coarse (approx 4 200 cells) and a refined (approx 34 000 cells) mesh with quadrature degrees equal either to 2 or 5.
-
 |Mesh type | Quadrature degree | `FEniCS`/`MFront` | Pure `FEniCS` |
 |:--------:|:-----------------:|:-----------------:|:-------------:|
 | coarse   | 2                 |     1.2 s         | 0.8 s         |
@@ -129,7 +144,19 @@ We can observe that both methods, relying on the same default Newton solver, yie
 | fine     | 2                 |     62.8 s        | 58.4 s        |
 | fine     | 5                 |     77.0 s        | 66.3 s        | 
 
-The difference is slightly larger for large quadrature degrees, however, the difference is moderate when compared to the total computing time for large scale problems.
+: Performance comparisons {#tbl:NonLinearHeatTransfer3D:Performances}
+
+We can observe that both methods, relying on the same default Newton
+solver, yield the same total iteration counts and residual values. As
+regards computing time, the pure `FEniCS` implementation is slightly
+faster as expected. In Table @tbl:NonLinearHeatTransfer3D:Performances,
+comparison has been made for a coarse (approx 4 200 cells) and a refined
+(approx 34 000 cells) mesh with quadrature degrees equal either to 2 or
+5.
+
+The difference is slightly larger for large quadrature degrees, however,
+the difference is moderate when compared to the total computing time for
+large scale problems.
 
 # On the use of the correct tangent operator
 
@@ -139,7 +166,7 @@ can easily test this variant by assigning `dj_ddT` in the MFront
 behaviour or change the expression of the jacobian in the pure FEniCS
 implementation by:
 
-```
+```python
 J = dot(grad(T_), -grad(dT)/(A+B*T))*dx(metadata={'quadrature_degree': quad_deg})
 ```
 

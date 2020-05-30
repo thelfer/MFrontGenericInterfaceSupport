@@ -36,7 +36,7 @@ order:
 * [Transient heat equation with phase 
   change](mgis_fenics_heat_equation_phase_change.html)
 * [Monolithic transient
-  elasto-plasticity](mgis_fenics_monolithic_transient_thermoelasticity.html)
+  thermoelasticity](mgis_fenics_monolithic_transient_thermoelasticity.html)
 * [Small-strain von Mises
   elastoplasticity](mgis_fenics_small_strain_elastoplasticity.html)
 * [Finite-strain elastoplasticity within the logarithmic strain
