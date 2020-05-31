@@ -55,11 +55,12 @@ class IntegrateTest2(unittest.TestCase):
         dt = 180  
         # setting the temperature
         T = 293.15*numpy.ones(nig)
+        print("type: {}".format(type(T)))
         # type of storage
         Ts = mgis_bv.MaterialStateManagerStorageMode.ExternalStorage
         mgis_bv.setExternalStateVariable(m.s1,'Temperature', T,Ts)
         # copy d.s1 in d.s0
-        mgis_bv.update(m);
+        mgis_bv.update(m)
         # index of the first integration point
         ni = 0
         # index of the last integration point
@@ -76,8 +77,8 @@ class IntegrateTest2(unittest.TestCase):
         ## integration
         for i in range(0,20):
             it = mgis_bv.IntegrationType.IntegrationWithoutTangentOperator
-            mgis_bv.integrate(m, it, dt, 0, m.n);
-            mgis_bv.update(m);
+            mgis_bv.integrate(m, it, dt, 0, m.n)
+            mgis_bv.update(m)
             for p in range(0,nig):
                 m.s1.gradients[p][0] += de
             pi.append(m.s0.internal_state_variables[ni][o])

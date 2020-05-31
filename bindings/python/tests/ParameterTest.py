@@ -25,20 +25,20 @@ class ParameterTest(unittest.TestCase):
         self.assertTrue(b.tfel_version == version, "invalid TFEL version")
         self.assertTrue(len(b.params) == 4, "invalid number of parameters")
         self.assertTrue(b.params[0] == "YoungModulus",
-                        "invalid first parameter");
+                        "invalid first parameter")
         self.assertTrue(b.params[1] == "PoissonRatio",
-                        "invalid second parameter");
+                        "invalid second parameter")
         self.assertTrue(b.params[2] == "minimal_time_step_scaling_factor",
-                        "invalid third parameter");
+                        "invalid third parameter")
         self.assertTrue(b.params[3] == "maximal_time_step_scaling_factor",
-                        "invalid fourth parameter");
+                        "invalid fourth parameter")
         self.assertTrue(abs(mgis_bv.getParameterDefaultValue(b, "YoungModulus") - yg) <
                         eps * yg,
-                        "invalid 'YoungModulus' default value");
+                        "invalid 'YoungModulus' default value")
         self.assertTrue(abs(b.getParameterDefaultValue("YoungModulus") - yg) < eps * yg,
-                        "invalid 'YoungModulus' default value");
+                        "invalid 'YoungModulus' default value")
         self.assertTrue(abs(b.getParameterDefaultValue("PoissonRatio") - nu) < eps * nu,
-                        "invalid 'PoissonRatio' default value");
+                        "invalid 'PoissonRatio' default value")
         
 if __name__ == '__main__':
     unittest.main()

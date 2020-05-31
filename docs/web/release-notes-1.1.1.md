@@ -19,7 +19,8 @@ it only retrieves the pointer of the `numpy` object, but it does more:
 In both cases, the counter of the returned object must be decreased at
 the end of the function, which was not done. Hence the memory leak.
 
-For details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/46>.
+For details, see
+<https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/46>.
 
 ## Issue #45: Stored and dissipated energies are not updated properly when updating the `MaterialDataManager`
 
