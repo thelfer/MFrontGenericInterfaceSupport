@@ -95,23 +95,23 @@ class MFrontNonlinearMaterial:
                     mgis_bv.setMaterialProperty(s, key, value, mgis_bv.MaterialStateManagerStorageMode.LocalStorage)
 
     def update_external_state_variables(self, external_state_variables):
-        for s in [self.data_manager.s0, self.data_manager.s1]:
-            for (key, value) in external_state_variables.items():
-                if type(value) in [int, float]:
-                    mgis_bv.setExternalStateVariable(s, key, value)
-                elif isinstance(value, dolfin.Constant):
-                    mgis_bv.setExternalStateVariable(s, key, float(value))
+        s = self.data_manager.s1
+        for (key, value) in external_state_variables.items():
+            if type(value) in [int, float]:
+                mgis_bv.setExternalStateVariable(s, key, value)
+            elif isinstance(value, dolfin.Constant):
+                mgis_bv.setExternalStateVariable(s, key, float(value))
+            else:
+                if isinstance(value, dolfin.Function):
+                    values = value.vector().get_local()
+                elif isinstance(value, Var):
+                    value.update()
+                    values = value.function.vector().get_local()
                 else:
-                    if isinstance(value, dolfin.Function):
-                        values = value.vector().get_local()
-                    elif isinstance(value, Var):
-                        value.update()
-                        values = value.function.vector().get_local()
-                    else:
-                        print(isinstance(value, Var))
-                        print(value)
-                        raise NotImplementedError("{} type is not supported for external state variables".format(type(value)))
-                    mgis_bv.setExternalStateVariable(s, key, values, mgis_bv.MaterialStateManagerStorageMode.LocalStorage)
+                    print(isinstance(value, Var))
+                    print(value)
+                    raise NotImplementedError("{} type is not supported for external state variables".format(type(value)))
+                mgis_bv.setExternalStateVariable(s, key, values, mgis_bv.MaterialStateManagerStorageMode.LocalStorage)
 
     def get_parameter(self, name):
         return self.behaviour.getParameterDefaultValue(name)
