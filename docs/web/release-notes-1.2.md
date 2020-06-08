@@ -1,13 +1,98 @@
-% MFrontGenericInterfaceSupport Version 1.2 
-% Thomas Helfer
-% 17/12/2019
+---
+title: MFrontGenericInterfaceSupport Version 1.2 
+author: Thomas Helfer
+date: 2020
+lang: en-EN
+numbersections: true
+documentclass: article
+from: markdown+tex_math_single_backslash
+geometry:
+  - margin=2cm
+papersize: a4
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tabPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+bibliography: bibliography.bib
+---
 
 Version 1.2 of `MFrontGenericInterfaceSupport` is compatible with the
 Version 3.4 of `TFEL/MFront`.
 
 # New functionalities
 
-## C bindings
+## Orthotropic behaviours
+
+For orthotropic behaviours, the `Behaviour` structure exposes \(6\)
+function pointers:
+
+- `rotate_gradients_ptr`: pointer to a function implementing the
+  rotation of the gradients from the global frame to the material frame.
+- `rotate_array_of_gradients_ptr`: pointer to a function implementing
+  the rotation of an array of gradients from the global frame to the
+  material frame.
+- `rotate_thermodynamic_forces_ptr`: pointer to a function implementing
+  the rotation of the thermodynamic forces from the material frame to
+  the global frame.
+- `rotate_array_of_thermodynamic_forces_ptr`: pointer to a function
+  implementing the rotation of an array of thermodynamic forces from the
+  material frame to the global frame
+- `rotate_tangent_operator_blocks_ptr`: pointer to a function
+  implementing the rotation of the tangent operator blocks from the
+  material frame to the global frame.
+- `rotate_array_of_tangent_operator_blocks_ptr`: pointer to a function
+  implementing the rotation of an array of tangent operator blocks from
+  the material frame to the global frame.
+
+Those functions takes pointer to the raw memory. The callee is
+responsible of the consistency of the data.
+
+> **In place transformations**
+>
+> All those functions take two parameters: the pointer to the rotated
+>
+> data on output and the pointer to the original data on input. In place
+> transformations is allowed, i.e. those pointers can be equal.
+
+> **The rotation matrix argument**
+>
+> All those functions takes the rotation matrix from the global frame to
+> the material frame as last argument. If required, i.e. for
+> thermodynamic forces and tangent operator blocks, this matrix is
+> transposed internally to have the inverse transformation.
+>
+> The rotation matrix is given as a \(3\times3\) matrix, packed in
+> an \(9\) continuous array in `C`-like column-major storage.
+>
+> No checks are made to ensure that the columns of the matrix makes
+> and orthonormal basis of \(\mathcal{R}^{3}\). In \(1D\), this matrix
+> is discarded an no operation is performed. In \(2D\), only the
+> upper-left part of the matrix is used.
+
+For convenience (and debugging), the call to those functions pointers
+are mapped into the following free functions: `rotateGradients`,
+`rotateArrayOfGradients`, `rotateThermodynamicForces` and
+`rotateArrayOfThermodynamicForces`. Those functions perform additional
+consistency checks (compared to the functions exposed by the `Behaviour`
+class) which might hurt performances, especially when dealing with one
+integration point only. Each of these functions is overloaded twice for
+in-place operations and out-of-place operations.
+
+### Example
+
+The following example shows how to rotate the gradients of a small
+strain strain behaviour in generalised plane strain:
+
+~~~~{.cxx}
+const std::array<real, 9> r = {0, 1, 0, 1, 0, 0, 0, 0, 1};
+const std::array<real, 4> ge = {1, 0, 0, 0};
+std::array<real, 4> me;
+rotateGradients(me, b, ge, r);
+~~~~
+
+## Update to the `C` bindings
 
 The following functions are now available:
 

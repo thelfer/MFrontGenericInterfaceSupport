@@ -176,6 +176,230 @@ namespace mgis {
     return reinterpret_cast<mgis::behaviour::BehaviourFctPtr>(p);
   }  // end of LibrariesManager::getBehaviour
 
+  mgis::behaviour::RotateBehaviourGradientsFctPtr
+  LibrariesManager::getRotateBehaviourGradientsFunction(const std::string &l,
+                                                        const std::string &b,
+                                                        const Hypothesis h) {
+    const auto hn = toString(h);
+    const auto f = b + "_" + hn + "_rotateGradients";
+    const auto p = this->getSymbolAddress(l, f);
+    if (p == nullptr) {
+      mgis::raise(
+          "LibrariesManager::getRotateBehaviourGradientsFunction: "
+          "can't load gradients' rotation function '" + f + "' "
+	  "for behaviour '" + b + "' in library '" + l +
+	  "' for hypothesis '" + hn + "'");
+    }
+    return reinterpret_cast<mgis::behaviour::RotateBehaviourGradientsFctPtr>(p);
+  }  // end of LibrariesManager::getRotateBehaviourGradientsFunction
+
+  mgis::behaviour::RotateArrayOfBehaviourGradientsFctPtr
+  LibrariesManager::getRotateArrayOfBehaviourGradientsFunction(const std::string &l,
+                                                        const std::string &b,
+                                                        const Hypothesis h) {
+    const auto hn = toString(h);
+    const auto f = b + "_" + hn + "_rotateGradients";
+    const auto p = this->getSymbolAddress(l, f);
+    if (p == nullptr) {
+      mgis::raise(
+          "LibrariesManager::getRotateArrayOfBehaviourGradientsFunction: "
+          "can't load gradients' rotation function '" + f + "' "
+	  "for behaviour '" + b + "' in library '" + l +
+	  "' for hypothesis '" + hn + "'");
+    }
+    return reinterpret_cast<mgis::behaviour::RotateArrayOfBehaviourGradientsFctPtr>(p);
+  }  // end of LibrariesManager::getRotateArrayOfBehaviourGradientsFunction
+
+  mgis::behaviour::RotateBehaviourThermodynamicForcesFctPtr
+  LibrariesManager::getRotateBehaviourThermodynamicForcesFunction(
+      const std::string &l, const std::string &b, const Hypothesis h) {
+    const auto hn = toString(h);
+    const auto f = b + "_" + hn + "_rotateThermodynamicForces";
+    const auto p = this->getSymbolAddress(l, f);
+    if (p == nullptr) {
+      mgis::raise(
+          "LibrariesManager::getRotateBehaviourThermodynamicForcesFunction: "
+          "can't load thermodynamic force' rotation function '" + f +
+	  "' for behaviour '" + b + "' in library '" + l +
+	  "' for hypothesis '" + hn + "'");
+    }
+    return reinterpret_cast<mgis::behaviour::RotateBehaviourThermodynamicForcesFctPtr>(p);
+  }  // end of LibrariesManager::getRotateBehaviourThermodynamicForcesFunction
+
+  mgis::behaviour::RotateArrayOfBehaviourThermodynamicForcesFctPtr
+  LibrariesManager::getRotateArrayOfBehaviourThermodynamicForcesFunction(
+      const std::string &l, const std::string &b, const Hypothesis h) {
+    const auto hn = toString(h);
+    const auto f = b + "_" + hn + "_rotateThermodynamicForces";
+    const auto p = this->getSymbolAddress(l, f);
+    if (p == nullptr) {
+      mgis::raise(
+          "LibrariesManager::getRotateArrayOfBehaviourThermodynamicForcesFunction: "
+          "can't load thermodynamic force' rotation function '" + f +
+	  "' for behaviour '" + b + "' in library '" + l +
+	  "' for hypothesis '" + hn + "'");
+    }
+    return reinterpret_cast<mgis::behaviour::RotateArrayOfBehaviourThermodynamicForcesFctPtr>(p);
+  }  // end of LibrariesManager::getRotateArrayOfBehaviourThermodynamicForcesFunction
+
+  mgis::behaviour::RotateBehaviourThermodynamicForcesFctPtr
+  LibrariesManager::getRotateBehaviourThermodynamicForcesFunction(
+      const std::string &l,
+      const std::string &b,
+      const Hypothesis h,
+      const mgis::behaviour::FiniteStrainBehaviourOptions::StressMeasure s) {
+    const auto hn = toString(h);
+    const auto suffix = [&s]() -> std::string {
+      if (s == mgis::behaviour::FiniteStrainBehaviourOptions::CAUCHY) {
+        return "CauchyStress";
+      } else if (s == mgis::behaviour::FiniteStrainBehaviourOptions::PK2) {
+        return "PK2Stress";
+      } else if (s != mgis::behaviour::FiniteStrainBehaviourOptions::PK1) {
+        mgis::raise(
+            "LibrariesManager::getRotateBehaviourTangentOperatorBlocksFunction:"
+            " unsupported stress measure");
+      }
+      return "PK1Stress";
+    }();
+    const auto f = b + "_" + hn + "_rotateThermodynamicForces_" + suffix;
+    const auto p =
+        this->getSymbolAddress(l, f);
+    if (p == nullptr) {
+      mgis::raise(
+          "LibrariesManager::getRotateBehaviourThermodynamicForcesFunction: "
+          "can't load gradients' rotation function '" + f +
+	  "' for behaviour '" +  b + "' in library '" + l +
+	  "' for hypothesis '" + hn + "'");
+    }
+    return reinterpret_cast<mgis::behaviour::RotateBehaviourThermodynamicForcesFctPtr>(p);
+  }  // end of LibrariesManager::getRotateBehaviourThermodynamicForcesFunction
+
+  mgis::behaviour::RotateArrayOfBehaviourThermodynamicForcesFctPtr
+  LibrariesManager::getRotateArrayOfBehaviourThermodynamicForcesFunction(
+      const std::string &l,
+      const std::string &b,
+      const Hypothesis h,
+      const mgis::behaviour::FiniteStrainBehaviourOptions::StressMeasure s) {
+    const auto hn = toString(h);
+    const auto suffix = [&s]() -> std::string {
+      if (s == mgis::behaviour::FiniteStrainBehaviourOptions::CAUCHY) {
+        return "CauchyStress";
+      } else if (s == mgis::behaviour::FiniteStrainBehaviourOptions::PK2) {
+        return "PK2Stress";
+      } else if (s != mgis::behaviour::FiniteStrainBehaviourOptions::PK1) {
+        mgis::raise(
+            "LibrariesManager::getRotateArrayOfBehaviourTangentOperatorBlocksFunction:"
+            " unsupported stress measure");
+      }
+      return "PK1Stress";
+    }();
+    const auto f = b + "_" + hn + "_rotateThermodynamicForces_" + suffix;
+    const auto p =
+        this->getSymbolAddress(l, f);
+    if (p == nullptr) {
+      mgis::raise(
+          "LibrariesManager::getRotateArrayOfBehaviourThermodynamicForcesFunction: "
+          "can't load gradients' rotation function '" + f +
+	  "' for behaviour '" +  b + "' in library '" + l +
+	  "' for hypothesis '" + hn + "'");
+    }
+    return reinterpret_cast<mgis::behaviour::RotateArrayOfBehaviourThermodynamicForcesFctPtr>(p);
+  }  // end of LibrariesManager::getRotateArrayOfBehaviourThermodynamicForcesFunction
+
+  mgis::behaviour::RotateBehaviourTangentOperatorBlocksFctPtr
+  LibrariesManager::getRotateBehaviourTangentOperatorBlocksFunction(
+      const std::string &l, const std::string &b, const Hypothesis h) {
+    const auto hn = toString(h);
+    const auto f = b + "_" + hn + "_rotateTangentOperatorBlocks";
+    const auto p = this->getSymbolAddress(l, f);
+    if (p == nullptr) {
+      mgis::raise(
+          "LibrariesManager::getRotateBehaviourTangentOperatorBlocksFunction: "
+          "can't load tangent operator blocks' rotation function '" + f +
+	  "' for behaviour '" + b + "' in library '" + l +
+	  "' for hypothesis '" + hn + "'");
+    }
+    return reinterpret_cast<mgis::behaviour::RotateBehaviourTangentOperatorBlocksFctPtr>(p);
+  }  // end of LibrariesManager::getRotateBehaviourTangentOperatorBlocksFunction
+
+  mgis::behaviour::RotateArrayOfBehaviourTangentOperatorBlocksFctPtr
+  LibrariesManager::getRotateArrayOfBehaviourTangentOperatorBlocksFunction(
+      const std::string &l, const std::string &b, const Hypothesis h) {
+    const auto hn = toString(h);
+    const auto f = b + "_" + hn + "_rotateTangentOperatorBlocks";
+    const auto p = this->getSymbolAddress(l, f);
+    if (p == nullptr) {
+      mgis::raise(
+          "LibrariesManager::getRotateArrayOfBehaviourTangentOperatorBlocksFunction: "
+          "can't load tangent operator blocks' rotation function '" + f +
+	  "' for behaviour '" + b + "' in library '" + l +
+	  "' for hypothesis '" + hn + "'");
+    }
+    return reinterpret_cast<mgis::behaviour::RotateArrayOfBehaviourTangentOperatorBlocksFctPtr>(p);
+  }  // end of LibrariesManager::getRotateArrayOfBehaviourTangentOperatorBlocksFunction
+
+  mgis::behaviour::RotateBehaviourTangentOperatorBlocksFctPtr
+  LibrariesManager::getRotateBehaviourTangentOperatorBlocksFunction(
+      const std::string &l,
+      const std::string &b,
+      const Hypothesis h,
+      const mgis::behaviour::FiniteStrainBehaviourOptions::TangentOperator t) {
+    const auto hn = toString(h);
+    const auto suffix = [&t]() -> std::string {
+      if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DSIG_DF) {
+        return "dsig_dF";
+      } else if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DS_DEGL) {
+        return "dPK2_degl";
+      } else if (t != mgis::behaviour::FiniteStrainBehaviourOptions::DPK1_DF) {
+        mgis::raise(
+            "LibrariesManager::getRotateBehaviourTangentOperatorBlocksFunction:"
+            " unsupported tangent operator type");
+      }
+      return "dPK1_dF";
+    }();
+    const auto f = b + "_" + hn + "_rotateTangentOperatorBlocks_" + suffix;
+    const auto p = this->getSymbolAddress(l, f);
+    if (p == nullptr) {
+      mgis::raise(
+          "LibrariesManager::getRotateBehaviourTangentOperatorBlocksFunction: "
+          "can't load tangent operator blocks' rotation function '" + f +
+	  "' for behaviour '" + b + "' in library '" + l +
+	  "' for hypothesis '" + hn + "'");
+    }
+    return reinterpret_cast<mgis::behaviour::RotateBehaviourTangentOperatorBlocksFctPtr>(p);
+  }  // end of LibrariesManager::getRotateBehaviourTangentOperatorBlocksFunction
+
+  mgis::behaviour::RotateArrayOfBehaviourTangentOperatorBlocksFctPtr
+  LibrariesManager::getRotateArrayOfBehaviourTangentOperatorBlocksFunction(
+      const std::string &l,
+      const std::string &b,
+      const Hypothesis h,
+      const mgis::behaviour::FiniteStrainBehaviourOptions::TangentOperator t) {
+    const auto hn = toString(h);
+    const auto suffix = [&t]() -> std::string {
+      if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DSIG_DF) {
+        return "dsig_dF";
+      } else if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DS_DEGL) {
+        return "dPK2_degl";
+      } else if (t != mgis::behaviour::FiniteStrainBehaviourOptions::DPK1_DF) {
+        mgis::raise(
+            "LibrariesManager::getRotateArrayOfBehaviourTangentOperatorBlocksFunction:"
+            " unsupported tangent operator type");
+      }
+      return "dPK1_dF";
+    }();
+    const auto f = b + "_" + hn + "_rotateTangentOperatorBlocks_" + suffix;
+    const auto p = this->getSymbolAddress(l, f);
+    if (p == nullptr) {
+      mgis::raise(
+          "LibrariesManager::getRotateArrayOfBehaviourTangentOperatorBlocksFunction: "
+          "can't load tangent operator blocks' rotation function '" + f +
+	  "' for behaviour '" + b + "' in library '" + l +
+	  "' for hypothesis '" + hn + "'");
+    }
+    return reinterpret_cast<mgis::behaviour::RotateArrayOfBehaviourTangentOperatorBlocksFctPtr>(p);
+  }  // end of LibrariesManager::getRotateArrayOfBehaviourTangentOperatorBlocksFunction
+
   std::string LibrariesManager::getTFELVersion(const std::string &l,
                                                const std::string &n) {
     const auto p = this->getSymbolAddress(l, n + "_tfel_version");

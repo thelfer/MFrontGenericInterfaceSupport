@@ -3,6 +3,7 @@ STRING(REPLACE ";" "\\;" MGIS_PATH_STRING "${MGIS_PATH_STRING}")
 
 mfront_behaviours_check_library(BehaviourTest
   Elasticity
+  OrthotropicElasticity
   Norton
   Plasticity
   Gurson
@@ -70,6 +71,10 @@ target_link_libraries(IntegrateTest3
 add_executable(IntegrateTest3b
   EXCLUDE_FROM_ALL IntegrateTest3b.cxx)
 target_link_libraries(IntegrateTest3b
+	PRIVATE MFrontGenericInterface)
+add_executable(RotateFunctionsTest
+  EXCLUDE_FROM_ALL RotateFunctionsTest.cxx)
+target_link_libraries(RotateFunctionsTest
 	PRIVATE MFrontGenericInterface)
 
 add_test(NAME MFrontGenericBehaviourInterfaceTest
@@ -194,5 +199,17 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
 else((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest3b
+    PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME RotateFunctionsTest
+ COMMAND RotateFunctionsTest "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(check RotateFunctionsTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST RotateFunctionsTest
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST RotateFunctionsTest
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))

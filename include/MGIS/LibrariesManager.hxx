@@ -27,6 +27,7 @@
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 
 #include "MGIS/Config.hxx"
+#include "MGIS/Behaviour/FiniteStrainBehaviourOptions.hxx"
 #include "MGIS/Behaviour/BehaviourFctPtr.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
 
@@ -90,6 +91,129 @@ namespace mgis {
     mgis::behaviour::BehaviourFctPtr getBehaviour(const std::string &,
                                                   const std::string &,
                                                   const Hypothesis);
+    /*!
+     * \return the function implementing the rotation of the gradients of a
+     * behaviour from the global frame to the material frame
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] h: hypothesis
+     */
+    mgis::behaviour::RotateBehaviourGradientsFctPtr
+    getRotateBehaviourGradientsFunction(const std::string &,
+                                        const std::string &,
+                                        const Hypothesis);
+    /*!
+     * \return the function implementing the rotation of the gradients of a
+     * behaviour from the global frame to the material frame
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] h: hypothesis
+     */
+    mgis::behaviour::RotateArrayOfBehaviourGradientsFctPtr
+    getRotateArrayOfBehaviourGradientsFunction(const std::string &,
+                                               const std::string &,
+                                               const Hypothesis);
+    /*!
+     * \return the function implementing the rotation of the thermodynamic
+     * forces from the material frame to the global frame.
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] h: hypothesis
+     */
+    mgis::behaviour::RotateBehaviourThermodynamicForcesFctPtr
+    getRotateBehaviourThermodynamicForcesFunction(const std::string &,
+                                                  const std::string &,
+                                                  const Hypothesis);
+    /*!
+     * \return the function implementing the rotation of the thermodynamic
+     * forces from the material frame to the global frame.
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] h: hypothesis
+     */
+    mgis::behaviour::RotateArrayOfBehaviourThermodynamicForcesFctPtr
+    getRotateArrayOfBehaviourThermodynamicForcesFunction(
+        const std::string &, const std::string &, const Hypothesis);
+    /*!
+     * \return the function implementing the rotation of the thermodynamic
+     * forces from the material frame to the global frame for a finite strain
+     * behaviour.
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] h: hypothesis
+     * \param[in] s: stress returned by the behaviour
+     */
+    mgis::behaviour::RotateBehaviourThermodynamicForcesFctPtr
+    getRotateBehaviourThermodynamicForcesFunction(
+        const std::string &,
+        const std::string &,
+        const Hypothesis,
+        const mgis::behaviour::FiniteStrainBehaviourOptions::StressMeasure);
+    /*!
+     * \return the function implementing the rotation of the thermodynamic
+     * forces from the material frame to the global frame for a finite strain
+     * behaviour.
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] h: hypothesis
+     * \param[in] s: stress returned by the behaviour
+     */
+    mgis::behaviour::RotateArrayOfBehaviourThermodynamicForcesFctPtr
+    getRotateArrayOfBehaviourThermodynamicForcesFunction(
+        const std::string &,
+        const std::string &,
+        const Hypothesis,
+        const mgis::behaviour::FiniteStrainBehaviourOptions::StressMeasure);
+    /*!
+     * \return the function implementing the rotation of the tangent operator
+     * block from the material frame to the global frame.
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] h: hypothesis
+     */
+    mgis::behaviour::RotateBehaviourTangentOperatorBlocksFctPtr
+    getRotateBehaviourTangentOperatorBlocksFunction(
+        const std::string &, const std::string &, const Hypothesis);
+    /*!
+     * \return the function implementing the rotation of the tangent operator
+     * block from the material frame to the global frame.
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] h: hypothesis
+     */
+    mgis::behaviour::RotateArrayOfBehaviourTangentOperatorBlocksFctPtr
+    getRotateArrayOfBehaviourTangentOperatorBlocksFunction(
+        const std::string &, const std::string &, const Hypothesis);
+    /*!
+     * \return the function implementing the rotation of the tangent operator
+     * block from the material frame to the global frame for a finite strain
+     * behaviour.
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] h: hypothesis
+     * \param[in] t: tangent operator returned by the behaviour
+     */
+    mgis::behaviour::RotateBehaviourTangentOperatorBlocksFctPtr
+    getRotateBehaviourTangentOperatorBlocksFunction(
+        const std::string &,
+        const std::string &,
+        const Hypothesis,
+        const mgis::behaviour::FiniteStrainBehaviourOptions::TangentOperator);
+    /*!
+     * \return the function implementing the rotation of the tangent operator
+     * block from the material frame to the global frame for a finite strain
+     * behaviour.
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] h: hypothesis
+     * \param[in] t: tangent operator returned by the behaviour
+     */
+    mgis::behaviour::RotateArrayOfBehaviourTangentOperatorBlocksFctPtr
+    getRotateArrayOfBehaviourTangentOperatorBlocksFunction(
+        const std::string &,
+        const std::string &,
+        const Hypothesis,
+        const mgis::behaviour::FiniteStrainBehaviourOptions::TangentOperator);
     /*!
      * \return the type of the behaviour
      * \see MechanicalBehaviourBase::BehaviourType
