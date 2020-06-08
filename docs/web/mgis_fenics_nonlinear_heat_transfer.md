@@ -221,10 +221,6 @@ material = mf.MFrontNonlinearMaterial("./src/libBehaviour.so",
                                       hypothesis="plane_strain")
 ```
 
-    Behaviour 'StationaryHeatTransfer' has not been found in './src/libBehaviour.so'.
-    Attempting to compile 'StationaryHeatTransfer.mfront' in './'...
-
-
 The `MFront` behaviour declares the field `"TemperatureGradient"` as a Gradient variable, with its associated Flux called `"HeatFlux"`. We can check that the `material` object retrieves `MFront`'s gradient and flux names, as well as the different tangent operator blocks which have been defined, namely `dj_ddgT` and `dj_ddT` in the present case:
 
 
@@ -310,11 +306,6 @@ problem.solve(T.vector())
 
     Automatic registration of 'Temperature' as an external state variable.
     
-
-
-
-
-
     (4, True)
 
 

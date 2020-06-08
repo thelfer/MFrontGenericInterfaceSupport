@@ -105,8 +105,15 @@ namespace mgis {
 
     mgis::span<mgis::real> mgis_convert_to_span(
         const boost::python::object& o) {
-      auto* const a = reinterpret_cast<PyArrayObject*>(
-          PyArray_FROM_OTF(o.ptr(), NPY_DOUBLE, NPY_IN_ARRAY));
+      if (!PyArray_Check(o.ptr())) {
+        const auto type = std::string(o.ptr()->ob_type->tp_name);
+        mgis::raise("convert_to_span: argument of type ('" + type +
+                    "') is not convertible to PyArrayObject");
+      }
+      auto* const a = reinterpret_cast<PyArrayObject*>(o.ptr());
+      if (a->descr->type_num != NPY_DOUBLE) {
+        mgis::raise("convert_to_span: invalid numpy object");
+      }
       if (a == nullptr) {
         mgis::raise(
             "convert_to_span: argument not convertible to PyArrayObject");

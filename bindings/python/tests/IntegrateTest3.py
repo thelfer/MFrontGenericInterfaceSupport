@@ -13,6 +13,7 @@ class IntegrateTest3(unittest.TestCase):
 
     def test_pass(self):
 
+        print(dir(mgis))
         # path to the test library
         lib = os.environ['MGIS_TEST_BEHAVIOURS_LIBRARY']
         # reference values
@@ -56,7 +57,7 @@ class IntegrateTest3(unittest.TestCase):
         # setting the temperature
         mgis_bv.setExternalStateVariable(m.s1,'Temperature', 293.15)
         # copy d.s1 in d.s0
-        mgis_bv.update(m);
+        mgis_bv.update(m)
         # index of the first integration point
         ni = 0
         # index of the last integration point
@@ -75,8 +76,8 @@ class IntegrateTest3(unittest.TestCase):
         ## integration
         for i in range(0,20):
             it = mgis_bv.IntegrationType.IntegrationWithoutTangentOperator
-            mgis_bv.integrate(p, m, it, dt);
-            mgis_bv.update(m);
+            mgis_bv.integrate(p, m, it, dt)
+            mgis_bv.update(m)
             for j in range(0,nig):
                 m.s1.gradients[j][0] += de
             pi.append(m.s0.internal_state_variables[ni][o])

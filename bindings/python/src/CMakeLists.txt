@@ -24,17 +24,39 @@ function(mgis_python_module name output_name)
     PRIVATE "${Boost_INCLUDE_DIRS}"
     PRIVATE "${PYTHON_INCLUDE_DIRS}"
     PRIVATE "${PYTHON_NUMPY_INCLUDE_DIR}")
-  # link flags
+  # Link flags for python modules.
+  #
+  # I removed links to the python library on MacOS system.
+  # Although linking with the python library do work
+  # with homebrew packages, it leads to a segfault
+  # when building `mgis` with `conda` packages.
+  # It seems that one shall never link modules with
+  # the python library (according to the `conda`
+  # community) but I need to figure out how things 
+  # work in `Windows` before doing so
   if(MGIS_USES_CONAN)
-    target_link_libraries(${module}
-      PRIVATE
-      MFrontGenericInterface
-      ${CONAN_LIBS} ${PYTHON_LIBRARIES})
+    if(APPLE)
+      target_link_libraries(${module}
+        PRIVATE
+        MFrontGenericInterface
+        ${CONAN_LIBS} ${PYTHON_LIBRARIES})
+    else(APPLE)
+      target_link_libraries(${module}
+        PRIVATE
+        MFrontGenericInterface ${CONAN_LIBS})
+	endif(APPLE)
   else(MGIS_USES_CONAN)
-    target_link_libraries(${module}
-      PRIVATE
-      MFrontGenericInterface
-      ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
+    if(APPLE)
+      target_link_libraries(${module}
+        PRIVATE
+        MFrontGenericInterface
+        ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY})
+    else(APPLE)
+      target_link_libraries(${module}
+        PRIVATE
+        MFrontGenericInterface
+        ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
+	endif(APPLE)
   endif(MGIS_USES_CONAN)
   # installation
   install(TARGETS ${module}

@@ -85,7 +85,7 @@ class IntegrateTest(unittest.TestCase):
         self.assertTrue(b.esvs[0].type == mgis_bv.VariableType.SCALAR,
 	                "invalid type for the first external state variable")
         # parameters
-        params = b.parameters;
+        params = b.parameters
         self.assertTrue(len(params)==15,
                         "invalid number of parameters")
         self.assertTrue('epsilon' in params,
@@ -97,7 +97,7 @@ class IntegrateTest(unittest.TestCase):
         self.assertTrue(len(b.unsigned_short_parameters)==1,
                         "invalid number of unsigned short parameters")
         self.assertTrue(b.usparams[0]=='iterMax',
-                        "invalid name for the first unsigned short parameter");
+                        "invalid name for the first unsigned short parameter")
 
         
         
