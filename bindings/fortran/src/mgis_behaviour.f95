@@ -405,6 +405,324 @@ contains
          convert_fortran_string(bn), &
          convert_fortran_string(h))
   end function load_finite_strain_behaviour
+  !
+  function rotate_gradients_in_place(g, b, r) result(res)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function rotate_gradients_in_place_wrapper(g, b, r) &
+            bind(c,name = 'mgis_bv_behaviour_rotate_gradients_in_place') &
+            result(res)
+         use, intrinsic :: iso_c_binding, only: c_double, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         real(c_double), dimension(:), intent(out) :: g
+         type(c_ptr), intent(in), value :: b
+         real(c_double), dimension(9), intent(in) :: r
+         type(mgis_status) :: res
+       end function rotate_gradients_in_place_wrapper
+    end interface
+    real(kind=8), dimension(:), intent(out) :: g
+    type(Behaviour), intent(in) :: b
+    real(kind=8), dimension(9), intent(in) :: r
+    type(mgis_status) :: res
+    res = rotate_gradients_in_place_wrapper(g, b%ptr, r)
+  end function rotate_gradients_in_place
+  !
+  function rotate_gradients_out_of_place(mg, b, gg, r) result(res)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function rotate_gradients_out_of_place_wrapper(mg, b, gg, r) &
+            bind(c,name = 'mgis_bv_behaviour_rotate_gradients_out_of_place') &
+            result(res)
+         use, intrinsic :: iso_c_binding, only: c_double, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         real(c_double), dimension(:), intent(out) :: mg
+         type(c_ptr), intent(in), value :: b
+         real(c_double), dimension(:), intent(in) :: gg
+         real(c_double), dimension(9), intent(in) :: r
+         type(mgis_status) :: res
+       end function rotate_gradients_out_of_place_wrapper
+    end interface
+    real(kind=8), dimension(:), intent(out) :: mg
+    type(Behaviour), intent(in) :: b
+    real(kind=8), dimension(:), intent(in) :: gg
+    real(kind=8), dimension(9), intent(in) :: r
+    type(mgis_status) :: res
+    res = rotate_gradients_out_of_place_wrapper(mg, b%ptr, gg, r)
+  end function rotate_gradients_out_of_place
+  !
+  function rotate_array_of_gradients_in_place(g, b, r, s) result(res)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function rotate_array_of_gradients_in_place_wrapper(g, b, r, s) &
+            bind(c,name = 'mgis_bv_behaviour_rotate_array_of_gradients_in_place') &
+            result(res)
+         use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         real(c_double), dimension(:), intent(out) :: g
+         type(c_ptr), intent(in), value :: b
+         real(c_double), dimension(9), intent(in) :: r
+         integer(kind=c_size_t) :: s
+         type(mgis_status) :: res
+       end function rotate_array_of_gradients_in_place_wrapper
+    end interface
+    real(kind=8), dimension(:), intent(out) :: g
+    type(Behaviour), intent(in) :: b
+    real(kind=8), dimension(9), intent(in) :: r
+    integer(kind=c_size_t) :: s
+    type(mgis_status) :: res
+    res = rotate_array_of_gradients_in_place_wrapper(g, b%ptr, r, s)
+  end function rotate_array_of_gradients_in_place
+  
+  function rotate_array_of_gradients_out_of_place(mg, b, gg, r, s) result(res)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function rotate_array_of_gradients_out_of_place_wrapper(mg,b, gg, r, s) &
+            bind(c,name = 'mgis_bv_behaviour_rotate_array_of_gradients_out_of_place') &
+            result(res)
+         use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         real(c_double), dimension(:), intent(out) :: mg
+         type(c_ptr), intent(in), value :: b
+         real(c_double), dimension(:), intent(in) :: gg
+         real(c_double), dimension(9), intent(in) :: r
+         integer(kind=c_size_t) :: s
+         type(mgis_status) :: res
+       end function rotate_array_of_gradients_out_of_place_wrapper
+    end interface
+    real(kind=8), dimension(:), intent(out) :: mg
+    type(Behaviour), intent(in) :: b
+    real(kind=8), dimension(:), intent(in) :: gg
+    integer(kind=c_size_t) :: s
+    real(kind=8), dimension(9), intent(in) :: r
+    type(mgis_status) :: res
+    res = rotate_array_of_gradients_out_of_place_wrapper(mg, b%ptr, gg, r, s)
+  end function rotate_array_of_gradients_out_of_place
+  !
+  function rotate_thermodynamic_forces_in_place(tf, b, r) result(res)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function rotate_thermodynamic_forces_in_place_wrapper(tf, b, r) &
+            bind(c,name = 'mgis_bv_behaviour_rotate_thermodynamic_forces_in_place') &
+            result(res)
+         use, intrinsic :: iso_c_binding, only: c_double, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         real(c_double), dimension(:), intent(out) :: tf
+         type(c_ptr), intent(in), value :: b
+         real(c_double), dimension(9), intent(in) :: r         
+         type(mgis_status) :: res
+       end function rotate_thermodynamic_forces_in_place_wrapper
+    end interface
+    real(kind=8), dimension(:), intent(out) :: tf
+    type(Behaviour), intent(in) :: b
+    real(kind=8), dimension(9), intent(in) :: r
+    type(mgis_status) :: res
+    res = rotate_thermodynamic_forces_in_place_wrapper(tf, b%ptr, r)
+  end function rotate_thermodynamic_forces_in_place
+  !
+  function rotate_thermodynamic_forces_out_of_place(mtf, b, gtf, r) result(s)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function rotate_thermodynamic_forces_out_of_place_wrapper(mtf,b, gtf, r) &
+            bind(c,name = 'mgis_bv_behaviour_rotate_thermodynamic_forces_out_of_place') &
+            result(ret)
+         use, intrinsic :: iso_c_binding, only: c_double, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         real(c_double), dimension(:), intent(out) :: mtf
+         type(c_ptr), intent(in), value :: b
+         real(c_double), dimension(:), intent(in) :: gtf
+         real(c_double), dimension(9), intent(in) :: r
+         type(mgis_status) :: ret
+       end function rotate_thermodynamic_forces_out_of_place_wrapper
+    end interface
+    real(kind=8), dimension(:), intent(out) :: mtf
+    type(Behaviour), intent(in) :: b
+    real(kind=8), dimension(:), intent(in) :: gtf
+    real(kind=8), dimension(9), intent(in) :: r
+    type(mgis_status) :: s
+    s = rotate_thermodynamic_forces_out_of_place_wrapper(mtf, b%ptr, gtf, r)
+  end function rotate_thermodynamic_forces_out_of_place
+  !
+  function rotate_array_of_thermodynamic_forces_in_place(tf, b, r, s) result(ret)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function rotate_array_of_thermodynamic_forces_in_place_wrapper(tf, b, r, s) &
+            bind(c,name = 'mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_in_place') &
+            result(ret)
+         use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         real(c_double), dimension(:), intent(out) :: tf
+         type(c_ptr), intent(in), value :: b
+         real(c_double), dimension(9), intent(in) :: r
+         integer(kind=c_size_t) :: s
+         type(mgis_status) :: ret
+       end function rotate_array_of_thermodynamic_forces_in_place_wrapper
+    end interface
+    real(kind=8), dimension(:), intent(out) :: tf
+    type(Behaviour), intent(in) :: b
+    real(kind=8), dimension(9), intent(in) :: r
+    integer(kind=c_size_t) :: s
+    type(mgis_status) :: ret
+    ret = rotate_array_of_thermodynamic_forces_in_place_wrapper(tf, b%ptr, r, s)
+  end function rotate_array_of_thermodynamic_forces_in_place
+  
+  function rotate_array_of_thermodynamic_forces_out_of_place(mtf, b, gtf, r, s) result(ret)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function rotate_array_of_thermodynamic_forces_out_of_place_wrapper(mtf,b, gtf, r, s) &
+            bind(c,name = 'mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_out_of_place') &
+            result(ret)
+         use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         real(c_double), dimension(:), intent(out) :: mtf
+         type(c_ptr), intent(in), value :: b
+         real(c_double), dimension(:), intent(in) :: gtf
+         real(kind=8), dimension(9), intent(in) :: r
+         integer(kind=c_size_t) :: s
+         type(mgis_status) :: ret
+       end function rotate_array_of_thermodynamic_forces_out_of_place_wrapper
+    end interface
+    real(kind=8), dimension(:), intent(out) :: mtf
+    type(Behaviour), intent(in) :: b
+    real(kind=8), dimension(:), intent(in) :: gtf
+    integer(kind=c_size_t) :: s
+    real(kind=8), dimension(9), intent(in) :: r
+    type(mgis_status) :: ret
+    ret = rotate_array_of_thermodynamic_forces_out_of_place_wrapper(mtf, b%ptr, gtf, r, s)
+  end function rotate_array_of_thermodynamic_forces_out_of_place
+  !
+  function rotate_tangent_operator_blocks_in_place(to, b, r) result(s)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function rotate_tangent_operator_blocks_in_place_wrapper(to,b, r) &
+            bind(c,name = 'mgis_bv_behaviour_rotate_tangent_operator_blocks_in_place') &
+            result(ret)
+         use, intrinsic :: iso_c_binding, only: c_double, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         real(c_double), dimension(:), intent(out) :: to
+         type(c_ptr), intent(in), value :: b
+         real(kind=8), dimension(9), intent(in) :: r         
+         type(mgis_status) :: ret
+       end function rotate_tangent_operator_blocks_in_place_wrapper
+    end interface
+    real(kind=8), dimension(:), intent(out) :: to
+    type(Behaviour), intent(in) :: b
+    real(kind=8), dimension(9), intent(in) :: r
+    type(mgis_status) :: s
+    s = rotate_tangent_operator_blocks_in_place_wrapper(to, b%ptr, r)
+  end function rotate_tangent_operator_blocks_in_place
+  
+  function rotate_tangent_operator_blocks_out_of_place(mto, b, gto, r) result(s)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function rotate_tangent_operator_blocks_out_of_place_wrapper(mto,b, gto, r) &
+            bind(c,name = 'mgis_bv_behaviour_rotate_tangent_operator_blocks_out_of_place') &
+            result(ret)
+         use, intrinsic :: iso_c_binding, only: c_double, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         real(c_double), dimension(:), intent(out) :: mto
+         type(c_ptr), intent(in), value :: b
+         real(c_double), dimension(:), intent(in) :: gto
+         real(kind=8), dimension(9), intent(in) :: r         
+         type(mgis_status) :: ret
+       end function rotate_tangent_operator_blocks_out_of_place_wrapper
+    end interface
+    real(kind=8), dimension(:), intent(out) :: mto
+    type(Behaviour), intent(in) :: b
+    real(kind=8), dimension(:), intent(in) :: gto
+    real(kind=8), dimension(9), intent(in) :: r
+    type(mgis_status) :: s
+    s = rotate_tangent_operator_blocks_out_of_place_wrapper(mto, b%ptr, gto, r)
+  end function rotate_tangent_operator_blocks_out_of_place
+  !
+  function rotate_array_of_tangent_operator_blocks_in_place(to, b, r, s) result(ret)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function rotate_array_of_tangent_operator_blocks_in_place_wrapper(to, b, r, s) &
+            bind(c,name = 'mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_in_place') &
+            result(res)
+         use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         real(c_double), dimension(:), intent(out) :: to
+         type(c_ptr), intent(in), value :: b
+         real(c_double), dimension(9), intent(in) :: r
+         integer(kind=c_size_t) :: s
+         type(mgis_status) :: res
+       end function rotate_array_of_tangent_operator_blocks_in_place_wrapper
+    end interface
+    real(kind=8), dimension(:), intent(out) :: to
+    type(Behaviour), intent(in) :: b
+    real(kind=8), dimension(9), intent(in) :: r
+    integer(kind=c_size_t) :: s
+    type(mgis_status) :: ret
+    ret = rotate_array_of_tangent_operator_blocks_in_place_wrapper(to, b%ptr, r, s)
+  end function rotate_array_of_tangent_operator_blocks_in_place
+  
+  function rotate_array_of_tangent_operator_blocks_out_of_place(mto, b, gto, r, s) result(ret)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function rotate_array_of_tangent_operator_blocks_out_of_place_wrapper(mto,b, gto, r, s) &
+            bind(c,name = 'mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_out_of_place') &
+            result(ret)
+         use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         real(c_double), dimension(:), intent(out) :: mto
+         type(c_ptr), intent(in), value :: b
+         real(c_double), dimension(:), intent(in) :: gto
+         real(c_double), dimension(9), intent(in) :: r
+         integer(kind=c_size_t) :: s
+         type(mgis_status) :: ret
+       end function rotate_array_of_tangent_operator_blocks_out_of_place_wrapper
+    end interface
+    real(kind=8), dimension(:), intent(out) :: mto
+    type(Behaviour), intent(in) :: b
+    real(kind=8), dimension(:), intent(in) :: gto
+    integer(kind=c_size_t) :: s
+    real(kind=8), dimension(9), intent(in) :: r
+    type(mgis_status) :: ret
+    ret = rotate_array_of_tangent_operator_blocks_out_of_place_wrapper(mto, b%ptr, gto, r, s)
+  end function rotate_array_of_tangent_operator_blocks_out_of_place
   ! behaviour_get_tangent_operator_array_size
   function behaviour_get_tangent_operator_array_size(n,b) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t

@@ -16,6 +16,7 @@
 #include <boost/python/enum.hpp>
 #include <boost/python/def.hpp>
 #include "MGIS/Python/VectorConverter.hxx"
+#include "MGIS/Python/NumPySupport.hxx"
 #include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/Behaviour.hxx"
 
@@ -125,6 +126,117 @@ Behaviour_getTangentOperatorBlocks(const mgis::behaviour::Behaviour &b) {
   return b.to_blocks;
 }  // end of Behaviour_getUnsignedShortParameters
 
+static mgis::span<const mgis::real, 9> convert_to_rotation_matrix(boost::python::object& r) {
+  auto rp = mgis::python::mgis_convert_to_span(r);
+  if (rp.size() != 9) {
+    mgis::raise("convert_to_rotation_matrix: invalid array size");
+  }
+  return mgis::span<const mgis::real, 9>(rp.data(), rp.size());
+}  // end of convert_to_rotation
+
+static void rotate_gradients_in_place_member(
+    const mgis::behaviour::Behaviour &b,
+    boost::python::object &g,
+    boost::python::object &r) {
+  mgis::behaviour::rotateArrayOfGradients(mgis::python::mgis_convert_to_span(g),
+                                          b, convert_to_rotation_matrix(r));
+}  // end of rotate_gradients_in_place_member
+
+static void rotate_gradients_in_place(boost::python::object &g,
+                                      const mgis::behaviour::Behaviour &b,
+                                      boost::python::object &r) {
+  mgis::behaviour::rotateArrayOfGradients(mgis::python::mgis_convert_to_span(g),
+                                          b, convert_to_rotation_matrix(r));
+}  // end of rotate_gradients_in_place
+
+static void rotate_gradients_out_of_place_member(
+    const mgis::behaviour::Behaviour &b,
+    boost::python::object &mg,
+    boost::python::object &gg,
+    boost::python::object &r) {
+  mgis::behaviour::rotateArrayOfGradients(
+      mgis::python::mgis_convert_to_span(mg), b,
+      mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
+}  // end of rotate_gradients_out_of_place_member
+
+static void rotate_gradients_out_of_place(boost::python::object &mg,
+                                          const mgis::behaviour::Behaviour &b,
+                                          boost::python::object &gg,
+                                          boost::python::object &r) {
+  mgis::behaviour::rotateArrayOfGradients(
+      mgis::python::mgis_convert_to_span(mg), b,
+      mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
+}  // end of rotate_gradients_out_of_place
+
+static void rotate_thermodynamic_forces_in_place_member(
+    const mgis::behaviour::Behaviour &b,
+    boost::python::object &g,
+    boost::python::object &r) {
+  mgis::behaviour::rotateArrayOfThermodynamicForces(
+      mgis::python::mgis_convert_to_span(g), b, convert_to_rotation_matrix(r));
+}  // end of rotate_thermodynamic_forces_in_place_member
+
+static void rotate_thermodynamic_forces_in_place(boost::python::object &g,
+                                      const mgis::behaviour::Behaviour &b,
+                                      boost::python::object &r) {
+  mgis::behaviour::rotateArrayOfThermodynamicForces(
+      mgis::python::mgis_convert_to_span(g), b, convert_to_rotation_matrix(r));
+}  // end of rotate_thermodynamic_forces_in_place
+
+static void rotate_thermodynamic_forces_out_of_place_member(
+    const mgis::behaviour::Behaviour &b,
+    boost::python::object &mg,
+    boost::python::object &gg,
+    boost::python::object &r) {
+  mgis::behaviour::rotateArrayOfThermodynamicForces(
+      mgis::python::mgis_convert_to_span(mg), b,
+      mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
+}  // end of rotate_thermodynamic_forces_out_of_place_member
+
+static void rotate_thermodynamic_forces_out_of_place(boost::python::object &mg,
+                                          const mgis::behaviour::Behaviour &b,
+                                          boost::python::object &gg,
+                                          boost::python::object &r) {
+  mgis::behaviour::rotateArrayOfThermodynamicForces(
+      mgis::python::mgis_convert_to_span(mg), b,
+      mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
+}  // end of rotate_thermodynamic_forces_out_of_place
+
+static void rotate_tangent_operator_blocks_in_place_member(
+    const mgis::behaviour::Behaviour &b,
+    boost::python::object &g,
+    boost::python::object &r) {
+  mgis::behaviour::rotateArrayOfTangentOperatorBlocks(
+      mgis::python::mgis_convert_to_span(g), b, convert_to_rotation_matrix(r));
+}  // end of rotate_tangent_operator_blocks_in_place_member
+
+static void rotate_tangent_operator_blocks_in_place(
+    boost::python::object &g,
+    const mgis::behaviour::Behaviour &b,
+    boost::python::object &r) {
+  mgis::behaviour::rotateArrayOfTangentOperatorBlocks(
+      mgis::python::mgis_convert_to_span(g), b, convert_to_rotation_matrix(r));
+}  // end of rotate_tangent_operator_blocks_in_place
+
+static void rotate_tangent_operator_blocks_out_of_place_member(
+    const mgis::behaviour::Behaviour &b,
+    boost::python::object &mg,
+    boost::python::object &gg,
+    boost::python::object &r) {
+  mgis::behaviour::rotateArrayOfTangentOperatorBlocks(
+      mgis::python::mgis_convert_to_span(mg), b,
+      mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
+}  // end of rotate_tangent_operator_blocks_out_of_place_member
+
+static void rotate_tangent_operator_blocks_out_of_place(
+    boost::python::object &mg,
+    const mgis::behaviour::Behaviour &b,
+    boost::python::object &gg,
+    boost::python::object &r) {
+  mgis::behaviour::rotateArrayOfTangentOperatorBlocks(
+      mgis::python::mgis_convert_to_span(mg), b,
+      mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
+}  // end of rotate_tangent_operator_blocks_out_of_place
 
 void declareBehaviour() {
   using mgis::behaviour::FiniteStrainBehaviourOptions;
@@ -299,8 +411,29 @@ void declareBehaviour() {
       .def("hasLowerPhysicalBound", hasLowerPhysicalBound)
       .def("hasUpperPhysicalBound", hasUpperPhysicalBound)
       .def("getLowerPhysicalBound ", getLowerPhysicalBound)
-      .def("getUpperPhysicalBound ", getUpperPhysicalBound);
+      .def("getUpperPhysicalBound ", getUpperPhysicalBound)
+      .def("rotateGradients", rotate_gradients_in_place_member)
+      .def("rotateGradients", rotate_gradients_out_of_place_member)
+      .def("rotateThermodynamicForces",
+           rotate_thermodynamic_forces_in_place_member)
+      .def("rotateThermodynamicForces",
+           rotate_thermodynamic_forces_out_of_place_member)
+      .def("rotateTangentOperatorBlocks",
+           rotate_tangent_operator_blocks_in_place_member)
+      .def("rotateTangentOperatorBlocks",
+           rotate_tangent_operator_blocks_out_of_place_member);
   // wrapping free functions
+  boost::python::def("rotateGradients", rotate_gradients_in_place);
+  boost::python::def("rotateGradients", rotate_gradients_out_of_place);
+  boost::python::def("rotateThermodynamicForces",
+                     rotate_thermodynamic_forces_in_place);
+  boost::python::def("rotateThermodynamicForces",
+                     rotate_thermodynamic_forces_out_of_place);
+  boost::python::def("rotateTangentOperatorBlocks",
+                     rotate_tangent_operator_blocks_in_place);
+  boost::python::def("rotateTangentOperatorBlocks",
+                     rotate_tangent_operator_blocks_out_of_place);
+
   boost::python::def(
       "isStandardFiniteStrainBehaviour",
       mgis::behaviour::isStandardFiniteStrainBehaviour,

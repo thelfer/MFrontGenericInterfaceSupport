@@ -198,7 +198,7 @@ namespace mgis {
                                                         const std::string &b,
                                                         const Hypothesis h) {
     const auto hn = toString(h);
-    const auto f = b + "_" + hn + "_rotateGradients";
+    const auto f = b + "_" + hn + "_rotateArrayOfGradients";
     const auto p = this->getSymbolAddress(l, f);
     if (p == nullptr) {
       mgis::raise(
@@ -230,7 +230,7 @@ namespace mgis {
   LibrariesManager::getRotateArrayOfBehaviourThermodynamicForcesFunction(
       const std::string &l, const std::string &b, const Hypothesis h) {
     const auto hn = toString(h);
-    const auto f = b + "_" + hn + "_rotateThermodynamicForces";
+    const auto f = b + "_" + hn + "_rotateArrayOfThermodynamicForces";
     const auto p = this->getSymbolAddress(l, f);
     if (p == nullptr) {
       mgis::raise(
@@ -293,7 +293,7 @@ namespace mgis {
       }
       return "PK1Stress";
     }();
-    const auto f = b + "_" + hn + "_rotateThermodynamicForces_" + suffix;
+    const auto f = b + "_" + hn + "_rotateArrayThermodynamicForces_" + suffix;
     const auto p =
         this->getSymbolAddress(l, f);
     if (p == nullptr) {
@@ -326,7 +326,7 @@ namespace mgis {
   LibrariesManager::getRotateArrayOfBehaviourTangentOperatorBlocksFunction(
       const std::string &l, const std::string &b, const Hypothesis h) {
     const auto hn = toString(h);
-    const auto f = b + "_" + hn + "_rotateTangentOperatorBlocks";
+    const auto f = b + "_" + hn + "_rotateArrayOfTangentOperatorBlocks";
     const auto p = this->getSymbolAddress(l, f);
     if (p == nullptr) {
       mgis::raise(
@@ -388,7 +388,7 @@ namespace mgis {
       }
       return "dPK1_dF";
     }();
-    const auto f = b + "_" + hn + "_rotateTangentOperatorBlocks_" + suffix;
+    const auto f = b + "_" + hn + "_rotateArrayOfTangentOperatorBlocks_" + suffix;
     const auto p = this->getSymbolAddress(l, f);
     if (p == nullptr) {
       mgis::raise(
