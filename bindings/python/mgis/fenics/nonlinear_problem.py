@@ -233,8 +233,11 @@ class AbstractNonlinearProblem:
             state_var = self.state_variables["external"][s]
             if isinstance(state_var, Gradient):
                 state_var.initialize_function(self.mesh, self.quadrature_degree)
+                values = state_var.function.vector().get_local()
+                mgis_bv.setExternalStateVariable(self.material.data_manager.s0, s,
+                                                 values, mgis_bv.MaterialStateManagerStorageMode.LocalStorage)
             elif isinstance(state_var, Constant):
-                pass
+                mgis_bv.setExternalStateVariable(self.material.data_manager.s0, s, float(state_var))
             else:
                 raise ValueError("External state variable '{}' has not been registered.".format(s))
 
