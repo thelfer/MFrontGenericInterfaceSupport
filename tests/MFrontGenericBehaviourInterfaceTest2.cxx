@@ -59,8 +59,8 @@ int main(const int argc, const char* const* argv) {
 	      "invalid material property name, expected '" + n + "'");
       };
       for (const auto& mp : d.mps) {
-	check(mp.type == Variable::SCALAR,
-	      "invalid material property type '" + mp.name + "'");
+        check(mp.type == Variable::SCALAR,
+              "invalid material property type '" + mp.name + "'");
       }
       check_mp(d.mps[0],"YoungModulus1");
       check_mp(d.mps[1],"YoungModulus2");

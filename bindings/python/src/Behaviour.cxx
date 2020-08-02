@@ -138,14 +138,14 @@ static void rotate_gradients_in_place_member(
     const mgis::behaviour::Behaviour &b,
     boost::python::object &g,
     boost::python::object &r) {
-  mgis::behaviour::rotateArrayOfGradients(mgis::python::mgis_convert_to_span(g),
+  mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(g),
                                           b, convert_to_rotation_matrix(r));
 }  // end of rotate_gradients_in_place_member
 
 static void rotate_gradients_in_place(boost::python::object &g,
                                       const mgis::behaviour::Behaviour &b,
                                       boost::python::object &r) {
-  mgis::behaviour::rotateArrayOfGradients(mgis::python::mgis_convert_to_span(g),
+  mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(g),
                                           b, convert_to_rotation_matrix(r));
 }  // end of rotate_gradients_in_place
 
@@ -154,7 +154,7 @@ static void rotate_gradients_out_of_place_member(
     boost::python::object &mg,
     boost::python::object &gg,
     boost::python::object &r) {
-  mgis::behaviour::rotateArrayOfGradients(
+  mgis::behaviour::rotateGradients(
       mgis::python::mgis_convert_to_span(mg), b,
       mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
 }  // end of rotate_gradients_out_of_place_member
@@ -163,7 +163,7 @@ static void rotate_gradients_out_of_place(boost::python::object &mg,
                                           const mgis::behaviour::Behaviour &b,
                                           boost::python::object &gg,
                                           boost::python::object &r) {
-  mgis::behaviour::rotateArrayOfGradients(
+  mgis::behaviour::rotateGradients(
       mgis::python::mgis_convert_to_span(mg), b,
       mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
 }  // end of rotate_gradients_out_of_place
@@ -172,14 +172,14 @@ static void rotate_thermodynamic_forces_in_place_member(
     const mgis::behaviour::Behaviour &b,
     boost::python::object &g,
     boost::python::object &r) {
-  mgis::behaviour::rotateArrayOfThermodynamicForces(
+  mgis::behaviour::rotateThermodynamicForces(
       mgis::python::mgis_convert_to_span(g), b, convert_to_rotation_matrix(r));
 }  // end of rotate_thermodynamic_forces_in_place_member
 
 static void rotate_thermodynamic_forces_in_place(boost::python::object &g,
                                       const mgis::behaviour::Behaviour &b,
                                       boost::python::object &r) {
-  mgis::behaviour::rotateArrayOfThermodynamicForces(
+  mgis::behaviour::rotateThermodynamicForces(
       mgis::python::mgis_convert_to_span(g), b, convert_to_rotation_matrix(r));
 }  // end of rotate_thermodynamic_forces_in_place
 
@@ -188,7 +188,7 @@ static void rotate_thermodynamic_forces_out_of_place_member(
     boost::python::object &mg,
     boost::python::object &gg,
     boost::python::object &r) {
-  mgis::behaviour::rotateArrayOfThermodynamicForces(
+  mgis::behaviour::rotateThermodynamicForces(
       mgis::python::mgis_convert_to_span(mg), b,
       mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
 }  // end of rotate_thermodynamic_forces_out_of_place_member
@@ -197,7 +197,7 @@ static void rotate_thermodynamic_forces_out_of_place(boost::python::object &mg,
                                           const mgis::behaviour::Behaviour &b,
                                           boost::python::object &gg,
                                           boost::python::object &r) {
-  mgis::behaviour::rotateArrayOfThermodynamicForces(
+  mgis::behaviour::rotateThermodynamicForces(
       mgis::python::mgis_convert_to_span(mg), b,
       mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
 }  // end of rotate_thermodynamic_forces_out_of_place
@@ -206,7 +206,7 @@ static void rotate_tangent_operator_blocks_in_place_member(
     const mgis::behaviour::Behaviour &b,
     boost::python::object &g,
     boost::python::object &r) {
-  mgis::behaviour::rotateArrayOfTangentOperatorBlocks(
+  mgis::behaviour::rotateTangentOperatorBlocks(
       mgis::python::mgis_convert_to_span(g), b, convert_to_rotation_matrix(r));
 }  // end of rotate_tangent_operator_blocks_in_place_member
 
@@ -214,7 +214,7 @@ static void rotate_tangent_operator_blocks_in_place(
     boost::python::object &g,
     const mgis::behaviour::Behaviour &b,
     boost::python::object &r) {
-  mgis::behaviour::rotateArrayOfTangentOperatorBlocks(
+  mgis::behaviour::rotateTangentOperatorBlocks(
       mgis::python::mgis_convert_to_span(g), b, convert_to_rotation_matrix(r));
 }  // end of rotate_tangent_operator_blocks_in_place
 
@@ -223,7 +223,7 @@ static void rotate_tangent_operator_blocks_out_of_place_member(
     boost::python::object &mg,
     boost::python::object &gg,
     boost::python::object &r) {
-  mgis::behaviour::rotateArrayOfTangentOperatorBlocks(
+  mgis::behaviour::rotateTangentOperatorBlocks(
       mgis::python::mgis_convert_to_span(mg), b,
       mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
 }  // end of rotate_tangent_operator_blocks_out_of_place_member
@@ -233,7 +233,7 @@ static void rotate_tangent_operator_blocks_out_of_place(
     const mgis::behaviour::Behaviour &b,
     boost::python::object &gg,
     boost::python::object &r) {
-  mgis::behaviour::rotateArrayOfTangentOperatorBlocks(
+  mgis::behaviour::rotateTangentOperatorBlocks(
       mgis::python::mgis_convert_to_span(mg), b,
       mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
 }  // end of rotate_tangent_operator_blocks_out_of_place

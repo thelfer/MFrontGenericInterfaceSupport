@@ -219,34 +219,6 @@ namespace mgis {
      */
     MGIS_EXPORT mgis::size_type getTangentOperatorArraySize(const Behaviour &);
     /*!
-     * \brief rotate the gradients of the behaviour from the global frame to the
-     * material frame.
-     * \param[in,out] g: gradients
-     * \param[in] b: behaviour description
-     * \param[in] r: rotation matrix from the global frame to the material
-     * frame.
-     * \note this function performs consistency checks that might hurt
-     * performances.
-     */
-    MGIS_EXPORT void rotateGradients(mgis::span<real>,
-                                     const Behaviour &,
-                                     const mgis::span<const real, 9> &);
-    /*!
-     * \brief rotate the gradients of the behaviour from the global frame to the
-     * material frame.
-     * \param[out] mg: gradients in the material frame
-     * \param[in] b: behaviour description
-     * \param[in] gg: gradients in the global frame
-     * \param[in] r: rotation matrix from the global frame to the material
-     * frame.
-     * \note this function performs consistency checks that might hurt
-     * performances.
-     */
-    MGIS_EXPORT void rotateGradients(mgis::span<real>,
-                                     const Behaviour &,
-                                     const mgis::span<const real> &,
-                                     const mgis::span<const real, 9> &);
-    /*!
      * \brief rotate an array of gradients from the global frame to the material
      * frame.
      * \param[out,in] g: gradients
@@ -254,9 +226,9 @@ namespace mgis {
      * \param[in] r: rotation matrix from the global frame to the material
      * frame.
      */
-    MGIS_EXPORT void rotateArrayOfGradients(mgis::span<real>,
-                                            const Behaviour &,
-                                            const mgis::span<const real, 9> &);
+    MGIS_EXPORT void rotateGradients(mgis::span<real>,
+                                     const Behaviour &,
+                                     const mgis::span<const real, 9> &);
     /*!
      * \brief rotate an array of gradients from the global frame to the material
      * frame.
@@ -266,54 +238,24 @@ namespace mgis {
      * \param[in] r: rotation matrix from the global frame to the material
      * frame.
      */
-    MGIS_EXPORT void rotateArrayOfGradients(mgis::span<real>,
-                                            const Behaviour &,
-                                            const mgis::span<const real> &,
-                                            const mgis::span<const real, 9> &);
+    MGIS_EXPORT void rotateGradients(mgis::span<real>,
+                                     const Behaviour &,
+                                     const mgis::span<const real> &,
+                                     const mgis::span<const real, 9> &);
     /*!
-     * \brief rotate the thermodynamics forces of the behaviour from the material
-     * frame to the global frame.
-     * \param[in,out] tf: thermodynamics forces
-     * \param[in] b: behaviour description
-     * \param[in] r: rotation matrix from the global frame to the material
-     * frame.
-     * \note this function performs consistency checks that might hurt
-     * performances.
-     */
-    MGIS_EXPORT void rotateThermodynamicForces(
-        mgis::span<real>,
-        const Behaviour &,
-        const mgis::span<const real, 9> &);
-    /*!
-     * \brief rotate the thermodynamics forces of the behaviour from the material
-     * frame to the global frame.
-     * \param[out] gtf: thermodynamics forces
-     * \param[in] b: behaviour description
-     * \param[in] mtf: thermodynamics forces
-     * \param[in] r: rotation matrix from the global frame to the material
-     * frame.
-     * \note this function performs consistency checks that might hurt
-     * performances.
-     */
-    MGIS_EXPORT void rotateThermodynamicForces(
-        mgis::span<real>,
-        const Behaviour &,
-        const mgis::span<const real> &,
-        const mgis::span<const real, 9> &);
-    /*!
-     * \brief rotate an array of thermodynamics forces from the material frame to
+     * \brief rotate an array of thermodynamics forces from the material frame
+     * to
      * the global frame.
      * \param[out,in] tf: thermodynamics forces
      * \param[in] b: behaviour description
      * \param[in] r: rotation matrix from the global frame to the material
      * frame.
      */
-    MGIS_EXPORT void rotateArrayOfThermodynamicForces(
-        mgis::span<real>,
-        const Behaviour &,
-        const mgis::span<const real, 9> &);
+    MGIS_EXPORT void rotateThermodynamicForces(
+        mgis::span<real>, const Behaviour &, const mgis::span<const real, 9> &);
     /*!
-     * \brief rotate an array of thermodynamics forces from the material frame to
+     * \brief rotate an array of thermodynamics forces from the material frame
+     * to
      * the global frame.
      * \param[out] gtf: thermodynamics forces in the global frame
      * \param[in] b: behaviour description
@@ -321,37 +263,7 @@ namespace mgis {
      * \param[in] r: rotation matrix from the global frame to the material
      * frame.
      */
-    MGIS_EXPORT void rotateArrayOfThermodynamicForces(
-        mgis::span<real>,
-        const Behaviour &,
-        const mgis::span<const real> &,
-        const mgis::span<const real, 9> &);
-    /*!
-     * \brief rotate the tangent operator blocks of the behaviour from the
-     * material frame to the global frame.
-     * \param[in,out] K: tangent operator blocks
-     * \param[in] b: behaviour description
-     * \param[in] r: rotation matrix from the global frame to the material
-     * frame.
-     * \note this function performs consistency checks that might hurt
-     * performances.
-     */
-    MGIS_EXPORT void rotateTangentOperatorBlocks(
-        mgis::span<real>,
-        const Behaviour &,
-        const mgis::span<const real, 9> &);
-    /*!
-     * \brief rotate the tangent operator blocks of the behaviour from the
-     * material frame to the global frame.
-     * \param[out] gK: tangent operator blocks in the global frame
-     * \param[in] b: behaviour description
-     * \param[in] mK: tangent operator blocks in the material frame
-     * \param[in] r: rotation matrix from the global frame to the material
-     * frame.
-     * \note this function performs consistency checks that might hurt
-     * performances.
-     */
-    MGIS_EXPORT void rotateTangentOperatorBlocks(
+    MGIS_EXPORT void rotateThermodynamicForces(
         mgis::span<real>,
         const Behaviour &,
         const mgis::span<const real> &,
@@ -364,10 +276,8 @@ namespace mgis {
      * \param[in] r: rotation matrix from the global frame to the material
      * frame.
      */
-    MGIS_EXPORT void rotateArrayOfTangentOperatorBlocks(
-        mgis::span<real>,
-        const Behaviour &,
-        const mgis::span<const real, 9> &);
+    MGIS_EXPORT void rotateTangentOperatorBlocks(
+        mgis::span<real>, const Behaviour &, const mgis::span<const real, 9> &);
     /*!
      * \brief rotate an array of tangent operator blocks from the material frame
      * to the global frame.
@@ -377,7 +287,7 @@ namespace mgis {
      * \param[in] r: rotation matrix from the global frame to the material
      * frame.
      */
-    MGIS_EXPORT void rotateArrayOfTangentOperatorBlocks(
+    MGIS_EXPORT void rotateTangentOperatorBlocks(
         mgis::span<real>,
         const Behaviour &,
         const mgis::span<const real> &,

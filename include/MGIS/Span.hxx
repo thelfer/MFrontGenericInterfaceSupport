@@ -12,6 +12,8 @@
 #ifndef LIB_MGIS_SPAN_HXX
 #define LIB_MGIS_SPAN_HXX
 
+#include "MGIS/Configx.hxx"
+
 #define span_lite_MAJOR 0
 #define span_lite_MINOR 3
 #define span_lite_PATCH 0

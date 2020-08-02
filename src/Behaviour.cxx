@@ -467,47 +467,11 @@ namespace mgis {
     }  // end of getTangentOperatorArraySize
 
     void rotateGradients(mgis::span<real> g,
-                         const Behaviour &b,
-                         const mgis::span<const real, 9> &r) {
-      if (b.rotate_gradients_ptr == nullptr) {
-        mgis::raise(
-            "rotateGradients: no function performing the rotation of the "
-            "gradients defined");
-      }
-      if (g.size() != getArraySize(b.gradients, b.hypothesis)) {
-        mgis::raise("rotateGradients: invalid array size");
-      }
-      b.rotate_gradients_ptr(g.data(), g.data(), r.data());
-    }  // end of rotateGradients
-
-    void rotateGradients(mgis::span<real> mg,
-                         const Behaviour &b,
-                         const mgis::span<const real> &gg,
-                         const mgis::span<const real, 9> &r) {
-      if (b.rotate_gradients_ptr == nullptr) {
-        mgis::raise(
-            "rotateGradients: no function performing the rotation of the "
-            "gradients defined");
-      }
-      if (mg.size() != getArraySize(b.gradients, b.hypothesis)) {
-        mgis::raise(
-            "rotateGradients: invalid size of the array of gradients in the "
-            "material frame");
-      }
-      if (gg.size() != mg.size()) {
-        mgis::raise(
-            "rotateGradients: invalid size of the array of gradients in the "
-            "global frame");
-      }
-      b.rotate_gradients_ptr(mg.data(), gg.data(), r.data());
-    }  // end of rotateGradients
-
-    void rotateArrayOfGradients(mgis::span<real> g,
                                 const Behaviour &b,
                                 const mgis::span<const real, 9> &r) {
       if (b.rotate_gradients_ptr == nullptr) {
         mgis::raise(
-            "rotateArrayOfGradients: no function performing the rotation of "
+            "rotateGradients: no function performing the rotation of "
             "the "
             "gradients defined");
       }
@@ -515,19 +479,19 @@ namespace mgis {
       auto dv = std::div(g.size(), gsize);
       if (dv.rem != 0) {
         mgis::raise(
-            "rotateArrayOfGradients: invalid array size (not a multiple of the "
+            "rotateGradients: invalid array size (not a multiple of the "
             "gradients size)");
       }
       b.rotate_array_of_gradients_ptr(g.data(), g.data(), r.data(), dv.quot);
-    }  // end of rotateArrayOfGradients
+    }  // end of rotateGradients
 
-    void rotateArrayOfGradients(mgis::span<real> mg,
+    void rotateGradients(mgis::span<real> mg,
                                 const Behaviour &b,
                                 const mgis::span<const real> &gg,
                                 const mgis::span<const real, 9> &r) {
       if (b.rotate_gradients_ptr == nullptr) {
         mgis::raise(
-            "rotateArrayOfGradients: no function performing the rotation of "
+            "rotateGradients: no function performing the rotation of "
             "the "
             "gradients defined");
       }
@@ -535,167 +499,101 @@ namespace mgis {
       auto dv = std::div(gg.size(), gsize);
       if (dv.rem != 0) {
         mgis::raise(
-            "rotateArrayOfGradients: invalid array size in the global frame "
+            "rotateGradients: invalid array size in the global frame "
             "(not a multiple of the gradients size)");
       }
       if (mg.size() != gg.size()) {
-        mgis::raise("rotateArrayOfGradients: unmatched array sizes");
+        mgis::raise("rotateGradients: unmatched array sizes");
       }
       b.rotate_array_of_gradients_ptr(mg.data(), gg.data(), r.data(), dv.quot);
-    }  // end of rotateArrayOfGradients
+    }  // end of rotateGradients
 
     void rotateThermodynamicForces(mgis::span<real> tf,
-                                   const Behaviour &b,
-                                   const mgis::span<const real, 9> &r) {
-      if (b.rotate_thermodynamic_forces_ptr == nullptr) {
-        mgis::raise(
-            "rotateThermodynamicForces: no function performing the rotation of "
-            "the thermodynamic forces defined");
-      }
-      if (tf.size() != getArraySize(b.thermodynamic_forces, b.hypothesis)) {
-        mgis::raise("rotateThermodynamicForces: invalid array size");
-      }
-      b.rotate_thermodynamic_forces_ptr(tf.data(), tf.data(), r.data());
-    }  // end of rotateThermodynamicForces
-
-    void rotateThermodynamicForces(mgis::span<real> gtf,
-                                   const Behaviour &b,
-                                   const mgis::span<const real> &mtf,
-                                   const mgis::span<const real, 9> &r) {
-      if (b.rotate_thermodynamic_forces_ptr == nullptr) {
-        mgis::raise(
-            "rotateThermodynamicForces: no function performing the rotation of "
-            "the thermodynamic forces defined");
-      }
-      if (mtf.size() != getArraySize(b.thermodynamic_forces, b.hypothesis)) {
-        mgis::raise(
-            "rotateThermodynamicForces: invalid size for the thermodynamic "
-            "forces in the material frame");
-      }
-      if (gtf.size() != mtf.size()) {
-        mgis::raise("rotateThermodynamicForces: unmatched array sizes");
-      }
-      b.rotate_thermodynamic_forces_ptr(gtf.data(), mtf.data(), r.data());
-    }  // end of rotateThermodynamicForces
-
-    void rotateArrayOfThermodynamicForces(mgis::span<real> tf,
                                           const Behaviour &b,
                                           const mgis::span<const real, 9> &r) {
       if (b.rotate_thermodynamic_forces_ptr == nullptr) {
         mgis::raise(
-            "rotateArrayOfThermodynamicForces: no function performing the "
+            "rotateThermodynamicForces: no function performing the "
             "rotation of the thermodynamic forces defined");
       }
       const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
       auto dv = std::div(tf.size(), tfsize);
       if (dv.rem != 0) {
         mgis::raise(
-            "rotateArrayOfThermodynamicForces: invalid array size (not a "
+            "rotateThermodynamicForces: invalid array size (not a "
             "multiple of the thermodynamic forces size)");
       }
       b.rotate_array_of_thermodynamic_forces_ptr(tf.data(), tf.data(), r.data(),
                                                  dv.quot);
-    }  // end of rotateArrayOfThermodynamicForces
+    }  // end of rotateThermodynamicForces
 
-    void rotateArrayOfThermodynamicForces(mgis::span<real> gtf,
+    void rotateThermodynamicForces(mgis::span<real> gtf,
                                           const Behaviour &b,
                                           const mgis::span<const real> &mtf,
                                           const mgis::span<const real, 9> &r) {
       if (b.rotate_thermodynamic_forces_ptr == nullptr) {
         mgis::raise(
-            "rotateArrayOfThermodynamicForces: no function performing the "
+            "rotateThermodynamicForces: no function performing the "
             "rotation of the thermodynamic forces defined");
       }
       const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
       auto dv = std::div(mtf.size(), tfsize);
       if (dv.rem != 0) {
         mgis::raise(
-            "rotateArrayOfThermodynamicForces: invalid array size (not a "
+            "rotateThermodynamicForces: invalid array size (not a "
             "multiple of the thermodynamic forces size)");
       }
       if (gtf.size() != mtf.size()) {
-        mgis::raise("rotateArrayOfThermodynamicForces: unmatched array sizes");
+        mgis::raise("rotateThermodynamicForces: unmatched array sizes");
       }
       b.rotate_array_of_thermodynamic_forces_ptr(gtf.data(), mtf.data(),
                                                  r.data(), dv.quot);
-    }  // end of rotateArrayOfThermodynamicForces
+    }  // end of rotateThermodynamicForces
 
-    void rotateTangentOperatorBlocks(mgis::span<real> K,
-                                     const Behaviour &b,
-                                     const mgis::span<const real, 9> &r) {
-      if (b.rotate_tangent_operator_blocks_ptr == nullptr) {
-        mgis::raise(
-            "rotateTangentOperatorBlocks: no function performing the rotation "
-            "of the tangent operator blocks defined");
-      }
-      if (K.size() != getTangentOperatorArraySize(b)) {
-        mgis::raise("rotateTangentOperatorBlocks: invalid array size");
-      }
-      b.rotate_tangent_operator_blocks_ptr(K.data(), K.data(), r.data());
-    }  // end of rotateTangentOperatorBlocks
-
-    void rotateTangentOperatorBlocks(mgis::span<real> gK,
-                                     const Behaviour &b,
-                                     const mgis::span<const real> &mK,
-                                     const mgis::span<const real, 9> &r) {
-      if (b.rotate_tangent_operator_blocks_ptr == nullptr) {
-        mgis::raise(
-            "rotateTangentOperatorBlocks: no function performing the rotation "
-            "of the tangent operator blocks defined");
-      }
-      if (mK.size() != getTangentOperatorArraySize(b)) {
-        mgis::raise("rotateTangentOperatorBlocks: invalid array size");
-      }
-      if (gK.size() != mK.size()) {
-        mgis::raise("rotateTangentOperatorBlocks : unmatched array sizes");
-      }
-      b.rotate_tangent_operator_blocks_ptr(gK.data(), mK.data(), r.data());
-    }  // end of rotateTangentOperatorBlocks
-
-    void rotateArrayOfTangentOperatorBlocks(
+    void rotateTangentOperatorBlocks(
         mgis::span<real> K,
         const Behaviour &b,
         const mgis::span<const real, 9> &r) {
       if (b.rotate_tangent_operator_blocks_ptr == nullptr) {
         mgis::raise(
-            "rotateArrayOfTangentOperatorBlocks: no function performing the "
+            "rotateTangentOperatorBlocks: no function performing the "
             "rotation of the tangent operator blocks defined");
       }
       const auto Ksize = getTangentOperatorArraySize(b);
       auto dv = std::div(K.size(), Ksize);
       if (dv.rem != 0) {
         mgis::raise(
-            "rotateArrayOfTangentOperatorBlocks: invalid array size (not a "
+            "rotateTangentOperatorBlocks: invalid array size (not a "
             "multiple of the tangent operator blocks size)");
       }
       b.rotate_array_of_tangent_operator_blocks_ptr(K.data(), K.data(),
                                                     r.data(), dv.quot);
-    }  // end of rotateArrayOfTangentOperatorBlocks
+    }  // end of rotateTangentOperatorBlocks
 
-    void rotateArrayOfTangentOperatorBlocks(
+    void rotateTangentOperatorBlocks(
         mgis::span<real> gK,
         const Behaviour &b,
         const mgis::span<const real> &mK,
         const mgis::span<const real, 9> &r) {
       if (b.rotate_tangent_operator_blocks_ptr == nullptr) {
         mgis::raise(
-            "rotateArrayOfTangentOperatorBlocks: no function performing the "
+            "rotateTangentOperatorBlocks: no function performing the "
             "rotation of the tangent operator blocks defined");
       }
       const auto Ksize = getTangentOperatorArraySize(b);
       auto dv = std::div(gK.size(), Ksize);
       if (dv.rem != 0) {
         mgis::raise(
-            "rotateArrayOfTangentOperatorBlocks: invalid array size (not a "
+            "rotateTangentOperatorBlocks: invalid array size (not a "
             "multiple of the tangent operator blocks size)");
       }
       if (mK.size() != gK.size()) {
         mgis::raise(
-            "rotateArrayOfTangentOperatorBlocks : unmatched array sizes");
+            "rotateTangentOperatorBlocks : unmatched array sizes");
       }
       b.rotate_array_of_tangent_operator_blocks_ptr(gK.data(), mK.data(),
                                                     r.data(), dv.quot);
-    }  // end of rotateArrayOfTangentOperatorBlocks
+    }  // end of rotateTangentOperatorBlocks
 
     void setParameter(const Behaviour &b,
                       const std::string &n,
