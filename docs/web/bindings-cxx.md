@@ -446,4 +446,10 @@ argument of the `ThreadPool` type allowing a parallelization of the
 behaviour integration. The user may refer to the `IntegrateTest2b.cxx`
 file to have an example on how this use this second overload.
 
+# Orthotropic behaviours
+
+Orthotropic behaviours require to handle the rotations between the
+global frame and the material frame. This is described in depth
+[here](orthotropic-behaviours.html).
+
 # References

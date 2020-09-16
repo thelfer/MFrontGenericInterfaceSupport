@@ -24,6 +24,10 @@ function(mgis_python_module name output_name)
     PRIVATE "${Boost_INCLUDE_DIRS}"
     PRIVATE "${PYTHON_INCLUDE_DIRS}"
     PRIVATE "${PYTHON_NUMPY_INCLUDE_DIR}")
+  if(NUMPY_INCLUDE_DIRS) 
+    target_include_directories(${module}
+      SYSTEM PRIVATE "${NUMPY_INCLUDE_DIRS}")
+  endif(NUMPY_INCLUDE_DIRS)
   # Link flags for python modules.
   #
   # I removed links to the python library on MacOS system.
