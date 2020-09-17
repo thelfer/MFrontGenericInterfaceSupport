@@ -15,6 +15,8 @@
 #ifndef LIB_MGIS_STRINGVIEW_IXX
 #define LIB_MGIS_STRINGVIEW_IXX
 
+#include <stdexcept>
+
 namespace mgis{
 
   //--------------------------------------------------------------------------
