@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import os
-import math
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
 import mgis.behaviour as mgis_bv
+
 
 class BoundsCheckTest(unittest.TestCase):
 
@@ -29,13 +29,16 @@ class BoundsCheckTest(unittest.TestCase):
         lib = os.environ['MGIS_TEST_BEHAVIOURS_LIBRARY']
         version = os.environ['MGIS_TEST_TFEL_VERSION']
         h = mgis_bv.Hypothesis.Tridimensional
-        b = mgis_bv.load(lib,'BoundsCheckTest',h)
-        self.assertTrue(b.behaviour == "BoundsCheckTest", "invalid behaviour name")
+        b = mgis_bv.load(lib, 'BoundsCheckTest', h)
+        self.assertTrue(b.behaviour == "BoundsCheckTest",
+                        "invalid behaviour name")
         self.assertTrue(b.hypothesis == h, "invalid hypothesis")
-        self.assertTrue(b.source == "BoundsCheckTest.mfront", "invalid source")
+        self.assertTrue(b.source == "BoundsCheckTest.mfront",
+                        "invalid source")
         self.assertTrue(b.tfel_version == version, "invalid TFEL version")
         # test on material properties
-        self.assertTrue(mgis_bv.hasBounds(b, "YoungModulus"), "'YoungModulus' shall have bounds")
+        self.assertTrue(mgis_bv.hasBounds(b, "YoungModulus"),
+                        "'YoungModulus' shall have bounds")
         self.assertTrue(mgis_bv.hasLowerBound(b, "YoungModulus"),
                         "'YoungModulus' shall have a lower bound")
         self.assertTrue(abs(mgis_bv.getLowerBound(b, "YoungModulus") - yg_min) < eps * yg_min,

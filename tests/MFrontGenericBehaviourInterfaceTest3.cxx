@@ -34,7 +34,7 @@ int main(const int argc, const char* const* argv) {
     auto o = FiniteStrainBehaviourOptions{};
     o.stress_measure = FiniteStrainBehaviourOptions::PK1;
     o.tangent_operator = FiniteStrainBehaviourOptions::DPK1_DF;
-    const auto d = load(o,argv[1], argv[2], h);
+    const auto d = load(o, argv[1], argv[2], h);
     check(d.symmetry == Behaviour::ORTHOTROPIC, "invalid behaviour symmetry");
     if (check(d.gradients.size() == 1u, "invalid number of gradients")) {
       check(d.gradients[0].name == "DeformationGradient", "invalid gradient name");

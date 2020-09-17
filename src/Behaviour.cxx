@@ -360,6 +360,13 @@ namespace mgis {
                    const std::string &b,
                    const Hypothesis h) {
       auto d = load_behaviour(l, b, h);
+      if (d.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
+        mgis::raise(
+            "mgis::behaviour::load: "
+            "This version of the load function shall not be called "
+            "for finite strain behaviour: you shall specify finite "
+            "strain options");
+      }
       if (d.symmetry == Behaviour::ORTHOTROPIC) {
         auto &lm = mgis::LibrariesManager::get();
         d.rotate_gradients_ptr =

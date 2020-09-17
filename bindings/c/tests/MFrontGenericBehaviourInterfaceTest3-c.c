@@ -34,27 +34,12 @@ static int check(const int b, const char* const e) {
   return b;
 }  // end of check
 
-static void test1(const char* const* argv){
-  mgis_bv_Behaviour* b;
-  check_status(mgis_bv_load_behaviour(&b, argv[1],
-				      argv[2], "Tridimensional"));
-  mgis_size_type gs_size;
-  mgis_size_type ths_size;
-  check_status(
-      mgis_bv_behaviour_get_gradients_size(&gs_size,b));
-  check(gs_size==9,"invalid gradient size");
-  check_status(
-      mgis_bv_behaviour_get_thermodynamic_forces_size(&ths_size,b));
-  check(ths_size==6,"invalid thermodynamic force size");
-  check_status(mgis_bv_free_behaviour(&b));
-}
-
-static void test2(const char* const* argv){
+static void test(const char* const* argv){
   mgis_bv_Behaviour* b;
   mgis_bv_FiniteStrainBehaviourOptions* o;
   check_status(mgis_bv_create_finite_strain_behaviour_options(&o));
-  check_status(mgis_bv_load_finite_strain_behaviour(&b, o, argv[1],
-						    argv[2], "Tridimensional"));
+  check_status(mgis_bv_load_finite_strain_behaviour(&b, o, argv[1], argv[2],
+                                                    "Tridimensional"));
   mgis_size_type gs_size;
   mgis_size_type ths_size;
   check_status(
@@ -67,8 +52,9 @@ static void test2(const char* const* argv){
   check_status(mgis_bv_free_behaviour(&b));
 }
 
-static void test3(const char* const* argv,
-		  const char* const ss, const mgis_size_type es){
+static void test2(const char* const* argv,
+                  const char* const ss,
+                  const mgis_size_type es) {
   mgis_bv_Behaviour* b;
   mgis_bv_FiniteStrainBehaviourOptions* o;
   check_status(mgis_bv_create_finite_strain_behaviour_options(&o));
@@ -91,13 +77,12 @@ int main(const int argc, const char* const* argv) {
   if (!check(argc == 3, "expected three arguments")) {
     return EXIT_FAILURE;
   }
-  test1(argv);
-  test2(argv);
-  test3(argv, "CAUCHY", 6);
-  test3(argv, "CauchyStress", 6);
-  test3(argv, "PK1", 9);
-  test3(argv, "FirstPiolaKirchhoffStress", 9);
-  test3(argv, "PK2", 6);
-  test3(argv, "SecondPiolaKirchhoffStress", 6);
+  test(argv);
+  test2(argv, "CAUCHY", 6);
+  test2(argv, "CauchyStress", 6);
+  test2(argv, "PK1", 9);
+  test2(argv, "FirstPiolaKirchhoffStress", 9);
+  test2(argv, "PK2", 6);
+  test2(argv, "SecondPiolaKirchhoffStress", 6);
   return test_status;
 }  // end of main

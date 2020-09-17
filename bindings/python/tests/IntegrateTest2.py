@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import os
-import math
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
 import mgis.behaviour as mgis_bv
+
 
 class IntegrateTest2(unittest.TestCase):
 
@@ -38,22 +38,22 @@ class IntegrateTest2(unittest.TestCase):
                 0.00056635857064313]
         # modelling hypothesis
         h = mgis_bv.Hypothesis.Tridimensional
-        # loading the behaviour        
-        b = mgis_bv.load(lib,'Norton',h)
+        # loading the behaviour
+        b = mgis_bv.load(lib, 'Norton', h)
         # number of integration points
         nig = 100
         # material data manager
-        m = mgis_bv.MaterialDataManager(b,nig)
+        m = mgis_bv.MaterialDataManager(b, nig)
         # index of the equivalent viscplastic strain in the array of
         # state variable
         o = mgis_bv.getVariableOffset(b.isvs,
-                                      'EquivalentViscoplasticStrain',h)
+                                      'EquivalentViscoplasticStrain', h)
         # strain increment per time step
         de = 5.e-5
         # time step increment
-        dt = 180  
+        dt = 180
         # setting the temperature
-        mgis_bv.setExternalStateVariable(m.s1,'Temperature', 293.15)
+        mgis_bv.setExternalStateVariable(m.s1, 'Temperature', 293.15)
         # copy d.s1 in d.s0
         mgis_bv.update(m)
         # index of the first integration point
@@ -67,25 +67,25 @@ class IntegrateTest2(unittest.TestCase):
         # for the last integration point
         pe = [m.s0.internal_state_variables[ne][o]]
         # setting the gradient at the end of the first time step
-        for i in range(0,nig):
+        for i in range(0, nig):
             m.s1.gradients[i][0] = de
-        ## integration
-        for i in range(0,20):
+        # integration
+        for i in range(0, 20):
             it = mgis_bv.IntegrationType.IntegrationWithoutTangentOperator
             mgis_bv.integrate(m, it, dt, 0, m.n)
             mgis_bv.update(m)
-            for p in range(0,nig):
+            for p in range(0, nig):
                 m.s1.gradients[p][0] += de
             pi.append(m.s0.internal_state_variables[ni][o])
             pe.append(m.s0.internal_state_variables[ne][o])
-        ## checks
-        # comparison criterion
+        # checks
         eps = 1.e-12
-        for i in range(0,21):
-            self.assertTrue(abs(pi[i]-pref[i])<eps)
-            self.assertTrue(abs(pe[i]-pref[i])<eps)
-            
+        for i in range(0, 21):
+            self.assertTrue(abs(pi[i] - pref[i]) < eps)
+            self.assertTrue(abs(pe[i] - pref[i]) < eps)
+
         pass
-    
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -33,7 +33,10 @@ int main(const int argc, const char* const* argv) {
   try{
     check(isStandardFiniteStrainBehaviour(argv[1], argv[2]),
           "invalid behaviour type");
-    const auto d = load(argv[1], argv[2], h);
+    auto o = FiniteStrainBehaviourOptions{};
+    o.stress_measure = FiniteStrainBehaviourOptions::PK1;
+    o.tangent_operator = FiniteStrainBehaviourOptions::DPK1_DF;
+    const auto d = load(o, argv[1], argv[2], h);
     check(d.behaviour == "FiniteStrainSingleCrystal", "invalid behaviour name");
     check(d.hypothesis == h, "invalid hypothesis");
     check(d.source == "FiniteStrainSingleCrystal.mfront", "invalid source");
@@ -49,8 +52,9 @@ int main(const int argc, const char* const* argv) {
     }
     if (check(d.thermodynamic_forces.size() == 1u,
 	      "invalid number of thermodynamic_forces")) {
-      check(d.thermodynamic_forces[0].name == "Stress", "invalid flux name");
-      check(d.thermodynamic_forces[0].type == Variable::STENSOR,
+      check(d.thermodynamic_forces[0].name == "FirstPiolaKirchhoffStress",
+            "invalid flux name");
+      check(d.thermodynamic_forces[0].type == Variable::TENSOR,
 	    "invalid flux type");
     }
     if (check(d.mps.size() == 16, "invalid number of material properties")) {

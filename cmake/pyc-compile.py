@@ -1,4 +1,6 @@
-import sys, os, py_compile
+import os
+import sys
+import py_compile
 
 if(len(sys.argv)>1):
     sys.stdout.write('Byte-compiling python modules...\n')

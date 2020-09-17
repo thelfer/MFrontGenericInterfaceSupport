@@ -16,6 +16,8 @@ subroutine test()
        get_mfront_behaviour_test_library_path(), &
        'OrthotropicElasticity', 'Tridimensional'))
   call check_status(rotate_gradients_in_place(g, b, r))
+  write(*,*) 'g:', g(1)
+  write(*,*) 'g:', g(2)
   res = check(abs(g(1)-0) < 1.d-12, &
        'invalid value of the gradient')
   res = check(abs(g(2)-1) < 1.d-12, &

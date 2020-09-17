@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import os
-import math
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
 import mgis.behaviour as mgis_bv
+
 
 class ParameterTest(unittest.TestCase):
 
@@ -18,8 +18,9 @@ class ParameterTest(unittest.TestCase):
         lib = os.environ['MGIS_TEST_BEHAVIOURS_LIBRARY']
         version = os.environ['MGIS_TEST_TFEL_VERSION']
         h = mgis_bv.Hypothesis.Tridimensional
-        b = mgis_bv.load(lib,'ParameterTest',h)
-        self.assertTrue(b.behaviour == "ParameterTest", "invalid behaviour name")
+        b = mgis_bv.load(lib, 'ParameterTest', h)
+        self.assertTrue(b.behaviour == "ParameterTest",
+                        "invalid behaviour name")
         self.assertTrue(b.hypothesis == h, "invalid hypothesis")
         self.assertTrue(b.source == "ParameterTest.mfront", "invalid source")
         self.assertTrue(b.tfel_version == version, "invalid TFEL version")
@@ -32,13 +33,13 @@ class ParameterTest(unittest.TestCase):
                         "invalid third parameter")
         self.assertTrue(b.params[3] == "maximal_time_step_scaling_factor",
                         "invalid fourth parameter")
-        self.assertTrue(abs(mgis_bv.getParameterDefaultValue(b, "YoungModulus") - yg) <
-                        eps * yg,
+        yg_v = mgis_bv.getParameterDefaultValue(b, "YoungModulus")
+        nu_v = mgis_bv.getParameterDefaultValue(b, "PoissonRatio")
+        self.assertTrue(abs(yg_v - yg) < eps * yg,
                         "invalid 'YoungModulus' default value")
-        self.assertTrue(abs(b.getParameterDefaultValue("YoungModulus") - yg) < eps * yg,
-                        "invalid 'YoungModulus' default value")
-        self.assertTrue(abs(b.getParameterDefaultValue("PoissonRatio") - nu) < eps * nu,
+        self.assertTrue(abs(nu_v - nu) < eps * nu,
                         "invalid 'PoissonRatio' default value")
-        
+
+
 if __name__ == '__main__':
     unittest.main()

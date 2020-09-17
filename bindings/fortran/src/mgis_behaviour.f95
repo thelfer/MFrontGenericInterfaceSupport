@@ -407,6 +407,7 @@ contains
   end function load_finite_strain_behaviour
   !
   function rotate_gradients_in_place(g, b, r) result(res)
+    use, intrinsic :: iso_c_binding, only: c_loc
     use mgis_fortran_utilities
     use mgis, only: mgis_status
     implicit none
@@ -417,17 +418,17 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: g
+         type(c_ptr), intent(in), value :: g
          type(c_ptr), intent(in), value :: b
          real(c_double), dimension(9), intent(in) :: r
          type(mgis_status) :: res
        end function rotate_gradients_in_place_wrapper
     end interface
-    real(kind=8), dimension(:), intent(out) :: g
+    real(kind=8), dimension(:), intent(out), target :: g
     type(Behaviour), intent(in) :: b
     real(kind=8), dimension(9), intent(in) :: r
     type(mgis_status) :: res
-    res = rotate_gradients_in_place_wrapper(g, b%ptr, r)
+    res = rotate_gradients_in_place_wrapper(c_loc(g), b%ptr, r)
   end function rotate_gradients_in_place
   !
   function rotate_gradients_out_of_place(mg, b, gg, r) result(res)
