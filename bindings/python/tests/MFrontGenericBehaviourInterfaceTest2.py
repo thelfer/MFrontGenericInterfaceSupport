@@ -12,6 +12,9 @@ class IntegrateTest(unittest.TestCase):
 
     def test_pass(self):
 
+        btype = mgis_bv.BehaviourType
+        bkinematic = mgis_bv.BehaviourKinematic
+        bsyme = mgis_bv.BehaviourSymmetry
         stress_options = mgis_bv.FiniteStrainBehaviourOptionsStressMeasure
         to_options = mgis_bv.FiniteStrainBehaviourOptionsTangentOperator
         # path to the test library
@@ -28,23 +31,26 @@ class IntegrateTest(unittest.TestCase):
         self.assertTrue(b.source == 'FiniteStrainSingleCrystal.mfront',
                         'invalid source')
         self.assertTrue(b.tfel_version == version, 'invalid TFEL version')
-        self.assertTrue(b.getBehaviourType() == 'StandardFiniteStrainBehaviour',
+        self.assertTrue(b.getBehaviourType() ==
+                        'StandardFiniteStrainBehaviour',
                         'invalid behaviour type')
-        self.assertTrue(b.btype == mgis_bv.BehaviourType.STANDARDFINITESTRAINBEHAVIOUR,
+        self.assertTrue(b.btype == btype.STANDARDFINITESTRAINBEHAVIOUR,
                         'invalid behaviour type')
-        self.assertTrue(b.btype == mgis_bv.BehaviourType.StandardFiniteStrainBehaviour,
+        self.assertTrue(b.btype == btype.StandardFiniteStrainBehaviour,
                         'invalid behaviour type')
         self.assertTrue(b.getKinematic() == 'F_CAUCHY',
                         'invalid kinematic value')
-        self.assertTrue(b.kinematic == mgis_bv.BehaviourKinematic.FINITESTRAINKINEMATIC_F_CAUCHY,
+        self.assertTrue(b.kinematic ==
+                        bkinematic.FINITESTRAINKINEMATIC_F_CAUCHY,
                         'invalid kinematic value')
-        self.assertTrue(b.kinematic == mgis_bv.BehaviourKinematic.FiniteStrainKinematic_F_Cauchy,
+        self.assertTrue(b.kinematic ==
+                        bkinematic.FiniteStrainKinematic_F_Cauchy,
                         'invalid kinematic value')
         self.assertTrue(b.getSymmetry() == 'Orthotropic',
                         'invalid behaviour symmetry')
-        self.assertTrue(b.symmetry == mgis_bv.BehaviourSymmetry.ORTHOTROPIC,
+        self.assertTrue(b.symmetry == bsyme.ORTHOTROPIC,
                         'invalid behaviour symmetry')
-        self.assertTrue(b.symmetry == mgis_bv.BehaviourSymmetry.Orthotropic,
+        self.assertTrue(b.symmetry == bsyme.Orthotropic,
                         'invalid behaviour symmetry')
         self.assertTrue(len(b.gradients) == 1, 'invalid number of gradients')
         F = b.gradients[0]
@@ -71,8 +77,8 @@ class IntegrateTest(unittest.TestCase):
                         'invalid number of material properties')
 
         def check_mp_name(mp, n):
-            self.assertTrue(mp.name ==n,
-                            "invalid material property name, " +
+            self.assertTrue(mp.name == n,
+                            "invalid material property name, "
                             "expected '" + n + "'")
 
         for mp in b.mps:
@@ -100,11 +106,11 @@ class IntegrateTest(unittest.TestCase):
         check_mp_name(b.mps[15], 'd1')
         self.assertTrue(len(b.isvs) == 37,
                         'invalid number of internal state variables')
-        
+
         def check_iv_name(iv, n, i):
             vn = n + '[' + str(i) + ']'
             self.assertTrue(iv.name == vn,
-                            "invalid internal state variable name, " +
+                            "invalid internal state variable name, "
                             "expected '" + vn + "'")
             self.assertTrue(iv.getType() == 'Scalar',
                             'invalid type for internal ' +

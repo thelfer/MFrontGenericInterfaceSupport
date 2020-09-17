@@ -40,7 +40,7 @@ class IntegrateTest(unittest.TestCase):
                         "invalid behaviour symmetry")
         self.assertTrue(len(b.gradients) == 1,
                         "invalid number of gradients")
-        F = b.gradients[0];
+        F = b.gradients[0]
         self.assertTrue(F.name == "Strain",
                         "invalid gradient name")
         self.assertTrue(F.type == mgis_bv.VariableType.Stensor,
