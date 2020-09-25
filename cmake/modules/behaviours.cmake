@@ -1,3 +1,21 @@
+macro(add_mfront_dependency name file)
+  set(mfront_file    "${CMAKE_CURRENT_SOURCE_DIR}/${file}.mfront")
+  set(mfront_output1 "${CMAKE_CURRENT_BINARY_DIR}/src/${file}-mfront.cxx")
+  set(mfront_output2 "${CMAKE_CURRENT_BINARY_DIR}/include/${file}-mfront.hxx")
+  add_custom_command(
+    OUTPUT  "${mfront_output1}"
+    OUTPUT  "${mfront_output2}"
+    COMMAND "${MFRONT}"
+    ARGS    "--search-path=${CMAKE_CURRENT_SOURCE_DIR}"
+    ARGS    "--interface=mfront" "${mfront_file}"
+    DEPENDS "${mfront_file}"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    COMMENT "mfront source ${mfront_file}")
+  set(${name}_dependencies_SOURCES
+      ${mfront_output1} ${mfront_output2}
+      ${${name}_dependencies_SOURCES})
+endmacro(add_mfront_dependency)
+
 function(add_mfront_behaviour_sources lib  file)
   set(mfront_file   "${CMAKE_CURRENT_SOURCE_DIR}/${file}.mfront")
   set(mfront_output1 "src/${file}.cxx")
@@ -19,13 +37,6 @@ function(mfront_behaviours_check_library name)
   set ( _CMD SOURCES )
   set ( _SOURCES )
   set ( _DEPENDENCIES )
-  if((TFEL_CXX_STANDARD GREATER 17) OR (TFEL_CXX_STANDARD EQUAL 17))
-    set(TFEL_MFRONT_LIBRARIES
-      "${TFELException};${TFELUtilities};${TFELMath};${TFELMaterial}")
-  else((TFEL_CXX_STANDARD GREATER 17) OR (TFEL_CXX_STANDARD EQUAL 17))
-    set(TFEL_MFRONT_LIBRARIES
-      "${TFELException};${TFELUtilities};${TFELMath};${TFELMaterial};${TFELPhysicalConstants}")
-  endif((TFEL_CXX_STANDARD GREATER 17) OR (TFEL_CXX_STANDARD EQUAL 17))
   foreach ( _ARG ${ARGN})
     if ( ${_ARG} MATCHES SOURCES )
       set ( _CMD SOURCES )
@@ -71,8 +82,7 @@ function(mfront_behaviours_check_library name)
 	  PROPERTIES LINK_FLAGS "-Wl,--kill-at -Wl,--no-undefined")
       endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     endif(WIN32)
-    target_link_libraries(${name}
-      PUBLIC ${TFEL_MFRONT_LIBRARIES})
+    target_link_libraries(${name} PUBLIC ${TFEL_MFRONT_LIBRARIES})
   else(nb_sources GREATER 0)
     message(STATUS "No sources selected for library ${name}")
   endif(nb_sources GREATER 0)
