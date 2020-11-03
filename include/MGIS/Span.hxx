@@ -12,7 +12,7 @@
 #ifndef LIB_MGIS_SPAN_HXX
 #define LIB_MGIS_SPAN_HXX
 
-#include "MGIS/Config.hxx"
+#include <stdexcept>
 
 #define span_lite_MAJOR 0
 #define span_lite_MINOR 3
@@ -462,6 +462,8 @@ span_DISABLE_MSVC_WARNINGS(26439 26440 26472 26473 26481 26490)
 #else
 #define span_LOCATION(file, line) file "(" span_STRINGIFY(line) ")"
 #endif
+
+#include "MGIS/Config.hxx"
 
 namespace mgis {
   namespace span_lite {
