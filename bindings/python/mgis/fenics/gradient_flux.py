@@ -13,8 +13,46 @@ import ufl
 from .utils import local_project, symmetric_tensor_to_vector, \
                 nonsymmetric_tensor_to_vector, get_quadrature_element
 
+<<<<<<< HEAD
+class QuadratureFunction:
+    """An abstract class for functions defined at quadrature points"""
+    def __init__(self, name, shape):
+        self.shape = shape
+        self.name = name
 
-class Gradient:
+    def initialize_function(self, mesh, quadrature_degree):
+        self.quadrature_degree = quadrature_degree
+        self.mesh = mesh
+        self.dx = Measure("dx", metadata={"quadrature_degree": quadrature_degree})
+        We = get_quadrature_element(mesh.ufl_cell(), quadrature_degree, self.shape)
+        self.function_space = FunctionSpace(mesh, We)
+        self.function = Function(self.function_space, name=self.name)
+
+    def update(self, x):
+        self.function.vector().set_local(x)
+
+    def project_on(self, space, degree):
+        """
+        Returns the projection on a standard CG/DG space
+
+        Parameters
+        ----------
+
+        space: str
+            FunctionSpace type ("CG", "DG",...)
+        degree: int
+            FunctionSpace degree
+        """
+        if self.shape == 1:
+            V = FunctionSpace(self.mesh, space, degree)
+        else:
+            V = VectorFunctionSpace(self.mesh, space, degree, dim=self.shape)
+        v = Function(V, name=self.name)
+        v.assign(project(self.function, V,
+                         form_compiler_parameters={"quadrature_degree": self.quadrature_degree}))
+        return v
+
+class Gradient(QuadratureFunction):
     """
     This class provides a representation of MFront gradient objects. Its main
     purpose is to provide the corresponding UFL expression, linking MFront and
@@ -53,7 +91,7 @@ class Gradient:
 
     def __call__(self, v):
         return ufl.replace(self.expression, {self.variable: v})
-    
+
     def variation(self, v):
         """ Directional derivative in direction v """
         # return ufl.algorithms.expand_derivatives(ufl.derivative(self.expression, self.variable, v))
@@ -61,11 +99,7 @@ class Gradient:
         return ufl.algorithms.expand_derivatives(deriv)
 
     def initialize_function(self, mesh, quadrature_degree):
-        self.quadrature_degree = quadrature_degree
-        self.dx = Measure("dx", metadata={"quadrature_degree": quadrature_degree})
-        We = get_quadrature_element(mesh.ufl_cell(), self.quadrature_degree, self.shape)
-        self.function_space = FunctionSpace(mesh, We)
-        self.function = Function(self.function_space, name=self.name)
+        super().initialize_function(mesh, quadrature_degree)
         self.update()
 
     def update(self, x=None):
@@ -89,19 +123,8 @@ class Var(Gradient):
     def _evaluate_at_quadrature_points(self, x):
         local_project(x, self.function_space, self.dx, self.function)
 
-class QuadratureFunction:
+class QuadratureFunctionTangentBlocks(QuadratureFunction):
     """An abstract class for Flux and InternalStateVariables"""
-    def __init__(self, name, shape):
-        self.shape = shape
-        self.name = name
-
-    def initialize_function(self, mesh, quadrature_degree):
-        self.quadrature_degree = quadrature_degree
-        self.mesh = mesh
-        We = get_quadrature_element(mesh.ufl_cell(), quadrature_degree, self.shape)
-        W = FunctionSpace(mesh, We)
-        self.function = Function(W, name=self.name)
-
     def initialize_tangent_blocks(self, variables):
         self.variables = variables
         values = [Function(FunctionSpace(self.mesh,
@@ -112,32 +135,8 @@ class QuadratureFunction:
         keys = [v.name for v in self.variables]
         self.tangent_blocks = dict(zip(keys, values))
 
-    def update(self, x):
-        self.function.vector().set_local(x)
-
-    def project_on(self, space, degree):
-        """
-        Returns the projection on a standard CG/DG space
-
-        Parameters
-        ----------
-
-        space: str
-            FunctionSpace type ("CG", "DG",...)
-        degree: int
-            FunctionSpace degree
-        """
-        if self.shape == 1:
-            V = FunctionSpace(self.mesh, space, degree)
-        else:
-            V = VectorFunctionSpace(self.mesh, space, degree, dim=self.shape)
-        v = Function(V, name=self.name)
-        v.assign(project(self.function, V,
-                         form_compiler_parameters={"quadrature_degree": self.quadrature_degree}))
-        return v
-
-class Flux(QuadratureFunction):
+class Flux(QuadratureFunctionTangentBlocks):
     pass
 
-class InternalStateVariable(QuadratureFunction):
+class InternalStateVariable(QuadratureFunctionTangentBlocks):
     pass

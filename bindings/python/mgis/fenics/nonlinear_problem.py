@@ -436,6 +436,29 @@ class AbstractNonlinearProblem:
         else:
             return self.fluxes[name].project_on(*project_on)
 
+    def get_gradient(self, name, project_on=None):
+        """
+        Returns the function associated with a gradient
+
+        Parameters
+        ----------
+        name : str
+            Name of the gradient
+        project_on : {None, (space, degree)}
+            Either None or a tuple (space, degree) such as ("CG", 1), ("DG", 0), etc.
+
+        Returns
+        -------
+        `dolfin.Function`
+            A function defined on the corresponding Quadrature function space if project_on=None (default).
+            Otherwise a classical function belonging to the FunctionSpace (space, degree)
+
+        """
+        if project_on is None:
+            return self.gradients[name].function
+        else:
+            return self.gradients[name].project_on(*project_on)
+
     def get_dissipated_energy(self):
         """Dissipated energy computed from MFront @DissipatedEnergy"""
         self._dummy_function.vector().set_local(self.material.data_manager.s1.dissipated_energies)
