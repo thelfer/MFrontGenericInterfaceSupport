@@ -11,9 +11,9 @@ from dolfin import *
 import numpy as np
 import ufl
 from .utils import local_project, symmetric_tensor_to_vector, \
-                nonsymmetric_tensor_to_vector, get_quadrature_element
+                nonsymmetric_tensor_to_vector, get_quadrature_element, \
+                vector_to_tensor
 
-<<<<<<< HEAD
 class QuadratureFunction:
     """An abstract class for functions defined at quadrature points"""
     def __init__(self, name, shape):
@@ -31,7 +31,7 @@ class QuadratureFunction:
     def update(self, x):
         self.function.vector().set_local(x)
 
-    def project_on(self, space, degree):
+    def project_on(self, space, degree, as_tensor=False):
         """
         Returns the projection on a standard CG/DG space
 
@@ -42,13 +42,20 @@ class QuadratureFunction:
             FunctionSpace type ("CG", "DG",...)
         degree: int
             FunctionSpace degree
+        as_tensor: bool
+            Returned as a tensor if True, in vector notation otherwise
         """
-        if self.shape == 1:
+        fun = self.function
+        if as_tensor:
+            fun = vector_to_tensor(self.function)
+            shape = ufl.shape(fun)
+            V = TensorFunctionSpace(self.mesh, space, degree, shape=shape)
+        elif self.shape == 1:
             V = FunctionSpace(self.mesh, space, degree)
         else:
             V = VectorFunctionSpace(self.mesh, space, degree, dim=self.shape)
         v = Function(V, name=self.name)
-        v.assign(project(self.function, V,
+        v.assign(project(fun, V,
                          form_compiler_parameters={"quadrature_degree": self.quadrature_degree}))
         return v
 

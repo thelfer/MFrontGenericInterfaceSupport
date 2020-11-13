@@ -390,7 +390,7 @@ class AbstractNonlinearProblem:
         self.update_tangent_blocks()
         self.update_internal_state_variables()
 
-    def get_state_variable(self, name, project_on=None):
+    def get_state_variable(self, name, project_on=None, as_tensor=False):
         """
         Returns the function associated with an internal state variable
 
@@ -411,9 +411,9 @@ class AbstractNonlinearProblem:
         if project_on is None:
             return self.state_variables["internal"][name].function
         else:
-            return self.state_variables["internal"][name].project_on(*project_on)
+            return self.state_variables["internal"][name].project_on(*project_on, as_tensor)
 
-    def get_flux(self, name, project_on=None):
+    def get_flux(self, name, project_on=None, as_tensor=False):
         """
         Returns the function associated with a flux
 
@@ -434,9 +434,9 @@ class AbstractNonlinearProblem:
         if project_on is None:
             return self.fluxes[name].function
         else:
-            return self.fluxes[name].project_on(*project_on)
+            return self.fluxes[name].project_on(*project_on, as_tensor)
 
-    def get_gradient(self, name, project_on=None):
+    def get_gradient(self, name, project_on=None, as_tensor=False):
         """
         Returns the function associated with a gradient
 
@@ -457,7 +457,7 @@ class AbstractNonlinearProblem:
         if project_on is None:
             return self.gradients[name].function
         else:
-            return self.gradients[name].project_on(*project_on)
+            return self.gradients[name].project_on(*project_on, as_tensor)
 
     def get_dissipated_energy(self):
         """Dissipated energy computed from MFront @DissipatedEnergy"""
