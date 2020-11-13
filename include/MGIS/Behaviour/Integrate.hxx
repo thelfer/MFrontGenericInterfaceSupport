@@ -30,6 +30,9 @@ namespace mgis {
     // forward declaration
     struct MaterialDataManager;
 
+    /*!
+     * \brief type of integration to be performed
+     */
     enum struct IntegrationType {
       PREDICTION_TANGENT_OPERATOR = -3,
       PREDICTION_SECANT_OPERATOR = -2,

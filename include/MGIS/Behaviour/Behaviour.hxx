@@ -1,5 +1,5 @@
 /*!
- * \file   Behaviour.hxx
+ * \file   include/MGIS/Behaviour/Behaviour.hxx
  * \brief
  * \author Thomas Helfer
  * \date   19/06/2018
@@ -18,37 +18,15 @@
 #include <iosfwd>
 #include <vector>
 #include "MGIS/Config.hxx"
+#include "MGIS/Span.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
 #include "MGIS/Behaviour/Variable.hxx"
+#include "MGIS/Behaviour/FiniteStrainBehaviourOptions.hxx"
 #include "MGIS/Behaviour/BehaviourFctPtr.hxx"
 
 namespace mgis {
 
   namespace behaviour {
-
-    /*!
-     * \brief option available for finite strain behaviours
-     */
-    struct FiniteStrainBehaviourOptions {
-      //! \brief stress measure requested for finite strain behaviours
-      enum StressMeasure {
-        CAUCHY,  //!< Cauchy stress
-        PK2,     //!< Second Piola-Kirchoff stress
-        PK1      //!< First Piola-Kirchoff stress
-      } stress_measure = CAUCHY;
-      /*!
-       * \brief type of finite strain tangent operator requested for finite
-       * strain behaviours
-       */
-      enum TangentOperator {
-        DSIG_DF, /*!< derivative of the Cauchy stress with respect to the
-                      deformation gradient */
-        DS_DEGL, /*!< derivative of the second Piola-Kirchoff stress with
-                      respect to the Green-Lagrange strain */
-        DPK1_DF  /*!< derivative of the first Piola-Kirchoff stress with
-                      respect to the deformation gradient  */
-      } tangent_operator = DSIG_DF;
-    };  // end of struct FiniteStrainBehaviourOptions
 
     /*!
      * \brief structure describing a behaviour
@@ -88,8 +66,43 @@ namespace mgis {
       std::string source;
       //! \brief version of `TFEL` used to generate the behaviour
       std::string tfel_version;
-      //! pointer to the function implementing the behaviour
-      BehaviourFctPtr b;
+      //! \brief pointer to the function implementing the behaviour
+      BehaviourFctPtr b = nullptr;
+      /*!
+       * \brief pointer to a function implementing the rotation of the gradients
+       * from the global frame to the material frame.
+       */
+      RotateBehaviourGradientsFctPtr rotate_gradients_ptr = nullptr;
+      /*!
+       * \brief pointer to a function implementing the rotation of an array of
+       * gradients from the global frame to the material frame.
+       */
+      RotateArrayOfBehaviourGradientsFctPtr rotate_array_of_gradients_ptr =
+          nullptr;
+      /*!
+       * \brief pointer to a function implementing the rotation of the
+       * thermodynamic forces from the material frame to the global frame.
+       */
+      RotateBehaviourThermodynamicForcesFctPtr rotate_thermodynamic_forces_ptr =
+          nullptr;
+      /*!
+       * \brief pointer to a function implementing the rotation of an array of
+       * thermodynamic forces from the material frame to the global frame.
+       */
+      RotateArrayOfBehaviourThermodynamicForcesFctPtr
+          rotate_array_of_thermodynamic_forces_ptr = nullptr;
+      /*!
+       * \brief pointer to a function implementing the rotation of the tangent
+       * operator blocks from the material frame to the global frame.
+       */
+      RotateBehaviourTangentOperatorBlocksFctPtr
+          rotate_tangent_operator_blocks_ptr = nullptr;
+      /*!
+       * \brief pointer to a function implementing the rotation of an array of
+       * tangent operator blocks from the material frame to the global frame.
+       */
+      RotateArrayOfBehaviourTangentOperatorBlocksFctPtr
+          rotate_array_of_tangent_operator_blocks_ptr = nullptr;
       //! \brief behaviour type
       enum BehaviourType {
         GENERALBEHAVIOUR,
@@ -150,11 +163,12 @@ namespace mgis {
        *   stress with respect to the deformation gradient is returned
        */
       std::vector<mgis::real> options;
-    }; // end of struct Behaviour
+    };  // end of struct Behaviour
 
     /*!
      * \return if the given behaviour is a standard finite strain behaviour,
-     * i.e. is a finite strain behaviour using the standard finite strain kinematic
+     * i.e. is a finite strain behaviour using the standard finite strain
+     * kinematic
      * (called F-Cauchy although the stress measure can be chosen when
      * loading the behaviour)
      * \param[in] l: library name
@@ -175,7 +189,8 @@ namespace mgis {
      * \note: use of `std::string` rather than `mgis::string_view` is
      * meaningfull here
      */
-    MGIS_EXPORT Behaviour load(const std::string &, const std::string &,
+    MGIS_EXPORT Behaviour load(const std::string &,
+                               const std::string &,
                                const Hypothesis);
     /*!
      * \brief load the description of a finite strain behaviour from a library
@@ -194,7 +209,8 @@ namespace mgis {
      * meaningfull here
      */
     MGIS_EXPORT Behaviour load(const FiniteStrainBehaviourOptions &,
-                               const std::string &, const std::string &,
+                               const std::string &,
+                               const std::string &,
                                const Hypothesis);
     /*!
      * \return the size of an array able to contain all the values of the
@@ -202,6 +218,80 @@ namespace mgis {
      * \param[in] b: behaviour
      */
     MGIS_EXPORT mgis::size_type getTangentOperatorArraySize(const Behaviour &);
+    /*!
+     * \brief rotate an array of gradients from the global frame to the material
+     * frame.
+     * \param[out,in] g: gradients
+     * \param[in] b: behaviour description
+     * \param[in] r: rotation matrix from the global frame to the material
+     * frame.
+     */
+    MGIS_EXPORT void rotateGradients(mgis::span<real>,
+                                     const Behaviour &,
+                                     const mgis::span<const real, 9> &);
+    /*!
+     * \brief rotate an array of gradients from the global frame to the material
+     * frame.
+     * \param[out] mg: array of gradients in the material frame
+     * \param[in] b: behaviour description
+     * \param[out] gg: array of gradients in the global frame
+     * \param[in] r: rotation matrix from the global frame to the material
+     * frame.
+     */
+    MGIS_EXPORT void rotateGradients(mgis::span<real>,
+                                     const Behaviour &,
+                                     const mgis::span<const real> &,
+                                     const mgis::span<const real, 9> &);
+    /*!
+     * \brief rotate an array of thermodynamics forces from the material frame
+     * to
+     * the global frame.
+     * \param[out,in] tf: thermodynamics forces
+     * \param[in] b: behaviour description
+     * \param[in] r: rotation matrix from the global frame to the material
+     * frame.
+     */
+    MGIS_EXPORT void rotateThermodynamicForces(
+        mgis::span<real>, const Behaviour &, const mgis::span<const real, 9> &);
+    /*!
+     * \brief rotate an array of thermodynamics forces from the material frame
+     * to
+     * the global frame.
+     * \param[out] gtf: thermodynamics forces in the global frame
+     * \param[in] b: behaviour description
+     * \param[in] mtf: thermodynamics forces in the material frame
+     * \param[in] r: rotation matrix from the global frame to the material
+     * frame.
+     */
+    MGIS_EXPORT void rotateThermodynamicForces(
+        mgis::span<real>,
+        const Behaviour &,
+        const mgis::span<const real> &,
+        const mgis::span<const real, 9> &);
+    /*!
+     * \brief rotate an array of tangent operator blocks from the material frame
+     * to the global frame.
+     * \param[out,in] K: tangent operator blocks
+     * \param[in] b: behaviour description
+     * \param[in] r: rotation matrix from the global frame to the material
+     * frame.
+     */
+    MGIS_EXPORT void rotateTangentOperatorBlocks(
+        mgis::span<real>, const Behaviour &, const mgis::span<const real, 9> &);
+    /*!
+     * \brief rotate an array of tangent operator blocks from the material frame
+     * to the global frame.
+     * \param[out] gK: tangent operator blocks in the global frame
+     * \param[in] b: behaviour description
+     * \param[in] mK: tangent operator blocks in the material frame
+     * \param[in] r: rotation matrix from the global frame to the material
+     * frame.
+     */
+    MGIS_EXPORT void rotateTangentOperatorBlocks(
+        mgis::span<real>,
+        const Behaviour &,
+        const mgis::span<const real> &,
+        const mgis::span<const real, 9> &);
     /*!
      * \brief set the value of a parameter
      * \param[in] b: behaviour description
@@ -335,8 +425,8 @@ namespace mgis {
      * \param[in] l: title level
      */
     MGIS_EXPORT void print_markdown(std::ostream &,
-                                   const Behaviour &,
-                                   const mgis::size_type);
+                                    const Behaviour &,
+                                    const mgis::size_type);
 
   }  // end of namespace behaviour
 

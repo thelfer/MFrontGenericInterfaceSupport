@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import os
-import math
+
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
 import mgis.behaviour as mgis_bv
+
 
 class IntegrateTest(unittest.TestCase):
 
@@ -38,39 +39,41 @@ class IntegrateTest(unittest.TestCase):
                 0.00056635857064313]
         # comparison criterion
         eps = 1.e-12
-        
-        b = mgis_bv.load(lib,'Norton',
+
+        b = mgis_bv.load(lib, 'Norton',
                          mgis_bv.Hypothesis.Tridimensional)
         d = mgis_bv.BehaviourData(b)
-        o = mgis_bv.getVariableOffset(b.isvs, 'EquivalentViscoplasticStrain', b.hypothesis)
-        
+        o = mgis_bv.getVariableOffset(b.isvs, 'EquivalentViscoplasticStrain',
+                                      b.hypothesis)
+
         # strain increment per time step
         de = 5.e-5
         # time step
-        d.dt = 180  
-	
+        d.dt = 180
+
         # setting the temperature
         mgis_bv.setExternalStateVariable(d.s1, 'Temperature', 293.15)
-        
+
         # copy d.s1 in d.s0
         mgis_bv.update(d)
         d.s1.gradients[0] = de
-        
+
         # equivalent plastic strain
         p = [d.s0.internal_state_variables[o]]
-        
+
         # integrate the behaviour
-        for i in range(0,20):
+        for i in range(0, 20):
             mgis_bv.integrate(d, b)
             mgis_bv.update(d)
             d.s1.gradients[0] += de
             p.append(d.s1.internal_state_variables[o])
-        
+
         # check-in results
-        for i in range(0,20):
-            self.assertTrue(abs(p[i]-pref[i])<eps)
-        
+        for i in range(0, 20):
+            self.assertTrue(abs(p[i]-pref[i]) < eps)
+
         pass
-    
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -234,7 +234,8 @@ blockquote {
 
 #nav ul{
     margin:0px 0px;
-    position:relative;
+    margin-left: auto;
+    margin-right: auto 
 }
 
 #nav, #nav ul{

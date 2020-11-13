@@ -1,67 +1,86 @@
 # -*- coding: utf-8 -*-
 
 import os
-import math
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
 import mgis.behaviour as mgis_bv
 
+
 class IntegrateTest(unittest.TestCase):
 
     def test_pass(self):
 
+        btype = mgis_bv.BehaviourType
+        bkinematic = mgis_bv.BehaviourKinematic
+        bsyme = mgis_bv.BehaviourSymmetry
+        stress_options = mgis_bv.FiniteStrainBehaviourOptionsStressMeasure
+        to_options = mgis_bv.FiniteStrainBehaviourOptionsTangentOperator
         # path to the test library
         lib = os.environ['MGIS_TEST_BEHAVIOURS_LIBRARY']
         version = os.environ['MGIS_TEST_TFEL_VERSION']
         h = mgis_bv.Hypothesis.Tridimensional
-        b = mgis_bv.load(lib,'FiniteStrainSingleCrystal',h)
-        self.assertTrue(b.behaviour == 'FiniteStrainSingleCrystal', 'invalid behaviour name')
+        o = mgis_bv.FiniteStrainBehaviourOptions()
+        o.stress_measure = stress_options.PK1
+        o.tangent_operator = to_options.DPK1_DF
+        b = mgis_bv.load(o, lib, 'FiniteStrainSingleCrystal', h)
+        self.assertTrue(b.behaviour == 'FiniteStrainSingleCrystal',
+                        'invalid behaviour name')
         self.assertTrue(b.hypothesis == h, 'invalid hypothesis')
-        self.assertTrue(b.source == 'FiniteStrainSingleCrystal.mfront', 'invalid source')
+        self.assertTrue(b.source == 'FiniteStrainSingleCrystal.mfront',
+                        'invalid source')
         self.assertTrue(b.tfel_version == version, 'invalid TFEL version')
-        self.assertTrue(b.getBehaviourType() == 'StandardFiniteStrainBehaviour',
-	                'invalid behaviour type')
-        self.assertTrue(b.btype == mgis_bv.BehaviourType.STANDARDFINITESTRAINBEHAVIOUR,
-	                'invalid behaviour type')
-        self.assertTrue(b.btype == mgis_bv.BehaviourType.StandardFiniteStrainBehaviour,
-	                'invalid behaviour type')
+        self.assertTrue(b.getBehaviourType() ==
+                        'StandardFiniteStrainBehaviour',
+                        'invalid behaviour type')
+        self.assertTrue(b.btype == btype.STANDARDFINITESTRAINBEHAVIOUR,
+                        'invalid behaviour type')
+        self.assertTrue(b.btype == btype.StandardFiniteStrainBehaviour,
+                        'invalid behaviour type')
         self.assertTrue(b.getKinematic() == 'F_CAUCHY',
-	                'invalid kinematic value')
-        self.assertTrue(b.kinematic == mgis_bv.BehaviourKinematic.FINITESTRAINKINEMATIC_F_CAUCHY,
-	                'invalid kinematic value')
-        self.assertTrue(b.kinematic == mgis_bv.BehaviourKinematic.FiniteStrainKinematic_F_Cauchy,
-	                'invalid kinematic value')
+                        'invalid kinematic value')
+        self.assertTrue(b.kinematic ==
+                        bkinematic.FINITESTRAINKINEMATIC_F_CAUCHY,
+                        'invalid kinematic value')
+        self.assertTrue(b.kinematic ==
+                        bkinematic.FiniteStrainKinematic_F_Cauchy,
+                        'invalid kinematic value')
         self.assertTrue(b.getSymmetry() == 'Orthotropic',
                         'invalid behaviour symmetry')
-        self.assertTrue(b.symmetry == mgis_bv.BehaviourSymmetry.ORTHOTROPIC,
+        self.assertTrue(b.symmetry == bsyme.ORTHOTROPIC,
                         'invalid behaviour symmetry')
-        self.assertTrue(b.symmetry == mgis_bv.BehaviourSymmetry.Orthotropic,
+        self.assertTrue(b.symmetry == bsyme.Orthotropic,
                         'invalid behaviour symmetry')
         self.assertTrue(len(b.gradients) == 1, 'invalid number of gradients')
-        self.assertTrue(b.gradients[0].name == 'DeformationGradient',
+        F = b.gradients[0]
+        self.assertTrue(F.name == 'DeformationGradient',
                         'invalid gradient name')
-        self.assertTrue(b.gradients[0].getType() == 'Tensor',
+        self.assertTrue(F.getType() == 'Tensor',
                         'invalid gradient type')
-        self.assertTrue(b.gradients[0].type == mgis_bv.VariableType.TENSOR,
+        self.assertTrue(F.type == mgis_bv.VariableType.TENSOR,
                         'invalid gradient type')
-        self.assertTrue(b.gradients[0].type == mgis_bv.VariableType.Tensor,
+        self.assertTrue(F.type == mgis_bv.VariableType.Tensor,
                         'invalid gradient type')
         self.assertTrue(len(b.thermodynamic_forces) == 1,
                         'invalid number of thermodynamic_forces')
-        self.assertTrue(b.thermodynamic_forces[0].name == 'Stress',
+        pk1 = b.thermodynamic_forces[0]
+        self.assertTrue(pk1.name == 'FirstPiolaKirchhoffStress',
                         'invalid flux name')
-        self.assertTrue(b.thermodynamic_forces[0].getType() == 'Stensor',
+        self.assertTrue(pk1.getType() == 'Tensor',
                         'invalid flux type')
-        self.assertTrue(b.thermodynamic_forces[0].type == mgis_bv.VariableType.STENSOR,
+        self.assertTrue(pk1.type == mgis_bv.VariableType.TENSOR,
                         'invalid flux type')
-        self.assertTrue(b.thermodynamic_forces[0].type == mgis_bv.VariableType.Stensor,
+        self.assertTrue(pk1.type == mgis_bv.VariableType.Tensor,
                         'invalid flux type')
         self.assertTrue(len(b.mps) == 16,
                         'invalid number of material properties')
-        check_mp_name = lambda mp,n: self.assertTrue(mp.name ==n,
-                                                     "invalid material property name, expected '" + n + "'")
+
+        def check_mp_name(mp, n):
+            self.assertTrue(mp.name == n,
+                            "invalid material property name, "
+                            "expected '" + n + "'")
+
         for mp in b.mps:
             self.assertTrue(mp.getType() == 'Scalar',
                             "invalid material property type '" + mp.name + "'")
@@ -69,14 +88,14 @@ class IntegrateTest(unittest.TestCase):
                             "invalid material property type '" + mp.name + "'")
             self.assertTrue(mp.type == mgis_bv.VariableType.Scalar,
                             "invalid material property type '" + mp.name + "'")
-        check_mp_name(b.mps[0],'YoungModulus1')
-        check_mp_name(b.mps[1],'YoungModulus2')
-        check_mp_name(b.mps[2],'YoungModulus3')
-        check_mp_name(b.mps[3],'PoissonRatio12')
-        check_mp_name(b.mps[4],'PoissonRatio23')
-        check_mp_name(b.mps[5],'PoissonRatio13')
-        check_mp_name(b.mps[6],'ShearModulus12')
-        check_mp_name(b.mps[7],'ShearModulus23')
+        check_mp_name(b.mps[0], 'YoungModulus1')
+        check_mp_name(b.mps[1], 'YoungModulus2')
+        check_mp_name(b.mps[2], 'YoungModulus3')
+        check_mp_name(b.mps[3], 'PoissonRatio12')
+        check_mp_name(b.mps[4], 'PoissonRatio23')
+        check_mp_name(b.mps[5], 'PoissonRatio13')
+        check_mp_name(b.mps[6], 'ShearModulus12')
+        check_mp_name(b.mps[7], 'ShearModulus23')
         check_mp_name(b.mps[8], 'ShearModulus13')
         check_mp_name(b.mps[9], 'm')
         check_mp_name(b.mps[10], 'K')
@@ -87,17 +106,22 @@ class IntegrateTest(unittest.TestCase):
         check_mp_name(b.mps[15], 'd1')
         self.assertTrue(len(b.isvs) == 37,
                         'invalid number of internal state variables')
-        def check_iv_name(iv,n,i):
+
+        def check_iv_name(iv, n, i):
             vn = n + '[' + str(i) + ']'
             self.assertTrue(iv.name == vn,
-                            "invalid internal state variable name, expected '" + vn + "'")
+                            "invalid internal state variable name, "
+                            "expected '" + vn + "'")
             self.assertTrue(iv.getType() == 'Scalar',
-                            'invalid type for internal state variable '' + vn + ''')
+                            'invalid type for internal ' +
+                            'state variable \'' + vn + '\'')
             self.assertTrue(iv.type == mgis_bv.VariableType.SCALAR,
-                            'invalid type for internal state variable '' + vn + ''')
+                            'invalid type for internal ' +
+                            'state variable \'' + vn + '\'')
             self.assertTrue(iv.type == mgis_bv.VariableType.Scalar,
-                            'invalid type for internal state variable '' + vn + ''')
-        for i in range(0,12):
+                            'invalid type for internal ' +
+                            'state variable \'' + vn + '\'')
+        for i in range(0, 12):
             check_iv_name(b.isvs[i], 'g', i)
             check_iv_name(b.isvs[13 + i], 'p', i)
             check_iv_name(b.isvs[25 + i], 'a', i)
@@ -119,6 +143,7 @@ class IntegrateTest(unittest.TestCase):
                         'invalid type for the first external state variable')
         self.assertTrue(b.esvs[0].type == mgis_bv.VariableType.Scalar,
                         'invalid type for the first external state variable')
-        
+
+
 if __name__ == '__main__':
     unittest.main()

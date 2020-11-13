@@ -23,6 +23,7 @@ subroutine test()
   use mgis_testing_utilities
   implicit none
   type(Behaviour) b
+  type(FiniteStrainBehaviourOptions) o
   logical :: r
   logical :: r2
   ! library
@@ -76,7 +77,8 @@ subroutine test()
        get_mfront_behaviour_test_library_path(), &
        'FiniteStrainSingleCrystal'))
   r = check(r2, 'invalid behaviour type')
-  call check_status(load_behaviour(b, &
+  call check_status(create_finite_strain_behaviour_options(o))
+  call check_status(load_finite_strain_behaviour(b, o, &
        get_mfront_behaviour_test_library_path(), &
        'FiniteStrainSingleCrystal', 'Tridimensional'))
   call check_status(behaviour_get_library(l, b))

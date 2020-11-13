@@ -53,8 +53,11 @@ int main(const int argc, const char* const* argv) {
   check_status(
       mgis_bv_is_standard_finite_strain_behaviour(&btype, argv[1], argv[2]));
   check(btype, "invalid type");
+  mgis_bv_FiniteStrainBehaviourOptions* o;
+  check_status(mgis_bv_create_finite_strain_behaviour_options(&o));
   mgis_bv_Behaviour* b;
-  check_status(mgis_bv_load_behaviour(&b, argv[1], argv[2], "Tridimensional"));
+  check_status(mgis_bv_load_finite_strain_behaviour(&b, o, argv[1], argv[2],
+                                                    "Tridimensional"));
   mgis_size_type mps_size;
   check_status(
       mgis_bv_behaviour_get_number_of_material_properties(&mps_size, b));

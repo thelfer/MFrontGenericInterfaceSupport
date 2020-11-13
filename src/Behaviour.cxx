@@ -12,8 +12,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <cstdlib>
 #include <iterator>
-#include <iostream>
 
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/LibrariesManager.hxx"
@@ -104,7 +104,7 @@ namespace mgis {
           }
         }
       }
-      for (const auto &i : b.isvs){
+      for (const auto &i : b.isvs) {
         for (const auto &g : b.gradients) {
           if ((block.first == i.name) && (block.second == g.name)) {
             assign_if(i, g);
@@ -139,9 +139,9 @@ namespace mgis {
              (lm.getBehaviourKinematic(l, b) == 3);
     }  // end of isStandardFiniteStrainBehaviour
 
-    Behaviour load(const std::string &l,
-                   const std::string &b,
-                   const Hypothesis h) {
+    static Behaviour load_behaviour(const std::string &l,
+                                    const std::string &b,
+                                    const Hypothesis h) {
       auto &lm = mgis::LibrariesManager::get();
       const auto fct = b + '_' + toString(h);
       auto raise = [&b, &l](const std::string &msg) {
@@ -188,7 +188,7 @@ namespace mgis {
         }
         raise("unsupported behaviour type");
       }();
-      if(d.btype==Behaviour::STANDARDFINITESTRAINBEHAVIOUR){
+      if (d.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
         d.options.resize(2, mgis::real(0));
       }
       // behaviour kinematic
@@ -334,7 +334,7 @@ namespace mgis {
       }
       // tangent operator blocks
       for (const auto &block : lm.getTangentOperatorBlocksNames(l, b, h)) {
-        d.to_blocks.push_back(getJacobianBlockVariables(d,block));
+        d.to_blocks.push_back(getJacobianBlockVariables(d, block));
       }
       //! parameters
       const auto pn = lm.getParametersNames(l, b, h);
@@ -354,13 +354,58 @@ namespace mgis {
         }
       }
       return d;
+    }  // end of load_behaviour
+
+    Behaviour load(const std::string &l,
+                   const std::string &b,
+                   const Hypothesis h) {
+      auto d = load_behaviour(l, b, h);
+      if (d.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
+        mgis::raise(
+            "mgis::behaviour::load: "
+            "This version of the load function shall not be called "
+            "for finite strain behaviour: you shall specify finite "
+            "strain options");
+      }
+      if (d.symmetry == Behaviour::ORTHOTROPIC) {
+        auto &lm = mgis::LibrariesManager::get();
+        d.rotate_gradients_ptr =
+            lm.getRotateBehaviourGradientsFunction(l, b, h);
+        d.rotate_array_of_gradients_ptr =
+            lm.getRotateArrayOfBehaviourGradientsFunction(l, b, h);
+        if (d.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
+          d.rotate_thermodynamic_forces_ptr =
+              lm.getRotateBehaviourThermodynamicForcesFunction(
+                  l, b, h, FiniteStrainBehaviourOptions::CAUCHY);
+          d.rotate_array_of_thermodynamic_forces_ptr =
+              lm.getRotateArrayOfBehaviourThermodynamicForcesFunction(
+                  l, b, h, FiniteStrainBehaviourOptions::CAUCHY);
+          d.rotate_tangent_operator_blocks_ptr =
+              lm.getRotateBehaviourTangentOperatorBlocksFunction(
+                  l, b, h, FiniteStrainBehaviourOptions::DSIG_DF);
+          d.rotate_array_of_tangent_operator_blocks_ptr =
+              lm.getRotateArrayOfBehaviourTangentOperatorBlocksFunction(
+                  l, b, h, FiniteStrainBehaviourOptions::DSIG_DF);
+        } else {
+          d.rotate_thermodynamic_forces_ptr =
+              lm.getRotateBehaviourThermodynamicForcesFunction(l, b, h);
+          d.rotate_array_of_thermodynamic_forces_ptr =
+              lm.getRotateArrayOfBehaviourThermodynamicForcesFunction(l, b, h);
+          d.rotate_tangent_operator_blocks_ptr =
+              lm.getRotateBehaviourTangentOperatorBlocksFunction(l, b, h);
+          d.rotate_array_of_tangent_operator_blocks_ptr =
+              lm.getRotateArrayOfBehaviourTangentOperatorBlocksFunction(l, b,
+                                                                        h);
+        }
+      }
+      return d;
     }  // end of load
 
     Behaviour load(const FiniteStrainBehaviourOptions &o,
                    const std::string &l,
                    const std::string &b,
                    const Hypothesis h) {
-      auto d = load(l, b, h);
+      auto d = load_behaviour(l, b, h);
       if (d.btype != Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
         mgis::raise(
             "mgis::behaviour::load: "
@@ -383,7 +428,6 @@ namespace mgis {
       }
       if (o.tangent_operator == FiniteStrainBehaviourOptions::DSIG_DF) {
         d.options[1] = mgis::real(0);
-
       } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DS_DEGL) {
         d.options[1] = mgis::real(1);
         d.to_blocks[0] = {{"SecondPiolaKirchhoffStress", Variable::STENSOR},
@@ -398,6 +442,25 @@ namespace mgis {
             "mgis::behaviour::load: "
             "internal error (unsupported tangent operator)");
       }
+      if (d.symmetry == Behaviour::ORTHOTROPIC) {
+        auto &lm = mgis::LibrariesManager::get();
+        d.rotate_gradients_ptr =
+            lm.getRotateBehaviourGradientsFunction(l, b, h);
+        d.rotate_array_of_gradients_ptr =
+            lm.getRotateArrayOfBehaviourGradientsFunction(l, b, h);
+        d.rotate_thermodynamic_forces_ptr =
+            lm.getRotateBehaviourThermodynamicForcesFunction(l, b, h,
+                                                             o.stress_measure);
+        d.rotate_array_of_thermodynamic_forces_ptr =
+            lm.getRotateArrayOfBehaviourThermodynamicForcesFunction(
+                l, b, h, o.stress_measure);
+        d.rotate_tangent_operator_blocks_ptr =
+            lm.getRotateBehaviourTangentOperatorBlocksFunction(
+                l, b, h, o.tangent_operator);
+        d.rotate_array_of_tangent_operator_blocks_ptr =
+            lm.getRotateArrayOfBehaviourTangentOperatorBlocksFunction(
+                l, b, h, o.tangent_operator);
+      }
       return d;
     }  // end of load
 
@@ -408,107 +471,235 @@ namespace mgis {
              getVariableSize(block.second, b.hypothesis);
       }
       return s;
-      }  // end of getTangentOperatorArraySize
+    }  // end of getTangentOperatorArraySize
 
-      void setParameter(const Behaviour &b, const std::string &n,
-                        const double v) {
-        auto &lm = mgis::LibrariesManager::get();
-        lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
-      }  // end of setParameter
+    void rotateGradients(mgis::span<real> g,
+                                const Behaviour &b,
+                                const mgis::span<const real, 9> &r) {
+      if (b.rotate_gradients_ptr == nullptr) {
+        mgis::raise(
+            "rotateGradients: no function performing the rotation of "
+            "the "
+            "gradients defined");
+      }
+      const auto gsize = getArraySize(b.gradients, b.hypothesis);
+      auto dv = std::div(g.size(), gsize);
+      if (dv.rem != 0) {
+        mgis::raise(
+            "rotateGradients: invalid array size (not a multiple of the "
+            "gradients size)");
+      }
+      b.rotate_array_of_gradients_ptr(g.data(), g.data(), r.data(), dv.quot);
+    }  // end of rotateGradients
 
-      void setParameter(const Behaviour &b, const std::string &n, const int v) {
-        auto &lm = mgis::LibrariesManager::get();
-        lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
-      }  // end of setParameter
+    void rotateGradients(mgis::span<real> mg,
+                                const Behaviour &b,
+                                const mgis::span<const real> &gg,
+                                const mgis::span<const real, 9> &r) {
+      if (b.rotate_gradients_ptr == nullptr) {
+        mgis::raise(
+            "rotateGradients: no function performing the rotation of "
+            "the "
+            "gradients defined");
+      }
+      const auto gsize = getArraySize(b.gradients, b.hypothesis);
+      auto dv = std::div(gg.size(), gsize);
+      if (dv.rem != 0) {
+        mgis::raise(
+            "rotateGradients: invalid array size in the global frame "
+            "(not a multiple of the gradients size)");
+      }
+      if (mg.size() != gg.size()) {
+        mgis::raise("rotateGradients: unmatched array sizes");
+      }
+      b.rotate_array_of_gradients_ptr(mg.data(), gg.data(), r.data(), dv.quot);
+    }  // end of rotateGradients
 
-      void setParameter(const Behaviour &b, const std::string &n,
-                        const unsigned short v) {
-        auto &lm = mgis::LibrariesManager::get();
-        lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
-      }  // end of setParameter
+    void rotateThermodynamicForces(mgis::span<real> tf,
+                                          const Behaviour &b,
+                                          const mgis::span<const real, 9> &r) {
+      if (b.rotate_thermodynamic_forces_ptr == nullptr) {
+        mgis::raise(
+            "rotateThermodynamicForces: no function performing the "
+            "rotation of the thermodynamic forces defined");
+      }
+      const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
+      auto dv = std::div(tf.size(), tfsize);
+      if (dv.rem != 0) {
+        mgis::raise(
+            "rotateThermodynamicForces: invalid array size (not a "
+            "multiple of the thermodynamic forces size)");
+      }
+      b.rotate_array_of_thermodynamic_forces_ptr(tf.data(), tf.data(), r.data(),
+                                                 dv.quot);
+    }  // end of rotateThermodynamicForces
 
-      template <>
-      double getParameterDefaultValue<double>(const Behaviour &b,
-                                              const std::string &n) {
-        auto &lm = mgis::LibrariesManager::get();
-        return lm.getParameterDefaultValue(b.library, b.behaviour, b.hypothesis,
-                                           n);
-      }  // end of getParameterDefaultValue<double>
+    void rotateThermodynamicForces(mgis::span<real> gtf,
+                                          const Behaviour &b,
+                                          const mgis::span<const real> &mtf,
+                                          const mgis::span<const real, 9> &r) {
+      if (b.rotate_thermodynamic_forces_ptr == nullptr) {
+        mgis::raise(
+            "rotateThermodynamicForces: no function performing the "
+            "rotation of the thermodynamic forces defined");
+      }
+      const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
+      auto dv = std::div(mtf.size(), tfsize);
+      if (dv.rem != 0) {
+        mgis::raise(
+            "rotateThermodynamicForces: invalid array size (not a "
+            "multiple of the thermodynamic forces size)");
+      }
+      if (gtf.size() != mtf.size()) {
+        mgis::raise("rotateThermodynamicForces: unmatched array sizes");
+      }
+      b.rotate_array_of_thermodynamic_forces_ptr(gtf.data(), mtf.data(),
+                                                 r.data(), dv.quot);
+    }  // end of rotateThermodynamicForces
 
-      template <>
-      int getParameterDefaultValue<int>(const Behaviour &b,
-                                        const std::string &n) {
-        auto &lm = mgis::LibrariesManager::get();
-        return lm.getIntegerParameterDefaultValue(b.library, b.behaviour,
-                                                  b.hypothesis, n);
-      }  // end of getParameterDefaultValue<int>
+    void rotateTangentOperatorBlocks(
+        mgis::span<real> K,
+        const Behaviour &b,
+        const mgis::span<const real, 9> &r) {
+      if (b.rotate_tangent_operator_blocks_ptr == nullptr) {
+        mgis::raise(
+            "rotateTangentOperatorBlocks: no function performing the "
+            "rotation of the tangent operator blocks defined");
+      }
+      const auto Ksize = getTangentOperatorArraySize(b);
+      auto dv = std::div(K.size(), Ksize);
+      if (dv.rem != 0) {
+        mgis::raise(
+            "rotateTangentOperatorBlocks: invalid array size (not a "
+            "multiple of the tangent operator blocks size)");
+      }
+      b.rotate_array_of_tangent_operator_blocks_ptr(K.data(), K.data(),
+                                                    r.data(), dv.quot);
+    }  // end of rotateTangentOperatorBlocks
 
-      template <>
-      unsigned short getParameterDefaultValue<unsigned short>(
-          const Behaviour &b, const std::string &n) {
-        auto &lm = mgis::LibrariesManager::get();
-        return lm.getUnsignedShortParameterDefaultValue(b.library, b.behaviour,
-                                                        b.hypothesis, n);
-      }  // end of getParameterDefaultValue<unsigned short>
+    void rotateTangentOperatorBlocks(
+        mgis::span<real> gK,
+        const Behaviour &b,
+        const mgis::span<const real> &mK,
+        const mgis::span<const real, 9> &r) {
+      if (b.rotate_tangent_operator_blocks_ptr == nullptr) {
+        mgis::raise(
+            "rotateTangentOperatorBlocks: no function performing the "
+            "rotation of the tangent operator blocks defined");
+      }
+      const auto Ksize = getTangentOperatorArraySize(b);
+      auto dv = std::div(gK.size(), Ksize);
+      if (dv.rem != 0) {
+        mgis::raise(
+            "rotateTangentOperatorBlocks: invalid array size (not a "
+            "multiple of the tangent operator blocks size)");
+      }
+      if (mK.size() != gK.size()) {
+        mgis::raise(
+            "rotateTangentOperatorBlocks : unmatched array sizes");
+      }
+      b.rotate_array_of_tangent_operator_blocks_ptr(gK.data(), mK.data(),
+                                                    r.data(), dv.quot);
+    }  // end of rotateTangentOperatorBlocks
 
-      bool hasBounds(const Behaviour &b, const std::string &v) {
-        auto &lm = mgis::LibrariesManager::get();
-        return lm.hasBounds(b.library, b.behaviour, b.hypothesis, v);
-      }  // end of hasBounds
+    void setParameter(const Behaviour &b,
+                      const std::string &n,
+                      const double v) {
+      auto &lm = mgis::LibrariesManager::get();
+      lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
+    }  // end of setParameter
 
-      bool hasLowerBound(const Behaviour &b, const std::string &v) {
-        auto &lm = mgis::LibrariesManager::get();
-        return lm.hasLowerBound(b.library, b.behaviour, b.hypothesis, v);
-      }  // end of hasLowerBound
+    void setParameter(const Behaviour &b, const std::string &n, const int v) {
+      auto &lm = mgis::LibrariesManager::get();
+      lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
+    }  // end of setParameter
 
-      bool hasUpperBound(const Behaviour &b, const std::string &v) {
-        auto &lm = mgis::LibrariesManager::get();
-        return lm.hasUpperBound(b.library, b.behaviour, b.hypothesis, v);
-      }  // end of hasUpperBound
+    void setParameter(const Behaviour &b,
+                      const std::string &n,
+                      const unsigned short v) {
+      auto &lm = mgis::LibrariesManager::get();
+      lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
+    }  // end of setParameter
 
-      long double getLowerBound(const Behaviour &b, const std::string &v) {
-        auto &lm = mgis::LibrariesManager::get();
-        return lm.getLowerBound(b.library, b.behaviour, b.hypothesis, v);
-      }  // end of getLowerBound
+    template <>
+    double getParameterDefaultValue<double>(const Behaviour &b,
+                                            const std::string &n) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.getParameterDefaultValue(b.library, b.behaviour, b.hypothesis,
+                                         n);
+    }  // end of getParameterDefaultValue<double>
 
-      long double getUpperBound(const Behaviour &b, const std::string &v) {
-        auto &lm = mgis::LibrariesManager::get();
-        return lm.getUpperBound(b.library, b.behaviour, b.hypothesis, v);
-      }  // end of getUpperBound
+    template <>
+    int getParameterDefaultValue<int>(const Behaviour &b,
+                                      const std::string &n) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.getIntegerParameterDefaultValue(b.library, b.behaviour,
+                                                b.hypothesis, n);
+    }  // end of getParameterDefaultValue<int>
 
-      bool hasPhysicalBounds(const Behaviour &b, const std::string &v) {
-        auto &lm = mgis::LibrariesManager::get();
-        return lm.hasPhysicalBounds(b.library, b.behaviour, b.hypothesis, v);
-      }  // end of hasPhysicalBounds
+    template <>
+    unsigned short getParameterDefaultValue<unsigned short>(
+        const Behaviour &b, const std::string &n) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.getUnsignedShortParameterDefaultValue(b.library, b.behaviour,
+                                                      b.hypothesis, n);
+    }  // end of getParameterDefaultValue<unsigned short>
 
-      bool hasLowerPhysicalBound(const Behaviour &b, const std::string &v) {
-        auto &lm = mgis::LibrariesManager::get();
-        return lm.hasLowerPhysicalBound(b.library, b.behaviour, b.hypothesis,
-                                        v);
-      }  // end of hasLowerPhysicalBound
+    bool hasBounds(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.hasBounds(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of hasBounds
 
-      bool hasUpperPhysicalBound(const Behaviour &b, const std::string &v) {
-        auto &lm = mgis::LibrariesManager::get();
-        return lm.hasUpperPhysicalBound(b.library, b.behaviour, b.hypothesis,
-                                        v);
-      }  // end of hasUpperPhysicalBound
+    bool hasLowerBound(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.hasLowerBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of hasLowerBound
 
-      long double getLowerPhysicalBound(const Behaviour &b,
-                                        const std::string &v) {
-        auto &lm = mgis::LibrariesManager::get();
-        return lm.getLowerPhysicalBound(b.library, b.behaviour, b.hypothesis,
-                                        v);
-      }  // end of getLowerPhysicalBound
+    bool hasUpperBound(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.hasUpperBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of hasUpperBound
 
-      long double getUpperPhysicalBound(const Behaviour &b,
-                                        const std::string &v) {
-        auto &lm = mgis::LibrariesManager::get();
-        return lm.getUpperPhysicalBound(b.library, b.behaviour, b.hypothesis,
-                                        v);
-      }  // end of getUpperPhysicalBound
+    long double getLowerBound(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.getLowerBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of getLowerBound
 
-      void print_markdown(std::ostream &, const Behaviour &, const mgis::size_type) {
-      }  // end of print_markdown
+    long double getUpperBound(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.getUpperBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of getUpperBound
+
+    bool hasPhysicalBounds(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.hasPhysicalBounds(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of hasPhysicalBounds
+
+    bool hasLowerPhysicalBound(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.hasLowerPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of hasLowerPhysicalBound
+
+    bool hasUpperPhysicalBound(const Behaviour &b, const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.hasUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of hasUpperPhysicalBound
+
+    long double getLowerPhysicalBound(const Behaviour &b,
+                                      const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.getLowerPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of getLowerPhysicalBound
+
+    long double getUpperPhysicalBound(const Behaviour &b,
+                                      const std::string &v) {
+      auto &lm = mgis::LibrariesManager::get();
+      return lm.getUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
+    }  // end of getUpperPhysicalBound
+
+    void print_markdown(std::ostream &,
+                        const Behaviour &,
+                        const mgis::size_type) {}  // end of print_markdown
 
   }  // end of namespace behaviour
 

@@ -4,31 +4,6 @@ subroutine test()
   use mgis_testing_utilities
   implicit none
   type(Behaviour) b
-  ! size of an array able to hold the gradients' value
-  integer gs_size
-  ! size of an array able to hold the thermodynamic forces' value
-  integer tfs_size
-  logical :: r
-  ! start of the check
-  call check_status(load_behaviour(b, &
-       get_mfront_behaviour_test_library_path(), &
-       'FiniteStrainSingleCrystal', 'Tridimensional'))
-  ! gradients size
-  call check_status(behaviour_get_gradients_size(gs_size,b))
-  r = check(gs_size==9,'invalid gradients size')
-  ! thermodynamic forces size
-  call check_status(behaviour_get_thermodynamic_forces_size(tfs_size,b))
-  r = check(tfs_size==6,'invalid thermodynamic forces size')
-  ! free ressources
-  call check_status(free_behaviour(b))
-end subroutine test
-
-subroutine test2()
-  use mgis
-  use mgis_behaviour
-  use mgis_testing_utilities
-  implicit none
-  type(Behaviour) b
   type(FiniteStrainBehaviourOptions) o
   ! size of an array able to hold the gradients' value
   integer gs_size
@@ -49,9 +24,9 @@ subroutine test2()
   ! free ressources
   call check_status(free_finite_strain_behaviour_options(o))
   call check_status(free_behaviour(b))
-end subroutine test2
+end subroutine test
 
-subroutine test3(ss, es)
+subroutine test2(ss, es)
   use mgis
   use mgis_behaviour
   use mgis_testing_utilities
@@ -80,15 +55,14 @@ subroutine test3(ss, es)
   ! free ressources
   call check_status(free_finite_strain_behaviour_options(o))
   call check_status(free_behaviour(b))
-end subroutine test3
+end subroutine test2
 
 program main
   use mgis_testing_utilities
   call test()
-  call test2()
-  call test3('PK1',9)
-  call test3('PK2',6)
-  call test3('CAUCHY',6)
+  call test2('PK1',9)
+  call test2('PK2',6)
+  call test2('CAUCHY',6)
   call tests_summary()
   if(.not. status) then
      stop -1

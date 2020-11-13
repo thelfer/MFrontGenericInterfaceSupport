@@ -1,6 +1,8 @@
-import sys, os, py_compile
+import os
+import sys
+import py_compile
 
-if(len(sys.argv)>1):
+if(len(sys.argv) > 1):
     sys.stdout.write('Byte-compiling python modules...\n')
     for f in sys.argv[1:]:
         if not os.path.exists(f) or not (len(f) >= 3
@@ -8,4 +10,4 @@ if(len(sys.argv)>1):
             continue
         sys.stdout.write(f+'\n')
         sys.stdout.flush()
-        py_compile.compile(f,f + 'c')
+        py_compile.compile(f, f + 'c')

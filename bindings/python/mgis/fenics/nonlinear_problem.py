@@ -374,7 +374,7 @@ class AbstractNonlinearProblem:
         for (i, s) in enumerate(self.material.get_internal_state_variable_names()):
             state_var = self.state_variables["internal"][s].function
             block_shape = self.material.get_internal_state_variable_sizes()[i]
-            state_var.vector().set_local(self.material.data_manager.s1.internal_state_variables[:,buff:buff+block_shape].flatten())
+            state_var.vector().set_local(self.material.data_manager.s1.internal_state_variables[:, buff:buff+block_shape].flatten())
             buff += block_shape
 
     def update_constitutive_law(self):

@@ -41,9 +41,9 @@
 #ifndef LIB_MGIS_STRINGVIEW_HXX
 #define LIB_MGIS_STRINGVIEW_HXX
 
-#include <algorithm>
-#include <string>
 #include <ostream>
+#include <string>
+#include <algorithm>
 
 namespace mgis{
 

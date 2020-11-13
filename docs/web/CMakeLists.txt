@@ -58,12 +58,14 @@ add_custom_target(website)
 add_dependencies(doc website)
 
 if(MGIS_HAVE_PANDOC)
-  mgis_pandoc_generate_html_page(index)
+  mgis_pandoc_generate_html_page(index "-c css/slideshow.css")
   mgis_pandoc_generate_html_page(install)
+  mgis_pandoc_generate_html_page(contributing)
   mgis_pandoc_generate_html_page(bindings-cxx "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(release-notes-1.1 "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(release-notes-1.1.1 "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(release-notes-1.2 "--toc" "--toc-depth=3")
+  mgis_pandoc_generate_html_page(orthotropic-behaviours "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(FEniCSBindings)
   mgis_pandoc_generate_html_page(mgis_fenics "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(mgis_fenics_nonlinear_heat_transfer "--toc" "--toc-depth=3")
@@ -82,12 +84,12 @@ endif(MGIS_HAVE_JUPYTER_NBCONVERT)
 
 
 if(MGIS_APPEND_SUFFIX)
-  install(DIRECTORY css img
+  install(DIRECTORY css img js
     DESTINATION share/doc/mgis-${MGIS_SUFFIX}/web
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
 else(MGIS_APPEND_SUFFIX)
-  install(DIRECTORY css img
+  install(DIRECTORY css img js
     DESTINATION share/doc/mgis/web
     COMPONENT website
     PATTERN ".svn" EXCLUDE)

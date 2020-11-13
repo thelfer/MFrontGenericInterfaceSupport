@@ -13,6 +13,7 @@ import ufl
 from .utils import local_project, symmetric_tensor_to_vector, \
                 nonsymmetric_tensor_to_vector, get_quadrature_element
 
+<<<<<<< HEAD
 class QuadratureFunction:
     """An abstract class for functions defined at quadrature points"""
     def __init__(self, name, shape):
@@ -56,31 +57,33 @@ class Gradient(QuadratureFunction):
     This class provides a representation of MFront gradient objects. Its main
     purpose is to provide the corresponding UFL expression, linking MFront and
     FEniCS concepts. It also handles:
-        - the reshaping from UFL tensorial representation to MFront vectorial conventions
-        - the symbolic expression of the gradient variation (directional derivative)
+        - the reshaping from UFL tensorial representation to MFront
+          vectorial conventions
+        - the symbolic expression of the gradient variation
+          (directional derivative)
         - the representation as a Quadrature function
 
-    This class is intended for internal use only. Gradient objects must be declared
-    by the user using the registration concept.
+    This class is intended for internal use only. Gradient objects must be
+    declared by the user using the registration concept.
     """
     def __init__(self, variable, expression, name, symmetric=None):
         self.variable = variable
         if symmetric is None:
             self.expression = expression
         elif symmetric:
-            if self.variable.geometric_dimension()==2:
+            if self.variable.geometric_dimension() == 2:
                 self.expression = as_vector([symmetric_tensor_to_vector(expression)[i] for i in range(4)])
             else:
                 self.expression = symmetric_tensor_to_vector(expression)
         else:
-            if self.variable.geometric_dimension()==2:
+            if self.variable.geometric_dimension() == 2:
                 self.expression = as_vector([nonsymmetric_tensor_to_vector(expression)[i] for i in range(5)])
             else:
                 self.expression = nonsymmetric_tensor_to_vector(expression)
         shape = ufl.shape(self.expression)
-        if len(shape)==1:
+        if len(shape) == 1:
             self.shape = shape[0]
-        elif shape==():
+        elif shape == ():
             self.shape = 0
         else:
             self.shape = shape

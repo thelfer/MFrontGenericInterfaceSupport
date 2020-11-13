@@ -21,7 +21,7 @@ mgis_hypothesis = {"plane_strain": mgis_bv.Hypothesis.PlaneStrain,
 
 class MFrontNonlinearMaterial:
     """
-    This class handles the loading of a MFront behaviour through MFrontGenericInterfaceSupport.
+    This class handles the loading of a MFront behaviour through MGIS.
     """
     def __init__(self, path, name, hypothesis="3d",
                  material_properties={}, parameters={}):
@@ -69,7 +69,8 @@ class MFrontNonlinearMaterial:
             bopts = mgis_bv.FiniteStrainBehaviourOptions()
             bopts.stress_measure = mgis_bv.FiniteStrainBehaviourOptionsStressMeasure.PK1
             bopts.tangent_operator = mgis_bv.FiniteStrainBehaviourOptionsTangentOperator.DPK1_DF
-            self.behaviour = mgis_bv.load(bopts, self.path, self.name, self.hypothesis)
+            self.behaviour = mgis_bv.load(bopts, self.path,
+                                          self.name, self.hypothesis)
         else:
             self.behaviour = mgis_bv.load(self.path, self.name, self.hypothesis)
 
