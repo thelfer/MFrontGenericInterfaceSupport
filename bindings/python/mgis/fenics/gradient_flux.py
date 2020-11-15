@@ -78,12 +78,12 @@ class Gradient(QuadratureFunction):
         if symmetric is None:
             self.expression = expression
         elif symmetric:
-            if self.variable.geometric_dimension() == 2:
+            if ufl.shape(expression) == (2, 2):
                 self.expression = as_vector([symmetric_tensor_to_vector(expression)[i] for i in range(4)])
             else:
                 self.expression = symmetric_tensor_to_vector(expression)
         else:
-            if self.variable.geometric_dimension() == 2:
+            if ufl.shape(expression) == (2, 2):
                 self.expression = as_vector([nonsymmetric_tensor_to_vector(expression)[i] for i in range(5)])
             else:
                 self.expression = nonsymmetric_tensor_to_vector(expression)

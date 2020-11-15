@@ -66,9 +66,11 @@ class AbstractNonlinearProblem:
         self._dummy_function = Function(self.W0)
 
         if self.material.hypothesis == mgis_bv.Hypothesis.Tridimensional:
-            assert self.u.geometric_dimension()==3, "Conflicting geometric dimension and material hypothesis"
+            if self.u.geometric_dimension()!=3:
+                warning("Conflicting geometric dimension and material hypothesis")
         else:
-            assert self.u.geometric_dimension()==2, "Conflicting geometric dimension and material hypothesis"
+            if self.u.geometric_dimension()!=2:
+                warning("Conflicting geometric dimension and material hypothesis")
 
         if bcs is None:
             self.bcs = []
@@ -383,7 +385,7 @@ class AbstractNonlinearProblem:
         self.material.update_external_state_variables(self.state_variables["external"])
         # integrate the behaviour
         mgis_bv.integrate(self.material.data_manager, self.integration_type,
-                          0, 0, self.material.data_manager.n);
+                          self.dt, 0, self.material.data_manager.n);
         # getting the stress and consistent tangent operator back to
         # the FEniCS world.
         self.update_fluxes()
