@@ -708,6 +708,20 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_lower_physical_bound(
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_upper_physical_bound(
     long double* const, const mgis_bv_Behaviour* const, const char* const);
 /*!
+ * \brief return if the behaviour computes the stored energy
+ * \param[out] v: returned value
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_computes_stored_energy(
+      int* const, const mgis_bv_Behaviour* const );
+/*!
+ * \brief return if the behaviour computes the dissipated energy
+ * \param[out] v: returned value
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_computes_dissipated_energy(
+    int* const, const mgis_bv_Behaviour* const);
+/*!
  * \brief free the memory associated with the given behaviour.
  * \param[in,out] b: behaviour
  */

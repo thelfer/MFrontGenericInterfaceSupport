@@ -132,8 +132,9 @@ namespace mgis {
      * \param[in] h: hypothesis
      */
     mgis::behaviour::RotateArrayOfBehaviourThermodynamicForcesFctPtr
-    getRotateArrayOfBehaviourThermodynamicForcesFunction(
-        const std::string &, const std::string &, const Hypothesis);
+    getRotateArrayOfBehaviourThermodynamicForcesFunction(const std::string &,
+                                                         const std::string &,
+                                                         const Hypothesis);
     /*!
      * \return the function implementing the rotation of the thermodynamic
      * forces from the material frame to the global frame for a finite strain
@@ -172,8 +173,9 @@ namespace mgis {
      * \param[in] h: hypothesis
      */
     mgis::behaviour::RotateBehaviourTangentOperatorBlocksFctPtr
-    getRotateBehaviourTangentOperatorBlocksFunction(
-        const std::string &, const std::string &, const Hypothesis);
+    getRotateBehaviourTangentOperatorBlocksFunction(const std::string &,
+                                                    const std::string &,
+                                                    const Hypothesis);
     /*!
      * \return the function implementing the rotation of the tangent operator
      * block from the material frame to the global frame.
@@ -182,8 +184,9 @@ namespace mgis {
      * \param[in] h: hypothesis
      */
     mgis::behaviour::RotateArrayOfBehaviourTangentOperatorBlocksFctPtr
-    getRotateArrayOfBehaviourTangentOperatorBlocksFunction(
-        const std::string &, const std::string &, const Hypothesis);
+    getRotateArrayOfBehaviourTangentOperatorBlocksFunction(const std::string &,
+                                                           const std::string &,
+                                                           const Hypothesis);
     /*!
      * \return the function implementing the rotation of the tangent operator
      * block from the material frame to the global frame for a finite strain
@@ -272,6 +275,26 @@ namespace mgis {
     bool requiresStiffnessTensor(const std::string &,
                                  const std::string &,
                                  const Hypothesis);
+    /*!
+     * \return true if a behaviour computes the internal energy. In `MFront`,
+     * this is associated with the `@InternalEnergy` code block.
+     * \param[in] l: library name
+     * \param[in] b: behaviour name
+     * \param[in] h: modelling hypothesis
+     */
+    bool computesStoredEnergy(const std::string &,
+                              const std::string &,
+                              const Hypothesis);
+    /*!
+     * \return true if a behaviour computes the dissipated energy. In `MFront`,
+     * this is associated with the `@DissipatedEnergy` code block.
+     * \param[in] l: library name
+     * \param[in] b: behaviour name
+     * \param[in] h: modelling hypothesis
+     */
+    bool computesDissipatedEnergy(const std::string &,
+                                  const std::string &,
+                                  const Hypothesis);
     /*!
      * \return true if a behaviour generated throught the aster
      * interface requires a offset for the elastic properties

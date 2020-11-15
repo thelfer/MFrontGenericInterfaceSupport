@@ -154,5 +154,5 @@ class MFrontNonlinearMaterial:
         return [(t[0].name, t[1].name) for t in self.behaviour.tangent_operator_blocks]
 
     def get_tangent_block_sizes(self):
-        return [tuple([mgis_bv.getVariableSize(tt, self.hypothesis) for tt in t]) \
+        return [tuple([mgis_bv.getVariableSize(tt, self.hypothesis) for tt in t])
                 for t in self.behaviour.tangent_operator_blocks]

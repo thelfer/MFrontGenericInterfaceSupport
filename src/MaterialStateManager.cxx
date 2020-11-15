@@ -43,8 +43,12 @@ namespace mgis {
       init(this->internal_state_variables,
            this->internal_state_variables_values,
            this->internal_state_variables_stride);
-      init(this->stored_energies, this->stored_energies_values, 1u);
-      init(this->dissipated_energies, this->dissipated_energies_values, 1u);
+      if (b.computesStoredEnergy) {
+        init(this->stored_energies, this->stored_energies_values, 1u);
+      }
+      if (b.computesDissipatedEnergy) {
+        init(this->dissipated_energies, this->dissipated_energies_values, 1u);
+      }
     }  // end of MaterialStateManager::MaterialStateManager
 
     MaterialStateManager::MaterialStateManager(
@@ -85,10 +89,28 @@ namespace mgis {
       init(this->internal_state_variables,
            this->internal_state_variables_values, i.internal_state_variables,
            this->internal_state_variables_stride, "internal state variables");
-      init(this->stored_energies, this->stored_energies_values,
-           i.stored_energies, 1u, "stored energies");
-      init(this->dissipated_energies, this->dissipated_energies_values,
-           i.dissipated_energies, 1u, "dissipated energies");
+      if (b.computesStoredEnergy) {
+        init(this->stored_energies, this->stored_energies_values,
+             i.stored_energies, 1u, "stored energies");
+      } else {
+        if (!i.stored_energies.empty()) {
+          mgis::raise(
+              "MaterialStateManager::MaterialStateManager: "
+              "stored energies shall not have been allocated as the behaviour "
+              "don't compute the stored energy");
+        }
+      }
+      if (b.computesDissipatedEnergy) {
+        init(this->dissipated_energies, this->dissipated_energies_values,
+             i.dissipated_energies, 1u, "dissipated energies");
+      } else {
+        if (!i.dissipated_energies.empty()) {
+          mgis::raise(
+              "MaterialStateManager::MaterialStateManager: "
+              "dissipated energies shall not have been allocated as the "
+              "behaviour don't compute the dissipated energy");
+        }
+      }
     }  // end of MaterialStateManager::MaterialStateManager
 
     MaterialStateManager::~MaterialStateManager() = default;
@@ -96,35 +118,35 @@ namespace mgis {
     static MaterialStateManager::FieldHolder& getFieldHolder(
         std::map<std::string, MaterialStateManager::FieldHolder>& m,
         const mgis::string_view& n) {
-// #if __cplusplus > 201103L
-//       return m[n];
-// #else  /* __cplusplus > 201103L */
+      // #if __cplusplus > 201103L
+      //       return m[n];
+      // #else  /* __cplusplus > 201103L */
       return m[n.to_string()];
-// #endif /* __cplusplus > 201103L */
-    } // end of getFieldHolder
+      // #endif /* __cplusplus > 201103L */
+    }  // end of getFieldHolder
 
     static std::map<std::string, MaterialStateManager::FieldHolder>::iterator
     getFieldHolderIterator(
         std::map<std::string, MaterialStateManager::FieldHolder>& m,
         const mgis::string_view& n) {
-// #if __cplusplus > 201103L
-//       return m.find(n);
-// #else  /* __cplusplus > 201103L */
+      // #if __cplusplus > 201103L
+      //       return m.find(n);
+      // #else  /* __cplusplus > 201103L */
       return m.find(n.to_string());
       // #endif /* __cplusplus > 201103L */
-    } // end of getFieldHolder
+    }  // end of getFieldHolder
 
     static std::map<std::string,
                     MaterialStateManager::FieldHolder>::const_iterator
     getFieldHolderIterator(
         const std::map<std::string, MaterialStateManager::FieldHolder>& m,
         const mgis::string_view& n) {
-// #if __cplusplus > 201103L
-//       return m.find(n);
-// #else  /* __cplusplus > 201103L */
+      // #if __cplusplus > 201103L
+      //       return m.find(n);
+      // #else  /* __cplusplus > 201103L */
       return m.find(n.to_string());
-// #endif /* __cplusplus > 201103L */
-    } // end of getFieldHolder
+      // #endif /* __cplusplus > 201103L */
+    }  // end of getFieldHolder
 
     void setMaterialProperty(MaterialStateManager& m,
                              const mgis::string_view& n,
@@ -134,7 +156,7 @@ namespace mgis {
                      "setMaterialProperty: "
                      "invalid material property "
                      "(only scalar material property is supported)");
-      getFieldHolder(m.material_properties,n)= v;
+      getFieldHolder(m.material_properties, n) = v;
     }  // end of setMaterialProperty
 
     MGIS_EXPORT void setMaterialProperty(
@@ -151,15 +173,16 @@ namespace mgis {
                      "setMaterialProperty: invalid number of values "
                      "(does not match the number of integration points)");
       if (s == MaterialStateManager::LOCAL_STORAGE) {
-        getFieldHolder(m.material_properties,n)= std::vector<real>{v.begin(), v.end()};
+        getFieldHolder(m.material_properties, n) =
+            std::vector<real>{v.begin(), v.end()};
       } else {
-        getFieldHolder(m.material_properties,n)= v;
+        getFieldHolder(m.material_properties, n) = v;
       }
     }  // end of setMaterialProperty
 
     bool isMaterialPropertyDefined(const MaterialStateManager& m,
-                                        const mgis::string_view& n) {
-      const auto p = getFieldHolderIterator(m.material_properties,n);
+                                   const mgis::string_view& n) {
+      const auto p = getFieldHolderIterator(m.material_properties, n);
       return p != m.material_properties.end();
     }  // end of isMaterialPropertyDefined
 
@@ -249,7 +272,7 @@ namespace mgis {
                      "setExternalStateVariable: "
                      "invalid external state variable "
                      "(only scalar external state variable is supported)");
-      getFieldHolder(m.external_state_variables,n) = v;
+      getFieldHolder(m.external_state_variables, n) = v;
     }  // end of setExternalStateVariable
 
     MGIS_EXPORT void setExternalStateVariable(
@@ -269,19 +292,19 @@ namespace mgis {
         getFieldHolder(m.external_state_variables, n) =
             std::vector<real>{v.begin(), v.end()};
       } else {
-        getFieldHolder(m.external_state_variables,n) = v;
+        getFieldHolder(m.external_state_variables, n) = v;
       }
     }  // end of setExternalStateVariable
 
     bool isExternalStateVariableDefined(const MaterialStateManager& m,
                                         const mgis::string_view& n) {
-      const auto p = getFieldHolderIterator(m.external_state_variables,n);
+      const auto p = getFieldHolderIterator(m.external_state_variables, n);
       return p != m.external_state_variables.end();
     }  // end of isExternalStateVariableDefined
 
     bool isExternalStateVariableUniform(const MaterialStateManager& m,
-                                   const mgis::string_view& n) {
-      const auto p = getFieldHolderIterator(m.external_state_variables,n);
+                                        const mgis::string_view& n) {
+      const auto p = getFieldHolderIterator(m.external_state_variables, n);
       mgis::raise_if(p == m.external_state_variables.end(),
                      "isExternalStateVariableUniform: "
                      "no external state variable named '" +
@@ -291,7 +314,7 @@ namespace mgis {
 
     real& getUniformExternalStateVariable(MaterialStateManager& m,
                                           const mgis::string_view& n) {
-      const auto p = getFieldHolderIterator(m.external_state_variables,n);
+      const auto p = getFieldHolderIterator(m.external_state_variables, n);
       mgis::raise_if(p == m.external_state_variables.end(),
                      "getUniformExternalStateVariable: "
                      "no external state variable named '" +
@@ -305,7 +328,7 @@ namespace mgis {
 
     const real& getUniformExternalStateVariable(const MaterialStateManager& m,
                                                 const mgis::string_view& n) {
-      const auto p = getFieldHolderIterator(m.external_state_variables,n);
+      const auto p = getFieldHolderIterator(m.external_state_variables, n);
       mgis::raise_if(p == m.external_state_variables.end(),
                      "getUniformExternalStateVariable: "
                      "no external state variable named '" +
@@ -320,7 +343,7 @@ namespace mgis {
     mgis::span<real> getNonUniformExternalStateVariable(
         MaterialStateManager& m, const mgis::string_view& n) {
       using index_type = span<real>::index_type;
-      const auto p = getFieldHolderIterator(m.external_state_variables,n);
+      const auto p = getFieldHolderIterator(m.external_state_variables, n);
       mgis::raise_if(p == m.external_state_variables.end(),
                      "getNonUniformExternalStateVariable: "
                      "no external state variable named '" +
@@ -331,14 +354,14 @@ namespace mgis {
                          n.to_string() + "' is uniform");
       if (mgis::holds_alternative<std::vector<real>>(p->second)) {
         auto& values = mgis::get<std::vector<real>>(p->second);
-        return {&values[0],static_cast<index_type>(values.size())};
+        return {&values[0], static_cast<index_type>(values.size())};
       }
       return mgis::get<span<real>>(p->second);
     }  // end of getUniformExternalStateVariable
 
     mgis::span<const real> getNonUniformExternalStateVariable(
         const MaterialStateManager& m, const mgis::string_view& n) {
-      const auto p = getFieldHolderIterator(m.external_state_variables,n);
+      const auto p = getFieldHolderIterator(m.external_state_variables, n);
       using index_type = span<const real>::index_type;
       mgis::raise_if(p == m.external_state_variables.end(),
                      "getNonUniformExternalStateVariable: "
@@ -373,14 +396,14 @@ namespace mgis {
           const MaterialStateManager::FieldHolder& from) {
         if (mgis::holds_alternative<mgis::real>(from)) {
           to = mgis::get<mgis::real>(from);
-        } else if(mgis::holds_alternative<std::vector<mgis::real>>(from)){
+        } else if (mgis::holds_alternative<std::vector<mgis::real>>(from)) {
           const auto& from_v = mgis::get<std::vector<mgis::real>>(from);
           if (mgis::holds_alternative<mgis::span<mgis::real>>(to)) {
             // reuse existing memory
             auto& to_v = mgis::get<mgis::span<mgis::real>>(to);
             check_size(from_v.size(), to_v.size());
             std::copy(from_v.begin(), from_v.end(), to_v.begin());
-          } else if(mgis::holds_alternative<std::vector<mgis::real>>(to)) {
+          } else if (mgis::holds_alternative<std::vector<mgis::real>>(to)) {
             // reuse existing memory
             auto& to_v = mgis::get<std::vector<mgis::real>>(to);
             check_size(from_v.size(), to_v.size());
@@ -395,14 +418,12 @@ namespace mgis {
             // reuse existing memory
             auto to_v = mgis::get<mgis::span<mgis::real>>(to);
             check_size(from_v.size(), to_v.size());
-            std::copy(from_v.begin(), from_v.end(),
-                      to_v.begin());
+            std::copy(from_v.begin(), from_v.end(), to_v.begin());
           } else if (mgis::holds_alternative<std::vector<mgis::real>>(to)) {
             // reuse existing memory
             auto to_v = mgis::get<std::vector<mgis::real>>(to);
             check_size(from_v.size(), to_v.size());
-            std::copy(from_v.begin(), from_v.end(),
-                      to_v.begin());
+            std::copy(from_v.begin(), from_v.end(), to_v.begin());
           } else {
             to = from_v;
           }

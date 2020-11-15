@@ -118,26 +118,40 @@ namespace mgis {
         FINITESTRAINKINEMATIC_F_CAUCHY,
         FINITESTRAINKINEMATIC_ETO_PK1
       } kinematic;
-      //! behaviour symmetry
+      //! \brief behaviour symmetry
       Symmetry symmetry;
-      //! gradients
+      //! \brief gradients
       std::vector<Variable> gradients;
-      //! thermodynamic forces associated to gradients
+      //! \brief thermodynamic forces associated to gradients
       std::vector<Variable> thermodynamic_forces;
-      //! material properties
+      //! \brief material properties
       std::vector<Variable> mps;
-      //! internal state variables
+      //! \brief internal state variables
       std::vector<Variable> isvs;
-      //! external state variables
+      //! \brief external state variables
       std::vector<Variable> esvs;
-      //! tangent operator blocks
+      //! \brief tangent operator blocks
       std::vector<std::pair<Variable, Variable>> to_blocks;
-      //! real parameters
+      //! \brief real parameters
       std::vector<std::string> params;
-      //! integer parameters
+      //! \brief integer parameters
       std::vector<std::string> iparams;
-      //! unsigned short parameters
+      //! \brief unsigned short parameters
       std::vector<std::string> usparams;
+      /*!
+       * \brief this boolean is true if the behaviour computes the
+       * energy stored by the material per unit of volume in the reference
+       * configuration. The physical meaning of this
+       * energy depends on the behaviour considered.
+       */
+      bool computesStoredEnergy;
+      /*!
+       * \brief this boolean is true if the behaviour computes the
+       * energy dissipated by the material per unit of volume in the 
+       * reference configuration. The physical meaning of this
+       * energy depends on the behaviour considered.
+       */
+      bool computesDissipatedEnergy;
       /*!
        * \brief behaviour options
        *

@@ -336,6 +336,8 @@ namespace mgis {
       for (const auto &block : lm.getTangentOperatorBlocksNames(l, b, h)) {
         d.to_blocks.push_back(getJacobianBlockVariables(d, block));
       }
+      d.computesStoredEnergy = lm.computesStoredEnergy(l, b, h);
+      d.computesDissipatedEnergy = lm.computesDissipatedEnergy(l, b, h);
       //! parameters
       const auto pn = lm.getParametersNames(l, b, h);
       const auto pt = lm.getParametersTypes(l, b, h);
@@ -359,14 +361,14 @@ namespace mgis {
     Behaviour load(const std::string &l,
                    const std::string &b,
                    const Hypothesis h) {
-      auto d = load_behaviour(l, b, h);
-      if (d.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
+      if (isStandardFiniteStrainBehaviour(l, b)) {
         mgis::raise(
             "mgis::behaviour::load: "
             "This version of the load function shall not be called "
             "for finite strain behaviour: you shall specify finite "
             "strain options");
       }
+      auto d = load_behaviour(l, b, h);
       if (d.symmetry == Behaviour::ORTHOTROPIC) {
         auto &lm = mgis::LibrariesManager::get();
         d.rotate_gradients_ptr =

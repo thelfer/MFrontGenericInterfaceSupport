@@ -42,7 +42,7 @@ namespace mgis {
       /*!
        * \brief view to an externally allocated memory used to store the
        * gradients. If empty, the material state manager will
-       * initialize the required memory internally. 
+       * initialize the required memory internally.
        */
       mgis::span<mgis::real> gradients;
       /*!
@@ -60,13 +60,23 @@ namespace mgis {
       /*!
        * \brief view to an externally allocated memory used to store the stored
        * energies. If empty, the material state manager will initialize the
-       * required memory internally.
+       * required memory internally, if the behaviour computes the stored
+       * energy.
+       *
+       * \note for backward compatibililty, the user may allocate memory for the
+       * stored energies even if the behaviour don't compute the stored
+       * energy.
        */
       mgis::span<mgis::real> stored_energies;
       /*!
        * \brief view to an externally allocated memory used to store the
        * dissipated energies. If empty, the material state manager will
-       * initialize the required memory internally.
+       * initialize the required memory internally, if the behaviour computes
+       * the dissipated energy.
+       *
+       * \note for backward compatibililty, the user may allocate memory for the
+       * dissipated energies even if the behaviour don't compute the dissipated
+       * energy.
        */
       mgis::span<mgis::real> dissipated_energies;
     };  // end of MaterialStateManagerInitializer
@@ -93,10 +103,10 @@ namespace mgis {
         LOCAL_STORAGE,    //! \brief use `std::vector` to store the data
         EXTERNAL_STORAGE  //! \brief use `mgis::span`  to store the data
       };                  // end of StorageMode
-      /*!
-       * \param[in] behaviour: behaviour
-       * \param[in] s: number of integration points
-       */
+                          /*!
+                           * \param[in] behaviour: behaviour
+                           * \param[in] s: number of integration points
+                           */
       MaterialStateManager(const Behaviour&, const size_type);
       /*!
        * \param[in] behaviour: behaviour

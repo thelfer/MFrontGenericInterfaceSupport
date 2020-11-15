@@ -69,11 +69,21 @@ static boost::python::object MaterialStateManager_getInternalStateVariables(
 
 static boost::python::object MaterialStateManager_getStoredEnergies(
     mgis::behaviour::MaterialStateManager& s) {
+  if (!s.b.computesStoredEnergy) {
+    mgis::raise(
+        "MaterialStateManager_getStoredEnergies: "
+        "the stored energy is not computed by the behaviour");
+  }
   return mgis::python::wrapInNumPyArray(s.stored_energies);
 }  // end of MaterialStateManager_getStoredEnergy
 
 static boost::python::object MaterialStateManager_getDissipatedEnergies(
     mgis::behaviour::MaterialStateManager& s) {
+  if (!s.b.computesDissipatedEnergy) {
+    mgis::raise(
+        "MaterialStateManager_getDissipatedEnergies: "
+        "the dissipated energy is not computed by the behaviour");
+  }
   return mgis::python::wrapInNumPyArray(s.dissipated_energies);
 }  // end of MaterialStateManager_getDissipatedEnergy
 

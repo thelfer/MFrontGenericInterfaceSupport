@@ -21,6 +21,12 @@ bibliography: bibliography.bib
 Version 1.2 of `MFrontGenericInterfaceSupport` is compatible with the
 Version 3.4 of `TFEL/MFront`.
 
+# Known incompatibilities
+
+The `stored_energies` and `dissipated_energies` are now automatically
+allocated only of the behaviours by the `MaterialStateManager` class
+only if the behaviours is able to compute them.
+
 # New functionalities
 
 ## Orthotropic behaviours
@@ -120,6 +126,24 @@ module:
   variable (i.e. the number of components) for the given hypothesis.
 
 # Issues solved
+
+## Issues #54: Inform the calling code about `@DissipatedEnergy` and/or `@InternalEnergy`
+
+The `Behaviour` class now exposes two new boolean data members:
+
+- `computesStoredEnergy`: if true, the behaviour computes the stored energy
+- `computesDissipatedEnergy`: if false, the behaviour computes the dissipated energy
+
+In the `C` bindings, the `mgis_bv_behaviour_computes_stored_energy`  and `mgis_bv_behaviour_computes_dissipated_energy` functions are now available.
+
+In the `fortran` bindings, the functions `behaviour_computes_stored_energy` and `behaviour_computes_dissipated_energy` are now available in the `mgis_behaviour` module.
+
+In the `python` bindings, the `Behaviour` class now exposes two read only properties: `computesStoredEnergy` and `computesDissipatedEnergy`.
+
+The `MaterialDataManager` constructor now only allocates the memory associated with the stored and disspated energies only if the behaviour computes those energies.
+
+For details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/54>
+
 
 ## Issue #33: Function for checking if the behaviour is a Finite Strain one
 

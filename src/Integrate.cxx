@@ -127,6 +127,8 @@ namespace mgis {
           dispatch(ws.esvs0, m.s0.external_state_variables, m.b.esvs);
       const auto vesvs1 =
           dispatch(ws.esvs1, m.s1.external_state_variables, m.b.esvs);
+      const auto computes_stored_energy = m.b.computesStoredEnergy;
+      const auto computes_dissipated_energy = m.b.computesDissipatedEnergy;
       // loop over integration points
       auto r = int{1};
       real opts[Behaviour::nopts + 1];  // option passed to the behaviour
@@ -155,10 +157,20 @@ namespace mgis {
             m.s0.internal_state_variables.data() + isvs_stride * i;
         v.s1.internal_state_variables =
             m.s1.internal_state_variables.data() + isvs_stride * i;
-        v.s0.stored_energy = m.s0.stored_energies.data() + i;
-        v.s1.stored_energy = m.s1.stored_energies.data() + i;
-        v.s0.dissipated_energy = m.s0.dissipated_energies.data() + i;
-        v.s1.dissipated_energy = m.s1.dissipated_energies.data() + i;
+        if (computes_stored_energy) {
+          v.s0.stored_energy = m.s0.stored_energies.data() + i;
+          v.s1.stored_energy = m.s1.stored_energies.data() + i;
+        } else {
+          v.s0.stored_energy = nullptr;
+          v.s1.stored_energy = nullptr;
+        }
+        if (computes_dissipated_energy) {
+          v.s0.dissipated_energy = m.s0.dissipated_energies.data() + i;
+          v.s1.dissipated_energy = m.s1.dissipated_energies.data() + i;
+        } else {
+          v.s0.dissipated_energy = nullptr;
+          v.s1.dissipated_energy = nullptr;
+        }
         v.s0.external_state_variables = ws.esvs0.data();
         v.s1.external_state_variables = ws.esvs1.data();
         v.K[0] = static_cast<int>(it);
