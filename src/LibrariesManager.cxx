@@ -482,6 +482,24 @@ namespace mgis {
     return bv == 1 ? true : false;
   }  // end of LibrariesManager::requiresStiffnessTensor
 
+  bool LibrariesManager::computesStoredEnergy(const std::string &l,
+                                                const std::string &b,
+                                                const Hypothesis h) {
+    const auto sn = "_ComputesInternalEnergy";
+    const auto bv =
+        *(this->extract<unsigned short>(l, b + "_" + toString(h) + sn, b + sn));
+    return bv == 1 ? true : false;
+  }  // end of LibrariesManager::computesStoredEnergy
+
+  bool LibrariesManager::computesDissipatedEnergy(const std::string &l,
+                                                  const std::string &b,
+                                                  const Hypothesis h) {
+    const auto sn = "_ComputesDissipatedEnergy";
+    const auto bv =
+        *(this->extract<unsigned short>(l, b + "_" + toString(h) + sn, b + sn));
+    return bv == 1 ? true : false;
+  }  // end of LibrariesManager::computesDissipatedEnergy
+
   bool LibrariesManager::requiresThermalExpansionCoefficientTensor(
       const std::string &l, const std::string &b, const Hypothesis h) {
     const auto sn = "_requiresThermalExpansionCoefficientTensor";

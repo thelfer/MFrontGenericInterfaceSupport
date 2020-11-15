@@ -354,6 +354,12 @@ void declareBehaviour() {
                     "version of TFEL used to generate the behaviour")
       .add_property("btype", &Behaviour::btype,
                     "return the type of the behaviour")
+      .def_readonly(
+          "computesStoredEnergy", &Behaviour::computesStoredEnergy,
+          "a boolean stating if the behaviour computes the stored energy")
+      .def_readonly(
+          "computesDissipatedEnergy", &Behaviour::computesDissipatedEnergy,
+          "a boolean stating if the behaviour computes the dissipated energy")
       .def("getBehaviourType", &Behaviour_getType,
            "return the type of the behaviour")
       .add_property("kinematic", &Behaviour::kinematic,

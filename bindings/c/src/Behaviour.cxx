@@ -990,6 +990,24 @@ mgis_bv_finite_strain_behaviour_options_set_tangent_operator_by_string(
     return mgis_report_success();
   }  // end of mgis_bv_behaviour_get_upper_physical_bound
 
+  mgis_status mgis_bv_behaviour_computes_stored_energy(
+      int* const v, const mgis_bv_Behaviour* const b) {
+    if ((b == nullptr) || (v == nullptr)) {
+      return mgis_report_failure("invalid argument");
+    }
+    *v = static_cast<int>(b->computesStoredEnergy);
+    return mgis_report_success();
+  }  // end of mgis_bv_behaviour_computes_stored_energy
+
+  mgis_status mgis_bv_behaviour_computes_dissipated_energy(
+      int* const v, const mgis_bv_Behaviour* const b) {
+    if ((b == nullptr) || (v == nullptr)) {
+      return mgis_report_failure("invalid argument");
+    }
+    *v = static_cast<int>(b->computesDissipatedEnergy);
+    return mgis_report_success();
+  }  // end of mgis_bv_behaviour_computes_dissipated_energy
+
   mgis_status mgis_bv_free_behaviour(mgis_bv_Behaviour * *b) {
     try {
       delete *b;

@@ -109,7 +109,6 @@ namespace mgis {
       MaterialDataManager& operator=(MaterialDataManager&&) = delete;
       //! copy assignement
       MaterialDataManager& operator=(const MaterialDataManager&) = delete;
-
     };  // end of struct MaterialDataManager
 
     /*!

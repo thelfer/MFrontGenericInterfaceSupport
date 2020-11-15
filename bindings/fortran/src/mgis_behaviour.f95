@@ -1355,6 +1355,71 @@ contains
     s = behaviour_get_external_state_variable_type_wrapper(t, b%ptr, nc)
   end function behaviour_get_external_state_variable_type
   !
+  function behaviour_computes_stored_energy(v, b) result(s)
+    use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_computes_stored_energy_wrapper(v, b) &
+            bind(c,name='mgis_bv_behaviour_computes_stored_energy') result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+         use mgis, only: mgis_status
+         integer(kind=c_int), intent(out) :: v
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: s
+       end function behaviour_computes_stored_energy_wrapper
+    end interface
+    logical, intent(out) :: v
+    type(Behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    integer(kind=c_int) :: vc
+    s = behaviour_computes_stored_energy_wrapper(vc, b%ptr)
+    if( s % exit_status .eq. MGIS_SUCCESS) then
+       if (vc .eq. 1) then
+          v = .TRUE.
+       else
+          v = .FALSE.
+       end if
+    else
+       v = .FALSE.     
+    end if
+  end function behaviour_computes_stored_energy
+  !
+  function behaviour_computes_dissipated_energy(v, b) result(s)
+    use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_computes_dissipated_energy_wrapper(v, b) &
+            bind(c,name='mgis_bv_behaviour_computes_dissipated_energy') &
+            result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+         use mgis, only: mgis_status
+         integer(kind=c_int), intent(out) :: v
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: s
+       end function behaviour_computes_dissipated_energy_wrapper
+    end interface
+    logical, intent(out) :: v
+    type(Behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    integer(kind=c_int) :: vc
+    s = behaviour_computes_dissipated_energy_wrapper(vc, b%ptr)
+    if( s % exit_status .eq. MGIS_SUCCESS) then
+       if (vc .eq. 1) then
+          v = .TRUE.
+       else
+          v = .FALSE.
+       end if
+    else
+       v = .FALSE.     
+    end if
+  end function behaviour_computes_dissipated_energy
+  !
   function behaviour_has_bounds(r, b, n) result(s)
     use, intrinsic :: iso_c_binding, only: c_int
     use mgis_fortran_utilities
