@@ -55,6 +55,10 @@ Options
 - `enable-static`: compiles static libraries
 - `enable-doxygen-doc`: enable the generation of the API documentation
   using with `Doxygen`.
+- `disable_python_library_linking`: when set to `ON`, this option
+  disables the link to `python` libraries. This is required when building
+  against `anaconda` on `Mac OS`. This can be enabled by default because
+  it will lead to a failure with the `python` version of homebrew.
 
 `cmake` usefull variables
 =======================
