@@ -88,6 +88,8 @@ class AbstractNonlinearProblem:
         self._Fext = None
         self._init = True
 
+        self.dt = 0
+
         self.state_variables =  {"internal": None,
                                  "external": dict.fromkeys(self.material.get_external_state_variable_names(), None)}
         self.gradients = dict.fromkeys(self.material.get_gradient_names(), None)
