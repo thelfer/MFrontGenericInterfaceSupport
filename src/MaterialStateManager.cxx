@@ -38,6 +38,14 @@ namespace mgis {
         view = mgis::span<mgis::real>(values);
       };
       init(this->gradients, this->gradients_values, this->gradients_stride);
+      if ((this->b.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) &&
+          (this->b.kinematic == Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY)) {
+        for (size_type i = 0; i != this->n; ++i) {
+          auto F = this->gradients.subspan(i * gradients_stride,  //
+                                           gradients_stride);
+          F[0] = F[1] = F[2] = real{1};
+        }
+      }
       init(this->thermodynamic_forces, this->thermodynamic_forces_values,
            this->thermodynamic_forces_stride);
       init(this->internal_state_variables,
@@ -83,6 +91,15 @@ namespace mgis {
       };
       init(this->gradients, this->gradients_values, i.gradients,
            this->gradients_stride, "gradients");
+      if ((this->b.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) &&
+          (this->b.kinematic == Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY) &&
+          (i.gradients.empty())) {
+        for (size_type ig = 0; ig != this->n; ++ig) {
+          auto F = this->gradients.subspan(ig * gradients_stride,  //
+                                           gradients_stride);
+          F[0] = F[1] = F[2] = real{1};
+        }
+      }
       init(this->thermodynamic_forces, this->thermodynamic_forces_values,
            i.thermodynamic_forces, this->thermodynamic_forces_stride,
            "thermodynamic forces");
