@@ -15,36 +15,32 @@
 #ifndef LIB_MGIS_BEHAVIOUR_FINITESTRAINBEHAVIOUROPTIONS_HXX
 #define LIB_MGIS_BEHAVIOUR_FINITESTRAINBEHAVIOUROPTIONS_HXX
 
-namespace mgis {
+namespace mgis::behaviour {
 
-  namespace behaviour {
-
+  /*!
+   * \brief option available for finite strain behaviours
+   */
+  struct FiniteStrainBehaviourOptions {
+    //! \brief stress measure requested for finite strain behaviours
+    enum StressMeasure {
+      CAUCHY,  //!< Cauchy stress
+      PK2,     //!< Second Piola-Kirchoff stress
+      PK1      //!< First Piola-Kirchoff stress
+    } stress_measure = CAUCHY;
     /*!
-     * \brief option available for finite strain behaviours
+     * \brief type of finite strain tangent operator requested for finite
+     * strain behaviours
      */
-    struct FiniteStrainBehaviourOptions {
-      //! \brief stress measure requested for finite strain behaviours
-      enum StressMeasure {
-        CAUCHY,  //!< Cauchy stress
-        PK2,     //!< Second Piola-Kirchoff stress
-        PK1      //!< First Piola-Kirchoff stress
-      } stress_measure = CAUCHY;
-      /*!
-       * \brief type of finite strain tangent operator requested for finite
-       * strain behaviours
-       */
-      enum TangentOperator {
-        DSIG_DF, /*!< derivative of the Cauchy stress with respect to the
-                      deformation gradient */
-        DS_DEGL, /*!< derivative of the second Piola-Kirchoff stress with
-                      respect to the Green-Lagrange strain */
-        DPK1_DF  /*!< derivative of the first Piola-Kirchoff stress with
-                      respect to the deformation gradient  */
-      } tangent_operator = DSIG_DF;
-    };  // end of struct FiniteStrainBehaviourOptions
+    enum TangentOperator {
+      DSIG_DF, /*!< derivative of the Cauchy stress with respect to the
+                    deformation gradient */
+      DS_DEGL, /*!< derivative of the second Piola-Kirchoff stress with
+                    respect to the Green-Lagrange strain */
+      DPK1_DF  /*!< derivative of the first Piola-Kirchoff stress with
+                    respect to the deformation gradient  */
+    } tangent_operator = DSIG_DF;
+  };  // end of struct FiniteStrainBehaviourOptions
 
-  }  // end of namespace behaviour
-
-}  // end of namespace mgis
+}  // end of namespace mgis::behaviour
 
 #endif /* LIB_MGIS_BEHAVIOUR_FINITESTRAINBEHAVIOUROPTIONS_HXX */

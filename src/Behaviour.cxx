@@ -19,690 +19,724 @@
 #include "MGIS/LibrariesManager.hxx"
 #include "MGIS/Raise.hxx"
 
-namespace mgis {
+namespace mgis::behaviour {
 
-  namespace behaviour {
-
-    template <typename ErrorHandler>
-    static std::vector<Variable> buildVariablesList(
-        ErrorHandler &raise,
-        const std::vector<std::string> &names,
-        const std::vector<int> &types) {
-      std::vector<Variable> vars;
-      if (names.size() != types.size()) {
-        raise(
-            "the number of internal state variables names does not match "
-            "the number of internal state variables types");
+  template <typename ErrorHandler>
+  static std::vector<Variable> buildVariablesList(
+      ErrorHandler &raise,
+      const std::vector<std::string> &names,
+      const std::vector<int> &types) {
+    std::vector<Variable> vars;
+    if (names.size() != types.size()) {
+      raise(
+          "the number of internal state variables names does not match "
+          "the number of internal state variables types");
+    }
+    for (decltype(names.size()) i = 0; i != names.size(); ++i) {
+      switch (types[i]) {
+        case 0:
+          vars.push_back({names[i], Variable::SCALAR});
+          break;
+        case 1:
+          vars.push_back({names[i], Variable::STENSOR});
+          break;
+        case 2:
+          vars.push_back({names[i], Variable::VECTOR});
+          break;
+        case 3:
+          vars.push_back({names[i], Variable::TENSOR});
+          break;
+        default:
+          raise("unsupported internal state variable type");
       }
-      for (decltype(names.size()) i = 0; i != names.size(); ++i) {
-        switch (types[i]) {
-          case 0:
-            vars.push_back({names[i], Variable::SCALAR});
-            break;
-          case 1:
-            vars.push_back({names[i], Variable::STENSOR});
-            break;
-          case 2:
-            vars.push_back({names[i], Variable::VECTOR});
-            break;
-          case 3:
-            vars.push_back({names[i], Variable::TENSOR});
-            break;
-          default:
-            raise("unsupported internal state variable type");
-        }
+    }
+    return vars;
+  }  // end of buildVariablesList
+
+  template <typename ErrorHandler>
+  static void checkGradientsAndThermodynamicForcesConsistency(
+      ErrorHandler &raise,
+      const std::vector<Variable> &gradients,
+      const std::vector<Variable> &thermodynamic_forces,
+      const Variable &g,
+      const Variable &t) {
+    auto raise_if = [&raise](const bool c, const std::string &m) {
+      if (c) {
+        raise(m);
       }
-      return vars;
-    }  // end of buildVariablesList
+    };
+    raise_if(gradients.size() != thermodynamic_forces.size(),
+             "the number of gradients does not match the number of "
+             "thermodynamic forces");
+    raise_if(gradients.size() != 1u, "invalid number of gradients");
+    raise_if(gradients[0].name != g.name, "invalid gradient name");
+    raise_if(gradients[0].type != g.type, "invalid gradient type");
+    raise_if(thermodynamic_forces[0].name != t.name,
+             "invalid thermodynamic force name");
+    raise_if(thermodynamic_forces[0].type != t.type,
+             "invalid thermodynamic force type");
+  }  // end of checkGradientsAndThermodynamicForcesConsistency
 
-    template <typename ErrorHandler>
-    static void checkGradientsAndThermodynamicForcesConsistency(
-        ErrorHandler &raise,
-        const std::vector<Variable> &gradients,
-        const std::vector<Variable> &thermodynamic_forces,
-        const Variable &g,
-        const Variable &t) {
-      auto raise_if = [&raise](const bool c, const std::string &m) {
-        if (c) {
-          raise(m);
-        }
-      };
-      raise_if(gradients.size() != thermodynamic_forces.size(),
-               "the number of gradients does not match the number of "
-               "thermodynamic forces");
-      raise_if(gradients.size() != 1u, "invalid number of gradients");
-      raise_if(gradients[0].name != g.name, "invalid gradient name");
-      raise_if(gradients[0].type != g.type, "invalid gradient type");
-      raise_if(thermodynamic_forces[0].name != t.name,
-               "invalid thermodynamic force name");
-      raise_if(thermodynamic_forces[0].type != t.type,
-               "invalid thermodynamic force type");
-    }  // end of checkGradientsAndThermodynamicForcesConsistency
-
-    static std::pair<Variable, Variable> getJacobianBlockVariables(
-        const Behaviour &b, const std::pair<std::string, std::string> &block) {
-      auto found = false;
-      std::pair<Variable, Variable> v;
-      auto assign_if = [&found, &block, &v](const Variable &v1,
-                                            const Variable &v2) {
-        mgis::raise_if(found,
-                       "getJacobianBlockVariables: "
-                       "multiple definition for block {" +
-                           block.first + "," + block.second + "}");
-        found = true;
-        v = {v1, v2};
-      };
-      for (const auto &f : b.thermodynamic_forces) {
-        for (const auto &g : b.gradients) {
-          if ((block.first == f.name) && (block.second == g.name)) {
-            assign_if(f, g);
-          }
-        }
-        for (const auto &e : b.esvs) {
-          if ((block.first == f.name) && (block.second == e.name)) {
-            assign_if(f, e);
-          }
+  static std::pair<Variable, Variable> getJacobianBlockVariables(
+      const Behaviour &b, const std::pair<std::string, std::string> &block) {
+    auto found = false;
+    std::pair<Variable, Variable> v;
+    auto assign_if = [&found, &block, &v](const Variable &v1,
+                                          const Variable &v2) {
+      mgis::raise_if(found,
+                     "getJacobianBlockVariables: "
+                     "multiple definition for block {" +
+                         block.first + "," + block.second + "}");
+      found = true;
+      v = {v1, v2};
+    };
+    for (const auto &f : b.thermodynamic_forces) {
+      for (const auto &g : b.gradients) {
+        if ((block.first == f.name) && (block.second == g.name)) {
+          assign_if(f, g);
         }
       }
-      for (const auto &i : b.isvs) {
-        for (const auto &g : b.gradients) {
-          if ((block.first == i.name) && (block.second == g.name)) {
-            assign_if(i, g);
-          }
-        }
-        for (const auto &e : b.esvs) {
-          if ((block.first == i.name) && (block.second == e.name)) {
-            assign_if(i, e);
-          }
+      for (const auto &e : b.esvs) {
+        if ((block.first == f.name) && (block.second == e.name)) {
+          assign_if(f, e);
         }
       }
-      if (!found) {
-        mgis::raise(
-            "getJacobianBlockVariables: "
-            "tangent operator block {" +
-            block.first + "," + block.second + "} is invalid");
+    }
+    for (const auto &i : b.isvs) {
+      for (const auto &g : b.gradients) {
+        if ((block.first == i.name) && (block.second == g.name)) {
+          assign_if(i, g);
+        }
       }
-      return v;
-    }  // end of getJacobianBlockVariables
+      for (const auto &e : b.esvs) {
+        if ((block.first == i.name) && (block.second == e.name)) {
+          assign_if(i, e);
+        }
+      }
+    }
+    if (!found) {
+      mgis::raise(
+          "getJacobianBlockVariables: "
+          "tangent operator block {" +
+          block.first + "," + block.second + "} is invalid");
+    }
+    return v;
+  }  // end of getJacobianBlockVariables
 
-    Behaviour::Behaviour() = default;
-    Behaviour::Behaviour(Behaviour &&) = default;
-    Behaviour::Behaviour(const Behaviour &) = default;
-    Behaviour &Behaviour::operator=(Behaviour &&) = default;
-    Behaviour &Behaviour::operator=(const Behaviour &) = default;
-    Behaviour::~Behaviour() = default;
+  Behaviour::Behaviour() = default;
+  Behaviour::Behaviour(Behaviour &&) = default;
+  Behaviour::Behaviour(const Behaviour &) = default;
+  Behaviour &Behaviour::operator=(Behaviour &&) = default;
+  Behaviour &Behaviour::operator=(const Behaviour &) = default;
+  Behaviour::~Behaviour() = default;
 
-    bool isStandardFiniteStrainBehaviour(const std::string &l,
-                                         const std::string &b) {
-      auto &lm = mgis::LibrariesManager::get();
-      return (lm.getBehaviourType(l, b) == 2) &&
-             (lm.getBehaviourKinematic(l, b) == 3);
-    }  // end of isStandardFiniteStrainBehaviour
+  bool isStandardFiniteStrainBehaviour(const std::string &l,
+                                       const std::string &b) {
+    auto &lm = mgis::LibrariesManager::get();
+    return (lm.getBehaviourType(l, b) == 2) &&
+           (lm.getBehaviourKinematic(l, b) == 3);
+  }  // end of isStandardFiniteStrainBehaviour
 
-    static Behaviour load_behaviour(const std::string &l,
-                                    const std::string &b,
-                                    const Hypothesis h) {
-      auto &lm = mgis::LibrariesManager::get();
-      const auto fct = b + '_' + toString(h);
-      auto raise = [&b, &l](const std::string &msg) {
+  static Behaviour load_behaviour(const std::string &l,
+                                  const std::string &b,
+                                  const Hypothesis h) {
+    auto &lm = mgis::LibrariesManager::get();
+    const auto fct = b + '_' + toString(h);
+    auto raise = [&b, &l](const std::string &msg) {
+      mgis::raise("load: " + msg + ".\nError while trying to load behaviour '" +
+                  b + "' in library '" + l + "'\n");
+    };
+    auto raise_if = [&b, &l](const bool c, const std::string &msg) {
+      if (c) {
         mgis::raise("load: " + msg +
                     ".\nError while trying to load behaviour '" + b +
                     "' in library '" + l + "'\n");
-      };
-      auto raise_if = [&b, &l](const bool c, const std::string &msg) {
-        if (c) {
-          mgis::raise("load: " + msg +
-                      ".\nError while trying to load behaviour '" + b +
-                      "' in library '" + l + "'\n");
-        }
-      };
-      auto d = Behaviour{};
-
-      d.library = l;
-      d.behaviour = b;
-      d.function = fct;
-      d.hypothesis = h;
-      d.b = lm.getBehaviour(l, b, h);
-
-      if (lm.getMaterialKnowledgeType(l, b) != 1u) {
-        raise("entry point '" + b + "' in library " + l +
-              " is not a behaviour");
       }
+    };
+    auto d = Behaviour{};
 
-      d.tfel_version = lm.getTFELVersion(l, b);
-      d.source = lm.getSource(l, b);
-      d.btype = [&l, &b, &lm, &raise] {
-        /* - 0 : general behaviour
-         * - 1 : strain based behaviour *
-         * - 2 : standard finite strain behaviour *
-         * - 3 : cohesive zone model */
-        switch (lm.getBehaviourType(l, b)) {
-          case 0:
-            return Behaviour::GENERALBEHAVIOUR;
-          case 1:
-            return Behaviour::STANDARDSTRAINBASEDBEHAVIOUR;
-          case 2:
-            return Behaviour::STANDARDFINITESTRAINBEHAVIOUR;
-          case 3:
-            return Behaviour::COHESIVEZONEMODEL;
+    d.library = l;
+    d.behaviour = b;
+    d.function = fct;
+    d.hypothesis = h;
+    d.b = lm.getBehaviour(l, b, h);
+
+    if (lm.getMaterialKnowledgeType(l, b) != 1u) {
+      raise("entry point '" + b + "' in library " + l + " is not a behaviour");
+    }
+
+    d.tfel_version = lm.getTFELVersion(l, b);
+    d.source = lm.getSource(l, b);
+    d.btype = [&l, &b, &lm, &raise] {
+      /* - 0 : general behaviour
+       * - 1 : strain based behaviour *
+       * - 2 : standard finite strain behaviour *
+       * - 3 : cohesive zone model */
+      switch (lm.getBehaviourType(l, b)) {
+        case 0:
+          return Behaviour::GENERALBEHAVIOUR;
+        case 1:
+          return Behaviour::STANDARDSTRAINBASEDBEHAVIOUR;
+        case 2:
+          return Behaviour::STANDARDFINITESTRAINBEHAVIOUR;
+        case 3:
+          return Behaviour::COHESIVEZONEMODEL;
+      }
+      raise("unsupported behaviour type");
+    }();
+    if (d.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
+      d.options.resize(2, mgis::real(0));
+    }
+    // behaviour kinematic
+    d.kinematic = [&l, &b, &lm, h, &raise] {
+      /* - 0: undefined kinematic
+       * - 1: standard small strain behaviour kinematic
+       * - 2: cohesive zone model kinematic
+       * - 3: standard finite strain kinematic (F-Cauchy)
+       * - 4: ptest finite strain kinematic (eto-pk1)
+       * - 5: Green-Lagrange strain
+       * - 6: Miehe Apel Lambrecht logarithmic strain framework */
+      switch (lm.getBehaviourKinematic(l, b)) {
+        case 0:
+          return Behaviour::UNDEFINEDKINEMATIC;
+        case 1:
+          return Behaviour::SMALLSTRAINKINEMATIC;
+        case 2:
+          return Behaviour::COHESIVEZONEKINEMATIC;
+        case 3:
+          return Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY;
+        case 4:
+          if (((h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) &&
+               (h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))) {
+            raise(
+                "invalid hypothesis for behaviour based on "
+                "the eto-pk1 kinematic");
+          }
+          return Behaviour::FINITESTRAINKINEMATIC_ETO_PK1;
+      }
+      raise("unsupported behaviour kinematic");
+    }();
+    // setting gradients and thermodynamic forces
+    d.gradients = buildVariablesList(raise, lm.getGradientsNames(l, b, h),
+                                     lm.getGradientsTypes(l, b, h));
+    d.thermodynamic_forces =
+        buildVariablesList(raise, lm.getThermodynamicForcesNames(l, b, h),
+                           lm.getThermodynamicForcesTypes(l, b, h));
+    raise_if(d.gradients.size() != d.thermodynamic_forces.size(),
+             "the number of the gradients does not match "
+             "the number of thermodynamic forces");
+    switch (d.btype) {
+      case Behaviour::GENERALBEHAVIOUR:
+        break;
+      case Behaviour::STANDARDSTRAINBASEDBEHAVIOUR:
+        raise_if(d.kinematic != Behaviour::SMALLSTRAINKINEMATIC,
+                 "strain based behaviour must be associated with the "
+                 "small strain kinematic hypothesis");
+        checkGradientsAndThermodynamicForcesConsistency(
+            raise, d.gradients, d.thermodynamic_forces,
+            {"Strain", Variable::STENSOR}, {"Stress", Variable::STENSOR});
+        break;
+      case Behaviour::COHESIVEZONEMODEL:
+        if (d.kinematic != Behaviour::COHESIVEZONEKINEMATIC) {
+          raise("invalid kinematic assumption for cohesive zone model");
         }
+        checkGradientsAndThermodynamicForcesConsistency(
+            raise, d.gradients, d.thermodynamic_forces,
+            {"OpeningDisplacement", Variable::VECTOR},
+            {"CohesiveForce", Variable::VECTOR});
+        break;
+      case Behaviour::STANDARDFINITESTRAINBEHAVIOUR:
+        if (d.kinematic == Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY) {
+          checkGradientsAndThermodynamicForcesConsistency(
+              raise, d.gradients, d.thermodynamic_forces,
+              {"DeformationGradient", Variable::TENSOR},
+              {"Stress", Variable::STENSOR});
+        } else if (d.kinematic == Behaviour::FINITESTRAINKINEMATIC_ETO_PK1) {
+          if (((h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) &&
+               (h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))) {
+            raise(
+                "invalid hypothesis for behaviour based on "
+                "the eto-pk1 kinematic");
+          }
+          checkGradientsAndThermodynamicForcesConsistency(
+              raise, d.gradients, d.thermodynamic_forces,
+              {"Strain", Variable::STENSOR}, {"Stresss", Variable::STENSOR});
+        } else {
+          raise(
+              "invalid kinematic hypothesis for finite strain "
+              "behaviour");
+        }
+        break;
+      default:
         raise("unsupported behaviour type");
-      }();
+    };
+    // behaviour symmetry
+    d.symmetry = lm.getBehaviourSymmetry(l, b) == 0 ? Behaviour::ISOTROPIC
+                                                    : Behaviour::ORTHOTROPIC;
+    auto add_mp = [&d](const std::string &mp) {
+      d.mps.push_back({mp, Variable::SCALAR});
+    };
+    if (lm.requiresStiffnessTensor(l, b, h)) {
+      if (lm.getElasticStiffnessSymmetry(l, b) == 0) {
+        add_mp("YoungModulus");
+        add_mp("PoissonRatio");
+      } else {
+        if (d.symmetry != Behaviour::ORTHOTROPIC) {
+          raise(
+              "load: the behaviour must be orthotropic "
+              "for the elastic stiffness symmetry to be orthotropic");
+        }
+        add_mp("YoungModulus1");
+        add_mp("YoungModulus2");
+        add_mp("YoungModulus3");
+        add_mp("PoissonRatio12");
+        add_mp("PoissonRatio23");
+        add_mp("PoissonRatio13");
+        if ((h == Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+            (h == Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+        } else if ((h == Hypothesis::PLANESTRESS) ||
+                   (h == Hypothesis::PLANESTRAIN) ||
+                   (h == Hypothesis::AXISYMMETRICAL) ||
+                   (h == Hypothesis::GENERALISEDPLANESTRAIN)) {
+          add_mp("ShearModulus12");
+        } else if (h == Hypothesis::TRIDIMENSIONAL) {
+          add_mp("ShearModulus12");
+          add_mp("ShearModulus23");
+          add_mp("ShearModulus13");
+        }
+      }
+    }
+    if (lm.requiresThermalExpansionCoefficientTensor(l, b, h)) {
+      if (d.symmetry == Behaviour::ORTHOTROPIC) {
+        add_mp("ThermalExpansion1");
+        add_mp("ThermalExpansion2");
+        add_mp("ThermalExpansion3");
+      } else {
+        add_mp("ThermalExpansion");
+      }
+    }
+    // standard material properties
+    for (const auto &mp : lm.getMaterialPropertiesNames(l, b, h)) {
+      add_mp(mp);
+    }
+    // internal state variables
+    d.isvs =
+        buildVariablesList(raise, lm.getInternalStateVariablesNames(l, b, h),
+                           lm.getInternalStateVariablesTypes(l, b, h));
+    // external state variables
+    d.esvs.push_back({"Temperature", Variable::SCALAR});
+    for (const auto &esv : lm.getExternalStateVariablesNames(l, b, h)) {
+      d.esvs.push_back({esv, Variable::SCALAR});
+    }
+    // tangent operator blocks
+    for (const auto &block : lm.getTangentOperatorBlocksNames(l, b, h)) {
+      d.to_blocks.push_back(getJacobianBlockVariables(d, block));
+    }
+    d.computesStoredEnergy = lm.computesStoredEnergy(l, b, h);
+    d.computesDissipatedEnergy = lm.computesDissipatedEnergy(l, b, h);
+    //! parameters
+    const auto pn = lm.getParametersNames(l, b, h);
+    const auto pt = lm.getParametersTypes(l, b, h);
+    raise_if(pn.size() != pt.size(),
+             "inconsistent size between parameters' names and"
+             "parameters' sizes");
+    for (decltype(pn.size()) i = 0; i != pn.size(); ++i) {
+      if (pt[i] == 0) {
+        d.params.push_back(pn[i]);
+      } else if (pt[i] == 1) {
+        d.iparams.push_back(pn[i]);
+      } else if (pt[i] == 2) {
+        d.usparams.push_back(pn[i]);
+      } else {
+        raise("unsupported parameter type for parameter '" + pn[i] + "'");
+      }
+    }
+    return d;
+  }  // end of load_behaviour
+
+  Behaviour load(const std::string &l,
+                 const std::string &b,
+                 const Hypothesis h) {
+    if (isStandardFiniteStrainBehaviour(l, b)) {
+      mgis::raise(
+          "mgis::behaviour::load: "
+          "This version of the load function shall not be called "
+          "for finite strain behaviour: you shall specify finite "
+          "strain options");
+    }
+    auto d = load_behaviour(l, b, h);
+    if (d.symmetry == Behaviour::ORTHOTROPIC) {
+      auto &lm = mgis::LibrariesManager::get();
+      d.rotate_gradients_ptr = lm.getRotateBehaviourGradientsFunction(l, b, h);
+      d.rotate_array_of_gradients_ptr =
+          lm.getRotateArrayOfBehaviourGradientsFunction(l, b, h);
       if (d.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
-        d.options.resize(2, mgis::real(0));
-      }
-      // behaviour kinematic
-      d.kinematic = [&l, &b, &lm, h, &raise] {
-        /* - 0: undefined kinematic
-         * - 1: standard small strain behaviour kinematic
-         * - 2: cohesive zone model kinematic
-         * - 3: standard finite strain kinematic (F-Cauchy)
-         * - 4: ptest finite strain kinematic (eto-pk1)
-         * - 5: Green-Lagrange strain
-         * - 6: Miehe Apel Lambrecht logarithmic strain framework */
-        switch (lm.getBehaviourKinematic(l, b)) {
-          case 0:
-            return Behaviour::UNDEFINEDKINEMATIC;
-          case 1:
-            return Behaviour::SMALLSTRAINKINEMATIC;
-          case 2:
-            return Behaviour::COHESIVEZONEKINEMATIC;
-          case 3:
-            return Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY;
-          case 4:
-            if (((h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) &&
-                 (h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))) {
-              raise(
-                  "invalid hypothesis for behaviour based on "
-                  "the eto-pk1 kinematic");
-            }
-            return Behaviour::FINITESTRAINKINEMATIC_ETO_PK1;
-        }
-        raise("unsupported behaviour kinematic");
-      }();
-      // setting gradients and thermodynamic forces
-      d.gradients = buildVariablesList(raise, lm.getGradientsNames(l, b, h),
-                                       lm.getGradientsTypes(l, b, h));
-      d.thermodynamic_forces =
-          buildVariablesList(raise, lm.getThermodynamicForcesNames(l, b, h),
-                             lm.getThermodynamicForcesTypes(l, b, h));
-      raise_if(d.gradients.size() != d.thermodynamic_forces.size(),
-               "the number of the gradients does not match "
-               "the number of thermodynamic forces");
-      switch (d.btype) {
-        case Behaviour::GENERALBEHAVIOUR:
-          break;
-        case Behaviour::STANDARDSTRAINBASEDBEHAVIOUR:
-          raise_if(d.kinematic != Behaviour::SMALLSTRAINKINEMATIC,
-                   "strain based behaviour must be associated with the "
-                   "small strain kinematic hypothesis");
-          checkGradientsAndThermodynamicForcesConsistency(
-              raise, d.gradients, d.thermodynamic_forces,
-              {"Strain", Variable::STENSOR}, {"Stress", Variable::STENSOR});
-          break;
-        case Behaviour::COHESIVEZONEMODEL:
-          if (d.kinematic != Behaviour::COHESIVEZONEKINEMATIC) {
-            raise("invalid kinematic assumption for cohesive zone model");
-          }
-          checkGradientsAndThermodynamicForcesConsistency(
-              raise, d.gradients, d.thermodynamic_forces,
-              {"OpeningDisplacement", Variable::VECTOR},
-              {"CohesiveForce", Variable::VECTOR});
-          break;
-        case Behaviour::STANDARDFINITESTRAINBEHAVIOUR:
-          if (d.kinematic == Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY) {
-            checkGradientsAndThermodynamicForcesConsistency(
-                raise, d.gradients, d.thermodynamic_forces,
-                {"DeformationGradient", Variable::TENSOR},
-                {"Stress", Variable::STENSOR});
-          } else if (d.kinematic == Behaviour::FINITESTRAINKINEMATIC_ETO_PK1) {
-            if (((h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) &&
-                 (h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))) {
-              raise(
-                  "invalid hypothesis for behaviour based on "
-                  "the eto-pk1 kinematic");
-            }
-            checkGradientsAndThermodynamicForcesConsistency(
-                raise, d.gradients, d.thermodynamic_forces,
-                {"Strain", Variable::STENSOR}, {"Stresss", Variable::STENSOR});
-          } else {
-            raise(
-                "invalid kinematic hypothesis for finite strain "
-                "behaviour");
-          }
-          break;
-        default:
-          raise("unsupported behaviour type");
-      };
-      // behaviour symmetry
-      d.symmetry = lm.getBehaviourSymmetry(l, b) == 0 ? Behaviour::ISOTROPIC
-                                                      : Behaviour::ORTHOTROPIC;
-      auto add_mp = [&d](const std::string &mp) {
-        d.mps.push_back({mp, Variable::SCALAR});
-      };
-      if (lm.requiresStiffnessTensor(l, b, h)) {
-        if (lm.getElasticStiffnessSymmetry(l, b) == 0) {
-          add_mp("YoungModulus");
-          add_mp("PoissonRatio");
-        } else {
-          if (d.symmetry != Behaviour::ORTHOTROPIC) {
-            raise(
-                "load: the behaviour must be orthotropic "
-                "for the elastic stiffness symmetry to be orthotropic");
-          }
-          add_mp("YoungModulus1");
-          add_mp("YoungModulus2");
-          add_mp("YoungModulus3");
-          add_mp("PoissonRatio12");
-          add_mp("PoissonRatio23");
-          add_mp("PoissonRatio13");
-          if ((h == Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-              (h == Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-          } else if ((h == Hypothesis::PLANESTRESS) ||
-                     (h == Hypothesis::PLANESTRAIN) ||
-                     (h == Hypothesis::AXISYMMETRICAL) ||
-                     (h == Hypothesis::GENERALISEDPLANESTRAIN)) {
-            add_mp("ShearModulus12");
-          } else if (h == Hypothesis::TRIDIMENSIONAL) {
-            add_mp("ShearModulus12");
-            add_mp("ShearModulus23");
-            add_mp("ShearModulus13");
-          }
-        }
-      }
-      if (lm.requiresThermalExpansionCoefficientTensor(l, b, h)) {
-        if (d.symmetry == Behaviour::ORTHOTROPIC) {
-          add_mp("ThermalExpansion1");
-          add_mp("ThermalExpansion2");
-          add_mp("ThermalExpansion3");
-        } else {
-          add_mp("ThermalExpansion");
-        }
-      }
-      // standard material properties
-      for (const auto &mp : lm.getMaterialPropertiesNames(l, b, h)) {
-        add_mp(mp);
-      }
-      // internal state variables
-      d.isvs =
-          buildVariablesList(raise, lm.getInternalStateVariablesNames(l, b, h),
-                             lm.getInternalStateVariablesTypes(l, b, h));
-      // external state variables
-      d.esvs.push_back({"Temperature", Variable::SCALAR});
-      for (const auto &esv : lm.getExternalStateVariablesNames(l, b, h)) {
-        d.esvs.push_back({esv, Variable::SCALAR});
-      }
-      // tangent operator blocks
-      for (const auto &block : lm.getTangentOperatorBlocksNames(l, b, h)) {
-        d.to_blocks.push_back(getJacobianBlockVariables(d, block));
-      }
-      d.computesStoredEnergy = lm.computesStoredEnergy(l, b, h);
-      d.computesDissipatedEnergy = lm.computesDissipatedEnergy(l, b, h);
-      //! parameters
-      const auto pn = lm.getParametersNames(l, b, h);
-      const auto pt = lm.getParametersTypes(l, b, h);
-      raise_if(pn.size() != pt.size(),
-               "inconsistent size between parameters' names and"
-               "parameters' sizes");
-      for (decltype(pn.size()) i = 0; i != pn.size(); ++i) {
-        if (pt[i] == 0) {
-          d.params.push_back(pn[i]);
-        } else if (pt[i] == 1) {
-          d.iparams.push_back(pn[i]);
-        } else if (pt[i] == 2) {
-          d.usparams.push_back(pn[i]);
-        } else {
-          raise("unsupported parameter type for parameter '" + pn[i] + "'");
-        }
-      }
-      return d;
-    }  // end of load_behaviour
-
-    Behaviour load(const std::string &l,
-                   const std::string &b,
-                   const Hypothesis h) {
-      if (isStandardFiniteStrainBehaviour(l, b)) {
-        mgis::raise(
-            "mgis::behaviour::load: "
-            "This version of the load function shall not be called "
-            "for finite strain behaviour: you shall specify finite "
-            "strain options");
-      }
-      auto d = load_behaviour(l, b, h);
-      if (d.symmetry == Behaviour::ORTHOTROPIC) {
-        auto &lm = mgis::LibrariesManager::get();
-        d.rotate_gradients_ptr =
-            lm.getRotateBehaviourGradientsFunction(l, b, h);
-        d.rotate_array_of_gradients_ptr =
-            lm.getRotateArrayOfBehaviourGradientsFunction(l, b, h);
-        if (d.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
-          d.rotate_thermodynamic_forces_ptr =
-              lm.getRotateBehaviourThermodynamicForcesFunction(
-                  l, b, h, FiniteStrainBehaviourOptions::CAUCHY);
-          d.rotate_array_of_thermodynamic_forces_ptr =
-              lm.getRotateArrayOfBehaviourThermodynamicForcesFunction(
-                  l, b, h, FiniteStrainBehaviourOptions::CAUCHY);
-          d.rotate_tangent_operator_blocks_ptr =
-              lm.getRotateBehaviourTangentOperatorBlocksFunction(
-                  l, b, h, FiniteStrainBehaviourOptions::DSIG_DF);
-          d.rotate_array_of_tangent_operator_blocks_ptr =
-              lm.getRotateArrayOfBehaviourTangentOperatorBlocksFunction(
-                  l, b, h, FiniteStrainBehaviourOptions::DSIG_DF);
-        } else {
-          d.rotate_thermodynamic_forces_ptr =
-              lm.getRotateBehaviourThermodynamicForcesFunction(l, b, h);
-          d.rotate_array_of_thermodynamic_forces_ptr =
-              lm.getRotateArrayOfBehaviourThermodynamicForcesFunction(l, b, h);
-          d.rotate_tangent_operator_blocks_ptr =
-              lm.getRotateBehaviourTangentOperatorBlocksFunction(l, b, h);
-          d.rotate_array_of_tangent_operator_blocks_ptr =
-              lm.getRotateArrayOfBehaviourTangentOperatorBlocksFunction(l, b,
-                                                                        h);
-        }
-      }
-      return d;
-    }  // end of load
-
-    Behaviour load(const FiniteStrainBehaviourOptions &o,
-                   const std::string &l,
-                   const std::string &b,
-                   const Hypothesis h) {
-      auto d = load_behaviour(l, b, h);
-      if (d.btype != Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
-        mgis::raise(
-            "mgis::behaviour::load: "
-            "This method shall only be called for finite strain behaviour");
-      }
-      if (o.stress_measure == FiniteStrainBehaviourOptions::CAUCHY) {
-        d.options[0] = mgis::real(0);
-      } else if (o.stress_measure == FiniteStrainBehaviourOptions::PK2) {
-        d.options[0] = mgis::real(1);
-        d.thermodynamic_forces[0] = {"SecondPiolaKirchhoffStress",
-                                     Variable::STENSOR};
-      } else if (o.stress_measure == FiniteStrainBehaviourOptions::PK1) {
-        d.options[0] = mgis::real(2);
-        d.thermodynamic_forces[0] = {"FirstPiolaKirchhoffStress",
-                                     Variable::TENSOR};
-      } else {
-        mgis::raise(
-            "mgis::behaviour::load: "
-            "internal error (unsupported stress measure)");
-      }
-      if (o.tangent_operator == FiniteStrainBehaviourOptions::DSIG_DF) {
-        d.options[1] = mgis::real(0);
-      } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DS_DEGL) {
-        d.options[1] = mgis::real(1);
-        d.to_blocks[0] = {{"SecondPiolaKirchhoffStress", Variable::STENSOR},
-                          {"GreenLagrangeStrain", Variable::STENSOR}};
-
-      } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DPK1_DF) {
-        d.options[1] = mgis::real(2);
-        d.to_blocks[0] = {{"FirstPiolaKirchhoffStress", Variable::TENSOR},
-                          {"DeformationGradient", Variable::TENSOR}};
-      } else {
-        mgis::raise(
-            "mgis::behaviour::load: "
-            "internal error (unsupported tangent operator)");
-      }
-      if (d.symmetry == Behaviour::ORTHOTROPIC) {
-        auto &lm = mgis::LibrariesManager::get();
-        d.rotate_gradients_ptr =
-            lm.getRotateBehaviourGradientsFunction(l, b, h);
-        d.rotate_array_of_gradients_ptr =
-            lm.getRotateArrayOfBehaviourGradientsFunction(l, b, h);
         d.rotate_thermodynamic_forces_ptr =
-            lm.getRotateBehaviourThermodynamicForcesFunction(l, b, h,
-                                                             o.stress_measure);
+            lm.getRotateBehaviourThermodynamicForcesFunction(
+                l, b, h, FiniteStrainBehaviourOptions::CAUCHY);
         d.rotate_array_of_thermodynamic_forces_ptr =
             lm.getRotateArrayOfBehaviourThermodynamicForcesFunction(
-                l, b, h, o.stress_measure);
+                l, b, h, FiniteStrainBehaviourOptions::CAUCHY);
         d.rotate_tangent_operator_blocks_ptr =
             lm.getRotateBehaviourTangentOperatorBlocksFunction(
-                l, b, h, o.tangent_operator);
+                l, b, h, FiniteStrainBehaviourOptions::DSIG_DF);
         d.rotate_array_of_tangent_operator_blocks_ptr =
             lm.getRotateArrayOfBehaviourTangentOperatorBlocksFunction(
-                l, b, h, o.tangent_operator);
+                l, b, h, FiniteStrainBehaviourOptions::DSIG_DF);
+      } else {
+        d.rotate_thermodynamic_forces_ptr =
+            lm.getRotateBehaviourThermodynamicForcesFunction(l, b, h);
+        d.rotate_array_of_thermodynamic_forces_ptr =
+            lm.getRotateArrayOfBehaviourThermodynamicForcesFunction(l, b, h);
+        d.rotate_tangent_operator_blocks_ptr =
+            lm.getRotateBehaviourTangentOperatorBlocksFunction(l, b, h);
+        d.rotate_array_of_tangent_operator_blocks_ptr =
+            lm.getRotateArrayOfBehaviourTangentOperatorBlocksFunction(l, b, h);
       }
-      return d;
-    }  // end of load
+    }
+    return d;
+  }  // end of load
 
-    mgis::size_type getTangentOperatorArraySize(const Behaviour &b) {
-      auto s = mgis::size_type{};
-      for (const auto &block : b.to_blocks) {
-        s += getVariableSize(block.first, b.hypothesis) *
-             getVariableSize(block.second, b.hypothesis);
-      }
-      return s;
-    }  // end of getTangentOperatorArraySize
+  Behaviour load(const FiniteStrainBehaviourOptions &o,
+                 const std::string &l,
+                 const std::string &b,
+                 const Hypothesis h) {
+    auto d = load_behaviour(l, b, h);
+    if (d.btype != Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
+      mgis::raise(
+          "mgis::behaviour::load: "
+          "This method shall only be called for finite strain behaviour");
+    }
+    if (o.stress_measure == FiniteStrainBehaviourOptions::CAUCHY) {
+      d.options[0] = mgis::real(0);
+    } else if (o.stress_measure == FiniteStrainBehaviourOptions::PK2) {
+      d.options[0] = mgis::real(1);
+      d.thermodynamic_forces[0] = {"SecondPiolaKirchhoffStress",
+                                   Variable::STENSOR};
+    } else if (o.stress_measure == FiniteStrainBehaviourOptions::PK1) {
+      d.options[0] = mgis::real(2);
+      d.thermodynamic_forces[0] = {"FirstPiolaKirchhoffStress",
+                                   Variable::TENSOR};
+    } else {
+      mgis::raise(
+          "mgis::behaviour::load: "
+          "internal error (unsupported stress measure)");
+    }
+    if (o.tangent_operator == FiniteStrainBehaviourOptions::DSIG_DF) {
+      d.options[1] = mgis::real(0);
+    } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DS_DEGL) {
+      d.options[1] = mgis::real(1);
+      d.to_blocks[0] = {{"SecondPiolaKirchhoffStress", Variable::STENSOR},
+                        {"GreenLagrangeStrain", Variable::STENSOR}};
 
-    void rotateGradients(mgis::span<real> g,
-                                const Behaviour &b,
-                                const mgis::span<const real, 9> &r) {
-      if (b.rotate_gradients_ptr == nullptr) {
-        mgis::raise(
-            "rotateGradients: no function performing the rotation of "
-            "the "
-            "gradients defined");
-      }
-      const auto gsize = getArraySize(b.gradients, b.hypothesis);
-      auto dv = std::div(g.size(), gsize);
-      if (dv.rem != 0) {
-        mgis::raise(
-            "rotateGradients: invalid array size (not a multiple of the "
-            "gradients size)");
-      }
-      b.rotate_array_of_gradients_ptr(g.data(), g.data(), r.data(), dv.quot);
-    }  // end of rotateGradients
+    } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DPK1_DF) {
+      d.options[1] = mgis::real(2);
+      d.to_blocks[0] = {{"FirstPiolaKirchhoffStress", Variable::TENSOR},
+                        {"DeformationGradient", Variable::TENSOR}};
+    } else {
+      mgis::raise(
+          "mgis::behaviour::load: "
+          "internal error (unsupported tangent operator)");
+    }
+    if (d.symmetry == Behaviour::ORTHOTROPIC) {
+      auto &lm = mgis::LibrariesManager::get();
+      d.rotate_gradients_ptr = lm.getRotateBehaviourGradientsFunction(l, b, h);
+      d.rotate_array_of_gradients_ptr =
+          lm.getRotateArrayOfBehaviourGradientsFunction(l, b, h);
+      d.rotate_thermodynamic_forces_ptr =
+          lm.getRotateBehaviourThermodynamicForcesFunction(l, b, h,
+                                                           o.stress_measure);
+      d.rotate_array_of_thermodynamic_forces_ptr =
+          lm.getRotateArrayOfBehaviourThermodynamicForcesFunction(
+              l, b, h, o.stress_measure);
+      d.rotate_tangent_operator_blocks_ptr =
+          lm.getRotateBehaviourTangentOperatorBlocksFunction(
+              l, b, h, o.tangent_operator);
+      d.rotate_array_of_tangent_operator_blocks_ptr =
+          lm.getRotateArrayOfBehaviourTangentOperatorBlocksFunction(
+              l, b, h, o.tangent_operator);
+    }
+    return d;
+  }  // end of load
 
-    void rotateGradients(mgis::span<real> mg,
-                                const Behaviour &b,
-                                const mgis::span<const real> &gg,
-                                const mgis::span<const real, 9> &r) {
-      if (b.rotate_gradients_ptr == nullptr) {
-        mgis::raise(
-            "rotateGradients: no function performing the rotation of "
-            "the "
-            "gradients defined");
-      }
-      const auto gsize = getArraySize(b.gradients, b.hypothesis);
-      auto dv = std::div(gg.size(), gsize);
-      if (dv.rem != 0) {
-        mgis::raise(
-            "rotateGradients: invalid array size in the global frame "
-            "(not a multiple of the gradients size)");
-      }
-      if (mg.size() != gg.size()) {
-        mgis::raise("rotateGradients: unmatched array sizes");
-      }
+  mgis::size_type getTangentOperatorArraySize(const Behaviour &b) {
+    auto s = mgis::size_type{};
+    for (const auto &block : b.to_blocks) {
+      s += getVariableSize(block.first, b.hypothesis) *
+           getVariableSize(block.second, b.hypothesis);
+    }
+    return s;
+  }  // end of getTangentOperatorArraySize
+
+  void rotateGradients(mgis::span<real> g,
+                       const Behaviour &b,
+                       const mgis::span<const real> &r) {
+    rotateGradients(g, b, g, r);
+  }  // end of rotateGradients
+
+  void rotateGradients(mgis::span<real> mg,
+                       const Behaviour &b,
+                       const mgis::span<const real> &gg,
+                       const mgis::span<const real> &r) {
+    if ((b.rotate_gradients_ptr == nullptr) ||
+        (b.rotate_array_of_gradients_ptr == nullptr)) {
+      mgis::raise(
+          "rotateGradients: no function performing the rotation of "
+          "the gradients defined");
+    }
+    if (gg.size() == 0) {
+      mgis::raise("rotateGradients: no values given for the gradients");
+    }
+    if (r.size() == 0) {
+      mgis::raise("rotateGradients: no values given for the rotation matrices");
+    }
+    const auto gsize = getArraySize(b.gradients, b.hypothesis);
+    auto dv = std::div(gg.size(), gsize);
+    if (dv.rem != 0) {
+      mgis::raise(
+          "rotateGradients: invalid array size in the global frame "
+          "(not a multiple of the gradients size)");
+    }
+    if (mg.size() != gg.size()) {
+      mgis::raise("rotateGradients: unmatched array sizes");
+    }
+    auto rdv = std::div(r.size(), size_type{9});
+    if (rdv.rem != 0) {
+      mgis::raise(
+          "rotateTangentOperatorBlocks: "
+          "invalid size for the rotation matrix array");
+    }
+    if (rdv.quot == 1) {
       b.rotate_array_of_gradients_ptr(mg.data(), gg.data(), r.data(), dv.quot);
-    }  // end of rotateGradients
+    } else {
+      if (rdv.quot != dv.quot) {
+        mgis::raise(
+            "the number of integration points for the gradients does not match "
+            "the number of integration points for the rotation matrices (" +
+            std::to_string(dv.quot) + " vs " + std::to_string(rdv.quot) + ")");
+      }
+      for (size_type i = 0; i != dv.quot; ++i) {
+        const auto o = i * gsize;
+        b.rotate_gradients_ptr(mg.data() + o, gg.data() + o, r.data() + i * 9);
+      }
+    }
+  }  // end of rotateGradients
 
-    void rotateThermodynamicForces(mgis::span<real> tf,
-                                          const Behaviour &b,
-                                          const mgis::span<const real, 9> &r) {
-      if (b.rotate_thermodynamic_forces_ptr == nullptr) {
-        mgis::raise(
-            "rotateThermodynamicForces: no function performing the "
-            "rotation of the thermodynamic forces defined");
-      }
-      const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
-      auto dv = std::div(tf.size(), tfsize);
-      if (dv.rem != 0) {
-        mgis::raise(
-            "rotateThermodynamicForces: invalid array size (not a "
-            "multiple of the thermodynamic forces size)");
-      }
-      b.rotate_array_of_thermodynamic_forces_ptr(tf.data(), tf.data(), r.data(),
-                                                 dv.quot);
-    }  // end of rotateThermodynamicForces
+  void rotateThermodynamicForces(mgis::span<real> tf,
+                                 const Behaviour &b,
+                                 const mgis::span<const real> &r) {
+    rotateThermodynamicForces(tf, b, tf, r);
+  }  // end of rotateThermodynamicForces
 
-    void rotateThermodynamicForces(mgis::span<real> gtf,
-                                          const Behaviour &b,
-                                          const mgis::span<const real> &mtf,
-                                          const mgis::span<const real, 9> &r) {
-      if (b.rotate_thermodynamic_forces_ptr == nullptr) {
-        mgis::raise(
-            "rotateThermodynamicForces: no function performing the "
-            "rotation of the thermodynamic forces defined");
-      }
-      const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
-      auto dv = std::div(mtf.size(), tfsize);
-      if (dv.rem != 0) {
-        mgis::raise(
-            "rotateThermodynamicForces: invalid array size (not a "
-            "multiple of the thermodynamic forces size)");
-      }
-      if (gtf.size() != mtf.size()) {
-        mgis::raise("rotateThermodynamicForces: unmatched array sizes");
-      }
+  void rotateThermodynamicForces(mgis::span<real> gtf,
+                                 const Behaviour &b,
+                                 const mgis::span<const real> &mtf,
+                                 const mgis::span<const real> &r) {
+    if ((b.rotate_thermodynamic_forces_ptr == nullptr) ||
+        (b.rotate_array_of_thermodynamic_forces_ptr == nullptr)) {
+      mgis::raise(
+          "rotateThermodynamicForces: no function performing the "
+          "rotation of the thermodynamic forces defined");
+    }
+    if (gtf.size() == 0) {
+      mgis::raise(
+          "rotateThermodynamicForces: "
+          "no values given for the thermodynamics forces");
+    }
+    if (r.size() == 0) {
+      mgis::raise(
+          "rotateThermodynamicForces: "
+          "no values given for the rotation matrices");
+    }
+    const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
+    auto dv = std::div(mtf.size(), tfsize);
+    if (dv.rem != 0) {
+      mgis::raise(
+          "rotateThermodynamicForces: invalid array size (not a "
+          "multiple of the thermodynamic forces size)");
+    }
+    if (gtf.size() != mtf.size()) {
+      mgis::raise(
+          "rotateThermodynamicForces: unmatched array sizes for the "
+          "thermodynamic forces");
+    }
+    auto rdv = std::div(r.size(), size_type{9});
+    if (rdv.rem != 0) {
+      mgis::raise(
+          "rotateTangentOperatorBlocks: "
+          "invalid size for the rotation matrix array");
+    }
+    if (rdv.quot == 1) {
       b.rotate_array_of_thermodynamic_forces_ptr(gtf.data(), mtf.data(),
                                                  r.data(), dv.quot);
-    }  // end of rotateThermodynamicForces
+    } else {
+      if (rdv.quot != dv.quot) {
+        mgis::raise(
+            "the number of integration points for the thermodynamic forces "
+            "does not match the number of integration points for the rotation "
+            "matrices (" +
+            std::to_string(dv.quot) + " vs " + std::to_string(rdv.quot) + ")");
+      }
+      for (size_type i = 0; i != dv.quot; ++i) {
+        const auto o = i * tfsize;
+        b.rotate_thermodynamic_forces_ptr(gtf.data() + o, mtf.data() + o,
+                                          r.data() + i * 9);
+      }
+    }
+  }  // end of rotateThermodynamicForces
 
-    void rotateTangentOperatorBlocks(
-        mgis::span<real> K,
-        const Behaviour &b,
-        const mgis::span<const real, 9> &r) {
-      if (b.rotate_tangent_operator_blocks_ptr == nullptr) {
-        mgis::raise(
-            "rotateTangentOperatorBlocks: no function performing the "
-            "rotation of the tangent operator blocks defined");
-      }
-      const auto Ksize = getTangentOperatorArraySize(b);
-      auto dv = std::div(K.size(), Ksize);
-      if (dv.rem != 0) {
-        mgis::raise(
-            "rotateTangentOperatorBlocks: invalid array size (not a "
-            "multiple of the tangent operator blocks size)");
-      }
-      b.rotate_array_of_tangent_operator_blocks_ptr(K.data(), K.data(),
-                                                    r.data(), dv.quot);
-    }  // end of rotateTangentOperatorBlocks
+  void rotateTangentOperatorBlocks(mgis::span<real> K,
+                                   const Behaviour &b,
+                                   const mgis::span<const real> &r) {
+    rotateTangentOperatorBlocks(K, b, K, r);
+  }  // end of rotateTangentOperatorBlocks
 
-    void rotateTangentOperatorBlocks(
-        mgis::span<real> gK,
-        const Behaviour &b,
-        const mgis::span<const real> &mK,
-        const mgis::span<const real, 9> &r) {
-      if (b.rotate_tangent_operator_blocks_ptr == nullptr) {
-        mgis::raise(
-            "rotateTangentOperatorBlocks: no function performing the "
-            "rotation of the tangent operator blocks defined");
-      }
-      const auto Ksize = getTangentOperatorArraySize(b);
-      auto dv = std::div(gK.size(), Ksize);
-      if (dv.rem != 0) {
-        mgis::raise(
-            "rotateTangentOperatorBlocks: invalid array size (not a "
-            "multiple of the tangent operator blocks size)");
-      }
-      if (mK.size() != gK.size()) {
-        mgis::raise(
-            "rotateTangentOperatorBlocks : unmatched array sizes");
-      }
+  void rotateTangentOperatorBlocks(mgis::span<real> gK,
+                                   const Behaviour &b,
+                                   const mgis::span<const real> &mK,
+                                   const mgis::span<const real> &r) {
+    if ((b.rotate_tangent_operator_blocks_ptr == nullptr) ||
+        (b.rotate_array_of_tangent_operator_blocks_ptr == nullptr)) {
+      mgis::raise(
+          "rotateTangentOperatorBlocks: no function performing the "
+          "rotation of the tangent operator blocks defined");
+    }
+    if (mK.size() == 0) {
+      mgis::raise(
+          "rotateTangentOperatorBlocks: "
+          "empty array for the tangent operator blocks");
+    }
+    if (r.size() == 0) {
+      mgis::raise(
+          "rotateTangentOperatorBlocks: "
+          "empty array for the rotation matrix");
+    }
+    const auto Ksize = getTangentOperatorArraySize(b);
+    auto dv = std::div(gK.size(), Ksize);
+    if (dv.rem != 0) {
+      mgis::raise(
+          "rotateTangentOperatorBlocks: invalid array size (not a "
+          "multiple of the tangent operator blocks size)");
+    }
+    if (mK.size() != gK.size()) {
+      mgis::raise("rotateTangentOperatorBlocks: unmatched array sizes");
+    }
+    auto rdv = std::div(r.size(), size_type{9});
+    if (rdv.rem != 0) {
+      mgis::raise(
+          "rotateTangentOperatorBlocks: "
+          "invalid size for the rotation matrix array");
+    }
+    if (rdv.quot == 1) {
       b.rotate_array_of_tangent_operator_blocks_ptr(gK.data(), mK.data(),
                                                     r.data(), dv.quot);
-    }  // end of rotateTangentOperatorBlocks
+    } else {
+      if (rdv.quot != dv.quot) {
+        mgis::raise(
+            "the number of integration points for the tangent operators does "
+            "not match the number of integration points for the rotation "
+            "matrices (" +
+            std::to_string(dv.quot) + " vs " + std::to_string(rdv.quot) + ")");
+      }
+      for (size_type i = 0; i != dv.quot; ++i) {
+        const auto o = i * Ksize;
+        b.rotate_tangent_operator_blocks_ptr(gK.data() + o, mK.data() + o,
+                                             r.data() + 9 * i);
+      }
+    }
+  }  // end of rotateTangentOperatorBlocks
 
-    void setParameter(const Behaviour &b,
-                      const std::string &n,
-                      const double v) {
-      auto &lm = mgis::LibrariesManager::get();
-      lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
-    }  // end of setParameter
+  void setParameter(const Behaviour &b, const std::string &n, const double v) {
+    auto &lm = mgis::LibrariesManager::get();
+    lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
+  }  // end of setParameter
 
-    void setParameter(const Behaviour &b, const std::string &n, const int v) {
-      auto &lm = mgis::LibrariesManager::get();
-      lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
-    }  // end of setParameter
+  void setParameter(const Behaviour &b, const std::string &n, const int v) {
+    auto &lm = mgis::LibrariesManager::get();
+    lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
+  }  // end of setParameter
 
-    void setParameter(const Behaviour &b,
-                      const std::string &n,
-                      const unsigned short v) {
-      auto &lm = mgis::LibrariesManager::get();
-      lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
-    }  // end of setParameter
+  void setParameter(const Behaviour &b,
+                    const std::string &n,
+                    const unsigned short v) {
+    auto &lm = mgis::LibrariesManager::get();
+    lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
+  }  // end of setParameter
 
-    template <>
-    double getParameterDefaultValue<double>(const Behaviour &b,
-                                            const std::string &n) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.getParameterDefaultValue(b.library, b.behaviour, b.hypothesis,
-                                         n);
-    }  // end of getParameterDefaultValue<double>
+  template <>
+  double getParameterDefaultValue<double>(const Behaviour &b,
+                                          const std::string &n) {
+    auto &lm = mgis::LibrariesManager::get();
+    return lm.getParameterDefaultValue(b.library, b.behaviour, b.hypothesis, n);
+  }  // end of getParameterDefaultValue<double>
 
-    template <>
-    int getParameterDefaultValue<int>(const Behaviour &b,
-                                      const std::string &n) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.getIntegerParameterDefaultValue(b.library, b.behaviour,
-                                                b.hypothesis, n);
-    }  // end of getParameterDefaultValue<int>
+  template <>
+  int getParameterDefaultValue<int>(const Behaviour &b, const std::string &n) {
+    auto &lm = mgis::LibrariesManager::get();
+    return lm.getIntegerParameterDefaultValue(b.library, b.behaviour,
+                                              b.hypothesis, n);
+  }  // end of getParameterDefaultValue<int>
 
-    template <>
-    unsigned short getParameterDefaultValue<unsigned short>(
-        const Behaviour &b, const std::string &n) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.getUnsignedShortParameterDefaultValue(b.library, b.behaviour,
-                                                      b.hypothesis, n);
-    }  // end of getParameterDefaultValue<unsigned short>
+  template <>
+  unsigned short getParameterDefaultValue<unsigned short>(
+      const Behaviour &b, const std::string &n) {
+    auto &lm = mgis::LibrariesManager::get();
+    return lm.getUnsignedShortParameterDefaultValue(b.library, b.behaviour,
+                                                    b.hypothesis, n);
+  }  // end of getParameterDefaultValue<unsigned short>
 
-    bool hasBounds(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.hasBounds(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of hasBounds
+  bool hasBounds(const Behaviour &b, const std::string &v) {
+    auto &lm = mgis::LibrariesManager::get();
+    return lm.hasBounds(b.library, b.behaviour, b.hypothesis, v);
+  }  // end of hasBounds
 
-    bool hasLowerBound(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.hasLowerBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of hasLowerBound
+  bool hasLowerBound(const Behaviour &b, const std::string &v) {
+    auto &lm = mgis::LibrariesManager::get();
+    return lm.hasLowerBound(b.library, b.behaviour, b.hypothesis, v);
+  }  // end of hasLowerBound
 
-    bool hasUpperBound(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.hasUpperBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of hasUpperBound
+  bool hasUpperBound(const Behaviour &b, const std::string &v) {
+    auto &lm = mgis::LibrariesManager::get();
+    return lm.hasUpperBound(b.library, b.behaviour, b.hypothesis, v);
+  }  // end of hasUpperBound
 
-    long double getLowerBound(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.getLowerBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of getLowerBound
+  long double getLowerBound(const Behaviour &b, const std::string &v) {
+    auto &lm = mgis::LibrariesManager::get();
+    return lm.getLowerBound(b.library, b.behaviour, b.hypothesis, v);
+  }  // end of getLowerBound
 
-    long double getUpperBound(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.getUpperBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of getUpperBound
+  long double getUpperBound(const Behaviour &b, const std::string &v) {
+    auto &lm = mgis::LibrariesManager::get();
+    return lm.getUpperBound(b.library, b.behaviour, b.hypothesis, v);
+  }  // end of getUpperBound
 
-    bool hasPhysicalBounds(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.hasPhysicalBounds(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of hasPhysicalBounds
+  bool hasPhysicalBounds(const Behaviour &b, const std::string &v) {
+    auto &lm = mgis::LibrariesManager::get();
+    return lm.hasPhysicalBounds(b.library, b.behaviour, b.hypothesis, v);
+  }  // end of hasPhysicalBounds
 
-    bool hasLowerPhysicalBound(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.hasLowerPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of hasLowerPhysicalBound
+  bool hasLowerPhysicalBound(const Behaviour &b, const std::string &v) {
+    auto &lm = mgis::LibrariesManager::get();
+    return lm.hasLowerPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
+  }  // end of hasLowerPhysicalBound
 
-    bool hasUpperPhysicalBound(const Behaviour &b, const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.hasUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of hasUpperPhysicalBound
+  bool hasUpperPhysicalBound(const Behaviour &b, const std::string &v) {
+    auto &lm = mgis::LibrariesManager::get();
+    return lm.hasUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
+  }  // end of hasUpperPhysicalBound
 
-    long double getLowerPhysicalBound(const Behaviour &b,
-                                      const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.getLowerPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of getLowerPhysicalBound
+  long double getLowerPhysicalBound(const Behaviour &b, const std::string &v) {
+    auto &lm = mgis::LibrariesManager::get();
+    return lm.getLowerPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
+  }  // end of getLowerPhysicalBound
 
-    long double getUpperPhysicalBound(const Behaviour &b,
-                                      const std::string &v) {
-      auto &lm = mgis::LibrariesManager::get();
-      return lm.getUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
-    }  // end of getUpperPhysicalBound
+  long double getUpperPhysicalBound(const Behaviour &b, const std::string &v) {
+    auto &lm = mgis::LibrariesManager::get();
+    return lm.getUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
+  }  // end of getUpperPhysicalBound
 
-    void print_markdown(std::ostream &,
-                        const Behaviour &,
-                        const mgis::size_type) {}  // end of print_markdown
+  void print_markdown(std::ostream &,
+                      const Behaviour &,
+                      const mgis::size_type) {}  // end of print_markdown
 
-  }  // end of namespace behaviour
-
-}  // end of namespace mgis
+}  // end of namespace mgis::behaviour
