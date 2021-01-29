@@ -108,14 +108,7 @@ class MFrontNonlinearMaterial:
             elif isinstance(value, dolfin.Constant):
                 mgis_bv.setExternalStateVariable(s, key, float(value))
             else:
-                # if isinstance(value, dolfin.Function):
-                #     values = value.vector().get_local()
-                # elif isinstance(value, Var):
-                #     value.update()
                 values = compute_on_quadrature(value, mesh, degree).vector().get_local()
-                # values = value.function.vector().get_local()
-                # else:
-                #     raise NotImplementedError("{} type is not supported for external state variables".format(type(value)))
                 mgis_bv.setExternalStateVariable(s, key, values, mgis_bv.MaterialStateManagerStorageMode.LocalStorage)
 
     def get_parameter(self, name):

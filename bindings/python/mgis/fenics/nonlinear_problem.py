@@ -90,6 +90,11 @@ class AbstractNonlinearProblem:
 
         self.dt = 0
 
+        if self.material.rotation_matrix is not None:
+            self.rotation_values = compute_on_quadrature(self.material.rotation_matrix,
+                                                         self.mesh, self.quadrature_degree)
+            self.rotation_values = self.rotation_values.vector().get_local()[:9]
+
         self.state_variables =  {"internal": None,
                                  "external": dict.fromkeys(self.material.get_external_state_variable_names(), None)}
         self.gradients = dict.fromkeys(self.material.get_gradient_names(), None)
@@ -219,11 +224,6 @@ class AbstractNonlinearProblem:
     def initialize_external_state_variables(self):
         for (s, size) in zip(self.material.get_external_state_variable_names(), self.material.get_external_state_variable_sizes()):
             state_var = self.state_variables["external"][s]
-            # if isinstance(state_var, Gradient):
-            #     state_var.initialize_function(self.mesh, self.quadrature_degree)
-            #     values = state_var.function.vector().get_local()
-            #     mgis_bv.setExternalStateVariable(self.material.data_manager.s0, s,
-                                                 # values, mgis_bv.MaterialStateManagerStorageMode.LocalStorage)
             if isinstance(state_var, Constant):
                 mgis_bv.setExternalStateVariable(self.material.data_manager.s0, s, float(state_var))
             else:
@@ -231,8 +231,6 @@ class AbstractNonlinearProblem:
                                                self.quadrature_degree).vector().get_local()
                 mgis_bv.setExternalStateVariable(self.material.data_manager.s0, s,
                                                  values, mgis_bv.MaterialStateManagerStorageMode.LocalStorage)
-            # else:
-                # raise ValueError("External state variable '{}' has not been registered.".format(s))
 
     def initialize_gradients(self):
         buff=0
@@ -336,7 +334,14 @@ class AbstractNonlinearProblem:
                 except KeyError:
                     raise KeyError("'{}' could not be found as a flux or an internal state variable.")
             block_shape = self.flattened_block_shapes[i]
-            t.vector().set_local(self.material.data_manager.K[:,buff:buff+block_shape].flatten())
+            tang_block_vals = self.material.data_manager.K[:,buff:buff+block_shape].ravel()
+            if self.material.rotation_matrix is not None:
+                # print("Tang block (before):\n",np.array_str(tang_block_vals[:36].reshape((6, 6)), precision=2))
+                print("Tang block (before):\n", tang_block_vals)
+                self.material.behaviour.rotateTangentOperatorBlocks(tang_block_vals, self.rotation_values)
+                print("Tang block (after):\n", tang_block_vals)
+                # print("Tang block (after):\n",np.array_str(tang_block_vals[:36].reshape((6, 6)), precision=2))
+            t.vector().set_local(tang_block_vals)
             buff += block_shape
 
     def update_fluxes(self):
@@ -344,7 +349,11 @@ class AbstractNonlinearProblem:
         for (i, f) in enumerate(self.material.get_flux_names()):
             flux = self.fluxes[f]
             block_shape = self.material.get_flux_sizes()[i]
-            flux.function.vector().set_local(self.material.data_manager.s1.thermodynamic_forces[:,buff:buff+block_shape].flatten())
+            flux_vals = self.material.data_manager.s1.thermodynamic_forces[:,buff:buff+block_shape].flatten()
+            if self.material.rotation_matrix is not None:
+                self.material.behaviour.rotateThermodynamicForces(flux_vals, self.rotation_values)
+                print("Flux:\n",flux_vals[:12])
+            flux.function.vector().set_local(flux_vals)
             buff += block_shape
 
     def update_gradients(self):
@@ -354,6 +363,10 @@ class AbstractNonlinearProblem:
             gradient.update()
             block_shape = self.material.get_gradient_sizes()[i]
             grad_vals = gradient.function.vector().get_local()
+            if self.material.rotation_matrix is not None:
+                print(grad_vals[:12])
+                self.material.behaviour.rotateGradients(grad_vals, self.rotation_values)
+                print(grad_vals[:12])
             if gradient.shape > 0:
                 grad_vals = grad_vals.reshape((self.material.data_manager.n, gradient.shape))
             else:
