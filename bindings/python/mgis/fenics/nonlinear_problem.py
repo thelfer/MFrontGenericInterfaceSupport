@@ -336,11 +336,8 @@ class AbstractNonlinearProblem:
             block_shape = self.flattened_block_shapes[i]
             tang_block_vals = self.material.data_manager.K[:,buff:buff+block_shape].ravel()
             if self.material.rotation_matrix is not None:
-                # print("Tang block (before):\n",np.array_str(tang_block_vals[:36].reshape((6, 6)), precision=2))
-                print("Tang block (before):\n", tang_block_vals)
-                self.material.behaviour.rotateTangentOperatorBlocks(tang_block_vals, self.rotation_values)
-                print("Tang block (after):\n", tang_block_vals)
-                # print("Tang block (after):\n",np.array_str(tang_block_vals[:36].reshape((6, 6)), precision=2))
+                mgis_bv.rotateTangentOperatorBlocks(tang_block_vals, self.material.behaviour,
+                                                    self.rotation_values)
             t.vector().set_local(tang_block_vals)
             buff += block_shape
 
@@ -349,10 +346,10 @@ class AbstractNonlinearProblem:
         for (i, f) in enumerate(self.material.get_flux_names()):
             flux = self.fluxes[f]
             block_shape = self.material.get_flux_sizes()[i]
-            flux_vals = self.material.data_manager.s1.thermodynamic_forces[:,buff:buff+block_shape].flatten()
+            flux_vals = self.material.data_manager.s1.thermodynamic_forces[:,buff:buff+block_shape].ravel()
             if self.material.rotation_matrix is not None:
-                self.material.behaviour.rotateThermodynamicForces(flux_vals, self.rotation_values)
-                print("Flux:\n",flux_vals[:12])
+                mgis_bv.rotateThermodynamicForces(flux_vals, self.material.behaviour,
+                                                  self.rotation_values)
             flux.function.vector().set_local(flux_vals)
             buff += block_shape
 
@@ -364,9 +361,8 @@ class AbstractNonlinearProblem:
             block_shape = self.material.get_gradient_sizes()[i]
             grad_vals = gradient.function.vector().get_local()
             if self.material.rotation_matrix is not None:
-                print(grad_vals[:12])
-                self.material.behaviour.rotateGradients(grad_vals, self.rotation_values)
-                print(grad_vals[:12])
+                mgis_bv.rotateGradients(grad_vals, self.material.behaviour,
+                                        self.rotation_values)
             if gradient.shape > 0:
                 grad_vals = grad_vals.reshape((self.material.data_manager.n, gradient.shape))
             else:
