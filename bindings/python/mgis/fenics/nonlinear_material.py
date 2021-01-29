@@ -44,9 +44,10 @@ class MFrontNonlinearMaterial:
         parameters : dict
             a dictionary of parameters. The dictionary keys must match the parameter
             names declared in the MFront behaviour. Values must be constants.
-        rotation_matrix : Matrix
-            a 2D or 3D rotation matrix expressing the rotation from the global
-            frame to the material frame
+        rotation_matrix : Numpy array, list of list, UFL matrix
+            a 3D rotation matrix expressing the rotation from the global
+            frame to the material frame. The matrix can be spatially variable
+            (either UFL matrix or function of Tensor type)
         """
         self.path = path
         self.name = name

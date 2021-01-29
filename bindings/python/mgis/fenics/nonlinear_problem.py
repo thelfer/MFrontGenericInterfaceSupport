@@ -206,12 +206,6 @@ class AbstractNonlinearProblem:
             self.state_variables["external"].update({name: Constant(expression)})
         else:
             self.state_variables["external"].update({name: expression})
-        # if isinstance(expression, Constant):
-        #     self.state_variables["external"].update({name: expression})
-        # elif type(expression) == float:
-        #     self.state_variables["external"].update({name: Constant(expression)})
-        # else:
-        #     self.state_variables["external"].update({name: Var(self.u, expression, name)})
 
     def set_loading(self, Fext):
         """
