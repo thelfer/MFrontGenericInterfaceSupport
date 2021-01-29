@@ -91,9 +91,12 @@ class AbstractNonlinearProblem:
         self.dt = 0
 
         if self.material.rotation_matrix is not None:
-            self.rotation_values = compute_on_quadrature(self.material.rotation_matrix,
-                                                         self.mesh, self.quadrature_degree)
-            self.rotation_values = self.rotation_values.vector().get_local()[:9]
+            if isinstance(self.material.rotation_matrix, (list, tuple, np.ndarray)):
+                self.rotation_values = np.asarray(self.material.rotation_matrix).ravel()
+            else:
+                self.rotation_values = compute_on_quadrature(self.material.rotation_matrix,
+                                                             self.mesh, self.quadrature_degree)
+                self.rotation_values = self.rotation_values.vector().get_local()
 
         self.state_variables =  {"internal": None,
                                  "external": dict.fromkeys(self.material.get_external_state_variable_names(), None)}
