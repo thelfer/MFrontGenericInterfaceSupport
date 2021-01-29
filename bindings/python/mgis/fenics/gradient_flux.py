@@ -77,6 +77,7 @@ class Gradient(QuadratureFunction):
         self.variable = variable
         if symmetric is None:
             self.expression = expression
+        # TODO: treat axisymmetric case
         elif symmetric:
             if ufl.shape(expression) == (2, 2):
                 self.expression = as_vector([symmetric_tensor_to_vector(expression)[i] for i in range(4)])
