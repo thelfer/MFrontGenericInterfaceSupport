@@ -9,6 +9,7 @@ Laboratoire Navier (ENPC,IFSTTAR,CNRS UMR 8205)
 """
 import mgis.behaviour as mgis_bv
 from .gradient_flux import Var
+from .utils import compute_on_quadrature
 import dolfin
 import subprocess
 import os
@@ -24,7 +25,8 @@ class MFrontNonlinearMaterial:
     This class handles the loading of a MFront behaviour through MGIS.
     """
     def __init__(self, path, name, hypothesis="3d",
-                 material_properties={}, parameters={}):
+                 material_properties={}, parameters={},
+                 rotation_matrix=None):
         """
         Parameters
         -----------
@@ -42,12 +44,17 @@ class MFrontNonlinearMaterial:
         parameters : dict
             a dictionary of parameters. The dictionary keys must match the parameter
             names declared in the MFront behaviour. Values must be constants.
+        rotation_matrix : Numpy array, list of list, UFL matrix
+            a 3D rotation matrix expressing the rotation from the global
+            frame to the material frame. The matrix can be spatially variable
+            (either UFL matrix or function of Tensor type)
         """
         self.path = path
         self.name = name
         # Defining the modelling hypothesis
         self.hypothesis = mgis_hypothesis[hypothesis]
         self.material_properties = material_properties
+        self.rotation_matrix = rotation_matrix
         # Loading the behaviour
         try:
             self.load_behaviour()
@@ -74,16 +81,16 @@ class MFrontNonlinearMaterial:
         else:
             self.behaviour = mgis_bv.load(self.path, self.name, self.hypothesis)
 
-    def set_data_manager(self, ngauss):
+    def set_data_manager(self, degree, ngauss, mesh):
         # Setting the material data manager
         self.data_manager = mgis_bv.MaterialDataManager(self.behaviour, ngauss)
-        self.update_material_properties()
+        self.update_material_properties(degree, mesh)
 
     def update_parameters(self, parameters):
         for (key, value) in parameters.items():
             self.behaviour.setParameter(key, value)
 
-    def update_material_properties(self, material_properties=None):
+    def update_material_properties(self, degree, mesh, material_properties=None):
         if material_properties is not None:
             self.material_properties = material_properties
         for s in [self.data_manager.s0, self.data_manager.s1]:
@@ -91,11 +98,10 @@ class MFrontNonlinearMaterial:
                 if type(value) in [int, float]:
                     mgis_bv.setMaterialProperty(s, key, value)
                 else:
-                    if isinstance(value, dolfin.Function):
-                        value = value.vector().get_local()
-                    mgis_bv.setMaterialProperty(s, key, value, mgis_bv.MaterialStateManagerStorageMode.LocalStorage)
+                    values = compute_on_quadrature(value, mesh, degree).vector().get_local()
+                    mgis_bv.setMaterialProperty(s, key, values, mgis_bv.MaterialStateManagerStorageMode.LocalStorage)
 
-    def update_external_state_variables(self, external_state_variables):
+    def update_external_state_variables(self, degree, mesh, external_state_variables):
         s = self.data_manager.s1
         for (key, value) in external_state_variables.items():
             if type(value) in [int, float]:
@@ -103,15 +109,7 @@ class MFrontNonlinearMaterial:
             elif isinstance(value, dolfin.Constant):
                 mgis_bv.setExternalStateVariable(s, key, float(value))
             else:
-                if isinstance(value, dolfin.Function):
-                    values = value.vector().get_local()
-                elif isinstance(value, Var):
-                    value.update()
-                    values = value.function.vector().get_local()
-                else:
-                    print(isinstance(value, Var))
-                    print(value)
-                    raise NotImplementedError("{} type is not supported for external state variables".format(type(value)))
+                values = compute_on_quadrature(value, mesh, degree).vector().get_local()
                 mgis_bv.setExternalStateVariable(s, key, values, mgis_bv.MaterialStateManagerStorageMode.LocalStorage)
 
     def get_parameter(self, name):
