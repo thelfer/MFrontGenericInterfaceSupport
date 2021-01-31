@@ -25,147 +25,147 @@ namespace mgis {
   // forward declaration
   struct MatrixView;
 
-  namespace behaviour {
+}  // namespace mgis
 
+namespace mgis::behaviour {
+
+  /*!
+   * \brief a structure in charge of rotating objects in 2D
+   */
+  struct Rotation2D {
     /*!
-     * \brief a structure in charge of rotating objects in 2D
+     * \brief m: rotation matrix in row-major ordering
      */
-    struct Rotation2D {
-      /*!
-       * \brief m: rotation matrix in row-major ordering
-       */
-      Rotation2D(const real* const);
-      /*!
-       * \brief 
-       */
-      Rotation2D(const real, const real, const real, const real);
-      //! \brief invert the rotation
-      Rotation2D transpose() const;
-      /*!
-       * \brief rotate a symmetric tensor
-       * \param[out] o: rotated values
-       * \param[out] i: initial values
-       */
-      void rotateVector(real* const, const real* const) const;
-      /*!
-       * \brief rotate a symmetric tensor
-       * \param[out] o: rotated values
-       * \param[out] i: initial values
-       */
-      void rotateStensor(real* const, const real* const) const;
-      /*!
-       * \brief rotate a tensor
-       * \param[out] o: rotated values
-       * \param[out] i: initial values
-       */
-      void rotateTensor(real* const, const real* const) const;
-      //! \brief
-      void buildVectorRotationOperator(mgis::MatrixView&) const;
-      //! \brief
-      void buildStensorRotationOperator(mgis::MatrixView&) const;
-      //! \brief
-      void buildTensorRotationOperator(mgis::MatrixView&) const;
-
-     private:
-      // coefficients of the rotation matrix
-      const real m00, m01, m10, m11;
-    };  // end of struct Rotation3D
-
+    Rotation2D(const real* const);
     /*!
-     * \brief a structure in charge of rotating objects in 3D
+     * \brief
      */
-    struct Rotation3D {
-      /*!
-       * \brief m: rotation matrix in row-major ordering
-       */
-      Rotation3D(const real* const);
-      /*!
-       * \brief 
-       */
-      Rotation3D(const real,
-                 const real,
-                 const real,
-                 const real,
-                 const real,
-                 const real,
-                 const real,
-                 const real,
-                 const real);
-      //! \brief invert the rotation
-      Rotation3D transpose() const;
-      /*!
-       * \brief rotate a symmetric tensor
-       * \param[out] o: rotated values
-       * \param[out] i: initial values
-       */
-      void rotateVector(real* const, const real* const) const;
-      /*!
-       * \brief rotate a symmetric tensor
-       * \param[out] o: rotated values
-       * \param[out] i: initial values
-       */
-      void rotateStensor(real* const, const real* const) const;
-      /*!
-       * \brief rotate a tensor
-       * \param[out] o: rotated values
-       * \param[out] i: initial values
-       */
-      void rotateTensor(real* const, const real* const) const;
-      //! \brief
-      void buildVectorRotationOperator(mgis::MatrixView&) const;
-      //! \brief
-      void buildStensorRotationOperator(mgis::MatrixView&) const;
-      //! \brief
-      void buildTensorRotationOperator(mgis::MatrixView&) const;
-
-     private:
-      // coefficients of the rotation matrix
-      const real m00, m01, m02, m10, m11, m12, m20, m21, m22;
-    };  // end of struct Rotation3D
-
+    Rotation2D(const real, const real, const real, const real);
+    //! \brief invert the rotation
+    Rotation2D transpose() const;
     /*!
-     * \brief change the basis of gradients or thermodynamic fluxes
-     * \param[in,out] v: values
-     * \param[in] vs: list of variables
-     * \param[in] h: hypothesis
-     * \param[in] r: rotation matrix, stored in row-major ordering (C ordering)
-     */
-    MGIS_EXPORT void changeBasis(real* const,
-                                 const std::vector<Variable>&,
-                                 const Hypothesis,
-                                 const real* const);
-
-    /*!
-     * \brief change the basis of gradients or thermodynamic fluxes
+     * \brief rotate a symmetric tensor
      * \param[out] o: rotated values
-     * \param[in] i: initial values
-     * \param[in] vs: list of variables
-     * \param[in] h: hypothesis
-     * \param[in] r: rotation matrix, stored in row-major ordering (C ordering)
+     * \param[out] i: initial values
      */
-    MGIS_EXPORT void changeBasis(real* const,
-                                 const real* const,
-                                 const std::vector<Variable>&,
-                                 const Hypothesis,
-                                 const real* const);
+    void rotateVector(real* const, const real* const) const;
     /*!
-     * \brief change the basis of gradients or thermodynamic fluxes
+     * \brief rotate a symmetric tensor
      * \param[out] o: rotated values
-     * \param[in] i: initial values
-     * \param[in] vs: list of variables
-     * \param[in] h: hypothesis
-     * \param[in] r: rotation matrix
+     * \param[out] i: initial values
      */
-    template <typename Rotation>
-    void changeBasis(real* const,
-                     const real* const,
-                     const std::vector<Variable>&,
-                     const Hypothesis,
-                     const Rotation&);
+    void rotateStensor(real* const, const real* const) const;
+    /*!
+     * \brief rotate a tensor
+     * \param[out] o: rotated values
+     * \param[out] i: initial values
+     */
+    void rotateTensor(real* const, const real* const) const;
+    //! \brief
+    void buildVectorRotationOperator(mgis::MatrixView&) const;
+    //! \brief
+    void buildStensorRotationOperator(mgis::MatrixView&) const;
+    //! \brief
+    void buildTensorRotationOperator(mgis::MatrixView&) const;
 
-  }  // end of namespace behaviour
+   private:
+    // coefficients of the rotation matrix
+    const real m00, m01, m10, m11;
+  };  // end of struct Rotation3D
 
-}  // end of namespace mgis
+  /*!
+   * \brief a structure in charge of rotating objects in 3D
+   */
+  struct Rotation3D {
+    /*!
+     * \brief m: rotation matrix in row-major ordering
+     */
+    Rotation3D(const real* const);
+    /*!
+     * \brief
+     */
+    Rotation3D(const real,
+               const real,
+               const real,
+               const real,
+               const real,
+               const real,
+               const real,
+               const real,
+               const real);
+    //! \brief invert the rotation
+    Rotation3D transpose() const;
+    /*!
+     * \brief rotate a symmetric tensor
+     * \param[out] o: rotated values
+     * \param[out] i: initial values
+     */
+    void rotateVector(real* const, const real* const) const;
+    /*!
+     * \brief rotate a symmetric tensor
+     * \param[out] o: rotated values
+     * \param[out] i: initial values
+     */
+    void rotateStensor(real* const, const real* const) const;
+    /*!
+     * \brief rotate a tensor
+     * \param[out] o: rotated values
+     * \param[out] i: initial values
+     */
+    void rotateTensor(real* const, const real* const) const;
+    //! \brief
+    void buildVectorRotationOperator(mgis::MatrixView&) const;
+    //! \brief
+    void buildStensorRotationOperator(mgis::MatrixView&) const;
+    //! \brief
+    void buildTensorRotationOperator(mgis::MatrixView&) const;
+
+   private:
+    // coefficients of the rotation matrix
+    const real m00, m01, m02, m10, m11, m12, m20, m21, m22;
+  };  // end of struct Rotation3D
+
+  /*!
+   * \brief change the basis of gradients or thermodynamic fluxes
+   * \param[in,out] v: values
+   * \param[in] vs: list of variables
+   * \param[in] h: hypothesis
+   * \param[in] r: rotation matrix, stored in row-major ordering (C ordering)
+   */
+  MGIS_EXPORT void changeBasis(real* const,
+                               const std::vector<Variable>&,
+                               const Hypothesis,
+                               const real* const);
+
+  /*!
+   * \brief change the basis of gradients or thermodynamic fluxes
+   * \param[out] o: rotated values
+   * \param[in] i: initial values
+   * \param[in] vs: list of variables
+   * \param[in] h: hypothesis
+   * \param[in] r: rotation matrix, stored in row-major ordering (C ordering)
+   */
+  MGIS_EXPORT void changeBasis(real* const,
+                               const real* const,
+                               const std::vector<Variable>&,
+                               const Hypothesis,
+                               const real* const);
+  /*!
+   * \brief change the basis of gradients or thermodynamic fluxes
+   * \param[out] o: rotated values
+   * \param[in] i: initial values
+   * \param[in] vs: list of variables
+   * \param[in] h: hypothesis
+   * \param[in] r: rotation matrix
+   */
+  template <typename Rotation>
+  void changeBasis(real* const,
+                   const real* const,
+                   const std::vector<Variable>&,
+                   const Hypothesis,
+                   const Rotation&);
+
+}  // end of namespace mgis::behaviour
 
 #include "MGIS/Behaviour/ChangeBasis.ixx"
 
