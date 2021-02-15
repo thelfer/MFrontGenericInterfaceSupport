@@ -237,6 +237,10 @@ namespace mgis::behaviour {
    * \param[in] b: behaviour description
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
+   * \note the rotation matrix argument can be given as a:
+   * - an array of size 9 which is interpreted as a 3x3 rotation matrix.
+   * - an array of size 9*n where n is the number of integration
+   *   points which is interpreted as a field of 3x3 rotation matrix.
    */
   MGIS_EXPORT void rotateGradients(mgis::span<real>,
                                    const Behaviour &,
@@ -249,6 +253,10 @@ namespace mgis::behaviour {
    * \param[out] gg: array of gradients in the global frame
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
+   * \note the rotation matrix argument can be given as a:
+   * - an array of size 9 which is interpreted as a 3x3 rotation matrix.
+   * - an array of size 9*n where n is the number of integration
+   *   points which is interpreted as a field of 3x3 rotation matrix.
    */
   MGIS_EXPORT void rotateGradients(mgis::span<real>,
                                    const Behaviour &,
@@ -288,8 +296,9 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateTangentOperatorBlocks(
-      mgis::span<real>, const Behaviour &, const mgis::span<const real> &);
+  MGIS_EXPORT void rotateTangentOperatorBlocks(mgis::span<real>,
+                                               const Behaviour &,
+                                               const mgis::span<const real> &);
   /*!
    * \brief rotate an array of tangent operator blocks from the material frame
    * to the global frame.
@@ -299,11 +308,10 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateTangentOperatorBlocks(
-      mgis::span<real>,
-      const Behaviour &,
-      const mgis::span<const real> &,
-      const mgis::span<const real> &);
+  MGIS_EXPORT void rotateTangentOperatorBlocks(mgis::span<real>,
+                                               const Behaviour &,
+                                               const mgis::span<const real> &,
+                                               const mgis::span<const real> &);
   /*!
    * \brief set the value of a parameter
    * \param[in] b: behaviour description
