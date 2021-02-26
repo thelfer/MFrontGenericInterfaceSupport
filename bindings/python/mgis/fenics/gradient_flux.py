@@ -125,8 +125,8 @@ class Gradient(QuadratureFunction):
 
 class Var(Gradient):
     """ A simple variable """
-    # def __init__(self, variable, name):
-    #     return Gradient.__init__(self, variable, variable, name)
+    def __init__(self, variable, expression, name):
+        return Gradient.__init__(self, variable, expression, name)
 
     def _evaluate_at_quadrature_points(self, x):
         local_project(x, self.function_space, self.dx, self.function)
