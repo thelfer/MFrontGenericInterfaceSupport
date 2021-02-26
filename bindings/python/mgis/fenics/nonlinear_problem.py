@@ -203,9 +203,8 @@ class AbstractNonlinearProblem:
         if vtype != mgis_bv.VariableType.Scalar:
             raise NotImplementedError("Only scalar external state variables are handled")
         if type(expression) == float:
-            self.state_variables["external"].update({name: Constant(expression)})
-        else:
-            self.state_variables["external"].update({name: expression})
+            expression = Constant(expression)
+        self.state_variables["external"].update({name: Var(self.u, expression, name)})
 
     def set_loading(self, Fext):
         """
@@ -224,7 +223,11 @@ class AbstractNonlinearProblem:
             if isinstance(state_var, Constant):
                 mgis_bv.setExternalStateVariable(self.material.data_manager.s0, s, float(state_var))
             else:
-                values = compute_on_quadrature(state_var, self.mesh,
+                if isinstance(state_var, Var):
+                    state_var.initialize_function(self.mesh, self.quadrature_degree)
+                    values = state_var.function.vector().get_local()
+                else:
+                    values = compute_on_quadrature(state_var, self.mesh,
                                                self.quadrature_degree).vector().get_local()
                 mgis_bv.setExternalStateVariable(self.material.data_manager.s0, s,
                                                  values, mgis_bv.MaterialStateManagerStorageMode.LocalStorage)
@@ -271,7 +274,7 @@ class AbstractNonlinearProblem:
                     except:
                         value = self.state_variables["external"].get(t[1], None)
                         if value is not None and isinstance(value, Var):
-                                flux_gradients.append(value)
+                            flux_gradients.append(value)
                         else:
                             raise ValueError("'{}' could not be associated with a registered gradient or state variable.".format(t[1]))
             self.fluxes[f].initialize_tangent_blocks(flux_gradients)
