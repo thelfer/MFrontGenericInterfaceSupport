@@ -70,53 +70,48 @@ typedef void (*mgis_bv_RotateArrayOfBehaviourTangentOperatorBlocksFctPtr)(
 
 #ifdef __cplusplus
 
-namespace mgis {
+namespace mgis::behaviour {
 
-  namespace behaviour {
+  //! \brief a simple alias
+  using BehaviourFctPtr = mgis_bv_BehaviourFctPtr;
+  /*!
+   * \brief type of the pointer of a function implementing the rotation of the
+   * gradients from the global frame to the material frame
+   */
+  using RotateBehaviourGradientsFctPtr = mgis_bv_RotateBehaviourGradientsFctPtr;
+  /*!
+   * \brief type of the pointer of a function implementing the rotation of an
+   * array of gradients from the global frame to the material frame
+   */
+  using RotateArrayOfBehaviourGradientsFctPtr =
+      mgis_bv_RotateArrayOfBehaviourGradientsFctPtr;
+  /*!
+   * \brief type of the pointer of a function implementing the rotation of the
+   * thermodynamic forces from the global frame to the material frame
+   */
+  using RotateBehaviourThermodynamicForcesFctPtr =
+      mgis_bv_RotateBehaviourThermodynamicForcesFctPtr;
+  /*!
+   * \brief type of the pointer of a function implementing the rotation of an
+   * array of thermodynamic forces from the global frame to the material frame
+   */
+  using RotateArrayOfBehaviourThermodynamicForcesFctPtr =
+      mgis_bv_RotateArrayOfBehaviourThermodynamicForcesFctPtr;
+  /*!
+   * \brief type of the pointer of a function implementing the rotation of the
+   * tangent operator blocks from the global frame to the material frame.
+   */
+  using RotateBehaviourTangentOperatorBlocksFctPtr =
+      mgis_bv_RotateBehaviourTangentOperatorBlocksFctPtr;
+  /*!
+   * \brief type of the pointer of a function implementing the rotation of an
+   * array of tangent operator blocks from the global frame to the material
+   * frame.
+   */
+  using RotateArrayOfBehaviourTangentOperatorBlocksFctPtr =
+      mgis_bv_RotateArrayOfBehaviourTangentOperatorBlocksFctPtr;
 
-    //! \brief a simple alias
-    using BehaviourFctPtr = mgis_bv_BehaviourFctPtr;
-    /*!
-     * \brief type of the pointer of a function implementing the rotation of the
-     * gradients from the global frame to the material frame
-     */
-    using RotateBehaviourGradientsFctPtr =
-        mgis_bv_RotateBehaviourGradientsFctPtr;
-    /*!
-     * \brief type of the pointer of a function implementing the rotation of an
-     * array of gradients from the global frame to the material frame
-     */
-    using RotateArrayOfBehaviourGradientsFctPtr =
-        mgis_bv_RotateArrayOfBehaviourGradientsFctPtr;
-    /*!
-     * \brief type of the pointer of a function implementing the rotation of the
-     * thermodynamic forces from the global frame to the material frame
-     */
-    using RotateBehaviourThermodynamicForcesFctPtr =
-        mgis_bv_RotateBehaviourThermodynamicForcesFctPtr;
-    /*!
-     * \brief type of the pointer of a function implementing the rotation of an
-     * array of thermodynamic forces from the global frame to the material frame
-     */
-    using RotateArrayOfBehaviourThermodynamicForcesFctPtr =
-        mgis_bv_RotateArrayOfBehaviourThermodynamicForcesFctPtr;
-    /*!
-     * \brief type of the pointer of a function implementing the rotation of the
-     * tangent operator blocks from the global frame to the material frame.
-     */
-    using RotateBehaviourTangentOperatorBlocksFctPtr =
-        mgis_bv_RotateBehaviourTangentOperatorBlocksFctPtr;
-    /*!
-     * \brief type of the pointer of a function implementing the rotation of an
-     * array of tangent operator blocks from the global frame to the material
-     * frame.
-     */
-    using RotateArrayOfBehaviourTangentOperatorBlocksFctPtr =
-        mgis_bv_RotateArrayOfBehaviourTangentOperatorBlocksFctPtr;
-
-  }  // end of namespace behaviour
-
-}  // end of namespace mgis
+}  // end of namespace mgis::behaviour
 
 #endif /* __cplusplus */
 

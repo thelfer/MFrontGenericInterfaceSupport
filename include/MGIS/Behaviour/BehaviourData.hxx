@@ -21,99 +21,95 @@
 #include "MGIS/Behaviour/State.hxx"
 #include "MGIS/Behaviour/BehaviourDataView.hxx"
 
-namespace mgis {
+namespace mgis::behaviour {
 
-  namespace behaviour {
+  // forward declaration
+  struct Behaviour;
 
-    // forward declaration
-    struct Behaviour;
-
+  /*!
+   * \brief structure in charge of containing the data required for a
+   * behaviour integration:
+   */
+  struct MGIS_EXPORT BehaviourData {
     /*!
-     * \brief structure in charge of containing the data required for a
-     * behaviour integration:
-     */
-    struct MGIS_EXPORT BehaviourData {
-      /*!
-       * \brief constructor from a behaviour
-       * \param[in] b: behaviour
-       */
-      BehaviourData(const Behaviour&);
-      //! move constructor
-      BehaviourData(BehaviourData&&);
-      //! copy constructor
-      BehaviourData(const BehaviourData&);
-      //! move assignement
-      BehaviourData& operator=(BehaviourData&&);
-      //! copy assignement
-      BehaviourData& operator=(const BehaviourData&);
-      //! time increment
-      mgis::real dt;
-      /*!
-       * \brief the stiffness matrix.
-       * On input, the first element of K must contain the type of type
-       * of stiffness matrix expected. If this value is negative, only
-       * the prediction operator is computed. This value has the
-       * following meaning:
-       * - if K[0] is lower than -2.5, the tangent operator must be
-       *   computed.
-       * - if K[0] is in [-2.5:-1.5]: the secant operator must be
-       *   computed.
-       * - if K[0] is in [-1.5:-0.5]: the elastic operator must be
-       *   computed.
-       * - if K[0] is in [-0.5:0.5]: the behaviour integration is
-       *   performed, but no stiffness matrix.
-       * - if K[0] is in [0.5:1.5]: the elastic operator must be
-       *   computed.
-       * - if K[0] is in [1.5:2.5]: the secant operator must be
-       *   computed.
-       * - if K[0] is in [2.5:3.5]: the secant operator must be
-       *   computed.
-       * - if K[0] is greater than 3.5, the consistent tangent operator
-       *   must be computed.
-       */
-      std::vector<real> K;
-      //! \brief proposed time step increment increase factor
-      real rdt;
-      //! \brief state at the beginning of the time step
-      State s0;
-      //! \brief state at the end of the time step
-      State s1;
-    };  // end of struct BehaviourData
-
-    /*!
-     * \brief update the behaviour data by:
-     * - setting s1 equal to s0
-     * - filling the stiffness matrix with 0
-     */
-    MGIS_EXPORT void update(BehaviourData&);
-    /*!
-     * \brief revert the behaviour data by:
-     * - setting s1 equal to s0
-     * - filling the stiffness matrix with 0
-     */
-    MGIS_EXPORT void revert(BehaviourData&);
-    /*!
-     * \brief make a view from a behaviour data
-     * \param[in] d: data
-     * \return the view
-     * \note the view has at most the same life time as the data.
-     */
-    MGIS_EXPORT BehaviourDataView make_view(BehaviourData&);
-    /*!
-     * \brief print a detailled (verbose) description of the data associated
-     * with an integration point using a markdown format
-     * \param[in] os: ouptut stream
+     * \brief constructor from a behaviour
      * \param[in] b: behaviour
-     * \param[in] d: behaviour data
-     * \param[in] l: title level
      */
-    MGIS_EXPORT void print_markdown(std::ostream&,
-                                    const Behaviour&,
-                                    const BehaviourData&,
-                                    const mgis::size_type);
+    BehaviourData(const Behaviour&);
+    //! move constructor
+    BehaviourData(BehaviourData&&);
+    //! copy constructor
+    BehaviourData(const BehaviourData&);
+    //! move assignement
+    BehaviourData& operator=(BehaviourData&&);
+    //! copy assignement
+    BehaviourData& operator=(const BehaviourData&);
+    //! time increment
+    mgis::real dt;
+    /*!
+     * \brief the stiffness matrix.
+     * On input, the first element of K must contain the type of type
+     * of stiffness matrix expected. If this value is negative, only
+     * the prediction operator is computed. This value has the
+     * following meaning:
+     * - if K[0] is lower than -2.5, the tangent operator must be
+     *   computed.
+     * - if K[0] is in [-2.5:-1.5]: the secant operator must be
+     *   computed.
+     * - if K[0] is in [-1.5:-0.5]: the elastic operator must be
+     *   computed.
+     * - if K[0] is in [-0.5:0.5]: the behaviour integration is
+     *   performed, but no stiffness matrix.
+     * - if K[0] is in [0.5:1.5]: the elastic operator must be
+     *   computed.
+     * - if K[0] is in [1.5:2.5]: the secant operator must be
+     *   computed.
+     * - if K[0] is in [2.5:3.5]: the secant operator must be
+     *   computed.
+     * - if K[0] is greater than 3.5, the consistent tangent operator
+     *   must be computed.
+     */
+    std::vector<real> K;
+    //! \brief proposed time step increment increase factor
+    real rdt;
+    //! \brief state at the beginning of the time step
+    State s0;
+    //! \brief state at the end of the time step
+    State s1;
+  };  // end of struct BehaviourData
 
-  }  // end of namespace behaviour
+  /*!
+   * \brief update the behaviour data by:
+   * - setting s1 equal to s0
+   * - filling the stiffness matrix with 0
+   */
+  MGIS_EXPORT void update(BehaviourData&);
+  /*!
+   * \brief revert the behaviour data by:
+   * - setting s1 equal to s0
+   * - filling the stiffness matrix with 0
+   */
+  MGIS_EXPORT void revert(BehaviourData&);
+  /*!
+   * \brief make a view from a behaviour data
+   * \param[in] d: data
+   * \return the view
+   * \note the view has at most the same life time as the data.
+   */
+  MGIS_EXPORT BehaviourDataView make_view(BehaviourData&);
+  /*!
+   * \brief print a detailled (verbose) description of the data associated
+   * with an integration point using a markdown format
+   * \param[in] os: ouptut stream
+   * \param[in] b: behaviour
+   * \param[in] d: behaviour data
+   * \param[in] l: title level
+   */
+  MGIS_EXPORT void print_markdown(std::ostream&,
+                                  const Behaviour&,
+                                  const BehaviourData&,
+                                  const mgis::size_type);
 
-}  // end of namespace mgis
+}  // end of namespace mgis::behaviour
 
 #endif /* LIB_MGIS_BEHAVIOUR_BEHAVIOURDATA_HXX */

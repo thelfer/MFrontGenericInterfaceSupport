@@ -127,7 +127,11 @@ module:
 
 # Issues solved
 
-## Issues #54: Inform the calling code about `@DissipatedEnergy` and/or `@InternalEnergy`
+## Issue #66: mgis.fenics: Missing update of external state variables when seen as UFL expression
+
+Declaring external state variables as UFL expressions were not properly updated between time steps.
+
+## Issue #54: Inform the calling code about `@DissipatedEnergy` and/or `@InternalEnergy`
 
 The `Behaviour` class now exposes two new boolean data members:
 
