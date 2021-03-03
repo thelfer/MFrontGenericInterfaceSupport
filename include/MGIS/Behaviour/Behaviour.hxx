@@ -21,6 +21,7 @@
 #include "MGIS/Span.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
 #include "MGIS/Behaviour/Variable.hxx"
+#include "MGIS/Behaviour/RotationMatrix.hxx"
 #include "MGIS/Behaviour/FiniteStrainBehaviourOptions.hxx"
 #include "MGIS/Behaviour/BehaviourFctPtr.hxx"
 
@@ -263,6 +264,54 @@ namespace mgis::behaviour {
                                    const mgis::span<const real> &,
                                    const mgis::span<const real> &);
   /*!
+   * \brief rotate an array of gradients from the global frame to the material
+   * frame.
+   * \param[out,in] g: gradients
+   * \param[in] b: behaviour description
+   * \param[in] r: rotation matrix from the global frame to the material
+   * frame.
+   */
+  MGIS_EXPORT void rotateGradients(mgis::span<real>,
+                                   const Behaviour &,
+                                   const RotationMatrix2D&);
+  /*!
+   * \brief rotate an array of gradients from the global frame to the material
+   * frame.
+   * \param[out] mg: array of gradients in the material frame
+   * \param[in] b: behaviour description
+   * \param[out] gg: array of gradients in the global frame
+   * \param[in] r: rotation matrix from the global frame to the material
+   * frame.
+   */
+  MGIS_EXPORT void rotateGradients(mgis::span<real>,
+                                   const Behaviour &,
+                                   const mgis::span<const real> &,
+                                   const RotationMatrix2D&);
+  /*!
+   * \brief rotate an array of gradients from the global frame to the material
+   * frame.
+   * \param[out,in] g: gradients
+   * \param[in] b: behaviour description
+   * \param[in] r: rotation matrix from the global frame to the material
+   * frame.
+   */
+  MGIS_EXPORT void rotateGradients(mgis::span<real>,
+                                   const Behaviour &,
+                                   const RotationMatrix3D&);
+  /*!
+   * \brief rotate an array of gradients from the global frame to the material
+   * frame.
+   * \param[out] mg: array of gradients in the material frame
+   * \param[in] b: behaviour description
+   * \param[out] gg: array of gradients in the global frame
+   * \param[in] r: rotation matrix from the global frame to the material
+   * frame.
+   */
+  MGIS_EXPORT void rotateGradients(mgis::span<real>,
+                                   const Behaviour &,
+                                   const mgis::span<const real> &,
+                                   const RotationMatrix3D&);
+  /*!
    * \brief rotate an array of thermodynamics forces from the material frame
    * to
    * the global frame.
@@ -278,6 +327,30 @@ namespace mgis::behaviour {
    * \brief rotate an array of thermodynamics forces from the material frame
    * to
    * the global frame.
+   * \param[out,in] tf: thermodynamics forces
+   * \param[in] b: behaviour description
+   * \param[in] r: rotation matrix from the global frame to the material
+   * frame.
+   */
+  MGIS_EXPORT void rotateThermodynamicForces(mgis::span<real>,
+                                             const Behaviour &,
+                                             const RotationMatrix2D &);
+  /*!
+   * \brief rotate an array of thermodynamics forces from the material frame
+   * to
+   * the global frame.
+   * \param[out,in] tf: thermodynamics forces
+   * \param[in] b: behaviour description
+   * \param[in] r: rotation matrix from the global frame to the material
+   * frame.
+   */
+  MGIS_EXPORT void rotateThermodynamicForces(mgis::span<real>,
+                                             const Behaviour &,
+                                             const RotationMatrix3D &);
+  /*!
+   * \brief rotate an array of thermodynamics forces from the material frame
+   * to
+   * the global frame.
    * \param[out] gtf: thermodynamics forces in the global frame
    * \param[in] b: behaviour description
    * \param[in] mtf: thermodynamics forces in the material frame
@@ -288,6 +361,34 @@ namespace mgis::behaviour {
                                              const Behaviour &,
                                              const mgis::span<const real> &,
                                              const mgis::span<const real> &);
+  /*!
+   * \brief rotate an array of thermodynamics forces from the material frame
+   * to
+   * the global frame.
+   * \param[out] gtf: thermodynamics forces in the global frame
+   * \param[in] b: behaviour description
+   * \param[in] mtf: thermodynamics forces in the material frame
+   * \param[in] r: rotation matrix from the global frame to the material
+   * frame.
+   */
+  MGIS_EXPORT void rotateThermodynamicForces(mgis::span<real>,
+                                             const Behaviour &,
+                                             const mgis::span<const real> &,
+                                             const RotationMatrix2D&);
+  /*!
+   * \brief rotate an array of thermodynamics forces from the material frame
+   * to
+   * the global frame.
+   * \param[out] gtf: thermodynamics forces in the global frame
+   * \param[in] b: behaviour description
+   * \param[in] mtf: thermodynamics forces in the material frame
+   * \param[in] r: rotation matrix from the global frame to the material
+   * frame.
+   */
+  MGIS_EXPORT void rotateThermodynamicForces(mgis::span<real>,
+                                             const Behaviour &,
+                                             const mgis::span<const real> &,
+                                             const RotationMatrix3D &);
   /*!
    * \brief rotate an array of tangent operator blocks from the material frame
    * to the global frame.
@@ -302,6 +403,28 @@ namespace mgis::behaviour {
   /*!
    * \brief rotate an array of tangent operator blocks from the material frame
    * to the global frame.
+   * \param[out,in] K: tangent operator blocks
+   * \param[in] b: behaviour description
+   * \param[in] r: rotation matrix from the global frame to the material
+   * frame.
+   */
+  MGIS_EXPORT void rotateTangentOperatorBlocks(mgis::span<real>,
+                                               const Behaviour &,
+                                               const RotationMatrix2D &);
+  /*!
+   * \brief rotate an array of tangent operator blocks from the material frame
+   * to the global frame.
+   * \param[out,in] K: tangent operator blocks
+   * \param[in] b: behaviour description
+   * \param[in] r: rotation matrix from the global frame to the material
+   * frame.
+   */
+  MGIS_EXPORT void rotateTangentOperatorBlocks(mgis::span<real>,
+                                               const Behaviour &,
+                                               const RotationMatrix3D &);
+  /*!
+   * \brief rotate an array of tangent operator blocks from the material frame
+   * to the global frame.
    * \param[out] gK: tangent operator blocks in the global frame
    * \param[in] b: behaviour description
    * \param[in] mK: tangent operator blocks in the material frame
@@ -312,6 +435,32 @@ namespace mgis::behaviour {
                                                const Behaviour &,
                                                const mgis::span<const real> &,
                                                const mgis::span<const real> &);
+  /*!
+   * \brief rotate an array of tangent operator blocks from the material frame
+   * to the global frame.
+   * \param[out] gK: tangent operator blocks in the global frame
+   * \param[in] b: behaviour description
+   * \param[in] mK: tangent operator blocks in the material frame
+   * \param[in] r: rotation matrix from the global frame to the material
+   * frame.
+   */
+  MGIS_EXPORT void rotateTangentOperatorBlocks(mgis::span<real>,
+                                               const Behaviour &,
+                                               const mgis::span<const real> &,
+                                               const RotationMatrix2D &);
+  /*!
+   * \brief rotate an array of tangent operator blocks from the material frame
+   * to the global frame.
+   * \param[out] gK: tangent operator blocks in the global frame
+   * \param[in] b: behaviour description
+   * \param[in] mK: tangent operator blocks in the material frame
+   * \param[in] r: rotation matrix from the global frame to the material
+   * frame.
+   */
+  MGIS_EXPORT void rotateTangentOperatorBlocks(mgis::span<real>,
+                                               const Behaviour &,
+                                               const mgis::span<const real> &,
+                                               const RotationMatrix3D &);
   /*!
    * \brief set the value of a parameter
    * \param[in] b: behaviour description

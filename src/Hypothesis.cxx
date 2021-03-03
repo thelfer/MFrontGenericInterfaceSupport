@@ -98,7 +98,7 @@ namespace mgis::behaviour {
     } else if (::strcmp(h, "Tridimensional") == 0) {
       return Hypothesis::TRIDIMENSIONAL;
     }
-    raise("toString : unsupported modelling hypothesis");
+    raise("fromString : unsupported modelling hypothesis");
   }  // end of fromString
 
   const char* toString(const Hypothesis h) {

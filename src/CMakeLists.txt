@@ -3,6 +3,7 @@ mgis_library(MFrontGenericInterface SHARED
 	  ThreadedTaskResult.cxx
 	  LibrariesManager.cxx
       Markdown.cxx
+	  RotationMatrix.cxx
 	  Variable.cxx
 	  Hypothesis.cxx
 	  Behaviour.cxx

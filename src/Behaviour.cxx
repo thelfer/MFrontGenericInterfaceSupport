@@ -1,5 +1,5 @@
 /*!
- * \file   Behaviour.cxx
+ * \file   src/Behaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \date   19/06/2018
@@ -15,11 +15,22 @@
 #include <cstdlib>
 #include <iterator>
 
-#include "MGIS/Behaviour/Behaviour.hxx"
-#include "MGIS/LibrariesManager.hxx"
 #include "MGIS/Raise.hxx"
+#include "MGIS/LibrariesManager.hxx"
+#include "MGIS/Behaviour/Hypothesis.hxx"
+#include "MGIS/Behaviour/Behaviour.hxx"
 
 namespace mgis::behaviour {
+
+  static std::array<mgis::real, 9u> buildRotationMatrix(const real *const a) {
+    return buildRotationMatrix(mgis::span<const mgis::real, 2u>{a, 2u});
+  }  // end of buildRotationMatrix
+
+  static std::array<mgis::real, 9u> buildRotationMatrix(const real *const a1,
+                                                        const real *const a2) {
+    return buildRotationMatrix(mgis::span<const mgis::real, 3u>{a1, 3u},
+                               mgis::span<const mgis::real, 3u>{a2, 3u});
+  }  // end of buildRotationMatrix
 
   template <typename ErrorHandler>
   static std::vector<Variable> buildVariablesList(
@@ -474,50 +485,163 @@ namespace mgis::behaviour {
     rotateGradients(g, b, g, r);
   }  // end of rotateGradients
 
-  void rotateGradients(mgis::span<real> mg,
+  void rotateGradients(mgis::span<real> g,
                        const Behaviour &b,
-                       const mgis::span<const real> &gg,
-                       const mgis::span<const real> &r) {
+                       const RotationMatrix2D &r) {
+    rotateGradients(g, b, g, r);
+  }  // end of rotateGradients
+
+  void rotateGradients(mgis::span<real> g,
+                       const Behaviour &b,
+                       const RotationMatrix3D &r) {
+    rotateGradients(g, b, g, r);
+  }  // end of rotateGradients
+
+  static mgis::size_type checkRotateFunctionInputs(
+      const char *const m,
+      const Behaviour &b,
+      const mgis::span<const real> &mv,
+      const mgis::span<const real> &gv) {
+    if (gv.size() == 0) {
+      mgis::raise(std::string(m) + ": no values given for the gradients");
+    }
+    const auto gsize = getArraySize(b.gradients, b.hypothesis);
+    auto dv = std::div(gv.size(), gsize);
+    if (dv.rem != 0) {
+      mgis::raise(std::string(m) +
+                  ": invalid array size in the global frame "
+                  "(not a multiple of the gradients size)");
+    }
+    if (mv.size() != gv.size()) {
+      mgis::raise(std::string(m) + ": unmatched array sizes");
+    }
+    return dv.quot;
+  }
+
+  static void checkRotationMatrix2D(const char *const m,
+                                    const RotationMatrix2D &r,
+                                    const Behaviour &b,
+                                    const mgis::size_type nipts) {
+    if (getSpaceDimension(b.hypothesis) != 2u) {
+      mgis::raise(std::string(m) + ": a 2D rotation matrix can't be used in '" +
+                  toString(b.hypothesis) + "'");
+    }
+    if (r.a.size() != 2u) {
+      if (nipts != r.a.size() % 2) {
+        mgis::raise(std::string(m) +
+                    ": the number of integration points handled "
+                    "by the rotation matrix is different from the "
+                    "number of integration points of the field to be rotated");
+      }
+    }
+  }  // end of checkRotationMatrix2D
+
+  static void checkRotationMatrix3D(const char *const m,
+                                    const RotationMatrix3D &r,
+                                    const Behaviour &b,
+                                    const mgis::size_type nipts) {
+    if (getSpaceDimension(b.hypothesis) != 3u) {
+      mgis::raise(std::string(m) + ": a 3D rotation matrix can't be used in '" +
+                  toString(b.hypothesis) + "'");
+    }
+    if (r.a1.a.size() != 3u) {
+      if (nipts != r.a1.a.size() % 3) {
+        mgis::raise(std::string(m) +
+                    ": the number of integration points handled "
+                    "by the rotation matrix is different from the "
+                    "number of integration points of the field to be rotated");
+      }
+    }
+    if (r.a2.a.size() != 3u) {
+      if (nipts != r.a2.a.size() % 3) {
+        mgis::raise(std::string(m) +
+                    ": the number of integration points handled "
+                    "by the rotation matrix is different from the "
+                    "number of integration points of the field to be rotated");
+      }
+    }
+  }  // end of checkRotationMatrix3D
+
+  static void checkBehaviourRotateGradients(const Behaviour &b) {
     if ((b.rotate_gradients_ptr == nullptr) ||
         (b.rotate_array_of_gradients_ptr == nullptr)) {
       mgis::raise(
           "rotateGradients: no function performing the rotation of "
           "the gradients defined");
     }
-    if (gg.size() == 0) {
-      mgis::raise("rotateGradients: no values given for the gradients");
-    }
+  }  // end of checkBehaviourRotateGradients
+
+  void rotateGradients(mgis::span<real> mg,
+                       const Behaviour &b,
+                       const mgis::span<const real> &gg,
+                       const mgis::span<const real> &r) {
+    checkBehaviourRotateGradients(b);
+    const auto nipts = checkRotateFunctionInputs("rotateGradients", b, mg, gg);
     if (r.size() == 0) {
       mgis::raise("rotateGradients: no values given for the rotation matrices");
     }
-    const auto gsize = getArraySize(b.gradients, b.hypothesis);
-    auto dv = std::div(gg.size(), gsize);
-    if (dv.rem != 0) {
-      mgis::raise(
-          "rotateGradients: invalid array size in the global frame "
-          "(not a multiple of the gradients size)");
-    }
-    if (mg.size() != gg.size()) {
-      mgis::raise("rotateGradients: unmatched array sizes");
-    }
-    auto rdv = std::div(r.size(), size_type{9});
+    const auto rdv = std::div(r.size(), size_type{9});
     if (rdv.rem != 0) {
       mgis::raise(
-          "rotateTangentOperatorBlocks: "
+          "rotateGradients: "
           "invalid size for the rotation matrix array");
     }
     if (rdv.quot == 1) {
-      b.rotate_array_of_gradients_ptr(mg.data(), gg.data(), r.data(), dv.quot);
+      b.rotate_array_of_gradients_ptr(mg.data(), gg.data(), r.data(), nipts);
     } else {
-      if (rdv.quot != dv.quot) {
+      if (rdv.quot != nipts) {
         mgis::raise(
             "the number of integration points for the gradients does not match "
             "the number of integration points for the rotation matrices (" +
-            std::to_string(dv.quot) + " vs " + std::to_string(rdv.quot) + ")");
+            std::to_string(nipts) + " vs " + std::to_string(rdv.quot) + ")");
       }
-      for (size_type i = 0; i != dv.quot; ++i) {
+      const auto gsize = getArraySize(b.gradients, b.hypothesis);
+      for (size_type i = 0; i != nipts; ++i) {
         const auto o = i * gsize;
         b.rotate_gradients_ptr(mg.data() + o, gg.data() + o, r.data() + i * 9);
+      }
+    }
+  }  // end of rotateGradients
+
+  void rotateGradients(mgis::span<real> mg,
+                       const Behaviour &b,
+                       const mgis::span<const real> &gg,
+                       const RotationMatrix2D &r) {
+    checkBehaviourRotateGradients(b);
+    const auto nipts = checkRotateFunctionInputs("rotateGradients", b, mg, gg);
+    checkRotationMatrix2D("rotateGradients", r, b, nipts);
+    if (r.a.size() == 2u) {
+      const auto m = buildRotationMatrix(r.a.data());
+      b.rotate_array_of_gradients_ptr(mg.data(), gg.data(), m.data(), nipts);
+    } else {
+      const auto gsize = getArraySize(b.gradients, b.hypothesis);
+      for (size_type i = 0; i != nipts; ++i) {
+        const auto m = buildRotationMatrix(r.a.data() + 2 * i);
+        const auto o = i * gsize;
+        b.rotate_gradients_ptr(mg.data() + o, gg.data() + o, m.data());
+      }
+    }
+  }  // end of rotateGradients
+
+  void rotateGradients(mgis::span<real> mg,
+                       const Behaviour &b,
+                       const mgis::span<const real> &gg,
+                       const RotationMatrix3D &r) {
+    checkBehaviourRotateGradients(b);
+    const auto nipts = checkRotateFunctionInputs("rotateGradients", b, mg, gg);
+    checkRotationMatrix3D("rotateGradients", r, b, nipts);
+    if ((r.a1.a.size() == 3u) && ((r.a2.a.size() == 3u))) {
+      const auto m = buildRotationMatrix(r.a1.a.data(), r.a2.a.data());
+      b.rotate_array_of_gradients_ptr(mg.data(), gg.data(), m.data(), nipts);
+    } else {
+      const auto o1 = (r.a1.a.size() == 3u) ? 0u : 3u;
+      const auto o2 = (r.a2.a.size() == 3u) ? 0u : 3u;
+      const auto gsize = getArraySize(b.gradients, b.hypothesis);
+      for (size_type i = 0; i != nipts; ++i) {
+        const auto m = buildRotationMatrix(r.a1.a.data() + o1 * i,  //
+                                           r.a2.a.data() + o2 * i);
+        const auto o = i * gsize;
+        b.rotate_gradients_ptr(mg.data() + o, gg.data() + o, m.data());
       }
     }
   }  // end of rotateGradients
@@ -528,38 +652,40 @@ namespace mgis::behaviour {
     rotateThermodynamicForces(tf, b, tf, r);
   }  // end of rotateThermodynamicForces
 
+  void rotateThermodynamicForces(mgis::span<real> tf,
+                                 const Behaviour &b,
+                                 const RotationMatrix2D &r) {
+    rotateThermodynamicForces(tf, b, tf, r);
+  }  // end of rotateThermodynamicForces
+
+  void rotateThermodynamicForces(mgis::span<real> tf,
+                                 const Behaviour &b,
+                                 const RotationMatrix3D &r) {
+    rotateThermodynamicForces(tf, b, tf, r);
+  }  // end of rotateThermodynamicForces
+
+  static void checkBehaviourRotateThermodynamicForces(const Behaviour &b) {
+    if ((b.rotate_thermodynamic_forces_ptr == nullptr) ||
+        (b.rotate_array_of_thermodynamic_forces_ptr == nullptr)) {
+      mgis::raise(
+          "rotateThermodynamicForces: no function performing the rotation of "
+          "the thermodynamic forces defined");
+    }
+  }  // end of checkBehaviourRotateThermodynamicForces
+
   void rotateThermodynamicForces(mgis::span<real> gtf,
                                  const Behaviour &b,
                                  const mgis::span<const real> &mtf,
                                  const mgis::span<const real> &r) {
-    if ((b.rotate_thermodynamic_forces_ptr == nullptr) ||
-        (b.rotate_array_of_thermodynamic_forces_ptr == nullptr)) {
-      mgis::raise(
-          "rotateThermodynamicForces: no function performing the "
-          "rotation of the thermodynamic forces defined");
-    }
-    if (gtf.size() == 0) {
-      mgis::raise(
-          "rotateThermodynamicForces: "
-          "no values given for the thermodynamics forces");
-    }
+    checkBehaviourRotateThermodynamicForces(b);
+    const auto nipts =
+        checkRotateFunctionInputs("rotateThermodynamicForces", b, mtf, gtf);
     if (r.size() == 0) {
       mgis::raise(
           "rotateThermodynamicForces: "
           "no values given for the rotation matrices");
     }
     const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
-    auto dv = std::div(mtf.size(), tfsize);
-    if (dv.rem != 0) {
-      mgis::raise(
-          "rotateThermodynamicForces: invalid array size (not a "
-          "multiple of the thermodynamic forces size)");
-    }
-    if (gtf.size() != mtf.size()) {
-      mgis::raise(
-          "rotateThermodynamicForces: unmatched array sizes for the "
-          "thermodynamic forces");
-    }
     auto rdv = std::div(r.size(), size_type{9});
     if (rdv.rem != 0) {
       mgis::raise(
@@ -568,19 +694,68 @@ namespace mgis::behaviour {
     }
     if (rdv.quot == 1) {
       b.rotate_array_of_thermodynamic_forces_ptr(gtf.data(), mtf.data(),
-                                                 r.data(), dv.quot);
+                                                 r.data(), nipts);
     } else {
-      if (rdv.quot != dv.quot) {
+      if (rdv.quot != nipts) {
         mgis::raise(
             "the number of integration points for the thermodynamic forces "
             "does not match the number of integration points for the rotation "
             "matrices (" +
-            std::to_string(dv.quot) + " vs " + std::to_string(rdv.quot) + ")");
+            std::to_string(nipts) + " vs " + std::to_string(rdv.quot) + ")");
       }
-      for (size_type i = 0; i != dv.quot; ++i) {
+      for (size_type i = 0; i != nipts; ++i) {
         const auto o = i * tfsize;
         b.rotate_thermodynamic_forces_ptr(gtf.data() + o, mtf.data() + o,
                                           r.data() + i * 9);
+      }
+    }
+  }  // end of rotateThermodynamicForces
+
+  void rotateThermodynamicForces(mgis::span<real> gtf,
+                                 const Behaviour &b,
+                                 const mgis::span<const real> &mtf,
+                                 const RotationMatrix2D &r) {
+    checkBehaviourRotateThermodynamicForces(b);
+    const auto nipts =
+        checkRotateFunctionInputs("rotateThermodynamicForces", b, gtf, mtf);
+    checkRotationMatrix2D("rotateThermodynamicForces", r, b, nipts);
+    if (r.a.size() == 2u) {
+      const auto m = buildRotationMatrix(r.a.data());
+      b.rotate_array_of_thermodynamic_forces_ptr(gtf.data(), mtf.data(),
+                                                 m.data(), nipts);
+    } else {
+      const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
+      for (size_type i = 0; i != nipts; ++i) {
+        const auto m = buildRotationMatrix(r.a.data() + 2 * i);
+        const auto o = i * tfsize;
+        b.rotate_thermodynamic_forces_ptr(gtf.data() + o, mtf.data() + o,
+                                          m.data());
+      }
+    }
+  }  // end of rotateThermodynamicForces
+
+  void rotateThermodynamicForces(mgis::span<real> gtf,
+                                 const Behaviour &b,
+                                 const mgis::span<const real> &mtf,
+                                 const RotationMatrix3D &r) {
+    checkBehaviourRotateThermodynamicForces(b);
+    const auto nipts =
+        checkRotateFunctionInputs("rotateThermodynamicForces", b, gtf, mtf);
+    checkRotationMatrix3D("rotateThermodynamicForces", r, b, nipts);
+    if ((r.a1.a.size() == 3u) && ((r.a2.a.size() == 3u))) {
+      const auto m = buildRotationMatrix(r.a1.a.data(), r.a2.a.data());
+      b.rotate_array_of_thermodynamic_forces_ptr(gtf.data(), mtf.data(),
+                                                 m.data(), nipts);
+    } else {
+      const auto o1 = (r.a1.a.size() == 3u) ? 0u : 3u;
+      const auto o2 = (r.a2.a.size() == 3u) ? 0u : 3u;
+      const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
+      for (size_type i = 0; i != nipts; ++i) {
+        const auto m = buildRotationMatrix(r.a1.a.data() + o1 * i,  //
+                                           r.a2.a.data() + o2 * i);
+        const auto o = i * tfsize;
+        b.rotate_thermodynamic_forces_ptr(gtf.data() + o, mtf.data() + o,
+                                          m.data());
       }
     }
   }  // end of rotateThermodynamicForces
@@ -591,33 +766,40 @@ namespace mgis::behaviour {
     rotateTangentOperatorBlocks(K, b, K, r);
   }  // end of rotateTangentOperatorBlocks
 
+  void rotateTangentOperatorBlocks(mgis::span<real> K,
+                                   const Behaviour &b,
+                                   const RotationMatrix2D &r) {
+    rotateTangentOperatorBlocks(K, b, K, r);
+  }  // end of rotateTangentOperatorBlocks
+
+  void rotateTangentOperatorBlocks(mgis::span<real> K,
+                                   const Behaviour &b,
+                                   const RotationMatrix3D &r) {
+    rotateTangentOperatorBlocks(K, b, K, r);
+  }  // end of rotateTangentOperatorBlocks
+
+  static void checkBehaviourRotateTangentOperatorBlocks(const Behaviour &b) {
+    if ((b.rotate_tangent_operator_blocks_ptr == nullptr) ||
+        (b.rotate_array_of_tangent_operator_blocks_ptr == nullptr)) {
+      mgis::raise(
+          "rotateTangentOperatorBlocks: no function performing the rotation of "
+          "the thermodynamic forces defined");
+    }
+  }  // end of checkBehaviourRotateTangentOperatorBlocks
+
   void rotateTangentOperatorBlocks(mgis::span<real> gK,
                                    const Behaviour &b,
                                    const mgis::span<const real> &mK,
                                    const mgis::span<const real> &r) {
-    if ((b.rotate_tangent_operator_blocks_ptr == nullptr) ||
-        (b.rotate_array_of_tangent_operator_blocks_ptr == nullptr)) {
-      mgis::raise(
-          "rotateTangentOperatorBlocks: no function performing the "
-          "rotation of the tangent operator blocks defined");
-    }
-    if (mK.size() == 0) {
-      mgis::raise(
-          "rotateTangentOperatorBlocks: "
-          "empty array for the tangent operator blocks");
-    }
+    checkBehaviourRotateTangentOperatorBlocks(b);
+    const auto nipts =
+        checkRotateFunctionInputs("rotateTangentOperatorBlocks", b, mK, gK);
     if (r.size() == 0) {
       mgis::raise(
           "rotateTangentOperatorBlocks: "
           "empty array for the rotation matrix");
     }
     const auto Ksize = getTangentOperatorArraySize(b);
-    auto dv = std::div(gK.size(), Ksize);
-    if (dv.rem != 0) {
-      mgis::raise(
-          "rotateTangentOperatorBlocks: invalid array size (not a "
-          "multiple of the tangent operator blocks size)");
-    }
     if (mK.size() != gK.size()) {
       mgis::raise("rotateTangentOperatorBlocks: unmatched array sizes");
     }
@@ -629,19 +811,68 @@ namespace mgis::behaviour {
     }
     if (rdv.quot == 1) {
       b.rotate_array_of_tangent_operator_blocks_ptr(gK.data(), mK.data(),
-                                                    r.data(), dv.quot);
+                                                    r.data(), nipts);
     } else {
-      if (rdv.quot != dv.quot) {
+      if (rdv.quot != nipts) {
         mgis::raise(
             "the number of integration points for the tangent operators does "
             "not match the number of integration points for the rotation "
             "matrices (" +
-            std::to_string(dv.quot) + " vs " + std::to_string(rdv.quot) + ")");
+            std::to_string(nipts) + " vs " + std::to_string(rdv.quot) + ")");
       }
-      for (size_type i = 0; i != dv.quot; ++i) {
+      for (size_type i = 0; i != nipts; ++i) {
         const auto o = i * Ksize;
         b.rotate_tangent_operator_blocks_ptr(gK.data() + o, mK.data() + o,
                                              r.data() + 9 * i);
+      }
+    }
+  }  // end of rotateTangentOperatorBlocks
+
+  void rotateTangentOperatorBlocks(mgis::span<real> gK,
+                                   const Behaviour &b,
+                                   const mgis::span<const real> &mK,
+                                   const RotationMatrix2D &r) {
+    checkBehaviourRotateTangentOperatorBlocks(b);
+    const auto nipts =
+        checkRotateFunctionInputs("rotateTangentOperatorBlocks", b, gK, mK);
+    checkRotationMatrix2D("rotateTangentOperatorBlocks", r, b, nipts);
+    if (r.a.size() == 2u) {
+      const auto m = buildRotationMatrix(r.a.data());
+      b.rotate_array_of_tangent_operator_blocks_ptr(gK.data(), mK.data(),
+                                                    m.data(), nipts);
+    } else {
+      const auto Ksize = getTangentOperatorArraySize(b);
+      for (size_type i = 0; i != nipts; ++i) {
+        const auto m = buildRotationMatrix(r.a.data() + 2 * i);
+        const auto o = i * Ksize;
+        b.rotate_tangent_operator_blocks_ptr(gK.data() + o, mK.data() + o,
+                                             m.data());
+      }
+    }
+  }  // end of rotateTangentOperatorBlocks
+
+  void rotateTangentOperatorBlocks(mgis::span<real> gK,
+                                   const Behaviour &b,
+                                   const mgis::span<const real> &mK,
+                                   const RotationMatrix3D &r) {
+    checkBehaviourRotateTangentOperatorBlocks(b);
+    const auto nipts =
+        checkRotateFunctionInputs("rotateTangentOperatorBlocks", b, gK, mK);
+    checkRotationMatrix3D("rotateTangentOperatorBlocks", r, b, nipts);
+    if ((r.a1.a.size() == 3u) && ((r.a2.a.size() == 3u))) {
+      const auto m = buildRotationMatrix(r.a1.a.data(), r.a2.a.data());
+      b.rotate_array_of_tangent_operator_blocks_ptr(gK.data(), mK.data(),
+                                                    m.data(), nipts);
+    } else {
+      const auto o1 = (r.a1.a.size() == 3u) ? 0u : 3u;
+      const auto o2 = (r.a2.a.size() == 3u) ? 0u : 3u;
+      const auto Ksize = getTangentOperatorArraySize(b);
+      for (size_type i = 0; i != nipts; ++i) {
+        const auto m = buildRotationMatrix(r.a1.a.data() + o1 * i,  //
+                                           r.a2.a.data() + o2 * i);
+        const auto o = i * Ksize;
+        b.rotate_tangent_operator_blocks_ptr(gK.data() + o, mK.data() + o,
+                                             m.data());
       }
     }
   }  // end of rotateTangentOperatorBlocks

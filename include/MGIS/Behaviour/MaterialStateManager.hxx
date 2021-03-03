@@ -21,6 +21,7 @@
 #include "MGIS/Config.hxx"
 #include "MGIS/Variant.hxx"
 #include "MGIS/Span.hxx"
+#include "MGIS/StorageMode.hxx"
 #include "MGIS/StringView.hxx"
 
 namespace mgis::behaviour {
@@ -90,21 +91,19 @@ namespace mgis::behaviour {
    * - The internal state variables are treated as a block.
    */
   struct MGIS_EXPORT MaterialStateManager {
-    //! a simple alias
+    //! \brief a simple alias
     using FieldHolder =
         mgis::variant<real, mgis::span<mgis::real>, std::vector<mgis::real>>;
+    //! \brief a simple alias
+    using StorageMode = mgis::StorageMode;
+    //!
+    static constexpr auto LOCAL_STORAGE = mgis::StorageMode::LOCAL_STORAGE;
+    //!
+    static constexpr auto EXTERNAL_STORAGE = mgis::StorageMode::EXTERNAL_STORAGE;
     /*!
-     * \brief storage option for a non uniform material property or non
-     * uniform external state variable.
+     * \param[in] behaviour: behaviour
+     * \param[in] s: number of integration points
      */
-    enum StorageMode {
-      LOCAL_STORAGE,    //! \brief use `std::vector` to store the data
-      EXTERNAL_STORAGE  //! \brief use `mgis::span`  to store the data
-    };                  // end of StorageMode
-                        /*!
-                         * \param[in] behaviour: behaviour
-                         * \param[in] s: number of integration points
-                         */
     MaterialStateManager(const Behaviour&, const size_type);
     /*!
      * \param[in] behaviour: behaviour
