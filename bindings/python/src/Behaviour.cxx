@@ -23,7 +23,7 @@
 // forward declaration
 void declareBehaviour();
 
-static const char *Behaviour_getType(const mgis::behaviour::Behaviour &b) {
+static const char* Behaviour_getType(const mgis::behaviour::Behaviour& b) {
   using mgis::behaviour::Behaviour;
   switch (b.btype) {
     case Behaviour::GENERALBEHAVIOUR:
@@ -44,7 +44,7 @@ static const char *Behaviour_getType(const mgis::behaviour::Behaviour &b) {
   return "";
 }  // end of Behaviour_getType
 
-static const char *Behaviour_getKinematic(const mgis::behaviour::Behaviour &b) {
+static const char* Behaviour_getKinematic(const mgis::behaviour::Behaviour& b) {
   using mgis::behaviour::Behaviour;
   switch (b.kinematic) {
     case Behaviour::SMALLSTRAINKINEMATIC:
@@ -66,7 +66,7 @@ static const char *Behaviour_getKinematic(const mgis::behaviour::Behaviour &b) {
   return "UndefinedKinematic";
 }  // end of Behaviour_getKinematic
 
-static const char *Behaviour_getSymmetry(const mgis::behaviour::Behaviour &b) {
+static const char* Behaviour_getSymmetry(const mgis::behaviour::Behaviour& b) {
   using mgis::behaviour::Behaviour;
   switch (b.symmetry) {
     case Behaviour::ISOTROPIC:
@@ -81,42 +81,42 @@ static const char *Behaviour_getSymmetry(const mgis::behaviour::Behaviour &b) {
 }  // end of Behaviour_getSymmetry
 
 static std::vector<mgis::behaviour::Variable> Behaviour_getGradients(
-    const mgis::behaviour::Behaviour &b) {
+    const mgis::behaviour::Behaviour& b) {
   return b.gradients;
 }  // end of Behaviour_getGradients
 
 static std::vector<mgis::behaviour::Variable> Behaviour_getThermodynamicForces(
-    const mgis::behaviour::Behaviour &b) {
+    const mgis::behaviour::Behaviour& b) {
   return b.thermodynamic_forces;
 }  // end of Behaviour_getThermodynamicForces
 
 static std::vector<mgis::behaviour::Variable> Behaviour_getMaterialProperties(
-    const mgis::behaviour::Behaviour &b) {
+    const mgis::behaviour::Behaviour& b) {
   return b.mps;
 }  // end of Behaviour_getMaterialProperties
 
 static std::vector<mgis::behaviour::Variable>
-Behaviour_getInternalStateVariables(const mgis::behaviour::Behaviour &b) {
+Behaviour_getInternalStateVariables(const mgis::behaviour::Behaviour& b) {
   return b.isvs;
 }  // end of Behaviour_getInternalStateVariables
 
 static std::vector<mgis::behaviour::Variable>
-Behaviour_getExternalStateVariables(const mgis::behaviour::Behaviour &b) {
+Behaviour_getExternalStateVariables(const mgis::behaviour::Behaviour& b) {
   return b.esvs;
 }  // end of Behaviour_getExternalStateVariables
 
 static boost::python::list Behaviour_getParameters(
-    const mgis::behaviour::Behaviour &b) {
+    const mgis::behaviour::Behaviour& b) {
   return mgis::python::convert_vector_to_list(b.params);
 }  // end of Behaviour_getParameters
 
 static boost::python::list Behaviour_getIntegerParameters(
-    const mgis::behaviour::Behaviour &b) {
+    const mgis::behaviour::Behaviour& b) {
   return mgis::python::convert_vector_to_list(b.iparams);
 }  // end of Behaviour_getIntegerParameters
 
 static boost::python::list Behaviour_getUnsignedShortParameters(
-    const mgis::behaviour::Behaviour &b) {
+    const mgis::behaviour::Behaviour& b) {
   return mgis::python::convert_vector_to_list(b.usparams);
 }  // end of Behaviour_getUnsignedShortParameters
 
@@ -126,19 +126,27 @@ Behaviour_getTangentOperatorBlocks(const mgis::behaviour::Behaviour &b) {
   return b.to_blocks;
 }  // end of Behaviour_getUnsignedShortParameters
 
+static mgis::span<const mgis::real, 9> convert_to_rotation_matrix(boost::python::object& r) {
+  auto rp = mgis::python::mgis_convert_to_span(r);
+  if (rp.size() != 9) {
+    mgis::raise("convert_to_rotation_matrix: invalid array size");
+  }
+  return mgis::span<const mgis::real, 9>(rp.data(), rp.size());
+}  // end of convert_to_rotation
+
 static void rotate_gradients_in_place_member(
     const mgis::behaviour::Behaviour &b,
     boost::python::object &g,
     boost::python::object &r) {
-  mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(g), b,
-                                   mgis::python::mgis_convert_to_span(r));
+  mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(g),
+                                          b, convert_to_rotation_matrix(r));
 }  // end of rotate_gradients_in_place_member
 
 static void rotate_gradients_in_place(boost::python::object &g,
                                       const mgis::behaviour::Behaviour &b,
                                       boost::python::object &r) {
-  mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(g), b,
-                                   mgis::python::mgis_convert_to_span(r));
+  mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(g),
+                                          b, convert_to_rotation_matrix(r));
 }  // end of rotate_gradients_in_place
 
 static void rotate_gradients_out_of_place_member(
@@ -146,18 +154,18 @@ static void rotate_gradients_out_of_place_member(
     boost::python::object &mg,
     boost::python::object &gg,
     boost::python::object &r) {
-  mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(mg), b,
-                                   mgis::python::mgis_convert_to_span(gg),
-                                   mgis::python::mgis_convert_to_span(r));
+  mgis::behaviour::rotateGradients(
+      mgis::python::mgis_convert_to_span(mg), b,
+      mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
 }  // end of rotate_gradients_out_of_place_member
 
 static void rotate_gradients_out_of_place(boost::python::object &mg,
                                           const mgis::behaviour::Behaviour &b,
                                           boost::python::object &gg,
                                           boost::python::object &r) {
-  mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(mg), b,
-                                   mgis::python::mgis_convert_to_span(gg),
-                                   mgis::python::mgis_convert_to_span(r));
+  mgis::behaviour::rotateGradients(
+      mgis::python::mgis_convert_to_span(mg), b,
+      mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
 }  // end of rotate_gradients_out_of_place
 
 static void rotate_thermodynamic_forces_in_place_member(
@@ -165,17 +173,14 @@ static void rotate_thermodynamic_forces_in_place_member(
     boost::python::object &g,
     boost::python::object &r) {
   mgis::behaviour::rotateThermodynamicForces(
-      mgis::python::mgis_convert_to_span(g), b,
-      mgis::python::mgis_convert_to_span(r));
+      mgis::python::mgis_convert_to_span(g), b, convert_to_rotation_matrix(r));
 }  // end of rotate_thermodynamic_forces_in_place_member
 
-static void rotate_thermodynamic_forces_in_place(
-    boost::python::object &g,
-    const mgis::behaviour::Behaviour &b,
-    boost::python::object &r) {
+static void rotate_thermodynamic_forces_in_place(boost::python::object &g,
+                                      const mgis::behaviour::Behaviour &b,
+                                      boost::python::object &r) {
   mgis::behaviour::rotateThermodynamicForces(
-      mgis::python::mgis_convert_to_span(g), b,
-      mgis::python::mgis_convert_to_span(r));
+      mgis::python::mgis_convert_to_span(g), b, convert_to_rotation_matrix(r));
 }  // end of rotate_thermodynamic_forces_in_place
 
 static void rotate_thermodynamic_forces_out_of_place_member(
@@ -185,19 +190,16 @@ static void rotate_thermodynamic_forces_out_of_place_member(
     boost::python::object &r) {
   mgis::behaviour::rotateThermodynamicForces(
       mgis::python::mgis_convert_to_span(mg), b,
-      mgis::python::mgis_convert_to_span(gg),
-      mgis::python::mgis_convert_to_span(r));
+      mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
 }  // end of rotate_thermodynamic_forces_out_of_place_member
 
-static void rotate_thermodynamic_forces_out_of_place(
-    boost::python::object &mg,
-    const mgis::behaviour::Behaviour &b,
-    boost::python::object &gg,
-    boost::python::object &r) {
+static void rotate_thermodynamic_forces_out_of_place(boost::python::object &mg,
+                                          const mgis::behaviour::Behaviour &b,
+                                          boost::python::object &gg,
+                                          boost::python::object &r) {
   mgis::behaviour::rotateThermodynamicForces(
       mgis::python::mgis_convert_to_span(mg), b,
-      mgis::python::mgis_convert_to_span(gg),
-      mgis::python::mgis_convert_to_span(r));
+      mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
 }  // end of rotate_thermodynamic_forces_out_of_place
 
 static void rotate_tangent_operator_blocks_in_place_member(
@@ -205,8 +207,7 @@ static void rotate_tangent_operator_blocks_in_place_member(
     boost::python::object &g,
     boost::python::object &r) {
   mgis::behaviour::rotateTangentOperatorBlocks(
-      mgis::python::mgis_convert_to_span(g), b,
-      mgis::python::mgis_convert_to_span(r));
+      mgis::python::mgis_convert_to_span(g), b, convert_to_rotation_matrix(r));
 }  // end of rotate_tangent_operator_blocks_in_place_member
 
 static void rotate_tangent_operator_blocks_in_place(
@@ -214,8 +215,7 @@ static void rotate_tangent_operator_blocks_in_place(
     const mgis::behaviour::Behaviour &b,
     boost::python::object &r) {
   mgis::behaviour::rotateTangentOperatorBlocks(
-      mgis::python::mgis_convert_to_span(g), b,
-      mgis::python::mgis_convert_to_span(r));
+      mgis::python::mgis_convert_to_span(g), b, convert_to_rotation_matrix(r));
 }  // end of rotate_tangent_operator_blocks_in_place
 
 static void rotate_tangent_operator_blocks_out_of_place_member(
@@ -225,8 +225,7 @@ static void rotate_tangent_operator_blocks_out_of_place_member(
     boost::python::object &r) {
   mgis::behaviour::rotateTangentOperatorBlocks(
       mgis::python::mgis_convert_to_span(mg), b,
-      mgis::python::mgis_convert_to_span(gg),
-      mgis::python::mgis_convert_to_span(r));
+      mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
 }  // end of rotate_tangent_operator_blocks_out_of_place_member
 
 static void rotate_tangent_operator_blocks_out_of_place(
@@ -236,31 +235,30 @@ static void rotate_tangent_operator_blocks_out_of_place(
     boost::python::object &r) {
   mgis::behaviour::rotateTangentOperatorBlocks(
       mgis::python::mgis_convert_to_span(mg), b,
-      mgis::python::mgis_convert_to_span(gg),
-      mgis::python::mgis_convert_to_span(r));
+      mgis::python::mgis_convert_to_span(gg), convert_to_rotation_matrix(r));
 }  // end of rotate_tangent_operator_blocks_out_of_place
 
 void declareBehaviour() {
-  using mgis::behaviour::Behaviour;
   using mgis::behaviour::FiniteStrainBehaviourOptions;
+  using mgis::behaviour::Behaviour;
   using mgis::behaviour::Hypothesis;
-  Behaviour (*load_ptr)(const std::string &, const std::string &,
+  Behaviour (*load_ptr)(const std::string&, const std::string&,
                         const Hypothesis) = &mgis::behaviour::load;
-  Behaviour (*load_ptr2)(const FiniteStrainBehaviourOptions &,
-                         const std::string &, const std::string &,
-                         const Hypothesis) = &mgis::behaviour::load;
-  void (*setParameter1)(const Behaviour &, const std::string &, const double) =
+  Behaviour (*load_ptr2)(const FiniteStrainBehaviourOptions&,
+			 const std::string&, const std::string&,
+			 const Hypothesis) = &mgis::behaviour::load;
+  void (*setParameter1)(const Behaviour&, const std::string&, const double) =
       &mgis::behaviour::setParameter;
-  void (*setParameter2)(const Behaviour &, const std::string &, const int) =
+  void (*setParameter2)(const Behaviour&, const std::string&, const int) =
       &mgis::behaviour::setParameter;
-  void (*setParameter3)(const Behaviour &, const std::string &,
-                        const unsigned short) = &mgis::behaviour::setParameter;
-  double (*getParameterDefaultValue1)(const Behaviour &, const std::string &) =
+  void (*setParameter3)(const Behaviour&, const std::string&, const unsigned short) =
+      &mgis::behaviour::setParameter;
+  double (*getParameterDefaultValue1)(const Behaviour&, const std::string&) =
       &mgis::behaviour::getParameterDefaultValue<double>;
-  int (*getParameterDefaultValue2)(const Behaviour &, const std::string &) =
+  int (*getParameterDefaultValue2)(const Behaviour&, const std::string&) =
       &mgis::behaviour::getParameterDefaultValue<int>;
-  unsigned short (*getParameterDefaultValue3)(const Behaviour &,
-                                              const std::string &) =
+  unsigned short (*getParameterDefaultValue3)(const Behaviour&,
+                                              const std::string&) =
       &mgis::behaviour::getParameterDefaultValue<unsigned short>;
   bool (*hasBounds)(const Behaviour &, const std::string &) =
       mgis::behaviour::hasBounds;
@@ -322,27 +320,25 @@ void declareBehaviour() {
       .value("FiniteStrainKinematic_Eto_PK1",
              Behaviour::Kinematic::FINITESTRAINKINEMATIC_ETO_PK1);
   // wrapping the FiniteStrainBehaviourOptions::StressMeasure enum
-  boost::python::enum_<FiniteStrainBehaviourOptions::StressMeasure>(
-      "FiniteStrainBehaviourOptionsStressMeasure")
-      .value("CAUCHY", FiniteStrainBehaviourOptions::CAUCHY)
-      .value("PK1", FiniteStrainBehaviourOptions::PK1)
-      .value("PK2", FiniteStrainBehaviourOptions::PK2);
+  boost::python::enum_<FiniteStrainBehaviourOptions::StressMeasure>("FiniteStrainBehaviourOptionsStressMeasure")
+    .value("CAUCHY",FiniteStrainBehaviourOptions::CAUCHY)
+    .value("PK1",FiniteStrainBehaviourOptions::PK1)
+    .value("PK2",FiniteStrainBehaviourOptions::PK2)
+    ;
   // wrapping the FiniteStrainBehaviourOptions::TangentOperator enum
-  boost::python::enum_<FiniteStrainBehaviourOptions::TangentOperator>(
-      "FiniteStrainBehaviourOptionsTangentOperator")
-      .value("DSIG_DF", FiniteStrainBehaviourOptions::DSIG_DF)
-      .value("DCAUCHY_DF", FiniteStrainBehaviourOptions::DSIG_DF)
-      .value("DPK1_DF", FiniteStrainBehaviourOptions::DPK1_DF)
-      .value("DS_DEGL", FiniteStrainBehaviourOptions::DS_DEGL);
+  boost::python::enum_<FiniteStrainBehaviourOptions::TangentOperator>("FiniteStrainBehaviourOptionsTangentOperator")
+    .value("DSIG_DF",FiniteStrainBehaviourOptions::DSIG_DF)
+    .value("DCAUCHY_DF",FiniteStrainBehaviourOptions::DSIG_DF)
+    .value("DPK1_DF",FiniteStrainBehaviourOptions::DPK1_DF)
+    .value("DS_DEGL",FiniteStrainBehaviourOptions::DS_DEGL)
+    ;
   // wrapping the FiniteStrainBehaviourOptions class
-  boost::python::class_<FiniteStrainBehaviourOptions>(
-      "FiniteStrainBehaviourOptions")
-      .def_readwrite("stress_measure",
-                     &FiniteStrainBehaviourOptions::stress_measure,
-                     "defines the stress measure")
-      .def_readwrite("tangent_operator",
-                     &FiniteStrainBehaviourOptions::tangent_operator,
-                     "defines the tangent operator");
+  boost::python::class_<FiniteStrainBehaviourOptions>("FiniteStrainBehaviourOptions")
+    .def_readwrite("stress_measure", &FiniteStrainBehaviourOptions::stress_measure,
+		   "defines the stress measure")
+    .def_readwrite("tangent_operator", &FiniteStrainBehaviourOptions::tangent_operator,
+		   "defines the tangent operator")
+    ;
   // wrapping the Behaviour class
   boost::python::class_<Behaviour>("Behaviour")
       .def_readonly("library", &Behaviour::library,

@@ -77,7 +77,6 @@ class Gradient(QuadratureFunction):
         self.variable = variable
         if symmetric is None:
             self.expression = expression
-        # TODO: treat axisymmetric case
         elif symmetric:
             if ufl.shape(expression) == (2, 2):
                 self.expression = as_vector([symmetric_tensor_to_vector(expression)[i] for i in range(4)])
@@ -125,8 +124,8 @@ class Gradient(QuadratureFunction):
 
 class Var(Gradient):
     """ A simple variable """
-    def __init__(self, variable, expression, name):
-        Gradient.__init__(self, variable, expression, name)
+    # def __init__(self, variable, name):
+    #     return Gradient.__init__(self, variable, variable, name)
 
     def _evaluate_at_quadrature_points(self, x):
         local_project(x, self.function_space, self.dx, self.function)
