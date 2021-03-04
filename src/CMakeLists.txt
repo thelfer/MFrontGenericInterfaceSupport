@@ -3,9 +3,11 @@ mgis_library(MFrontGenericInterface SHARED
 	  ThreadedTaskResult.cxx
 	  LibrariesManager.cxx
       Markdown.cxx
+	  MatrixView.cxx
 	  Variable.cxx
 	  Hypothesis.cxx
 	  Behaviour.cxx
+	  ChangeBasis.cxx
 	  State.cxx
 	  BehaviourData.cxx
 	  MaterialStateManager.cxx

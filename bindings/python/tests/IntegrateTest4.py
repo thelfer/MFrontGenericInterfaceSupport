@@ -9,7 +9,7 @@ except ImportError:
 import mgis.behaviour as mgis_bv
 
 
-class IntegrateTest4(unittest.TestCase):
+class IntegrateTest2(unittest.TestCase):
 
     def test_pass(self):
 

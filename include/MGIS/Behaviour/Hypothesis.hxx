@@ -18,66 +18,70 @@
 #include <string>
 #include "MGIS/Config.hxx"
 
-namespace mgis::behaviour {
+namespace mgis {
 
-  //! \brief the list of supported modelling hypotheses
-  enum struct Hypothesis {
-    AXISYMMETRICALGENERALISEDPLANESTRAIN,
-    AXISYMMETRICALGENERALISEDPLANESTRESS,
-    AXISYMMETRICAL,
-    PLANESTRESS,
-    PLANESTRAIN,
-    GENERALISEDPLANESTRAIN,
-    TRIDIMENSIONAL
-  };  // end of enum Hypothesis
+  namespace behaviour {
 
-  /*!
-   * \return the dimension of the space associated to the given hypothesis.
-   * \param[in] h: modelling hypothesis
-   */
-  MGIS_EXPORT size_type getSpaceDimension(const Hypothesis);
-  /*!
-   * \return the size of a symmetric tensor in the given hypothesis.
-   * \param[in] h: modelling hypothesis
-   */
-  MGIS_EXPORT size_type getStensorSize(const Hypothesis);
-  /*!
-   * \return the size of a tensor in the given hypothesis
-   * \param[in] h: modelling hypothesis
-   */
-  MGIS_EXPORT size_type getTensorSize(const Hypothesis);
-  /*!
-   * \return the string associated to the given hypothesis
-   * \param[in] h: modelling hypothesis
-   */
-  MGIS_EXPORT const char* toString(const Hypothesis);
-  /*!
-   * \return the hypothesis described by the given string.
-   * \param[in] h: modelling hypothesis
-   * \note valid values are:
-   * - `AxisymmetricalGeneralisedPlaneStrain`
-   * - `AxisymmetricalGeneralisedPlaneStress`
-   * - `Axisymmetrical`
-   * - `PlaneStress`
-   * - `PlaneStrain`
-   * - `GeneralisedPlaneStrain`
-   * - `Tridimensional`
-   */
-  MGIS_EXPORT Hypothesis fromString(const char* const);
-  /*!
-   * \return the hypothesis described by the given string.
-   * \param[in] h: modelling hypothesis
-   * \note valid values are:
-   * - `AxisymmetricalGeneralisedPlaneStrain`
-   * - `AxisymmetricalGeneralisedPlaneStress`
-   * - `Axisymmetrical`
-   * - `PlaneStress`
-   * - `PlaneStrain`
-   * - `GeneralisedPlaneStrain`
-   * - `Tridimensional`
-   */
-  MGIS_EXPORT Hypothesis fromString(const std::string&);
+    //! \brief the list of supported modelling hypotheses
+    enum struct Hypothesis {
+      AXISYMMETRICALGENERALISEDPLANESTRAIN,
+      AXISYMMETRICALGENERALISEDPLANESTRESS,
+      AXISYMMETRICAL,
+      PLANESTRESS,
+      PLANESTRAIN,
+      GENERALISEDPLANESTRAIN,
+      TRIDIMENSIONAL
+    };  // end of enum Hypothesis
 
-}  // end of namespace mgis::behaviour
+    /*!
+     * \return the dimension of the space associated to the given hypothesis.
+     * \param[in] h: modelling hypothesis
+     */
+    MGIS_EXPORT size_type getSpaceDimension(const Hypothesis);
+    /*!
+     * \return the size of a symmetric tensor in the given hypothesis.
+     * \param[in] h: modelling hypothesis
+     */
+    MGIS_EXPORT size_type getStensorSize(const Hypothesis);
+    /*!
+     * \return the size of a tensor in the given hypothesis
+     * \param[in] h: modelling hypothesis
+     */
+    MGIS_EXPORT size_type getTensorSize(const Hypothesis);
+    /*!
+     * \return the string associated to the given hypothesis
+     * \param[in] h: modelling hypothesis
+     */
+    MGIS_EXPORT const char* toString(const Hypothesis);
+    /*!
+     * \return the hypothesis described by the given string.
+     * \param[in] h: modelling hypothesis
+     * \note valid values are:
+     * - `AxisymmetricalGeneralisedPlaneStrain`
+     * - `AxisymmetricalGeneralisedPlaneStress`
+     * - `Axisymmetrical`
+     * - `PlaneStress`
+     * - `PlaneStrain`
+     * - `GeneralisedPlaneStrain`
+     * - `Tridimensional`
+     */
+    MGIS_EXPORT Hypothesis fromString(const char* const);
+    /*!
+     * \return the hypothesis described by the given string.
+     * \param[in] h: modelling hypothesis
+     * \note valid values are:
+     * - `AxisymmetricalGeneralisedPlaneStrain`
+     * - `AxisymmetricalGeneralisedPlaneStress`
+     * - `Axisymmetrical`
+     * - `PlaneStress`
+     * - `PlaneStrain`
+     * - `GeneralisedPlaneStrain`
+     * - `Tridimensional`
+     */
+    MGIS_EXPORT Hypothesis fromString(const std::string&);
+
+  }  // end of namespace behaviour
+
+}  // end of namespace mgis
 
 #endif /* LIB_MGIS_BEHAVIOUR_HYPOTHESIS_HXX */

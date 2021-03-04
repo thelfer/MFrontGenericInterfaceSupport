@@ -28,15 +28,15 @@ extern "C" {
 /*!
  * \brief state of the material
  */
-typedef struct {
+typedef struct{
   //! \brief value of the gradients
   const mgis_real* gradients;
   //! \brief values of the thermodynamic_forces
-  mgis_real* thermodynamic_forces;
+  mgis_real * thermodynamic_forces;
   //! \brief values of the material properties
   const mgis_real* material_properties;
   //! \brief values of the internal state variables
-  mgis_real* internal_state_variables;
+  mgis_real * internal_state_variables;
   /*!
    * \brief stored energy (computed by `@InternalEnergy` in `MFront`
    * files) This output is optional.
@@ -54,7 +54,7 @@ typedef struct {
 /*!
  * \brief state of the material
  */
-typedef struct {
+typedef struct{
   //! \brief value of the gradients
   const mgis_real* gradients;
   //! \brief values of the thermodynamic_forces
@@ -83,14 +83,18 @@ typedef struct {
 
 #ifdef __cplusplus
 
-namespace mgis::behaviour {
+namespace mgis {
 
-  //! a simple alias
-  using StateView = ::mgis_bv_StateView;
-  //! a simple alias
-  using InitialStateView = ::mgis_bv_InitialStateView;
+  namespace behaviour {
 
-}  // end of namespace mgis::behaviour
+    //! a simple alias
+    using StateView = ::mgis_bv_StateView;
+    //! a simple alias
+    using InitialStateView = ::mgis_bv_InitialStateView;
+
+  }  // end of namespace behaviour
+
+}  // end of namespace mgis
 
 #endif /* __cplusplus */
 

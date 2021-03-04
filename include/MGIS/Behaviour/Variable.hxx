@@ -21,61 +21,65 @@
 #include "MGIS/StringView.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
 
-namespace mgis::behaviour {
+namespace mgis {
 
-  /*!
-   * \brief structure describing a variable
-   */
-  struct Variable {
-    //! \brief name of the variable
-    std::string name;
-    //! \brief type of the variable
-    enum Type { SCALAR = 0, VECTOR = 1, STENSOR = 2, TENSOR = 3 } type;
-  };  // end of struct Variable
+  namespace behaviour {
 
-  /*!
-   * \return a boolean stating that a variable with the given name
-   * is in the container.
-   * \param[in] vs: variables
-   * \param[in] n: name
-   */
-  MGIS_EXPORT bool contains(const std::vector<Variable> &, const string_view);
-  /*!
-   * \return the variable with the given name
-   * \param[in] vs: variables
-   * \param[in] n: name
-   */
-  MGIS_EXPORT const Variable &getVariable(const std::vector<Variable> &,
-                                          const string_view);
-  /*!
-   * \return the size of a variable
-   * \param[in] v: variable
-   * \param[in] h: modelling hypothesis
-   */
-  MGIS_EXPORT size_type getVariableSize(const Variable &, const Hypothesis);
-  /*!
-   * \return the size of an array that may contain the values described by the
-   * given array of variables
-   * \param[in] vs: variables
-   * \param[in] h: modelling hypothesis
-   */
-  MGIS_EXPORT size_type getArraySize(const std::vector<Variable> &,
-                                     const Hypothesis);
-  /*!
-   * \return the offset of the given variable for the given hypothesis
-   * \param[in] vs: variables
-   * \param[in] n: variable name
-   * \param[in] h: modelling hypothesis
-   */
-  MGIS_EXPORT size_type getVariableOffset(const std::vector<Variable> &,
-                                          const string_view,
-                                          const Hypothesis);
-  /*!
-   * \return the type of the given variable as a string
-   * \param[in] v: variable
-   */
-  MGIS_EXPORT std::string getVariableTypeAsString(const Variable &);
+    /*!
+     * \brief structure describing a variable
+     */
+    struct Variable {
+      //! \brief name of the variable
+      std::string name;
+      //! \brief type of the variable
+      enum Type { SCALAR = 0, VECTOR = 1, STENSOR = 2, TENSOR = 3 } type;
+    };  // end of struct Variable
 
-}  // end of namespace mgis::behaviour
+    /*!
+     * \return a boolean stating that a variable with the given name
+     * is in the container.
+     * \param[in] vs: variables
+     * \param[in] n: name
+     */
+    MGIS_EXPORT bool contains(const std::vector<Variable> &, const string_view);
+    /*!
+     * \return the variable with the given name
+     * \param[in] vs: variables
+     * \param[in] n: name
+     */
+    MGIS_EXPORT const Variable &getVariable(const std::vector<Variable> &,
+                                            const string_view);
+    /*!
+     * \return the size of a variable
+     * \param[in] v: variable
+     * \param[in] h: modelling hypothesis
+     */
+    MGIS_EXPORT size_type getVariableSize(const Variable &, const Hypothesis);
+    /*!
+     * \return the size of an array that may contain the values described by the
+     * given array of variables
+     * \param[in] vs: variables
+     * \param[in] h: modelling hypothesis
+     */
+    MGIS_EXPORT size_type getArraySize(const std::vector<Variable> &,
+                                       const Hypothesis);
+    /*!
+     * \return the offset of the given variable for the given hypothesis
+     * \param[in] vs: variables
+     * \param[in] n: variable name
+     * \param[in] h: modelling hypothesis
+     */
+    MGIS_EXPORT size_type getVariableOffset(const std::vector<Variable> &,
+                                            const string_view,
+                                            const Hypothesis);
+    /*!
+     * \return the type of the given variable as a string
+     * \param[in] v: variable
+     */
+    MGIS_EXPORT std::string getVariableTypeAsString(const Variable &);
+
+    }  // end of namespace behaviour
+
+}  // end of namespace mgis
 
 #endif /* LIB_MGIS_BEHAVIOUR_VARIABLE_HXX */
