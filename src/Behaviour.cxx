@@ -499,14 +499,13 @@ namespace mgis::behaviour {
 
   static mgis::size_type checkRotateFunctionInputs(
       const char *const m,
-      const Behaviour &b,
       const mgis::span<const real> &mv,
-      const mgis::span<const real> &gv) {
+      const mgis::span<const real> &gv,
+      const mgis::size_type vsize) {
     if (gv.size() == 0) {
       mgis::raise(std::string(m) + ": no values given for the gradients");
     }
-    const auto gsize = getArraySize(b.gradients, b.hypothesis);
-    auto dv = std::div(gv.size(), gsize);
+    auto dv = std::div(gv.size(), vsize);
     if (dv.rem != 0) {
       mgis::raise(std::string(m) +
                   ": invalid array size in the global frame "
@@ -576,7 +575,9 @@ namespace mgis::behaviour {
                        const mgis::span<const real> &gg,
                        const mgis::span<const real> &r) {
     checkBehaviourRotateGradients(b);
-    const auto nipts = checkRotateFunctionInputs("rotateGradients", b, mg, gg);
+    const auto gsize = getArraySize(b.gradients, b.hypothesis);
+    const auto nipts = checkRotateFunctionInputs(
+        "rotateGradients", mg, gg, gsize);
     if (r.size() == 0) {
       mgis::raise("rotateGradients: no values given for the rotation matrices");
     }
@@ -595,7 +596,6 @@ namespace mgis::behaviour {
             "the number of integration points for the rotation matrices (" +
             std::to_string(nipts) + " vs " + std::to_string(rdv.quot) + ")");
       }
-      const auto gsize = getArraySize(b.gradients, b.hypothesis);
       for (size_type i = 0; i != nipts; ++i) {
         const auto o = i * gsize;
         b.rotate_gradients_ptr(mg.data() + o, gg.data() + o, r.data() + i * 9);
@@ -608,13 +608,14 @@ namespace mgis::behaviour {
                        const mgis::span<const real> &gg,
                        const RotationMatrix2D &r) {
     checkBehaviourRotateGradients(b);
-    const auto nipts = checkRotateFunctionInputs("rotateGradients", b, mg, gg);
+    const auto gsize = getArraySize(b.gradients, b.hypothesis);
+    const auto nipts =
+        checkRotateFunctionInputs("rotateGradients", mg, gg, gsize);
     checkRotationMatrix2D("rotateGradients", r, b, nipts);
     if (r.a.size() == 2u) {
       const auto m = buildRotationMatrix(r.a.data());
       b.rotate_array_of_gradients_ptr(mg.data(), gg.data(), m.data(), nipts);
     } else {
-      const auto gsize = getArraySize(b.gradients, b.hypothesis);
       for (size_type i = 0; i != nipts; ++i) {
         const auto m = buildRotationMatrix(r.a.data() + 2 * i);
         const auto o = i * gsize;
@@ -628,7 +629,9 @@ namespace mgis::behaviour {
                        const mgis::span<const real> &gg,
                        const RotationMatrix3D &r) {
     checkBehaviourRotateGradients(b);
-    const auto nipts = checkRotateFunctionInputs("rotateGradients", b, mg, gg);
+    const auto gsize = getArraySize(b.gradients, b.hypothesis);
+    const auto nipts =
+        checkRotateFunctionInputs("rotateGradients", mg, gg, gsize);
     checkRotationMatrix3D("rotateGradients", r, b, nipts);
     if ((r.a1.a.size() == 3u) && ((r.a2.a.size() == 3u))) {
       const auto m = buildRotationMatrix(r.a1.a.data(), r.a2.a.data());
@@ -636,7 +639,6 @@ namespace mgis::behaviour {
     } else {
       const auto o1 = (r.a1.a.size() == 3u) ? 0u : 3u;
       const auto o2 = (r.a2.a.size() == 3u) ? 0u : 3u;
-      const auto gsize = getArraySize(b.gradients, b.hypothesis);
       for (size_type i = 0; i != nipts; ++i) {
         const auto m = buildRotationMatrix(r.a1.a.data() + o1 * i,  //
                                            r.a2.a.data() + o2 * i);
@@ -678,18 +680,18 @@ namespace mgis::behaviour {
                                  const mgis::span<const real> &mtf,
                                  const mgis::span<const real> &r) {
     checkBehaviourRotateThermodynamicForces(b);
-    const auto nipts =
-        checkRotateFunctionInputs("rotateThermodynamicForces", b, mtf, gtf);
+    const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
+    const auto nipts = checkRotateFunctionInputs("rotateThermodynamicForces",
+                                                 mtf, gtf, tfsize);
     if (r.size() == 0) {
       mgis::raise(
           "rotateThermodynamicForces: "
           "no values given for the rotation matrices");
     }
-    const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
     auto rdv = std::div(r.size(), size_type{9});
     if (rdv.rem != 0) {
       mgis::raise(
-          "rotateTangentOperatorBlocks: "
+          "rotateThermodynamicForces: "
           "invalid size for the rotation matrix array");
     }
     if (rdv.quot == 1) {
@@ -698,7 +700,8 @@ namespace mgis::behaviour {
     } else {
       if (rdv.quot != nipts) {
         mgis::raise(
-            "the number of integration points for the thermodynamic forces "
+            "rotateThermodynamicForces: "
+	    "the number of integration points for the thermodynamic forces "
             "does not match the number of integration points for the rotation "
             "matrices (" +
             std::to_string(nipts) + " vs " + std::to_string(rdv.quot) + ")");
@@ -716,15 +719,15 @@ namespace mgis::behaviour {
                                  const mgis::span<const real> &mtf,
                                  const RotationMatrix2D &r) {
     checkBehaviourRotateThermodynamicForces(b);
-    const auto nipts =
-        checkRotateFunctionInputs("rotateThermodynamicForces", b, gtf, mtf);
+    const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
+    const auto nipts = checkRotateFunctionInputs("rotateThermodynamicForces",
+                                                 gtf, mtf, tfsize);
     checkRotationMatrix2D("rotateThermodynamicForces", r, b, nipts);
     if (r.a.size() == 2u) {
       const auto m = buildRotationMatrix(r.a.data());
       b.rotate_array_of_thermodynamic_forces_ptr(gtf.data(), mtf.data(),
                                                  m.data(), nipts);
     } else {
-      const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
       for (size_type i = 0; i != nipts; ++i) {
         const auto m = buildRotationMatrix(r.a.data() + 2 * i);
         const auto o = i * tfsize;
@@ -739,8 +742,9 @@ namespace mgis::behaviour {
                                  const mgis::span<const real> &mtf,
                                  const RotationMatrix3D &r) {
     checkBehaviourRotateThermodynamicForces(b);
-    const auto nipts =
-        checkRotateFunctionInputs("rotateThermodynamicForces", b, gtf, mtf);
+    const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
+    const auto nipts = checkRotateFunctionInputs("rotateThermodynamicForces",
+                                                 gtf, mtf, tfsize);
     checkRotationMatrix3D("rotateThermodynamicForces", r, b, nipts);
     if ((r.a1.a.size() == 3u) && ((r.a2.a.size() == 3u))) {
       const auto m = buildRotationMatrix(r.a1.a.data(), r.a2.a.data());
@@ -749,7 +753,6 @@ namespace mgis::behaviour {
     } else {
       const auto o1 = (r.a1.a.size() == 3u) ? 0u : 3u;
       const auto o2 = (r.a2.a.size() == 3u) ? 0u : 3u;
-      const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
       for (size_type i = 0; i != nipts; ++i) {
         const auto m = buildRotationMatrix(r.a1.a.data() + o1 * i,  //
                                            r.a2.a.data() + o2 * i);
@@ -792,14 +795,14 @@ namespace mgis::behaviour {
                                    const mgis::span<const real> &mK,
                                    const mgis::span<const real> &r) {
     checkBehaviourRotateTangentOperatorBlocks(b);
+    const auto Ksize = getTangentOperatorArraySize(b);
     const auto nipts =
-        checkRotateFunctionInputs("rotateTangentOperatorBlocks", b, mK, gK);
+        checkRotateFunctionInputs("rotateTangentOperatorBlocks", mK, gK, Ksize);
     if (r.size() == 0) {
       mgis::raise(
           "rotateTangentOperatorBlocks: "
           "empty array for the rotation matrix");
     }
-    const auto Ksize = getTangentOperatorArraySize(b);
     if (mK.size() != gK.size()) {
       mgis::raise("rotateTangentOperatorBlocks: unmatched array sizes");
     }
@@ -833,15 +836,15 @@ namespace mgis::behaviour {
                                    const mgis::span<const real> &mK,
                                    const RotationMatrix2D &r) {
     checkBehaviourRotateTangentOperatorBlocks(b);
-    const auto nipts =
-        checkRotateFunctionInputs("rotateTangentOperatorBlocks", b, gK, mK);
-    checkRotationMatrix2D("rotateTangentOperatorBlocks", r, b, nipts);
-    if (r.a.size() == 2u) {
-      const auto m = buildRotationMatrix(r.a.data());
-      b.rotate_array_of_tangent_operator_blocks_ptr(gK.data(), mK.data(),
-                                                    m.data(), nipts);
-    } else {
       const auto Ksize = getTangentOperatorArraySize(b);
+      const auto nipts = checkRotateFunctionInputs(
+          "rotateTangentOperatorBlocks", gK, mK, Ksize);
+      checkRotationMatrix2D("rotateTangentOperatorBlocks", r, b, nipts);
+      if (r.a.size() == 2u) {
+        const auto m = buildRotationMatrix(r.a.data());
+        b.rotate_array_of_tangent_operator_blocks_ptr(gK.data(), mK.data(),
+                                                      m.data(), nipts);
+    } else {
       for (size_type i = 0; i != nipts; ++i) {
         const auto m = buildRotationMatrix(r.a.data() + 2 * i);
         const auto o = i * Ksize;
@@ -856,8 +859,9 @@ namespace mgis::behaviour {
                                    const mgis::span<const real> &mK,
                                    const RotationMatrix3D &r) {
     checkBehaviourRotateTangentOperatorBlocks(b);
+    const auto Ksize = getTangentOperatorArraySize(b);
     const auto nipts =
-        checkRotateFunctionInputs("rotateTangentOperatorBlocks", b, gK, mK);
+        checkRotateFunctionInputs("rotateTangentOperatorBlocks", gK, mK, Ksize);
     checkRotationMatrix3D("rotateTangentOperatorBlocks", r, b, nipts);
     if ((r.a1.a.size() == 3u) && ((r.a2.a.size() == 3u))) {
       const auto m = buildRotationMatrix(r.a1.a.data(), r.a2.a.data());
@@ -866,7 +870,6 @@ namespace mgis::behaviour {
     } else {
       const auto o1 = (r.a1.a.size() == 3u) ? 0u : 3u;
       const auto o2 = (r.a2.a.size() == 3u) ? 0u : 3u;
-      const auto Ksize = getTangentOperatorArraySize(b);
       for (size_type i = 0; i != nipts; ++i) {
         const auto m = buildRotationMatrix(r.a1.a.data() + o1 * i,  //
                                            r.a2.a.data() + o2 * i);
