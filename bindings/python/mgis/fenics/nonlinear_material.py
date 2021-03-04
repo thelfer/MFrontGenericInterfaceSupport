@@ -110,6 +110,7 @@ class MFrontNonlinearMaterial:
                 mgis_bv.setExternalStateVariable(s, key, float(value))
             else:
                 if isinstance(value, Var):
+                    value.update()
                     values = value.function.vector().get_local()
                 else:
                     values = compute_on_quadrature(value, mesh, degree).vector().get_local()
