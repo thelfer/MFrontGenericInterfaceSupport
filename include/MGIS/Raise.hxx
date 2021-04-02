@@ -21,6 +21,37 @@
 
 namespace mgis {
 
+  //! \brief a simple alias
+  using ExceptionHandler = void (*)(void);
+
+  /*!
+   * \brief set an exception handler
+   * \param[in] h: exception handler
+   *
+   * \code{.cpp}
+   * void handler() {
+   *   try {
+   *     throw;
+   *   } catch (std::exception& e) {
+   *     std::cerr << e.what() << '\n';
+   *   } catch (...) {
+   *     std::cerr << "unknown exception thrown";
+   *   }
+   *   std::abort();
+   * }  // end of handler
+   *
+   * mgis::setExceptionHandler(handler);
+   * mgis::raise<std::logic_error>("something went wrong");
+   * \endcode
+   */
+  MGIS_EXPORT void setExceptionHandler(ExceptionHandler);
+
+  /*!
+   * \brief return a registred exception handler, nullptr if none were
+   * registred.
+   */
+  MGIS_EXPORT ExceptionHandler getExceptionHandler();
+
   /*!
    * \brief a small wrapper used to build the exception outside the
    * `throw` statement. As most exception's classes constructors may
