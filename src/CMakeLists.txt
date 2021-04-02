@@ -1,5 +1,6 @@
 mgis_library(MFrontGenericInterface SHARED
-	  ThreadPool.cxx
+  Raise.cxx
+  ThreadPool.cxx
 	  ThreadedTaskResult.cxx
 	  LibrariesManager.cxx
       Markdown.cxx

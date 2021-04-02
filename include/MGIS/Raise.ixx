@@ -15,18 +15,42 @@
 #ifndef LIB_MGIS_RAISE_IXX
 #define LIB_MGIS_RAISE_IXX
 
+#include <cstdlib>
+
 namespace mgis {
 
   template <typename Exception>
   void raise() {
-    Exception e;
-    throw(std::move(e));
+    const auto h = getExceptionHandler();
+    if (h != nullptr) {
+      try {
+        Exception e;
+        throw(std::move(e));
+      } catch (...) {
+        h();
+      }
+      std::abort();
+    } else {
+      Exception e;
+      throw(std::move(e));
+    }
   }  // end of raise
 
   template <typename Exception, typename... Args>
   void raise(Args&&... a) {
-    Exception e(std::forward<Args...>(a...));
-    throw(std::move(e));
+    const auto h = getExceptionHandler();
+    if (h != nullptr) {
+      try {
+        Exception e(std::forward<Args...>(a...));
+        throw(std::move(e));
+      } catch (...) {
+        h();
+      }
+      std::abort();
+    } else {
+      Exception e(std::forward<Args...>(a...));
+      throw(std::move(e));
+    }
   }  // end of raise
 
   template <typename Exception>
