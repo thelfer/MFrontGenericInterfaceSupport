@@ -61,7 +61,7 @@ class AbstractNonlinearProblem:
         # compute Gauss points numbers
         self.ngauss = Function(self.W0).vector().local_size()
         # Set data manager
-        self.material.set_data_manager(self.ngauss)
+        self.material.set_data_manager(self.quadrature_degree, self.ngauss, self.mesh)
         # dummy function used for computing global quantity
         self._dummy_function = Function(self.W0)
 
@@ -89,6 +89,14 @@ class AbstractNonlinearProblem:
         self._init = True
 
         self.dt = 0
+
+        if self.material.rotation_matrix is not None:
+            if isinstance(self.material.rotation_matrix, (list, tuple, np.ndarray)):
+                self.rotation_values = np.asarray(self.material.rotation_matrix).ravel()
+            else:
+                self.rotation_values = compute_on_quadrature(self.material.rotation_matrix,
+                                                             self.mesh, self.quadrature_degree)
+                self.rotation_values = self.rotation_values.vector().get_local()
 
         self.state_variables =  {"internal": None,
                                  "external": dict.fromkeys(self.material.get_external_state_variable_names(), None)}
@@ -194,12 +202,9 @@ class AbstractNonlinearProblem:
         vtype = self.material.behaviour.external_state_variables[pos].type
         if vtype != mgis_bv.VariableType.Scalar:
             raise NotImplementedError("Only scalar external state variables are handled")
-        if isinstance(expression, Constant):
-            self.state_variables["external"].update({name: expression})
-        elif type(expression) == float:
-            self.state_variables["external"].update({name: Constant(expression)})
-        else:
-            self.state_variables["external"].update({name: Var(self.u, expression, name)})
+        if type(expression) == float:
+            expression = Constant(expression)
+        self.state_variables["external"].update({name: Var(self.u, expression, name)})
 
     def set_loading(self, Fext):
         """
@@ -212,38 +217,20 @@ class AbstractNonlinearProblem:
         """
         self._Fext = ufl.replace(Fext, {self.u: self.u_})
 
-    def set_quadrature_function_spaces(self):
-        cell = self.mesh.ufl_cell()
-        W0e = get_quadrature_element(cell, self.quadrature_degree)
-        # scalar quadrature space
-        self.W0 = FunctionSpace(self.mesh, W0e)
-        # compute Gauss points numbers
-        self.ngauss = Function(self.W0).vector().local_size()
-        # Set data manager
-        self.material.set_data_manager(self.ngauss)
-
-        # Get strain measure dimension
-        self.strain_dim = ufl.shape(self.strain_measure(self.u))[0]
-        # Define quadrature spaces for stress/strain and tangent matrix
-        Wsige = get_quadrature_element(cell, self.quadrature_degree, self.strain_dim)
-        # stress/strain quadrature space
-        self.Wsig = FunctionSpace(self.mesh, Wsige)
-        Wce = get_quadrature_element(cell, self.quadrature_degree, (self.strain_dim, self.strain_dim))
-        # tangent matrix quadrature space
-        self.WCt = FunctionSpace(self.mesh, Wce)
-
     def initialize_external_state_variables(self):
         for (s, size) in zip(self.material.get_external_state_variable_names(), self.material.get_external_state_variable_sizes()):
             state_var = self.state_variables["external"][s]
-            if isinstance(state_var, Gradient):
-                state_var.initialize_function(self.mesh, self.quadrature_degree)
-                values = state_var.function.vector().get_local()
-                mgis_bv.setExternalStateVariable(self.material.data_manager.s0, s,
-                                                 values, mgis_bv.MaterialStateManagerStorageMode.LocalStorage)
-            elif isinstance(state_var, Constant):
+            if isinstance(state_var, Constant):
                 mgis_bv.setExternalStateVariable(self.material.data_manager.s0, s, float(state_var))
             else:
-                raise ValueError("External state variable '{}' has not been registered.".format(s))
+                if isinstance(state_var, Var):
+                    state_var.initialize_function(self.mesh, self.quadrature_degree)
+                    values = state_var.function.vector().get_local()
+                else:
+                    values = compute_on_quadrature(state_var, self.mesh,
+                                               self.quadrature_degree).vector().get_local()
+                mgis_bv.setExternalStateVariable(self.material.data_manager.s0, s,
+                                                 values, mgis_bv.MaterialStateManagerStorageMode.LocalStorage)
 
     def initialize_gradients(self):
         buff=0
@@ -287,7 +274,7 @@ class AbstractNonlinearProblem:
                     except:
                         value = self.state_variables["external"].get(t[1], None)
                         if value is not None and isinstance(value, Var):
-                                flux_gradients.append(value)
+                            flux_gradients.append(value)
                         else:
                             raise ValueError("'{}' could not be associated with a registered gradient or state variable.".format(t[1]))
             self.fluxes[f].initialize_tangent_blocks(flux_gradients)
@@ -347,7 +334,11 @@ class AbstractNonlinearProblem:
                 except KeyError:
                     raise KeyError("'{}' could not be found as a flux or an internal state variable.")
             block_shape = self.flattened_block_shapes[i]
-            t.vector().set_local(self.material.data_manager.K[:,buff:buff+block_shape].flatten())
+            tang_block_vals = self.material.data_manager.K[:,buff:buff+block_shape].ravel()
+            if self.material.rotation_matrix is not None:
+                mgis_bv.rotateTangentOperatorBlocks(tang_block_vals, self.material.behaviour,
+                                                    self.rotation_values)
+            t.vector().set_local(tang_block_vals)
             buff += block_shape
 
     def update_fluxes(self):
@@ -355,7 +346,11 @@ class AbstractNonlinearProblem:
         for (i, f) in enumerate(self.material.get_flux_names()):
             flux = self.fluxes[f]
             block_shape = self.material.get_flux_sizes()[i]
-            flux.function.vector().set_local(self.material.data_manager.s1.thermodynamic_forces[:,buff:buff+block_shape].flatten())
+            flux_vals = self.material.data_manager.s1.thermodynamic_forces[:,buff:buff+block_shape].ravel()
+            if self.material.rotation_matrix is not None:
+                mgis_bv.rotateThermodynamicForces(flux_vals, self.material.behaviour,
+                                                  self.rotation_values)
+            flux.function.vector().set_local(flux_vals)
             buff += block_shape
 
     def update_gradients(self):
@@ -365,6 +360,9 @@ class AbstractNonlinearProblem:
             gradient.update()
             block_shape = self.material.get_gradient_sizes()[i]
             grad_vals = gradient.function.vector().get_local()
+            if self.material.rotation_matrix is not None:
+                mgis_bv.rotateGradients(grad_vals, self.material.behaviour,
+                                        self.rotation_values)
             if gradient.shape > 0:
                 grad_vals = grad_vals.reshape((self.material.data_manager.n, gradient.shape))
             else:
@@ -384,7 +382,8 @@ class AbstractNonlinearProblem:
     def update_constitutive_law(self):
         """Performs the consitutive law update"""
         self.update_gradients()
-        self.material.update_external_state_variables(self.state_variables["external"])
+        self.material.update_external_state_variables(self.quadrature_degree, self.mesh,
+                                                      self.state_variables["external"])
         # integrate the behaviour
         mgis_bv.integrate(self.material.data_manager, self.integration_type,
                           self.dt, 0, self.material.data_manager.n);
