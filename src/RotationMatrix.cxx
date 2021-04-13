@@ -1,6 +1,6 @@
 /*!
  * \file   src/RotationMatrix.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   17/02/2021
  */
@@ -49,7 +49,7 @@ namespace mgis::behaviour {
           "invalid number of values for material axis in 2D");
     }
     return v;
-  } // end of checkMaterialAxis3D
+  }  // end of checkMaterialAxis3D
 
   RotationMatrix2D::RotationMatrix2D(const mgis::span<const mgis::real>& v,
                                      const mgis::StorageMode& s)
@@ -71,7 +71,7 @@ namespace mgis::behaviour {
           "invalid number of values for material axis in 3D");
     }
     return v;
-  } // end of checkMaterialAxis3D
+  }  // end of checkMaterialAxis3D
 
   RotationMatrix3D::RotationMatrix3D(const mgis::span<const mgis::real>& v1,
                                      const mgis::StorageMode& s1,
@@ -92,4 +92,4 @@ namespace mgis::behaviour {
 
   RotationMatrix3D::~RotationMatrix3D() = default;
 
-} // end of namespace mgis::behaviour
+}  // end of namespace mgis::behaviour

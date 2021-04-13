@@ -9,7 +9,6 @@ import mgis.behaviour as mgis_bv
 
 
 class IntegrateTest(unittest.TestCase):
-
     def test_pass(self):
 
         stress_options = mgis_bv.FiniteStrainBehaviourOptionsStressMeasure
@@ -32,8 +31,9 @@ class IntegrateTest(unittest.TestCase):
                         'invalid gradient type')
         self.assertTrue(b.gradients[0].type == mgis_bv.VariableType.Tensor,
                         'invalid gradient type')
-        self.assertTrue(len(b.thermodynamic_forces) == 1,
-                        'invalid number of thermodynamic_forces')
+        self.assertTrue(
+            len(b.thermodynamic_forces) == 1,
+            'invalid number of thermodynamic_forces')
         pk1 = b.thermodynamic_forces[0]
         self.assertTrue(pk1.name == 'FirstPiolaKirchhoffStress',
                         'invalid thermodynamic force  name')

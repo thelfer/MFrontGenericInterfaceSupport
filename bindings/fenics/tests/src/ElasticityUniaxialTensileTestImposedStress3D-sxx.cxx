@@ -1,5 +1,6 @@
 /*!
- * \file   bindings/fenics/tests/ElasticityUniaxialTensileTestImposedStress3D-sxx.cxx
+ * \file
+ * bindings/fenics/tests/ElasticityUniaxialTensileTestImposedStress3D-sxx.cxx
  * \brief  This program tests the elastic response of an unit cube.
  * \date   14/12/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -43,20 +44,20 @@
 struct Load : public dolfin::Expression {
   Load(const double& t_) : dolfin::Expression(3), t(t_) {}
   void eval(Eigen::Ref<Eigen::VectorXd> values,
-	    Eigen::Ref<const Eigen::VectorXd>) const override{
+            Eigen::Ref<const Eigen::VectorXd>) const override {
     values[0] = 100e6 * t;
     values[1] = values[2] = 0.0;
   }
   ~Load() override = default;
-private:
+
+ private:
   const double& t;
 };
 
-
-int main(){
+int main() {
   // getting the path to the test library
   auto library = std::getenv("MGIS_TEST_BEHAVIOURS_LIBRARY");
-  if(library==nullptr){
+  if (library == nullptr) {
     std::exit(EXIT_FAILURE);
   }
   // create mesh and boundaries
@@ -86,12 +87,16 @@ int main(){
   auto boundary_load = std::make_shared<Load>(t);
 
   std::vector<std::shared_ptr<const dolfin::DirichletBC>> bcs;
-  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(0), zero, boundaries["sx1"]));
-  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(1), zero, boundaries["sy1"]));
-  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(2), zero, boundaries["sz1"]));
+  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(0), zero,
+                                                      boundaries["sx1"]));
+  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(1), zero,
+                                                      boundaries["sy1"]));
+  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(2), zero,
+                                                      boundaries["sz1"]));
 
   // Mark loading boundary
-  auto load_marker = std::make_shared<dolfin::MeshFunction<std::size_t>>(mesh,mesh->topology().dim()-1, 0);
+  auto load_marker = std::make_shared<dolfin::MeshFunction<std::size_t>>(
+      mesh, mesh->topology().dim() - 1, 0);
   boundaries["sx2"]->mark(*load_marker, 1);
 
   // Solution function
@@ -99,19 +104,19 @@ int main(){
 
   auto b = mgis::behaviour::load(library, "Elasticity",
                                  mgis::behaviour::Hypothesis::TRIDIMENSIONAL);
-  mgis::fenics::NonLinearMaterial m(u,element_t,element_s,b);
+  mgis::fenics::NonLinearMaterial m(u, element_t, element_s, b);
   const auto yg = 150e9;
   const auto nu = 0.3;
   setMaterialProperty(m.s0, "YoungModulus", yg);
   setMaterialProperty(m.s1, "YoungModulus", yg);
   setMaterialProperty(m.s0, "PoissonRatio", nu);
   setMaterialProperty(m.s1, "PoissonRatio", nu);
-  setExternalStateVariable(m.s0,"Temperature", 293.15);
-  setExternalStateVariable(m.s1,"Temperature", 293.15);
-  
+  setExternalStateVariable(m.s0, "Temperature", 293.15);
+  setExternalStateVariable(m.s1, "Temperature", 293.15);
+
   // // Create forms and attach functions
   auto a = std::make_shared<MGISSmallStrainFormulation3D::BilinearForm>(V, V);
-  a->t =  m.getTangentOperatorFunction();
+  a->t = m.getTangentOperatorFunction();
   a->ds = load_marker;
   auto L = std::make_shared<MGISSmallStrainFormulation3D::LinearForm>(V);
   L->f = f;
@@ -123,7 +128,8 @@ int main(){
 
   // // Displacement and load integration functionals
   auto M_d = std::make_shared<MGISSmallStrainFormulation3D::Form_M_d>(mesh, u);
-  auto M_f = std::make_shared<MGISSmallStrainFormulation3D::Form_M_f>(mesh, boundary_load);
+  auto M_f = std::make_shared<MGISSmallStrainFormulation3D::Form_M_f>(
+      mesh, boundary_load);
   M_d->ds = load_marker;
   M_f->ds = load_marker;
 
@@ -136,11 +142,11 @@ int main(){
 
   // post-processings data
   std::vector<double> ux, fx;
-  std::vector<std::array<double,6>> s, e;
+  std::vector<std::array<double, 6>> s, e;
   ux.push_back(0.0);
   fx.push_back(0.0);
   e.push_back({0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
-  s.push_back({0.0,0.0,0.0,0.0,0.0,0.0});
+  s.push_back({0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
 
   // Solver loop
   mgis::size_type step = 0;
@@ -169,11 +175,12 @@ int main(){
   }
   /* tests */
   auto status = EXIT_SUCCESS;
-  auto nb_tests    = mgis::size_type{};
+  auto nb_tests = mgis::size_type{};
   auto nb_failures = mgis::size_type{};
-  auto check = [&status,&nb_tests,&nb_failures](const bool c, const mgis::string_view msg){
+  auto check = [&status, &nb_tests, &nb_failures](const bool c,
+                                                  const mgis::string_view msg) {
     ++nb_tests;
-    if(!c){
+    if (!c) {
       std::cerr << msg << '\n';
       status = EXIT_FAILURE;
       ++nb_failures;

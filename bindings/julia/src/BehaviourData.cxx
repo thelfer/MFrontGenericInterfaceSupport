@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/julia/src/BehaviourData.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   17/05/2019
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -19,8 +19,8 @@
 void declareBehaviourData();
 
 void declareBehaviourData(jlcxx::Module& m) {
-  using mgis::behaviour::State;
   using mgis::behaviour::BehaviourData;
+  using mgis::behaviour::State;
   void (*update)(BehaviourData&) = &mgis::behaviour::update;
   void (*revert)(BehaviourData&) = &mgis::behaviour::revert;
   mgis::behaviour::BehaviourDataView (*make_view)(BehaviourData&) =

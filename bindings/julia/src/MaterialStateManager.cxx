@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/julia/src/MaterialStateManager.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   19/05/2019
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -20,4 +20,4 @@ void declareMaterialStateManager();
 
 void declareMaterialStateManager(jlcxx::Module& m) {
   m.add_type<mgis::behaviour::MaterialStateManager>("MaterialStateManager");
-} // end of declareMaterialStateManager
+}  // end of declareMaterialStateManager

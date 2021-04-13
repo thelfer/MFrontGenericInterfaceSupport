@@ -1,6 +1,6 @@
 /*!
  * \file   Integrate.cxx
- * \brief    
+ * \brief
  * \author th202608
  * \date   02/08/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -21,7 +21,7 @@ extern "C" {
 
 static mgis::behaviour::IntegrationType convertIntegrationType(
     const mgis_bv_IntegrationType i) {
-  switch(i) {
+  switch (i) {
     case MGIS_BV_PREDICTION_TANGENT_OPERATOR:
       return mgis::behaviour::IntegrationType::PREDICTION_TANGENT_OPERATOR;
     case MGIS_BV_PREDICTION_SECANT_OPERATOR:
@@ -37,12 +37,13 @@ static mgis::behaviour::IntegrationType convertIntegrationType(
     case MGIS_BV_INTEGRATION_TANGENT_OPERATOR:
       return mgis::behaviour::IntegrationType::INTEGRATION_TANGENT_OPERATOR;
     case MGIS_BV_INTEGRATION_CONSISTENT_TANGENT_OPERATOR:
-      return mgis::behaviour::IntegrationType::INTEGRATION_CONSISTENT_TANGENT_OPERATOR;
+      return mgis::behaviour::IntegrationType::
+          INTEGRATION_CONSISTENT_TANGENT_OPERATOR;
     default:
       mgis::raise("convertIntegrationType: invalid integration type");
   }
   return mgis::behaviour::IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR;
-} // end of convertIntegrationType
+}  // end of convertIntegrationType
 
 mgis_status mgis_bv_integrate(int* const r,
                               mgis_bv_BehaviourDataView* const d,
@@ -55,8 +56,8 @@ mgis_status mgis_bv_integrate(int* const r,
 }  // end of mgis_bv_integrate
 
 mgis_status mgis_bv_integrate_2(int* const r,
-				mgis_bv_BehaviourData* const d,
-                              const mgis_bv_Behaviour* const b) {
+                                mgis_bv_BehaviourData* const d,
+                                const mgis_bv_Behaviour* const b) {
   auto v = mgis::behaviour::make_view(*d);
   auto s = mgis_bv_integrate(r, &v, b);
   d->rdt = v.rdt;
@@ -79,7 +80,7 @@ mgis_status mgis_bv_integrate_material_data_manager(
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_bv_integrate_material_data_manager
+}  // end of mgis_bv_integrate_material_data_manager
 
 mgis_status mgis_bv_integrate_material_data_manager_part(
     int* const r,
@@ -98,6 +99,6 @@ mgis_status mgis_bv_integrate_material_data_manager_part(
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_bv_integrate_material_data_manager_part
+}  // end of mgis_bv_integrate_material_data_manager_part
 
-} // end of extern "C"
+}  // end of extern "C"

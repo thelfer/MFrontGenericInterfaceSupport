@@ -45,7 +45,7 @@
 #include <string>
 #include <algorithm>
 
-namespace mgis{
+namespace mgis {
 
   ////////////////////////////////////////////////////////////////////////////
   /// \brief A wrapper around non-owned strings.

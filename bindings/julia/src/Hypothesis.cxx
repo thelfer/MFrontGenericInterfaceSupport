@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/julia/src/Hypothesis.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/05/2019
  */
@@ -8,7 +8,7 @@
 #include <jlcxx/jlcxx.hpp>
 #include "MGIS/Behaviour/Hypothesis.hxx"
 #include "MGIS/Julia/JuliaUtilities.hxx"
- 
+
 void declareHypothesis(jlcxx::Module& m) {
   using mgis::behaviour::Hypothesis;
 
@@ -24,10 +24,8 @@ void declareHypothesis(jlcxx::Module& m) {
               Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
   m.set_const("AxisymmetricalGeneralisedPlaneStress",
               Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
-  m.set_const("AXISYMMETRICAL",
-              Hypothesis::AXISYMMETRICAL);
-  m.set_const("Axisymmetrical",
-              Hypothesis::AXISYMMETRICAL);
+  m.set_const("AXISYMMETRICAL", Hypothesis::AXISYMMETRICAL);
+  m.set_const("Axisymmetrical", Hypothesis::AXISYMMETRICAL);
   m.set_const("PLANESTRESS", Hypothesis::PLANESTRESS);
   m.set_const("PlaneStress", Hypothesis::PLANESTRESS);
   m.set_const("PLANESTRAIN", Hypothesis::PLANESTRAIN);
@@ -43,4 +41,3 @@ void declareHypothesis(jlcxx::Module& m) {
   m.method("toString", &mgis::behaviour::toString);
   m.method("fromString", fromString);
 }  // end of declareHypothesis
-

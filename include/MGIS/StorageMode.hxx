@@ -1,6 +1,6 @@
 /*!
  * \file   include/MGIS/StorageMode.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   17/02/2021
  */
@@ -8,7 +8,7 @@
 #ifndef LIB_MGIS_STORAGEMODE_HXX
 #define LIB_MGIS_STORAGEMODE_HXX
 
-namespace mgis{
+namespace mgis {
 
   /*!
    * \brief storage option for a non uniform material property or non

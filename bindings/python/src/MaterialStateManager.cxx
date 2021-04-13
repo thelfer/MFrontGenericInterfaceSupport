@@ -1,6 +1,6 @@
 /*!
  * \file   MaterialStateManager.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10/11/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -24,25 +24,25 @@ static void MaterialStateManagerInitializer_bindGradients(
     mgis::behaviour::MaterialStateManagerInitializer& i,
     boost::python::object K) {
   i.gradients = mgis::python::mgis_convert_to_span(K);
-} // end of MaterialStateManagerInitializer_bindGradients
+}  // end of MaterialStateManagerInitializer_bindGradients
 
 static void MaterialStateManagerInitializer_bindThermodynamicForces(
     mgis::behaviour::MaterialStateManagerInitializer& i,
     boost::python::object K) {
   i.thermodynamic_forces = mgis::python::mgis_convert_to_span(K);
-} // end of MaterialStateManagerInitializer_bindThermodynamicForces
+}  // end of MaterialStateManagerInitializer_bindThermodynamicForces
 
 static void MaterialStateManagerInitializer_bindInternalStateVariables(
     mgis::behaviour::MaterialStateManagerInitializer& i,
     boost::python::object K) {
   i.internal_state_variables = mgis::python::mgis_convert_to_span(K);
-} // end of MaterialStateManagerInitializer_bindInternalStateVariables
+}  // end of MaterialStateManagerInitializer_bindInternalStateVariables
 
 static void MaterialStateManagerInitializer_bindStoredEnergies(
     mgis::behaviour::MaterialStateManagerInitializer& i,
     boost::python::object K) {
   i.stored_energies = mgis::python::mgis_convert_to_span(K);
-} // end of MaterialStateManagerInitializer_bindStoredEnergies
+}  // end of MaterialStateManagerInitializer_bindStoredEnergies
 
 static void MaterialStateManagerInitializer_bindDissipatedEnergies(
     mgis::behaviour::MaterialStateManagerInitializer& i,

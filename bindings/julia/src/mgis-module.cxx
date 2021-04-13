@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/julia/src/mgis-module.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/05/2019
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -25,7 +25,7 @@ void declareThreadPool(jlcxx::Module& m);
 //   return a;
 // }
 
-JLCXX_MODULE define_mgis_module(jlcxx::Module& m){
+JLCXX_MODULE define_mgis_module(jlcxx::Module& m) {
   //   m.method("test", []() {
   //     auto& a = test();
   //     return mgis::julia::ArrayView<double, 1>(a.data(), a.size());

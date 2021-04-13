@@ -1,6 +1,6 @@
 /*!
  * \file   include/MGIS/Behaviour/ChangeBasis.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   03/09/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -15,7 +15,7 @@
 #ifndef LIB_MGIS_BEHAVIOUR_CHANGEBASIS_IXX
 #define LIB_MGIS_BEHAVIOUR_CHANGEBASIS_IXX
 
-namespace mgis{
+namespace mgis {
 
   namespace behaviour {
 
@@ -40,11 +40,10 @@ namespace mgis{
           offset += getTensorSize(h);
         }
       }
-}  // end of changeBasis
+    }  // end of changeBasis
 
   }  // end of namespace behaviour
 
 }  // end of namespace mgis
-
 
 #endif /* LIB_MGIS_BEHAVIOUR_CHANGEBASIS_IXX */

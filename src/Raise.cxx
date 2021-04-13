@@ -1,6 +1,6 @@
 /*!
  * \file   src/Raise.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   02/04/2021
  */
@@ -22,4 +22,4 @@ namespace mgis {
     return getInternalExceptionHandler();
   }  // end of getExceptionHandler
 
-} // end of namespace mgis 
+}  // end of namespace mgis

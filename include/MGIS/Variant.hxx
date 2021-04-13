@@ -177,10 +177,10 @@ namespace mgis {
       }
 
 #ifdef MGIS_INTEGER_SEQUENCE
-      using std::integer_sequence;
       using std::index_sequence;
-      using std::make_index_sequence;
       using std::index_sequence_for;
+      using std::integer_sequence;
+      using std::make_index_sequence;
 #else
       template <typename T, T... Is>
       struct integer_sequence {
@@ -326,8 +326,8 @@ namespace mgis {
         }  // namespace swappable
       }    // namespace detail
 
-      using detail::swappable::is_swappable;
       using detail::swappable::is_nothrow_swappable;
+      using detail::swappable::is_swappable;
 
 // <functional>
 #ifdef _MSC_VER
@@ -507,10 +507,10 @@ namespace mgis {
 #endif
 
 #ifdef MGIS_TRIVIALITY_TYPE_TRAITS
-    using std::is_trivially_copy_constructible;
-    using std::is_trivially_move_constructible;
     using std::is_trivially_copy_assignable;
+    using std::is_trivially_copy_constructible;
     using std::is_trivially_move_assignable;
+    using std::is_trivially_move_constructible;
 #else
     template <typename T>
     struct is_trivially_copy_constructible
@@ -714,8 +714,10 @@ namespace mgis {
     enum class Trait { TriviallyAvailable, Available, Unavailable };
 
     template <typename T,
-              template <typename> class IsTriviallyAvailable,
-              template <typename> class IsAvailable>
+              template <typename>
+              class IsTriviallyAvailable,
+              template <typename>
+              class IsAvailable>
     inline constexpr Trait trait() {
       return IsTriviallyAvailable<T>::value
                  ? Trait::TriviallyAvailable
@@ -1149,8 +1151,7 @@ namespace mgis {
     class base {
      public:
       inline explicit constexpr base(valueless_t tag) noexcept
-          : data_(tag),
-            index_(static_cast<index_t>(-1)) {}
+          : data_(tag), index_(static_cast<index_t>(-1)) {}
 
       template <std::size_t I, typename... Args>
       inline explicit constexpr base(in_place_index_t<I>, Args &&... args)
@@ -1646,7 +1647,7 @@ namespace mgis {
     template <typename T>
     struct is_in_place_type<in_place_type_t<T>> : std::true_type {};
 
-  }  // detail
+  }  // namespace detail
 
   template <typename... Ts>
   class variant {
@@ -1861,8 +1862,9 @@ namespace mgis {
     template <std::size_t I, typename V>
     inline constexpr AUTO_REFREF generic_get(V &&v)
         AUTO_REFREF_RETURN(generic_get_impl<I, V>(
-            holds_alternative<I>(v) ? 0 : (throw_bad_variant_access(),
-                                           0))(lib::forward<V>(v)))
+            holds_alternative<I>(v)
+                ? 0
+                : (throw_bad_variant_access(), 0))(lib::forward<V>(v)))
   }  // namespace detail
 
   template <std::size_t I, typename... Ts>
@@ -2234,6 +2236,6 @@ namespace std {
     }
   };
 
-}  // namespace mgis
+}  // namespace std
 
 #endif /* LIB_MGIS_VARIANT_HXX */

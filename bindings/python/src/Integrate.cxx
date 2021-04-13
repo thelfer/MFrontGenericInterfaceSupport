@@ -1,6 +1,6 @@
 /*!
  * \file   Integrate.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   06/11/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -60,9 +60,11 @@ void declareIntegrate() {
       .value("IntegrationWithTangentOperator",
              mgis::behaviour::IntegrationType::INTEGRATION_TANGENT_OPERATOR)
       .value("INTEGRATION_CONSISTENT_TANGENT_OPERATOR",
-             mgis::behaviour::IntegrationType::INTEGRATION_CONSISTENT_TANGENT_OPERATOR)
+             mgis::behaviour::IntegrationType::
+                 INTEGRATION_CONSISTENT_TANGENT_OPERATOR)
       .value("IntegrationWithConsistentTangentOperator",
-             mgis::behaviour::IntegrationType::INTEGRATION_CONSISTENT_TANGENT_OPERATOR);
+             mgis::behaviour::IntegrationType::
+                 INTEGRATION_CONSISTENT_TANGENT_OPERATOR);
 
   int (*integrate_ptr1)(mgis::behaviour::BehaviourDataView&,
                         const mgis::behaviour::Behaviour&) =

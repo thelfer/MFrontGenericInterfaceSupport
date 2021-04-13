@@ -1,6 +1,6 @@
 /*!
  * \file   VectorConverter.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   06/11/2018
  * \copyright (C) Copyright Thomas Helfer 2018.

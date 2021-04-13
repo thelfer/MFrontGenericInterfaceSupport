@@ -483,8 +483,8 @@ namespace mgis {
   }  // end of LibrariesManager::requiresStiffnessTensor
 
   bool LibrariesManager::computesStoredEnergy(const std::string &l,
-                                                const std::string &b,
-                                                const Hypothesis h) {
+                                              const std::string &b,
+                                              const Hypothesis h) {
     const auto sn = "_ComputesInternalEnergy";
     const auto bv =
         *(this->extract<unsigned short>(l, b + "_" + toString(h) + sn, b + sn));

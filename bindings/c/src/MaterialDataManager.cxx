@@ -1,6 +1,6 @@
 /*!
  * \file   MaterialDataManager.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   05/08/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -58,7 +58,8 @@ mgis_status mgis_bv_material_data_manager_initializer_get_state_0_initializer(
     mgis_bv_MaterialStateManagerInitializer** s,
     mgis_bv_MaterialDataManagerInitializer* const d) {
   if (d == nullptr) {
-    return mgis_report_failure("invalid argument (material data manager is null)");
+    return mgis_report_failure(
+        "invalid argument (material data manager is null)");
   }
   *s = &(d->s0);
   return mgis_report_success();
@@ -68,7 +69,8 @@ mgis_status mgis_bv_material_data_manager_initializer_get_state_1_initializer(
     mgis_bv_MaterialStateManagerInitializer** s,
     mgis_bv_MaterialDataManagerInitializer* const d) {
   if (d == nullptr) {
-    return mgis_report_failure("invalid argument (material data manager is null)");
+    return mgis_report_failure(
+        "invalid argument (material data manager is null)");
   }
   *s = &(d->s1);
   return mgis_report_success();
@@ -84,7 +86,7 @@ mgis_status mgis_bv_free_material_data_manager_initializer(
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_bv_free_material_data_manager_initializer
+}  // end of mgis_bv_free_material_data_manager_initializer
 
 mgis_status mgis_bv_create_material_data_manager(
     mgis_bv_MaterialDataManager** d,
@@ -136,7 +138,8 @@ mgis_status mgis_bv_create_material_data_manager_with_initializer(
 mgis_status mgis_bv_material_data_manager_get_state_0(
     mgis_bv_MaterialStateManager** s, mgis_bv_MaterialDataManager* const d) {
   if (d == nullptr) {
-    return mgis_report_failure("invalid argument (material data manager is null)");
+    return mgis_report_failure(
+        "invalid argument (material data manager is null)");
   }
   *s = &(d->s0);
   return mgis_report_success();
@@ -145,7 +148,8 @@ mgis_status mgis_bv_material_data_manager_get_state_0(
 mgis_status mgis_bv_material_data_manager_get_state_1(
     mgis_bv_MaterialStateManager** s, mgis_bv_MaterialDataManager* const d) {
   if (d == nullptr) {
-    return mgis_report_failure("invalid argument (material data manager is null)");
+    return mgis_report_failure(
+        "invalid argument (material data manager is null)");
   }
   *s = &(d->s1);
   return mgis_report_success();
@@ -164,27 +168,30 @@ mgis_status mgis_bv_material_data_manager_get_tangent_operator(
   }
   *K = &(Kv[0]);
   return mgis_report_success();
-} // end of mgis_bv_material_data_manager_get_tangent_operator
-  
-mgis_status mgis_bv_update_material_data_manager(mgis_bv_MaterialDataManager* const d){
+}  // end of mgis_bv_material_data_manager_get_tangent_operator
+
+mgis_status mgis_bv_update_material_data_manager(
+    mgis_bv_MaterialDataManager* const d) {
   try {
     mgis::behaviour::update(*d);
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_bv_update_material_data_manager
+}  // end of mgis_bv_update_material_data_manager
 
-mgis_status mgis_bv_revert_material_data_manager(mgis_bv_MaterialDataManager* const d){
+mgis_status mgis_bv_revert_material_data_manager(
+    mgis_bv_MaterialDataManager* const d) {
   try {
     mgis::behaviour::revert(*d);
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_bv_revert_material_data_manager
+}  // end of mgis_bv_revert_material_data_manager
 
-mgis_status mgis_bv_free_material_data_manager(mgis_bv_MaterialDataManager** d){
+mgis_status mgis_bv_free_material_data_manager(
+    mgis_bv_MaterialDataManager** d) {
   try {
     delete *d;
     *d = nullptr;
@@ -193,6 +200,6 @@ mgis_status mgis_bv_free_material_data_manager(mgis_bv_MaterialDataManager** d){
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_bv_free_material_data_manager
+}  // end of mgis_bv_free_material_data_manager
 
 }  // end of extern "C"

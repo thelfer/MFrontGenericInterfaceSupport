@@ -124,6 +124,15 @@ set(COMPILER_WARNINGS  "")
 option(enable-fast-math "enable -ffast-math compiler flag" OFF)
 option(PATHSCALE_COMPILER "set true if using the PathScale compiler" OFF)
 
+if(NOT USE_EXTERNAL_COMPILER_FLAGS)
+  set(CMAKE_C_FLAGS           "")
+  set(CMAKE_C_FLAGS_RELEASE "")
+  set(CMAKE_C_FLAGS_DEBUG   "")
+  set(CMAKE_CXX_FLAGS         "")
+  set(CMAKE_CXX_FLAGS_RELEASE "")
+  set(CMAKE_CXX_FLAGS_DEBUG   "")
+endif(NOT USE_EXTERNAL_COMPILER_FLAGS)
+
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   include(cmake/modules/gcc.cmake)
 elseif(((CMAKE_CXX_COMPILER_ID STREQUAL "Clang") OR
@@ -151,12 +160,6 @@ endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 # thus, using those variables `CFLAGS` and `CXXFLAGS` solves the issue and is more
 # consistent with other `conda` packages.
 if(NOT USE_EXTERNAL_COMPILER_FLAGS)
-  set(CMAKE_C_FLAGS           "")
-  set(CMAKE_C_FLAGS_RELEASE "")
-  set(CMAKE_C_FLAGS_DEBUG   "")
-  set(CMAKE_CXX_FLAGS         "")
-  set(CMAKE_CXX_FLAGS_RELEASE "")
-  set(CMAKE_CXX_FLAGS_DEBUG   "")
   set(CMAKE_C_FLAGS "${COMPILER_FLAGS} ${COMPILER_CFLAGS}")
   set(CMAKE_CXX_FLAGS "${VISIBILITY_FLAGS} ${COMPILER_WARNINGS} ${COMPILER_FLAGS} ${COMPILER_CXXFLAGS}")
   if(CMAKE_BUILD_TYPE STREQUAL "Profiling")

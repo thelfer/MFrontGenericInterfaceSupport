@@ -100,16 +100,16 @@ struct mgis_bv_BehaviourDataView {
 
 #ifdef __cplusplus
 
-namespace mgis{
+namespace mgis {
 
   namespace behaviour {
 
     //! a simple alias
     using BehaviourDataView = ::mgis_bv_BehaviourDataView;
 
-  } // end of namespace behaviour
-  
-} // end of namespace mgis
+  }  // end of namespace behaviour
+
+}  // end of namespace mgis
 
 #endif /* __cplusplus */
 

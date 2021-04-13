@@ -273,7 +273,7 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT void rotateGradients(mgis::span<real>,
                                    const Behaviour &,
-                                   const RotationMatrix2D&);
+                                   const RotationMatrix2D &);
   /*!
    * \brief rotate an array of gradients from the global frame to the material
    * frame.
@@ -286,7 +286,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT void rotateGradients(mgis::span<real>,
                                    const Behaviour &,
                                    const mgis::span<const real> &,
-                                   const RotationMatrix2D&);
+                                   const RotationMatrix2D &);
   /*!
    * \brief rotate an array of gradients from the global frame to the material
    * frame.
@@ -297,7 +297,7 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT void rotateGradients(mgis::span<real>,
                                    const Behaviour &,
-                                   const RotationMatrix3D&);
+                                   const RotationMatrix3D &);
   /*!
    * \brief rotate an array of gradients from the global frame to the material
    * frame.
@@ -310,7 +310,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT void rotateGradients(mgis::span<real>,
                                    const Behaviour &,
                                    const mgis::span<const real> &,
-                                   const RotationMatrix3D&);
+                                   const RotationMatrix3D &);
   /*!
    * \brief rotate an array of thermodynamics forces from the material frame
    * to
@@ -374,7 +374,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT void rotateThermodynamicForces(mgis::span<real>,
                                              const Behaviour &,
                                              const mgis::span<const real> &,
-                                             const RotationMatrix2D&);
+                                             const RotationMatrix2D &);
   /*!
    * \brief rotate an array of thermodynamics forces from the material frame
    * to

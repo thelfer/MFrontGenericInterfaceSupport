@@ -1,5 +1,6 @@
 /*!
- * \file   bindings/fenics/tests/ElasticityUniaxialTensileTestImposedStrain3D-exx.cxx
+ * \file
+ * bindings/fenics/tests/ElasticityUniaxialTensileTestImposedStrain3D-exx.cxx
  * \brief  This program tests the elastic response of an unit cube.
  * \author Thomas Helfer
  * \date   14/12/2018
@@ -43,20 +44,20 @@
 // force at the right end
 struct ImposedDisplacementValue : public dolfin::Expression {
   ImposedDisplacementValue(const double& t_) : dolfin::Expression(), t(t_) {}
-  void eval(Eigen::Ref<Eigen::VectorXd>  values,
-	    Eigen::Ref<const Eigen::VectorXd>) const override{
+  void eval(Eigen::Ref<Eigen::VectorXd> values,
+            Eigen::Ref<const Eigen::VectorXd>) const override {
     values[0] = 1.e-3 * t;
   }
   ~ImposedDisplacementValue() override = default;
-private:
+
+ private:
   const double& t;
 };
 
-
-int main(){
+int main() {
   // getting the path to the test library
   auto library = std::getenv("MGIS_TEST_BEHAVIOURS_LIBRARY");
-  if(library==nullptr){
+  if (library == nullptr) {
     std::exit(EXIT_FAILURE);
   }
   // create mesh and boundaries
@@ -83,9 +84,12 @@ int main(){
   auto zero = std::make_shared<dolfin::Constant>(0.0);
 
   std::vector<std::shared_ptr<const dolfin::DirichletBC>> bcs;
-  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(0), zero, boundaries["sx1"]));
-  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(1), zero, boundaries["sy1"]));
-  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(2), zero, boundaries["sz1"]));
+  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(0), zero,
+                                                      boundaries["sx1"]));
+  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(1), zero,
+                                                      boundaries["sy1"]));
+  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(2), zero,
+                                                      boundaries["sz1"]));
   bcs.push_back(std::make_shared<dolfin::DirichletBC>(
       V->sub(0), std::make_shared<ImposedDisplacementValue>(t),
       boundaries["sx2"]));
@@ -95,19 +99,19 @@ int main(){
 
   auto b = mgis::behaviour::load(library, "Elasticity",
                                  mgis::behaviour::Hypothesis::TRIDIMENSIONAL);
-  mgis::fenics::NonLinearMaterial m(u,element_t,element_s,b);
+  mgis::fenics::NonLinearMaterial m(u, element_t, element_s, b);
   const auto yg = 150e9;
   const auto nu = 0.3;
   setMaterialProperty(m.s0, "YoungModulus", yg);
   setMaterialProperty(m.s1, "YoungModulus", yg);
   setMaterialProperty(m.s0, "PoissonRatio", nu);
   setMaterialProperty(m.s1, "PoissonRatio", nu);
-  setExternalStateVariable(m.s0,"Temperature", 293.15);
-  setExternalStateVariable(m.s1,"Temperature", 293.15);
-  
+  setExternalStateVariable(m.s0, "Temperature", 293.15);
+  setExternalStateVariable(m.s1, "Temperature", 293.15);
+
   // // Create forms and attach functions
   auto a = std::make_shared<MGISSmallStrainFormulation3D::BilinearForm>(V, V);
-  a->t =  m.getTangentOperatorFunction();
+  a->t = m.getTangentOperatorFunction();
   auto L = std::make_shared<MGISSmallStrainFormulation3D::LinearForm>(V);
   L->f = std::make_shared<dolfin::Constant>(0.0, 0.0, 0.0);
   L->h = std::make_shared<dolfin::Constant>(0.0, 0.0, 0.0);
@@ -126,7 +130,7 @@ int main(){
   // post-processings data
   std::vector<std::array<double, 6>> s, e;
   e.push_back({0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
-  s.push_back({0.0,0.0,0.0,0.0,0.0,0.0});
+  s.push_back({0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
 
   // Solver loop
   mgis::size_type step = 0;
@@ -151,11 +155,12 @@ int main(){
   }
   /* tests */
   auto status = EXIT_SUCCESS;
-  auto nb_tests    = mgis::size_type{};
+  auto nb_tests = mgis::size_type{};
   auto nb_failures = mgis::size_type{};
-  auto check = [&status,&nb_tests,&nb_failures](const bool c, const mgis::string_view msg){
+  auto check = [&status, &nb_tests, &nb_failures](const bool c,
+                                                  const mgis::string_view msg) {
     ++nb_tests;
-    if(!c){
+    if (!c) {
       std::cerr << msg << '\n';
       status = EXIT_FAILURE;
       ++nb_failures;

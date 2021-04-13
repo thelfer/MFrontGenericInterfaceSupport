@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/julia/include/MGIS/Julia/ArrayView.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   17/05/2019
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -11,7 +11,6 @@
  * - CECILL-C,  Version 1.0 (See accompanying files
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
-
 
 #ifndef LIB_MGIS_JULIA_ARRAYVIEW_HXX
 #define LIB_MGIS_JULIA_ARRAYVIEW_HXX
@@ -37,7 +36,7 @@ namespace mgis {
       struct LongNTuple<0, TypesT...> {
         typedef std::tuple<TypesT...> type;
       };
-    }
+    }  // namespace detail
 
     /// Wrap a const pointer
     template <typename T>
@@ -66,8 +65,8 @@ namespace mgis {
       T* m_arr;
       const size_t m_sizes;
     };
-  }
-}
+  }  // namespace julia
+}  // namespace mgis
 
 namespace jlcxx {
 
@@ -94,8 +93,8 @@ namespace jlcxx {
       : InstantiateParametricType<mgis::julia::Ptr<T>> {};
 
   template <typename T, typename... SizesT>
-  mgis::julia::ArrayView<T, sizeof...(SizesT)> make_array_view(const T* p,
-                                                  const SizesT... sizes) {
+  mgis::julia::ArrayView<T, sizeof...(SizesT)> make_array_view(
+      const T* p, const SizesT... sizes) {
     return mgis::julia::ArrayView<T, sizeof...(SizesT)>(p, sizes...);
   }
 
@@ -111,7 +110,8 @@ namespace jlcxx {
       JL_GC_PUSH3(&result, &ptr, &size);
       ptr = box(mgis::julia::Ptr<T>({arr.ptr()}));
       size = convert_to_julia(arr.size());
-      result = jl_new_struct(julia_type<mgis::julia::ArrayView<T, N>>(), ptr, size);
+      result =
+          jl_new_struct(julia_type<mgis::julia::ArrayView<T, N>>(), ptr, size);
       JL_GC_POP();
       return result;
     }
@@ -135,6 +135,6 @@ namespace jlcxx {
     }
   };
 
-}  // namespace mgis
+}  // namespace jlcxx
 
 #endif /* LIB_MGIS_JULIA_ARRAYVIEW_HXX */

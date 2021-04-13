@@ -410,7 +410,7 @@ namespace mgis {
      * \param[in] l: library
      * \param[in] s: name of function or mechanical behaviour
      * \param[in] h: modelling hypothesis
-      * \param[in] p: parameter name
+     * \param[in] p: parameter name
      * \param[in] v: value
      */
     void setParameter(const std::string &,

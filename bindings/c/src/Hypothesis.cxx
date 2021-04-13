@@ -62,8 +62,7 @@ mgis_status mgis_bv_get_tensor_size(mgis_size_type* const s,
     *s = 5u;
   } else if (::strcmp(h, "Tridimensional") == 0) {
     *s = 9u;
-  }
-  else {
+  } else {
     return mgis_report_failure(
         "mgis_bv_get_tensor_size: "
         "unsupported hypothesis");

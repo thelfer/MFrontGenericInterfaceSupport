@@ -1,6 +1,6 @@
 /*!
  * \file   JuliaUtilities.ixx
- * \brief    
+ * \brief
  * \author th202608
  * \date   16/05/2019
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -36,7 +36,8 @@ namespace mgis {
                     }
                     v.at(i - 1) = value;
                   })
-          .method("getindex", [](const std::vector<T>& v, const std::int64_t i) {
+          .method("getindex", [](const std::vector<T>& v,
+                                 const std::int64_t i) {
             if (i <= 0) {
               mgis::raise<std::range_error>("invalid index");
             }
@@ -62,10 +63,10 @@ namespace mgis {
       for (decltype(d.size()) i = 0; i != d.size(); ++i) {
         d[i] = s[i];
       }
-    } // end of assign
+    }  // end of assign
 
   }  // end of namespace julia
 
-} // end of namespace mgis
+}  // end of namespace mgis
 
 #endif /* LIB_MGIS_JULIA_JULIAUTILITIES_IXX */

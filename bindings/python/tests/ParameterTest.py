@@ -9,7 +9,6 @@ import mgis.behaviour as mgis_bv
 
 
 class ParameterTest(unittest.TestCase):
-
     def test_pass(self):
         yg = 150e9
         nu = 0.3
@@ -35,10 +34,10 @@ class ParameterTest(unittest.TestCase):
                         "invalid fourth parameter")
         yg_v = mgis_bv.getParameterDefaultValue(b, "YoungModulus")
         nu_v = mgis_bv.getParameterDefaultValue(b, "PoissonRatio")
-        self.assertTrue(abs(yg_v - yg) < eps * yg,
-                        "invalid 'YoungModulus' default value")
-        self.assertTrue(abs(nu_v - nu) < eps * nu,
-                        "invalid 'PoissonRatio' default value")
+        self.assertTrue(
+            abs(yg_v - yg) < eps * yg, "invalid 'YoungModulus' default value")
+        self.assertTrue(
+            abs(nu_v - nu) < eps * nu, "invalid 'PoissonRatio' default value")
 
 
 if __name__ == '__main__':

@@ -99,7 +99,8 @@ namespace mgis::behaviour {
     //!
     static constexpr auto LOCAL_STORAGE = mgis::StorageMode::LOCAL_STORAGE;
     //!
-    static constexpr auto EXTERNAL_STORAGE = mgis::StorageMode::EXTERNAL_STORAGE;
+    static constexpr auto EXTERNAL_STORAGE =
+        mgis::StorageMode::EXTERNAL_STORAGE;
     /*!
      * \param[in] behaviour: behaviour
      * \param[in] s: number of integration points

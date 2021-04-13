@@ -1,6 +1,6 @@
 /*!
  * \file   ParameterTest.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   13/11/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -43,8 +43,10 @@ int main(const int argc, const char* const* argv) {
     if (check(d.params.size() == 4u, "invalid number of parameters")) {
       check(d.params[0] == "YoungModulus", "invalid first parameter");
       check(d.params[1] == "PoissonRatio", "invalid second parameter");
-      check(d.params[2] == "minimal_time_step_scaling_factor", "invalid third parameter");
-      check(d.params[3] == "maximal_time_step_scaling_factor", "invalid fourth parameter");
+      check(d.params[2] == "minimal_time_step_scaling_factor",
+            "invalid third parameter");
+      check(d.params[3] == "maximal_time_step_scaling_factor",
+            "invalid fourth parameter");
       check(std::abs(getParameterDefaultValue<double>(d, "YoungModulus") - yg) <
                 eps * yg,
             "invalid 'YoungModulus' default value");
@@ -58,4 +60,3 @@ int main(const int argc, const char* const* argv) {
   }
   return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-

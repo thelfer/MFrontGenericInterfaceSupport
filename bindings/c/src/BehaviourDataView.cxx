@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/c/src/BehaviourDataView.cxx
- * \brief    
+ * \brief
  * \author th202608
  * \date   02/08/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -18,10 +18,10 @@ extern "C" {
 
 mgis_status mgis_bv_make_behaviour_data_view(mgis_bv_BehaviourDataView* const v,
                                              mgis_bv_BehaviourData* const d) {
-  if(v==nullptr){
+  if (v == nullptr) {
     return mgis_report_failure("uninitialized view");
   }
-  if(d==nullptr){
+  if (d == nullptr) {
     return mgis_report_failure("uninitialized behaviour data");
   }
   try {
@@ -32,4 +32,4 @@ mgis_status mgis_bv_make_behaviour_data_view(mgis_bv_BehaviourDataView* const v,
   return mgis_report_success();
 }  // end of mgis_bv_make_behaviour_data_view
 
-} // end of extern "C"
+}  // end of extern "C"

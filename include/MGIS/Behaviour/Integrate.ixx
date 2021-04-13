@@ -1,6 +1,6 @@
 /*!
  * \file   include/MGIS/Behaviour/Integrate.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   01/08/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -17,17 +17,17 @@
 #include <algorithm>
 #include "MGIS/Behaviour/Behaviour.hxx"
 
-namespace mgis{
+namespace mgis {
 
   namespace behaviour {
 
     inline int integrate(BehaviourDataView& d, const Behaviour& b) {
-      std::copy(b.options.begin(),b.options.end(),d.K+1);
+      std::copy(b.options.begin(), b.options.end(), d.K + 1);
       return b.b(&d);
     }  // end of integrate
 
   }  // end of namespace behaviour
 
-} // end of namespace mgis
+}  // end of namespace mgis
 
 #endif /* LIB_MGIS_BEHAVIOUR_INTEGRATE_IXX */

@@ -1,6 +1,6 @@
 /*!
  * \file   NumPySupport.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   08/11/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -23,7 +23,10 @@ namespace mgis {
 #if PY_MAJOR_VERSION == 2
     static void wrapInitializeNumPy() { import_array(); }
 #else
-    static void* wrapInitializeNumPy() { import_array(); return nullptr;}
+    static void* wrapInitializeNumPy() {
+      import_array();
+      return nullptr;
+    }
 #endif
 
     void initializeNumPy() { wrapInitializeNumPy(); }  // end of initializeNumPy
@@ -52,7 +55,7 @@ namespace mgis {
     boost::python::object wrapInNumPyArray(mgis::span<double>& v,
                                            const size_type nc) {
       npy_intp dims[2] = {static_cast<npy_intp>(v.size() / nc),
-			  static_cast<npy_intp>(nc)};
+                          static_cast<npy_intp>(nc)};
       auto* const arr =
           PyArray_SimpleNewFromData(2, dims, NPY_DOUBLE, v.data());
       boost::python::handle<> handle(arr);
@@ -78,8 +81,7 @@ namespace mgis {
                                            const size_type nl,
                                            const size_type nc) {
       npy_intp dims[3] = {static_cast<npy_intp>(v.size() / (nc * nl)),
-			  static_cast<npy_intp>(nl),
-			  static_cast<npy_intp>(nc)};
+                          static_cast<npy_intp>(nl), static_cast<npy_intp>(nc)};
       auto* const arr =
           PyArray_SimpleNewFromData(3, dims, NPY_DOUBLE, v.data());
       boost::python::handle<> handle(arr);
