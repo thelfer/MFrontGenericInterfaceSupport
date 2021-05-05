@@ -147,7 +147,7 @@ namespace mgis {
       bool computesStoredEnergy;
       /*!
        * \brief this boolean is true if the behaviour computes the
-       * energy dissipated by the material per unit of volume in the 
+       * energy dissipated by the material per unit of volume in the
        * reference configuration. The physical meaning of this
        * energy depends on the behaviour considered.
        */
@@ -160,20 +160,20 @@ namespace mgis {
        * - the stress measure used
        * - the consistent tangent operator expected
        *
-       * For finite strain behaviours, options[1] holds the stress measure
+       * For finite strain behaviours, options[0] holds the stress measure
        * used:
-       * - if options[1] < 0.5, the Cauchy stress is used
-       * - if 0.5 < options[1] < 1.5, the second Piola-Kirchoff stress is used
-       * - if 1.5 < options[1] < 2.5, the first Piola-Kirchoff stress is used
+       * - if options[0] < 0.5, the Cauchy stress is used
+       * - if 0.5 < options[0] < 1.5, the second Piola-Kirchoff stress is used
+       * - if 1.5 < options[0] < 2.5, the first Piola-Kirchoff stress is used
        *
-       * For finite strain behaviours, options[2] holds the consitent tangent
+       * For finite strain behaviours, options[1] holds the consitent tangent
        * operator returned by the behaviour:
-       * - if options[2]<0.5, the derivative of the Cauchy stress with respect
+       * - if options[1]<0.5, the derivative of the Cauchy stress with respect
        *   to the deformation gradient is returned
-       * - if 0.5<options[2]<1.5, the derivative of the second Piola-Kirchoff
+       * - if 0.5<options[1]<1.5, the derivative of the second Piola-Kirchoff
        *   stress with respect to the Green-Lagrange strain
        *   is returned
-       * - if 1.5<options[2]<2.5, the derivative of the first Piola-Kirchoff
+       * - if 1.5<options[1]<2.5, the derivative of the first Piola-Kirchoff
        *   stress with respect to the deformation gradient is returned
        */
       std::vector<mgis::real> options;

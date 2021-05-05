@@ -391,62 +391,63 @@ namespace mgis {
         check_size(from.size(), to.size());
         std::copy(from.begin(), from.end(), to.begin());
       };  // end update_span
-      auto update_field_holder = [&check_size](
-          MaterialStateManager::FieldHolder& to,
-          const MaterialStateManager::FieldHolder& from) {
-        if (mgis::holds_alternative<mgis::real>(from)) {
-          to = mgis::get<mgis::real>(from);
-        } else if (mgis::holds_alternative<std::vector<mgis::real>>(from)) {
-          const auto& from_v = mgis::get<std::vector<mgis::real>>(from);
-          if (mgis::holds_alternative<mgis::span<mgis::real>>(to)) {
-            // reuse existing memory
-            auto& to_v = mgis::get<mgis::span<mgis::real>>(to);
-            check_size(from_v.size(), to_v.size());
-            std::copy(from_v.begin(), from_v.end(), to_v.begin());
-          } else if (mgis::holds_alternative<std::vector<mgis::real>>(to)) {
-            // reuse existing memory
-            auto& to_v = mgis::get<std::vector<mgis::real>>(to);
-            check_size(from_v.size(), to_v.size());
-            std::copy(from_v.begin(), from_v.end(), to_v.begin());
-          } else {
-            // to contains a real value, so overwrite it with a new vector
-            to = mgis::get<std::vector<mgis::real>>(from);
-          }
-        } else {
-          const auto from_v = mgis::get<mgis::span<mgis::real>>(from);
-          if (mgis::holds_alternative<mgis::span<mgis::real>>(to)) {
-            // reuse existing memory
-            auto to_v = mgis::get<mgis::span<mgis::real>>(to);
-            check_size(from_v.size(), to_v.size());
-            std::copy(from_v.begin(), from_v.end(), to_v.begin());
-          } else if (mgis::holds_alternative<std::vector<mgis::real>>(to)) {
-            // reuse existing memory
-            auto to_v = mgis::get<std::vector<mgis::real>>(to);
-            check_size(from_v.size(), to_v.size());
-            std::copy(from_v.begin(), from_v.end(), to_v.begin());
-          } else {
-            to = from_v;
-          }
-        }
-      };  // end of update_field_holder
-      auto check_mps = [](
-          const Behaviour& b,
-          const std::map<std::string, MaterialStateManager::FieldHolder>& mps) {
-        for (const auto& mp : mps) {
-          auto find_mp = [&mp](const Variable& d) {
-            return mp.first == d.name;
+      auto update_field_holder =
+          [&check_size](MaterialStateManager::FieldHolder& to,
+                        const MaterialStateManager::FieldHolder& from) {
+            if (mgis::holds_alternative<mgis::real>(from)) {
+              to = mgis::get<mgis::real>(from);
+            } else if (mgis::holds_alternative<std::vector<mgis::real>>(from)) {
+              const auto& from_v = mgis::get<std::vector<mgis::real>>(from);
+              if (mgis::holds_alternative<mgis::span<mgis::real>>(to)) {
+                // reuse existing memory
+                auto& to_v = mgis::get<mgis::span<mgis::real>>(to);
+                check_size(from_v.size(), to_v.size());
+                std::copy(from_v.begin(), from_v.end(), to_v.begin());
+              } else if (mgis::holds_alternative<std::vector<mgis::real>>(to)) {
+                // reuse existing memory
+                auto& to_v = mgis::get<std::vector<mgis::real>>(to);
+                check_size(from_v.size(), to_v.size());
+                std::copy(from_v.begin(), from_v.end(), to_v.begin());
+              } else {
+                // to contains a real value, so overwrite it with a new vector
+                to = mgis::get<std::vector<mgis::real>>(from);
+              }
+            } else {
+              const auto from_v = mgis::get<mgis::span<mgis::real>>(from);
+              if (mgis::holds_alternative<mgis::span<mgis::real>>(to)) {
+                // reuse existing memory
+                auto to_v = mgis::get<mgis::span<mgis::real>>(to);
+                check_size(from_v.size(), to_v.size());
+                std::copy(from_v.begin(), from_v.end(), to_v.begin());
+              } else if (mgis::holds_alternative<std::vector<mgis::real>>(to)) {
+                // reuse existing memory
+                auto to_v = mgis::get<std::vector<mgis::real>>(to);
+                check_size(from_v.size(), to_v.size());
+                std::copy(from_v.begin(), from_v.end(), to_v.begin());
+              } else {
+                to = from_v;
+              }
+            }
+          };  // end of update_field_holder
+      auto check_mps =
+          [](const Behaviour& b,
+             const std::map<std::string, MaterialStateManager::FieldHolder>&
+                 mps) {
+            for (const auto& mp : mps) {
+              auto find_mp = [&mp](const Variable& d) {
+                return mp.first == d.name;
+              };
+              if (std::find_if(b.mps.begin(), b.mps.end(), find_mp) ==
+                  b.mps.end()) {
+                mgis::raise(
+                    "mgis::behaviour::update_values: "
+                    "material property '" +
+                    mp.first +
+                    "' defined in the material state manager is not defined "
+                    " by the behaviour");
+              }
+            }
           };
-          if (std::find_if(b.mps.begin(), b.mps.end(), find_mp) ==
-              b.mps.end()) {
-            mgis::raise(
-                "mgis::behaviour::update_values: "
-                "material property '" +
-                mp.first +
-                "' defined in the material state manager is not defined "
-                " by the behaviour");
-          }
-        }
-      };
       if (&i.b != &o.b) {
         mgis::raise(
             "mgis::behaviour::update_values: the material state managers "

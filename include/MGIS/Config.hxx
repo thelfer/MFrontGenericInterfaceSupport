@@ -1,6 +1,6 @@
 /*!
  * \file   include/MGIS/Config.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   19/06/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -15,7 +15,7 @@
 #ifndef LIB_MGIS_CONFIG_HXX
 #define LIB_MGIS_CONFIG_HXX
 
-#include"MGIS/Config-c.h"
+#include "MGIS/Config-c.h"
 
 #define MGIS_INLINE inline
 #define MGIS_NORETURN [[noreturn]]

@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/fencis/include/MGIS/FEniCS/NonLinearMechanicalProblem.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/12/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -31,7 +31,7 @@ namespace mgis {
   namespace fenics {
 
     struct MGIS_FENICS_EXPORT NonLinearMechanicalProblem
-      : public dolfin::NonlinearProblem {
+        : public dolfin::NonlinearProblem {
       //! \brief Constructor
       NonLinearMechanicalProblem(
           std::shared_ptr<const dolfin::Form>,
@@ -51,7 +51,6 @@ namespace mgis {
       ~NonLinearMechanicalProblem() override;
 
      private:
-
       // For system after constitutive update
       void form_tensors(dolfin::GenericMatrix&,
                         dolfin::GenericVector&,
@@ -68,9 +67,9 @@ namespace mgis {
           delete;
       NonLinearMechanicalProblem& operator=(const NonLinearMechanicalProblem&) =
           delete;
-};  // end of struct
+    };  // end of struct
 
-}  // end of namespace fenics
+  }  // end of namespace fenics
 
 }  // end of namespace mgis
 

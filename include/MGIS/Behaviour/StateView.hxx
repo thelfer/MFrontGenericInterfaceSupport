@@ -25,18 +25,18 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/*!
- * \brief state of the material
- */
-typedef struct{
+//! \brief state of the material at the end of the time step
+typedef struct {
   //! \brief value of the gradients
   const mgis_real* gradients;
   //! \brief values of the thermodynamic_forces
-  mgis_real * thermodynamic_forces;
+  mgis_real* thermodynamic_forces;
+  //! \brief volumetric mass density in the reference configuration
+  const mgis_real* mass_density;
   //! \brief values of the material properties
   const mgis_real* material_properties;
   //! \brief values of the internal state variables
-  mgis_real * internal_state_variables;
+  mgis_real* internal_state_variables;
   /*!
    * \brief stored energy (computed by `@InternalEnergy` in `MFront`
    * files) This output is optional.
@@ -51,14 +51,14 @@ typedef struct{
   const mgis_real* external_state_variables;
 } mgis_bv_StateView;
 
-/*!
- * \brief state of the material
- */
-typedef struct{
+//! \brief state of the material at the beginning of the time step
+typedef struct {
   //! \brief value of the gradients
   const mgis_real* gradients;
   //! \brief values of the thermodynamic_forces
   const mgis_real* thermodynamic_forces;
+  //! \brief volumetric mass density in the reference configuration
+  const mgis_real* mass_density;
   //! \brief values of the material properties
   const mgis_real* material_properties;
   //! \brief values of the internal state variables

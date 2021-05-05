@@ -1,6 +1,7 @@
 /*!
- * \file   bindings/fencis/include/MGIS/FEniCS/NonLinearMaterialTangentOperatorFunction.hxx
- * \brief    
+ * \file
+ * bindings/fencis/include/MGIS/FEniCS/NonLinearMaterialTangentOperatorFunction.hxx
+ * \brief
  * \author Thomas Helfer
  * \date   14/12/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -25,13 +26,13 @@
 #include "MGIS/FEniCS/Config-FEniCS.hxx"
 #include "MGIS/FEniCS/NonLinearMaterialFunctionBase.hxx"
 
-namespace mgis{
-  
+namespace mgis {
+
   namespace fenics {
 
     //! \brief function in charge of the export the flux to `FEniCS`.
     struct MGIS_FENICS_EXPORT NonLinearMaterialTangentOperatorFunction
-      : NonLinearMaterialFunctionBase {
+        : NonLinearMaterialFunctionBase {
       // inheriting NonLinearMaterialFunctionBase constructor
       using NonLinearMaterialFunctionBase::NonLinearMaterialFunctionBase;
 
@@ -42,15 +43,18 @@ namespace mgis{
                     const ufc::cell&) const override;
       //! destructor
       ~NonLinearMaterialTangentOperatorFunction() override;
-    private:
+
+     private:
       NonLinearMaterialTangentOperatorFunction() = delete;
-      NonLinearMaterialTangentOperatorFunction(NonLinearMaterialTangentOperatorFunction&&) = delete;
-      NonLinearMaterialTangentOperatorFunction(const NonLinearMaterialTangentOperatorFunction&) = delete;
-      NonLinearMaterialTangentOperatorFunction&
-      operator=(NonLinearMaterialTangentOperatorFunction&&) = delete;
-      NonLinearMaterialTangentOperatorFunction&
-      operator=(const NonLinearMaterialTangentOperatorFunction&) = delete;
-    }; // end of struct NonLinearMaterialFunctionFunction
+      NonLinearMaterialTangentOperatorFunction(
+          NonLinearMaterialTangentOperatorFunction&&) = delete;
+      NonLinearMaterialTangentOperatorFunction(
+          const NonLinearMaterialTangentOperatorFunction&) = delete;
+      NonLinearMaterialTangentOperatorFunction& operator=(
+          NonLinearMaterialTangentOperatorFunction&&) = delete;
+      NonLinearMaterialTangentOperatorFunction& operator=(
+          const NonLinearMaterialTangentOperatorFunction&) = delete;
+    };  // end of struct NonLinearMaterialFunctionFunction
 
   }  // end of namespace fenics
 

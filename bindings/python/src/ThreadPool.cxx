@@ -1,6 +1,6 @@
 /*!
  * \file   ThreadPool.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   12/11/2018
  * \copyright (C) Copyright Thomas Helfer 2018.

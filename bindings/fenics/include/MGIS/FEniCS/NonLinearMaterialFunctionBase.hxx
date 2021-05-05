@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/fencis/include/MGIS/FEniCS/NonLinearMaterialFunctionBase.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/12/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -25,28 +25,29 @@
 #include <dolfin/function/GenericFunction.h>
 #include "MGIS/FEniCS/Config-FEniCS.hxx"
 
-namespace mgis{
+namespace mgis {
 
   namespace fenics {
 
     // forward declaration
     struct NonLinearMaterial;
-    
+
     /*!
      * \brief main interface between `MGIS` and `FEniCS`.
      * This design has been inspired by the one of the
      * `fenics-solid-mechanics` project.
      */
     struct MGIS_FENICS_EXPORT NonLinearMaterialFunctionBase
-      : public dolfin::GenericFunction {
-      /*! 
+        : public dolfin::GenericFunction {
+      /*!
        * \brief constructor
-       * \param[in] nlm: material 
+       * \param[in] nlm: material
        */
-      NonLinearMaterialFunctionBase(NonLinearMaterial&,
-				    std::shared_ptr<const dolfin::FiniteElement>);
+      NonLinearMaterialFunctionBase(
+          NonLinearMaterial&, std::shared_ptr<const dolfin::FiniteElement>);
 
-      std::shared_ptr<const dolfin::FunctionSpace> function_space() const override;
+      std::shared_ptr<const dolfin::FunctionSpace> function_space()
+          const override;
 
       std::size_t value_rank() const override;
 
@@ -60,21 +61,23 @@ namespace mgis{
       //! \brief destructor
       ~NonLinearMaterialFunctionBase() override;
 
-    protected:
+     protected:
       NonLinearMaterial& m;
       std::shared_ptr<const dolfin::FiniteElement> elements;
-    private:
+
+     private:
       // disallow copying
-      NonLinearMaterialFunctionBase(const NonLinearMaterialFunctionBase&) = delete;
+      NonLinearMaterialFunctionBase(const NonLinearMaterialFunctionBase&) =
+          delete;
       /// delete copy constructor and assignement
-       NonLinearMaterialFunctionBase(NonLinearMaterialFunctionBase&&) = delete;
+      NonLinearMaterialFunctionBase(NonLinearMaterialFunctionBase&&) = delete;
       // deleting assignment operator
-      NonLinearMaterialFunctionBase&
-      operator=(const NonLinearMaterialFunctionBase&) = delete;
+      NonLinearMaterialFunctionBase& operator=(
+          const NonLinearMaterialFunctionBase&) = delete;
       // deleting assignment operator
-      NonLinearMaterialFunctionBase&
-      operator=(NonLinearMaterialFunctionBase&&) = delete;
-    }; // end of struct NonLinearMaterialFunctionBase
+      NonLinearMaterialFunctionBase& operator=(
+          NonLinearMaterialFunctionBase&&) = delete;
+    };  // end of struct NonLinearMaterialFunctionBase
 
   }  // end of namespace fenics
 

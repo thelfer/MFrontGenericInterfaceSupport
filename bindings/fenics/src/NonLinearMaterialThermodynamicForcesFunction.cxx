@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/fenics/src/NonLinearMaterialThermodynamicForcesFunction.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/12/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -22,8 +22,8 @@
 #include "MGIS/FEniCS/NonLinearMaterial.hxx"
 #include "MGIS/FEniCS/NonLinearMaterialThermodynamicForcesFunction.hxx"
 
-namespace mgis{
-  
+namespace mgis {
+
   namespace fenics {
 
     void NonLinearMaterialThermodynamicForcesFunction::restrict(
@@ -45,10 +45,11 @@ namespace mgis{
           values[num_ip_per_cell * i + ip] = f[i];
         }
       }
-    } // end of NonLinearMaterialThermodynamicForcesFunction::restrict
+    }  // end of NonLinearMaterialThermodynamicForcesFunction::restrict
 
-    NonLinearMaterialThermodynamicForcesFunction::~NonLinearMaterialThermodynamicForcesFunction() = default;
-    
+    NonLinearMaterialThermodynamicForcesFunction::
+        ~NonLinearMaterialThermodynamicForcesFunction() = default;
+
   }  // end of namespace fenics
 
 }  // end of namespace mgis

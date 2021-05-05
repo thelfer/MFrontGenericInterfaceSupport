@@ -36,7 +36,7 @@ namespace mgis {
        */
       Rotation2D(const real* const);
       /*!
-       * \brief 
+       * \brief
        */
       Rotation2D(const real, const real, const real, const real);
       //! \brief invert the rotation
@@ -80,7 +80,7 @@ namespace mgis {
        */
       Rotation3D(const real* const);
       /*!
-       * \brief 
+       * \brief
        */
       Rotation3D(const real,
                  const real,

@@ -1,9 +1,8 @@
 /*!
- * \file   bindings/fenics/tests/StandardElastoPlasticityPlasticityTest11-cyclic_E.cxx
- * \brief  This program tests the elastic/plastic response of an unit cube submitted
- * to a cyclic loading.
- * \author Thomas Helfer
- * \date   2/12/2018
+ * \file
+ * bindings/fenics/tests/StandardElastoPlasticityPlasticityTest11-cyclic_E.cxx
+ * \brief  This program tests the elastic/plastic response of an unit cube
+ * submitted to a cyclic loading. \author Thomas Helfer \date   2/12/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
  * Use, modification and distribution are subject
  * to one of the following licences:
@@ -44,44 +43,44 @@
 
 // force at the right end
 struct ImposedDisplacementValue : public dolfin::Expression {
-  ImposedDisplacementValue(const double& t_)
-    : dolfin::Expression(), t(t_) {
-    this->loadings = {{0,0},{0.3,1.5e-2},{0.6,-1.5e-2},{1,3e-2}};
+  ImposedDisplacementValue(const double& t_) : dolfin::Expression(), t(t_) {
+    this->loadings = {{0, 0}, {0.3, 1.5e-2}, {0.6, -1.5e-2}, {1, 3e-2}};
   }
-  void eval(Eigen::Ref<Eigen::VectorXd>  values,
-	    Eigen::Ref<const Eigen::VectorXd>) const override{
-    const auto p = [this]{
+  void eval(Eigen::Ref<Eigen::VectorXd> values,
+            Eigen::Ref<const Eigen::VectorXd>) const override {
+    const auto p = [this] {
       auto i = this->loadings.begin();
-      if(i->first>this->t){
-	return i;
+      if (i->first > this->t) {
+        return i;
       }
       auto in = std::next(i);
-      while(in!=this->loadings.end()){
-	if(in->first>this->t){
-	  return i;
-	}
-	++i;
-	++in;
+      while (in != this->loadings.end()) {
+        if (in->first > this->t) {
+          return i;
+        }
+        ++i;
+        ++in;
       }
       return i;
     }();
     const auto pn = std::next(p);
     values[0] = p->second;
-    if(pn!=this->loadings.end()){
+    if (pn != this->loadings.end()) {
       values[0] +=
-	(pn->second-p->second)/(pn->first-p->first)*(t-p->first);
+          (pn->second - p->second) / (pn->first - p->first) * (t - p->first);
     }
   }
   ~ImposedDisplacementValue() override = default;
-private:
+
+ private:
   const double& t;
-  std::vector<std::pair<double,double>> loadings;
+  std::vector<std::pair<double, double>> loadings;
 };
 
-int main(){
+int main() {
   // getting the path to the test library
   auto library = std::getenv("MGIS_TEST_BEHAVIOURS_LIBRARY");
-  if(library==nullptr){
+  if (library == nullptr) {
     std::exit(EXIT_FAILURE);
   }
   // create mesh and boundaries
@@ -108,9 +107,12 @@ int main(){
   auto zero = std::make_shared<dolfin::Constant>(0.0);
 
   std::vector<std::shared_ptr<const dolfin::DirichletBC>> bcs;
-  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(0), zero, boundaries["sx1"]));
-  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(1), zero, boundaries["sy1"]));
-  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(2), zero, boundaries["sz1"]));
+  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(0), zero,
+                                                      boundaries["sx1"]));
+  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(1), zero,
+                                                      boundaries["sy1"]));
+  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(2), zero,
+                                                      boundaries["sz1"]));
   bcs.push_back(std::make_shared<dolfin::DirichletBC>(
       V->sub(0), std::make_shared<ImposedDisplacementValue>(t),
       boundaries["sx2"]));
@@ -118,20 +120,21 @@ int main(){
   // Solution function
   auto u = std::make_shared<dolfin::Function>(V);
 
-  auto b = mgis::behaviour::load(library, "StandardElastoViscoPlasticityPlasticityTest11",
-    // auto b = mgis::behaviour::load(library, "Elasticity",
-                                 mgis::behaviour::Hypothesis::TRIDIMENSIONAL);
-  mgis::fenics::NonLinearMaterial m(u,element_t,element_s,b);
+  auto b = mgis::behaviour::load(
+      library, "StandardElastoViscoPlasticityPlasticityTest11",
+      // auto b = mgis::behaviour::load(library, "Elasticity",
+      mgis::behaviour::Hypothesis::TRIDIMENSIONAL);
+  mgis::fenics::NonLinearMaterial m(u, element_t, element_s, b);
   // setMaterialProperty(m.s0,"YoungModulus", 160e9);
   // setMaterialProperty(m.s1,"YoungModulus", 160e9);
   // setMaterialProperty(m.s0,"PoissonRatio", 0.3);
   // setMaterialProperty(m.s1,"PoissonRatio", 0.3);
-  setExternalStateVariable(m.s0,"Temperature", 293.15);
-  setExternalStateVariable(m.s1,"Temperature", 293.15);
-  
+  setExternalStateVariable(m.s0, "Temperature", 293.15);
+  setExternalStateVariable(m.s1, "Temperature", 293.15);
+
   // // Create forms and attach functions
   auto a = std::make_shared<MGISSmallStrainFormulation3D::BilinearForm>(V, V);
-  a->t =  m.getTangentOperatorFunction();
+  a->t = m.getTangentOperatorFunction();
   auto L = std::make_shared<MGISSmallStrainFormulation3D::LinearForm>(V);
   L->f = std::make_shared<dolfin::Constant>(0.0, 0.0, 0.0);
   L->h = std::make_shared<dolfin::Constant>(0.0, 0.0, 0.0);
@@ -150,7 +153,7 @@ int main(){
   // post-processings data
   std::vector<std::array<double, 6>> s, e;
   e.push_back({0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
-  s.push_back({0.0,0.0,0.0,0.0,0.0,0.0});
+  s.push_back({0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
 
   // Solver loop
   mgis::size_type step = 0;
@@ -175,18 +178,19 @@ int main(){
   }
   /* tests */
   auto status = EXIT_SUCCESS;
-  auto nb_tests    = mgis::size_type{};
+  auto nb_tests = mgis::size_type{};
   auto nb_failures = mgis::size_type{};
-  auto check = [&status,&nb_tests,&nb_failures](const bool c, const mgis::string_view msg){
+  auto check = [&status, &nb_tests, &nb_failures](const bool c,
+                                                  const mgis::string_view msg) {
     ++nb_tests;
-    if(!c){
+    if (!c) {
       std::cerr << msg << '\n';
       status = EXIT_FAILURE;
       ++nb_failures;
     }
   };
   constexpr const auto eps = 1.e-14;
-  constexpr const auto yg  = 160e9;
+  constexpr const auto yg = 160e9;
   for (mgis::size_type i = 0; i != e.size(); ++i) {
     // // check strain values
     check(std::abs(e[i][3]) < eps, "invalid shear strain value");

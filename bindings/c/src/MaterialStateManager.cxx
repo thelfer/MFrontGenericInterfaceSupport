@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/c/src/MaterialStateManager.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   11/09/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -86,8 +86,7 @@ mgis_bv_material_state_manager_initializer_bind_internal_state_variables(
 }  // end of
    // mgis_bv_material_state_manager_initializer_bind_internal_state_variables
 
-mgis_status
-mgis_bv_material_state_manager_initializer_bind_stored_energies(
+mgis_status mgis_bv_material_state_manager_initializer_bind_stored_energies(
     mgis_bv_MaterialStateManagerInitializer* i,
     mgis_real* const p,
     mgis_size_type s) {
@@ -110,8 +109,7 @@ mgis_bv_material_state_manager_initializer_bind_stored_energies(
 }  // end of
    // mgis_bv_material_state_manager_initializer_bind_stored_energies
 
-mgis_status
-mgis_bv_material_state_manager_initializer_bind_dissipated_energies(
+mgis_status mgis_bv_material_state_manager_initializer_bind_dissipated_energies(
     mgis_bv_MaterialStateManagerInitializer* i,
     mgis_real* const p,
     mgis_size_type s) {
@@ -142,8 +140,8 @@ mgis_status mgis_bv_material_state_manager_get_number_of_integration_points(
   }
   *n = s->n;
   return mgis_report_success();
-} // end of mgis_bv_material_state_manager_get_number_of_integration_points
-  
+}  // end of mgis_bv_material_state_manager_get_number_of_integration_points
+
 mgis_status mgis_bv_material_state_manager_get_gradients(
     mgis_real** g, mgis_bv_MaterialStateManager* const s) {
   if (s == nullptr) {
@@ -243,20 +241,23 @@ mgis_status mgis_bv_material_state_manager_set_non_uniform_material_property(
   }
   try {
     if (s == MGIS_BV_LOCAL_STORAGE) {
-      setMaterialProperty(*m, n, {v,static_cast<index_type>(m->n)},
+      setMaterialProperty(*m, n, {v, static_cast<index_type>(m->n)},
                           mgis::behaviour::MaterialStateManager::LOCAL_STORAGE);
     } else {
-      setMaterialProperty(*m, n, {v,static_cast<index_type>(m->n)},
-                          mgis::behaviour::MaterialStateManager::EXTERNAL_STORAGE);
+      setMaterialProperty(
+          *m, n, {v, static_cast<index_type>(m->n)},
+          mgis::behaviour::MaterialStateManager::EXTERNAL_STORAGE);
     }
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_bv_material_state_manager_set_non_uniform_material_property
+}  // end of mgis_bv_material_state_manager_set_non_uniform_material_property
 
 mgis_status mgis_bv_material_state_manager_is_material_property_defined(
-    int* const b, const mgis_bv_MaterialStateManager* const m, const char* const n){
+    int* const b,
+    const mgis_bv_MaterialStateManager* const m,
+    const char* const n) {
   *b = 0;
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
@@ -267,7 +268,7 @@ mgis_status mgis_bv_material_state_manager_is_material_property_defined(
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_bv_material_state_manager_is_material_property_defined
+}  // end of mgis_bv_material_state_manager_is_material_property_defined
 
 mgis_status mgis_bv_material_state_manager_is_material_property_uniform(
     int* const b,
@@ -316,7 +317,7 @@ mgis_status mgis_bv_material_state_manager_get_non_uniform_material_property(
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_bv_material_state_manager_get_non_uniform_material_property
+}  // end of mgis_bv_material_state_manager_get_non_uniform_material_property
 
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_set_uniform_external_state_variable(
@@ -334,7 +335,8 @@ mgis_bv_material_state_manager_set_uniform_external_state_variable(
   return mgis_report_success();
 }  // end of mgis_bv_material_state_manager_set_uniform_external_state_variable
 
-mgis_status mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
+mgis_status
+mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
     mgis_bv_MaterialStateManager* const m,
     const char* const n,
     mgis_real* const v,
@@ -360,7 +362,8 @@ mgis_status mgis_bv_material_state_manager_set_non_uniform_external_state_variab
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_bv_material_state_manager_set_non_uniform_external_state_variable
+}  // end of
+   // mgis_bv_material_state_manager_set_non_uniform_external_state_variable
 
 mgis_status mgis_bv_material_state_manager_is_external_state_variable_defined(
     int* const b,
@@ -376,7 +379,7 @@ mgis_status mgis_bv_material_state_manager_is_external_state_variable_defined(
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_bv_material_state_manager_is_external_state_variable_defined
+}  // end of mgis_bv_material_state_manager_is_external_state_variable_defined
 
 mgis_status mgis_bv_material_state_manager_is_external_state_variable_uniform(
     int* const b,
@@ -426,6 +429,7 @@ mgis_bv_material_state_manager_get_non_uniform_external_state_variable(
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_bv_material_state_manager_get_non_uniform_external_state_variable
+}  // end of
+   // mgis_bv_material_state_manager_get_non_uniform_external_state_variable
 
 }  // end of extern "C"

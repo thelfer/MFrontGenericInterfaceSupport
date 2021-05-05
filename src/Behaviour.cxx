@@ -476,8 +476,8 @@ namespace mgis {
     }  // end of getTangentOperatorArraySize
 
     void rotateGradients(mgis::span<real> g,
-                                const Behaviour &b,
-                                const mgis::span<const real, 9> &r) {
+                         const Behaviour &b,
+                         const mgis::span<const real, 9> &r) {
       if (b.rotate_gradients_ptr == nullptr) {
         mgis::raise(
             "rotateGradients: no function performing the rotation of "
@@ -495,9 +495,9 @@ namespace mgis {
     }  // end of rotateGradients
 
     void rotateGradients(mgis::span<real> mg,
-                                const Behaviour &b,
-                                const mgis::span<const real> &gg,
-                                const mgis::span<const real, 9> &r) {
+                         const Behaviour &b,
+                         const mgis::span<const real> &gg,
+                         const mgis::span<const real, 9> &r) {
       if (b.rotate_gradients_ptr == nullptr) {
         mgis::raise(
             "rotateGradients: no function performing the rotation of "
@@ -518,8 +518,8 @@ namespace mgis {
     }  // end of rotateGradients
 
     void rotateThermodynamicForces(mgis::span<real> tf,
-                                          const Behaviour &b,
-                                          const mgis::span<const real, 9> &r) {
+                                   const Behaviour &b,
+                                   const mgis::span<const real, 9> &r) {
       if (b.rotate_thermodynamic_forces_ptr == nullptr) {
         mgis::raise(
             "rotateThermodynamicForces: no function performing the "
@@ -537,9 +537,9 @@ namespace mgis {
     }  // end of rotateThermodynamicForces
 
     void rotateThermodynamicForces(mgis::span<real> gtf,
-                                          const Behaviour &b,
-                                          const mgis::span<const real> &mtf,
-                                          const mgis::span<const real, 9> &r) {
+                                   const Behaviour &b,
+                                   const mgis::span<const real> &mtf,
+                                   const mgis::span<const real, 9> &r) {
       if (b.rotate_thermodynamic_forces_ptr == nullptr) {
         mgis::raise(
             "rotateThermodynamicForces: no function performing the "
@@ -559,10 +559,9 @@ namespace mgis {
                                                  r.data(), dv.quot);
     }  // end of rotateThermodynamicForces
 
-    void rotateTangentOperatorBlocks(
-        mgis::span<real> K,
-        const Behaviour &b,
-        const mgis::span<const real, 9> &r) {
+    void rotateTangentOperatorBlocks(mgis::span<real> K,
+                                     const Behaviour &b,
+                                     const mgis::span<const real, 9> &r) {
       if (b.rotate_tangent_operator_blocks_ptr == nullptr) {
         mgis::raise(
             "rotateTangentOperatorBlocks: no function performing the "
@@ -579,11 +578,10 @@ namespace mgis {
                                                     r.data(), dv.quot);
     }  // end of rotateTangentOperatorBlocks
 
-    void rotateTangentOperatorBlocks(
-        mgis::span<real> gK,
-        const Behaviour &b,
-        const mgis::span<const real> &mK,
-        const mgis::span<const real, 9> &r) {
+    void rotateTangentOperatorBlocks(mgis::span<real> gK,
+                                     const Behaviour &b,
+                                     const mgis::span<const real> &mK,
+                                     const mgis::span<const real, 9> &r) {
       if (b.rotate_tangent_operator_blocks_ptr == nullptr) {
         mgis::raise(
             "rotateTangentOperatorBlocks: no function performing the "
@@ -597,8 +595,7 @@ namespace mgis {
             "multiple of the tangent operator blocks size)");
       }
       if (mK.size() != gK.size()) {
-        mgis::raise(
-            "rotateTangentOperatorBlocks : unmatched array sizes");
+        mgis::raise("rotateTangentOperatorBlocks : unmatched array sizes");
       }
       b.rotate_array_of_tangent_operator_blocks_ptr(gK.data(), mK.data(),
                                                     r.data(), dv.quot);

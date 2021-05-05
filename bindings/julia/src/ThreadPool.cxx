@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/julia/src/ThreadPool.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/05/2019
  */

@@ -78,7 +78,7 @@ namespace mgis {
      */
     MGIS_EXPORT std::string getVariableTypeAsString(const Variable &);
 
-    }  // end of namespace behaviour
+  }  // end of namespace behaviour
 
 }  // end of namespace mgis
 

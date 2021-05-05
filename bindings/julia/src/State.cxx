@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/julia/src/State.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   16/05/2019
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -90,4 +90,4 @@ void declareState(jlcxx::Module& m) {
                 mgis::behaviour::setExternalStateVariable(s, n, v);
               });
 
-} // end of declareState
+}  // end of declareState

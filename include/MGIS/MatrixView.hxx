@@ -62,7 +62,7 @@ namespace mgis {
     const size_type row_stride;
   };  // end of struct MatrixView
 
-}  // end of mgis
+}  // namespace mgis
 
 #include "MGIS/MatrixView.ixx"
 

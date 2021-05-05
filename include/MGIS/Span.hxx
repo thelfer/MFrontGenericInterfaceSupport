@@ -490,15 +490,15 @@ namespace mgis {
     namespace detail {
 
 #if span_HAVE(TYPE_TRAITS)
+      using std::false_type;
       using std::is_same;
       using std::true_type;
-      using std::false_type;
 #endif
 
 #if span_HAVE(REMOVE_CONST)
 
-      using std::remove_cv;
       using std::remove_const;
+      using std::remove_cv;
       using std::remove_volatile;
 
 #else
@@ -584,7 +584,7 @@ namespace mgis {
 #if !span_CONFIG(NO_EXCEPTIONS)
 #if span_FEATURE(MEMBER_AT) > 1
 
-// format index and size:
+      // format index and size:
 
 #if defined __clang__
 #pragma clang diagnostic ignored "-Wlong-long"
@@ -604,7 +604,8 @@ namespace mgis {
 
 #else   // MEMBER_AT
 
-      MGIS_NORETURN inline void throw_out_of_range(index_t /*idx*/, index_t /*size*/) {
+      MGIS_NORETURN inline void throw_out_of_range(index_t /*idx*/,
+                                                   index_t /*size*/) {
         throw std::out_of_range("span::at(): index outside span");
       }
 #endif  // MEMBER_AT
@@ -694,7 +695,7 @@ namespace mgis {
       //    static constexpr index_type extent = Extent;
       enum { extent = Extent };
 
-// 26.7.3.2 Constructors, copy, and assignment [span.cons]
+      // 26.7.3.2 Constructors, copy, and assignment [span.cons]
 
 #if span_HAVE(DEFAULT_FUNCTION_TEMPLATE_ARG)
       template <
@@ -864,10 +865,10 @@ namespace mgis {
                       (0 <= Count && Count + Offset <= size())));
 
         return span<element_type, Count>(
-            data() + Offset,
-            Count != dynamic_extent ? Count : (Extent != dynamic_extent
-                                                   ? Extent - Offset
-                                                   : size() - Offset));
+            data() + Offset, Count != dynamic_extent ? Count
+                                                     : (Extent != dynamic_extent
+                                                            ? Extent - Offset
+                                                            : size() - Offset));
       }
 
       span_constexpr_exp span<element_type, dynamic_extent> first(
@@ -952,7 +953,7 @@ namespace mgis {
 
 #endif
 
-// xx.x.x.x Modifiers [span.modifiers]
+      // xx.x.x.x Modifiers [span.modifiers]
 
 #if span_FEATURE(MEMBER_SWAP)
 
@@ -1018,7 +1019,7 @@ namespace mgis {
       index_type size_;
     };
 
-// class template argument deduction guides:
+    // class template argument deduction guides:
 
 #if span_HAVE(DEDUCTION_GUIDES)  // span_CPP17_OR_GREATER
 
@@ -1039,7 +1040,7 @@ namespace mgis {
 
 #endif  // span_HAVE( DEDUCTION_GUIDES )
 
-// 26.7.3.7 Comparison operators [span.comparison]
+    // 26.7.3.7 Comparison operators [span.comparison]
 
 #if span_FEATURE(SAME)
 
@@ -1093,7 +1094,7 @@ namespace mgis {
       return !(l < r);
     }
 
-// 26.7.2.6 views of object representation [span.objectrep]
+    // 26.7.2.6 views of object representation [span.objectrep]
 
 #if span_HAVE(BYTE)
 

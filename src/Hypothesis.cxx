@@ -81,7 +81,7 @@ namespace mgis {
       } else if (h == "Tridimensional") {
         return Hypothesis::TRIDIMENSIONAL;
       }
-      raise("fromString : unsupported modelling hypothesis ('"+h+"')");
+      raise("fromString : unsupported modelling hypothesis ('" + h + "')");
     }  // end of fromString
 
     Hypothesis fromString(const char* const h) {

@@ -41,7 +41,8 @@ namespace mgis {
 
     void Rotation2D::rotateVector(real* const o, const real* const i) const {
       const real nv[2] = {
-          m00 * i[0] + m01 * i[1], m10 * i[0] + m11 * i[1],
+          m00 * i[0] + m01 * i[1],
+          m10 * i[0] + m11 * i[1],
       };
       o[0] = nv[0];
       o[1] = nv[1];

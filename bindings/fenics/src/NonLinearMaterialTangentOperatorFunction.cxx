@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/fenics/src/NonLinearMaterialTangentOperatorFunction.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/12/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -24,8 +24,8 @@
 #include "MGIS/FEniCS/NonLinearMaterial.hxx"
 #include "MGIS/FEniCS/NonLinearMaterialTangentOperatorFunction.hxx"
 
-namespace mgis{
-  
+namespace mgis {
+
   namespace fenics {
 
     void NonLinearMaterialTangentOperatorFunction::restrict(
@@ -35,8 +35,8 @@ namespace mgis{
         const double* nc,
         const ufc::cell&) const {
       // behaviour integration
-      this->m.update(c,nc);
-      const auto gs  = this->m.s1.gradients_stride;
+      this->m.update(c, nc);
+      const auto gs = this->m.s1.gradients_stride;
       const auto ths = this->m.s1.thermodynamic_forces_stride;
       // updating the tangent operator
       const std::size_t cell_index = c.index();
@@ -47,17 +47,18 @@ namespace mgis{
       for (std::size_t ip = 0; ip != num_ip_per_cell; ++ip) {
         const auto gip = cell_index * num_ip_per_cell + ip;
         const auto Kb = this->m.K.data() + gip * num_ip_dofs;
-	for (mgis::size_type i = 0; i != ths; ++i) {
+        for (mgis::size_type i = 0; i != ths; ++i) {
           for (mgis::size_type j = 0; j != gs; ++j) {
             const std::size_t pos = i * gs + j;
             values[num_ip_per_cell * pos + ip] = Kb[pos];
           }
         }
       }
-    } // end of NonLinearMaterialTangentOperatorFunction::restrict
+    }  // end of NonLinearMaterialTangentOperatorFunction::restrict
 
-    NonLinearMaterialTangentOperatorFunction::~NonLinearMaterialTangentOperatorFunction() = default;
-    
+    NonLinearMaterialTangentOperatorFunction::
+        ~NonLinearMaterialTangentOperatorFunction() = default;
+
   }  // end of namespace fenics
 
 }  // end of namespace mgis

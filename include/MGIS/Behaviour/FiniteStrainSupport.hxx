@@ -42,7 +42,6 @@ namespace mgis {
                *   deformation gradient */
     };        // end of enum struct FiniteStrainTangentOperator
 
-
     /*!
      * \brief convert the Cauchy stress to the first Piola-Kirchhoff stress in
      * 2D. No bounds checks is made, use with care.

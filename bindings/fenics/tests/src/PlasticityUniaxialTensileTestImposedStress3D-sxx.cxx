@@ -1,5 +1,6 @@
 /*!
- * \file   bindings/fenics/tests/PlasticityUniaxialTensileTestImposedStress3D-sxx.cxx
+ * \file
+ * bindings/fenics/tests/PlasticityUniaxialTensileTestImposedStress3D-sxx.cxx
  * \brief  This program tests the elastic and plastic load-displacement
  * responses for a unit cube in uniaxial tension with an Von Mises
  * (J2) plastic behaviour with linear strain hardening.
@@ -45,22 +46,22 @@
 // force at the right end
 struct Load : public dolfin::Expression {
   Load(const double& t_) : dolfin::Expression(3), t(t_) {}
-  void eval(Eigen::Ref<Eigen::VectorXd>  values,
-	    Eigen::Ref<const Eigen::VectorXd>) const override{
+  void eval(Eigen::Ref<Eigen::VectorXd> values,
+            Eigen::Ref<const Eigen::VectorXd>) const override {
     values[0] = 1.0e5 * t;
     values[1] = 0.0;
     values[2] = 0.0;
   }
   ~Load() override = default;
-private:
+
+ private:
   const double& t;
 };
 
-
-int main(){
+int main() {
   // getting the path to the test library
   auto library = std::getenv("MGIS_TEST_BEHAVIOURS_LIBRARY");
-  if(library==nullptr){
+  if (library == nullptr) {
     std::exit(EXIT_FAILURE);
   }
   // create mesh
@@ -91,12 +92,16 @@ int main(){
   auto boundary_load = std::make_shared<Load>(t);
 
   std::vector<std::shared_ptr<const dolfin::DirichletBC>> bcs;
-  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(0), zero, boundaries["sx1"]));
-  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(1), zero, boundaries["sy1"]));
-  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(2), zero, boundaries["sz1"]));
+  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(0), zero,
+                                                      boundaries["sx1"]));
+  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(1), zero,
+                                                      boundaries["sy1"]));
+  bcs.push_back(std::make_shared<dolfin::DirichletBC>(V->sub(2), zero,
+                                                      boundaries["sz1"]));
 
   // Mark loading boundary
-  auto load_marker = std::make_shared<dolfin::MeshFunction<std::size_t>>(mesh,mesh->topology().dim()-1, 0);
+  auto load_marker = std::make_shared<dolfin::MeshFunction<std::size_t>>(
+      mesh, mesh->topology().dim() - 1, 0);
   boundaries["sx2"]->mark(*load_marker, 1);
 
   // Solution function
@@ -104,13 +109,13 @@ int main(){
 
   auto b = mgis::behaviour::load(library, "Plasticity",
                                  mgis::behaviour::Hypothesis::TRIDIMENSIONAL);
-  mgis::fenics::NonLinearMaterial m(u,element_t,element_s,b);
-  setExternalStateVariable(m.s0,"Temperature", 293.15);
-  setExternalStateVariable(m.s1,"Temperature", 293.15);
-  
+  mgis::fenics::NonLinearMaterial m(u, element_t, element_s, b);
+  setExternalStateVariable(m.s0, "Temperature", 293.15);
+  setExternalStateVariable(m.s1, "Temperature", 293.15);
+
   // // Create forms and attach functions
   auto a = std::make_shared<MGISSmallStrainFormulation3D::BilinearForm>(V, V);
-  a->t =  m.getTangentOperatorFunction();
+  a->t = m.getTangentOperatorFunction();
   a->ds = load_marker;
   auto L = std::make_shared<MGISSmallStrainFormulation3D::LinearForm>(V);
   L->f = f;
@@ -122,7 +127,8 @@ int main(){
 
   // // Displacement and load integration functionals
   auto M_d = std::make_shared<MGISSmallStrainFormulation3D::Form_M_d>(mesh, u);
-  auto M_f = std::make_shared<MGISSmallStrainFormulation3D::Form_M_f>(mesh, boundary_load);
+  auto M_f = std::make_shared<MGISSmallStrainFormulation3D::Form_M_f>(
+      mesh, boundary_load);
   M_d->ds = load_marker;
   M_f->ds = load_marker;
 
@@ -134,7 +140,7 @@ int main(){
   nonlinear_solver.parameters["absolute_tolerance"] = 1.0e-15;
 
   // Structures to hold load-disp data
-  std::vector<double> disp, load,p;
+  std::vector<double> disp, load, p;
   disp.push_back(0.0);
   load.push_back(0.0);
   p.push_back(0.0);

@@ -1,6 +1,6 @@
 /*!
  * \file   MatrixView.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   03/09/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,14 +17,15 @@
 
 namespace mgis {
 
-  real& MatrixView::operator()(const size_type i, const size_type j){
-    return this->values[this->ioffset+i*this->row_stride+j];
-  } // end of MatrixView::operator()
+  real& MatrixView::operator()(const size_type i, const size_type j) {
+    return this->values[this->ioffset + i * this->row_stride + j];
+  }  // end of MatrixView::operator()
 
-  const real& MatrixView::operator()(const size_type i, const size_type j) const {
-    return this->values[this->ioffset+i*this->row_stride+j];
-  } // end of MatrixView::operator()
+  const real& MatrixView::operator()(const size_type i,
+                                     const size_type j) const {
+    return this->values[this->ioffset + i * this->row_stride + j];
+  }  // end of MatrixView::operator()
 
-}  // end of mgis
+}  // namespace mgis
 
 #endif /* LIB_MGIS_MATRIXVIEW_IXX */

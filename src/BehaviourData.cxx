@@ -70,9 +70,9 @@ namespace mgis {
     }  // end of make_view
 
     void print_markdown(std::ostream& os,
-                       const Behaviour& b,
-                       const BehaviourData& d,
-                       const mgis::size_type l) {
+                        const Behaviour& b,
+                        const BehaviourData& d,
+                        const mgis::size_type l) {
       os << mgis::utilities::get_heading_signs(l + 1)
          << " Behaviour description\n\n";
       print_markdown(os, b, l + 1);

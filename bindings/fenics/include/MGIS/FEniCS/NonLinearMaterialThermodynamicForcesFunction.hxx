@@ -1,6 +1,7 @@
 /*!
- * \file   bindings/fencis/include/MGIS/FEniCS/NonLinearMaterialThermodynamicForcesFunction.hxx
- * \brief    
+ * \file
+ * bindings/fencis/include/MGIS/FEniCS/NonLinearMaterialThermodynamicForcesFunction.hxx
+ * \brief
  * \author Thomas Helfer
  * \date   14/12/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -25,13 +26,13 @@
 #include "MGIS/FEniCS/Config-FEniCS.hxx"
 #include "MGIS/FEniCS/NonLinearMaterialFunctionBase.hxx"
 
-namespace mgis{
-  
+namespace mgis {
+
   namespace fenics {
 
     //! \brief function in charge of the export the flux to `FEniCS`.
     struct MGIS_FENICS_EXPORT NonLinearMaterialThermodynamicForcesFunction
-      : NonLinearMaterialFunctionBase {
+        : NonLinearMaterialFunctionBase {
       // inheriting NonLinearMaterialFunctionBase constructor
       using NonLinearMaterialFunctionBase::NonLinearMaterialFunctionBase;
 
@@ -42,15 +43,18 @@ namespace mgis{
                     const ufc::cell&) const override;
       //! destructor
       ~NonLinearMaterialThermodynamicForcesFunction() override;
-    private:
+
+     private:
       NonLinearMaterialThermodynamicForcesFunction() = delete;
-      NonLinearMaterialThermodynamicForcesFunction(NonLinearMaterialThermodynamicForcesFunction&&) = delete;
-      NonLinearMaterialThermodynamicForcesFunction(const NonLinearMaterialThermodynamicForcesFunction&) = delete;
-      NonLinearMaterialThermodynamicForcesFunction&
-      operator=(NonLinearMaterialThermodynamicForcesFunction&&) = delete;
-      NonLinearMaterialThermodynamicForcesFunction&
-      operator=(const NonLinearMaterialThermodynamicForcesFunction&) = delete;
-    }; // end of struct NonLinearMaterialFunctionFunction
+      NonLinearMaterialThermodynamicForcesFunction(
+          NonLinearMaterialThermodynamicForcesFunction&&) = delete;
+      NonLinearMaterialThermodynamicForcesFunction(
+          const NonLinearMaterialThermodynamicForcesFunction&) = delete;
+      NonLinearMaterialThermodynamicForcesFunction& operator=(
+          NonLinearMaterialThermodynamicForcesFunction&&) = delete;
+      NonLinearMaterialThermodynamicForcesFunction& operator=(
+          const NonLinearMaterialThermodynamicForcesFunction&) = delete;
+    };  // end of struct NonLinearMaterialFunctionFunction
 
   }  // end of namespace fenics
 

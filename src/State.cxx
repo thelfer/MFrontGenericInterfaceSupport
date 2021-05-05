@@ -366,7 +366,7 @@ namespace mgis {
       for (const auto& v : variables) {
         os << "- " << v.name << " (" << getVariableTypeAsString(v) << "): ";
         if (v.type == Variable::SCALAR) {
-          if (values.size() < o ) {
+          if (values.size() < o) {
             mgis::raise("print_variables: invalid state initialisation");
           }
           os << values[o] << '\n';
@@ -374,7 +374,7 @@ namespace mgis {
         } else {
           const auto s = getVariableSize(v, b.hypothesis);
           if (values.size() < o + s) {
-            mgis::raise("print_variables: invalid state initialisation");          
+            mgis::raise("print_variables: invalid state initialisation");
           }
           os << '{';
           for (auto i = o; i != o + s;) {
@@ -394,8 +394,7 @@ namespace mgis {
                         const State& s,
                         const mgis::size_type l) {
       if (!b.gradients.empty()) {
-        os << mgis::utilities::get_heading_signs(l + 1)
-           << " Gradients\n\n";
+        os << mgis::utilities::get_heading_signs(l + 1) << " Gradients\n\n";
         print_variables(os, b, b.gradients, s.gradients);
         os << '\n';
       }

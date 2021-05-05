@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/fencis/include/MGIS/FEniCS/Utils.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/12/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,7 +17,7 @@
 
 #include "MGIS/FEniCS/Config-FEniCS.hxx"
 
-namespace mgis{
+namespace mgis {
 
   namespace fenics {
 

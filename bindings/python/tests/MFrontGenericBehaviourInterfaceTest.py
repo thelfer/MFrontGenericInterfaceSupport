@@ -9,7 +9,6 @@ import mgis.behaviour as mgis_bv
 
 
 class IntegrateTest(unittest.TestCase):
-
     def test_pass(self):
         btype = mgis_bv.BehaviourType
         bkinematic = mgis_bv.BehaviourKinematic
@@ -22,8 +21,8 @@ class IntegrateTest(unittest.TestCase):
         self.assertTrue(b.hypothesis == h, "invalid hypothesis")
         self.assertTrue(b.source == "Gurson.mfront", "invalid source")
         self.assertTrue(b.tfel_version == version, "invalid TFEL version")
-        self.assertTrue(len(b.mps) == 0,
-                        "invalid number of material properties")
+        self.assertTrue(
+            len(b.mps) == 0, "invalid number of material properties")
         self.assertTrue(b.getBehaviourType() == "StandardStrainBasedBehaviour",
                         "invalid behaviour type")
         self.assertTrue(b.btype == btype.StandardStrainBasedBehaviour,
@@ -38,28 +37,27 @@ class IntegrateTest(unittest.TestCase):
                         "invalid kinematic value")
         self.assertTrue(b.symmetry == mgis_bv.BehaviourSymmetry.Isotropic,
                         "invalid behaviour symmetry")
-        self.assertTrue(len(b.gradients) == 1,
-                        "invalid number of gradients")
+        self.assertTrue(len(b.gradients) == 1, "invalid number of gradients")
         F = b.gradients[0]
-        self.assertTrue(F.name == "Strain",
-                        "invalid gradient name")
+        self.assertTrue(F.name == "Strain", "invalid gradient name")
         self.assertTrue(F.type == mgis_bv.VariableType.Stensor,
                         "invalid gradient type")
         self.assertTrue(F.type == mgis_bv.VariableType.STENSOR,
                         "invalid gradient type")
-        self.assertTrue(len(b.thermodynamic_forces) == 1,
-                        "invalid number of thermodynamic_forces")
+        self.assertTrue(
+            len(b.thermodynamic_forces) == 1,
+            "invalid number of thermodynamic_forces")
         pk1 = b.thermodynamic_forces[0]
-        self.assertTrue(pk1.name == "Stress",
-                        "invalid flux name")
+        self.assertTrue(pk1.name == "Stress", "invalid flux name")
         self.assertTrue(pk1.type == mgis_bv.VariableType.Stensor,
                         "invalid flux type")
         self.assertTrue(pk1.type == mgis_bv.VariableType.STENSOR,
                         "invalid flux type")
-        self.assertTrue(len(b.isvs) == 4,
-                        "invalid number of internal state variables")
-        self.assertTrue(len(b.internal_state_variables) == 4,
-                        "invalid number of internal state variables")
+        self.assertTrue(
+            len(b.isvs) == 4, "invalid number of internal state variables")
+        self.assertTrue(
+            len(b.internal_state_variables) == 4,
+            "invalid number of internal state variables")
         self.assertTrue(b.isvs[0].name == "ElasticStrain",
                         "invalid name for the first internal state variable")
         self.assertTrue(b.isvs[0].type == mgis_bv.VariableType.STENSOR,
@@ -81,26 +79,27 @@ class IntegrateTest(unittest.TestCase):
         self.assertTrue(b.isvs[3].type == mgis_bv.VariableType.SCALAR,
                         "invalid type for the fourth internal state variable")
         # external state variables
-        self.assertTrue(len(b.esvs) == 1,
-                        "invalid number of external state variables")
-        self.assertTrue(len(b.external_state_variables) == 1,
-                        "invalid number of external state variables")
+        self.assertTrue(
+            len(b.esvs) == 1, "invalid number of external state variables")
+        self.assertTrue(
+            len(b.external_state_variables) == 1,
+            "invalid number of external state variables")
         self.assertTrue(b.esvs[0].name == "Temperature",
                         "invalid name for the first external state variable")
         self.assertTrue(b.esvs[0].type == mgis_bv.VariableType.SCALAR,
                         "invalid type for the first external state variable")
         # parameters
         params = b.parameters
-        self.assertTrue(len(params) == 15,
-                        "invalid number of parameters")
-        self.assertTrue('epsilon' in params,
-                        "'epsilon is not a parameter")
-        self.assertTrue(len(b.iparams) == 0,
-                        "invalid number of integer parameters")
-        self.assertTrue(len(b.integer_parameters) == 0,
-                        "invalid number of integer parameters")
-        self.assertTrue(len(b.unsigned_short_parameters) == 1,
-                        "invalid number of unsigned short parameters")
+        self.assertTrue(len(params) == 15, "invalid number of parameters")
+        self.assertTrue('epsilon' in params, "'epsilon is not a parameter")
+        self.assertTrue(
+            len(b.iparams) == 0, "invalid number of integer parameters")
+        self.assertTrue(
+            len(b.integer_parameters) == 0,
+            "invalid number of integer parameters")
+        self.assertTrue(
+            len(b.unsigned_short_parameters) == 1,
+            "invalid number of unsigned short parameters")
         self.assertTrue(b.usparams[0] == 'iterMax',
                         "invalid name for the first unsigned short parameter")
 

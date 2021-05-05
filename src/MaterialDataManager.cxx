@@ -1,6 +1,6 @@
 /*!
  * \file   MaterialDataManager.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   21/08/2018
  * \copyright (C) Copyright Thomas Helfer 2018.

@@ -1,6 +1,6 @@
 /*!
  * \file   MatrixView.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   03/09/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -25,4 +25,4 @@ namespace mgis {
 
   MatrixView::MatrixView(const MatrixView&) = default;
 
-} // end of mgis
+}  // namespace mgis

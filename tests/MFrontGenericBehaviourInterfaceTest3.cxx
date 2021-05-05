@@ -30,24 +30,25 @@ int main(const int argc, const char* const* argv) {
   if (!check(argc == 3, "expected three arguments")) {
     return EXIT_FAILURE;
   }
-  try{
+  try {
     auto o = FiniteStrainBehaviourOptions{};
     o.stress_measure = FiniteStrainBehaviourOptions::PK1;
     o.tangent_operator = FiniteStrainBehaviourOptions::DPK1_DF;
     const auto d = load(o, argv[1], argv[2], h);
     check(d.symmetry == Behaviour::ORTHOTROPIC, "invalid behaviour symmetry");
     if (check(d.gradients.size() == 1u, "invalid number of gradients")) {
-      check(d.gradients[0].name == "DeformationGradient", "invalid gradient name");
+      check(d.gradients[0].name == "DeformationGradient",
+            "invalid gradient name");
       check(d.gradients[0].type == Variable::TENSOR, "invalid gradient type");
     }
     if (check(d.thermodynamic_forces.size() == 1u,
-	      "invalid number of thermodynamic_forces")) {
+              "invalid number of thermodynamic_forces")) {
       check(d.thermodynamic_forces[0].name == "FirstPiolaKirchhoffStress",
-	    "invalid flux name");
+            "invalid flux name");
       check(d.thermodynamic_forces[0].type == Variable::TENSOR,
-	    "invalid flux type");
+            "invalid flux type");
     }
-  } catch(std::exception& e){
+  } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
   }

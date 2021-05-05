@@ -1,6 +1,6 @@
 /*!
  * \file   Variable.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   06/11/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -80,4 +80,4 @@ void declareVariable() {
   boost::python::def("getArraySize", &mgis::behaviour::getArraySize);
   boost::python::def("getVariableOffset", getVariableOffsetByString);
 
-} // end of declareVariable
+}  // end of declareVariable

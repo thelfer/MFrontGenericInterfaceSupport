@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/fencis/src/Utils.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/12/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -16,8 +16,7 @@
 #include <dolfin/fem/FiniteElement.h>
 #include "MGIS/FEniCS/Utils.hxx"
 
-
-namespace mgis{
+namespace mgis {
 
   namespace fenics {
 
@@ -30,8 +29,8 @@ namespace mgis{
       // number of quadrature points per cell
       const std::size_t num_ip = e.space_dimension() / num_ip_dofs;
       return num_ip * num_cells;
-    } // end of getNumberOfIntegrationPoints
-    
+    }  // end of getNumberOfIntegrationPoints
+
   }  // end of namespace fenics
 
 }  // end of namespace mgis

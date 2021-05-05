@@ -24,7 +24,7 @@ static void MaterialDataManagerInitializer_bindTangentOperator(
     mgis::behaviour::MaterialDataManagerInitializer& i,
     boost::python::object K) {
   i.K = mgis::python::mgis_convert_to_span(K);
-} // end of MaterialDataManagerInitializer_bindTangentOperator
+}  // end of MaterialDataManagerInitializer_bindTangentOperator
 
 static boost::python::object MaterialDataManager_getK(
     mgis::behaviour::MaterialDataManager& d) {

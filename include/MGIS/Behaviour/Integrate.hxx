@@ -88,17 +88,19 @@ namespace mgis {
      * \note: the type of integration to be performed, must be
      * explicitely set in d.K[0], as follows (see the IntegrationType finite ):
      * - d.K[0]<-2.5, one computes a prediction and request the tangent operator
-     * - -2.5<d.K[0]<-1.5: one computes a prediction and request the secant operator
-     * - -1.5<d.K[0]<-0.5: one computes a prediction and request the elastic operator
-     * - -0.5<d.K[0]< 0.5: one integrates the behaviour over the time step 
+     * - -2.5<d.K[0]<-1.5: one computes a prediction and request the secant
+     operator
+     * - -1.5<d.K[0]<-0.5: one computes a prediction and request the elastic
+     operator
+     * - -0.5<d.K[0]< 0.5: one integrates the behaviour over the time step
      *                     but does not compute an stiffness tensor
-     * -  0.5<d.K[0]< 1.5: one integrates the behaviour over the time step 
+     * -  0.5<d.K[0]< 1.5: one integrates the behaviour over the time step
      *                     and computes an elastic stiffness
-     * -  1.5<d.K[0]< 2.5: one integrates the behaviour over the time step 
+     * -  1.5<d.K[0]< 2.5: one integrates the behaviour over the time step
      *                     and computes a secant stiffness
-     * -  2.5<d.K[0]< 3.5: one integrates the behaviour over the time step 
+     * -  2.5<d.K[0]< 3.5: one integrates the behaviour over the time step
      *                     and computes a tangent stiffness
-     * -  2.5<d.K[0]< 3.5: one integrates the behaviour over the time step 
+     * -  2.5<d.K[0]< 3.5: one integrates the behaviour over the time step
      *                     and computes a consistent tangent stiffness
      */
     int integrate(BehaviourDataView&, const Behaviour&);

@@ -51,7 +51,7 @@ namespace mgis {
       return std::find_if(vs.begin(), vs.end(), [&n](const Variable &v) {
                return v.name == n;
              }) != vs.end();
-    } // end of contains
+    }  // end of contains
 
     const Variable &getVariable(const std::vector<Variable> &vs,
                                 const string_view n) {
@@ -62,28 +62,29 @@ namespace mgis {
         mgis::raise("getVariable: no variable named '" + std::string(n) + "'");
       }
       return *p;
-      }  // end of getVariable
+    }  // end of getVariable
 
-      size_type getArraySize(const std::vector<Variable> &vs,
-                             const Hypothesis h) {
-        auto s = size_type{};
-        for (const auto &v : vs) {
-          s += getVariableSize(v, h);
-        }
-        return s;
-      }  // end of getArraySize
+    size_type getArraySize(const std::vector<Variable> &vs,
+                           const Hypothesis h) {
+      auto s = size_type{};
+      for (const auto &v : vs) {
+        s += getVariableSize(v, h);
+      }
+      return s;
+    }  // end of getArraySize
 
-      size_type getVariableOffset(const std::vector<Variable> &vs,
-                                  const string_view n, const Hypothesis h) {
-        auto o = size_type{};
-        for (const auto &v : vs) {
-          if (v.name == n) {
-            return o;
-          }
-          o += getVariableSize(v, h);
+    size_type getVariableOffset(const std::vector<Variable> &vs,
+                                const string_view n,
+                                const Hypothesis h) {
+      auto o = size_type{};
+      for (const auto &v : vs) {
+        if (v.name == n) {
+          return o;
         }
-        raise("getVariableOffset: no variable named '" + std::string(n) + "'");
-      }  // end of getVariableOffset
+        o += getVariableSize(v, h);
+      }
+      raise("getVariableOffset: no variable named '" + std::string(n) + "'");
+    }  // end of getVariableOffset
 
   }  // end of namespace behaviour
 

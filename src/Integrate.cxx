@@ -65,48 +65,49 @@ namespace mgis {
        * \brief uniform values are treated immediatly. For spatially variable
        * fields, we return the information needed to evaluate them
        */
-      auto dispatch = [](
-          std::vector<real>& v,
-          std::map<std::string, mgis::variant<real, mgis::span<real>,
-                                              std::vector<real>>>& values,
-          const std::vector<Variable>& ds) {
-        mgis::raise_if(ds.size() != v.size(),
-                       "integrate: ill allocated memory");
-        // evaluators
-        std::vector<std::tuple<size_type, real*>> evs;
-        auto i = mgis::size_type{};
-        for (const auto& d : ds) {
-          if (d.type != Variable::SCALAR) {
-            mgis::raise("integrate: invalid type for variable '" + d.name +
-                        "'");
-          }
-          auto p = values.find(d.name);
-          if (p == values.end()) {
-            auto msg = std::string{"integrate: no variable named '" + d.name +
-                                   "' declared"};
-            if (!values.empty()) {
-              msg += "\nThe following variables were declared: ";
-              for (const auto& vs : values) {
-                msg += "\n- " + vs.first;
+      auto dispatch =
+          [](std::vector<real>& v,
+             std::map<std::string,
+                      mgis::variant<real, mgis::span<real>, std::vector<real>>>&
+                 values,
+             const std::vector<Variable>& ds) {
+            mgis::raise_if(ds.size() != v.size(),
+                           "integrate: ill allocated memory");
+            // evaluators
+            std::vector<std::tuple<size_type, real*>> evs;
+            auto i = mgis::size_type{};
+            for (const auto& d : ds) {
+              if (d.type != Variable::SCALAR) {
+                mgis::raise("integrate: invalid type for variable '" + d.name +
+                            "'");
               }
-            } else {
-              msg += "\nNo variable declared.";
+              auto p = values.find(d.name);
+              if (p == values.end()) {
+                auto msg = std::string{"integrate: no variable named '" +
+                                       d.name + "' declared"};
+                if (!values.empty()) {
+                  msg += "\nThe following variables were declared: ";
+                  for (const auto& vs : values) {
+                    msg += "\n- " + vs.first;
+                  }
+                } else {
+                  msg += "\nNo variable declared.";
+                }
+                mgis::raise(msg);
+              }
+              if (holds_alternative<real>(p->second)) {
+                v[i] = get<real>(p->second);
+              } else if (holds_alternative<mgis::span<real>>(p->second)) {
+                evs.push_back(std::make_tuple(
+                    i, get<mgis::span<real>>(p->second).data()));
+              } else {
+                evs.push_back(std::make_tuple(
+                    i, get<std::vector<real>>(p->second).data()));
+              }
+              ++i;
             }
-            mgis::raise(msg);
-          }
-          if (holds_alternative<real>(p->second)) {
-            v[i] = get<real>(p->second);
-          } else if (holds_alternative<mgis::span<real>>(p->second)) {
-            evs.push_back(
-                std::make_tuple(i, get<mgis::span<real>>(p->second).data()));
-          } else {
-            evs.push_back(
-                std::make_tuple(i, get<std::vector<real>>(p->second).data()));
-          }
-          ++i;
-        }
-        return evs;
-      };  // end of dispatch
+            return evs;
+          };  // end of dispatch
       auto eval = [](std::vector<real>& v,
                      const std::vector<std::tuple<size_type, real*>>& evs,
                      const size_type i) {

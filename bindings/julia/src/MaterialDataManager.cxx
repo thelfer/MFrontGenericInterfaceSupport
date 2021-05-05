@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/julia/src/MaterialDataManager.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   19/05/2019
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -20,4 +20,4 @@ void declareMaterialDataManager();
 
 void declareMaterialDataManager(jlcxx::Module& m) {
   m.add_type<mgis::behaviour::MaterialDataManager>("MaterialDataManager");
-} // end of declareMaterialDataManager
+}  // end of declareMaterialDataManager

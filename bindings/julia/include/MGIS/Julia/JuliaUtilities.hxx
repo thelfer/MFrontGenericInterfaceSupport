@@ -1,6 +1,6 @@
 /*!
  * \file   JuliaUtilities.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   16/05/2019
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -50,10 +50,10 @@ namespace jlcxx {
   template <>
   struct IsBits<mgis::behaviour::FiniteStrainBehaviourOptions::TangentOperator>
       : std::true_type {};
-  //! \brief 
+  //! \brief
   template <>
   struct IsBits<mgis::behaviour::IntegrationType> : std::true_type {};
-} // end of namespace jlcxx
+}  // end of namespace jlcxx
 
 namespace mgis {
 
@@ -77,7 +77,7 @@ namespace mgis {
 
   }  // end of namespace julia
 
-} // end of namespace mgis
+}  // end of namespace mgis
 
 #include "MGIS/Julia/JuliaUtilities.ixx"
 
