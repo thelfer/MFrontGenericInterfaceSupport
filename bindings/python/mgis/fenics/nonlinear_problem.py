@@ -501,6 +501,8 @@ class MFrontNonlinearProblem(NonlinearProblem, AbstractNonlinearProblem):
     def form(self, A, P, b, x):
         # this function is called before calling F or J
         self.update_constitutive_law()
+        if hasattr(self.solver, "update_pc"):
+            self.solver.update_pc()
         assemble_system(self.tangent_form, self.residual, A_tensor=A, b_tensor=b, bcs=self.bcs, x0=x)
 
     def F(self,b,x):
