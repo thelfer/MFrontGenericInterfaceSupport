@@ -44,8 +44,8 @@ int main(const int argc, const char* const* argv) {
     auto p = std::array<real, 21>{};
     p[0] = d.s0.internal_state_variables[o];
     for (size_type i = 0; i != 20; ++i) {
+      d.rdt = 1;
       auto v = make_view(d);
-      v.rdt = 1;
       integrate(v, b);
       update(d);
       d.s1.gradients[0] += de;

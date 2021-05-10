@@ -15,6 +15,7 @@
 #ifndef LIB_MGIS_THREADEDTASKRESULT_HXX
 #define LIB_MGIS_THREADEDTASKRESULT_HXX
 
+#include <optional>
 #include <exception>
 #include <type_traits>
 #include "MGIS/Config.hxx"
@@ -25,9 +26,9 @@ namespace mgis {
   struct MGIS_VISIBILITY_EXPORT ThreadedTaskResultBase {
    protected:
     //! thr
-    MGIS_NORETURN static void throwBadCastException();
+    [[noreturn]] static void throwBadCastException();
     //! thr
-    MGIS_NORETURN static void throwNullException();
+    [[noreturn]] static void throwNullException();
   };  // end of struct ThreadedTaskResultBase
 
   /*!
@@ -40,67 +41,53 @@ namespace mgis {
   template <typename T>
   struct ThreadedTaskResult : public ThreadedTaskResultBase {
     //! \brief default constructor
-    MGIS_INLINE ThreadedTaskResult();
+    inline ThreadedTaskResult();
     /*!
      * \brief constructor of T
      * \param[in] args: arguments to T constructor
      */
     template <typename... Args>
-    MGIS_INLINE ThreadedTaskResult(Args&&...);
+    inline ThreadedTaskResult(Args&&...);
     /*!
      * \brief constructor of T
      */
-    MGIS_INLINE ThreadedTaskResult(const T&);
+    inline ThreadedTaskResult(const T&);
     //! \brief move constructor
-    MGIS_INLINE ThreadedTaskResult(ThreadedTaskResult&&);
+    inline ThreadedTaskResult(ThreadedTaskResult&&);
     //! \brief copy constructor
-    MGIS_INLINE ThreadedTaskResult(const ThreadedTaskResult&);
+    inline ThreadedTaskResult(const ThreadedTaskResult&);
     //! \brief assignement
-    MGIS_INLINE ThreadedTaskResult& operator=(const ThreadedTaskResult&);
+    inline ThreadedTaskResult& operator=(const ThreadedTaskResult&);
     //! \brief move assignement
-    MGIS_INLINE ThreadedTaskResult& operator=(ThreadedTaskResult&&);
+    inline ThreadedTaskResult& operator=(ThreadedTaskResult&&);
     //! \brief assignement
-    MGIS_INLINE ThreadedTaskResult& operator=(const T&);
+    inline ThreadedTaskResult& operator=(const T&);
     //! \brief move assignement
-    MGIS_INLINE ThreadedTaskResult& operator=(T&&);
+    inline ThreadedTaskResult& operator=(T&&);
     //! \brief set current exception
-    MGIS_INLINE void setException(const std::exception_ptr&);
+    inline void setException(const std::exception_ptr&);
 //! \brief throw the catched exception
 #ifndef _MSC_VER
-    MGIS_NORETURN MGIS_INLINE void rethrow();
+    [[noreturn]] inline void rethrow();
 #else  /* _MSC_VER */
-    MGIS_INLINE void rethrow();
+    inline void rethrow();
 #endif /* _MSC_VER */
        //! \brief conversion to bool
-    MGIS_INLINE operator bool() const;
+    inline operator bool() const;
     //! \brief conversion to underlying type
-    MGIS_INLINE T& operator*();
+    inline T& operator*();
     //! \brief conversion to underlying type
-    MGIS_INLINE const T& operator*() const;
+    inline const T& operator*() const;
     //! \brief conversion to underlying type
-    MGIS_INLINE T* operator->();
+    inline T* operator->();
     //! \brief conversion to underlying type
-    MGIS_INLINE const T* operator->() const;
+    inline const T* operator->() const;
     //! \brief destructor
-    MGIS_INLINE ~ThreadedTaskResult();
+    inline ~ThreadedTaskResult();
 
    private:
-    /*!
-     * build an object
-     * \param[in] args: arguments to the constructor
-     */
-    template <typename... Args>
-    MGIS_INLINE void build(Args&&...);
-    //! \brief clear the underlying object destructor
-    MGIS_INLINE void clear();
-    //! \brief pointer the underlying object storage
-    MGIS_INLINE T* get_pointer();
-    //! \brief pointer the underlying object storage
-    MGIS_INLINE const T* get_pointer() const;
-    //! \brief if true, the ThreadedTaskResult contains a value
-    bool initialized = false;
-    //! \brief storage of the underlying value
-    typename std::aligned_storage<sizeof(T), alignof(T)>::type storage;
+    //! \brief result of the ThreadedTaskResult
+    std::optional<T> result;
     //! exception ptr thrown during the task
     std::exception_ptr eptr;
   };
@@ -122,7 +109,7 @@ namespace mgis {
     //! \brief set current exception
     void setException(const std::exception_ptr&);
     //! \brief throw the catched exception
-    MGIS_NORETURN void rethrow();
+    [[noreturn]] void rethrow();
     //! \brief conversion to bool
     operator bool() const;
     //! \brief destructor

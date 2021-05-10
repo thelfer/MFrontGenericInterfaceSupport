@@ -17,17 +17,13 @@
 #include <algorithm>
 #include "MGIS/Behaviour/Behaviour.hxx"
 
-namespace mgis {
+namespace mgis::behaviour {
 
-  namespace behaviour {
+  inline int integrate(BehaviourDataView& d, const Behaviour& b) {
+    std::copy(b.options.begin(), b.options.end(), d.K + 1);
+    return b.b(&d);
+  }  // end of integrate
 
-    inline int integrate(BehaviourDataView& d, const Behaviour& b) {
-      std::copy(b.options.begin(), b.options.end(), d.K + 1);
-      return b.b(&d);
-    }  // end of integrate
-
-  }  // end of namespace behaviour
-
-}  // end of namespace mgis
+}  // end of namespace mgis::behaviour
 
 #endif /* LIB_MGIS_BEHAVIOUR_INTEGRATE_IXX */

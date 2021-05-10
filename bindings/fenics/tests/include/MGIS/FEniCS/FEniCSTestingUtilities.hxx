@@ -52,8 +52,8 @@ namespace mgis {
      * - sy2: defined by the points satisfying y==1
      */
     MGIS_VISIBILITY_EXPORT
-        std::map<std::string, std::shared_ptr<dolfin::SubDomain>>
-        getUnitSquareBoundaries();
+    std::map<std::string, std::shared_ptr<dolfin::SubDomain>>
+    getUnitSquareBoundaries();
     /*!
      * \return all the boundaries associated with a unit cube
      * The following boundaries are defined:
@@ -65,8 +65,8 @@ namespace mgis {
      * - sz2: defined by the points satisfying z==1
      */
     MGIS_VISIBILITY_EXPORT
-        std::map<std::string, std::shared_ptr<dolfin::SubDomain>>
-        getUnitCubeBoundaries();
+    std::map<std::string, std::shared_ptr<dolfin::SubDomain>>
+    getUnitCubeBoundaries();
 
   }  // end of namespace fenics
 

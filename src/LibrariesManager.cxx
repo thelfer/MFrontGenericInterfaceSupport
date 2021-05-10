@@ -58,7 +58,7 @@ namespace mgis {
     }
     return "";
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-  }    // end of  getErrorMessage
+  }    // end of getErrorMessage
 
   static LibrariesManager::libhandler load_library(const std::string &l) {
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
@@ -159,7 +159,7 @@ namespace mgis {
   LibrariesManager &LibrariesManager::get() {
     static LibrariesManager lm;
     return lm;
-  }  // end of LibrariesManager::get
+  }  // end of get
 
   LibrariesManager::LibrariesManager() = default;
 
@@ -174,7 +174,7 @@ namespace mgis {
           b + "' in library '" + l + "' for hypothesis '" + hn + "'");
     }
     return reinterpret_cast<mgis::behaviour::BehaviourFctPtr>(p);
-  }  // end of LibrariesManager::getBehaviour
+  }  // end of getBehaviour
 
   mgis::behaviour::RotateBehaviourGradientsFctPtr
   LibrariesManager::getRotateBehaviourGradientsFunction(const std::string &l,
@@ -193,7 +193,7 @@ namespace mgis {
           b + "' in library '" + l + "' for hypothesis '" + hn + "'");
     }
     return reinterpret_cast<mgis::behaviour::RotateBehaviourGradientsFctPtr>(p);
-  }  // end of LibrariesManager::getRotateBehaviourGradientsFunction
+  }  // end of getRotateBehaviourGradientsFunction
 
   mgis::behaviour::RotateArrayOfBehaviourGradientsFctPtr
   LibrariesManager::getRotateArrayOfBehaviourGradientsFunction(
@@ -213,7 +213,7 @@ namespace mgis {
     }
     return reinterpret_cast<
         mgis::behaviour::RotateArrayOfBehaviourGradientsFctPtr>(p);
-  }  // end of LibrariesManager::getRotateArrayOfBehaviourGradientsFunction
+  }  // end of getRotateArrayOfBehaviourGradientsFunction
 
   mgis::behaviour::RotateBehaviourThermodynamicForcesFctPtr
   LibrariesManager::getRotateBehaviourThermodynamicForcesFunction(
@@ -230,7 +230,7 @@ namespace mgis {
     }
     return reinterpret_cast<
         mgis::behaviour::RotateBehaviourThermodynamicForcesFctPtr>(p);
-  }  // end of LibrariesManager::getRotateBehaviourThermodynamicForcesFunction
+  }  // end of getRotateBehaviourThermodynamicForcesFunction
 
   mgis::behaviour::RotateArrayOfBehaviourThermodynamicForcesFctPtr
   LibrariesManager::getRotateArrayOfBehaviourThermodynamicForcesFunction(
@@ -248,8 +248,7 @@ namespace mgis {
     }
     return reinterpret_cast<
         mgis::behaviour::RotateArrayOfBehaviourThermodynamicForcesFctPtr>(p);
-  }  // end of
-     // LibrariesManager::getRotateArrayOfBehaviourThermodynamicForcesFunction
+  }  // end of getRotateArrayOfBehaviourThermodynamicForcesFunction
 
   mgis::behaviour::RotateBehaviourThermodynamicForcesFctPtr
   LibrariesManager::getRotateBehaviourThermodynamicForcesFunction(
@@ -281,7 +280,7 @@ namespace mgis {
     }
     return reinterpret_cast<
         mgis::behaviour::RotateBehaviourThermodynamicForcesFctPtr>(p);
-  }  // end of LibrariesManager::getRotateBehaviourThermodynamicForcesFunction
+  }  // end of getRotateBehaviourThermodynamicForcesFunction
 
   mgis::behaviour::RotateArrayOfBehaviourThermodynamicForcesFctPtr
   LibrariesManager::getRotateArrayOfBehaviourThermodynamicForcesFunction(
@@ -314,8 +313,7 @@ namespace mgis {
     }
     return reinterpret_cast<
         mgis::behaviour::RotateArrayOfBehaviourThermodynamicForcesFctPtr>(p);
-  }  // end of
-     // LibrariesManager::getRotateArrayOfBehaviourThermodynamicForcesFunction
+  }  // end of getRotateArrayOfBehaviourThermodynamicForcesFunction
 
   mgis::behaviour::RotateBehaviourTangentOperatorBlocksFctPtr
   LibrariesManager::getRotateBehaviourTangentOperatorBlocksFunction(
@@ -332,7 +330,7 @@ namespace mgis {
     }
     return reinterpret_cast<
         mgis::behaviour::RotateBehaviourTangentOperatorBlocksFctPtr>(p);
-  }  // end of LibrariesManager::getRotateBehaviourTangentOperatorBlocksFunction
+  }  // end of getRotateBehaviourTangentOperatorBlocksFunction
 
   mgis::behaviour::RotateArrayOfBehaviourTangentOperatorBlocksFctPtr
   LibrariesManager::getRotateArrayOfBehaviourTangentOperatorBlocksFunction(
@@ -350,8 +348,7 @@ namespace mgis {
     }
     return reinterpret_cast<
         mgis::behaviour::RotateArrayOfBehaviourTangentOperatorBlocksFctPtr>(p);
-  }  // end of
-     // LibrariesManager::getRotateArrayOfBehaviourTangentOperatorBlocksFunction
+  }  // end of getRotateArrayOfBehaviourTangentOperatorBlocksFunction
 
   mgis::behaviour::RotateBehaviourTangentOperatorBlocksFctPtr
   LibrariesManager::getRotateBehaviourTangentOperatorBlocksFunction(
@@ -383,7 +380,7 @@ namespace mgis {
     }
     return reinterpret_cast<
         mgis::behaviour::RotateBehaviourTangentOperatorBlocksFctPtr>(p);
-  }  // end of LibrariesManager::getRotateBehaviourTangentOperatorBlocksFunction
+  }  // end of getRotateBehaviourTangentOperatorBlocksFunction
 
   mgis::behaviour::RotateArrayOfBehaviourTangentOperatorBlocksFctPtr
   LibrariesManager::getRotateArrayOfBehaviourTangentOperatorBlocksFunction(
@@ -418,8 +415,7 @@ namespace mgis {
     }
     return reinterpret_cast<
         mgis::behaviour::RotateArrayOfBehaviourTangentOperatorBlocksFctPtr>(p);
-  }  // end of
-     // LibrariesManager::getRotateArrayOfBehaviourTangentOperatorBlocksFunction
+  }  // end of getRotateArrayOfBehaviourTangentOperatorBlocksFunction
 
   std::string LibrariesManager::getTFELVersion(const std::string &l,
                                                const std::string &n) {
@@ -428,12 +424,22 @@ namespace mgis {
       return "";
     }
     return *(static_cast<const char *const *>(p));
-  }  // end of LibrariesManager::getTFELVersion
+  }  // end of getTFELVersion
+
+  unsigned short LibrariesManager::getAPIVersion(const std::string &l,
+                                                 const std::string &n) {
+    const auto s = n + "_api_version";
+    const auto p = this->getSymbolAddress(l, s);
+    if (p == nullptr) {
+      return 0;
+    }
+    return *(static_cast<unsigned short *>(p));
+  }  // end of getAPIVersion
 
   unsigned short LibrariesManager::getMaterialKnowledgeType(
       const std::string &l, const std::string &b) {
     return *(this->extract<unsigned short>(l, b + "_mfront_mkt"));
-  }  // end of LibrariesManager::getMaterialKnowledgeType
+  }  // end of getMaterialKnowledgeType
 
   std::string LibrariesManager::getSource(const std::string &l,
                                           const std::string &n) {
@@ -442,7 +448,7 @@ namespace mgis {
       return "";
     }
     return *(static_cast<const char *const *>(p));
-  }  // end of LibrariesManager::getSource
+  }  // end of getSource
 
   std::string LibrariesManager::getInterface(const std::string &l,
                                              const std::string &n) {
@@ -451,27 +457,27 @@ namespace mgis {
       return "";
     }
     return *(static_cast<const char *const *>(p));
-  }  // end of LibrariesManager::getInterface
+  }  // end of getInterface
 
   unsigned short LibrariesManager::getBehaviourType(const std::string &l,
                                                     const std::string &b) {
     return *(this->extract<unsigned short>(l, b + "_BehaviourType"));
-  }  // end of LibrariesManager::getBehaviourType
+  }  // end of getBehaviourType
 
   unsigned short LibrariesManager::getBehaviourKinematic(const std::string &l,
                                                          const std::string &b) {
     return *(this->extract<unsigned short>(l, b + "_BehaviourKinematic"));
-  }  // end of LibrariesManager::getBehaviourKinematic
+  }  // end of getBehaviourKinematic
 
   unsigned short LibrariesManager::getBehaviourSymmetry(const std::string &l,
                                                         const std::string &b) {
     return *(this->extract<unsigned short>(l, b + "_SymmetryType"));
-  }  // end of LibrariesManager::getBehaviourSymmetry
+  }  // end of getBehaviourSymmetry
 
   unsigned short LibrariesManager::getElasticStiffnessSymmetry(
       const std::string &l, const std::string &b) {
     return *(this->extract<unsigned short>(l, b + "_ElasticSymmetryType"));
-  }  // end of LibrariesManager::getElasticStiffnessSymmetry
+  }  // end of getElasticStiffnessSymmetry
 
   bool LibrariesManager::requiresStiffnessTensor(const std::string &l,
                                                  const std::string &b,
@@ -480,7 +486,7 @@ namespace mgis {
     const auto bv =
         *(this->extract<unsigned short>(l, b + "_" + toString(h) + sn, b + sn));
     return bv == 1 ? true : false;
-  }  // end of LibrariesManager::requiresStiffnessTensor
+  }  // end of requiresStiffnessTensor
 
   bool LibrariesManager::computesStoredEnergy(const std::string &l,
                                               const std::string &b,
@@ -489,7 +495,7 @@ namespace mgis {
     const auto bv =
         *(this->extract<unsigned short>(l, b + "_" + toString(h) + sn, b + sn));
     return bv == 1 ? true : false;
-  }  // end of LibrariesManager::computesStoredEnergy
+  }  // end of computesStoredEnergy
 
   bool LibrariesManager::computesDissipatedEnergy(const std::string &l,
                                                   const std::string &b,
@@ -498,7 +504,7 @@ namespace mgis {
     const auto bv =
         *(this->extract<unsigned short>(l, b + "_" + toString(h) + sn, b + sn));
     return bv == 1 ? true : false;
-  }  // end of LibrariesManager::computesDissipatedEnergy
+  }  // end of computesDissipatedEnergy
 
   bool LibrariesManager::requiresThermalExpansionCoefficientTensor(
       const std::string &l, const std::string &b, const Hypothesis h) {
@@ -506,7 +512,7 @@ namespace mgis {
     const auto bv =
         *(this->extract<unsigned short>(l, b + "_" + toString(h) + sn, b + sn));
     return bv == 1 ? true : false;
-  }  // end of LibrariesManager::requiresThermalExpansionCoefficientTensor
+  }  // end of requiresThermalExpansionCoefficientTensor
 
   template <typename T>
   const T *LibrariesManager::extract(const std::string &l,
@@ -516,7 +522,7 @@ namespace mgis {
       raise("LibrariesManager::extract: could not load symbol '" + n + "'");
     }
     return static_cast<const T *const>(p);
-  }  // end of LibrariesManager::extract
+  }  // end of extract
 
   template <typename T>
   const T *LibrariesManager::extract(const std::string &l,
@@ -528,7 +534,7 @@ namespace mgis {
             "' nor '" + n2 + "'");
     }
     return static_cast<const T *const>(p);
-  }  // end of LibrariesManager::extract
+  }  // end of extract
 
   std::vector<std::string> LibrariesManager::getNames(const std::string &l,
                                                       const std::string &f,
@@ -542,12 +548,12 @@ namespace mgis {
                                                       f + '_' + n);
     std::copy(res, res + nb, std::back_inserter(vars));
     return vars;
-  }  // end of LibrariesManager::getNames
+  }  // end of getNames
 
   std::vector<std::string> LibrariesManager::getGradientsNames(
       const std::string &l, const std::string &b, const Hypothesis h) {
     return this->getNames(l, b, h, "Gradients");
-  }  // end of LibrariesManager::getGradientsNames
+  }  // end of getGradientsNames
 
   std::vector<int> LibrariesManager::getGradientsTypes(const std::string &l,
                                                        const std::string &b,
@@ -560,12 +566,12 @@ namespace mgis {
         l, b + "_" + hn + "_GradientsTypes", b + "_GradientsTypes");
     std::copy(res, res + nb, std::back_inserter(types));
     return types;
-  }  // end of LibrariesManager::getGradientsTypes
+  }  // end of getGradientsTypes
 
   std::vector<std::string> LibrariesManager::getThermodynamicForcesNames(
       const std::string &l, const std::string &b, const Hypothesis h) {
     return this->getNames(l, b, h, "ThermodynamicForces");
-  }  // end of LibrariesManager::getThermodynamicForcesNames
+  }  // end of getThermodynamicForcesNames
 
   std::vector<int> LibrariesManager::getThermodynamicForcesTypes(
       const std::string &l, const std::string &b, const Hypothesis h) {
@@ -579,7 +585,7 @@ namespace mgis {
                                  b + "_ThermodynamicForcesTypes");
     std::copy(res, res + nb, std::back_inserter(types));
     return types;
-  }  // end of LibrariesManager::getThermodynamicForcesTypes
+  }  // end of getThermodynamicForcesTypes
 
   std::vector<std::pair<std::string, std::string>>
   LibrariesManager::getTangentOperatorBlocksNames(const std::string &l,
@@ -596,17 +602,17 @@ namespace mgis {
       blocks.push_back({names[2 * i], names[2 * i + 1]});
     }
     return blocks;
-  }  // end of LibrariesManager::getTangentOperatorBlocksNames
+  }  // end of getTangentOperatorBlocksNames
 
   std::vector<std::string> LibrariesManager::getMaterialPropertiesNames(
       const std::string &l, const std::string &b, const Hypothesis h) {
     return this->getNames(l, b, h, "MaterialProperties");
-  }  // end of LibrariesManager::getMaterialPropertiesNames
+  }  // end of getMaterialPropertiesNames
 
   std::vector<std::string> LibrariesManager::getInternalStateVariablesNames(
       const std::string &l, const std::string &b, const Hypothesis h) {
     return this->getNames(l, b, h, "InternalStateVariables");
-  }  // end of LibrariesManager::getInternalStateVariablesNames
+  }  // end of getInternalStateVariablesNames
 
   std::vector<int> LibrariesManager::getInternalStateVariablesTypes(
       const std::string &l, const std::string &b, const Hypothesis h) {
@@ -620,16 +626,16 @@ namespace mgis {
         b + "_InternalStateVariablesTypes");
     std::copy(res, res + nb, std::back_inserter(types));
     return types;
-  }  // end of LibrariesManager::getInternalStateVariablesTypes
+  }  // end of getInternalStateVariablesTypes
 
   std::vector<std::string> LibrariesManager::getExternalStateVariablesNames(
       const std::string &l, const std::string &b, const Hypothesis h) {
     return this->getNames(l, b, h, "ExternalStateVariables");
-  }  // end of LibrariesManager::getMaterialPropertiesNames
+  }  // end of getMaterialPropertiesNames
 
   bool LibrariesManager::contains(const std::string &l, const std::string &n) {
     return this->getSymbolAddress(l, n) != nullptr;
-  }  // end of LibrariesManager::contains
+  }  // end of contains
 
   void *LibrariesManager::getSymbolAddress(const std::string &l,
                                            const std::string &n) {
@@ -671,7 +677,7 @@ namespace mgis {
       return lib;
     }
     return p->second;
-  }  // end of LibrariesManager::loadLibrary
+  }  // end of loadLibrary
 
   void LibrariesManager::setParameter(const std::string &l,
                                       const std::string &b,
@@ -695,7 +701,7 @@ namespace mgis {
           "call to the '" +
           b + "_setParameter' function failed");
     }
-  }  // end of LibrariesManager::setParameter
+  }  // end of setParameter
 
   void LibrariesManager::setParameter(const std::string &l,
                                       const std::string &b,
@@ -719,7 +725,7 @@ namespace mgis {
           "call to the '" +
           b + "_setParameter' function failed");
     }
-  }  // end of LibrariesManager::setParameter
+  }  // end of setParameter
 
   void LibrariesManager::setParameter(const std::string &l,
                                       const std::string &b,
@@ -744,12 +750,12 @@ namespace mgis {
           "call to the '" +
           b + "_setParameter' function failed");
     }
-  }  // end of LibrariesManager::setParameter
+  }  // end of setParameter
 
   std::vector<std::string> LibrariesManager::getParametersNames(
       const std::string &l, const std::string &b, const Hypothesis h) {
     return this->getNames(l, b, h, "Parameters");
-  }  // end of LibrariesManager::getMaterialPropertiesNames
+  }  // end of getMaterialPropertiesNames
 
   std::vector<int> LibrariesManager::getParametersTypes(const std::string &l,
                                                         const std::string &b,
@@ -762,7 +768,7 @@ namespace mgis {
         l, b + "_" + hn + "_ParametersTypes", b + "_ParametersTypes");
     std::copy(res, res + nb, std::back_inserter(types));
     return types;
-  }  // end of LibrariesManager::getInternalVariablesTypes
+  }  // end of getInternalVariablesTypes
 
   double LibrariesManager::getParameterDefaultValue(const std::string &l,
                                                     const std::string &b,
@@ -773,7 +779,7 @@ namespace mgis {
     return *(this->extract<double>(
         l, b + "_" + hn + "_" + pn + "_ParameterDefaultValue",
         b + "_" + pn + "_ParameterDefaultValue"));
-  }  // end of LibrariesManager::getParameterDefaultValue
+  }  // end of getParameterDefaultValue
 
   int LibrariesManager::getIntegerParameterDefaultValue(const std::string &l,
                                                         const std::string &b,
@@ -784,7 +790,7 @@ namespace mgis {
     return *(this->extract<int>(
         l, b + "_" + hn + "_" + pn + "_ParameterDefaultValue",
         b + "_" + pn + "_ParameterDefaultValue"));
-  }  // end of LibrariesManager::getIntegerParameterDefaultValue
+  }  // end of getIntegerParameterDefaultValue
 
   unsigned short LibrariesManager::getUnsignedShortParameterDefaultValue(
       const std::string &l,
@@ -796,7 +802,7 @@ namespace mgis {
     return *(this->extract<unsigned short>(
         l, b + "_" + hn + "_" + pn + "_ParameterDefaultValue",
         b + "_" + pn + "_ParameterDefaultValue"));
-  }  // end of LibrariesManager::getUnsignedShortParameterDefaultValue
+  }  // end of getUnsignedShortParameterDefaultValue
 
   bool LibrariesManager::hasBounds(const std::string &l,
                                    const std::string &b,
@@ -810,7 +816,7 @@ namespace mgis {
     const auto n4 = b + "_" + vn + "_UpperBound";
     return ((this->contains(l, n1)) || (this->contains(l, n2)) ||
             (this->contains(l, n3)) || (this->contains(l, n4)));
-  }  // end of LibrariesManager::hasBounds
+  }  // end of hasBounds
 
   bool LibrariesManager::hasLowerBound(const std::string &l,
                                        const std::string &b,
@@ -821,7 +827,7 @@ namespace mgis {
     const auto n1 = b + "_" + hn + "_" + vn + "_LowerBound";
     const auto n2 = b + "_" + vn + "_LowerBound";
     return ((this->contains(l, n1)) || (this->contains(l, n2)));
-  }  // end of LibrariesManager::hasLowerBound
+  }  // end of hasLowerBound
 
   bool LibrariesManager::hasUpperBound(const std::string &l,
                                        const std::string &b,
@@ -832,7 +838,7 @@ namespace mgis {
     const auto n1 = b + "_" + hn + "_" + vn + "_UpperBound";
     const auto n2 = b + "_" + vn + "_UpperBound";
     return ((this->contains(l, n1)) || (this->contains(l, n2)));
-  }  // end of LibrariesManager::hasUpperBound
+  }  // end of hasUpperBound
 
   long double LibrariesManager::getLowerBound(const std::string &l,
                                               const std::string &b,
@@ -843,7 +849,7 @@ namespace mgis {
     const auto n1 = b + "_" + hn + "_" + vn + "_LowerBound";
     const auto n2 = b + "_" + vn + "_LowerBound";
     return *(this->extract<long double>(l, n1, n2));
-  }  // end of LibrariesManager::getLowerBound
+  }  // end of getLowerBound
 
   long double LibrariesManager::getUpperBound(const std::string &l,
                                               const std::string &b,
@@ -854,7 +860,7 @@ namespace mgis {
     const auto n1 = b + "_" + hn + "_" + vn + "_UpperBound";
     const auto n2 = b + "_" + vn + "_UpperBound";
     return *(this->extract<long double>(l, n1, n2));
-  }  // end of LibrariesManager::getUpperBound
+  }  // end of getUpperBound
 
   bool LibrariesManager::hasPhysicalBounds(const std::string &l,
                                            const std::string &b,
@@ -868,7 +874,7 @@ namespace mgis {
     const auto n4 = b + "_" + vn + "_UpperPhysicalBound";
     return ((this->contains(l, n1)) || (this->contains(l, n2)) ||
             (this->contains(l, n3)) || (this->contains(l, n4)));
-  }  // end of LibrariesManager::hasPhysicalBounds
+  }  // end of hasPhysicalBounds
 
   bool LibrariesManager::hasLowerPhysicalBound(const std::string &l,
                                                const std::string &b,
@@ -879,7 +885,7 @@ namespace mgis {
     const auto n1 = b + "_" + hn + "_" + vn + "_LowerPhysicalBound";
     const auto n2 = b + "_" + vn + "_LowerPhysicalBound";
     return ((this->contains(l, n1)) || (this->contains(l, n2)));
-  }  // end of LibrariesManager::hasLowerPhysicalBound
+  }  // end of hasLowerPhysicalBound
 
   bool LibrariesManager::hasUpperPhysicalBound(const std::string &l,
                                                const std::string &b,
@@ -890,7 +896,7 @@ namespace mgis {
     const auto n1 = b + "_" + hn + "_" + vn + "_UpperPhysicalBound";
     const auto n2 = b + "_" + vn + "_UpperPhysicalBound";
     return ((this->contains(l, n1)) || (this->contains(l, n2)));
-  }  // end of LibrariesManager::hasUpperPhysicalBound
+  }  // end of hasUpperPhysicalBound
 
   long double LibrariesManager::getLowerPhysicalBound(const std::string &l,
                                                       const std::string &b,
@@ -901,7 +907,7 @@ namespace mgis {
     const auto n1 = b + "_" + hn + "_" + vn + "_LowerPhysicalBound";
     const auto n2 = b + "_" + vn + "_LowerPhysicalBound";
     return *(this->extract<long double>(l, n1, n2));
-  }  // end of LibrariesManager::getLowerPhysicalBound
+  }  // end of getLowerPhysicalBound
 
   long double LibrariesManager::getUpperPhysicalBound(const std::string &l,
                                                       const std::string &b,
@@ -912,7 +918,7 @@ namespace mgis {
     const auto n1 = b + "_" + hn + "_" + vn + "_UpperPhysicalBound";
     const auto n2 = b + "_" + vn + "_UpperPhysicalBound";
     return *(this->extract<long double>(l, n1, n2));
-  }  // end of LibrariesManager::getUpperPhysicalBound
+  }  // end of getUpperPhysicalBound
 
   LibrariesManager::~LibrariesManager() {
     for (const auto &l : this->libraries) {
@@ -922,6 +928,6 @@ namespace mgis {
       ::dlclose(l.second);
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     }
-  }  // end of LibrariesManager::~LibrariesManager
+  }  // end of ~LibrariesManager
 
 }  // namespace mgis

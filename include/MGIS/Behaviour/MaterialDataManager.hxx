@@ -15,15 +15,47 @@
 #ifndef LIB_MGIS_BEHAVIOUR_MATERIALDATAMANAGER_HXX
 #define LIB_MGIS_BEHAVIOUR_MATERIALDATAMANAGER_HXX
 
+#include <map>
+#include <thread>
+#include <memory>
 #include <vector>
 #include "MGIS/Config.hxx"
-#include "MGIS/Variant.hxx"
 #include "MGIS/Behaviour/MaterialStateManager.hxx"
 
 namespace mgis::behaviour {
 
   // forward declaration
   struct Behaviour;
+
+  //! \brief structure in charge of handling temporary memory access.
+  struct MGIS_EXPORT BehaviourIntegrationWorkSpace {
+    /*!
+     * \brief constructor
+     * \param[in] b: behaviour
+     */
+    BehaviourIntegrationWorkSpace(const Behaviour&);
+    //! \brief move constructor
+    BehaviourIntegrationWorkSpace(BehaviourIntegrationWorkSpace&&);
+    //! \brief copye constructor
+    BehaviourIntegrationWorkSpace(const BehaviourIntegrationWorkSpace&);
+    //! \brief move assignement
+    BehaviourIntegrationWorkSpace& operator=(BehaviourIntegrationWorkSpace&&);
+    //! \brief copy assignement
+    BehaviourIntegrationWorkSpace& operator=(
+        const BehaviourIntegrationWorkSpace&);
+    //! \brief destructor
+    ~BehaviourIntegrationWorkSpace();
+    //! \brief a buffer to hold error messages
+    std::vector<char> error_message;
+    //! material properties at the beginning of the time step
+    std::vector<mgis::real> mps0;
+    //! material properties at the end of the time step
+    std::vector<mgis::real> mps1;
+    //! external state variables at the beginning of the time step
+    std::vector<mgis::real> esvs0;
+    //! external state variables at the end of the time step
+    std::vector<mgis::real> esvs1;
+  };  // end of struct BehaviourIntegrationWorkSpace
 
   /*!
    * \brief a structure in charge of holding information on how a material
@@ -37,9 +69,15 @@ namespace mgis::behaviour {
     /*!
      * \brief view to an externally allocated memory used to store the
      * tangent operator. If empty, the material data manager will
-     * initialize the required memory internally.
+     * initialize the required memory internally if required.
      */
     mgis::span<mgis::real> K;
+    /*!
+     * \brief view to an externally allocated memory used to store the
+     * speed_of_sound. If empty, the material data manager will
+     * initialize the required memory internally if required.
+     */
+    mgis::span<mgis::real> speed_of_sound;
     /*!
      * \brief object used to initalize the state manager associated with the
      * beginning of the time step.
@@ -78,14 +116,102 @@ namespace mgis::behaviour {
     MaterialDataManager(const Behaviour&,
                         const size_type,
                         const MaterialDataManagerInitializer&);
-    //! destructor
+    /*!
+     * \brief set if the `MaterialDataManager` must take care of thread-safety.
+     * This flag is mostly used in members functions allocating memory.
+     * \param[in] bv: boolean
+     */
+    void setThreadSafe(const bool);
+    /*!
+     * \brief allocate the memory associated with the tangent operator blocks if
+     * required.
+     *
+     * This method is useless if the memory associated with the tangent operator
+     * blocks had previously been allocated or assigned to external memory (see
+     * the `MaterialDataManagerInitializer` structure).
+     *
+     * \note This method is thread-safe if the `thread_safe` is `true`.
+     * In this case, the memory allocation is guarded by a mutex.
+     * See the `setThreadSafe` method for details
+     */
+    void allocateArrayOfTangentOperatorBlocks();
+    /*!
+     * \brief use an externally allocated memory to store the tangent operator
+     * blocks.
+     *
+     * \param[in] m: memory view
+     *
+     * \note this method calls `releaseArrayOfTangentOperatorBlocks` before
+     * allocating the memory.
+     */
+    void useExternalArrayOfTangentOperatorBlocks(mgis::span<real>);
+    /*!
+     * \brief release the memory associated with the tangent operator blocks.
+     *
+     * If the memory associated with the tangent operator blocks was handled
+     * internally, this memory is freed.
+     * If an external memory buffer was used, reference to this buffer is
+     * removed.
+     */
+    void releaseArrayOfTangentOperatorBlocks();
+    /*!
+     * \brief allocate the memory associated with the speed of sound if
+     * required.
+     *
+     * This method is useless if the memory associated with the speed of sound
+     * had previously been allocated or assigned to external memory (see the
+     * `MaterialDataManagerInitializer` structure).
+     *
+     * \note This method is thread-safe if the `thread_safe` is `true`.
+     * In this case, the memory allocation is guarded by a mutex.
+     * See the `setThreadSafe` method for details
+     */
+    void allocateArrayOfSpeedOfSounds();
+    /*!
+     * \brief use an externally allocated memory to store the tangent operator
+     * blocks.
+     *
+     * \param[in] m: memory view
+     *
+     * \note this method calls `releaseArrayOfSpeedOfSounds` before
+     * allocating the memory.
+     */
+    void useExternalArrayOfSpeedOfSounds(mgis::span<real>);
+    /*!
+     * \brief release the memory associated with the tangent operator blocks.
+     *
+     * If the memory associated with the tangent operator blocks was handled
+     * internally, this memory is freed.
+     * If an external memory buffer was used, reference to this buffer is
+     * removed.
+     */
+    void releaseArrayOfSpeedOfSounds();
+    /*!
+     * \brief return a workspace associated with the given behaviour.
+     *
+     * \note This method returns a object per thread if the `thread_safe` member
+     * is `true`.
+     */
+    BehaviourIntegrationWorkSpace& getBehaviourIntegrationWorkSpace();
+    /*!
+     * \brief clear behaviour integration workspaces.
+     *
+     * \note This is only interesting if you keep allocating different thread
+     * pools.
+     */
+    void releaseBehaviourIntegrationWorkspaces();
+    //! \brief destructor
     ~MaterialDataManager();
     //! \brief state at the beginning of the time step
     MaterialStateManager s0;
     //! \brief state at the end of the time step
     MaterialStateManager s1;
-    //! \brief view of the stiffness matrices.
+    //! \brief view of the stiffness matrices, if required.
     mgis::span<real> K;
+    //! \brief proposed time step increment increase factor
+    real rdt;
+    //! \brief view on the speed of sound.
+    mgis::span<real> speed_of_sound;
     //! \brief number of integration points
     const size_type n;
     /*!
@@ -93,12 +219,10 @@ namespace mgis::behaviour {
      * size of K is K_stride times the number of integration points)
      */
     const size_type K_stride;
-    //! underlying behaviour
+    //! \brief underlying behaviour
     const Behaviour& b;
 
    private:
-    //! \brief values of the stiffness matrices, if hold internally.
-    std::vector<real> K_values;
     //! move constructor
     MaterialDataManager(MaterialDataManager&&) = delete;
     //! copy constructor
@@ -107,6 +231,17 @@ namespace mgis::behaviour {
     MaterialDataManager& operator=(MaterialDataManager&&) = delete;
     //! copy assignement
     MaterialDataManager& operator=(const MaterialDataManager&) = delete;
+    //! \brief values of the stiffness matrices, if hold internally.
+    std::vector<real> K_values;
+    //! \brief values of the speed of sound, if hold internally.
+    std::vector<real> speed_of_sound_values;
+    //! \brief integration workspace for individual threads.
+    std::map<std::thread::id, std::unique_ptr<BehaviourIntegrationWorkSpace>>
+        iwks;
+    //! \brief a pointer to an integration workspace
+    std::unique_ptr<BehaviourIntegrationWorkSpace> iwk;
+    //! \brief boolean stating if thread safety must be unsured
+    bool thread_safe = true;
   };  // end of struct MaterialDataManager
 
   /*!

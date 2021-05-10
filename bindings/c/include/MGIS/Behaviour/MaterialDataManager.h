@@ -58,6 +58,15 @@ MGIS_C_EXPORT
 mgis_status mgis_bv_material_data_manager_initializer_bind_tangent_operator(
     mgis_bv_MaterialDataManagerInitializer*, mgis_real* const, mgis_size_type);
 /*!
+ * \brief bind the speed of sound to the given array
+ * \param[in,out] d: initializer
+ * \param[in] p: pointer to a memory area meant to store the speed of sound values
+ * \param[in] s: size of the memory area
+ */
+MGIS_C_EXPORT
+mgis_status mgis_bv_material_data_manager_initializer_bind_speed_of_sound(
+    mgis_bv_MaterialDataManagerInitializer*, mgis_real* const, mgis_size_type);
+/*!
  * \brief set the state at the beginning of the time step
  * \param[out] s: pointer to a pointer to the state initializer
  * \param[in]  d: material data manager initalizer
@@ -82,7 +91,6 @@ mgis_bv_material_data_manager_initializer_get_state_1_initializer(
  */
 MGIS_C_EXPORT mgis_status mgis_bv_free_material_data_manager_initializer(
     mgis_bv_MaterialDataManagerInitializer**);
-
 /*!
  * \param[out] d: a pointer to the created data manager
  * \param[in]  b: behaviour
@@ -102,6 +110,52 @@ MGIS_C_EXPORT mgis_status mgis_bv_create_material_data_manager_with_initializer(
     const mgis_bv_Behaviour* const,
     const mgis_size_type,
     const mgis_bv_MaterialDataManagerInitializer* const);
+/*!
+ * \param[in]  d: material data manager
+ * \param[in]  b: boolean value
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_material_data_manager_set_thread_safe(
+    mgis_bv_MaterialDataManager*, const mgis_size_type);
+/*!
+ * \param[in]  d: material data manager
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_data_manager_allocate_array_of_tangent_operator_blocks(
+    mgis_bv_MaterialDataManager* const);
+/*!
+ * \param[in] d: material data manager
+ * \param[in] p: pointer to a memory buffer
+ * \param[in] s: size of the a memory buffer
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_data_manager_use_external_array_of_tangent_operator_blocks(
+    mgis_bv_MaterialDataManager* const, mgis_real* const, const mgis_size_type);
+/*!
+ * \param[in]  d: material data manager
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_data_manager_release_array_of_tangent_operator_blocks(
+    mgis_bv_MaterialDataManager*const);
+/*!
+ * \param[in]  d: material data manager
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_data_manager_allocate_array_of_speed_of_sounds(
+    mgis_bv_MaterialDataManager*const);
+/*!
+ * \param[in] d: material data manager
+ * \param[in] p: pointer to a memory buffer
+ * \param[in] s: size of the a memory buffer
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_data_manager_use_external_array_of_speed_of_sounds(
+    mgis_bv_MaterialDataManager* const, mgis_real* const, const mgis_size_type);
+/*!
+ * \param[in]  d: material data manager
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_data_manager_release_array_of_speed_of_sounds(
+    mgis_bv_MaterialDataManager*const);
 /*!
  * \brief set the state at the beginning of the time step
  * \param[out] s: pointer to a pointer to the state

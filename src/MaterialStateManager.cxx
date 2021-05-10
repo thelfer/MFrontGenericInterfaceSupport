@@ -209,7 +209,7 @@ namespace mgis::behaviour {
           "no material property named '" +
           n.to_string() + "' defined");
     }
-    return mgis::holds_alternative<real>(p->second);
+    return std::holds_alternative<real>(p->second);
   }  // end of isMaterialPropertyUniform
 
   real& getUniformMaterialProperty(MaterialStateManager& m,
@@ -219,11 +219,11 @@ namespace mgis::behaviour {
                    "getUniformMaterialProperty: "
                    "no material property named '" +
                        n.to_string() + "' defined");
-    mgis::raise_if(!mgis::holds_alternative<real>(p->second),
+    mgis::raise_if(!std::holds_alternative<real>(p->second),
                    "getUniformMaterialProperty: "
                    "material property '" +
                        n.to_string() + "' is not uniform");
-    return mgis::get<real>(p->second);
+    return std::get<real>(p->second);
   }  // end of getUniformMaterialProperty
 
   const real& getUniformMaterialProperty(const MaterialStateManager& m,
@@ -233,11 +233,11 @@ namespace mgis::behaviour {
                    "getUniformMaterialProperty: "
                    "no material property named '" +
                        n.to_string() + "' defined");
-    mgis::raise_if(!mgis::holds_alternative<real>(p->second),
+    mgis::raise_if(!std::holds_alternative<real>(p->second),
                    "getUniformMaterialProperty: "
                    "material property '" +
                        n.to_string() + "' is not uniform");
-    return mgis::get<real>(p->second);
+    return std::get<real>(p->second);
   }  // end of getUniformMaterialProperty
 
   mgis::span<real> getNonUniformMaterialProperty(MaterialStateManager& m,
@@ -248,15 +248,15 @@ namespace mgis::behaviour {
                    "getNonUniformMaterialProperty: "
                    "no material property named '" +
                        n.to_string() + "' defined");
-    mgis::raise_if(mgis::holds_alternative<real>(p->second),
+    mgis::raise_if(std::holds_alternative<real>(p->second),
                    "getNonUniformMaterialProperty: "
                    "material property '" +
                        n.to_string() + "' is uniform");
-    if (mgis::holds_alternative<std::vector<real>>(p->second)) {
-      auto& values = mgis::get<std::vector<real>>(p->second);
+    if (std::holds_alternative<std::vector<real>>(p->second)) {
+      auto& values = std::get<std::vector<real>>(p->second);
       return {&values[0], static_cast<index_type>(values.size())};
     }
-    return mgis::get<span<real>>(p->second);
+    return std::get<span<real>>(p->second);
   }  // end of getNonUniformMaterialProperty
 
   mgis::span<const real> getNonUniformMaterialProperty(
@@ -267,15 +267,15 @@ namespace mgis::behaviour {
                    "getNonUniformMaterialProperty: "
                    "no material property named '" +
                        n.to_string() + "' defined");
-    mgis::raise_if(mgis::holds_alternative<real>(p->second),
+    mgis::raise_if(std::holds_alternative<real>(p->second),
                    "getNonUniformMaterialProperty: "
                    "material property '" +
                        n.to_string() + "' is uniform");
-    if (mgis::holds_alternative<std::vector<real>>(p->second)) {
-      const auto& values = mgis::get<std::vector<real>>(p->second);
+    if (std::holds_alternative<std::vector<real>>(p->second)) {
+      const auto& values = std::get<std::vector<real>>(p->second);
       return {&values[0], static_cast<index_type>(values.size())};
     }
-    return mgis::get<span<real>>(p->second);
+    return std::get<span<real>>(p->second);
   }  // end of getNonUniformMaterialProperty
 
   void setExternalStateVariable(MaterialStateManager& m,
@@ -323,7 +323,7 @@ namespace mgis::behaviour {
                    "isExternalStateVariableUniform: "
                    "no external state variable named '" +
                        n.to_string() + "' defined");
-    return mgis::holds_alternative<real>(p->second);
+    return std::holds_alternative<real>(p->second);
   }  // end of isExternalStateVariableUniform
 
   real& getUniformExternalStateVariable(MaterialStateManager& m,
@@ -333,11 +333,11 @@ namespace mgis::behaviour {
                    "getUniformExternalStateVariable: "
                    "no external state variable named '" +
                        n.to_string() + "' defined");
-    mgis::raise_if(!mgis::holds_alternative<real>(p->second),
+    mgis::raise_if(!std::holds_alternative<real>(p->second),
                    "getUniformExternalStateVariable: "
                    "external state variable '" +
                        n.to_string() + "' is not uniform");
-    return mgis::get<real>(p->second);
+    return std::get<real>(p->second);
   }  // end of getUniformExternalStateVariable
 
   const real& getUniformExternalStateVariable(const MaterialStateManager& m,
@@ -347,11 +347,11 @@ namespace mgis::behaviour {
                    "getUniformExternalStateVariable: "
                    "no external state variable named '" +
                        n.to_string() + "' defined");
-    mgis::raise_if(!mgis::holds_alternative<real>(p->second),
+    mgis::raise_if(!std::holds_alternative<real>(p->second),
                    "getUniformExternalStateVariable: "
                    "external state variable '" +
                        n.to_string() + "' is not uniform");
-    return mgis::get<real>(p->second);
+    return std::get<real>(p->second);
   }  // end of getUniformExternalStateVariable
 
   mgis::span<real> getNonUniformExternalStateVariable(
@@ -362,15 +362,15 @@ namespace mgis::behaviour {
                    "getNonUniformExternalStateVariable: "
                    "no external state variable named '" +
                        n.to_string() + "' defined");
-    mgis::raise_if(mgis::holds_alternative<real>(p->second),
+    mgis::raise_if(std::holds_alternative<real>(p->second),
                    "getNonUniformExternalStateVariable: "
                    "external state variable '" +
                        n.to_string() + "' is uniform");
-    if (mgis::holds_alternative<std::vector<real>>(p->second)) {
-      auto& values = mgis::get<std::vector<real>>(p->second);
+    if (std::holds_alternative<std::vector<real>>(p->second)) {
+      auto& values = std::get<std::vector<real>>(p->second);
       return {&values[0], static_cast<index_type>(values.size())};
     }
-    return mgis::get<span<real>>(p->second);
+    return std::get<span<real>>(p->second);
   }  // end of getUniformExternalStateVariable
 
   mgis::span<const real> getNonUniformExternalStateVariable(
@@ -381,15 +381,15 @@ namespace mgis::behaviour {
                    "getNonUniformExternalStateVariable: "
                    "no external state variable named '" +
                        n.to_string() + "' defined");
-    mgis::raise_if(mgis::holds_alternative<real>(p->second),
+    mgis::raise_if(std::holds_alternative<real>(p->second),
                    "getNonUniformExternalStateVariable: "
                    "external state variable '" +
                        n.to_string() + "' is uniform");
-    if (mgis::holds_alternative<std::vector<real>>(p->second)) {
-      const auto& values = mgis::get<std::vector<real>>(p->second);
+    if (std::holds_alternative<std::vector<real>>(p->second)) {
+      const auto& values = std::get<std::vector<real>>(p->second);
       return {&values[0], static_cast<index_type>(values.size())};
     }
-    return mgis::get<span<real>>(p->second);
+    return std::get<span<real>>(p->second);
   }  // end of getUniformExternalStateVariable
 
   void update_values(MaterialStateManager& o, const MaterialStateManager& i) {
@@ -408,34 +408,34 @@ namespace mgis::behaviour {
     auto update_field_holder =
         [&check_size](MaterialStateManager::FieldHolder& to,
                       const MaterialStateManager::FieldHolder& from) {
-          if (mgis::holds_alternative<mgis::real>(from)) {
-            to = mgis::get<mgis::real>(from);
-          } else if (mgis::holds_alternative<std::vector<mgis::real>>(from)) {
-            const auto& from_v = mgis::get<std::vector<mgis::real>>(from);
-            if (mgis::holds_alternative<mgis::span<mgis::real>>(to)) {
+          if (std::holds_alternative<mgis::real>(from)) {
+            to = std::get<mgis::real>(from);
+          } else if (std::holds_alternative<std::vector<mgis::real>>(from)) {
+            const auto& from_v = std::get<std::vector<mgis::real>>(from);
+            if (std::holds_alternative<mgis::span<mgis::real>>(to)) {
               // reuse existing memory
-              auto& to_v = mgis::get<mgis::span<mgis::real>>(to);
+              auto& to_v = std::get<mgis::span<mgis::real>>(to);
               check_size(from_v.size(), to_v.size());
               std::copy(from_v.begin(), from_v.end(), to_v.begin());
-            } else if (mgis::holds_alternative<std::vector<mgis::real>>(to)) {
+            } else if (std::holds_alternative<std::vector<mgis::real>>(to)) {
               // reuse existing memory
-              auto& to_v = mgis::get<std::vector<mgis::real>>(to);
+              auto& to_v = std::get<std::vector<mgis::real>>(to);
               check_size(from_v.size(), to_v.size());
               std::copy(from_v.begin(), from_v.end(), to_v.begin());
             } else {
               // to contains a real value, so overwrite it with a new vector
-              to = mgis::get<std::vector<mgis::real>>(from);
+              to = std::get<std::vector<mgis::real>>(from);
             }
           } else {
-            const auto from_v = mgis::get<mgis::span<mgis::real>>(from);
-            if (mgis::holds_alternative<mgis::span<mgis::real>>(to)) {
+            const auto from_v = std::get<mgis::span<mgis::real>>(from);
+            if (std::holds_alternative<mgis::span<mgis::real>>(to)) {
               // reuse existing memory
-              auto to_v = mgis::get<mgis::span<mgis::real>>(to);
+              auto to_v = std::get<mgis::span<mgis::real>>(to);
               check_size(from_v.size(), to_v.size());
               std::copy(from_v.begin(), from_v.end(), to_v.begin());
-            } else if (mgis::holds_alternative<std::vector<mgis::real>>(to)) {
+            } else if (std::holds_alternative<std::vector<mgis::real>>(to)) {
               // reuse existing memory
-              auto to_v = mgis::get<std::vector<mgis::real>>(to);
+              auto to_v = std::get<std::vector<mgis::real>>(to);
               check_size(from_v.size(), to_v.size());
               std::copy(from_v.begin(), from_v.end(), to_v.begin());
             } else {

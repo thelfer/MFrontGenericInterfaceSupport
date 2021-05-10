@@ -77,4 +77,5 @@ Options
 
 mkdir build
 cd build
-cmake ../MFrontGenericInterfaceSupport/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/MFrontGenericInterfaceSupport/master/install-python-3.5/ -Denable-c-bindings=ON -Denable-fortran-bindings=ON  -Denable-python-bindings=ON -DPython_ADDITIONAL_VERSIONS=3.5
+cmake ../MFrontGenericInterfaceSupport/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/MFrontGenericInterfaceSupport/master/install-python-3.7/ -Denable-c-bindings=ON -Denable-fortran-bindings=ON  -Denable-python-bindings=ON -DPython_ADDITIONAL_VERSIONS=3.7
+cmake ../MFrontGenericInterfaceSupport/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/MFrontGenericInterfaceSupport/master/install-python-3.7/ -Denable-c-bindings=ON -Denable-fortran-bindings=ON  -Denable-python-bindings=ON -Denable-website=ON -DPython_ADDITIONAL_VERSIONS=3.7

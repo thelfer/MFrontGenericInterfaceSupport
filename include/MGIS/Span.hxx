@@ -604,8 +604,8 @@ namespace mgis {
 
 #else   // MEMBER_AT
 
-      MGIS_NORETURN inline void throw_out_of_range(index_t /*idx*/,
-                                                   index_t /*size*/) {
+      [[noreturn]] inline void throw_out_of_range(index_t /*idx*/,
+                                                  index_t /*size*/) {
         throw std::out_of_range("span::at(): index outside span");
       }
 #endif  // MEMBER_AT
@@ -624,7 +624,7 @@ namespace mgis {
 
 #else  // span_CONFIG( CONTRACT_VIOLATION_THROWS_V )
 
-      MGIS_NORETURN span_noreturn inline void report_contract_violation(
+      [[noreturn]] span_noreturn inline void report_contract_violation(
           char const * /*msg*/) span_noexcept {
         std::terminate();
       }

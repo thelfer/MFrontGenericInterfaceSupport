@@ -18,8 +18,8 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <variant>
 #include "MGIS/Config.hxx"
-#include "MGIS/Variant.hxx"
 #include "MGIS/Span.hxx"
 #include "MGIS/StorageMode.hxx"
 #include "MGIS/StringView.hxx"
@@ -93,7 +93,7 @@ namespace mgis::behaviour {
   struct MGIS_EXPORT MaterialStateManager {
     //! \brief a simple alias
     using FieldHolder =
-        mgis::variant<real, mgis::span<mgis::real>, std::vector<mgis::real>>;
+        std::variant<real, mgis::span<mgis::real>, std::vector<mgis::real>>;
     //! \brief a simple alias
     using StorageMode = mgis::StorageMode;
     //!

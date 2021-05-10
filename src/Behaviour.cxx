@@ -176,6 +176,15 @@ namespace mgis::behaviour {
       raise("entry point '" + b + "' in library " + l + " is not a behaviour");
     }
 
+    if (lm.getAPIVersion(l, b) != MGIS_BEHAVIOUR_API_VERSION) {
+      std::string msg("unmatched API version\n");
+      msg += "- the behaviour uses API version ";
+      msg += std::to_string(lm.getAPIVersion(l, b)) + "\n";
+      msg += "- mgis uses API version ";
+      msg += std::to_string(MGIS_BEHAVIOUR_API_VERSION);
+      raise(msg);
+    }
+
     d.tfel_version = lm.getTFELVersion(l, b);
     d.source = lm.getSource(l, b);
     d.btype = [&l, &b, &lm, &raise] {

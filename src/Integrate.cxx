@@ -24,41 +24,72 @@
 
 namespace mgis::behaviour {
 
-  IntegrateWorkSpace::IntegrateWorkSpace(const Behaviour& b)
-      : mps0(getArraySize(b.mps, b.hypothesis)),
-        mps1(getArraySize(b.mps, b.hypothesis)),
-        esvs0(getArraySize(b.esvs, b.hypothesis)),
-        esvs1(getArraySize(b.esvs, b.hypothesis)) {
-  }  // end of IntegrateWorkSpace
-
-  IntegrateWorkSpace::IntegrateWorkSpace(IntegrateWorkSpace&&) = default;
-  IntegrateWorkSpace::IntegrateWorkSpace(const IntegrateWorkSpace&) = default;
-  IntegrateWorkSpace& IntegrateWorkSpace::operator=(IntegrateWorkSpace&&) =
-      default;
-  IntegrateWorkSpace& IntegrateWorkSpace::operator=(const IntegrateWorkSpace&) =
-      default;
-
-  IntegrateWorkSpace& getIntegrateWorkSpace(const Behaviour& b) {
-    static std::map<
-        const Behaviour*,
-        std::map<std::thread::id, std::shared_ptr<IntegrateWorkSpace>>>
-        m;
-    static std::mutex mt;
-    const auto id = std::this_thread::get_id();
-    std::lock_guard<std::mutex> lock(mt);
-    auto& mwks = m[&b];
-    auto p = mwks.find(id);
-    if (p == mwks.end()) {
-      p = mwks.insert({id, std::make_shared<IntegrateWorkSpace>(b)}).first;
+  static void allocate(MaterialDataManager& m,
+                       const BehaviourIntegrationOptions& opts) {
+    if (opts.integration_type !=
+        IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR) {
+      m.allocateArrayOfTangentOperatorBlocks();
     }
-    return *(p->second);
-  }  // end of getIntegrateWorkSpace
+    if (opts.compute_speed_of_sound) {
+      m.allocateArrayOfSpeedOfSounds();
+    }
+  }  // end of allocate
 
-  int integrate(MaterialDataManager& m,
-                const IntegrationType it,
-                const real dt,
-                const size_type b,
-                const size_type e) {
+  static mgis::real encodeBehaviourIntegrationOptions(
+      const BehaviourIntegrationOptions& opts) {
+    if (opts.compute_speed_of_sound) {
+      return 100 + static_cast<int>(opts.integration_type);
+    }
+    return static_cast<int>(opts.integration_type);
+  }  // end of encodeBehaviourIntegrationOptions
+
+  BehaviourIntegrationResult::BehaviourIntegrationResult() = default;
+
+  BehaviourIntegrationResult::BehaviourIntegrationResult(
+      BehaviourIntegrationResult&&) = default;
+
+  BehaviourIntegrationResult::BehaviourIntegrationResult(
+      const BehaviourIntegrationResult&) = default;
+
+  BehaviourIntegrationResult& BehaviourIntegrationResult::operator=(
+      BehaviourIntegrationResult&&) = default;
+
+  BehaviourIntegrationResult& BehaviourIntegrationResult::operator=(
+      const BehaviourIntegrationResult&) = default;
+
+  BehaviourIntegrationResult::~BehaviourIntegrationResult() = default;
+
+  MultiThreadedBehaviourIntegrationResult::
+      MultiThreadedBehaviourIntegrationResult() = default;
+
+  MultiThreadedBehaviourIntegrationResult::
+      MultiThreadedBehaviourIntegrationResult(
+          MultiThreadedBehaviourIntegrationResult&&) = default;
+
+  MultiThreadedBehaviourIntegrationResult::
+      MultiThreadedBehaviourIntegrationResult(
+          const MultiThreadedBehaviourIntegrationResult&) = default;
+
+  MultiThreadedBehaviourIntegrationResult&
+  MultiThreadedBehaviourIntegrationResult::operator=(
+      MultiThreadedBehaviourIntegrationResult&&) = default;
+
+  MultiThreadedBehaviourIntegrationResult&
+  MultiThreadedBehaviourIntegrationResult::operator=(
+      const MultiThreadedBehaviourIntegrationResult&) = default;
+
+  MultiThreadedBehaviourIntegrationResult::
+      ~MultiThreadedBehaviourIntegrationResult() = default;
+
+  /*!
+   * \brief integration the behaviour over a range of integration points.
+   */
+  static BehaviourIntegrationResult integrate2(
+      MaterialDataManager& m,
+      const BehaviourIntegrationOptions& opts,
+      const real dt,
+      const size_type b,
+      const size_type e) {
     /*
      * \brief uniform values are treated immediatly. For spatially variable
      * fields, we return the information needed to evaluate them
@@ -66,7 +97,7 @@ namespace mgis::behaviour {
     auto dispatch =
         [](std::vector<real>& v,
            std::map<std::string,
-                    mgis::variant<real, mgis::span<real>, std::vector<real>>>&
+                    std::variant<real, mgis::span<real>, std::vector<real>>>&
                values,
            const std::vector<Variable>& ds) {
           mgis::raise_if(ds.size() != v.size(),
@@ -93,14 +124,14 @@ namespace mgis::behaviour {
               }
               mgis::raise(msg);
             }
-            if (holds_alternative<real>(p->second)) {
-              v[i] = get<real>(p->second);
-            } else if (holds_alternative<mgis::span<real>>(p->second)) {
-              evs.push_back(
-                  std::make_tuple(i, get<mgis::span<real>>(p->second).data()));
+            if (std::holds_alternative<real>(p->second)) {
+              v[i] = std::get<real>(p->second);
+            } else if (std::holds_alternative<mgis::span<real>>(p->second)) {
+              evs.push_back(std::make_tuple(
+                  i, std::get<mgis::span<real>>(p->second).data()));
             } else {
-              evs.push_back(
-                  std::make_tuple(i, get<std::vector<real>>(p->second).data()));
+              evs.push_back(std::make_tuple(
+                  i, std::get<std::vector<real>>(p->second).data()));
             }
             ++i;
           }
@@ -118,7 +149,7 @@ namespace mgis::behaviour {
     const auto t_stride = m.s0.thermodynamic_forces_stride;
     const auto isvs_stride = m.s0.internal_state_variables_stride;
     // workspace
-    auto& ws = getIntegrateWorkSpace(m.b);
+    auto& ws = m.getBehaviourIntegrationWorkSpace();
     // treating uniform values
     const auto vmps0 = dispatch(ws.mps0, m.s0.material_properties, m.b.mps);
     const auto vmps1 = dispatch(ws.mps1, m.s1.material_properties, m.b.mps);
@@ -129,17 +160,24 @@ namespace mgis::behaviour {
     const auto computes_stored_energy = m.b.computesStoredEnergy;
     const auto computes_dissipated_energy = m.b.computesDissipatedEnergy;
     // loop over integration points
-    auto r = int{1};
-    real opts[Behaviour::nopts + 1];  // option passed to the behaviour
+    auto r = BehaviourIntegrationResult{};
+    auto rdt0 = r.time_step_increase_factor;
+    const real Ke = encodeBehaviourIntegrationOptions(opts);
+    real bopts[Behaviour::nopts + 1];  // option passed to the behaviour
     for (auto i = b; i != e; ++i) {
+      auto rdt = rdt0;
       BehaviourDataView v;
-      v.rdt = real(1);
+      v.error_message = ws.error_message.data();
+      v.error_message[0] = '\0';
+      v.rdt = &rdt;
       v.dt = dt;
-      if (it != IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR) {
+      if (opts.integration_type !=
+          IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR) {
         v.K = m.K.data() + m.K_stride * i;
       } else {
-        v.K = &opts[0];
+        v.K = &bopts[0];
       }
+      v.speed_of_sound = m.speed_of_sound.data() + i;
       eval(ws.mps0, vmps0, i);
       eval(ws.mps1, vmps1, i);
       eval(ws.esvs0, vesvs0, i);
@@ -172,55 +210,83 @@ namespace mgis::behaviour {
       }
       v.s0.external_state_variables = ws.esvs0.data();
       v.s1.external_state_variables = ws.esvs1.data();
-      v.K[0] = static_cast<int>(it);
-      switch (integrate(v, m.b)) {
-        case 1:
-          r = std::min(r, 1);
-          break;
-        case 0:
-          r = 0;
-          break;
-        default:
-          return -1;
+      v.K[0] = Ke;
+      const auto ri = integrate(v, m.b);
+      r.exit_status = std::min(ri, r.exit_status);
+      r.time_step_increase_factor = std::min(rdt, r.time_step_increase_factor);
+      if (ri == 0) {
+        r.n = i;
+      } else if (ri == -1) {
+        r.n = i;
+        v.error_message[511] = '\0';
+        r.error_message = std::string(v.error_message);
+        return r;
       }
     }
     return r;
+  }  // end of integrate2
+
+  int integrate(MaterialDataManager& m,
+                const IntegrationType it,
+                const real dt,
+                const size_type b,
+                const size_type e) {
+    BehaviourIntegrationOptions opts;
+    opts.integration_type = it;
+    const auto r = integrate(m, opts, dt, b, e);
+    return r.exit_status;
+  }  // end of integrate
+
+  BehaviourIntegrationResult integrate(MaterialDataManager& m,
+                                       const BehaviourIntegrationOptions& opts,
+                                       const real dt,
+                                       const size_type b,
+                                       const size_type e) {
+    allocate(m, opts);
+    return integrate2(m, opts, dt, b, e);
   }  // end of integrate
 
   int integrate(ThreadPool& p,
                 MaterialDataManager& m,
                 const IntegrationType it,
                 const real dt) {
+    BehaviourIntegrationOptions opts;
+    opts.integration_type = it;
+    const auto r = integrate(p, m, opts, dt);
+    return r.exit_status;
+  }  // end of integrate
+
+  MultiThreadedBehaviourIntegrationResult integrate(
+      ThreadPool& p,
+      MaterialDataManager& m,
+      const BehaviourIntegrationOptions& opts,
+      const real dt) {
+    m.setThreadSafe(true);
+    allocate(m, opts);
     // get number of threads
     const auto nth = p.getNumberOfThreads();
     const auto d = m.n / nth;
     const auto r = m.n % nth;
     size_type b = 0;
-    std::vector<std::future<ThreadedTaskResult<int>>> tasks;
+    std::vector<std::future<ThreadedTaskResult<BehaviourIntegrationResult>>>
+        tasks;
     tasks.reserve(nth);
     for (size_type i = 0; i != r; ++i) {
-      tasks.push_back(p.addTask(
-          [&m, it, dt, b, d] { return integrate(m, it, dt, b, b + d + 1); }));
+      tasks.push_back(p.addTask([&m, &opts, dt, b, d] {
+        return integrate2(m, opts, dt, b, b + d + 1);
+      }));
       b += d + 1;
     }
     for (size_type i = r; i != nth; ++i) {
       tasks.push_back(p.addTask(
-          [&m, it, dt, b, d] { return integrate(m, it, dt, b, b + d); }));
+          [&m, &opts, dt, b, d] { return integrate2(m, opts, dt, b, b + d); }));
       b += d;
     }
-    //      p.wait();
-    auto res = int{1};
+    auto res = MultiThreadedBehaviourIntegrationResult{};
     for (auto& t : tasks) {
-      switch (*(t.get())) {
-        case 1:
-          res = std::min(res, 1);
-          break;
-        case 0:
-          res = 0;
-          break;
-        default:
-          return -1;
-      }
+      const auto& ri = *(t.get());
+      res.exit_status = std::min(res.exit_status, ri.exit_status);
+      res.results.push_back(ri);
     }
     return res;
   }  // end of integrate

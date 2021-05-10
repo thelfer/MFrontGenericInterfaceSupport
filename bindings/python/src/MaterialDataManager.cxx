@@ -26,6 +26,23 @@ static void MaterialDataManagerInitializer_bindTangentOperator(
   i.K = mgis::python::mgis_convert_to_span(K);
 }  // end of MaterialDataManagerInitializer_bindTangentOperator
 
+static void MaterialDataManagerInitializer_bindSpeedOfSound(
+    mgis::behaviour::MaterialDataManagerInitializer& i,
+    boost::python::object vs) {
+  i.speed_of_sound = mgis::python::mgis_convert_to_span(vs);
+}  // end of MaterialDataManagerInitializer_bindSpeedOfSound
+
+static void MaterialDataManager_useExternalArrayOfTangentOperatorBlocks(
+    mgis::behaviour::MaterialDataManager& m, boost::python::object K) {
+  m.useExternalArrayOfTangentOperatorBlocks(
+      mgis::python::mgis_convert_to_span(K));
+}  // end of MaterialDataManager_useExternalArrayOfTangentOperatorBlocks
+
+static void MaterialDataManager_useExternalArrayOfSpeedOfSounds(
+    mgis::behaviour::MaterialDataManager& m, boost::python::object vs) {
+  m.useExternalArrayOfSpeedOfSounds(mgis::python::mgis_convert_to_span(vs));
+}  // end of MaterialDataManager_useExternalArrayOfSpeedOfSounds
+
 static boost::python::object MaterialDataManager_getK(
     mgis::behaviour::MaterialDataManager& d) {
   if (d.b.to_blocks.size() == 1u) {
@@ -54,13 +71,37 @@ void declareMaterialDataManager() {
       .add_property("s1", &MaterialDataManagerInitializer::s1)
       .def("bindTangentOperator",
            &MaterialDataManagerInitializer_bindTangentOperator,
-           "use the given array to store the tangent operator");
+           "use the given array to store the tangent operator blocks")
+      .def("bindSpeedOfSound", &MaterialDataManagerInitializer_bindSpeedOfSound,
+           "use the given array to store the speed of sounds");
   // exporting the MaterialDataManager class
   boost::python::class_<MaterialDataManager, boost::noncopyable>(
       "MaterialDataManager",
       boost::python::init<const Behaviour&, const size_type>())
       .def(boost::python::init<const Behaviour&, const size_type,
                                const MaterialDataManagerInitializer&>())
+      .def("setThreadSafe", &MaterialDataManager::setThreadSafe,
+           "specify if various operations performed by the MaterialDataManager "
+           "(memory allocations) shall be protected by a mutex")
+      .def("allocateArrayOfTangentOperatorBlocks",
+           &MaterialDataManager::allocateArrayOfTangentOperatorBlocks,
+           "allocate the tangent operator blocks")
+      .def("useExternalArrayOfTangentOperatorBlocks",
+           &MaterialDataManager_useExternalArrayOfTangentOperatorBlocks,
+           "use and externally defined array to store the tangent operator "
+           "blocks")
+      .def("releaseArrayOfTangentOperatorBlocks",
+           &MaterialDataManager::releaseArrayOfTangentOperatorBlocks,
+           "release the arrays of tangent operator blocks")
+      .def("allocateArrayOfSpeedOfSounds",
+           &MaterialDataManager::allocateArrayOfSpeedOfSounds,
+           "allocate the array of speed of sounds")
+      .def("useExternalArrayOfSpeedOfSounds",
+           &MaterialDataManager_useExternalArrayOfSpeedOfSounds,
+           "use and externally defined array to store the spped of sounds")
+      .def("releaseArrayOfSpeedOfSounds",
+           &MaterialDataManager::releaseArrayOfSpeedOfSounds,
+           "release the array of speed of sounds")
       .def_readonly("n", &MaterialDataManager::n)
       .def_readonly("number_of_integration_points", &MaterialDataManager::n)
       .add_property("s0", &MaterialDataManager::s0)
