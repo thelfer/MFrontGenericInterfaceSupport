@@ -588,8 +588,12 @@ class MFrontNonlinearProblem(NonlinearProblem, AbstractNonlinearProblem):
         self.update_constitutive_law()
         if hasattr(self.solver, "update_pc"):
             self.solver.update_pc()
-        assemble_system(self.tangent_form, self.residual, A_tensor=A, b_tensor=b, bcs=self.bcs, x0=x)
-
+        assemble_system(self.tangent_form,
+                        self.residual,
+                        A_tensor=A,
+                        b_tensor=b,
+                        bcs=self.bcs,
+                        x0=x)
 
     def F(self, b, x):
         pass
