@@ -23,7 +23,7 @@ function(mfront_behaviours_check_library name)
       "${TFELException};${TFELUtilities};${TFELMath};${TFELMaterial}")
   else((TFEL_CXX_STANDARD GREATER 17) OR (TFEL_CXX_STANDARD EQUAL 17))
     set(TFEL_MFRONT_LIBRARIES
-      "${TFELException};${TFELUtilities};${TFELMath};${TFELMaterial};${TFELPhysicalConstants}")
+      "${TFELException};${TFELUtilities};${TFELMath};${TFELMaterial}")
   endif((TFEL_CXX_STANDARD GREATER 17) OR (TFEL_CXX_STANDARD EQUAL 17))
   foreach ( _ARG ${ARGN})
     if ( ${_ARG} MATCHES SOURCES )
