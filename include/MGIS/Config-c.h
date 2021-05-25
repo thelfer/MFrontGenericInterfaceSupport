@@ -22,6 +22,21 @@
 #endif /*  __cplusplus */
 
 /*!
+ * \brief define the API used by the behaviour support.
+ *
+ * The API mostly refers to the various functions provided by `MGIS` but also
+ * the data strutures used to manage behaviours (See `BehaviourData`,
+ * `MaterialDataManger`, etc...).
+ *
+ * - 0 corresponds to the initial api provided by the TFEL project
+ *   (versions 3.2.x, versions 3.3.x and 3.4.0)`.
+ * - 1 corresponds the initial api provided by the TFEL project (versions 3.4.1
+ *   and after that and 4.x).
+ *
+ */
+#define MGIS_BEHAVIOUR_API_VERSION 1
+
+/*!
  * Macro extracted from :
  * "Why is the new C++ visibility support so useful?"
  * from http://gcc.gnu.org/wiki/Visibility
@@ -53,10 +68,10 @@
 #endif /* defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ */
 
 #ifdef MGIS_REAL_TYPE
-/*! alias to the numeric type used in the library */
+/*! \brief alias to the numeric type used in the library */
 typedef MGIS_REAL_TYPE mgis_real;
-#else   /* MGIS_REAL_TYPE */
-/*! alias to the numeric type used in the library */
+#else  /* MGIS_REAL_TYPE */
+/*! \brief alias to the numeric type used in the library */
 typedef double mgis_real;
 #endif /* MGIS_REAL_TYPE */
 

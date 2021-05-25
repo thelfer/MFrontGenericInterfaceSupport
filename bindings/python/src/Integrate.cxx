@@ -14,10 +14,12 @@
 
 #include <boost/python/def.hpp>
 #include <boost/python/enum.hpp>
+#include <boost/python/class.hpp>
 #include "MGIS/ThreadPool.hxx"
 #include "MGIS/Behaviour/BehaviourData.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
+#include "MGIS/Python/VectorConverter.hxx"
 
 void declareIntegrate();
 
@@ -25,61 +27,104 @@ static int integrateBehaviourData1(mgis::behaviour::BehaviourData& d,
                                    const mgis::behaviour::Behaviour& b) {
   auto v = mgis::behaviour::make_view(d);
   const auto s = mgis::behaviour::integrate(v, b);
-  d.rdt = v.rdt;
   return s;
 }  // end of integrateBehaviourData
 
 void declareIntegrate() {
-  boost::python::enum_<mgis::behaviour::IntegrationType>("IntegrationType")
-      .value("PREDICTION_TANGENT_OPERATOR",
-             mgis::behaviour::IntegrationType::PREDICTION_TANGENT_OPERATOR)
-      .value("PredictionWithTangentOperator",
-             mgis::behaviour::IntegrationType::PREDICTION_TANGENT_OPERATOR)
-      .value("PREDICTION_SECANT_OPERATOR",
-             mgis::behaviour::IntegrationType::PREDICTION_SECANT_OPERATOR)
-      .value("PredictionWithSecantOperator",
-             mgis::behaviour::IntegrationType::PREDICTION_SECANT_OPERATOR)
-      .value("PREDICTION_ELASTIC_OPERATOR",
-             mgis::behaviour::IntegrationType::PREDICTION_ELASTIC_OPERATOR)
-      .value("PredictionWithElasticOperator",
-             mgis::behaviour::IntegrationType::PREDICTION_ELASTIC_OPERATOR)
-      .value("INTEGRATION_NO_TANGENT_OPERATOR",
-             mgis::behaviour::IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR)
-      .value("IntegrationWithoutTangentOperator",
-             mgis::behaviour::IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR)
-      .value("INTEGRATION_ELASTIC_OPERATOR",
-             mgis::behaviour::IntegrationType::INTEGRATION_ELASTIC_OPERATOR)
-      .value("IntegrationWithElasticOperator",
-             mgis::behaviour::IntegrationType::INTEGRATION_ELASTIC_OPERATOR)
-      .value("INTEGRATION_SECANT_OPERATOR",
-             mgis::behaviour::IntegrationType::INTEGRATION_SECANT_OPERATOR)
-      .value("IntegrationWithSecantOperator",
-             mgis::behaviour::IntegrationType::INTEGRATION_SECANT_OPERATOR)
-      .value("INTEGRATION_TANGENT_OPERATOR",
-             mgis::behaviour::IntegrationType::INTEGRATION_TANGENT_OPERATOR)
-      .value("IntegrationWithTangentOperator",
-             mgis::behaviour::IntegrationType::INTEGRATION_TANGENT_OPERATOR)
-      .value("INTEGRATION_CONSISTENT_TANGENT_OPERATOR",
-             mgis::behaviour::IntegrationType::
-                 INTEGRATION_CONSISTENT_TANGENT_OPERATOR)
-      .value("IntegrationWithConsistentTangentOperator",
-             mgis::behaviour::IntegrationType::
-                 INTEGRATION_CONSISTENT_TANGENT_OPERATOR);
+  using namespace mgis::behaviour;
 
-  int (*integrate_ptr1)(mgis::behaviour::BehaviourDataView&,
-                        const mgis::behaviour::Behaviour&) =
-      mgis::behaviour::integrate;
-  int (*integrate_ptr2)(mgis::behaviour::MaterialDataManager&,
-                        const mgis::behaviour::IntegrationType,
+  boost::python::enum_<IntegrationType>("IntegrationType")
+      .value("PREDICTION_TANGENT_OPERATOR",
+             IntegrationType::PREDICTION_TANGENT_OPERATOR)
+      .value("PredictionWithTangentOperator",
+             IntegrationType::PREDICTION_TANGENT_OPERATOR)
+      .value("PREDICTION_SECANT_OPERATOR",
+             IntegrationType::PREDICTION_SECANT_OPERATOR)
+      .value("PredictionWithSecantOperator",
+             IntegrationType::PREDICTION_SECANT_OPERATOR)
+      .value("PREDICTION_ELASTIC_OPERATOR",
+             IntegrationType::PREDICTION_ELASTIC_OPERATOR)
+      .value("PredictionWithElasticOperator",
+             IntegrationType::PREDICTION_ELASTIC_OPERATOR)
+      .value("INTEGRATION_NO_TANGENT_OPERATOR",
+             IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR)
+      .value("IntegrationWithoutTangentOperator",
+             IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR)
+      .value("INTEGRATION_ELASTIC_OPERATOR",
+             IntegrationType::INTEGRATION_ELASTIC_OPERATOR)
+      .value("IntegrationWithElasticOperator",
+             IntegrationType::INTEGRATION_ELASTIC_OPERATOR)
+      .value("INTEGRATION_SECANT_OPERATOR",
+             IntegrationType::INTEGRATION_SECANT_OPERATOR)
+      .value("IntegrationWithSecantOperator",
+             IntegrationType::INTEGRATION_SECANT_OPERATOR)
+      .value("INTEGRATION_TANGENT_OPERATOR",
+             IntegrationType::INTEGRATION_TANGENT_OPERATOR)
+      .value("IntegrationWithTangentOperator",
+             IntegrationType::INTEGRATION_TANGENT_OPERATOR)
+      .value("INTEGRATION_CONSISTENT_TANGENT_OPERATOR",
+             IntegrationType::INTEGRATION_CONSISTENT_TANGENT_OPERATOR)
+      .value("IntegrationWithConsistentTangentOperator",
+             IntegrationType::INTEGRATION_CONSISTENT_TANGENT_OPERATOR);
+
+  boost::python::class_<BehaviourIntegrationOptions>(
+      "BehaviourIntegrationOptions")
+      .add_property("integration_type",
+                    &BehaviourIntegrationOptions::integration_type)
+      .add_property("compute_speed_of_sound",
+                    &BehaviourIntegrationOptions::compute_speed_of_sound);
+
+  boost::python::class_<BehaviourIntegrationResult>(
+      "BehaviourIntegrationResult")
+      .add_property("exit_status", &BehaviourIntegrationResult::exit_status,
+                    "The returned value has the following meaning:\n"
+                    "- -1: integration failed for at least one Gauss point\n"
+                    "-  0: all integrations succeeded but results are\n "
+                    "      unreliable for at least one Gauss point\n"
+                    "-  1: integration succeeded and results are reliable.")
+      .add_property("time_step_increase_factor",
+                    &BehaviourIntegrationResult::time_step_increase_factor)
+      .add_property("n", &BehaviourIntegrationResult::n,
+                    "number of the integration point that failed\n"
+                    "or number of the last integration point \n"
+                    "that reported unreliable results")
+      .add_property("error_message",
+                    &BehaviourIntegrationResult::error_message);
+
+  // wrapping std::vector<BehaviourIntegrationResult>
+  mgis::python::initializeVectorConverter<
+      std::vector<BehaviourIntegrationResult>>();
+
+  boost::python::class_<MultiThreadedBehaviourIntegrationResult>(
+      "MultiThreadedBehaviourIntegrationResult")
+      .add_property("exit_status",
+                    &MultiThreadedBehaviourIntegrationResult::exit_status,
+                    "The returned value has the following meaning:\n"
+                    "- -1: integration failed for at least one Gauss point\n"
+                    "-  0: all integrations succeeded but results are\n "
+                    "      unreliable for at least one Gauss point\n"
+                    "-  1: integration succeeded and results are reliable.")
+      .add_property("results",
+                    &MultiThreadedBehaviourIntegrationResult::results);
+
+  int (*integrate_ptr1)(BehaviourDataView&, const Behaviour&) = integrate;
+  int (*integrate_ptr2)(MaterialDataManager&, const IntegrationType,
                         const mgis::real, const mgis::size_type,
-                        const mgis::size_type) = mgis::behaviour::integrate;
-  int (*integrate_ptr3)(mgis::ThreadPool&,
-                        mgis::behaviour::MaterialDataManager&,
-                        const mgis::behaviour::IntegrationType,
-                        const mgis::real) = mgis::behaviour::integrate;
+                        const mgis::size_type) = integrate;
+  int (*integrate_ptr3)(mgis::ThreadPool&, MaterialDataManager&,
+                        const IntegrationType, const mgis::real) = integrate;
+  BehaviourIntegrationResult (*integrate_ptr4)(
+      MaterialDataManager&, const BehaviourIntegrationOptions&,
+      const mgis::real, const mgis::size_type, const mgis::size_type) =
+      integrate;
+  MultiThreadedBehaviourIntegrationResult (*integrate_ptr5)(
+      mgis::ThreadPool&, MaterialDataManager&,
+      const BehaviourIntegrationOptions&, const mgis::real) = integrate;
 
   boost::python::def("integrate", &integrateBehaviourData1);
   boost::python::def("integrate", integrate_ptr1);
   boost::python::def("integrate", integrate_ptr2);
   boost::python::def("integrate", integrate_ptr3);
+  boost::python::def("integrate", integrate_ptr4);
+  boost::python::def("integrate", integrate_ptr5);
 }  // end of declareIntegrate

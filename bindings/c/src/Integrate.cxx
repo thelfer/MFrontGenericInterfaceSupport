@@ -60,7 +60,6 @@ mgis_status mgis_bv_integrate_2(int* const r,
                                 const mgis_bv_Behaviour* const b) {
   auto v = mgis::behaviour::make_view(*d);
   auto s = mgis_bv_integrate(r, &v, b);
-  d->rdt = v.rdt;
   return s;
 }  // end of mgis_bv_integrate
 

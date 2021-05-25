@@ -28,9 +28,7 @@ namespace mgis {
 
   namespace behaviour {
 
-    /*!
-     * \brief structure describing a behaviour
-     */
+    //! \brief structure describing a behaviour
     struct MGIS_EXPORT Behaviour {
       /*!
        * \brief maximum number of behaviour options, whatever the kind of

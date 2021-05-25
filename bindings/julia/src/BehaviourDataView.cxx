@@ -16,6 +16,14 @@
 #include "MGIS/Behaviour/BehaviourDataView.hxx"
 #include "MGIS/Julia/JuliaUtilities.hxx"
 
+namespace jlcxx {
+
+  //! \brief
+  template <>
+  struct IsMirroredType<mgis::behaviour::BehaviourDataView> : std::false_type {
+  };
+
+}  // end of namespace jlcxx
 void declareBehaviourDataView();
 
 void declareBehaviourDataView(jlcxx::Module& m) {

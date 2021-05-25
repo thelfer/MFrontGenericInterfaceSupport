@@ -2386,6 +2386,35 @@ contains
     s = material_data_manager_initializer_bind_tangent_operator_wrapper(d%ptr,K_ptr,nc)
   end function material_data_manager_initializer_bind_tangent_operator
   !
+  function material_data_manager_initializer_bind_speed_of_sound(d,p,n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function material_data_manager_initializer_bind_speed_of_sound_wrapper(d,p,s) &
+            bind(c,name = 'mgis_bv_material_data_manager_initializer_bind_speed_of_sound') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: d
+         type(c_ptr), intent(in), value :: p
+         integer(kind=c_size_t), intent(in), value :: s
+         type(mgis_status) :: r
+       end function material_data_manager_initializer_bind_speed_of_sound_wrapper
+    end interface
+    type(MaterialDataManagerInitializer), intent(in) :: d
+    real(kind=8), dimension(:,:), target, intent(out) :: p
+    integer, intent(in) :: n
+    type(mgis_status) :: s
+    type(c_ptr) p_ptr
+    integer(kind=c_size_t) nc
+    nc=n
+    p_ptr = c_loc(p)
+    s = material_data_manager_initializer_bind_speed_of_sound_wrapper(d%ptr,p_ptr,nc)
+  end function material_data_manager_initializer_bind_speed_of_sound
+  !
   function free_material_data_manager_initializer(ptr) result(r)
     use, intrinsic :: iso_c_binding, only: c_associated
     use mgis
@@ -2468,6 +2497,159 @@ contains
     nc = n
     s = create_material_data_manager_with_initializer_wrapper(d%ptr, b%ptr, nc, i%ptr)
   end function create_material_data_manager_with_initializer
+  !
+  function material_data_manager_set_thread_safe(d, b) result(r)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function material_data_manager_set_thread_safe_wrapper(d, b) &
+            bind(c,name = 'mgis_bv_material_data_manager_set_thread_safe') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: d
+         integer(kind=c_size_t), intent(in), value :: b
+         type(mgis_status) :: r
+       end function material_data_manager_set_thread_safe_wrapper
+    end interface
+    type(MaterialDataManager), intent(in) :: d
+    integer(kind=c_size_t), intent(in) :: b
+    type(mgis_status) :: r
+    r = material_data_manager_set_thread_safe_wrapper(d%ptr, b)
+  end function material_data_manager_set_thread_safe
+  !
+  function material_data_manager_allocate_array_of_tangent_operator_blocks(d) result(r)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function mdm_allocate_array_of_tangent_operator_blocks_wrapper(d) &
+            bind(c,name = 'mgis_bv_material_data_manager_allocate_array_of_tangent_operator_blocks') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: d
+         type(mgis_status) :: r
+       end function mdm_allocate_array_of_tangent_operator_blocks_wrapper
+    end interface
+    type(MaterialDataManager), intent(in) :: d
+    type(mgis_status) :: r
+    r = mdm_allocate_array_of_tangent_operator_blocks_wrapper(d%ptr)
+  end function material_data_manager_allocate_array_of_tangent_operator_blocks
+  !
+  function material_data_manager_use_array_of_tangent_operator_blocks(d, p , n) result(r)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function mdm_use_array_of_tangent_operator_blocks_wrapper(d, p, n) &
+            bind(c,name = 'mgis_bv_material_data_manager_use_external_array_of_tangent_operator_blocks') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: d
+         type(c_ptr), intent(in), value :: p
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function mdm_use_array_of_tangent_operator_blocks_wrapper
+    end interface
+    type(MaterialDataManager), intent(in) :: d
+    real(kind=8), dimension(:,:), target, intent(out) :: p
+    integer, intent(in) :: n
+    type(mgis_status) :: r
+    type(c_ptr) p_ptr
+    integer(kind=c_size_t) nc
+    nc=n
+    p_ptr = c_loc(p)
+    r = mdm_use_array_of_tangent_operator_blocks_wrapper(d%ptr, p_ptr, nc)
+  end function material_data_manager_use_array_of_tangent_operator_blocks
+  !
+  function material_data_manager_release_array_of_tangent_operator_blocks(d) result(r)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function mdm_release_array_of_tangent_operator_blocks_wrapper(d) &
+            bind(c,name = 'mgis_bv_material_data_manager_release_array_of_tangent_operator_blocks') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: d
+         type(mgis_status) :: r
+       end function mdm_release_array_of_tangent_operator_blocks_wrapper
+    end interface
+    type(MaterialDataManager), intent(in) :: d
+    type(mgis_status) :: r
+    r = mdm_release_array_of_tangent_operator_blocks_wrapper(d%ptr)
+  end function material_data_manager_release_array_of_tangent_operator_blocks
+  !
+  function material_data_manager_allocate_array_of_speed_of_sounds(d) result(r)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function mdm_allocate_array_of_speed_of_sounds_wrapper(d) &
+            bind(c,name = 'mgis_bv_material_data_manager_allocate_array_of_speed_of_sounds') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: d
+         type(mgis_status) :: r
+       end function mdm_allocate_array_of_speed_of_sounds_wrapper
+    end interface
+    type(MaterialDataManager), intent(in) :: d
+    type(mgis_status) :: r
+    r = mdm_allocate_array_of_speed_of_sounds_wrapper(d%ptr)
+  end function material_data_manager_allocate_array_of_speed_of_sounds
+  !
+  function material_data_manager_use_array_of_speed_of_sounds(d, p , n) result(r)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function mdm_use_array_of_speed_of_sounds_wrapper(d, p, n) &
+            bind(c,name = 'mgis_bv_material_data_manager_use_external_array_of_speed_of_sounds') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: d
+         type(c_ptr), intent(in), value :: p
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function mdm_use_array_of_speed_of_sounds_wrapper
+    end interface
+    type(MaterialDataManager), intent(in) :: d
+    real(kind=8), dimension(:,:), target, intent(out) :: p
+    integer, intent(in) :: n
+    type(mgis_status) :: r
+    type(c_ptr) p_ptr
+    integer(kind=c_size_t) nc
+    nc=n
+    p_ptr = c_loc(p)
+    r = mdm_use_array_of_speed_of_sounds_wrapper(d%ptr, p_ptr, nc)
+  end function material_data_manager_use_array_of_speed_of_sounds
+  !
+  function material_data_manager_release_array_of_speed_of_sounds(d) result(r)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function mdm_release_array_of_speed_of_sounds_wrapper(d) &
+            bind(c,name = 'mgis_bv_material_data_manager_release_array_of_speed_of_sounds') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: d
+         type(mgis_status) :: r
+       end function mdm_release_array_of_speed_of_sounds_wrapper
+    end interface
+    type(MaterialDataManager), intent(in) :: d
+    type(mgis_status) :: r
+    r = mdm_release_array_of_speed_of_sounds_wrapper(d%ptr)
+  end function material_data_manager_release_array_of_speed_of_sounds
   !
   function material_data_manager_get_state_0(s0,d) result(s)
     use mgis, only: mgis_status

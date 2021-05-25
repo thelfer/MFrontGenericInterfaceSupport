@@ -37,7 +37,9 @@ namespace mgis {
     // declared in the class definition (again regardless of the order of the
     // mem-initializers).
     BehaviourData::BehaviourData(const Behaviour& b)
-        : dt(0), rdt(1), s0(b), s1(s0) {
+        : dt(0), rdt(1), speed_of_sound(0), s0(b), s1(s0) {
+      static char error_message_buffer[512];
+      this->error_message = error_message_buffer;
       this->K.resize(getTangentOperatorArraySize(b));
     }  // end of Behaviour::Behaviour
 
@@ -61,8 +63,10 @@ namespace mgis {
         return &v[0];
       };  // end of get_ptr
       BehaviourDataView v;
+      v.error_message = d.error_message;
       v.dt = d.dt;
-      v.rdt = d.rdt;
+      v.rdt = &(d.rdt);
+      v.speed_of_sound = &(d.speed_of_sound);
       v.K = get_ptr(d.K);
       v.s0 = make_view(static_cast<const State&>(d.s0));
       v.s1 = make_view(d.s1);

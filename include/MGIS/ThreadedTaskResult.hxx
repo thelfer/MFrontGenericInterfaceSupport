@@ -18,6 +18,7 @@
 #include <exception>
 #include <type_traits>
 #include "MGIS/Config.hxx"
+#include "MGIS/Variant.hxx"
 
 namespace mgis {
 
@@ -85,22 +86,8 @@ namespace mgis {
     MGIS_INLINE ~ThreadedTaskResult();
 
    private:
-    /*!
-     * build an object
-     * \param[in] args: arguments to the constructor
-     */
-    template <typename... Args>
-    MGIS_INLINE void build(Args&&...);
-    //! \brief clear the underlying object destructor
-    MGIS_INLINE void clear();
-    //! \brief pointer the underlying object storage
-    MGIS_INLINE T* get_pointer();
-    //! \brief pointer the underlying object storage
-    MGIS_INLINE const T* get_pointer() const;
-    //! \brief if true, the ThreadedTaskResult contains a value
-    bool initialized = false;
-    //! \brief storage of the underlying value
-    typename std::aligned_storage<sizeof(T), alignof(T)>::type storage;
+    //! \brief result of the task
+    mgis::variant<mgis::monostate, T> result;
     //! exception ptr thrown during the task
     std::exception_ptr eptr;
   };

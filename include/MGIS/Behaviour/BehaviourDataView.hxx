@@ -32,6 +32,15 @@ typedef struct mgis_bv_BehaviourDataView mgis_bv_BehaviourDataView;
 
 //! \brief view on the data associated with an integration point
 struct mgis_bv_BehaviourDataView {
+  /*!
+   * \brief pointer to a buffer used to store error message
+   *
+   * \note This pointer can be nullptr.  If not null, the pointer must
+   * point to a buffer which is at least 512 characters wide (longer
+   * error message are truncated).  This caller must ensure
+   * thread-safety (i.e. each thread shall have its own buffer).
+   */
+  char* error_message;
   //! \brief time increment
   mgis_real dt;
   /*!
@@ -39,6 +48,8 @@ struct mgis_bv_BehaviourDataView {
    *
    * On input, the first element of K (K[0]) must contain the type of type
    * of computation to be performed.
+   *
+   * If K[0] is greater than 50, the speed of sound is computed.
    *
    * Let Ke be equal to:
    *
@@ -88,9 +99,9 @@ struct mgis_bv_BehaviourDataView {
    */
   mgis_real* K;
   //! \brief proposed time step increment increase factor
-  mgis_real rdt;
+  mgis_real* rdt;
   //! \brief speed of sound (only computed if requested)
-  mgis_real speed_of_sound;
+  mgis_real* speed_of_sound;
   //! \brief state at the beginning of the time step
   mgis_bv_InitialStateView s0;
   //! \brief state at the end of the time step
