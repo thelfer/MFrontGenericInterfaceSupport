@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/c/src/Variable.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   02/03/2020
  */

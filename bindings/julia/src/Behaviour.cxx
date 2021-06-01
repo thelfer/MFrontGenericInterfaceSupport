@@ -18,9 +18,9 @@
 #include "MGIS/Julia/JuliaUtilities.hxx"
 
 void declareBehaviour(jlcxx::Module &m) {
-  using mgis::behaviour::Hypothesis;
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::FiniteStrainBehaviourOptions;
+  using mgis::behaviour::Hypothesis;
   //
   Behaviour (*load)(const std::string &, const std::string &,
                     const Hypothesis) = &mgis::behaviour::load;
@@ -101,8 +101,8 @@ void declareBehaviour(jlcxx::Module &m) {
                  const FiniteStrainBehaviourOptions::TangentOperator &to) {
                 o.tangent_operator = to;
               });
-      //
-      m.add_bits<Behaviour::BehaviourType>("BehaviourType");
+  //
+  m.add_bits<Behaviour::BehaviourType>("BehaviourType");
   m.set_const("GENERALBEHAVIOUR", Behaviour::GENERALBEHAVIOUR);
   m.set_const("GeneralBehaviour", Behaviour::GENERALBEHAVIOUR);
   m.set_const("STANDARDSTRAINBASEDBEHAVIOUR",
@@ -162,7 +162,8 @@ void declareBehaviour(jlcxx::Module &m) {
            });
   m.method("get_parameter_default_value", getParameterDefaultValue1);
   m.method("get_integer_parameter_default_value", getParameterDefaultValue2);
-  m.method("get_unsigned_short_parameter_default_value", getParameterDefaultValue3);
+  m.method("get_unsigned_short_parameter_default_value",
+           getParameterDefaultValue3);
   m.method("has_bounds", hasBounds);
   m.method("has_lower_bound", hasLowerBound);
   m.method("has_upper_bound", hasUpperBound);

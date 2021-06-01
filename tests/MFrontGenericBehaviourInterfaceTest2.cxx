@@ -30,7 +30,7 @@ int main(const int argc, const char* const* argv) {
   if (!check(argc == 3, "expected three arguments")) {
     return EXIT_FAILURE;
   }
-  try{
+  try {
     check(isStandardFiniteStrainBehaviour(argv[1], argv[2]),
           "invalid behaviour type");
     auto o = FiniteStrainBehaviourOptions{};
@@ -42,38 +42,39 @@ int main(const int argc, const char* const* argv) {
     check(d.source == "FiniteStrainSingleCrystal.mfront", "invalid source");
     check(d.tfel_version == TFEL_VERSION, "invalid TFEL version");
     check(d.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR,
-	  "invalid behaviour type");
+          "invalid behaviour type");
     check(d.kinematic == Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY,
-	  "invalid kinematic value");
+          "invalid kinematic value");
     check(d.symmetry == Behaviour::ORTHOTROPIC, "invalid behaviour symmetry");
     if (check(d.gradients.size() == 1u, "invalid number of gradients")) {
-      check(d.gradients[0].name == "DeformationGradient", "invalid gradient name");
+      check(d.gradients[0].name == "DeformationGradient",
+            "invalid gradient name");
       check(d.gradients[0].type == Variable::TENSOR, "invalid gradient type");
     }
     if (check(d.thermodynamic_forces.size() == 1u,
-	      "invalid number of thermodynamic_forces")) {
+              "invalid number of thermodynamic_forces")) {
       check(d.thermodynamic_forces[0].name == "FirstPiolaKirchhoffStress",
             "invalid flux name");
       check(d.thermodynamic_forces[0].type == Variable::TENSOR,
-	    "invalid flux type");
+            "invalid flux type");
     }
     if (check(d.mps.size() == 16, "invalid number of material properties")) {
       auto check_mp = [&check](const Variable& mp, const std::string& n) {
-	check(mp.name == n,
-	      "invalid material property name, expected '" + n + "'");
+        check(mp.name == n,
+              "invalid material property name, expected '" + n + "'");
       };
       for (const auto& mp : d.mps) {
         check(mp.type == Variable::SCALAR,
               "invalid material property type '" + mp.name + "'");
       }
-      check_mp(d.mps[0],"YoungModulus1");
-      check_mp(d.mps[1],"YoungModulus2");
-      check_mp(d.mps[2],"YoungModulus3");
-      check_mp(d.mps[3],"PoissonRatio12");
-      check_mp(d.mps[4],"PoissonRatio23");
-      check_mp(d.mps[5],"PoissonRatio13");
-      check_mp(d.mps[6],"ShearModulus12");
-      check_mp(d.mps[7],"ShearModulus23");
+      check_mp(d.mps[0], "YoungModulus1");
+      check_mp(d.mps[1], "YoungModulus2");
+      check_mp(d.mps[2], "YoungModulus3");
+      check_mp(d.mps[3], "PoissonRatio12");
+      check_mp(d.mps[4], "PoissonRatio23");
+      check_mp(d.mps[5], "PoissonRatio13");
+      check_mp(d.mps[6], "ShearModulus12");
+      check_mp(d.mps[7], "ShearModulus23");
       check_mp(d.mps[8], "ShearModulus13");
       check_mp(d.mps[9], "m");
       check_mp(d.mps[10], "K");
@@ -83,32 +84,34 @@ int main(const int argc, const char* const* argv) {
       check_mp(d.mps[14], "b");
       check_mp(d.mps[15], "d1");
     }
-    if (check(d.isvs.size() == 37, "invalid number of internal state variables")) {
+    if (check(d.isvs.size() == 37,
+              "invalid number of internal state variables")) {
       auto check_isv = [&check](const Variable& isv, const std::string& n,
-				const unsigned short i) {
-	const auto vn = n + "[" + std::to_string(i) + "]";
-	check(isv.name == vn,
-	      "invalid internal state variable name, expected '" + vn + "'");
-	check(isv.type == Variable::SCALAR,
-	      "invalid type for internal state variable '" + vn + "'");
+                                const unsigned short i) {
+        const auto vn = n + "[" + std::to_string(i) + "]";
+        check(isv.name == vn,
+              "invalid internal state variable name, expected '" + vn + "'");
+        check(isv.type == Variable::SCALAR,
+              "invalid type for internal state variable '" + vn + "'");
       };
       for (unsigned short i = 0; i != 12; ++i) {
-	check_isv(d.isvs[i], "g", i);
-	check_isv(d.isvs[13 + i], "p", i);
-	check_isv(d.isvs[25 + i], "a", i);
+        check_isv(d.isvs[i], "g", i);
+        check_isv(d.isvs[13 + i], "p", i);
+        check_isv(d.isvs[25 + i], "a", i);
       }
       check(d.isvs[12].name == "Fe",
-	    "invalid name for internal state variable 'Fe'");
+            "invalid name for internal state variable 'Fe'");
       check(d.isvs[12].type == Variable::TENSOR,
-	    "invalid type for internal state variable 'Fe'");
+            "invalid type for internal state variable 'Fe'");
     }
-    if (check(d.esvs.size() == 1, "invalid number of external state variables")) {
+    if (check(d.esvs.size() == 1,
+              "invalid number of external state variables")) {
       check(d.esvs[0].name == "Temperature",
-	    "invalid name for the first external state variable");
+            "invalid name for the first external state variable");
       check(d.esvs[0].type == Variable::SCALAR,
-	    "invalid type for the first external state variable");
+            "invalid type for the first external state variable");
     }
-  } catch(std::exception& e){
+  } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
   }

@@ -8,7 +8,7 @@ if(MGIS_HAVE_PANDOC)
       COMMAND   ${PANDOC}
       ARGS      -f markdown-markdown_in_html_blocks+tex_math_single_backslash
       ARGS      --filter pandoc-crossref -M crossrefYaml=${CMAKE_CURRENT_SOURCE_DIR}/pandoc-crossref.yaml
-      ARGS      --bibliography=${CMAKE_CURRENT_SOURCE_DIR}/bibliography.bib --filter pandoc-citeproc
+      ARGS      --bibliography=${CMAKE_CURRENT_SOURCE_DIR}/bibliography.bib --citeproc
       ARGS      --template=${CMAKE_CURRENT_SOURCE_DIR}/mgis-template.html --css=${CMAKE_CURRENT_SOURCE_DIR}/css/main.css
       ARGS      --mathjax
       ARGS      --highlight-style=tango
@@ -65,7 +65,7 @@ if(MGIS_HAVE_PANDOC)
   mgis_pandoc_generate_html_page(release-notes-1.1 "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(release-notes-1.1.1 "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(release-notes-1.2 "--toc" "--toc-depth=3")
-  mgis_pandoc_generate_html_page(release-notes-1.2.1 "--toc" "--toc-depth=3")
+  mgis_pandoc_generate_html_page(release-notes-1.2.1 "--number-sections" "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(release-notes-1.3 "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(orthotropic-behaviours "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(FEniCSBindings)

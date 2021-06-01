@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/julia/src/Variable.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/05/2019
  */
@@ -36,10 +36,9 @@ void declareVariable(jlcxx::Module& m) {
               });
 
   mgis::julia::expose_std_vector<Variable>(m, "VariablesVector");
-  m.method("contains",
-           [](std::vector<Variable>& v, const std::string& n) {
-             return mgis::behaviour::contains(v, n);
-           });
+  m.method("contains", [](std::vector<Variable>& v, const std::string& n) {
+    return mgis::behaviour::contains(v, n);
+  });
   m.method("get_variable",
            [](const std::vector<Variable>& v, const std::string& n) {
              return mgis::behaviour::getVariable(v, n);
@@ -55,4 +54,3 @@ void declareVariable(jlcxx::Module& m) {
            });
 
 }  // end of declareVariable
-

@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/julia/src/BehaviourDataView.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   19/05/2019
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -16,8 +16,17 @@
 #include "MGIS/Behaviour/BehaviourDataView.hxx"
 #include "MGIS/Julia/JuliaUtilities.hxx"
 
+namespace jlcxx {
+
+  //! \brief
+  template <>
+  struct IsMirroredType<mgis::behaviour::BehaviourDataView> : std::false_type {
+  };
+
+}  // end of namespace jlcxx
+
 void declareBehaviourDataView();
 
 void declareBehaviourDataView(jlcxx::Module& m) {
   m.add_type<mgis::behaviour::BehaviourDataView>("BehaviourDataView");
-} // end of declareBehaviourDataView
+}  // end of declareBehaviourDataView

@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/fencis/include/MGIS/FEniCS/NonLinearMaterial.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/12/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -28,7 +28,7 @@
 #include "MGIS/FEniCS/NonLinearMaterialTangentOperatorFunction.hxx"
 #include "MGIS/FEniCS/NonLinearMaterialThermodynamicForcesFunction.hxx"
 
-namespace mgis{
+namespace mgis {
 
   namespace fenics {
 
@@ -38,7 +38,7 @@ namespace mgis{
      * `fenics-solid-mechanics` project.
      */
     struct MGIS_FENICS_EXPORT NonLinearMaterial
-      : public mgis::behaviour::MaterialDataManager {
+        : public mgis::behaviour::MaterialDataManager {
       /*!
        * \param[in] u: unknowns space
        * \param[in] t: tangent operator finite elements
@@ -46,12 +46,12 @@ namespace mgis{
        * \param[in] bv: behaviour
        */
       NonLinearMaterial(std::shared_ptr<const dolfin::Function>,
-			std::shared_ptr<const dolfin::FiniteElement>,
-			std::shared_ptr<const dolfin::FiniteElement>,
-			const mgis::behaviour::Behaviour&);
+                        std::shared_ptr<const dolfin::FiniteElement>,
+                        std::shared_ptr<const dolfin::FiniteElement>,
+                        const mgis::behaviour::Behaviour&);
       //! set time increment
       void setTimeIncrement(const double);
-      //! 
+      //!
       void update(const dolfin::Cell&, const double*);
       //! \return a function able to evaluate the thermodynamic forces
       std::shared_ptr<NonLinearMaterialThermodynamicForcesFunction>
@@ -63,14 +63,14 @@ namespace mgis{
       std::shared_ptr<const dolfin::Function> unknowns;
       //! \brief destructor
       ~NonLinearMaterial();
-    private:
+
+     private:
       //! \brief underlying elements for the thermodynamic forces
       std::shared_ptr<const dolfin::FiniteElement> tangent_operator_elements;
       //! \brief underlying elements for the tangent operator
       std::shared_ptr<const dolfin::FiniteElement> thf_elements;
-      //! 
-      void update_gradients(const dolfin::Cell&,
-			    const double*);
+      //!
+      void update_gradients(const dolfin::Cell&, const double*);
       /*!
        * \brief basis function derivatives at integration points on
        * reference element
@@ -82,7 +82,7 @@ namespace mgis{
       std::vector<double> expansion_coefficients;
       //! \brief current time increment
       double dt;
-    }; // end of struct NonLinearMaterial
+    };  // end of struct NonLinearMaterial
 
   }  // end of namespace fenics
 

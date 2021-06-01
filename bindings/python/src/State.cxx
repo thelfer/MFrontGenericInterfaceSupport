@@ -1,6 +1,6 @@
 /*!
  * \file   State.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   06/11/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -23,19 +23,23 @@ static boost::python::object State_getGradients(mgis::behaviour::State& s) {
   return mgis::python::wrapInNumPyArray(s.gradients);
 }  // end of State_getGradients
 
-static boost::python::object State_getThermodynamicForces(mgis::behaviour::State& s) {
+static boost::python::object State_getThermodynamicForces(
+    mgis::behaviour::State& s) {
   return mgis::python::wrapInNumPyArray(s.thermodynamic_forces);
 }  // end of State_getThermodynamicForces
 
-static boost::python::object State_getMaterialProperties(mgis::behaviour::State& s) {
+static boost::python::object State_getMaterialProperties(
+    mgis::behaviour::State& s) {
   return mgis::python::wrapInNumPyArray(s.material_properties);
 }  // end of State_getMaterialProperties
 
-static boost::python::object State_getInternalStateVariables(mgis::behaviour::State& s) {
+static boost::python::object State_getInternalStateVariables(
+    mgis::behaviour::State& s) {
   return mgis::python::wrapInNumPyArray(s.internal_state_variables);
 }  // end of State_getInternalStateVariables
 
-static boost::python::object State_getExternalStateVariables(mgis::behaviour::State& s) {
+static boost::python::object State_getExternalStateVariables(
+    mgis::behaviour::State& s) {
   return mgis::python::wrapInNumPyArray(s.external_state_variables);
 }  // end of State_getExternalStateVariables
 
@@ -43,7 +47,7 @@ static void State_setExternalStateVariable(mgis::behaviour::State& s,
                                            const std::string& n,
                                            const mgis::real v) {
   mgis::behaviour::setExternalStateVariable(s, n, v);
-} // end of State_setExternalStateVariable
+}  // end of State_setExternalStateVariable
 
 void declareState() {
   using mgis::behaviour::Behaviour;
@@ -62,7 +66,8 @@ void declareState() {
   void (*ptr_setExternalStateVariable)(State&, const mgis::size_type,
                                        const mgis::real) =
       &mgis::behaviour::setExternalStateVariable;
-  boost::python::def("setExternalStateVariable", State_setExternalStateVariable,"toto");
+  boost::python::def("setExternalStateVariable", State_setExternalStateVariable,
+                     "toto");
   boost::python::def("setExternalStateVariable", ptr_setExternalStateVariable);
 
-} // end of declareState
+}  // end of declareState

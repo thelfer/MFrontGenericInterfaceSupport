@@ -1,6 +1,6 @@
 /*!
  * \file   FiniteStrainSupport.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   25/01/2019
  * \copyright (C) Copyright Thomas Helfer 2018-2019.
@@ -12,7 +12,6 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-
 #include <boost/python/enum.hpp>
 #include <boost/python/def.hpp>
 #include "MGIS/Python/NumPySupport.hxx"
@@ -23,8 +22,8 @@
 void declareFiniteStrainSupport();
 
 void py_convertFiniteStrainStress(boost::python::object o,
-                               const mgis::behaviour::MaterialDataManager& m,
-                               const mgis::behaviour::FiniteStrainStress t){
+                                  const mgis::behaviour::MaterialDataManager& m,
+                                  const mgis::behaviour::FiniteStrainStress t) {
   auto s = mgis::python::mgis_convert_to_span(o);
   mgis::behaviour::convertFiniteStrainStress(s, m, t);
 }  // end of py_py_convertFiniteStrainStress

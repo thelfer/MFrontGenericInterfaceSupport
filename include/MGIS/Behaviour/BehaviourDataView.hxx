@@ -27,37 +27,55 @@
 extern "C" {
 #endif /* __cplusplus */
 
+//! \brief a simple alias
 typedef struct mgis_bv_BehaviourDataView mgis_bv_BehaviourDataView;
 
-/*!
- * \brief structure
- */
+//! \brief view on the data associated with an integration point
 struct mgis_bv_BehaviourDataView {
   /*!
-   * \brief time increment
+   * \brief pointer to a buffer used to store error message
+   *
+   * \note This pointer can be nullptr.  If not null, the pointer must
+   * point to a buffer which is at least 512 characters wide (longer
+   * error message are truncated).  This caller must ensure
+   * thread-safety (i.e. each thread shall have its own buffer).
    */
+  char* error_message;
+  //! \brief time increment
   mgis_real dt;
   /*!
    * \brief the stiffness matrix.
-   * On input, the first element of K must contain the type of type
-   * of stiffness matrix expected. If this value is negative, only
-   * the prediction operator is computed. This value has the
-   * following meaning:
-   * - if K[0] is lower than -2.5, the tangent operator must be
+   *
+   * On input, the first element of K (K[0]) must contain the type of type
+   * of computation to be performed.
+   *
+   * If K[0] is greater than 50, the speed of sound is computed.
+   *
+   * Let Ke be equal to:
+   *
+   * - K[0] - 100 if K[0] is greater than 50
+   * - K[0] otherwise.
+   *
+   * If Ke is negative, only the prediction operator is computed and
+   * no behaviour integration is performed.
+   *
+   * Ke has the following meaning:
+   *
+   * - if Ke is lower than -2.5, the tangent operator must be
    *   computed.
-   * - if K[0] is in [-2.5:-1.5]: the secant operator must be
+   * - if Ke is in [-2.5:-1.5]: the secant operator must be
    *   computed.
-   * - if K[0] is in [-1.5:-0.5]: the elastic operator must be
+   * - if Ke is in [-1.5:-0.5]: the elastic operator must be
    *   computed.
-   * - if K[0] is in [-0.5:0.5]: the behaviour integration is
+   * - if Ke is in [-0.5:0.5]: the behaviour integration is
    *   performed, but no stiffness matrix.
-   * - if K[0] is in [0.5:1.5]: the elastic operator must be
+   * - if Ke is in [0.5:1.5]: the elastic operator must be
    *   computed.
-   * - if K[0] is in [1.5:2.5]: the secant operator must be
+   * - if Ke is in [1.5:2.5]: the secant operator must be
    *   computed.
-   * - if K[0] is in [2.5:3.5]: the secant operator must be
+   * - if Ke is in [2.5:3.5]: the secant operator must be
    *   computed.
-   * - if K[0] is greater than 3.5, the consistent tangent operator
+   * - if Ke is greater than 3.5, the consistent tangent operator
    *   must be computed.
    *
    * Other values of K are meant to store behaviour's option. This
@@ -80,17 +98,13 @@ struct mgis_bv_BehaviourDataView {
    *   stress with respect to the deformation gradient is returned
    */
   mgis_real* K;
-  /*!
-   * \brief proposed time step increment increase factor
-   */
-  mgis_real rdt;
-  /*!
-   * \brief state at the beginning of the time step
-   */
+  //! \brief proposed time step increment increase factor
+  mgis_real* rdt;
+  //! \brief speed of sound (only computed if requested)
+  mgis_real* speed_of_sound;
+  //! \brief state at the beginning of the time step
   mgis_bv_InitialStateView s0;
-  /*!
-   * \brief state at the end of the time step
-   */
+  //! \brief state at the end of the time step
   mgis_bv_StateView s1;
 };
 
@@ -100,16 +114,12 @@ struct mgis_bv_BehaviourDataView {
 
 #ifdef __cplusplus
 
-namespace mgis{
+namespace mgis::behaviour {
 
-  namespace behaviour {
+  //! \brief a simple alias
+  using BehaviourDataView = ::mgis_bv_BehaviourDataView;
 
-    //! a simple alias
-    using BehaviourDataView = ::mgis_bv_BehaviourDataView;
-
-  } // end of namespace behaviour
-  
-} // end of namespace mgis
+}  // end of namespace mgis::behaviour
 
 #endif /* __cplusplus */
 

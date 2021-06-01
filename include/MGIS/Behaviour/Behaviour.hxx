@@ -27,9 +27,7 @@
 
 namespace mgis::behaviour {
 
-  /*!
-   * \brief structure describing a behaviour
-   */
+  //! \brief structure describing a behaviour
   struct MGIS_EXPORT Behaviour {
     /*!
      * \brief maximum number of behaviour options, whatever the kind of
@@ -159,20 +157,20 @@ namespace mgis::behaviour {
      * - the stress measure used
      * - the consistent tangent operator expected
      *
-     * For finite strain behaviours, options[1] holds the stress measure
+     * For finite strain behaviours, options[0] holds the stress measure
      * used:
-     * - if options[1] < 0.5, the Cauchy stress is used
-     * - if 0.5 < options[1] < 1.5, the second Piola-Kirchoff stress is used
-     * - if 1.5 < options[1] < 2.5, the first Piola-Kirchoff stress is used
+     * - if options[0] < 0.5, the Cauchy stress is used
+     * - if 0.5 < options[0] < 1.5, the second Piola-Kirchoff stress is used
+     * - if 1.5 < options[0] < 2.5, the first Piola-Kirchoff stress is used
      *
-     * For finite strain behaviours, options[2] holds the consitent tangent
+     * For finite strain behaviours, options[1] holds the consitent tangent
      * operator returned by the behaviour:
-     * - if options[2]<0.5, the derivative of the Cauchy stress with respect
+     * - if options[1]<0.5, the derivative of the Cauchy stress with respect
      *   to the deformation gradient is returned
-     * - if 0.5<options[2]<1.5, the derivative of the second Piola-Kirchoff
+     * - if 0.5<options[1]<1.5, the derivative of the second Piola-Kirchoff
      *   stress with respect to the Green-Lagrange strain
      *   is returned
-     * - if 1.5<options[2]<2.5, the derivative of the first Piola-Kirchoff
+     * - if 1.5<options[1]<2.5, the derivative of the first Piola-Kirchoff
      *   stress with respect to the deformation gradient is returned
      */
     std::vector<mgis::real> options;
@@ -273,7 +271,7 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT void rotateGradients(mgis::span<real>,
                                    const Behaviour &,
-                                   const RotationMatrix2D&);
+                                   const RotationMatrix2D &);
   /*!
    * \brief rotate an array of gradients from the global frame to the material
    * frame.
@@ -286,7 +284,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT void rotateGradients(mgis::span<real>,
                                    const Behaviour &,
                                    const mgis::span<const real> &,
-                                   const RotationMatrix2D&);
+                                   const RotationMatrix2D &);
   /*!
    * \brief rotate an array of gradients from the global frame to the material
    * frame.
@@ -297,7 +295,7 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT void rotateGradients(mgis::span<real>,
                                    const Behaviour &,
-                                   const RotationMatrix3D&);
+                                   const RotationMatrix3D &);
   /*!
    * \brief rotate an array of gradients from the global frame to the material
    * frame.
@@ -310,7 +308,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT void rotateGradients(mgis::span<real>,
                                    const Behaviour &,
                                    const mgis::span<const real> &,
-                                   const RotationMatrix3D&);
+                                   const RotationMatrix3D &);
   /*!
    * \brief rotate an array of thermodynamics forces from the material frame
    * to
@@ -374,7 +372,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT void rotateThermodynamicForces(mgis::span<real>,
                                              const Behaviour &,
                                              const mgis::span<const real> &,
-                                             const RotationMatrix2D&);
+                                             const RotationMatrix2D &);
   /*!
    * \brief rotate an array of thermodynamics forces from the material frame
    * to

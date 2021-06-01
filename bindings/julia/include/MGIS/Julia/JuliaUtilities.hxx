@@ -1,6 +1,6 @@
 /*!
  * \file   JuliaUtilities.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   16/05/2019
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -29,31 +29,37 @@ namespace jlcxx {
 
   //!
   template <>
-  struct IsBits<mgis::behaviour::Variable::Type> : std::true_type {};
+  struct IsMirroredType<mgis::behaviour::Variable::Type> : std::true_type {};
   //!
   template <>
-  struct IsBits<mgis::behaviour::Hypothesis> : std::true_type {};
+  struct IsMirroredType<mgis::behaviour::Hypothesis> : std::true_type {};
   //!
   template <>
-  struct IsBits<mgis::behaviour::Behaviour::Symmetry> : std::true_type {};
+  struct IsMirroredType<mgis::behaviour::Behaviour::Symmetry> : std::true_type {
+  };
   //!
   template <>
-  struct IsBits<mgis::behaviour::Behaviour::BehaviourType> : std::true_type {};
-  //!
-  template <>
-  struct IsBits<mgis::behaviour::Behaviour::Kinematic> : std::true_type {};
-  //!
-  template <>
-  struct IsBits<mgis::behaviour::FiniteStrainBehaviourOptions::StressMeasure>
+  struct IsMirroredType<mgis::behaviour::Behaviour::BehaviourType>
       : std::true_type {};
   //!
   template <>
-  struct IsBits<mgis::behaviour::FiniteStrainBehaviourOptions::TangentOperator>
+  struct IsMirroredType<mgis::behaviour::Behaviour::Kinematic>
       : std::true_type {};
-  //! \brief 
+  //!
   template <>
-  struct IsBits<mgis::behaviour::IntegrationType> : std::true_type {};
-} // end of namespace jlcxx
+  struct IsMirroredType<
+      mgis::behaviour::FiniteStrainBehaviourOptions::StressMeasure>
+      : std::true_type {};
+  //!
+  template <>
+  struct IsMirroredType<
+      mgis::behaviour::FiniteStrainBehaviourOptions::TangentOperator>
+      : std::true_type {};
+  //! \brief
+  template <>
+  struct IsMirroredType<mgis::behaviour::IntegrationType> : std::true_type {};
+
+}  // end of namespace jlcxx
 
 namespace mgis {
 
@@ -77,7 +83,7 @@ namespace mgis {
 
   }  // end of namespace julia
 
-} // end of namespace mgis
+}  // end of namespace mgis
 
 #include "MGIS/Julia/JuliaUtilities.ixx"
 

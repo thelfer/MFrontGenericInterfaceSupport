@@ -1,6 +1,6 @@
 /*!
  * \file   Markdown.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   26/05/2019
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -18,7 +18,7 @@
 #include <string>
 #include "MGIS/Config.hxx"
 
-namespace mgis{
+namespace mgis {
 
   namespace utilities {
 
@@ -30,6 +30,6 @@ namespace mgis{
 
   }  // end of namespace utilities
 
-} // end of namespace mgis
+}  // end of namespace mgis
 
 #endif /* LIB_MGIS_UTILITIES_MARKDOWN_HXX */

@@ -176,6 +176,15 @@ namespace mgis::behaviour {
       raise("entry point '" + b + "' in library " + l + " is not a behaviour");
     }
 
+    if (lm.getAPIVersion(l, b) != MGIS_BEHAVIOUR_API_VERSION) {
+      std::string msg("unmatched API version\n");
+      msg += "- the behaviour uses API version ";
+      msg += std::to_string(lm.getAPIVersion(l, b)) + "\n";
+      msg += "- mgis uses API version ";
+      msg += std::to_string(MGIS_BEHAVIOUR_API_VERSION);
+      raise(msg);
+    }
+
     d.tfel_version = lm.getTFELVersion(l, b);
     d.source = lm.getSource(l, b);
     d.btype = [&l, &b, &lm, &raise] {
@@ -576,8 +585,8 @@ namespace mgis::behaviour {
                        const mgis::span<const real> &r) {
     checkBehaviourRotateGradients(b);
     const auto gsize = getArraySize(b.gradients, b.hypothesis);
-    const auto nipts = checkRotateFunctionInputs(
-        "rotateGradients", mg, gg, gsize);
+    const auto nipts =
+        checkRotateFunctionInputs("rotateGradients", mg, gg, gsize);
     if (r.size() == 0) {
       mgis::raise("rotateGradients: no values given for the rotation matrices");
     }
@@ -701,7 +710,7 @@ namespace mgis::behaviour {
       if (rdv.quot != nipts) {
         mgis::raise(
             "rotateThermodynamicForces: "
-	    "the number of integration points for the thermodynamic forces "
+            "the number of integration points for the thermodynamic forces "
             "does not match the number of integration points for the rotation "
             "matrices (" +
             std::to_string(nipts) + " vs " + std::to_string(rdv.quot) + ")");
@@ -836,14 +845,14 @@ namespace mgis::behaviour {
                                    const mgis::span<const real> &mK,
                                    const RotationMatrix2D &r) {
     checkBehaviourRotateTangentOperatorBlocks(b);
-      const auto Ksize = getTangentOperatorArraySize(b);
-      const auto nipts = checkRotateFunctionInputs(
-          "rotateTangentOperatorBlocks", gK, mK, Ksize);
-      checkRotationMatrix2D("rotateTangentOperatorBlocks", r, b, nipts);
-      if (r.a.size() == 2u) {
-        const auto m = buildRotationMatrix(r.a.data());
-        b.rotate_array_of_tangent_operator_blocks_ptr(gK.data(), mK.data(),
-                                                      m.data(), nipts);
+    const auto Ksize = getTangentOperatorArraySize(b);
+    const auto nipts =
+        checkRotateFunctionInputs("rotateTangentOperatorBlocks", gK, mK, Ksize);
+    checkRotationMatrix2D("rotateTangentOperatorBlocks", r, b, nipts);
+    if (r.a.size() == 2u) {
+      const auto m = buildRotationMatrix(r.a.data());
+      b.rotate_array_of_tangent_operator_blocks_ptr(gK.data(), mK.data(),
+                                                    m.data(), nipts);
     } else {
       for (size_type i = 0; i != nipts; ++i) {
         const auto m = buildRotationMatrix(r.a.data() + 2 * i);

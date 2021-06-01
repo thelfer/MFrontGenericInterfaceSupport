@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/python/src/behaviour-module.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   31/10/2018
  * \copyright (C) Copyright Thomas Helfer 2018.

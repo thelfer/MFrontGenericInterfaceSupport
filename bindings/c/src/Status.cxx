@@ -1,6 +1,6 @@
 /*!
  * \file   Status.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   24/06/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -20,7 +20,7 @@
 extern "C" {
 
 mgis_status mgis_report_success() {
-  return { MGIS_SUCCESS, nullptr };
+  return {MGIS_SUCCESS, nullptr};
 }  // end of mgis_status mgis_report_success
 
 mgis_status mgis_report_failure(const char* const e) {
@@ -28,7 +28,7 @@ mgis_status mgis_report_failure(const char* const e) {
   ::strncpy(msg, e, 511);
   msg[511] = '\0';
   return {MGIS_FAILURE, msg};
-} // end of mgis_status mgis_report_failure
+}  // end of mgis_status mgis_report_failure
 
 mgis_status mgis_handle_cxx_exception() {
   try {

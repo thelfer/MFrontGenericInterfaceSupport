@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/fenics/include/MGIS/FEniCS/Config-FEniCS.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   16/12/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -43,6 +43,6 @@ namespace dolfin {
   class GenericVector;
   class Form;
   class NewtonSolver;
-} // end of namespace dolphin
+}  // namespace dolfin
 
 #endif /* LIB_MGIS_FENICS_CONFIG_HXX */

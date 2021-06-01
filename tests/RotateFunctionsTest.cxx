@@ -1,6 +1,6 @@
 /*!
  * \file   RotateFunctionsTest.cxx
- * \brief    
+ * \brief
  * \author Thomas Heler
  * \date   08/06/2020
  */

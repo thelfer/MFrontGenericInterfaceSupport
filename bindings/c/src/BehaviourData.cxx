@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/c/src/BehaviourData.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   02/08/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -42,7 +42,7 @@ mgis_status mgis_bv_behaviour_data_get_behaviour(
   return mgis_report_success();
 }  // end of mgis_bv_update_behaviour_data
 
-mgis_status mgis_bv_update_behaviour_data(mgis_bv_BehaviourData* const d){
+mgis_status mgis_bv_update_behaviour_data(mgis_bv_BehaviourData* const d) {
   if (d == nullptr) {
     return mgis_report_failure("invalid argument (behaviour data is null)");
   }
@@ -52,7 +52,7 @@ mgis_status mgis_bv_update_behaviour_data(mgis_bv_BehaviourData* const d){
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_bv_update_behaviour_data
+}  // end of mgis_bv_update_behaviour_data
 
 mgis_status mgis_bv_revert_behaviour_data(mgis_bv_BehaviourData* const d) {
   if (d == nullptr) {
@@ -64,10 +64,10 @@ mgis_status mgis_bv_revert_behaviour_data(mgis_bv_BehaviourData* const d) {
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_bv_revert_behaviour_data
+}  // end of mgis_bv_revert_behaviour_data
 
-mgis_status mgis_bv_behaviour_data_get_state_0(
-    mgis_bv_State** s, mgis_bv_BehaviourData* const d) {
+mgis_status mgis_bv_behaviour_data_get_state_0(mgis_bv_State** s,
+                                               mgis_bv_BehaviourData* const d) {
   if (d == nullptr) {
     return mgis_report_failure("invalid argument (behaviour data is null)");
   }
@@ -75,8 +75,8 @@ mgis_status mgis_bv_behaviour_data_get_state_0(
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_data_get_state_0
 
-mgis_status mgis_bv_behaviour_data_get_state_1(
-    mgis_bv_State** s, mgis_bv_BehaviourData* const d) {
+mgis_status mgis_bv_behaviour_data_get_state_1(mgis_bv_State** s,
+                                               mgis_bv_BehaviourData* const d) {
   if (d == nullptr) {
     return mgis_report_failure("invalid argument (behaviour data is null)");
   }
@@ -101,7 +101,7 @@ mgis_status mgis_bv_behaviour_data_get_time_step_scaling_factor(
   }
   *rdt = d->rdt;
   return mgis_report_success();
-} // end of mgis_bv_behaviour_data_get_time_step_scaling_factor
+}  // end of mgis_bv_behaviour_data_get_time_step_scaling_factor
 
 mgis_status mgis_bv_behaviour_data_get_tangent_operator(
     mgis_real** const K, mgis_bv_BehaviourData* const d) {
@@ -115,13 +115,13 @@ mgis_status mgis_bv_behaviour_data_get_tangent_operator(
   }
   *K = &(d->K[0]);
   return mgis_report_success();
-} // end of mgis_bv_behaviour_data_get_tangent_operator
+}  // end of mgis_bv_behaviour_data_get_tangent_operator
 
 mgis_status mgis_bv_free_behaviour_data(mgis_bv_BehaviourData** d) {
   try {
     delete *d;
-   } catch (...) {
-     return mgis_handle_cxx_exception();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
   }
   *d = nullptr;
   return mgis_report_success();

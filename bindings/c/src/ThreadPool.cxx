@@ -1,6 +1,6 @@
 /*!
  * \file   ThreadPool.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   05/08/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,7 +17,7 @@
 extern "C" {
 
 mgis_status mgis_create_thread_pool(mgis_ThreadPool** p,
-				    const mgis_size_type n) {
+                                    const mgis_size_type n) {
   *p = nullptr;
   try {
     *p = new mgis::ThreadPool(n);
@@ -32,7 +32,7 @@ mgis_status mgis_create_thread_pool(mgis_ThreadPool** p,
   return mgis_report_success();
 }  // end of mgis_create_thread_pool
 
-mgis_status mgis_free_thread_pool(mgis_ThreadPool** p){
+mgis_status mgis_free_thread_pool(mgis_ThreadPool** p) {
   try {
     delete *p;
     *p = nullptr;
@@ -41,6 +41,6 @@ mgis_status mgis_free_thread_pool(mgis_ThreadPool** p){
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-} // end of mgis_free_thread_pool
+}  // end of mgis_free_thread_pool
 
-} // end of extern "C"
+}  // end of extern "C"

@@ -20,7 +20,7 @@
 namespace mgis {
 
   void ThreadedTaskResultBase::throwBadCastException() {
-    throw(std::bad_cast());
+    raise<std::bad_cast>();
   }  // end of ThreadPool::ResultBase::throwBadCastException
 
   void ThreadedTaskResultBase::throwNullException() {

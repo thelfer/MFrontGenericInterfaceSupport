@@ -18,7 +18,7 @@
  */
 
 #ifdef _MSC_VER
-#define  _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
 #endif /* MSC_VER */
 #include <cmath>
 #include <dolfin/log/log.h>
@@ -48,8 +48,8 @@ namespace mgis {
         // Uy,y (eps_yy)
         e[1] += dsf[dim][1] * ecs[space_dim + dim];
         // Ux,y + Uy,x (sqrt(2)*eps_xy)
-        e[3] += (dsf[dim][1] * ecs[dim] +
-		 dsf[dim][0] * ecs[space_dim + dim]) * icste;
+        e[3] += (dsf[dim][1] * ecs[dim] + dsf[dim][0] * ecs[space_dim + dim]) *
+                icste;
       }
     }  // end of compute_strain2D
 
@@ -68,14 +68,16 @@ namespace mgis {
         // Uz,z (eps_zz)
         e[2] += dsf[dim][2] * ecs[2 * space_dim + dim];
         // sqrt(2)*(Ux,y + Uy,x) (sqrt(2)*eps_xy)
-        e[3] += (dsf[dim][1] * ecs[dim] +
-		 dsf[dim][0] * ecs[space_dim + dim]) * icste;
+        e[3] += (dsf[dim][1] * ecs[dim] + dsf[dim][0] * ecs[space_dim + dim]) *
+                icste;
         // sqrt(2)*(Ux,z + Uz,x) (sqrt(2)*eps_xz)
-        e[4] += (dsf[dim][2] * ecs[dim] +
-		 dsf[dim][0] * ecs[2 * space_dim + dim]) * icste;
+        e[4] +=
+            (dsf[dim][2] * ecs[dim] + dsf[dim][0] * ecs[2 * space_dim + dim]) *
+            icste;
         // sqrt(2)*(Uy,z + Uz,y) (sqrt(2)*eps_yz)
         e[5] += (dsf[dim][2] * ecs[space_dim + dim] +
-                 dsf[dim][1] * ecs[2 * space_dim + dim]) * icste;
+                 dsf[dim][1] * ecs[2 * space_dim + dim]) *
+                icste;
       }
     }  // end of compute_strain3D
 
@@ -88,8 +90,8 @@ namespace mgis {
               bv,
               getNumberOfIntegrationPoints(*(u->function_space()->mesh()), *e)),
           unknowns(u),
-      tangent_operator_elements(t),
-      thf_elements(e),
+          tangent_operator_elements(t),
+          thf_elements(e),
           dt(0) {
       const auto s =
           this->unknowns->function_space()->dofmap()->max_cell_dimension();
@@ -133,12 +135,13 @@ namespace mgis {
     std::shared_ptr<NonLinearMaterialThermodynamicForcesFunction>
     NonLinearMaterial::getThermodynamicForcesFunction() {
       return std::make_shared<NonLinearMaterialThermodynamicForcesFunction>(
-          *this,this->thf_elements);
+          *this, this->thf_elements);
     }  // end of NonLinearMaterial::getThermodynamicForcesFunction
 
     std::shared_ptr<NonLinearMaterialTangentOperatorFunction>
     NonLinearMaterial::getTangentOperatorFunction() {
-      return std::make_shared<NonLinearMaterialTangentOperatorFunction>(*this,this->tangent_operator_elements);
+      return std::make_shared<NonLinearMaterialTangentOperatorFunction>(
+          *this, this->tangent_operator_elements);
     }  // end of NonLinearMaterial::getTangentOperatorFunction
 
     void NonLinearMaterial::update_gradients(const dolfin::Cell& c,
@@ -220,8 +223,8 @@ namespace mgis {
     }  // end of update_gradients
 
     void NonLinearMaterial::update(const dolfin::Cell& c, const double* nc) {
-      constexpr const auto it =
-	mgis::behaviour::IntegrationType::INTEGRATION_CONSISTENT_TANGENT_OPERATOR;
+      constexpr const auto it = mgis::behaviour::IntegrationType::
+          INTEGRATION_CONSISTENT_TANGENT_OPERATOR;
       const std::size_t cell_index = c.index();
       const std::size_t num_ip_dofs = this->thf_elements->value_dimension(0);
       const std::size_t num_ip_per_cell =

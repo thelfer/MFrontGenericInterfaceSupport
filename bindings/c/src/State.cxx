@@ -95,9 +95,7 @@ mgis_status mgis_bv_state_get_gradient_by_offset(mgis_real** v,
 }  // end of mgis_bv_state_get_gradient_by_offset
 
 mgis_status mgis_bv_state_set_thermodynamic_force_by_name(
-    mgis_bv_State* const s,
-    const char* const n,
-    const mgis_real* const v) {
+    mgis_bv_State* const s, const char* const n, const mgis_real* const v) {
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
   }
@@ -116,9 +114,7 @@ mgis_status mgis_bv_state_set_thermodynamic_force_by_name(
 }  // end of mgis_bv_state_set_thermodynamic_force_by_name
 
 mgis_status mgis_bv_state_get_thermodynamic_force_by_name(
-    mgis_real** v,
-    mgis_bv_State* const s,
-    const char* const n) {
+    mgis_real** v, mgis_bv_State* const s, const char* const n) {
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
   }
@@ -174,10 +170,9 @@ mgis_status mgis_bv_state_get_thermodynamic_force_by_offset(
   return mgis_report_success();
 }  // end of mgis_bv_state_get_thermodynamic_force_by_offset
 
-mgis_status mgis_bv_state_set_material_property_by_name(
-    mgis_bv_State* const s,
-    const char* const n,
-    const mgis_real v) {
+mgis_status mgis_bv_state_set_material_property_by_name(mgis_bv_State* const s,
+                                                        const char* const n,
+                                                        const mgis_real v) {
   try {
     setMaterialProperty(*s, n, v);
   } catch (...) {
@@ -186,10 +181,9 @@ mgis_status mgis_bv_state_set_material_property_by_name(
   return mgis_report_success();
 }  // end of mgis_bv_state_set_material_property_by_name
 
-mgis_status mgis_bv_state_get_material_property_by_name(
-    mgis_real** const v,
-    mgis_bv_State* const s,
-    const char* const n) {
+mgis_status mgis_bv_state_get_material_property_by_name(mgis_real** const v,
+                                                        mgis_bv_State* const s,
+                                                        const char* const n) {
   try {
     *v = getMaterialProperty(*s, n);
   } catch (...) {
@@ -219,9 +213,7 @@ mgis_status mgis_bv_state_get_material_property_by_offset(
 }  // end of mgis_bv_state_get_material_property_by_offset
 
 mgis_status mgis_bv_state_set_internal_state_variable_by_name(
-    mgis_bv_State* const s,
-    const char* const n,
-    const mgis_real* const v) {
+    mgis_bv_State* const s, const char* const n, const mgis_real* const v) {
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
   }
@@ -240,9 +232,7 @@ mgis_status mgis_bv_state_set_internal_state_variable_by_name(
 }  // end of mgis_bv_state_set_internal_state_variable_by_name
 
 mgis_status mgis_bv_state_get_internal_state_variable_by_name(
-    mgis_real** v,
-    mgis_bv_State* const s,
-    const char* const n) {
+    mgis_real** v, mgis_bv_State* const s, const char* const n) {
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
   }
@@ -299,9 +289,7 @@ mgis_status mgis_bv_state_get_internal_state_variable_by_offset(
 }  // end of mgis_bv_state_get_internal_state_variable_by_offset
 
 mgis_status mgis_bv_state_set_external_state_variable_by_name(
-    mgis_bv_State* const s,
-    const char* const n,
-    const mgis_real v) {
+    mgis_bv_State* const s, const char* const n, const mgis_real v) {
   try {
     setExternalStateVariable(*s, n, v);
   } catch (...) {
@@ -311,9 +299,7 @@ mgis_status mgis_bv_state_set_external_state_variable_by_name(
 }  // end of mgis_bv_state_set_external_state_variable_by_name
 
 mgis_status mgis_bv_state_get_external_state_variable_by_name(
-    mgis_real** const v,
-    mgis_bv_State* const s,
-    const char* const n) {
+    mgis_real** const v, mgis_bv_State* const s, const char* const n) {
   try {
     *v = getExternalStateVariable(*s, n);
   } catch (...) {

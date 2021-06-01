@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/fencis/tests/src/FEniCSTestingUtilities.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/12/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -20,74 +20,70 @@
 #include <dolfin/common/Array.h>
 #include "MGIS/FEniCS/FEniCSTestingUtilities.hxx"
 
-namespace mgis{
+namespace mgis {
 
-  namespace fenics{
+  namespace fenics {
 
-    struct sx1 : public dolfin::SubDomain
-    {
+    struct sx1 : public dolfin::SubDomain {
       bool inside(const dolfin::Array<double>& x, bool) const {
-	return std::abs(x[0]) < DOLFIN_EPS;
+        return std::abs(x[0]) < DOLFIN_EPS;
       }
-    }; // end of sx1
+    };  // end of sx1
 
-    struct sx2 : public dolfin::SubDomain
-    {
+    struct sx2 : public dolfin::SubDomain {
       bool inside(const dolfin::Array<double>& x, bool) const {
-	return std::abs(x[0] - 1.0) < DOLFIN_EPS;
+        return std::abs(x[0] - 1.0) < DOLFIN_EPS;
       }
-    }; // end of sx2
+    };  // end of sx2
 
-    struct sy1 : public dolfin::SubDomain
-    {
+    struct sy1 : public dolfin::SubDomain {
       bool inside(const dolfin::Array<double>& x, bool) const {
-	return std::abs(x[1]) < DOLFIN_EPS;
+        return std::abs(x[1]) < DOLFIN_EPS;
       }
-    }; // end of sy1
+    };  // end of sy1
 
-    struct sy2 : public dolfin::SubDomain
-    {
+    struct sy2 : public dolfin::SubDomain {
       bool inside(const dolfin::Array<double>& x, bool) const {
-	return std::abs(x[1] - 1.0) < DOLFIN_EPS;
+        return std::abs(x[1] - 1.0) < DOLFIN_EPS;
       }
-    }; // end of sy2
+    };  // end of sy2
 
-    struct sz1 : public dolfin::SubDomain
-    {
+    struct sz1 : public dolfin::SubDomain {
       bool inside(const dolfin::Array<double>& x, bool) const {
-	return std::abs(x[2]) < DOLFIN_EPS;
+        return std::abs(x[2]) < DOLFIN_EPS;
       }
-    }; // end of sz1
+    };  // end of sz1
 
-    struct sz2 : public dolfin::SubDomain
-    {
+    struct sz2 : public dolfin::SubDomain {
       bool inside(const dolfin::Array<double>& x, bool) const {
-	return std::abs(x[2] - 1.0) < DOLFIN_EPS;
+        return std::abs(x[2] - 1.0) < DOLFIN_EPS;
       }
-    }; // end of sz2
-    
-    std::map<std::string,std::shared_ptr<dolfin::SubDomain>>
-    getUnitSquareBoundaries(){
-      auto boundaries = std::map<std::string,std::shared_ptr<dolfin::SubDomain>>{};
-      boundaries.insert({"sx1",std::make_shared<sx1>()});
-      boundaries.insert({"sx2",std::make_shared<sx2>()});
-      boundaries.insert({"sy1",std::make_shared<sy1>()});
-      boundaries.insert({"sy2",std::make_shared<sy2>()});
+    };  // end of sz2
+
+    std::map<std::string, std::shared_ptr<dolfin::SubDomain>>
+    getUnitSquareBoundaries() {
+      auto boundaries =
+          std::map<std::string, std::shared_ptr<dolfin::SubDomain>>{};
+      boundaries.insert({"sx1", std::make_shared<sx1>()});
+      boundaries.insert({"sx2", std::make_shared<sx2>()});
+      boundaries.insert({"sy1", std::make_shared<sy1>()});
+      boundaries.insert({"sy2", std::make_shared<sy2>()});
       return boundaries;
-    } // end of getUnitSquareBoundaries
+    }  // end of getUnitSquareBoundaries
 
-        std::map<std::string,std::shared_ptr<dolfin::SubDomain>>
-    getUnitCubeBoundaries(){
-      auto boundaries = std::map<std::string,std::shared_ptr<dolfin::SubDomain>>{};
-      boundaries.insert({"sx1",std::make_shared<sx1>()});
-      boundaries.insert({"sx2",std::make_shared<sx2>()});
-      boundaries.insert({"sy1",std::make_shared<sy1>()});
-      boundaries.insert({"sy2",std::make_shared<sy2>()});
-      boundaries.insert({"sz1",std::make_shared<sz1>()});
-      boundaries.insert({"sz2",std::make_shared<sz2>()});
+    std::map<std::string, std::shared_ptr<dolfin::SubDomain>>
+    getUnitCubeBoundaries() {
+      auto boundaries =
+          std::map<std::string, std::shared_ptr<dolfin::SubDomain>>{};
+      boundaries.insert({"sx1", std::make_shared<sx1>()});
+      boundaries.insert({"sx2", std::make_shared<sx2>()});
+      boundaries.insert({"sy1", std::make_shared<sy1>()});
+      boundaries.insert({"sy2", std::make_shared<sy2>()});
+      boundaries.insert({"sz1", std::make_shared<sz1>()});
+      boundaries.insert({"sz2", std::make_shared<sz2>()});
       return boundaries;
-    } // end of getUnitCubeBoundaries
+    }  // end of getUnitCubeBoundaries
 
-  } // end of namespace fenics
+  }  // end of namespace fenics
 
-} // end of namespace mgis
+}  // end of namespace mgis

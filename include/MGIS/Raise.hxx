@@ -61,7 +61,7 @@ namespace mgis {
    * \tparam Exception: type of the exception to be thrown.
    */
   template <typename Exception = std::runtime_error>
-  MGIS_NORETURN MGIS_VISIBILITY_LOCAL MGIS_INLINE void raise();
+  [[noreturn]] MGIS_VISIBILITY_LOCAL inline void raise();
 
   /*!
    * \brief a small wrapper used to build the exception outside the
@@ -75,7 +75,7 @@ namespace mgis {
    * \param[in] a: arguments passed to the exception' constructor.
    */
   template <typename Exception = std::runtime_error, typename... Args>
-  MGIS_NORETURN MGIS_VISIBILITY_LOCAL MGIS_INLINE void raise(Args&&...);
+  [[noreturn]] MGIS_VISIBILITY_LOCAL inline void raise(Args&&...);
 
   /*!
    * \brief raise an exception if the first argument is `true`.
@@ -84,7 +84,7 @@ namespace mgis {
    * thrown.
    */
   template <typename Exception = std::runtime_error>
-  MGIS_VISIBILITY_LOCAL MGIS_INLINE void raise_if(const bool);
+  MGIS_VISIBILITY_LOCAL inline void raise_if(const bool);
 
   /*!
    * \brief raise an exception if the first argument is `true`.
@@ -96,7 +96,7 @@ namespace mgis {
    * \param[in] a: arguments passed to the exception' constructor.
    */
   template <typename Exception = std::runtime_error, typename... Args>
-  MGIS_VISIBILITY_LOCAL MGIS_INLINE void raise_if(const bool, Args&&...);
+  MGIS_VISIBILITY_LOCAL inline void raise_if(const bool, Args&&...);
 
 }  // end of namespace mgis
 

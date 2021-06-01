@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/python/src/mgis-module.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   31/10/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,6 +17,4 @@
 // forward declarations
 void declareThreadPool();
 
-BOOST_PYTHON_MODULE(_mgis) {
-  declareThreadPool();
-}  // end of module behaviour
+BOOST_PYTHON_MODULE(_mgis) { declareThreadPool(); }  // end of module behaviour

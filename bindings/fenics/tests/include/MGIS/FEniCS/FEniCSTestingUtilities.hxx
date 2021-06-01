@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/fencis/include/MGIS/FEniCS/FenicsTestingUtilities.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/12/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -20,8 +20,8 @@
 #ifndef LIB_MGIS_FENICS_TESTINGUTILITIES_HXX
 #define LIB_MGIS_FENICS_TESTINGUTILITIES_HXX
 
-#include<map>
-#include<memory>
+#include <map>
+#include <memory>
 #include <dolfin/mesh/SubDomain.h>
 #include "MGIS/Config.hxx"
 
@@ -39,9 +39,9 @@
 #define MGIS_FENICS_TESTINGEXPORT MGIS_VISIBILITY_EXPORT
 #endif /* */
 
-namespace mgis{
+namespace mgis {
 
-  namespace fenics{
+  namespace fenics {
 
     /*!
      * \return all the boundaries associated with a unit square
@@ -51,7 +51,8 @@ namespace mgis{
      * - sy1: defined by the points satisfying y==0
      * - sy2: defined by the points satisfying y==1
      */
-    MGIS_VISIBILITY_EXPORT std::map<std::string,std::shared_ptr<dolfin::SubDomain>>
+    MGIS_VISIBILITY_EXPORT
+    std::map<std::string, std::shared_ptr<dolfin::SubDomain>>
     getUnitSquareBoundaries();
     /*!
      * \return all the boundaries associated with a unit cube
@@ -63,11 +64,12 @@ namespace mgis{
      * - sz1: defined by the points satisfying z==0
      * - sz2: defined by the points satisfying z==1
      */
-    MGIS_VISIBILITY_EXPORT std::map<std::string,std::shared_ptr<dolfin::SubDomain>>
+    MGIS_VISIBILITY_EXPORT
+    std::map<std::string, std::shared_ptr<dolfin::SubDomain>>
     getUnitCubeBoundaries();
 
-  } // end of namespace fenics
+  }  // end of namespace fenics
 
-} // end of namespace mgis
+}  // end of namespace mgis
 
 #endif /* LIB_MGIS_FENICS_TESTINGUTILITIES_HXX */

@@ -51,7 +51,7 @@ namespace mgis {
 
     void NonLinearMechanicalProblem::J(dolfin::GenericMatrix&,
                                        const dolfin::GenericVector&) {
-    } // end of NonLinearMechanicalProblem::J
+    }  // end of NonLinearMechanicalProblem::J
 
     void NonLinearMechanicalProblem::form(dolfin::GenericMatrix& A,
                                           dolfin::GenericMatrix&,
@@ -73,7 +73,7 @@ namespace mgis {
       dolfin::set_log_active(false);
       this->assembler.assemble(A, b, x);
       dolfin::set_log_active(true);
-    } // end of NonLinearMechanicalProblem::form_tensors
+    }  // end of NonLinearMechanicalProblem::form_tensors
 
     NonLinearMechanicalProblem::~NonLinearMechanicalProblem() = default;
 

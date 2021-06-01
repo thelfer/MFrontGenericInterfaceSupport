@@ -60,6 +60,15 @@ namespace mgis {
      */
     std::string getTFELVersion(const std::string &, const std::string &);
     /*!
+     * \return the `TFEL`'s API version.
+     *
+     * This was added in TFEL 3.4.1 which broke the generic behaviour' API.
+     *
+     * \note If the corresponding symbol is not present, the API is assumed to
+     * conform to the TFEL' API prior to Version 3.4.1 and 0 is returned.
+     */
+    unsigned short getAPIVersion(const std::string &, const std::string &);
+    /*!
      * \return the material knowledge type of an entry point in a
      * library. The returned value has the following meaning:
      * - 0: material property
@@ -410,7 +419,7 @@ namespace mgis {
      * \param[in] l: library
      * \param[in] s: name of function or mechanical behaviour
      * \param[in] h: modelling hypothesis
-      * \param[in] p: parameter name
+     * \param[in] p: parameter name
      * \param[in] v: value
      */
     void setParameter(const std::string &,

@@ -1,6 +1,6 @@
 /*!
  * \file   include/MGIS/Config-c.h
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   19/06/2018
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,25 +17,40 @@
 
 #ifdef __cplusplus
 #include <cstddef>
-#else  /*  __cplusplus */
+#else /*  __cplusplus */
 #include <stddef.h>
 #endif /*  __cplusplus */
+
+/*!
+ * \brief define the API used by the behaviour support.
+ *
+ * The API mostly refers to the various functions provided by `MGIS` but also
+ * the data strutures used to manage behaviours (See `BehaviourData`,
+ * `MaterialDataManger`, etc...).
+ *
+ * - 0 corresponds to the initial api provided by the TFEL project
+ *   (versions 3.2.x, versions 3.3.x and 3.4.0)`.
+ * - 1 corresponds the initial api provided by the TFEL project (versions 3.4.1
+ *   and after that and 4.x).
+ *
+ */
+#define MGIS_BEHAVIOUR_API_VERSION 1
 
 /*!
  * Macro extracted from :
  * "Why is the new C++ visibility support so useful?"
  * from http://gcc.gnu.org/wiki/Visibility
  */
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #define MGIS_VISIBILITY_IMPORT __declspec(dllimport)
 #define MGIS_VISIBILITY_EXPORT __declspec(dllexport)
 #define MGIS_VISIBILITY_LOCAL
 #else /* defined _WIN32 || defined __CYGWIN__ */
-#if (defined __GNUC__) && (! defined __INTEL_COMPILER)
+#if (defined __GNUC__) && (!defined __INTEL_COMPILER)
 #if __GNUC__ >= 4
 #define MGIS_VISIBILITY_IMPORT __attribute__((visibility("default")))
 #define MGIS_VISIBILITY_EXPORT __attribute__((visibility("default")))
-#define MGIS_VISIBILITY_LOCAL  __attribute__((visibility("hidden")))
+#define MGIS_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
 #else /* __GNUC__ >= 4 */
 #define MGIS_VISIBILITY_IMPORT
 #define MGIS_VISIBILITY_EXPORT
@@ -44,7 +59,7 @@
 #elif defined __INTEL_COMPILER
 #define MGIS_VISIBILITY_IMPORT __attribute__((visibility("default")))
 #define MGIS_VISIBILITY_EXPORT __attribute__((visibility("default")))
-#define MGIS_VISIBILITY_LOCAL  __attribute__((visibility("hidden")))
+#define MGIS_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
 #else /* defined __INTEL_COMPILER */
 #define MGIS_VISIBILITY_IMPORT
 #define MGIS_VISIBILITY_EXPORT
@@ -53,15 +68,15 @@
 #endif /* defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ */
 
 #ifdef MGIS_REAL_TYPE
-/*! alias to the numeric type used in the library */
+/*! \brief alias to the numeric type used in the library */
 typedef MGIS_REAL_TYPE mgis_real;
-#else   /* MGIS_REAL_TYPE */
-/*! alias to the numeric type used in the library */
+#else  /* MGIS_REAL_TYPE */
+/*! \brief alias to the numeric type used in the library */
 typedef double mgis_real;
 #endif /* MGIS_REAL_TYPE */
 
 //! alias to the index type type used in the library
-typedef size_t mgis_size_type; 
+typedef size_t mgis_size_type;
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #if defined MFrontGenericInterface_EXPORTS
