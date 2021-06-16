@@ -466,6 +466,24 @@ class AbstractNonlinearProblem:
                 internal_state_variables[:, buff:buff + block_shape].flatten())
             buff += block_shape
 
+    def set_internal_state_variables(self):
+        """Set initial value of internal state variables"""
+        buff = 0
+        for (i, s) in enumerate(
+                self.material.get_internal_state_variable_names()):
+            state_var = self.state_variables["internal"][s]
+            state_var_vals = state_var.function.vector().get_local()
+            if state_var.shape > 0:
+                state_var_vals = state_var_vals.reshape(
+                    (self.material.data_manager.n, state_var.shape))
+            else:
+                state_var_vals = state_var_vals[:, np.newaxis]
+            block_shape = self.material.get_internal_state_variable_sizes()[i]
+            self.material.data_manager.s0.internal_state_variables[:,
+                                                                   buff:buff +
+                                                                   block_shape] = state_var_vals
+            buff += block_shape
+
     def update_constitutive_law(self):
         """Performs the consitutive law update"""
         self.update_gradients()

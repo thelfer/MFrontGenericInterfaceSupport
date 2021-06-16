@@ -298,6 +298,13 @@ The following classes and functions are now available in `python`:
   Section @sec:mgis:1.2.1:behaviour_integration_results.
 - The `integrate` functions describe in Section
   @sec:mgis:1.2.1:integrate.
+  
+### Enhancements to the `mgis.fenics` module
+
+- A `set_internal_state_variables` is now available to update the values 
+  of internal state variables at the beginning of the time step. 
+- `linear_solver` and `preconditioner` keywords are now available when performing 
+   projection in the ̀get_flux`, `get_gradient` and `get_state_variable` methods. 
 
 ## Enhancements to the `Julia` bindings
 
