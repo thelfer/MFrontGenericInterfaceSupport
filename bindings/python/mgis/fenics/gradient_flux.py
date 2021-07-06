@@ -37,6 +37,7 @@ class QuadratureFunction:
 
     def update(self, x):
         self.function.vector().set_local(x)
+        self.function.vector().apply("insert")
 
     def project_on(self, space, degree, as_tensor=False, **kwargs):
         """
@@ -137,6 +138,7 @@ class Gradient(QuadratureFunction):
         else:
             if isinstance(x, np.ndarray):
                 self.function.vector().set_local(x)
+                self.function.vector().apply("insert")
             else:
                 self._evaluate_at_quadrature_points(x)
 

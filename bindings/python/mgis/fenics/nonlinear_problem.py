@@ -415,6 +415,7 @@ class AbstractNonlinearProblem:
                                                     self.material.behaviour,
                                                     self.rotation_values)
             t.vector().set_local(tang_block_vals)
+            t.vector().apply("insert")
             buff += block_shape
 
     def update_fluxes(self):
@@ -433,6 +434,7 @@ class AbstractNonlinearProblem:
                                                   self.material.behaviour,
                                                   self.rotation_values)
             flux.function.vector().set_local(flux_vals)
+            flux.function.vector().apply("insert")
             buff += block_shape
 
     def update_gradients(self):
@@ -464,6 +466,7 @@ class AbstractNonlinearProblem:
             state_var.vector().set_local(
                 self.material.data_manager.s1.
                 internal_state_variables[:, buff:buff + block_shape].flatten())
+            state_var.vector().apply("insert")
             buff += block_shape
 
     def set_internal_state_variables(self):
@@ -592,12 +595,14 @@ class AbstractNonlinearProblem:
         """Dissipated energy computed from MFront @DissipatedEnergy"""
         self._dummy_function.vector().set_local(
             self.material.data_manager.s1.dissipated_energies)
+        self._dummy_function.vector().apply("insert")
         return assemble(self._dummy_function * self.dx)
 
     def get_stored_energy(self):
         """Stored energy computed from MFront @InternalEnergy"""
         self._dummy_function.vector().set_local(
             self.material.data_manager.s1.stored_energies)
+        self._dummy_function.vector().apply("insert")
         return assemble(self._dummy_function * self.dx)
 
     def get_total_energy(self):
