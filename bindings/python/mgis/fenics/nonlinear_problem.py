@@ -64,6 +64,8 @@ class AbstractNonlinearProblem:
         self.integration_type = (
             mgis_bv.IntegrationType.IntegrationWithConsistentTangentOperator)
 
+        self._before_update_constitutive_law_callbacks = []
+
         self.quadrature_degree = quadrature_degree
 
         cell = self.mesh.ufl_cell()
@@ -487,8 +489,17 @@ class AbstractNonlinearProblem:
                                                                    block_shape] = state_var_vals
             buff += block_shape
 
+    def add_before_update_constitutive_law_callback(self, c):
+        """
+        Add a callback which is called a the beginnig of the
+        update_constitutive_law method
+        """
+        self._before_update_constitutive_law_callbacks.append(c)
+
     def update_constitutive_law(self):
         """Performs the consitutive law update"""
+        for c in self._before_update_constitutive_law_callbacks:
+            c()
         self.update_gradients()
         self.material.update_external_state_variables(
             self.quadrature_degree, self.mesh,
