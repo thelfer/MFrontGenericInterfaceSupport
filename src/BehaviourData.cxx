@@ -38,7 +38,7 @@ namespace mgis::behaviour {
       : dt(0), rdt(1), speed_of_sound(0), s0(b), s1(s0) {
     static char error_message_buffer[512];
     this->error_message = error_message_buffer;
-    this->K.resize(getTangentOperatorArraySize(b));
+    this->K.resize(std::max(getTangentOperatorArraySize(b), mgis::size_type{1}));
   }  // end of Behaviour::Behaviour
 
   void update(BehaviourData& d) {

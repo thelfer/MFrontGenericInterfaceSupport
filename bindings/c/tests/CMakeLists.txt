@@ -63,6 +63,16 @@ add_executable(IntegrateTest3-c
   IntegrateTest3-c.c)
 target_link_libraries(IntegrateTest3-c
   PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
+add_executable(IntegrateTest4-c
+  EXCLUDE_FROM_ALL
+  IntegrateTest4-c.c)
+target_link_libraries(IntegrateTest4-c
+  PRIVATE MFrontGenericInterface-c MFrontGenericInterface m)
+add_executable(IntegrateTest5-c
+  EXCLUDE_FROM_ALL
+  IntegrateTest5-c.c)
+target_link_libraries(IntegrateTest5-c
+  PRIVATE MFrontGenericInterface-c MFrontGenericInterface m)
 
 add_test(NAME MFrontGenericBehaviourInterfaceTest-c
  COMMAND MFrontGenericBehaviourInterfaceTest-c
@@ -207,4 +217,28 @@ else((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
+add_test(NAME IntegrateTest4-c
+ COMMAND IntegrateTest4-c
+ "$<TARGET_FILE:ModelTest>")
+add_dependencies(check IntegrateTest4-c)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrateTest4-c
+    PROPERTY DEPENDS ModelTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrateTest4-c
+    PROPERTY DEPENDS ModelTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
+add_test(NAME IntegrateTest5-c
+ COMMAND IntegrateTest5-c
+ "$<TARGET_FILE:ModelTest>")
+add_dependencies(check IntegrateTest5-c)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrateTest5-c
+    PROPERTY DEPENDS ModelTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrateTest5-c
+    PROPERTY DEPENDS ModelTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))

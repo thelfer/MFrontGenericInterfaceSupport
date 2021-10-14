@@ -52,7 +52,6 @@ module mgis_behaviour
     type(c_ptr) :: ptr = c_null_ptr
   end type FiniteStrainBehaviourOptions
   type :: Behaviour
-    private
     type(c_ptr) :: ptr = c_null_ptr
   end type Behaviour
   type :: BehaviourData

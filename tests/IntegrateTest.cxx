@@ -43,6 +43,7 @@ int main(const int argc, const char* const* argv) {
     // integration
     auto p = std::array<real, 21>{};
     p[0] = d.s0.internal_state_variables[o];
+    d.K[0] = 0;
     for (size_type i = 0; i != 20; ++i) {
       d.rdt = 1;
       auto v = make_view(d);
@@ -72,7 +73,7 @@ int main(const int argc, const char* const* argv) {
                                             0.00049969190397646,
                                             0.00053302523730979,
                                             0.00056635857064313};
-    std::cout.precision(14);
+    std::cerr.precision(14);
     for (size_type i = 0; i != 21; ++i) {
       if (std::abs(p[i] - p_ref[i]) > 1.e-12) {
         std::cerr << "IntegrateTest: invalid value for the equivalent "

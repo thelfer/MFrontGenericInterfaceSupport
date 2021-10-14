@@ -171,8 +171,9 @@ namespace mgis::behaviour {
       v.error_message[0] = '\0';
       v.rdt = &rdt;
       v.dt = dt;
-      if (opts.integration_type !=
-          IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR) {
+      if ((opts.integration_type !=
+           IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR) &&
+          (m.K_stride != 0)) {
         v.K = m.K.data() + m.K_stride * i;
       } else {
         v.K = &bopts[0];

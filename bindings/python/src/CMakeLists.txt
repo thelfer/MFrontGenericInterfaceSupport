@@ -85,3 +85,9 @@ mgis_python_module(mgis_behaviour behaviour
  MaterialStateManager.cxx
  Integrate.cxx
  FiniteStrainSupport.cxx)
+
+mgis_python_module(mgis_model model
+ model-module.cxx
+ Model.cxx)
+
+
