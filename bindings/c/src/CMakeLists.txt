@@ -9,7 +9,8 @@ mgis_library(MFrontGenericInterface-c SHARED
   BehaviourDataView.cxx
   MaterialStateManager.cxx
   MaterialDataManager.cxx
-  Integrate.cxx)
+  Integrate.cxx
+  Model.cxx)
 target_include_directories(MFrontGenericInterface-c
   PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
   PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/bindings/c/include>

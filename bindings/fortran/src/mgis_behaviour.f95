@@ -52,7 +52,6 @@ module mgis_behaviour
     type(c_ptr) :: ptr = c_null_ptr
   end type FiniteStrainBehaviourOptions
   type :: Behaviour
-    private
     type(c_ptr) :: ptr = c_null_ptr
   end type Behaviour
   type :: BehaviourData
@@ -2089,6 +2088,41 @@ contains
        v = ieee_value(v, ieee_quiet_nan)
     endif
   end function state_get_internal_state_variable_by_offset
+  !
+  function state_get_internal_state_variables(isvs, s, b) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_size_t, c_f_pointer
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function state_get_internal_state_variables_wrapper(isvs_ptr, s) &
+            bind(c,name = 'mgis_bv_state_get_internal_state_variables') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         type(c_ptr), intent(out) :: isvs_ptr
+         type(c_ptr), intent(in),value :: s
+         type(mgis_status) :: r
+       end function state_get_internal_state_variables_wrapper
+    end interface
+    real(kind=8), dimension(:), pointer, intent(out) :: isvs
+    type(State), intent(in) :: s
+    type(Behaviour), intent(in) :: b
+    type(mgis_status) :: r
+    type(c_ptr) isvs_ptr
+    integer n
+    nullify(isvs)
+    r = state_get_internal_state_variables_wrapper(isvs_ptr, s %ptr)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = behaviour_get_number_of_internal_state_variables(n, b)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    call c_f_pointer(isvs_ptr, isvs, [n])
+  end function state_get_internal_state_variables
   !
   function state_set_external_state_variable_by_name(s, n, v) result(r)
     use mgis_fortran_utilities

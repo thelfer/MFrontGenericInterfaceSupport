@@ -14,7 +14,8 @@ mgis_library(MFrontGenericInterface SHARED
 	  MaterialStateManager.cxx
 	  MaterialDataManager.cxx
 	  Integrate.cxx
-	  FiniteStrainSupport.cxx)
+	  FiniteStrainSupport.cxx
+      Model.cxx)
 target_include_directories(MFrontGenericInterface
    PUBLIC 
    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>

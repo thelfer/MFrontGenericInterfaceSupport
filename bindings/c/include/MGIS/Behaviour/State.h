@@ -160,6 +160,14 @@ MGIS_C_EXPORT mgis_status mgis_bv_state_set_internal_state_variable_by_name(
     const char* const,
     const mgis_real* const);
 /*!
+ * \brief get a pointer to the state variables
+ * \param[out] v: pointer to internal state variables
+ * \param[in] s: state
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_state_get_internal_state_variables(
+    mgis_real**,
+    mgis_bv_State* const);
+/*!
  * \brief get a internal state variable' value in a state
  * \param[out] v: pointer to internal state variable' value(s)
  * \param[in] s: state

@@ -9,7 +9,7 @@ except ImportError:
 import mgis.behaviour as mgis_bv
 
 
-class IntegrateTest2(unittest.TestCase):
+class IntegrateTest4(unittest.TestCase):
     def test_pass(self):
 
         # path to the test library
@@ -42,7 +42,6 @@ class IntegrateTest2(unittest.TestCase):
         dt = 180
         # setting the temperature
         T = 293.15 * numpy.ones(nig)
-        print("type: {}".format(type(T)))
         # type of storage
         Ts = mgis_bv.MaterialStateManagerStorageMode.ExternalStorage
         mgis_bv.setExternalStateVariable(m.s1, 'Temperature', T, Ts)

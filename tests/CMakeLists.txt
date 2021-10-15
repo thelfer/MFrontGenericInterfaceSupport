@@ -12,6 +12,9 @@ mfront_behaviours_check_library(BehaviourTest
   FiniteStrainSingleCrystal
   StandardElastoViscoPlasticityPlasticityTest11)
 
+mfront_behaviours_check_library(ModelTest
+  ode_rk54)
+
 add_executable(MFrontGenericBehaviourInterfaceTest
   EXCLUDE_FROM_ALL
   MFrontGenericBehaviourInterfaceTest.cxx)
@@ -71,6 +74,14 @@ target_link_libraries(IntegrateTest3
 add_executable(IntegrateTest3b
   EXCLUDE_FROM_ALL IntegrateTest3b.cxx)
 target_link_libraries(IntegrateTest3b
+	PRIVATE MFrontGenericInterface)
+add_executable(IntegrateTest4
+  EXCLUDE_FROM_ALL IntegrateTest4.cxx)
+target_link_libraries(IntegrateTest4
+	PRIVATE MFrontGenericInterface)
+add_executable(IntegrateTest5
+  EXCLUDE_FROM_ALL IntegrateTest5.cxx)
+target_link_libraries(IntegrateTest5
 	PRIVATE MFrontGenericInterface)
 add_executable(RotateFunctionsTest
   EXCLUDE_FROM_ALL RotateFunctionsTest.cxx)
@@ -212,4 +223,28 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
 else((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST RotateFunctionsTest
     PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME IntegrateTest4
+ COMMAND IntegrateTest4 "$<TARGET_FILE:ModelTest>")
+add_dependencies(check IntegrateTest4)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrateTest4
+    PROPERTY DEPENDS ModelTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrateTest4
+    PROPERTY DEPENDS ModelTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME IntegrateTest5
+ COMMAND IntegrateTest5 "$<TARGET_FILE:ModelTest>")
+add_dependencies(check IntegrateTest5)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrateTest5
+    PROPERTY DEPENDS ModelTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrateTest5
+    PROPERTY DEPENDS ModelTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
