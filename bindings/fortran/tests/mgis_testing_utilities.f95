@@ -21,6 +21,22 @@ contains
     l = convert_c_string(mgis_get_mfront_behaviour_test_library_path_wrapper())
   end function get_mfront_behaviour_test_library_path
   !
+  function get_mfront_model_test_library_path() result(l)
+    use, intrinsic :: ISO_C_BINDING, only: c_ptr
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function mgis_get_mfront_model_test_library_path_wrapper() &
+            bind(c,name = 'mgis_get_mfront_model_test_library_path') result(l)
+         import c_ptr
+         implicit none
+         type(c_ptr) :: l
+       end function mgis_get_mfront_model_test_library_path_wrapper
+    end interface
+    character(len=:), allocatable :: l
+    l = convert_c_string(mgis_get_mfront_model_test_library_path_wrapper())
+  end function get_mfront_model_test_library_path
+  !
   function get_tfel_version() result(l)
     use, intrinsic :: ISO_C_BINDING, only: c_ptr
     use mgis_fortran_utilities

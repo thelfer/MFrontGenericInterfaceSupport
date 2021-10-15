@@ -18,6 +18,7 @@ else(CMAKE_CONFIGURATION_TYPES)
     COMMAND ${CMAKE_COMMAND} -E create_symlink "${PROJECT_SOURCE_DIR}/bindings/python/mgis/__init__.py" "mgis/__init__.py"
     COMMAND ${CMAKE_COMMAND} -E create_symlink "$<TARGET_FILE:py_mgis>" "mgis/$<TARGET_FILE_NAME:py_mgis>"
     COMMAND ${CMAKE_COMMAND} -E create_symlink "$<TARGET_FILE:py_mgis_behaviour>" "mgis/$<TARGET_FILE_NAME:py_mgis_behaviour>"
+    COMMAND ${CMAKE_COMMAND} -E create_symlink "$<TARGET_FILE:py_mgis_model>" "mgis/$<TARGET_FILE_NAME:py_mgis_model>"
     )
 endif(CMAKE_CONFIGURATION_TYPES)
 add_dependencies(mgis_python_bindings_checkfiles py_mgis_behaviour)
@@ -34,7 +35,8 @@ function(test_python_bindings test)
       set_tests_properties(${test}_${conf}_py
     	PROPERTIES ENVIRONMENT
         PYTHONPATH="${PROJECT_BINARY_DIR}/bindings/python/tests/;$ENV{PYTHONPATH}"
-        MGIS_TEST_BEHAVIOURS_LIBRARY="$<TARGET_FILE:BehaviourTest>")
+        MGIS_TEST_BEHAVIOURS_LIBRARY="$<TARGET_FILE:BehaviourTest>"
+        MGIS_TEST_MODELS_LIBRARY="$<TARGET_FILE:ModelTest>")
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
     add_test(NAME ${test}_py
@@ -43,6 +45,7 @@ function(test_python_bindings test)
       PROPERTY ENVIRONMENT
       PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python/tests/;$ENV{PYTHONPATH}
       MGIS_TEST_BEHAVIOURS_LIBRARY=$<TARGET_FILE:BehaviourTest>
+      MGIS_TEST_MODELS_LIBRARY=$<TARGET_FILE:ModelTest>
       MGIS_TEST_TFEL_VERSION=${TFEL_VERSION})
   endif(CMAKE_CONFIGURATION_TYPES)
 endfunction(test_python_bindings)
@@ -56,4 +59,6 @@ test_python_bindings(IntegrateTest)
 test_python_bindings(IntegrateTest2)
 test_python_bindings(IntegrateTest3)
 test_python_bindings(IntegrateTest4)
+test_python_bindings(IntegrateTest5)
+test_python_bindings(IntegrateTest6)
 

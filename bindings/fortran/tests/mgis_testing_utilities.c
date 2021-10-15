@@ -17,6 +17,10 @@ const char* mgis_get_mfront_behaviour_test_library_path(){
   return getenv("MGIS_TEST_BEHAVIOURS_LIBRARY");
 } // end of mgis_get_mfront_behaviour_test_library_path
 
+const char* mgis_get_mfront_model_test_library_path(){
+  return getenv("MGIS_TEST_MODELS_LIBRARY");
+} // end of mgis_get_mfront_model_test_library_path
+
 const char* mgis_get_tfel_version(){
   return getenv("MGIS_TEST_TFEL_VERSION");
 } // end of mgis_get_mfront_behaviour_test_library
