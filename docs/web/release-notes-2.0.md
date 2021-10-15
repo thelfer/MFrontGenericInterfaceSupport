@@ -1,5 +1,5 @@
 ---
-title: MFrontGenericInterfaceSupport Version 1.3 
+title: MFrontGenericInterfaceSupport Version 2.0 
 author: Thomas Helfer
 date: 2020
 lang: en-EN
@@ -18,8 +18,11 @@ eqnPrefixTemplate: "($$i$$)"
 bibliography: bibliography.bib
 ---
 
-Version 1.3 of `MFrontGenericInterfaceSupport` is compatible with the
+Version 2.0 of `MFrontGenericInterfaceSupport` is compatible with the
 Version 4.0 of `TFEL/MFront`.
+
+It has been released along with Version 1.2.3 and inherits from the
+evolutions and bug fixes of this version.
 
 # Known incompatibilities
 
