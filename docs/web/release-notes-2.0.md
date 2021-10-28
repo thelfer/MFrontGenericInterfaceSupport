@@ -21,8 +21,8 @@ bibliography: bibliography.bib
 Version 2.0 of `MFrontGenericInterfaceSupport` is compatible with the
 Version 4.0 of `TFEL/MFront`.
 
-It has been released along with Version 1.2.3 and inherits from the
-evolutions and bug fixes of this version.
+It has been released along with Version 1.2.3 on October, 28 2021 and
+inherits from the evolutions and bug fixes of this version.
 
 # Known incompatibilities
 
