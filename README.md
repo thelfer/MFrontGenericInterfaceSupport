@@ -56,26 +56,36 @@ The following bindings are under consideration:
 
 - `octave` binding
 
-# Versions, branches, tags
+# Versions, branches
 
-- the `master` branch follows the evolution of the `master` branch of
+- Version `MFrontGenericInterfaceSupport-2.0` is meant to be build against
+  `TFEL` 4.0
+- Version `MFrontGenericInterfaceSupport-1.2.2` is meant to be build
+  against `TFEL` 3.4.3
+- Version `MFrontGenericInterfaceSupport-1.2.1` is meant to be build
+  against `TFEL` 3.4.1
+- Version `MFrontGenericInterfaceSupport-1.2` is meant to be build against
+  `TFEL` 3.4.0
+- Version `MFrontGenericInterfaceSupport-1.1` is meant to be build against
+  `TFEL` 3.3.0
+- Version `MFrontGenericInterfaceSupport-1.0` is meant to be build against
+  `TFEL` 3.2.0
+- Version `MFrontGenericInterfaceSupport-1.0.1` is meant to be build
+  against `TFEL` 3.2.1
+
+The following branches are available:
+
+- The `master` branch follows the evolution of the `master` branch of
   the `TFEL` project
-- the `rliv-1.2` follows the evolution of the 3.4.x series of the `TFEL`
+- The `rliv-2.0` follows the evolution of the 4.0.x series of the `TFEL`
   project.
-- the `rliv-1.1` follows the evolution of the 3.3.x series of the `TFEL`
+- The `rliv-1.2` follows the evolution of the 3.4.x series of the `TFEL`
   project.
-- the `rliv-1.0` follows the evolution of the 3.2.x series of the `TFEL`
+- The `rliv-1.1` follows the evolution of the 3.3.x series of the `TFEL`
+  project.
+- The `rliv-1.0` follows the evolution of the 3.2.x series of the `TFEL`
   project. Note that this branch is **not** compatible with
   `TFEL-3.2.0`.
-
-- tag `MFrontGenericInterfaceSupport-1.2` is meant to be build against
-  `TFEL` 3.4.0
-- tag `MFrontGenericInterfaceSupport-1.1` is meant to be build against
-  `TFEL` 3.3.0
-- tag `MFrontGenericInterfaceSupport-1.0` is meant to be build against
-  `TFEL` 3.2.0
-- tag `MFrontGenericInterfaceSupport-1.0.1` is meant to be build
-  against `TFEL` 3.2.1
 
 # Acknowledgement
 

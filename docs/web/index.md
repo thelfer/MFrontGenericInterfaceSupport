@@ -26,6 +26,8 @@ bibliography: bibliography.bib
 <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> -->
 <!-- <script src="js/slideshow.js"></script> -->
 
+![Principle of MGIS](img/mgis.svg){width=100%}
+
 This project aims at proving tools (functions, classes, bindings,
 etc...) to handle behaviours written using `MFront` generic interface.
 For information about `MFront`, see <http://tfel.sourceforge.net>.
@@ -67,7 +69,13 @@ An introduction to the `C++` library may be found [here](bindings-cxx.html)
   [tutorial](https://github.com/thelfer/tfel-doc/blob/master/MFrontUserDays/FifthUserDays/OpenGeoSys-Nagel-MFrontUserDays-2019.pdf)
   for details). However, we recommend using the higher level
   [`mgis.fenics`](mgis_fenics.html) module.
-- [`MoFEM`](http://mofem.eng.gla.ac.uk/mofem/html/).
+- [`MFEM`](https://mfem.org/) through the
+  [`MFEM-MGIS`](https://github.com/thelfer/mfem-mgis/). See [this
+  talk](https://github.com/thelfer/tfel-doc/blob/master/MFrontUserDays/SeventhUserDays/mfem-mgis.pdf)
+  for details.
+- [`MoFEM`](http://mofem.eng.gla.ac.uk/mofem/html/). See [this
+  talk](https://github.com/thelfer/tfel-doc/blob/master/MFrontUserDays/SixthUserDays/Talk6-MoFEM_MFront.pdf)
+  for details.
 - [`JuliaFEM`](http://www.juliafem.org/) through the
   [`MFrontInterface.jl`](https://github.com/JuliaFEM/MFrontInterface.jl)
   package.
