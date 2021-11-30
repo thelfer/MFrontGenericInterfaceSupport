@@ -1239,14 +1239,14 @@ contains
     s = behaviour_get_internal_state_variable_type_wrapper(t, b%ptr, nc)
   end function behaviour_get_internal_state_variable_type
   !
-  function behaviour_get_internal_state_variable_offset(o, b, n) result(s)
+  function behaviour_get_internal_state_variable_offset_by_name(o, b, n) result(s)
     use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
     use mgis_fortran_utilities
     use mgis, only: mgis_status, report_failure
     implicit none
     interface
-       function behaviour_get_internal_state_variable_offset_wrapper(o, b, n) &
-            bind(c,name = 'mgis_bv_behaviour_get_internal_state_variable_offset') result(r)
+       function behaviour_get_internal_state_variable_offset_by_name_wrapper(o, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_internal_state_variable_offset_by_name') result(r)
          use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t, c_char
          use mgis, only: mgis_status
          implicit none
@@ -1254,17 +1254,17 @@ contains
          type(c_ptr), intent(in), value :: b
          character(len=1,kind=c_char), dimension(*), intent(in) :: n
          type(mgis_status) :: r
-       end function behaviour_get_internal_state_variable_offset_wrapper
+       end function behaviour_get_internal_state_variable_offset_by_name_wrapper
     end interface
     integer, intent (out) :: o
     type(behaviour), intent(in) :: b
     character(len=*), intent(in) :: n
     type(mgis_status) :: s
     integer(kind=c_size_t) offset
-    s = behaviour_get_internal_state_variable_offset_wrapper( &
+    s = behaviour_get_internal_state_variable_offset_by_name_wrapper( &
          offset, b%ptr, convert_fortran_string(n))
     o = offset+1
-  end function behaviour_get_internal_state_variable_offset
+  end function behaviour_get_internal_state_variable_offset_by_name
   !
   function behaviour_get_number_of_external_state_variables(n,b) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t
@@ -2124,13 +2124,13 @@ contains
     call c_f_pointer(isvs_ptr, isvs, [n])
   end function state_get_internal_state_variables
   !
-  function state_set_external_state_variable_by_name(s, n, v) result(r)
+  function state_set_scalar_external_state_variable_by_name(s, n, v) result(r)
     use mgis_fortran_utilities
     use mgis, only: mgis_status
     implicit none
     interface
-       function state_set_external_state_variable_by_name_wrapper(s1, n, v) &
-            bind(c,name = 'mgis_bv_state_set_external_state_variable_by_name') &
+       function state_set_scalar_external_state_variable_by_name_wrapper(s1, n, v) &
+            bind(c,name = 'mgis_bv_state_set_scalar_external_state_variable_by_name') &
             result(r)
          use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_char
          use mgis, only: mgis_status
@@ -2139,15 +2139,15 @@ contains
          character(len=1,kind=c_char), dimension(*), intent(in) :: n
          real(kind=c_double), intent(in), value :: v
          type(mgis_status) :: r
-       end function state_set_external_state_variable_by_name_wrapper
+       end function state_set_scalar_external_state_variable_by_name_wrapper
     end interface
     type(State), intent(in) :: s
     character(len=*), intent(in) :: n
     real(kind=8), intent(in) :: v
     type(mgis_status) :: r
-    r = state_set_external_state_variable_by_name_wrapper(&
+    r = state_set_scalar_external_state_variable_by_name_wrapper(&
          s%ptr, convert_fortran_string(n), v)
-  end function state_set_external_state_variable_by_name
+  end function state_set_scalar_external_state_variable_by_name
   ! \note the C function returns a pointer to the variable, the
   !       fortran funtion returns the value
   function state_get_external_state_variable_by_name(v, s, n) result(r)
@@ -2890,14 +2890,14 @@ contains
     call c_f_pointer(tf_ptr, tf, [tfs, n])
   end function material_state_manager_get_thermodynamic_forces
   !
-  function material_state_manager_set_uniform_material_property(s, n, v) &
+  function material_state_manager_set_uniform_scalar_material_property(s, n, v) &
        result(r)
     use mgis, only: mgis_status
     use mgis_fortran_utilities
     implicit none
     interface
-       function msm_set_uniform_material_property_wrapper(s, n, v) &
-            bind(c,name = 'mgis_bv_material_state_manager_set_uniform_material_property') &
+       function msm_set_uniform_scalar_material_property_wrapper(s, n, v) &
+            bind(c,name = 'mgis_bv_material_state_manager_set_uniform_scalar_material_property') &
             result(r)
          use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_char
          use mgis, only: mgis_status
@@ -2906,15 +2906,15 @@ contains
          character(len=1,kind=c_char), dimension(*), intent(in) :: n
          real(kind=c_double), intent(in), value :: v
          type(mgis_status) :: r
-       end function msm_set_uniform_material_property_wrapper
+       end function msm_set_uniform_scalar_material_property_wrapper
     end interface
     type(MaterialStateManager), intent(in) :: s
     character(len=*), intent(in) :: n
     real(kind=8),     intent(in) :: v
     type(mgis_status) :: r
-    r = msm_set_uniform_material_property_wrapper(s %ptr, &
+    r = msm_set_uniform_scalar_material_property_wrapper(s %ptr, &
          convert_fortran_string(n), v)
-  end function material_state_manager_set_uniform_material_property
+  end function material_state_manager_set_uniform_scalar_material_property
   !
   function material_state_manager_is_material_property_defined(b, s, n)&
        result(r)
@@ -3048,14 +3048,14 @@ contains
     call c_f_pointer(isvs_ptr, isvs, [n_isvs, n])
   end function material_state_manager_get_internal_state_variables
   !
-  function material_state_manager_set_uniform_external_state_variable(s, n, v) &
+  function material_state_manager_set_us_external_state_variable(s, n, v) &
        result(r)
     use mgis_fortran_utilities
     use mgis, only: mgis_status
     implicit none
     interface
-       function msm_set_uniform_external_state_variable_wrapper(s, n, v) &
-            bind(c,name = 'mgis_bv_material_state_manager_set_uniform_external_state_variable') &
+       function msm_set_uniform_scalar_external_state_variable_wrapper(s, n, v) &
+            bind(c,name = 'mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable') &
             result(r)
          use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_char
          use mgis, only: mgis_status
@@ -3064,15 +3064,15 @@ contains
          character(len=1,kind=c_char), dimension(*), intent(in) :: n
          real(kind=c_double), intent(in), value :: v
          type(mgis_status) :: r
-       end function msm_set_uniform_external_state_variable_wrapper
+       end function msm_set_uniform_scalar_external_state_variable_wrapper
     end interface
     type(MaterialStateManager), intent(in) :: s
     character(len=*), intent(in) :: n
     real(kind=8),     intent(in) :: v
     type(mgis_status) :: r
-    r = msm_set_uniform_external_state_variable_wrapper(s %ptr, &
+    r = msm_set_uniform_scalar_external_state_variable_wrapper(s %ptr, &
          convert_fortran_string(n), v)
-  end function material_state_manager_set_uniform_external_state_variable
+  end function material_state_manager_set_us_external_state_variable
   !
   function material_state_manager_is_external_state_variable_defined(b, s, n)&
        result(r)

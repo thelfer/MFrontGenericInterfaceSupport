@@ -48,6 +48,14 @@ target_compile_definitions(ParameterTest-c
 target_link_libraries(ParameterTest-c
   PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
 
+add_executable(ExternalStateVariableTest-c
+  EXCLUDE_FROM_ALL
+  ExternalStateVariableTest-c.c)
+target_compile_definitions(ExternalStateVariableTest-c
+  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
+target_link_libraries(ExternalStateVariableTest-c
+  PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
+
 add_executable(IntegrateTest-c
   EXCLUDE_FROM_ALL
   IntegrateTest-c.c)
@@ -175,6 +183,19 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
 else((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ParameterTest-c
+    PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME ExternalStateVariableTest-c
+ COMMAND ExternalStateVariableTest-c
+ "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(check ExternalStateVariableTest-c)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST ExternalStateVariableTest-c
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST ExternalStateVariableTest-c
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 

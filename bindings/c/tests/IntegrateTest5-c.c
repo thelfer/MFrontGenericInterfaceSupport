@@ -64,15 +64,15 @@ int main(const int argc, const char* const* argv) {
   check_status(mgis_model_load(&model, argv[1], "ode_rk54", "Tridimensional"));
   check_status(mgis_bv_behaviour_get_parameter_default_value(&A, model, "A"));
   check_status(mgis_bv_allocate_behaviour_data(&d, model));
-  check_status(
-      mgis_bv_behaviour_get_internal_state_variable_offset(&o, model, "x"));
+  check_status(mgis_bv_behaviour_get_internal_state_variable_offset_by_name(
+      &o, model, "x"));
   check_status(mgis_bv_behaviour_data_get_state_0(&s0, d));
   check_status(mgis_bv_behaviour_data_get_state_1(&s1, d));
   /* initialize the internal state variable */
   mgis_bv_state_get_internal_state_variable_by_offset(&x, s1, o);
   *x = 1;
   /* initialize the external state variable */
-  check_status(mgis_bv_state_set_external_state_variable_by_name(
+  check_status(mgis_bv_state_set_scalar_external_state_variable_by_name(
       s1, "Temperature", 293.15));
   /* copy s1 in s0 */
   check_status(mgis_bv_update_behaviour_data(d));

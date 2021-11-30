@@ -12,6 +12,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include "MGIS/Behaviour/Variable.hxx"
+#include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/State.h"
 
 extern "C" {
@@ -304,7 +306,7 @@ mgis_status mgis_bv_state_get_internal_state_variable_by_offset(
   return mgis_report_success();
 }  // end of mgis_bv_state_get_internal_state_variable_by_offset
 
-mgis_status mgis_bv_state_set_external_state_variable_by_name(
+mgis_status mgis_bv_state_set_scalar_external_state_variable_by_name(
     mgis_bv_State* const s, const char* const n, const mgis_real v) {
   try {
     setExternalStateVariable(*s, n, v);
@@ -313,6 +315,34 @@ mgis_status mgis_bv_state_set_external_state_variable_by_name(
   }
   return mgis_report_success();
 }  // end of mgis_bv_state_set_external_state_variable_by_name
+
+mgis_status mgis_bv_state_set_external_state_variable_by_name(
+    mgis_bv_State* const s, const char* const n, const mgis_real* const v) {
+  try {
+    const auto& ev = getVariable(s->b.esvs, n);
+    const auto es = getVariableSize(ev, s->b.hypothesis);
+    setExternalStateVariable(*s, n, mgis::span<const mgis::real>(v, es));
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_state_set_external_state_variable_by_name
+
+mgis_status mgis_bv_state_get_external_state_variables(
+    mgis_real** v, mgis_bv_State* const s) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if (v == nullptr) {
+    return mgis_report_failure("invalid argument (null values)");
+  }
+  if(s->external_state_variables.empty()){
+    *v = nullptr;
+    return mgis_report_failure("no external state variables declared");
+  }
+  *v = s->external_state_variables.data();
+  return mgis_report_success();
+}  // end of mgis_bv_state_get_external_state_variable_by_name
 
 mgis_status mgis_bv_state_get_external_state_variable_by_name(
     mgis_real** const v, mgis_bv_State* const s, const char* const n) {
@@ -324,10 +354,23 @@ mgis_status mgis_bv_state_get_external_state_variable_by_name(
   return mgis_report_success();
 }  // end of mgis_bv_state_get_external_state_variable_by_name
 
-mgis_status mgis_bv_state_set_external_state_variable_by_offset(
+mgis_status mgis_bv_state_set_scalar_external_state_variable_by_offset(
     mgis_bv_State* const s, const mgis_size_type o, const mgis_real v) {
   try {
     setExternalStateVariable(*s, o, v);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_state_set_external_state_variable_by_offset
+
+mgis_status mgis_bv_state_set_external_state_variable_by_offset(
+    mgis_bv_State* const s,
+    const mgis_size_type o,
+    const mgis_real* const v,
+    const mgis_size_type vs) {
+  try {
+    setExternalStateVariable(*s, o, mgis::span<const mgis::real>(v, vs));
   } catch (...) {
     return mgis_handle_cxx_exception();
   }

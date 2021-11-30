@@ -50,7 +50,7 @@ int main(const int argc, const char* const* argv) {
   check_status(mgis_bv_allocate_behaviour_data(&d, b));
   // state at the beginning of the time step
   check_status(mgis_bv_behaviour_data_get_state_0(&s0, d));
-  check_status(mgis_bv_state_set_external_state_variable_by_name(
+  check_status(mgis_bv_state_set_scalar_external_state_variable_by_name(
       s0, "Temperature", 293.15));
   // state at the end of the time step
   check_status(mgis_bv_behaviour_data_get_state_1(&s1, d));

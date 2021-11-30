@@ -70,8 +70,8 @@ int main(const int argc, const char* const* argv) {
   check_status(mgis_model_load(&model, argv[1], "ode_rk54", "Tridimensional"));
   check_status(mgis_bv_behaviour_get_parameter_default_value(&A, model, "A"));
   check_status(mgis_bv_create_material_data_manager(&m, model, 100));
-  check_status(
-      mgis_bv_behaviour_get_internal_state_variable_offset(&o, model, "x"));
+  check_status(mgis_bv_behaviour_get_internal_state_variable_offset_by_name(
+      &o, model, "x"));
   check_status(mgis_bv_material_data_manager_get_state_0(&s0, m));
   check_status(mgis_bv_material_data_manager_get_state_1(&s1, m));
   /* initialize the internal state variable */
@@ -87,7 +87,7 @@ int main(const int argc, const char* const* argv) {
   }
   /* initialize the external state variable */
   check_status(
-      mgis_bv_material_state_manager_set_uniform_external_state_variable(
+      mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable(
           s1, "Temperature", 293.15));
   /* copy s1 in s0 */
   check_status(mgis_bv_update_material_data_manager(m));

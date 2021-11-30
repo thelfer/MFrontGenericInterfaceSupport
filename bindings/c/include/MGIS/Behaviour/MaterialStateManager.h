@@ -146,11 +146,35 @@ mgis_bv_material_state_manager_get_internal_state_variables(
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_get_internal_state_variables_stride(
     mgis_size_type* const, mgis_bv_MaterialStateManager* const);
-
+/*!
+ * \brief set the value of an uniform scalar material property
+ * \param[in] s: state manager
+ * \param[in] n: name of the material property
+ * \param[in] v: value of the material property
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_uniform_scalar_material_property(
+    mgis_bv_MaterialStateManager* const, const char* const, const mgis_real);
+/*!
+ * \brief set the value of an uniform material property
+ * \param[in] s: state manager
+ * \param[in] n: name of the material property
+ * \param[in] v: values of the material property
+ * \param[in] sm: storage mode
+ */
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_set_uniform_material_property(
-    mgis_bv_MaterialStateManager* const, const char* const, const mgis_real);
-
+    mgis_bv_MaterialStateManager* const,
+    const char* const,
+    mgis_real* const,
+    const mgis_bv_MaterialStateManagerStorageMode);
+/*!
+ * \brief set the value of an uniform material property
+ * \param[in] s: state manager
+ * \param[in] n: name of the material property
+ * \param[in] v: values of the material property
+ * \param[in] sm: storage mode
+ */
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_set_non_uniform_material_property(
     mgis_bv_MaterialStateManager* const,
@@ -175,8 +199,15 @@ mgis_bv_material_state_manager_get_non_uniform_material_property(
     mgis_real** const, mgis_bv_MaterialStateManager* const, const char* const);
 
 MGIS_C_EXPORT mgis_status
-mgis_bv_material_state_manager_set_uniform_external_state_variable(
+mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable(
     mgis_bv_MaterialStateManager* const, const char* const, const mgis_real);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_uniform_external_state_variable(
+    mgis_bv_MaterialStateManager* const,
+    const char* const,
+    mgis_real* const,
+    const mgis_bv_MaterialStateManagerStorageMode);
 
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_set_non_uniform_external_state_variable(

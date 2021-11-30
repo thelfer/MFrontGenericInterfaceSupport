@@ -45,22 +45,26 @@ static boost::python::object State_getExternalStateVariables(
 
 static void State_setExternalStateVariable(mgis::behaviour::State& s,
                                            const std::string& n,
-                                           const mgis::real v) {
-  mgis::behaviour::setExternalStateVariable(s, n, v);
+                                           boost::python::object v) {
+  auto e = boost::python::extract<double>(v);
+  if (e.check()) {
+    mgis::behaviour::setExternalStateVariable(s, n, e());
+  } else {
+    mgis::behaviour::setExternalStateVariable(
+        s, n, mgis::python::mgis_convert_to_span(v));
+  }
 }  // end of State_setExternalStateVariable
-
-static void State_setExternalStateVariable1(mgis::behaviour::State& s,
-                                            const std::string& n,
-                                            boost::python::object v) {
-  mgis::behaviour::setExternalStateVariable(
-      s, n, mgis::python::mgis_convert_to_span(v));
-}  // end of State_setExternalStateVariable1
 
 static void State_setExternalStateVariable2(mgis::behaviour::State& s,
                                             const mgis::size_type o,
                                             boost::python::object v) {
-  mgis::behaviour::setExternalStateVariable(
-      s, o, mgis::python::mgis_convert_to_span(v));
+  auto e = boost::python::extract<double>(v);
+  if (e.check()) {
+    mgis::behaviour::setExternalStateVariable(s, o, e());
+  } else {
+    mgis::behaviour::setExternalStateVariable(
+        s, o, mgis::python::mgis_convert_to_span(v));
+  }
 }  // end of State_setExternalStateVariable2
 
 void declareState() {
@@ -77,18 +81,10 @@ void declareState() {
       .add_property("external_state_variables",
                     &State_getExternalStateVariables);
   //
-  void (*ptr_setExternalStateVariable)(State&, const mgis::size_type,
-                                       const mgis::real) =
-      &mgis::behaviour::setExternalStateVariable;
   boost::python::def("setExternalStateVariable", State_setExternalStateVariable,
-                     "set the value of a scalar external state variable");
-  boost::python::def("setExternalStateVariable",
-                     State_setExternalStateVariable1,
-                     "set the value of an external state variable");
-  boost::python::def("setExternalStateVariable", ptr_setExternalStateVariable,
-                     "set the value of a scalar external state variable");
+                     "set the value of an external state variable by name");
   boost::python::def("setExternalStateVariable",
                      State_setExternalStateVariable2,
-                     "set the value of an external state variable");
+                     "set the value of an external state variable by offset");
 
 }  // end of declareState

@@ -17,7 +17,7 @@ subroutine test()
   call check_status(behaviour_data_get_state_0(s0, d))
   ! state at the end of the time step
   call check_status(behaviour_data_get_state_1(s1, d))
-  call check_status(state_set_external_state_variable_by_name( &
+  call check_status(state_set_scalar_external_state_variable_by_name( &
         s1, "Temperature", 293.15d0))
   ! s0 is copied in s1
   call check_status(update_behaviour_data(d))

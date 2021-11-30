@@ -30,10 +30,10 @@ subroutine test()
   ! state at the end of the time step
   call check_status(behaviour_data_get_state_1(s1, d))
   ! 
-  call check_status(behaviour_get_internal_state_variable_offset( &
+  call check_status(behaviour_get_internal_state_variable_offset_by_name( &
        o, mo, 'x'))
   ! initialize the external state variable
-  call check_status(state_set_external_state_variable_by_name( &
+  call check_status(state_set_scalar_external_state_variable_by_name( &
        s1, "Temperature", 293.15d0))
   !  Getting the value of the internal state variable.
   call check_status(state_get_internal_state_variables(isvs, s1, mo))

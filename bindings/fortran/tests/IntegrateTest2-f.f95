@@ -62,10 +62,10 @@ subroutine test()
   ! state at the end of the time step
   call check_status(material_data_manager_get_state_1(s1, m))
   ! 
-  call check_status(behaviour_get_internal_state_variable_offset( &
+  call check_status(behaviour_get_internal_state_variable_offset_by_name( &
        o, b, 'EquivalentViscoplasticStrain'))
   ! initialize the external state variable
-  call check_status(material_state_manager_set_uniform_external_state_variable( &
+  call check_status(material_state_manager_set_us_external_state_variable( &
        s1, "Temperature", 293.15d0))
   ! copy s1 in s0
   call check_status(update_material_data_manager(m))

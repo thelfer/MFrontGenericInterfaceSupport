@@ -489,14 +489,6 @@ mgis_bv_behaviour_get_number_of_internal_state_variables(
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_internal_state_variable_name(
     const char**, const mgis_bv_Behaviour* const, const mgis_size_type);
 /*!
- * \brief return the name of an internal state variable
- * \param[out] o: internal state variable offset
- * \param[in]  b: behaviour
- * \param[in]  n: internal state variable name
- */
-MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_internal_state_variable_offset(
-    mgis_size_type* const, const mgis_bv_Behaviour* const, const char* const);
-/*!
  * \brief return the type of an internal state variable
  * \param[out] t: internal state variable type
  * \param[in] b: behaviour
@@ -506,6 +498,36 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_internal_state_variable_type(
     mgis_bv_VariableType* const,
     const mgis_bv_Behaviour* const,
     const mgis_size_type);
+/*!
+ * \brief return the type of an internal state variable
+ * \param[out] t: internal state variable type
+ * \param[in] b: behaviour
+ * \param[in] n: internal state variable name
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_internal_state_variable_type_by_name(
+    mgis_bv_VariableType* const,
+    const mgis_bv_Behaviour* const,
+    const char* const);
+/*!
+ * \brief return the name of an internal state variable
+ * \param[out] o: internal state variable offset
+ * \param[in]  b: behaviour
+ * \param[in]  i: internal state variable index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_internal_state_variable_offset(
+    mgis_size_type* const,
+    const mgis_bv_Behaviour* const,
+    const mgis_size_type);
+/*!
+ * \brief return the name of an internal state variable
+ * \param[out] o: internal state variable offset
+ * \param[in]  b: behaviour
+ * \param[in]  n: internal state variable name
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_internal_state_variable_offset_by_name(
+    mgis_size_type* const, const mgis_bv_Behaviour* const, const char* const);
 /*!
  * \brief return the number of external state variables
  * \param[out] c: number of the external state variables
@@ -532,6 +554,36 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_external_state_variable_type(
     mgis_bv_VariableType* const,
     const mgis_bv_Behaviour* const,
     const mgis_size_type);
+/*!
+ * \brief return the type of an external state variable
+ * \param[out] t: external state variable type
+ * \param[in] b: behaviour
+ * \param[in] n: external state variable name
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_external_state_variable_type_by_name(
+    mgis_bv_VariableType* const,
+    const mgis_bv_Behaviour* const,
+    const char* const);
+/*!
+ * \brief return the name of an external state variable
+ * \param[out] o: external state variable offset
+ * \param[in]  b: behaviour
+ * \param[in]  i: external state variable index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_external_state_variable_offset(
+    mgis_size_type* const,
+    const mgis_bv_Behaviour* const,
+    const mgis_size_type);
+/*!
+ * \brief return the name of an external state variable
+ * \param[out] o: external state variable offset
+ * \param[in]  b: behaviour
+ * \param[in]  n: external state variable name
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_external_state_variable_offset_by_name(
+    mgis_size_type* const, const mgis_bv_Behaviour* const, const char* const);
 /*!
  * \brief return the number of parameters
  * \param[out] c: number of the parameters

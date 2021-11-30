@@ -203,10 +203,26 @@ MGIS_C_EXPORT mgis_status mgis_bv_state_get_internal_state_variable_by_offset(
  * \param[in] n: name
  * \param[in] v: value
  */
+MGIS_C_EXPORT mgis_status
+mgis_bv_state_set_scalar_external_state_variable_by_name(mgis_bv_State* const,
+                                                         const char* const,
+                                                         const mgis_real);
+/*!
+ * \brief set a external state variable' value in a state
+ * \param[out] s: state
+ * \param[in] n: name
+ * \param[in] v: value
+ */
 MGIS_C_EXPORT mgis_status mgis_bv_state_set_external_state_variable_by_name(
-    mgis_bv_State* const,
-    const char* const,
-    const mgis_real);
+    mgis_bv_State* const, const char* const, const mgis_real* const);
+/*!
+ * \brief get a pointer to the state variables
+ * \param[out] v: pointer to external state variables
+ * \param[in] s: state
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_state_get_external_state_variables(
+    mgis_real**,
+    mgis_bv_State* const);
 /*!
  * \brief get a external state variable' value in a state
  * \param[out] v: external state variable' value
@@ -223,13 +239,27 @@ MGIS_C_EXPORT mgis_status mgis_bv_state_get_external_state_variable_by_name(
  * \param[in] o: offset
  * \param[in] v: value
  */
-MGIS_C_EXPORT mgis_status mgis_bv_state_set_external_state_variable_by_offset(
-    mgis_bv_State* const, const mgis_size_type, const mgis_real);
+MGIS_C_EXPORT mgis_status
+mgis_bv_state_set_scalar_external_state_variable_by_offset(mgis_bv_State* const,
+                                                           const mgis_size_type,
+                                                           const mgis_real);
+/*!
+ * \brief set a external state variable' value in a state
+ * \param[out] s: state
+ * \param[in] o: offset
+ * \param[in] v: value
+ * \param[in] vs: number of values
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_state_set_external_state_variable_by_offset(mgis_bv_State* const,
+                                                    const mgis_size_type,
+                                                    const mgis_real* const,
+                                                    const mgis_size_type);
 /*!
  * \brief get a external state variable' value in a state
  * \param[out] v: external state variable' value
  * \param[in]  s: state
- * \param[in]  n: name
+ * \param[in]  o: offset
  */
 MGIS_C_EXPORT mgis_status mgis_bv_state_get_external_state_variable_by_offset(
     mgis_real** const, mgis_bv_State* const, const mgis_size_type);

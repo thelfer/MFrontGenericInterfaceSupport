@@ -54,10 +54,10 @@ subroutine test()
   ! state at the end of the time step
   call check_status(behaviour_data_get_state_1(s1, d))
   ! setting the temperature at the beginning of the time step
-  call check_status(state_set_external_state_variable_by_name( &
+  call check_status(state_set_scalar_external_state_variable_by_name( &
        s0, 'Temperature', 293.15d0))
   ! getting the offset of the equivalent plastic strain
-  call check_status(behaviour_get_internal_state_variable_offset( &
+  call check_status(behaviour_get_internal_state_variable_offset_by_name( &
        o, b, 'EquivalentViscoplasticStrain'))
   ! setting the time increment
   call check_status(behaviour_data_set_time_increment(d, 180d0))

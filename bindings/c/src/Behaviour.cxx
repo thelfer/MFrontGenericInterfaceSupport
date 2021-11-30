@@ -555,6 +555,31 @@ mgis_status mgis_bv_behaviour_get_internal_state_variable_name(
   }
 }  // end of mgis_bv_behaviour_get_internal_state_variable_name
 
+namespace c_internals{
+
+  static mgis_status getVariableType(mgis_bv_VariableType& t,
+                                     const mgis::behaviour::Variable& v) {
+    switch (v.type) {
+      case mgis::behaviour::Variable::SCALAR:
+        t = MGIS_BV_SCALAR;
+        break;
+      case mgis::behaviour::Variable::VECTOR:
+        t = MGIS_BV_VECTOR;
+        break;
+      case mgis::behaviour::Variable::STENSOR:
+        t = MGIS_BV_STENSOR;
+        break;
+      case mgis::behaviour::Variable::TENSOR:
+        t = MGIS_BV_TENSOR;
+        break;
+      default:
+        return mgis_report_failure("unsupported variable type");
+    }
+    return mgis_report_success();
+  }
+
+}  // end of namespace c_internals
+
 mgis_status mgis_bv_behaviour_get_internal_state_variable_type(
     mgis_bv_VariableType* const t,
     const mgis_bv_Behaviour* const b,
@@ -563,30 +588,44 @@ mgis_status mgis_bv_behaviour_get_internal_state_variable_type(
     return mgis_report_failure("invalid argument");
   }
   try {
-    const auto& iv = b->isvs.at(i);
-    switch (iv.type) {
-      case mgis::behaviour::Variable::SCALAR:
-        *t = MGIS_BV_SCALAR;
-        break;
-      case mgis::behaviour::Variable::VECTOR:
-        *t = MGIS_BV_VECTOR;
-        break;
-      case mgis::behaviour::Variable::STENSOR:
-        *t = MGIS_BV_STENSOR;
-        break;
-      case mgis::behaviour::Variable::TENSOR:
-        *t = MGIS_BV_TENSOR;
-        break;
-      default:
-        return mgis_report_failure("unsupported variable type");
-    }
-    return mgis_report_success();
+    return c_internals::getVariableType(*t, b->isvs.at(i));
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
 }  // end of mgis_bv_behaviour_get_internal_state_variable_type
 
+mgis_status mgis_bv_behaviour_get_internal_state_variable_type_by_name(
+    mgis_bv_VariableType* const t,
+    const mgis_bv_Behaviour* const b,
+    const char* const n) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& iv = getVariable(b->isvs, n);
+    return c_internals::getVariableType(*t, iv);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+}  // end of mgis_bv_behaviour_get_internal_state_variable_type_by_name
+
 mgis_status mgis_bv_behaviour_get_internal_state_variable_offset(
+    mgis_size_type* const o,
+    const mgis_bv_Behaviour* const b,
+    const mgis_size_type i) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& iv = b->isvs.at(i);
+    *o = getVariableOffset(b->isvs, iv.name, b->hypothesis);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_internal_state_variable_offset
+
+mgis_status mgis_bv_behaviour_get_internal_state_variable_offset_by_name(
     mgis_size_type* const o,
     const mgis_bv_Behaviour* const b,
     const char* const n) {
@@ -594,12 +633,13 @@ mgis_status mgis_bv_behaviour_get_internal_state_variable_offset(
     return mgis_report_failure("invalid argument");
   }
   try {
-    *o = getVariableOffset(b->isvs, n, b->hypothesis);
+    const auto& iv = getVariable(b->isvs, n);
+    *o = getVariableOffset(b->isvs, iv.name, b->hypothesis);
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
   return mgis_report_success();
-}  // end of mgis_bv_behaviour_get_internal_state_variable_type
+}  // end of mgis_bv_behaviour_get_internal_state_variable_offset_by_name
 
 mgis_status mgis_bv_behaviour_get_internal_state_variables_size(
     mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
@@ -643,6 +683,38 @@ mgis_status mgis_bv_behaviour_get_external_state_variable_name(
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_get_external_state_variable_name
 
+mgis_status mgis_bv_behaviour_get_external_state_variable_offset(
+    mgis_size_type* const o,
+    const mgis_bv_Behaviour* const b,
+    const mgis_size_type i) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& iv = b->isvs.at(i);
+    *o = getVariableOffset(b->isvs, iv.name, b->hypothesis);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_external_state_variable_offset
+
+mgis_status mgis_bv_behaviour_get_external_state_variable_offset_by_name(
+    mgis_size_type* const o,
+    const mgis_bv_Behaviour* const b,
+    const char* const n) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& iv = getVariable(b->isvs, n);
+    *o = getVariableOffset(b->isvs, iv.name, b->hypothesis);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_external_state_variable_offset_by_name
+
 mgis_status mgis_bv_behaviour_get_external_state_variable_type(
     mgis_bv_VariableType* const t,
     const mgis_bv_Behaviour* const b,
@@ -652,27 +724,26 @@ mgis_status mgis_bv_behaviour_get_external_state_variable_type(
   }
   try {
     const auto& ev = b->esvs.at(i);
-    switch (ev.type) {
-      case mgis::behaviour::Variable::SCALAR:
-        *t = MGIS_BV_SCALAR;
-        break;
-      case mgis::behaviour::Variable::VECTOR:
-        *t = MGIS_BV_VECTOR;
-        break;
-      case mgis::behaviour::Variable::STENSOR:
-        *t = MGIS_BV_STENSOR;
-        break;
-      case mgis::behaviour::Variable::TENSOR:
-        *t = MGIS_BV_TENSOR;
-        break;
-      default:
-        return mgis_report_failure("unsupported variable type");
-    }
-    return mgis_report_success();
+    return c_internals::getVariableType(*t, ev);
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
 }  // end of mgis_bv_behaviour_get_external_state_variable_type
+
+mgis_status mgis_bv_behaviour_get_external_state_variable_type_by_name(
+    mgis_bv_VariableType* const t,
+    const mgis_bv_Behaviour* const b,
+    const char* const n) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& ev = getVariable(b->esvs, n);
+    return c_internals::getVariableType(*t, ev);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+}  // end of mgis_bv_behaviour_get_external_state_variable_type_by_name
 
 mgis_status mgis_bv_behaviour_get_number_of_parameters(
     mgis_size_type* const s, const mgis_bv_Behaviour* const b) {

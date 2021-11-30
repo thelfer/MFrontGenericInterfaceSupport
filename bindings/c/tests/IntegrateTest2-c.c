@@ -86,15 +86,15 @@ int main(const int argc, const char* const* argv) {
   int r;
   check_status(mgis_bv_load_behaviour(&b, argv[1], "Norton", "Tridimensional"));
   check_status(mgis_bv_create_material_data_manager(&m,b,100));
-  check_status(mgis_bv_behaviour_get_internal_state_variable_offset(
+  check_status(mgis_bv_behaviour_get_internal_state_variable_offset_by_name(
       &o, b, "EquivalentViscoplasticStrain"));
-  check_status(mgis_bv_behaviour_get_internal_state_variable_offset(
+  check_status(mgis_bv_behaviour_get_internal_state_variable_offset_by_name(
       &o, b, "EquivalentViscoplasticStrain"));
   check_status(mgis_bv_material_data_manager_get_state_0(&s0, m));
   check_status(mgis_bv_material_data_manager_get_state_1(&s1, m));
   /* initialize the external state variable */
   check_status(
-      mgis_bv_material_state_manager_set_uniform_external_state_variable(
+      mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable(
           s1, "Temperature", 293.15));
   /* copy s1 in s0 */
   check_status(mgis_bv_update_material_data_manager(m));
