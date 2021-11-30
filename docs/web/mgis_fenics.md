@@ -10,7 +10,7 @@
 
 These pages are intended to describe the `FEniCS` interface to `MGIS`
 available in the `mgis.fenics` Python module. This module has been
-developed in the spirit of providing sa upport to the implementation of
+developed in the spirit of providing support to the implementation of
 generalized nonlinear behaviours i.e. including multiple gradients and
 dual flux variables. It can also be used as a simple interface to
 standard mechanical behaviours in small or finite strain (see the

@@ -345,8 +345,17 @@ namespace mgis::behaviour {
                            lm.getInternalStateVariablesTypes(l, b, h));
     // external state variables
     d.esvs.push_back({"Temperature", Variable::SCALAR});
-    for (const auto &esv : lm.getExternalStateVariablesNames(l, b, h)) {
-      d.esvs.push_back({esv, Variable::SCALAR});
+    if (lm.hasExternalStateVariablesTypes(l, b, h)) {
+      const auto esvs =
+          buildVariablesList(raise, lm.getExternalStateVariablesNames(l, b, h),
+                             lm.getExternalStateVariablesTypes(l, b, h));
+      d.esvs.insert(d.esvs.end(), esvs.begin(), esvs.end());
+    } else {
+      // Prior to TFEL versions 3.4.4 and 4.1, external state variables were
+      // only scalars
+      for (const auto &esv : lm.getExternalStateVariablesNames(l, b, h)) {
+        d.esvs.push_back({esv, Variable::SCALAR});
+      }
     }
     // tangent operator blocks
     for (const auto &block : lm.getTangentOperatorBlocksNames(l, b, h)) {

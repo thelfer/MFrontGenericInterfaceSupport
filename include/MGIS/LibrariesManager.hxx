@@ -403,6 +403,27 @@ namespace mgis {
                                                             const std::string &,
                                                             const Hypothesis);
     /*!
+     * \return if the behaviour exports the types of the external state
+     * variables. This method is provided for backward compatibility with TFEL
+     * versions prior to 3.4.4 and 4.1.
+     * \param[in] l: library name
+     * \param[in] b: behaviour name
+     * \param[in] h: modelling hypothesis
+     */
+    bool hasExternalStateVariablesTypes(const std::string &,
+                                        const std::string &,
+                                        const Hypothesis);
+    /*!
+     * \return the types of the internal state variables associated with
+     * a behaviour
+     * \param[in] l: library name
+     * \param[in] b: behaviour name
+     * \param[in] h: modelling hypothesis
+     */
+    std::vector<int> getExternalStateVariablesTypes(const std::string &,
+                                                    const std::string &,
+                                                    const Hypothesis);
+    /*!
      * \param[in] l: library
      * \param[in] s: name of function or mechanical behaviour
      * \param[in] h: modelling hypothesis

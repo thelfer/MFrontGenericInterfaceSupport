@@ -292,8 +292,42 @@ namespace mgis::behaviour {
   }  // end of getInternalStateVariable
 
   void setExternalStateVariable(State& s, const string_view n, const real v) {
+    const auto& ev = getVariable(s.b.esvs, n);
+    if (ev.type != Variable::SCALAR) {
+      mgis::raise("setExternalStateVariable: external state variable '" +
+                  std::string{n} + "' is not a scalar");
+    }
     const auto o = getVariableOffset(s.b.esvs, n, s.b.hypothesis);
     setExternalStateVariable(s, o, v);
+  }  // end of setExternalStateVariable
+
+  void setExternalStateVariable(State& s,
+                                const string_view n,
+                                const mgis::span<const real> v) {
+    const auto& ev = getVariable(s.b.esvs, n);
+    const auto es = getVariableSize(ev, s.b.hypothesis);
+    if (v.size() != es) {
+      mgis::raise(
+          "setExternalSateVariable: invalid number of values "
+          "for external variable '" +
+          std::string{n} +
+          "' "
+          "(" +
+          std::to_string(v.size()) + " given, " + std::to_string(es) +
+          "expected)");
+    }
+    const auto o = getVariableOffset(s.b.esvs, n, s.b.hypothesis);
+    setExternalStateVariable(s, o, v);
+  }  // end of setExternalStateVariable
+
+  void setExternalStateVariable(State& s, const size_type o, const real v) {
+    s.external_state_variables[o] = v;
+  }  // end of setExternalStateVariable
+
+  void setExternalStateVariable(State& s,
+                                const size_type o,
+                                const mgis::span<const real> v) {
+    std::copy(v.begin(), v.end(), s.external_state_variables.begin() + o);
   }  // end of setExternalStateVariable
 
   real* getExternalStateVariable(State& s, const string_view n) {
@@ -305,10 +339,6 @@ namespace mgis::behaviour {
     const auto o = getVariableOffset(s.b.esvs, n, s.b.hypothesis);
     return getExternalStateVariable(s, o);
   }  // end of getExternalStateVariable
-
-  void setExternalStateVariable(State& s, const size_type o, const real v) {
-    s.external_state_variables[o] = v;
-  }  // end of setExternalStateVariable
 
   real* getExternalStateVariable(State& s, const size_type o) {
     return &(s.external_state_variables[o]);

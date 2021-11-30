@@ -95,55 +95,74 @@ namespace mgis::behaviour {
      * fields, we return the information needed to evaluate them
      */
     auto dispatch =
-        [](std::vector<real>& v,
-           std::map<std::string,
-                    std::variant<real, mgis::span<real>, std::vector<real>>>&
-               values,
-           const std::vector<Variable>& ds) {
-          mgis::raise_if(ds.size() != v.size(),
+        [&m](std::vector<real>& v,
+             std::map<std::string, MaterialStateManager::FieldHolder>& values,
+             const std::vector<Variable>& ds) {
+          mgis::raise_if(v.size() != getArraySize(ds, m.b.hypothesis),
                          "integrate: ill allocated memory");
           // evaluators
-          std::vector<std::tuple<size_type, real*>> evs;
-          auto i = mgis::size_type{};
+          std::vector<std::tuple<size_type,  // offset
+                                 size_type,  // variable size
+                                 const real*>>
+              evs;
+          auto offset = mgis::size_type{};
           for (const auto& d : ds) {
-            if (d.type != Variable::SCALAR) {
-              mgis::raise("integrate: invalid type for variable '" + d.name +
-                          "'");
-            }
+            const auto s = getVariableSize(d, m.b.hypothesis);
             auto p = values.find(d.name);
             if (p == values.end()) {
               auto msg = std::string{"integrate: no variable named '" + d.name +
                                      "' declared"};
               if (!values.empty()) {
                 msg += "\nThe following variables were declared: ";
-                for (const auto& vs : values) {
-                  msg += "\n- " + vs.first;
+                for (const auto& variable : values) {
+                  msg += "\n- " + variable.first;
                 }
               } else {
                 msg += "\nNo variable declared.";
               }
               mgis::raise(msg);
             }
+            auto set_values = [&](const auto& variable_values) {
+              if (variable_values.size() == s) {
+                // uniform value
+                std::copy(variable_values.begin(), variable_values.end(),
+                          v.begin() + offset);
+              } else {
+                evs.push_back(
+                    std::make_tuple(offset, s, variable_values.data()));
+              }
+            };
             if (std::holds_alternative<real>(p->second)) {
-              v[i] = std::get<real>(p->second);
+              if (d.type != Variable::SCALAR) {
+                mgis::raise("integrate: invalid type for variable '" + d.name +
+                            "'");
+              }
+              v[offset] = std::get<real>(p->second);
             } else if (std::holds_alternative<mgis::span<real>>(p->second)) {
-              evs.push_back(std::make_tuple(
-                  i, std::get<mgis::span<real>>(p->second).data()));
+              set_values(std::get<mgis::span<real>>(p->second));
             } else {
-              evs.push_back(std::make_tuple(
-                  i, std::get<std::vector<real>>(p->second).data()));
+              set_values(std::get<std::vector<real>>(p->second));
             }
-            ++i;
+            offset += s;
           }
           return evs;
         };  // end of dispatch
-    auto eval = [](std::vector<real>& v,
-                   const std::vector<std::tuple<size_type, real*>>& evs,
-                   const size_type i) {
-      for (const auto& ev : evs) {
-        v[std::get<0>(ev)] = std::get<1>(ev)[i];
-      }
-    };  // end of eval
+    auto eval =
+        [](std::vector<real>& values,
+           const std::vector<std::tuple<size_type, size_type, const real*>>& evs,
+           const size_type i) {
+          for (const auto& ev : evs) {
+            const auto o = std::get<0>(ev);
+            const auto s = std::get<1>(ev);
+            if (s == 1) {
+              const auto* const v = std::get<2>(ev) + i;
+              values[o] = *v;
+            } else {
+              const auto* const v = std::get<2>(ev) + i * s;
+              std::copy(v, v + s, values.begin() + o);
+            }
+          }
+        };  // end of eval
     // strides
     const auto g_stride = m.s0.gradients_stride;
     const auto t_stride = m.s0.thermodynamic_forces_stride;

@@ -286,39 +286,6 @@ mgis_status mgis_bv_material_state_manager_is_material_property_uniform(
   return mgis_report_success();
 }  // end of mgis_bv_material_state_manager_is_material_property_uniform
 
-mgis_status mgis_bv_material_state_manager_get_uniform_material_property(
-    mgis_real* const v,
-    mgis_bv_MaterialStateManager* const m,
-    const char* const n) {
-  if (m == nullptr) {
-    return mgis_report_failure("null state manager");
-  }
-  try {
-    *v = getUniformMaterialProperty(*m, n);
-  } catch (...) {
-    return mgis_handle_cxx_exception();
-  }
-  return mgis_report_success();
-}  // end of mgis_bv_material_state_manager_get_uniform_material_property
-
-mgis_status mgis_bv_material_state_manager_get_non_uniform_material_property(
-    mgis_real** const v,
-    mgis_bv_MaterialStateManager* const m,
-    const char* const n) {
-  if (m == nullptr) {
-    return mgis_report_failure("null state manager");
-  }
-  if (v == nullptr) {
-    return mgis_report_failure("null state values");
-  }
-  try {
-    *v = getNonUniformMaterialProperty(*m, n).data();
-  } catch (...) {
-    return mgis_handle_cxx_exception();
-  }
-  return mgis_report_success();
-}  // end of mgis_bv_material_state_manager_get_non_uniform_material_property
-
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_set_uniform_external_state_variable(
     mgis_bv_MaterialStateManager* const m,
@@ -396,40 +363,5 @@ mgis_status mgis_bv_material_state_manager_is_external_state_variable_uniform(
   }
   return mgis_report_success();
 }  // end of mgis_bv_material_state_manager_is_external_state_variable_uniform
-
-mgis_status mgis_bv_material_state_manager_get_uniform_external_state_variable(
-    mgis_real* const v,
-    mgis_bv_MaterialStateManager* const m,
-    const char* const n) {
-  if (m == nullptr) {
-    return mgis_report_failure("null state manager");
-  }
-  try {
-    *v = getUniformExternalStateVariable(*m, n);
-  } catch (...) {
-    return mgis_handle_cxx_exception();
-  }
-  return mgis_report_success();
-}  // end of mgis_bv_material_state_manager_get_uniform_external_state_variable
-
-mgis_status
-mgis_bv_material_state_manager_get_non_uniform_external_state_variable(
-    mgis_real** const v,
-    mgis_bv_MaterialStateManager* const m,
-    const char* const n) {
-  if (m == nullptr) {
-    return mgis_report_failure("null state manager");
-  }
-  if (v == nullptr) {
-    return mgis_report_failure("null state values");
-  }
-  try {
-    *v = getNonUniformExternalStateVariable(*m, n).data();
-  } catch (...) {
-    return mgis_handle_cxx_exception();
-  }
-  return mgis_report_success();
-}  // end of
-   // mgis_bv_material_state_manager_get_non_uniform_external_state_variable
 
 }  // end of extern "C"

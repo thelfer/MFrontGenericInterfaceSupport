@@ -212,72 +212,6 @@ namespace mgis::behaviour {
     return std::holds_alternative<real>(p->second);
   }  // end of isMaterialPropertyUniform
 
-  real& getUniformMaterialProperty(MaterialStateManager& m,
-                                   const mgis::string_view& n) {
-    const auto p = getFieldHolderIterator(m.material_properties, n);
-    mgis::raise_if(p == m.material_properties.end(),
-                   "getUniformMaterialProperty: "
-                   "no material property named '" +
-                       n.to_string() + "' defined");
-    mgis::raise_if(!std::holds_alternative<real>(p->second),
-                   "getUniformMaterialProperty: "
-                   "material property '" +
-                       n.to_string() + "' is not uniform");
-    return std::get<real>(p->second);
-  }  // end of getUniformMaterialProperty
-
-  const real& getUniformMaterialProperty(const MaterialStateManager& m,
-                                         const mgis::string_view& n) {
-    const auto p = getFieldHolderIterator(m.material_properties, n);
-    mgis::raise_if(p == m.material_properties.end(),
-                   "getUniformMaterialProperty: "
-                   "no material property named '" +
-                       n.to_string() + "' defined");
-    mgis::raise_if(!std::holds_alternative<real>(p->second),
-                   "getUniformMaterialProperty: "
-                   "material property '" +
-                       n.to_string() + "' is not uniform");
-    return std::get<real>(p->second);
-  }  // end of getUniformMaterialProperty
-
-  mgis::span<real> getNonUniformMaterialProperty(MaterialStateManager& m,
-                                                 const mgis::string_view& n) {
-    using index_type = span<real>::index_type;
-    const auto p = getFieldHolderIterator(m.material_properties, n);
-    mgis::raise_if(p == m.material_properties.end(),
-                   "getNonUniformMaterialProperty: "
-                   "no material property named '" +
-                       n.to_string() + "' defined");
-    mgis::raise_if(std::holds_alternative<real>(p->second),
-                   "getNonUniformMaterialProperty: "
-                   "material property '" +
-                       n.to_string() + "' is uniform");
-    if (std::holds_alternative<std::vector<real>>(p->second)) {
-      auto& values = std::get<std::vector<real>>(p->second);
-      return {&values[0], static_cast<index_type>(values.size())};
-    }
-    return std::get<span<real>>(p->second);
-  }  // end of getNonUniformMaterialProperty
-
-  mgis::span<const real> getNonUniformMaterialProperty(
-      const MaterialStateManager& m, const mgis::string_view& n) {
-    using index_type = span<const real>::index_type;
-    const auto p = getFieldHolderIterator(m.material_properties, n);
-    mgis::raise_if(p == m.material_properties.end(),
-                   "getNonUniformMaterialProperty: "
-                   "no material property named '" +
-                       n.to_string() + "' defined");
-    mgis::raise_if(std::holds_alternative<real>(p->second),
-                   "getNonUniformMaterialProperty: "
-                   "material property '" +
-                       n.to_string() + "' is uniform");
-    if (std::holds_alternative<std::vector<real>>(p->second)) {
-      const auto& values = std::get<std::vector<real>>(p->second);
-      return {&values[0], static_cast<index_type>(values.size())};
-    }
-    return std::get<span<real>>(p->second);
-  }  // end of getNonUniformMaterialProperty
-
   void setExternalStateVariable(MaterialStateManager& m,
                                 const mgis::string_view& n,
                                 const real v) {
@@ -295,16 +229,17 @@ namespace mgis::behaviour {
       const mgis::span<real>& v,
       const MaterialStateManager::StorageMode s) {
     const auto esv = getVariable(m.b.esvs, n);
-    mgis::raise_if(esv.type != Variable::SCALAR,
-                   "setExternalStateVariable: "
-                   "invalid external state variable "
-                   "(only scalar external state variable is supported)");
-    mgis::raise_if(static_cast<mgis::size_type>(v.size()) != m.n,
-                   "setExternalStateVariable: invalid number of values "
-                   "(does not match the number of integration points)");
+    const auto vs = getVariableSize(esv, m.b.hypothesis);
+    mgis::raise_if(((static_cast<mgis::size_type>(v.size()) != m.n * vs) &&
+                    (static_cast<mgis::size_type>(v.size()) != vs)),
+                   "setExternalStateVariable: invalid number of values");
     if (s == MaterialStateManager::LOCAL_STORAGE) {
-      getFieldHolder(m.external_state_variables, n) =
-          std::vector<real>{v.begin(), v.end()};
+      if (v.size() == 1u) {
+        getFieldHolder(m.external_state_variables, n) = v[0];
+      } else {
+        getFieldHolder(m.external_state_variables, n) =
+            std::vector<real>{v.begin(), v.end()};
+      }
     } else {
       getFieldHolder(m.external_state_variables, n) = v;
     }
@@ -325,72 +260,6 @@ namespace mgis::behaviour {
                        n.to_string() + "' defined");
     return std::holds_alternative<real>(p->second);
   }  // end of isExternalStateVariableUniform
-
-  real& getUniformExternalStateVariable(MaterialStateManager& m,
-                                        const mgis::string_view& n) {
-    const auto p = getFieldHolderIterator(m.external_state_variables, n);
-    mgis::raise_if(p == m.external_state_variables.end(),
-                   "getUniformExternalStateVariable: "
-                   "no external state variable named '" +
-                       n.to_string() + "' defined");
-    mgis::raise_if(!std::holds_alternative<real>(p->second),
-                   "getUniformExternalStateVariable: "
-                   "external state variable '" +
-                       n.to_string() + "' is not uniform");
-    return std::get<real>(p->second);
-  }  // end of getUniformExternalStateVariable
-
-  const real& getUniformExternalStateVariable(const MaterialStateManager& m,
-                                              const mgis::string_view& n) {
-    const auto p = getFieldHolderIterator(m.external_state_variables, n);
-    mgis::raise_if(p == m.external_state_variables.end(),
-                   "getUniformExternalStateVariable: "
-                   "no external state variable named '" +
-                       n.to_string() + "' defined");
-    mgis::raise_if(!std::holds_alternative<real>(p->second),
-                   "getUniformExternalStateVariable: "
-                   "external state variable '" +
-                       n.to_string() + "' is not uniform");
-    return std::get<real>(p->second);
-  }  // end of getUniformExternalStateVariable
-
-  mgis::span<real> getNonUniformExternalStateVariable(
-      MaterialStateManager& m, const mgis::string_view& n) {
-    using index_type = span<real>::index_type;
-    const auto p = getFieldHolderIterator(m.external_state_variables, n);
-    mgis::raise_if(p == m.external_state_variables.end(),
-                   "getNonUniformExternalStateVariable: "
-                   "no external state variable named '" +
-                       n.to_string() + "' defined");
-    mgis::raise_if(std::holds_alternative<real>(p->second),
-                   "getNonUniformExternalStateVariable: "
-                   "external state variable '" +
-                       n.to_string() + "' is uniform");
-    if (std::holds_alternative<std::vector<real>>(p->second)) {
-      auto& values = std::get<std::vector<real>>(p->second);
-      return {&values[0], static_cast<index_type>(values.size())};
-    }
-    return std::get<span<real>>(p->second);
-  }  // end of getUniformExternalStateVariable
-
-  mgis::span<const real> getNonUniformExternalStateVariable(
-      const MaterialStateManager& m, const mgis::string_view& n) {
-    const auto p = getFieldHolderIterator(m.external_state_variables, n);
-    using index_type = span<const real>::index_type;
-    mgis::raise_if(p == m.external_state_variables.end(),
-                   "getNonUniformExternalStateVariable: "
-                   "no external state variable named '" +
-                       n.to_string() + "' defined");
-    mgis::raise_if(std::holds_alternative<real>(p->second),
-                   "getNonUniformExternalStateVariable: "
-                   "external state variable '" +
-                       n.to_string() + "' is uniform");
-    if (std::holds_alternative<std::vector<real>>(p->second)) {
-      const auto& values = std::get<std::vector<real>>(p->second);
-      return {&values[0], static_cast<index_type>(values.size())};
-    }
-    return std::get<span<real>>(p->second);
-  }  // end of getUniformExternalStateVariable
 
   void update_values(MaterialStateManager& o, const MaterialStateManager& i) {
     auto check_size = [](const mgis::size_type s1, const mgis::size_type s2) {

@@ -18,6 +18,7 @@
 #include <iosfwd>
 #include <vector>
 #include "MGIS/Config.hxx"
+#include "MGIS/Span.hxx"
 #include "MGIS/StringView.hxx"
 #include "MGIS/Behaviour/StateView.hxx"
 
@@ -330,7 +331,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT const real* getInternalStateVariable(const State&,
                                                    const size_type);
   /*!
-   * \brief set the value of an external state variable
+   * \brief set the value of a scalar external state variable
    * \param[out] s: state
    * \param[in]  n: name
    * \param[in]  v: value
@@ -338,6 +339,33 @@ namespace mgis::behaviour {
   MGIS_EXPORT void setExternalStateVariable(State&,
                                             const string_view,
                                             const real);
+  /*!
+   * \brief set the value of an external state variable
+   * \param[out] s: state
+   * \param[in]  n: name
+   * \param[in]  v: value
+   */
+  MGIS_EXPORT void setExternalStateVariable(State&,
+                                            const string_view,
+                                            const mgis::span<const real>);
+  /*!
+   * \brief set the value of a scalar external state variable
+   * \param[out] s: state
+   * \param[in]  o: external state variable offset
+   * \param[in]  v: value
+   */
+  MGIS_EXPORT void setExternalStateVariable(State&,
+                                            const size_type,
+                                            const real);
+  /*!
+   * \brief set the value of an external state variable
+   * \param[out] s: state
+   * \param[in]  o: external state variable offset
+   * \param[in]  v: value
+   */
+  MGIS_EXPORT void setExternalStateVariable(State&,
+                                            const size_type,
+                                            const mgis::span<const real>);
   /*!
    * \brief set the value of an external state variable
    * \param[out] s: state
@@ -351,15 +379,6 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT const real* getExternalStateVariable(const State&,
                                                    const string_view);
-  /*!
-   * \brief set the value of an external state variable
-   * \param[out] s: state
-   * \param[in]  o: external state variable offset
-   * \param[in]  v: value
-   */
-  MGIS_EXPORT void setExternalStateVariable(State&,
-                                            const size_type,
-                                            const real);
   /*!
    * \return a pointer to the value of an external state variable
    * \param[out] s: state

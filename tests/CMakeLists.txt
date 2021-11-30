@@ -10,7 +10,8 @@ mfront_behaviours_check_library(BehaviourTest
   BoundsCheckTest
   ParameterTest
   FiniteStrainSingleCrystal
-  StandardElastoViscoPlasticityPlasticityTest11)
+  StandardElastoViscoPlasticityPlasticityTest11
+  TensorialExternalStateVariableTest)
 
 mfront_behaviours_check_library(ModelTest
   ode_rk54)
@@ -88,6 +89,13 @@ add_executable(RotateFunctionsTest
   EXCLUDE_FROM_ALL RotateFunctionsTest.cxx)
 target_link_libraries(RotateFunctionsTest
 	PRIVATE MFrontGenericInterface)
+
+add_executable(ExternalStateVariableTest
+  EXCLUDE_FROM_ALL ExternalStateVariableTest.cxx)
+target_link_libraries(ExternalStateVariableTest
+	PRIVATE MFrontGenericInterface)
+target_compile_definitions(ExternalStateVariableTest
+  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
 
 add_test(NAME MFrontGenericBehaviourInterfaceTest
  COMMAND MFrontGenericBehaviourInterfaceTest
@@ -248,4 +256,16 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
 else((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest5
     PROPERTY DEPENDS ModelTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME ExternalStateVariableTest
+  COMMAND ExternalStateVariableTest "$<TARGET_FILE:BehaviourTest>"  "TensorialExternalStateVariableTest")
+add_dependencies(check ExternalStateVariableTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST ExternalStateVariableTest
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST ExternalStateVariableTest
+    PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))

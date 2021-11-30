@@ -633,6 +633,28 @@ namespace mgis {
     return this->getNames(l, b, h, "ExternalStateVariables");
   }  // end of getMaterialPropertiesNames
 
+  bool LibrariesManager::hasExternalStateVariablesTypes(
+      const std::string &l, const std::string &b, const Hypothesis h) {
+    const auto hn = toString(h);
+    return (
+        (this->contains(l, b + "_" + hn + "_ExternalStateVariablesTypes")) ||
+        (this->contains(l, b + "_ExternalStateVariablesTypes")));
+  }  // end of hasExternalStateVariablesTypes
+
+  std::vector<int> LibrariesManager::getExternalStateVariablesTypes(
+      const std::string &l, const std::string &b, const Hypothesis h) {
+    std::vector<int> types;
+    const auto hn = toString(h);
+    const auto nb = *(this->extract<unsigned short>(
+        l, b + "_" + hn + "_nExternalStateVariables",
+        b + "_nExternalStateVariables"));
+    const auto res = this->extract<const int>(
+        l, b + "_" + hn + "_ExternalStateVariablesTypes",
+        b + "_ExternalStateVariablesTypes");
+    std::copy(res, res + nb, std::back_inserter(types));
+    return types;
+  }  // end of getExternalStateVariablesTypes
+
   bool LibrariesManager::contains(const std::string &l, const std::string &n) {
     return this->getSymbolAddress(l, n) != nullptr;
   }  // end of contains
