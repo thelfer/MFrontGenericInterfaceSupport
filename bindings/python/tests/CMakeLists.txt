@@ -61,4 +61,5 @@ test_python_bindings(IntegrateTest3)
 test_python_bindings(IntegrateTest4)
 test_python_bindings(IntegrateTest5)
 test_python_bindings(IntegrateTest6)
+test_python_bindings(ExternalStateVariableTest)
 

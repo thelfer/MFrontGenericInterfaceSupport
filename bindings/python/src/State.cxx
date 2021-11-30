@@ -49,6 +49,20 @@ static void State_setExternalStateVariable(mgis::behaviour::State& s,
   mgis::behaviour::setExternalStateVariable(s, n, v);
 }  // end of State_setExternalStateVariable
 
+static void State_setExternalStateVariable1(mgis::behaviour::State& s,
+                                            const std::string& n,
+                                            boost::python::object v) {
+  mgis::behaviour::setExternalStateVariable(
+      s, n, mgis::python::mgis_convert_to_span(v));
+}  // end of State_setExternalStateVariable1
+
+static void State_setExternalStateVariable2(mgis::behaviour::State& s,
+                                            const mgis::size_type o,
+                                            boost::python::object v) {
+  mgis::behaviour::setExternalStateVariable(
+      s, o, mgis::python::mgis_convert_to_span(v));
+}  // end of State_setExternalStateVariable2
+
 void declareState() {
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::State;
@@ -67,7 +81,14 @@ void declareState() {
                                        const mgis::real) =
       &mgis::behaviour::setExternalStateVariable;
   boost::python::def("setExternalStateVariable", State_setExternalStateVariable,
-                     "toto");
-  boost::python::def("setExternalStateVariable", ptr_setExternalStateVariable);
+                     "set the value of a scalar external state variable");
+  boost::python::def("setExternalStateVariable",
+                     State_setExternalStateVariable1,
+                     "set the value of an external state variable");
+  boost::python::def("setExternalStateVariable", ptr_setExternalStateVariable,
+                     "set the value of a scalar external state variable");
+  boost::python::def("setExternalStateVariable",
+                     State_setExternalStateVariable2,
+                     "set the value of an external state variable");
 
 }  // end of declareState
