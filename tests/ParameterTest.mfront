@@ -6,10 +6,13 @@
 }
 
 // Material properties
-@Parameter young = 150e9;
-@Parameter nu    = 0.3;
+@Parameter stress young = 150e9;
+@Parameter real nu    = 0.3;
 young.setGlossaryName("YoungModulus");
 nu.setGlossaryName("PoissonRatio");
+
+@Parameter real A[2] = {7, 2};
+A.setEntryName("ParametersArray");
 
 @ProvidesSymmetricTangentOperator;
 @Integrator{

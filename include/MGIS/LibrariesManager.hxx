@@ -667,7 +667,7 @@ namespace mgis {
                      const std::string &,
                      const std::string &);
     /*!
-     * \return the given symbol exists.
+     * \return if the given symbol exists.
      * \param[in] l: library name
      * \param[in] n: symbol name
      */
@@ -690,6 +690,45 @@ namespace mgis {
     void *getSymbolAddress(const std::string &,
                            const std::string &,
                            const std::string &);
+    /*!
+     * \brief get the default value of a parameter
+     * \tparam T: paramter type
+     * \param[in] l: library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] p: parameter name
+     */
+    template <typename T>
+    T getParameterDefaultValueImplementation(const std::string &,
+                                             const std::string &,
+                                             const Hypothesis,
+                                             const std::string &);
+    /*!
+     * \return true if the given variable has a bound of the given kind
+     * \param[in] l: name of the library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: variable name
+     * \param[in] bt: bound type
+     */
+    bool hasBoundImplementation(const std::string &,
+                                const std::string &,
+                                const Hypothesis,
+                                const std::string &,
+                                const std::string &);
+    /*!
+     * \return the bound of the given king for the given variable
+     * \param[in] l: name of the library
+     * \param[in] b: behaviour
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: variable name
+     * \param[in] bt: bound type
+     */
+    long double getBoundImplementation(const std::string &,
+                                       const std::string &,
+                                       const Hypothesis,
+                                       const std::string &,
+                                       const std::string &);
     /*!
      * \brief load an external library if not already loaded. If the library
      * is

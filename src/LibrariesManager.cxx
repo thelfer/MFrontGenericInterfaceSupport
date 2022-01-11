@@ -127,7 +127,7 @@ namespace mgis {
     return {lib, ln};
   }  // end of try_open
 
-  static std::string decomposeVariableName(const std::string &n) {
+  static std::string decomposeVariableName1(const std::string &n) {
     auto throw_if = [](const bool c, const std::string &m) {
       mgis::raise_if(c, "mgis::decomposeVariableName: " + m);
     };
@@ -154,6 +154,39 @@ namespace mgis {
     throw_if(p != pe, "invalid variable name '" + n + "'");
     r += "__";
     return r;
+  }  // end of decomposeVariableName1
+
+  static std::string decomposeVariableName2(const std::string &n) {
+    auto throw_if = [](const bool c, const std::string &m) {
+      mgis::raise_if(c, "mgis::decomposeVariableName: " + m);
+    };
+    auto p = n.cbegin();
+    auto pe = n.cend();
+    while ((p != pe) && (*p != '[')) {
+      ++p;
+    }
+    if (p == pe) {
+      return n;
+    }
+    auto r = std::string{n.cbegin(), p};
+    ++p;
+    throw_if(p == pe, "unexpected end of string 'n'");
+    throw_if(!std::isdigit(*p), "unexpected a digit 'n'");
+    r += "_mfront_index_";
+    while ((p != pe) && (std::isdigit(*p))) {
+      r.push_back(*p);
+      ++p;
+    }
+    throw_if(p == pe, "unexpected end of string '" + n + "'");
+    throw_if(*p != ']', "invalid variable name '" + n + "'");
+    ++p;
+    throw_if(p != pe, "invalid variable name '" + n + "'");
+    return r;
+  }  // end of decomposeVariableName2
+
+  std::pair<std::string, std::string> decomposeVariableName(
+      const std::string &n) {
+    return {decomposeVariableName1(n), decomposeVariableName2(n)};
   }  // end of decomposeVariableName
 
   LibrariesManager &LibrariesManager::get() {
@@ -633,8 +666,9 @@ namespace mgis {
     return this->getNames(l, b, h, "ExternalStateVariables");
   }  // end of getMaterialPropertiesNames
 
-  bool LibrariesManager::hasExternalStateVariablesTypes(
-      const std::string &l, const std::string &b, const Hypothesis h) {
+  bool LibrariesManager::hasExternalStateVariablesTypes(const std::string &l,
+                                                        const std::string &b,
+                                                        const Hypothesis h) {
     const auto hn = toString(h);
     return (
         (this->contains(l, b + "_" + hn + "_ExternalStateVariablesTypes")) ||
@@ -792,26 +826,42 @@ namespace mgis {
     return types;
   }  // end of getInternalVariablesTypes
 
-  double LibrariesManager::getParameterDefaultValue(const std::string &l,
-                                                    const std::string &b,
-                                                    const Hypothesis h,
-                                                    const std::string &p) {
-    const auto pn = decomposeVariableName(p);
+  static std::pair<std::string, std::string> buildSymbolsNames(
+      const std::string &b, const std::string &h, const std::string &p) {
+    return {b + "_" + h + "_" + p, b + "_" + p};
+  }
+
+  template <typename T>
+  T LibrariesManager::getParameterDefaultValueImplementation(
+      const std::string &l,
+      const std::string &b,
+      const Hypothesis h,
+      const std::string &p) {
     const auto hn = toString(h);
-    return *(this->extract<double>(
-        l, b + "_" + hn + "_" + pn + "_ParameterDefaultValue",
-        b + "_" + pn + "_ParameterDefaultValue"));
+    const auto pn = decomposeVariableName(p);
+    const auto s1 =
+        buildSymbolsNames(b, hn, pn.first + "_ParameterDefaultValue");
+    if (this->contains(l, s1.first) || this->contains(l, s1.second)) {
+      return *(this->extract<T>(l, s1.first, s1.second));
+    }
+    const auto s2 =
+        buildSymbolsNames(b, hn, pn.second + "_ParameterDefaultValue");
+    return *(this->extract<T>(l, s2.first, s2.second));
+  }  // end of LibrariesManager_extractParameterDefaultValue
+
+  double LibrariesManager::getParameterDefaultValue(
+      const std::string &l,
+      const std::string &b,
+      const LibrariesManager::Hypothesis h,
+      const std::string &p) {
+    return this->getParameterDefaultValueImplementation<double>(l, b, h, p);
   }  // end of getParameterDefaultValue
 
   int LibrariesManager::getIntegerParameterDefaultValue(const std::string &l,
                                                         const std::string &b,
                                                         const Hypothesis h,
                                                         const std::string &p) {
-    const auto pn = decomposeVariableName(p);
-    const auto hn = toString(h);
-    return *(this->extract<int>(
-        l, b + "_" + hn + "_" + pn + "_ParameterDefaultValue",
-        b + "_" + pn + "_ParameterDefaultValue"));
+    return this->getParameterDefaultValueImplementation<int>(l, b, h, p);
   }  // end of getIntegerParameterDefaultValue
 
   unsigned short LibrariesManager::getUnsignedShortParameterDefaultValue(
@@ -819,127 +869,109 @@ namespace mgis {
       const std::string &b,
       const Hypothesis h,
       const std::string &p) {
-    const auto pn = decomposeVariableName(p);
-    const auto hn = toString(h);
-    return *(this->extract<unsigned short>(
-        l, b + "_" + hn + "_" + pn + "_ParameterDefaultValue",
-        b + "_" + pn + "_ParameterDefaultValue"));
+    return this->getParameterDefaultValueImplementation<unsigned short>(l, b, h,
+                                                                        p);
   }  // end of getUnsignedShortParameterDefaultValue
 
   bool LibrariesManager::hasBounds(const std::string &l,
                                    const std::string &b,
                                    const Hypothesis h,
                                    const std::string &n) {
+    return this->hasLowerBound(l, b, h, n) || this->hasUpperBound(l, b, h, n);
+  }  // end of hasBounds
+
+  bool LibrariesManager::hasBoundImplementation(
+      const std::string &l,
+      const std::string &b,
+      const Hypothesis h,
+      const std::string &n,
+      const std::string &bt) {
     const auto hn = toString(h);
     const auto vn = decomposeVariableName(n);
-    const auto n1 = b + "_" + hn + "_" + vn + "_LowerBound";
-    const auto n2 = b + "_" + hn + "_" + vn + "_UpperBound";
-    const auto n3 = b + "_" + vn + "_LowerBound";
-    const auto n4 = b + "_" + vn + "_UpperBound";
+    const auto [n1, n2] = buildSymbolsNames(b, hn, vn.first + "_" + bt);
+    const auto [n3, n4] = buildSymbolsNames(b, hn, vn.second + "_" + bt);
     return ((this->contains(l, n1)) || (this->contains(l, n2)) ||
             (this->contains(l, n3)) || (this->contains(l, n4)));
-  }  // end of hasBounds
+  }  // end of hasBoundImplementation
+
+  long double LibrariesManager::getBoundImplementation(
+      const std::string &l,
+      const std::string &b,
+      const Hypothesis h,
+      const std::string &n,
+      const std::string &bt) {
+    const auto hn = toString(h);
+    const auto vn = decomposeVariableName(n);
+    const auto [n1, n2] = buildSymbolsNames(b, hn, vn.first + "_" + bt);
+    if ((this->contains(l, n1)) || (this->contains(l, n2))) {
+      return *(this->extract<long double>(l, n1, n2));
+    }
+    const auto [n3, n4] = buildSymbolsNames(b, hn, vn.second + "_" + bt);
+    return *(this->extract<long double>(l, n3, n4));
+  }  // end of getBoundImplementation
 
   bool LibrariesManager::hasLowerBound(const std::string &l,
                                        const std::string &b,
                                        const Hypothesis h,
                                        const std::string &n) {
-    const auto hn = toString(h);
-    const auto vn = decomposeVariableName(n);
-    const auto n1 = b + "_" + hn + "_" + vn + "_LowerBound";
-    const auto n2 = b + "_" + vn + "_LowerBound";
-    return ((this->contains(l, n1)) || (this->contains(l, n2)));
+    return this->hasBoundImplementation(l, b, h, n, "LowerBound");
   }  // end of hasLowerBound
 
   bool LibrariesManager::hasUpperBound(const std::string &l,
                                        const std::string &b,
                                        const Hypothesis h,
                                        const std::string &n) {
-    const auto hn = toString(h);
-    const auto vn = decomposeVariableName(n);
-    const auto n1 = b + "_" + hn + "_" + vn + "_UpperBound";
-    const auto n2 = b + "_" + vn + "_UpperBound";
-    return ((this->contains(l, n1)) || (this->contains(l, n2)));
+    return this->hasBoundImplementation(l, b, h, n, "UpperBound");
   }  // end of hasUpperBound
 
   long double LibrariesManager::getLowerBound(const std::string &l,
                                               const std::string &b,
                                               const Hypothesis h,
                                               const std::string &n) {
-    const auto hn = toString(h);
-    const auto vn = decomposeVariableName(n);
-    const auto n1 = b + "_" + hn + "_" + vn + "_LowerBound";
-    const auto n2 = b + "_" + vn + "_LowerBound";
-    return *(this->extract<long double>(l, n1, n2));
+    return this->getBoundImplementation(l, b, h, n, "LowerBound");
   }  // end of getLowerBound
 
   long double LibrariesManager::getUpperBound(const std::string &l,
                                               const std::string &b,
                                               const Hypothesis h,
                                               const std::string &n) {
-    const auto hn = toString(h);
-    const auto vn = decomposeVariableName(n);
-    const auto n1 = b + "_" + hn + "_" + vn + "_UpperBound";
-    const auto n2 = b + "_" + vn + "_UpperBound";
-    return *(this->extract<long double>(l, n1, n2));
+    return this->getBoundImplementation(l, b, h, n, "UpperBound");
   }  // end of getUpperBound
 
   bool LibrariesManager::hasPhysicalBounds(const std::string &l,
                                            const std::string &b,
                                            const Hypothesis h,
                                            const std::string &n) {
-    const auto hn = toString(h);
-    const auto vn = decomposeVariableName(n);
-    const auto n1 = b + "_" + hn + "_" + vn + "_LowerPhysicalBound";
-    const auto n2 = b + "_" + hn + "_" + vn + "_UpperPhysicalBound";
-    const auto n3 = b + "_" + vn + "_LowerPhysicalBound";
-    const auto n4 = b + "_" + vn + "_UpperPhysicalBound";
-    return ((this->contains(l, n1)) || (this->contains(l, n2)) ||
-            (this->contains(l, n3)) || (this->contains(l, n4)));
+    return this->hasLowerPhysicalBound(l, b, h, n) ||
+           this->hasUpperPhysicalBound(l, b, h, n);
   }  // end of hasPhysicalBounds
 
   bool LibrariesManager::hasLowerPhysicalBound(const std::string &l,
                                                const std::string &b,
                                                const Hypothesis h,
                                                const std::string &n) {
-    const auto hn = toString(h);
-    const auto vn = decomposeVariableName(n);
-    const auto n1 = b + "_" + hn + "_" + vn + "_LowerPhysicalBound";
-    const auto n2 = b + "_" + vn + "_LowerPhysicalBound";
-    return ((this->contains(l, n1)) || (this->contains(l, n2)));
+    return this->hasBoundImplementation(l, b, h, n, "LowerPhysicalBound");
   }  // end of hasLowerPhysicalBound
 
   bool LibrariesManager::hasUpperPhysicalBound(const std::string &l,
                                                const std::string &b,
                                                const Hypothesis h,
                                                const std::string &n) {
-    const auto hn = toString(h);
-    const auto vn = decomposeVariableName(n);
-    const auto n1 = b + "_" + hn + "_" + vn + "_UpperPhysicalBound";
-    const auto n2 = b + "_" + vn + "_UpperPhysicalBound";
-    return ((this->contains(l, n1)) || (this->contains(l, n2)));
+    return this->hasBoundImplementation(l, b, h, n, "UpperPhysicalBound");
   }  // end of hasUpperPhysicalBound
 
   long double LibrariesManager::getLowerPhysicalBound(const std::string &l,
                                                       const std::string &b,
                                                       const Hypothesis h,
                                                       const std::string &n) {
-    const auto hn = toString(h);
-    const auto vn = decomposeVariableName(n);
-    const auto n1 = b + "_" + hn + "_" + vn + "_LowerPhysicalBound";
-    const auto n2 = b + "_" + vn + "_LowerPhysicalBound";
-    return *(this->extract<long double>(l, n1, n2));
+    return this->getBoundImplementation(l, b, h, n, "LowerPhysicalBound");
   }  // end of getLowerPhysicalBound
 
   long double LibrariesManager::getUpperPhysicalBound(const std::string &l,
                                                       const std::string &b,
                                                       const Hypothesis h,
                                                       const std::string &n) {
-    const auto hn = toString(h);
-    const auto vn = decomposeVariableName(n);
-    const auto n1 = b + "_" + hn + "_" + vn + "_UpperPhysicalBound";
-    const auto n2 = b + "_" + vn + "_UpperPhysicalBound";
-    return *(this->extract<long double>(l, n1, n2));
+    return this->getBoundImplementation(l, b, h, n, "UpperPhysicalBound");
   }  // end of getUpperPhysicalBound
 
   LibrariesManager::~LibrariesManager() {

@@ -23,15 +23,19 @@ class ParameterTest(unittest.TestCase):
         self.assertTrue(b.hypothesis == h, "invalid hypothesis")
         self.assertTrue(b.source == "ParameterTest.mfront", "invalid source")
         self.assertTrue(b.tfel_version == version, "invalid TFEL version")
-        self.assertTrue(len(b.params) == 4, "invalid number of parameters")
+        self.assertTrue(len(b.params) == 6, "invalid number of parameters")
         self.assertTrue(b.params[0] == "YoungModulus",
                         "invalid first parameter")
         self.assertTrue(b.params[1] == "PoissonRatio",
                         "invalid second parameter")
-        self.assertTrue(b.params[2] == "minimal_time_step_scaling_factor",
+        self.assertTrue(b.params[2] == "ParametersArray[0]",
                         "invalid third parameter")
-        self.assertTrue(b.params[3] == "maximal_time_step_scaling_factor",
+        self.assertTrue(b.params[3] == "ParametersArray[1]",
                         "invalid fourth parameter")
+        self.assertTrue(b.params[4] == "minimal_time_step_scaling_factor",
+                        "invalid fifth parameter")
+        self.assertTrue(b.params[5] == "maximal_time_step_scaling_factor",
+                        "invalid sixth parameter")
         yg_v = mgis_bv.getParameterDefaultValue(b, "YoungModulus")
         nu_v = mgis_bv.getParameterDefaultValue(b, "PoissonRatio")
         self.assertTrue(

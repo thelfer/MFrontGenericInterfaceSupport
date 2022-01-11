@@ -75,7 +75,7 @@ int main(const int argc, const char* const* argv) {
   // number of real parameter
   mgis_size_type nparams;
   check_status(mgis_bv_behaviour_get_number_of_parameters(&nparams, b));
-  if (check(nparams == 4u, "invalid number of parameters")) {
+  if (check(nparams == 6u, "invalid number of parameters")) {
     const char* n;
     mgis_real v;
     check_status(mgis_bv_behaviour_get_parameter_name(&n, b, 0));
@@ -87,9 +87,13 @@ int main(const int argc, const char* const* argv) {
     check_status(mgis_bv_behaviour_get_parameter_default_value(&v, b, n));
     check(fabs(v-nu)<eps*nu,"invalid 'PoissonRatio' default value");
     check_status(mgis_bv_behaviour_get_parameter_name(&n, b, 2));
-    check(strcmp(n, "minimal_time_step_scaling_factor") == 0, "invalid third parameter");
+    check(strcmp(n, "ParametersArray[0]") == 0, "invalid third parameter");
     check_status(mgis_bv_behaviour_get_parameter_name(&n, b, 3));
-    check(strcmp(n, "maximal_time_step_scaling_factor") == 0, "invalid fourth parameter");
+    check(strcmp(n, "ParametersArray[1]") == 0, "invalid fourth parameter");
+    check_status(mgis_bv_behaviour_get_parameter_name(&n, b, 4));
+    check(strcmp(n, "minimal_time_step_scaling_factor") == 0, "invalid fifth parameter");
+    check_status(mgis_bv_behaviour_get_parameter_name(&n, b, 5));
+    check(strcmp(n, "maximal_time_step_scaling_factor") == 0, "invalid sixth parameter");
   }
   // clean-up
   check_status(mgis_bv_free_behaviour(&b));
