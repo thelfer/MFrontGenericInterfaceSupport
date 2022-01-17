@@ -393,6 +393,14 @@ namespace mgis {
                                                     const std::string &,
                                                     const Hypothesis);
     /*!
+     * \return if the temperature has been removed for the external state
+     * variables. This is the default behaviour of `MFront`
+     * \param[in] l : name of the library
+     * \param[in] f : law name
+     */
+    bool hasTemperatureBeenRemovedFromExternalStateVariables(
+        const std::string&, const std::string&);
+    /*!
      * \return the names of the external state variables associated with
      * a behaviour
      * \param[in] l: library name

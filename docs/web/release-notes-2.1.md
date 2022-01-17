@@ -49,6 +49,10 @@ The following functions were removed from the `mgis_behaviour` module:
 
 # Issues solved
 
+## Issue #78: Add support for behaviours which does not declare the temperature as the first external state variable
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/78>.
+
 ## Issue #74: Support for tensorial external state variables
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/74>.

@@ -661,6 +661,16 @@ namespace mgis {
     return types;
   }  // end of getInternalStateVariablesTypes
 
+  bool LibrariesManager::hasTemperatureBeenRemovedFromExternalStateVariables(
+      const std::string &l, const std::string &b) {
+    const auto s = b + "_TemperatureRemovedFromExternalStateVariables";
+    if (!this->contains(l, s)) {
+      // for backward compatibility
+      return true;
+    }
+    return *(this->extract<unsigned short>(l, s)) == 1u;
+  }  // end of hasTemperatureBeenRemovedFromExternalStateVariables
+
   std::vector<std::string> LibrariesManager::getExternalStateVariablesNames(
       const std::string &l, const std::string &b, const Hypothesis h) {
     return this->getNames(l, b, h, "ExternalStateVariables");

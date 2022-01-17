@@ -344,7 +344,9 @@ namespace mgis::behaviour {
         buildVariablesList(raise, lm.getInternalStateVariablesNames(l, b, h),
                            lm.getInternalStateVariablesTypes(l, b, h));
     // external state variables
-    d.esvs.push_back({"Temperature", Variable::SCALAR});
+    if (lm.hasTemperatureBeenRemovedFromExternalStateVariables(l, b)) {
+      d.esvs.push_back({"Temperature", Variable::SCALAR});
+    }
     if (lm.hasExternalStateVariablesTypes(l, b, h)) {
       const auto esvs =
           buildVariablesList(raise, lm.getExternalStateVariablesNames(l, b, h),
