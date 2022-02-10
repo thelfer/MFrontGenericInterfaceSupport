@@ -25,9 +25,8 @@ Grad = {
 }
 Id_Grad = {
     mgis_bv.Hypothesis.Tridimensional: lambda u: Identity(3) + grad(u),
-    mgis_bv.Hypothesis.PlaneStrain: lambda u: Identity(2) + grad(u),
-    mgis_bv.Hypothesis.Axisymmetrical:
-    lambda r, u: Identity(3) + axi_grad(r, u),
+    mgis_bv.Hypothesis.PlaneStrain: lambda u: Identity(3) + grad_3d(u),
+    mgis_bv.Hypothesis.Axisymmetrical: lambda r, u: Identity(3) + axi_grad(r, u),
 }
 
 predefined_gradients = {
@@ -43,8 +42,7 @@ def list_predefined_gradients():
     print("'TFEL gradient name'   (Available hypotheses)")
     print("---------------------------------------------")
     for (g, value) in predefined_gradients.items():
-        print("{:22} {}".format("'{}'".format(g),
-                                tuple(str(v) for v in value.keys())))
+        print("{:22} {}".format("'{}'".format(g), tuple(str(v) for v in value.keys())))
     print("")
 
 
@@ -52,6 +50,7 @@ class AbstractNonlinearProblem:
     """
     This class handles the definition and resolution of a nonlinear problem associated with a `MFrontNonlinearMaterial`.
     """
+
     def __init__(self, u, material, quadrature_degree=2, bcs=None):
         self.u = u
         self.V = self.u.function_space()
@@ -60,9 +59,11 @@ class AbstractNonlinearProblem:
         self.mesh = self.V.mesh()
         self.material = material
         self.axisymmetric = (
-            self.material.hypothesis == mgis_bv.Hypothesis.Axisymmetrical)
+            self.material.hypothesis == mgis_bv.Hypothesis.Axisymmetrical
+        )
         self.integration_type = (
-            mgis_bv.IntegrationType.IntegrationWithConsistentTangentOperator)
+            mgis_bv.IntegrationType.IntegrationWithConsistentTangentOperator
+        )
 
         self._before_update_constitutive_law_callbacks = []
 
@@ -75,19 +76,16 @@ class AbstractNonlinearProblem:
         # compute Gauss points numbers
         self.ngauss = Function(self.W0).vector().local_size()
         # Set data manager
-        self.material.set_data_manager(self.quadrature_degree, self.ngauss,
-                                       self.mesh)
+        self.material.set_data_manager(self.quadrature_degree, self.ngauss, self.mesh)
         # dummy function used for computing global quantity
         self._dummy_function = Function(self.W0)
 
         if self.material.hypothesis == mgis_bv.Hypothesis.Tridimensional:
             if self.u.geometric_dimension() != 3:
-                warning(
-                    "Conflicting geometric dimension and material hypothesis")
+                warning("Conflicting geometric dimension and material hypothesis")
         else:
             if self.u.geometric_dimension() != 2:
-                warning(
-                    "Conflicting geometric dimension and material hypothesis")
+                warning("Conflicting geometric dimension and material hypothesis")
 
         if bcs is None:
             self.bcs = []
@@ -113,26 +111,21 @@ class AbstractNonlinearProblem:
         self.dt = 0
 
         if self.material.rotation_matrix is not None:
-            if isinstance(self.material.rotation_matrix,
-                          (list, tuple, np.ndarray)):
-                self.rotation_values = np.asarray(
-                    self.material.rotation_matrix).ravel()
+            if isinstance(self.material.rotation_matrix, (list, tuple, np.ndarray)):
+                self.rotation_values = np.asarray(self.material.rotation_matrix).ravel()
             else:
                 self.rotation_values = compute_on_quadrature(
-                    self.material.rotation_matrix, self.mesh,
-                    self.quadrature_degree)
-                self.rotation_values = self.rotation_values.vector().get_local(
+                    self.material.rotation_matrix, self.mesh, self.quadrature_degree
                 )
+                self.rotation_values = self.rotation_values.vector().get_local()
 
         self.state_variables = {
-            "internal":
-            None,
-            "external":
-            dict.fromkeys(self.material.get_external_state_variable_names(),
-                          None),
+            "internal": None,
+            "external": dict.fromkeys(
+                self.material.get_external_state_variable_names(), None
+            ),
         }
-        self.gradients = dict.fromkeys(self.material.get_gradient_names(),
-                                       None)
+        self.gradients = dict.fromkeys(self.material.get_gradient_names(), None)
         self.initialize_fluxes()
         self.initialize_internal_state_variables()
 
@@ -147,38 +140,51 @@ class AbstractNonlinearProblem:
                     if self.u.ufl_element().family() == "Mixed":
                         error_msg = "Automatic registration cannot be used with mixed function spaces.\n"
                         error_msg += (
-                            "Gradient '{}' must be registered explicitly.".
-                            format(name))
+                            "Gradient '{}' must be registered explicitly.".format(name)
+                        )
                         raise NotImplementedError(error_msg)
                     else:
                         if self.axisymmetric:
                             var = (self._r, self.u)
                         else:
-                            var = (self.u, )
+                            var = (self.u,)
                     expr = case[self.material.hypothesis](*var)
                     self.register_gradient(name, expr)
-                    print("Automatic registration of '{}' as {}.\n".format(
-                        name, str(expr)))
+                    print(
+                        "Automatic registration of '{}' as {}.\n".format(
+                            name, str(expr)
+                        )
+                    )
         for (name, value) in self.state_variables["external"].items():
             if name in predefined_external_state_variables and value is None:
                 if self.u.name() == name:
                     self.register_external_state_variable(name, self.u)
                     print(
-                        "Automatic registration of '{}' as an external state variable.\n"
-                        .format(name))
+                        "Automatic registration of '{}' as an external state variable.\n".format(
+                            name
+                        )
+                    )
                 elif predefined_external_state_variables.get(name, None):
                     val = predefined_external_state_variables[name]
                     self.register_external_state_variable(name, val)
                     print(
-                        "Automatic registration of '{}' as a Constant value = {}.\n"
-                        .format(name, float(val)))
+                        "Automatic registration of '{}' as a Constant value = {}.\n".format(
+                            name, float(val)
+                        )
+                    )
 
     def define_form(self):
         # residual form (internal forces)
-        self.residual = (sum([
-            inner(g.variation(self.u_), f.function)
-            for (f, g) in zip(self.fluxes.values(), self.gradients.values())
-        ]) * self.axi_coeff * self.dx)
+        self.residual = (
+            sum(
+                [
+                    inner(g.variation(self.u_), f.function)
+                    for (f, g) in zip(self.fluxes.values(), self.gradients.values())
+                ]
+            )
+            * self.axi_coeff
+            * self.dx
+        )
         if self._Fext is not None:
             self.residual -= self._Fext
         self.compute_tangent_form()
@@ -223,7 +229,16 @@ class AbstractNonlinearProblem:
         else:
             symmetric = None
         self.gradients.update(
-            {name: Gradient(self.u, expression, name, symmetric=symmetric)})
+            {
+                name: Gradient(
+                    self.u,
+                    expression,
+                    name,
+                    self.material.hypothesis,
+                    symmetric=symmetric,
+                )
+            }
+        )
 
     def register_external_state_variable(self, name, expression):
         """
@@ -241,11 +256,13 @@ class AbstractNonlinearProblem:
         vtype = self.material.behaviour.external_state_variables[pos].type
         if vtype != mgis_bv.VariableType.Scalar:
             raise NotImplementedError(
-                "Only scalar external state variables are handled")
+                "Only scalar external state variables are handled"
+            )
         if type(expression) == float:
             expression = Constant(expression)
         self.state_variables["external"].update(
-            {name: Var(self.u, expression, name)})
+            {name: Var(self.u, expression, name, self.material.hypothesis)}
+        )
 
     def set_loading(self, Fext):
         """
@@ -260,22 +277,26 @@ class AbstractNonlinearProblem:
 
     def initialize_external_state_variables(self):
         for (s, size) in zip(
-                self.material.get_external_state_variable_names(),
-                self.material.get_external_state_variable_sizes(),
+            self.material.get_external_state_variable_names(),
+            self.material.get_external_state_variable_sizes(),
         ):
             state_var = self.state_variables["external"][s]
             if isinstance(state_var, Constant):
-                mgis_bv.setExternalStateVariable(self.material.data_manager.s0,
-                                                 s, float(state_var))
+                mgis_bv.setExternalStateVariable(
+                    self.material.data_manager.s0, s, float(state_var)
+                )
             else:
                 if isinstance(state_var, Var):
-                    state_var.initialize_function(self.mesh,
-                                                  self.quadrature_degree)
+                    state_var.initialize_function(self.mesh, self.quadrature_degree)
                     values = state_var.function.vector().get_local()
                 else:
-                    values = (compute_on_quadrature(
-                        state_var, self.mesh,
-                        self.quadrature_degree).vector().get_local())
+                    values = (
+                        compute_on_quadrature(
+                            state_var, self.mesh, self.quadrature_degree
+                        )
+                        .vector()
+                        .get_local()
+                    )
                 mgis_bv.setExternalStateVariable(
                     self.material.data_manager.s0,
                     s,
@@ -285,29 +306,30 @@ class AbstractNonlinearProblem:
 
     def initialize_gradients(self):
         buff = 0
-        for (g, size) in zip(self.material.get_gradient_names(),
-                             self.material.get_gradient_sizes()):
+        for (g, size) in zip(
+            self.material.get_gradient_names(), self.material.get_gradient_sizes()
+        ):
             gradient = self.gradients[g]
             try:
                 gradient.initialize_function(self.mesh, self.quadrature_degree)
             except:
-                raise ValueError(
-                    "Gradient '{}' has not been registered.".format(g))
+                raise ValueError("Gradient '{}' has not been registered.".format(g))
             grad_vals = gradient.function.vector().get_local()
             if gradient.shape > 0:
                 grad_vals = grad_vals.reshape(
-                    (self.material.data_manager.n, gradient.shape))
+                    (self.material.data_manager.n, gradient.shape)
+                )
             else:
                 grad_vals = grad_vals[:, np.newaxis]
-            self.material.data_manager.s0.gradients[:, buff:buff +
-                                                    size] = grad_vals
+            self.material.data_manager.s0.gradients[:, buff : buff + size] = grad_vals
             buff += size
 
     def initialize_fluxes(self):
         fluxes = []
-        for (f, size) in zip(self.material.get_flux_names(),
-                             self.material.get_flux_sizes()):
-            flux = Flux(f, size)
+        for (f, size) in zip(
+            self.material.get_flux_names(), self.material.get_flux_sizes()
+        ):
+            flux = Flux(f, size, self.material.hypothesis)
             flux.initialize_function(self.mesh, self.quadrature_degree)
             fluxes.append(flux)
         self.fluxes = dict(zip(self.material.get_flux_names(), fluxes))
@@ -315,39 +337,40 @@ class AbstractNonlinearProblem:
     def initialize_internal_state_variables(self):
         state_variables = []
         for (s, size) in zip(
-                self.material.get_internal_state_variable_names(),
-                self.material.get_internal_state_variable_sizes(),
+            self.material.get_internal_state_variable_names(),
+            self.material.get_internal_state_variable_sizes(),
         ):
-            state_variable = InternalStateVariable(s, size)
-            state_variable.initialize_function(self.mesh,
-                                               self.quadrature_degree)
+            state_variable = InternalStateVariable(s, size, self.material.hypothesis)
+            state_variable.initialize_function(self.mesh, self.quadrature_degree)
             state_variables.append(state_variable)
         self.state_variables["internal"] = dict(
-            zip(self.material.get_internal_state_variable_names(),
-                state_variables))
+            zip(self.material.get_internal_state_variable_names(), state_variables)
+        )
 
     def initialize_tangent_blocks(self):
-        for (f, size) in zip(self.material.get_flux_names(),
-                             self.material.get_flux_sizes()):
+        for (f, size) in zip(
+            self.material.get_flux_names(), self.material.get_flux_sizes()
+        ):
             flux_gradients = []
             for t in self.material.get_tangent_block_names():
                 if t[0] == f:
                     try:
                         flux_gradients.append(self.gradients[t[1]])
                     except:
-                        value = self.state_variables["external"].get(
-                            t[1], None)
+                        value = self.state_variables["external"].get(t[1], None)
                         if value is not None and isinstance(value, Var):
                             flux_gradients.append(value)
                         else:
                             raise ValueError(
-                                "'{}' could not be associated with a registered gradient or state variable."
-                                .format(t[1]))
+                                "'{}' could not be associated with a registered gradient or state variable.".format(
+                                    t[1]
+                                )
+                            )
             self.fluxes[f].initialize_tangent_blocks(flux_gradients)
 
         for (s, size) in zip(
-                self.material.get_internal_state_variable_names(),
-                self.material.get_internal_state_variable_sizes(),
+            self.material.get_internal_state_variable_names(),
+            self.material.get_internal_state_variable_sizes(),
         ):
             state_var_gradients = []
             for t in self.material.get_tangent_block_names():
@@ -355,16 +378,18 @@ class AbstractNonlinearProblem:
                     try:
                         state_var_gradients.append(self.gradients[t[1]])
                     except:
-                        value = self.state_variables["external"].get(
-                            t[1], None)
+                        value = self.state_variables["external"].get(t[1], None)
                         if value is not None and isinstance(value, Var):
                             state_var_gradients.append(value)
                         else:
                             raise ValueError(
-                                "'{}' could not be associated with a registered gradient or state variable."
-                                .format(t[1]))
+                                "'{}' could not be associated with a registered gradient or state variable.".format(
+                                    t[1]
+                                )
+                            )
             self.state_variables["internal"][s].initialize_tangent_blocks(
-                state_var_gradients)
+                state_var_gradients
+            )
 
     def initialize(self):
         """
@@ -409,13 +434,13 @@ class AbstractNonlinearProblem:
                         "'{}' could not be found as a flux or an internal state variable."
                     )
             block_shape = self.flattened_block_shapes[i]
-            tang_block_vals = self.material.data_manager.K[:, buff:buff +
-                                                           block_shape].ravel(
-                                                           )
+            tang_block_vals = self.material.data_manager.K[
+                :, buff : buff + block_shape
+            ].ravel()
             if self.material.rotation_matrix is not None:
-                mgis_bv.rotateTangentOperatorBlocks(tang_block_vals,
-                                                    self.material.behaviour,
-                                                    self.rotation_values)
+                mgis_bv.rotateTangentOperatorBlocks(
+                    tang_block_vals, self.material.behaviour, self.rotation_values
+                )
             t.vector().set_local(tang_block_vals)
             t.vector().apply("insert")
             buff += block_shape
@@ -425,16 +450,13 @@ class AbstractNonlinearProblem:
         for (i, f) in enumerate(self.material.get_flux_names()):
             flux = self.fluxes[f]
             block_shape = self.material.get_flux_sizes()[i]
-            flux_vals = self.material.data_manager.s1.thermodynamic_forces[:,
-                                                                           buff:
-                                                                           buff
-                                                                           +
-                                                                           block_shape].ravel(
-                                                                           )
+            flux_vals = self.material.data_manager.s1.thermodynamic_forces[
+                :, buff : buff + block_shape
+            ].ravel()
             if self.material.rotation_matrix is not None:
-                mgis_bv.rotateThermodynamicForces(flux_vals,
-                                                  self.material.behaviour,
-                                                  self.rotation_values)
+                mgis_bv.rotateThermodynamicForces(
+                    flux_vals, self.material.behaviour, self.rotation_values
+                )
             flux.function.vector().set_local(flux_vals)
             flux.function.vector().apply("insert")
             buff += block_shape
@@ -447,46 +469,50 @@ class AbstractNonlinearProblem:
             block_shape = self.material.get_gradient_sizes()[i]
             grad_vals = gradient.function.vector().get_local()
             if self.material.rotation_matrix is not None:
-                mgis_bv.rotateGradients(grad_vals, self.material.behaviour,
-                                        self.rotation_values)
+                mgis_bv.rotateGradients(
+                    grad_vals, self.material.behaviour, self.rotation_values
+                )
             if gradient.shape > 0:
                 grad_vals = grad_vals.reshape(
-                    (self.material.data_manager.n, gradient.shape))
+                    (self.material.data_manager.n, gradient.shape)
+                )
             else:
                 grad_vals = grad_vals[:, np.newaxis]
-            self.material.data_manager.s1.gradients[:, buff:buff +
-                                                    block_shape] = grad_vals
+            self.material.data_manager.s1.gradients[
+                :, buff : buff + block_shape
+            ] = grad_vals
             buff += block_shape
 
     def update_internal_state_variables(self):
         """Performs update of internal state variables"""
         buff = 0
-        for (i, s) in enumerate(
-                self.material.get_internal_state_variable_names()):
+        for (i, s) in enumerate(self.material.get_internal_state_variable_names()):
             state_var = self.state_variables["internal"][s].function
             block_shape = self.material.get_internal_state_variable_sizes()[i]
             state_var.vector().set_local(
-                self.material.data_manager.s1.
-                internal_state_variables[:, buff:buff + block_shape].flatten())
+                self.material.data_manager.s1.internal_state_variables[
+                    :, buff : buff + block_shape
+                ].flatten()
+            )
             state_var.vector().apply("insert")
             buff += block_shape
 
     def set_internal_state_variables(self):
         """Set initial value of internal state variables"""
         buff = 0
-        for (i, s) in enumerate(
-                self.material.get_internal_state_variable_names()):
+        for (i, s) in enumerate(self.material.get_internal_state_variable_names()):
             state_var = self.state_variables["internal"][s]
             state_var_vals = state_var.function.vector().get_local()
             if state_var.shape > 0:
                 state_var_vals = state_var_vals.reshape(
-                    (self.material.data_manager.n, state_var.shape))
+                    (self.material.data_manager.n, state_var.shape)
+                )
             else:
                 state_var_vals = state_var_vals[:, np.newaxis]
             block_shape = self.material.get_internal_state_variable_sizes()[i]
-            self.material.data_manager.s0.internal_state_variables[:,
-                                                                   buff:buff +
-                                                                   block_shape] = state_var_vals
+            self.material.data_manager.s0.internal_state_variables[
+                :, buff : buff + block_shape
+            ] = state_var_vals
             buff += block_shape
 
     def add_before_update_constitutive_law_callback(self, c):
@@ -502,8 +528,8 @@ class AbstractNonlinearProblem:
             c()
         self.update_gradients()
         self.material.update_external_state_variables(
-            self.quadrature_degree, self.mesh,
-            self.state_variables["external"])
+            self.quadrature_degree, self.mesh, self.state_variables["external"]
+        )
         # integrate the behaviour
         mgis_bv.integrate(
             self.material.data_manager,
@@ -518,11 +544,7 @@ class AbstractNonlinearProblem:
         self.update_tangent_blocks()
         self.update_internal_state_variables()
 
-    def get_state_variable(self,
-                           name,
-                           project_on=None,
-                           as_tensor=False,
-                           **kwargs):
+    def get_state_variable(self, name, project_on=None, as_tensor=False, **kwargs):
         """
         Returns the function associated with an internal state variable
 
@@ -546,7 +568,8 @@ class AbstractNonlinearProblem:
             return self.state_variables["internal"][name].function
         else:
             return self.state_variables["internal"][name].project_on(
-                *project_on, as_tensor, **kwargs)
+                *project_on, as_tensor, **kwargs
+            )
 
     def get_flux(self, name, project_on=None, as_tensor=False, **kwargs):
         """
@@ -572,8 +595,7 @@ class AbstractNonlinearProblem:
         if project_on is None:
             return self.fluxes[name].function
         else:
-            return self.fluxes[name].project_on(*project_on, as_tensor,
-                                                **kwargs)
+            return self.fluxes[name].project_on(*project_on, as_tensor, **kwargs)
 
     def get_gradient(self, name, project_on=None, as_tensor=False, **kwargs):
         """
@@ -599,20 +621,21 @@ class AbstractNonlinearProblem:
         if project_on is None:
             return self.gradients[name].function
         else:
-            return self.gradients[name].project_on(*project_on, as_tensor,
-                                                   **kwargs)
+            return self.gradients[name].project_on(*project_on, as_tensor, **kwargs)
 
     def get_dissipated_energy(self):
         """Dissipated energy computed from MFront @DissipatedEnergy"""
         self._dummy_function.vector().set_local(
-            self.material.data_manager.s1.dissipated_energies)
+            self.material.data_manager.s1.dissipated_energies
+        )
         self._dummy_function.vector().apply("insert")
         return assemble(self._dummy_function * self.dx)
 
     def get_stored_energy(self):
         """Stored energy computed from MFront @InternalEnergy"""
         self._dummy_function.vector().set_local(
-            self.material.data_manager.s1.stored_energies)
+            self.material.data_manager.s1.stored_energies
+        )
         self._dummy_function.vector().apply("insert")
         return assemble(self._dummy_function * self.dx)
 
@@ -626,6 +649,7 @@ class MFrontNonlinearProblem(NonlinearProblem, AbstractNonlinearProblem):
     This class handles the definition and resolution of a nonlinear problem
     associated with a `MFrontNonlinearMaterial`.
     """
+
     def __init__(self, u, material, quadrature_degree=2, bcs=None):
         """
         Parameters
@@ -640,11 +664,9 @@ class MFrontNonlinearProblem(NonlinearProblem, AbstractNonlinearProblem):
             Dirichlet boundary conditions associated with the problem. The default is None.
         """
         NonlinearProblem.__init__(self)
-        AbstractNonlinearProblem.__init__(self,
-                                          u,
-                                          material,
-                                          quadrature_degree=quadrature_degree,
-                                          bcs=bcs)
+        AbstractNonlinearProblem.__init__(
+            self, u, material, quadrature_degree=quadrature_degree, bcs=bcs
+        )
         self.solver = NewtonSolver()
 
     def form(self, A, P, b, x):
@@ -652,12 +674,9 @@ class MFrontNonlinearProblem(NonlinearProblem, AbstractNonlinearProblem):
         self.update_constitutive_law()
         if hasattr(self.solver, "update_pc"):
             self.solver.update_pc()
-        assemble_system(self.tangent_form,
-                        self.residual,
-                        A_tensor=A,
-                        b_tensor=b,
-                        bcs=self.bcs,
-                        x0=x)
+        assemble_system(
+            self.tangent_form, self.residual, A_tensor=A, b_tensor=b, bcs=self.bcs, x0=x
+        )
 
     def F(self, b, x):
         pass
@@ -678,6 +697,7 @@ class MFrontOptimisationProblem(OptimisationProblem, AbstractNonlinearProblem):
     This class handles the definition and resolution of a nonlinear optimization problem
     associated with a `MFrontNonlinearMaterial`.
     """
+
     def __init__(self, u, material, quadrature_degree=2, bcs=None):
         """
         Parameters
@@ -692,11 +712,9 @@ class MFrontOptimisationProblem(OptimisationProblem, AbstractNonlinearProblem):
             Dirichlet boundary conditions associated with the problem. The default is None.
         """
         OptimisationProblem.__init__(self)
-        AbstractNonlinearProblem.__init__(self,
-                                          u,
-                                          material,
-                                          quadrature_degree=quadrature_degree,
-                                          bcs=bcs)
+        AbstractNonlinearProblem.__init__(
+            self, u, material, quadrature_degree=quadrature_degree, bcs=bcs
+        )
         self.solver = PETScTAOSolver()
         self.solver.parameters["method"] = "tron"
         self.solver.parameters["line_search"] = "gpcg"
