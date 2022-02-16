@@ -19,8 +19,20 @@
 
 // forward declaration
 typedef struct mgis_bv_BehaviourDataView mgis_bv_BehaviourDataView;
+/*!
+ * \brief type of a pointer function implementing an initialize function
+ * associated with a behaviour
+ */
+typedef int (*mgis_bv_BehaviourInitializeFctPtr)(
+    mgis_bv_BehaviourDataView* const, const mgis_real* const);
 //! \brief type of a pointer function implementing the behaviour integration
 typedef int (*mgis_bv_BehaviourFctPtr)(mgis_bv_BehaviourDataView* const);
+/*!
+ * \brief type of a pointer function implementing a post-processing
+ * associated with a behaviour
+ */
+typedef int (*mgis_bv_BehaviourPostProcessingFctPtr)(
+    mgis_real* const, mgis_bv_BehaviourDataView* const);
 /*!
  * \brief type of the pointer of a function implementing the rotation of the
  * gradients from the global frame to the material frame
@@ -73,7 +85,11 @@ typedef void (*mgis_bv_RotateArrayOfBehaviourTangentOperatorBlocksFctPtr)(
 namespace mgis::behaviour {
 
   //! \brief a simple alias
+  using BehaviourInitializeFctPtr = mgis_bv_BehaviourInitializeFctPtr;
+  //! \brief a simple alias
   using BehaviourFctPtr = mgis_bv_BehaviourFctPtr;
+  //! \brief a simple alias
+  using BehaviourPostProcessingFctPtr = mgis_bv_BehaviourPostProcessingFctPtr;
   /*!
    * \brief type of the pointer of a function implementing the rotation of the
    * gradients from the global frame to the material frame

@@ -196,6 +196,55 @@ namespace mgis {
 
   LibrariesManager::LibrariesManager() = default;
 
+  std::vector<std::string> LibrariesManager::getBehaviourInitializeFunctions(
+      const std::string &l, const std::string &b, const Hypothesis h) {
+    return this->getNames(l, b, h, "InitializeFunctions");
+  }  // end of getBehaviourInitializeFunctions
+
+  mgis::behaviour::BehaviourInitializeFctPtr
+  LibrariesManager::getBehaviourInitializeFunction(const std::string &l,
+                                                   const std::string &b,
+                                                   const std::string &f,
+                                                   const Hypothesis h) {
+    const auto hn = toString(h);
+    const auto p =
+        this->getSymbolAddress(l, b + "_" + hn + "_InitializeFunction_" + f);
+    if (p == nullptr) {
+      mgis::raise(
+          "LibrariesManager::getBehaviourInitializeFunction: "
+          "can't load initialize function '" +
+          f + "' for behaviour '" + b + "' in library '" + l +
+          "' for hypothesis '" + hn + "'");
+    }
+    return reinterpret_cast<mgis::behaviour::BehaviourInitializeFctPtr>(p);
+  }  // end of getBehaviour
+
+  std::vector<std::string>
+  LibrariesManager::getBehaviourInitializeFunctionInputsNames(
+      const std::string &l,
+      const std::string &b,
+      const std::string &p,
+      const Hypothesis h) {
+    return this->getNames(l, b, h, "InitializeFunction_" + p + "_Inputs");
+  }  // end of getBehaviourInitializeFunctionInputsNames
+
+  std::vector<int> LibrariesManager::getBehaviourInitializeFunctionInputsTypes(
+      const std::string &l,
+      const std::string &b,
+      const std::string &p,
+      const Hypothesis h) {
+    auto types = std::vector<int> {};
+    const auto hn = toString(h);
+    const auto outputs = "InitializeFunction_" + p + "_Inputs";
+    const auto outputs_types = "InitializeFunction_" + p + "_InputsTypes";
+    const auto nb = *(this->extract<unsigned short>(
+        l, b + "_" + hn + "_n" + outputs, b + "_n" + outputs));
+    const auto res = this->extract<const int>(
+        l, b + "_" + hn + '_' + outputs_types, b + '_' + outputs_types);
+    std::copy(res, res + nb, std::back_inserter(types));
+    return types;
+  }  // end of getBehaviourInitializeFunctionInputsTypes
+
   mgis::behaviour::BehaviourFctPtr LibrariesManager::getBehaviour(
       const std::string &l, const std::string &b, const Hypothesis h) {
     const auto hn = toString(h);
@@ -208,6 +257,55 @@ namespace mgis {
     }
     return reinterpret_cast<mgis::behaviour::BehaviourFctPtr>(p);
   }  // end of getBehaviour
+
+  std::vector<std::string> LibrariesManager::getBehaviourPostProcessings(
+      const std::string &l, const std::string &b, const Hypothesis h) {
+    return this->getNames(l, b, h, "PostProcessings");
+  }  // end of getBehaviourPostProcessings
+
+  mgis::behaviour::BehaviourPostProcessingFctPtr
+  LibrariesManager::getBehaviourPostProcessing(const std::string &l,
+                                               const std::string &b,
+                                               const std::string &f,
+                                               const Hypothesis h) {
+    const auto hn = toString(h);
+    const auto p =
+        this->getSymbolAddress(l, b + "_" + hn + "_PostProcessing_" + f);
+    if (p == nullptr) {
+      mgis::raise(
+          "LibrariesManager::getBehaviourPostProcessing: "
+          "can't load post-processing '" +
+          f + "' for behaviour '" + b + "' in library '" + l +
+          "' for hypothesis '" + hn + "'");
+    }
+    return reinterpret_cast<mgis::behaviour::BehaviourPostProcessingFctPtr>(p);
+  }  // end of getBehaviourPostProcessing
+
+  std::vector<std::string>
+  LibrariesManager::getBehaviourPostProcessingOutputsNames(
+      const std::string &l,
+      const std::string &b,
+      const std::string &p,
+      const Hypothesis h) {
+    return this->getNames(l, b, h, "PostProcessing_" + p + "_Outputs");
+  }  // end of getBehaviourPostProcessingOutputsNames
+
+  std::vector<int> LibrariesManager::getBehaviourPostProcessingOutputsTypes(
+      const std::string &l,
+      const std::string &b,
+      const std::string &p,
+      const Hypothesis h) {
+    auto types = std::vector<int> {};
+    const auto hn = toString(h);
+    const auto outputs = "PostProcessing_" + p + "_Outputs";
+    const auto outputs_types = "PostProcessing_" + p + "_OutputsTypes";
+    const auto nb = *(this->extract<unsigned short>(
+        l, b + "_" + hn + "_n" + outputs, b + "_n" + outputs));
+    const auto res = this->extract<const int>(
+        l, b + "_" + hn + '_' + outputs_types, b + '_' + outputs_types);
+    std::copy(res, res + nb, std::back_inserter(types));
+    return types;
+  }  // end of getBehaviourPostProcessingOutputsTypes
 
   mgis::behaviour::RotateBehaviourGradientsFctPtr
   LibrariesManager::getRotateBehaviourGradientsFunction(const std::string &l,

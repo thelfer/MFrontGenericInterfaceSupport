@@ -311,4 +311,46 @@ namespace mgis::behaviour {
     return res;
   }  // end of integrate
 
+  int executeInitializeFunction(BehaviourDataView& d,
+                                mgis::span<const real> inputs,
+                                const Behaviour& b,
+                                const std::string_view n) {
+    const auto p = b.initialize_functions.find(n);
+    if (p == b.initialize_functions.end()) {
+      mgis::raise(
+          "executeInitializeFunction: "
+          "no initialize function named '" +
+          std::string{n} + "'");
+    }
+    if (inputs.size() != getArraySize(p->second.inputs, b.hypothesis)) {
+      mgis::raise(
+          "executeInitializeFunction: "
+          "invalid size of the inputs '" +
+          std::string{n} + "'");
+    }
+    const auto& f = p->second.f;
+    return f(&d, inputs.data());
+  }  // end of executeInitializeFunction
+
+  int executePostProcessing(mgis::span<real> outputs,
+                            BehaviourDataView& d,
+                            const Behaviour& b,
+                            const std::string_view n) {
+    const auto p = b.postprocessings.find(n);
+    if (p == b.postprocessings.end()) {
+      mgis::raise(
+          "executePostProcessing: "
+          "no postprocessing named '" +
+          std::string{n} + "'");
+    }
+    if (outputs.size() != getArraySize(p->second.outputs, b.hypothesis)) {
+      mgis::raise(
+          "executePostProcessing: "
+          "invalid size of the outputs '" +
+          std::string{n} + "'");
+    }
+    const auto& f = p->second.f;
+    return f(outputs.data(), &d);
+  }  // end of executePostProcessing
+
 }  // end of namespace mgis::behaviour

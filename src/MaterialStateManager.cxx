@@ -139,16 +139,16 @@ namespace mgis::behaviour {
     // #endif /* __cplusplus > 201103L */
   }  // end of getFieldHolder
 
-  static std::map<std::string, MaterialStateManager::FieldHolder>::iterator
-  getFieldHolderIterator(
-      std::map<std::string, MaterialStateManager::FieldHolder>& m,
-      const mgis::string_view& n) {
-    // #if __cplusplus > 201103L
-    //       return m.find(n);
-    // #else  /* __cplusplus > 201103L */
-    return m.find(n.to_string());
-    // #endif /* __cplusplus > 201103L */
-  }  // end of getFieldHolder
+  //   static std::map<std::string, MaterialStateManager::FieldHolder>::iterator
+  //   getFieldHolderIterator(
+  //       std::map<std::string, MaterialStateManager::FieldHolder>& m,
+  //       const mgis::string_view& n) {
+  //     // #if __cplusplus > 201103L
+  //     //       return m.find(n);
+  //     // #else  /* __cplusplus > 201103L */
+  //     return m.find(n.to_string());
+  //     // #endif /* __cplusplus > 201103L */
+  //   }  // end of getFieldHolder
 
   static std::map<std::string,
                   MaterialStateManager::FieldHolder>::const_iterator

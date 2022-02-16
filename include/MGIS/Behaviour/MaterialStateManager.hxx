@@ -1,5 +1,5 @@
 /*!
- * \file   MaterialStateManager.hxx
+ * \file   include/MGIS/Behaviour/MaterialStateManager.hxx
  * \brief
  * \author Thomas Helfer
  * \date   05/08/2018

@@ -259,6 +259,14 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT void revert(MaterialDataManager&);
 
+  /*!
+   * \return an array containing the results of a post-processing.
+   * \param[in] m: material data manager
+   * \param[in] n: name of the post-processing
+   */
+  MGIS_EXPORT std::vector<mgis::real> allocatePostProcessingVariables(
+      const MaterialDataManager&, const std::string_view);
+
 }  // end of namespace mgis::behaviour
 
 #endif /* LIB_MGIS_BEHAVIOUR_MATERIALDATAMANAGER_HXX */

@@ -12,8 +12,179 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <bitset>
+#include <climits>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/Variable.hxx"
+
+namespace mgis::behaviour::internals {
+
+  static int extractAndShift(int &v, const std::size_t s) {
+    using bits = std::bitset<sizeof(int) * CHAR_BIT>;
+    const auto m = (bits{}.set() << s).flip();
+    bits value(v);
+    const auto r = value & m;
+    value >>= s;
+    v = static_cast<int>(value.to_ulong());
+    return static_cast<int>(r.to_ulong());
+  }  // end of extractAndShift
+
+  static mgis::behaviour::Variable::Type getTinyVectorVariableType(int &v) {
+    // tiny vector
+    const auto N = extractAndShift(v, 2);
+    if (N == 0) {
+      return mgis::behaviour::Variable::VECTOR;
+    } else if (N == 1) {
+      return mgis::behaviour::Variable::VECTOR_1D;
+    } else if (N == 2) {
+      return mgis::behaviour::Variable::VECTOR_2D;
+    } else if (N == 3) {
+      return mgis::behaviour::Variable::VECTOR_3D;
+    } else {
+      mgis::raise("getTinyVectorVariableType: invalid space dimension");
+    }
+  }  // end of getTinyVectorVariableType
+
+  static mgis::behaviour::Variable::Type getSymmetricTensorVariableType(
+      int &v) {
+    const auto N = extractAndShift(v, 2);
+    if (N == 0) {
+      return mgis::behaviour::Variable::STENSOR;
+    } else if (N == 1) {
+      return mgis::behaviour::Variable::STENSOR_1D;
+    } else if (N == 2) {
+      return mgis::behaviour::Variable::STENSOR_2D;
+    } else if (N == 3) {
+      return mgis::behaviour::Variable::STENSOR_3D;
+    } else {
+      mgis::raise("getSymmetricTensorVariableType: invalid space dimension");
+    }
+  }  // end of getSymmetricTensorVariableType
+
+  static mgis::behaviour::Variable::Type getUnSymmetricTensorVariableType(
+      int &v) {
+    const auto N = extractAndShift(v, 2);
+    if (N == 0) {
+      return mgis::behaviour::Variable::TENSOR;
+    } else if (N == 1) {
+      return mgis::behaviour::Variable::TENSOR_1D;
+    } else if (N == 2) {
+      return mgis::behaviour::Variable::TENSOR_2D;
+    } else if (N == 3) {
+      return mgis::behaviour::Variable::TENSOR_3D;
+    } else {
+      mgis::raise("getUnSymmetricTensorVariableType: invalid space dimension");
+    }
+  }  // end of getUnSymmetricTensorVariableType
+
+  mgis::behaviour::Variable::Type getVariableType(const int t) {
+    int v = t;
+    const auto type = extractAndShift(v, 3);
+    if (type == 0) {
+      return Variable::SCALAR;
+    } else if (type == 1) {
+      return getSymmetricTensorVariableType(v);
+    } else if (type == 2) {
+      return getTinyVectorVariableType(v);
+    } else if (type == 3) {
+      return getUnSymmetricTensorVariableType(v);
+    } else if (type == 4) {
+      return Variable::HIGHER_ORDER_TENSOR;
+    } else if (type != 5) {
+      mgis::raise("getVariableType: unsupported variable type");
+    }
+    return Variable::ARRAY;
+  }  // end of getVariableType
+
+  static size_t getVariableSize(int &, const mgis::behaviour::Hypothesis);
+
+  static size_t getTinyVectorVariableSize(int &v,
+                                          const mgis::behaviour::Hypothesis h) {
+    // tiny vector
+    const auto N = extractAndShift(v, 2);
+    if (N < 0) {
+      mgis::raise("invalid tensorial object dimension");
+    }
+    if (N == 0) {
+      return mgis::behaviour::getSpaceDimension(h);
+    } else if (N > 3) {
+      mgis::raise("invalid space dimension");
+    }
+    return static_cast<size_t>(N);
+  }  // end of getVariableSize
+
+  static size_t getSymmetricTensorVariableSize(
+      int &v, const mgis::behaviour::Hypothesis h) {
+    const auto N = extractAndShift(v, 2);
+    if (N == 0) {
+      return mgis::behaviour::getStensorSize(h);
+    } else if (N == 1) {
+      return 3u;
+    } else if (N == 2) {
+      return 4u;
+    } else if (N == 3) {
+      return 6u;
+    } else {
+      mgis::raise("invalid space dimension");
+    }
+  }  // end of getSymmetricTensorVariableSize
+
+  static size_t getUnSymmetricTensorVariableSize(
+      int &v, const mgis::behaviour::Hypothesis h) {
+    const auto N = extractAndShift(v, 2);
+    if (N == 0) {
+      return mgis::behaviour::getTensorSize(h);
+    } else if (N == 1) {
+      return 3u;
+    } else if (N == 2) {
+      return 5u;
+    } else if (N == 3) {
+      return 9u;
+    } else {
+      mgis::raise("invalid space dimension");
+    }
+  }  // end of getUnSymmetricTensorVariableSize
+
+  static size_t getArrayVariableSize(int &v,
+                                     const mgis::behaviour::Hypothesis h) {
+    // number of dimension of the array
+    const auto a = extractAndShift(v, 3);
+    if (a == 0) {
+      mgis::raise("invalid array arity");
+    }
+    auto n = size_t{1};
+    for (int i = 0; i != a; ++i) {
+      const auto d = extractAndShift(v, 7);
+      if (d < 1) {
+        mgis::raise("invalid array dimension");
+      }
+      n *= d;
+    }
+    return n * getVariableSize(v, h);
+  }  // end of getArrayVariableSize
+
+  static size_t getVariableSize(int &v, const mgis::behaviour::Hypothesis h) {
+    const auto type = extractAndShift(v, 3);
+    if (type == 0) {
+      return 1u;
+    } else if (type == 1) {
+      return getSymmetricTensorVariableSize(v, h);
+    } else if (type == 2) {
+      return getTinyVectorVariableSize(v, h);
+    } else if (type == 3) {
+      return getUnSymmetricTensorVariableSize(v, h);
+    } else if (type == 4) {
+      // derivative type
+      const auto s1 = getVariableSize(v, h);
+      const auto s2 = getVariableSize(v, h);
+      return s1 * s2;
+    } else if (type != 5) {
+      mgis::raise("unsupported variable type");
+    }
+    return getArrayVariableSize(v, h);
+  }
+
+}  // end of namespace mgis::behaviour::internals
 
 namespace mgis::behaviour {
 
@@ -22,27 +193,48 @@ namespace mgis::behaviour {
       return "Scalar";
     } else if (v.type == Variable::VECTOR) {
       return "Vector";
+    } else if (v.type == Variable::VECTOR_1D) {
+      return "Vector_1D";
+    } else if (v.type == Variable::VECTOR_2D) {
+      return "Vector_2D";
+    } else if (v.type == Variable::VECTOR_3D) {
+      return "Vector_3D";
     } else if (v.type == Variable::STENSOR) {
       return "Stensor";
+    } else if (v.type == Variable::STENSOR_1D) {
+      return "Stensor_1D";
+    } else if (v.type == Variable::STENSOR_2D) {
+      return "Stensor_2D";
+    } else if (v.type == Variable::STENSOR_3D) {
+      return "Stensor_3D";
+    } else if (v.type == Variable::TENSOR) {
+      return "Tensor";
+    } else if (v.type == Variable::TENSOR_1D) {
+      return "Tensor_1D";
+    } else if (v.type == Variable::TENSOR_2D) {
+      return "Tensor_2D";
+    } else if (v.type == Variable::TENSOR_3D) {
+      return "Tensor_3D";
+    } else if (v.type == Variable::HIGHER_ORDER_TENSOR) {
+      return "HigherOrderTensor";
+    } else if (v.type == Variable::ARRAY) {
+      return "Array";
     }
-    if (v.type != Variable::TENSOR) {
-      mgis::raise("getVariableTypeAsString: unsupported variable type");
-    }
-    return "Tensor";
+    mgis::raise("getVariableTypeAsString: unsupported variable type");
+  }
+
+  Variable::Type getVariableType(const int id) {
+    return internals::getVariableType(id);
   }
 
   size_type getVariableSize(const Variable &v, const Hypothesis h) {
-    if (v.type == Variable::SCALAR) {
-      return 1;
-    } else if (v.type == Variable::VECTOR) {
-      return getSpaceDimension(h);
-    } else if (v.type == Variable::STENSOR) {
-      return getStensorSize(h);
+    auto id = v.type_identifier;
+    const auto s = internals::getVariableSize(id, h);
+    if (id != 0) {
+      mgis::raise("getVariableSize: invalid type identifier '" +
+                  std::to_string(id) + "'");
     }
-    if (v.type != Variable::TENSOR) {
-      mgis::raise("getArraySize: unsupported variable type");
-    }
-    return getTensorSize(h);
+    return s;
   }  // end of getVariableSize
 
   bool contains(const std::vector<Variable> &vs, const string_view n) {

@@ -15,6 +15,7 @@
 #ifndef LIB_MGIS_BEHAVIOUR_DESCRIPTION_HXX
 #define LIB_MGIS_BEHAVIOUR_DESCRIPTION_HXX
 
+#include <map>
 #include <iosfwd>
 #include <vector>
 #include "MGIS/Config.hxx"
@@ -26,6 +27,22 @@
 #include "MGIS/Behaviour/BehaviourFctPtr.hxx"
 
 namespace mgis::behaviour {
+
+  //! \brief structure describing an initialize function of a behaviour
+  struct MGIS_EXPORT BehaviourInitializeFunction {
+    //! \brief pointer to the initialize function
+    BehaviourInitializeFctPtr f;
+    //! \brief inputs of the initialize function
+    std::vector<Variable> inputs;
+  };  // end of BehaviourInitializeFunction
+
+  //! \brief structure describing a post-processing of a behaviour
+  struct MGIS_EXPORT BehaviourPostProcessing {
+    //! \brief pointer to the post-processing
+    BehaviourPostProcessingFctPtr f;
+    //! \brief outputs of the post-processing
+    std::vector<Variable> outputs;
+  };  // end of BehaviourPostProcessing
 
   //! \brief structure describing a behaviour
   struct MGIS_EXPORT Behaviour {
@@ -63,8 +80,12 @@ namespace mgis::behaviour {
     std::string source;
     //! \brief version of `TFEL` used to generate the behaviour
     std::string tfel_version;
+    //! \brief list of initialize functions associated with the behaviour
+    std::map<std::string, BehaviourInitializeFunction, std::less<>> initialize_functions;
     //! \brief pointer to the function implementing the behaviour
     BehaviourFctPtr b = nullptr;
+    //! \brief list of post-processings associated with the behaviour
+    std::map<std::string, BehaviourPostProcessing, std::less<>> postprocessings;
     /*!
      * \brief pointer to a function implementing the rotation of the gradients
      * from the global frame to the material frame.
@@ -592,7 +613,37 @@ namespace mgis::behaviour {
   MGIS_EXPORT void print_markdown(std::ostream &,
                                   const Behaviour &,
                                   const mgis::size_type);
+  /*!
+   * \return the size of an array able to contain the inputs of an
+   * initialize function.
+   * \param[in] b: behaviour
+   * \param[in] n: name of the post-processing
+   */
+  MGIS_EXPORT size_type getInitializeFunctionVariablesArraySize(
+      const Behaviour &, const std::string_view);
+  /*!
+   * \return an array containing the inputs of an initialize function.
+   * \param[in] b: behaviour
+   * \param[in] n: name of the initialize function
+   */
+  MGIS_EXPORT std::vector<mgis::real> allocateInitializeFunctionVariables(
+      const Behaviour &, const std::string_view);
+  /*!
+   * \return the size of an array able to contain the outputs of a
+   * post-processing.
+   * \param[in] b: behaviour
+   * \param[in] n: name of the post-processing
+   */
+  MGIS_EXPORT size_type getPostProcessingVariablesArraySize(
+      const Behaviour &, const std::string_view);
+  /*!
+   * \return an array containing the results of a post-processing.
+   * \param[in] b: behaviour
+   * \param[in] n: name of the post-processing
+   */
+  MGIS_EXPORT std::vector<mgis::real> allocatePostProcessingVariables(
+      const Behaviour &, const std::string_view);
 
-}  // end of namespace mgis::behaviour
+  }  // end of namespace mgis::behaviour
 
 #endif /* LIB_MGIS_BEHAVIOUR_DESCRIPTION_HXX */

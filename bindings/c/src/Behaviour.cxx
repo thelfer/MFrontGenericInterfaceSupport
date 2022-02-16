@@ -691,8 +691,8 @@ mgis_status mgis_bv_behaviour_get_external_state_variable_offset(
     return mgis_report_failure("invalid argument");
   }
   try {
-    const auto& iv = b->isvs.at(i);
-    *o = getVariableOffset(b->isvs, iv.name, b->hypothesis);
+    const auto& esv = b->esvs.at(i);
+    *o = getVariableOffset(b->esvs, esv.name, b->hypothesis);
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
@@ -707,8 +707,8 @@ mgis_status mgis_bv_behaviour_get_external_state_variable_offset_by_name(
     return mgis_report_failure("invalid argument");
   }
   try {
-    const auto& iv = getVariable(b->isvs, n);
-    *o = getVariableOffset(b->isvs, iv.name, b->hypothesis);
+    const auto& esv = getVariable(b->esvs, n);
+    *o = getVariableOffset(b->esvs, esv.name, b->hypothesis);
   } catch (...) {
     return mgis_handle_cxx_exception();
   }

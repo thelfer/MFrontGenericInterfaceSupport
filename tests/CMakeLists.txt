@@ -11,7 +11,9 @@ mfront_behaviours_check_library(BehaviourTest
   ParameterTest
   FiniteStrainSingleCrystal
   StandardElastoViscoPlasticityPlasticityTest11
-  TensorialExternalStateVariableTest)
+  TensorialExternalStateVariableTest
+  InitializeFunctionTest
+  PostProcessingTest)
 
 mfront_behaviours_check_library(ModelTest
   ode_rk54)
@@ -95,6 +97,20 @@ add_executable(ExternalStateVariableTest
 target_link_libraries(ExternalStateVariableTest
 	PRIVATE MFrontGenericInterface)
 target_compile_definitions(ExternalStateVariableTest
+  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
+
+add_executable(InitializeFunctionTest
+  EXCLUDE_FROM_ALL InitializeFunctionTest.cxx)
+target_link_libraries(InitializeFunctionTest
+	PRIVATE MFrontGenericInterface)
+target_compile_definitions(InitializeFunctionTest
+  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
+
+add_executable(PostProcessingTest
+  EXCLUDE_FROM_ALL PostProcessingTest.cxx)
+target_link_libraries(PostProcessingTest
+	PRIVATE MFrontGenericInterface)
+target_compile_definitions(PostProcessingTest
   PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
 
 add_test(NAME MFrontGenericBehaviourInterfaceTest
@@ -267,5 +283,29 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
 else((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ExternalStateVariableTest
+    PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME InitializeFunctionTest
+  COMMAND InitializeFunctionTest "$<TARGET_FILE:BehaviourTest>"  "InitializeFunctionTest")
+add_dependencies(check InitializeFunctionTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST InitializeFunctionTest
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST InitializeFunctionTest
+    PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME PostProcessingTest
+  COMMAND PostProcessingTest "$<TARGET_FILE:BehaviourTest>"  "PostProcessingTest")
+add_dependencies(check PostProcessingTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST PostProcessingTest
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST PostProcessingTest
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))

@@ -1239,6 +1239,61 @@ contains
     s = behaviour_get_internal_state_variable_type_wrapper(t, b%ptr, nc)
   end function behaviour_get_internal_state_variable_type
   !
+  function behaviour_get_internal_state_variable_type_by_name(t, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function behaviour_get_internal_state_variable_type_by_name_wrapper(t, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_internal_state_variable_type_by_name') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer t
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: r
+       end function behaviour_get_internal_state_variable_type_by_name_wrapper
+    end interface
+    integer, intent (out) :: t
+    type(behaviour), intent(in) :: b
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: s
+    s = behaviour_get_internal_state_variable_type_by_name_wrapper(t, b%ptr, convert_fortran_string(n))
+  end function behaviour_get_internal_state_variable_type_by_name
+  !
+  function behaviour_get_internal_state_variable_offset(o, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function behaviour_get_internal_state_variable_offset_wrapper(o, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_internal_state_variable_offset') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: o
+         type(c_ptr), intent(in), value :: b
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_internal_state_variable_offset_wrapper
+    end interface
+    integer, intent (out) :: o
+    type(behaviour), intent(in) :: b
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    integer(kind=c_size_t) offset
+    integer(kind = c_size_t) :: nc
+    if(.not. convert_to_c_index(nc, n)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    s = behaviour_get_internal_state_variable_offset_wrapper(offset, b%ptr, nc)
+    o = offset + 1
+  end function behaviour_get_internal_state_variable_offset
+  !
   function behaviour_get_internal_state_variable_offset_by_name(o, b, n) result(s)
     use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
     use mgis_fortran_utilities
@@ -1353,6 +1408,89 @@ contains
     end if
     s = behaviour_get_external_state_variable_type_wrapper(t, b%ptr, nc)
   end function behaviour_get_external_state_variable_type
+  !
+  function behaviour_get_external_state_variable_type_by_name(t, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function behaviour_get_external_state_variable_type_by_name_wrapper(t, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_external_state_variable_type_by_name') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer t
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: r
+       end function behaviour_get_external_state_variable_type_by_name_wrapper
+    end interface
+    integer, intent (out) :: t
+    type(behaviour), intent(in) :: b
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: s
+    s = behaviour_get_external_state_variable_type_by_name_wrapper(t, b%ptr, convert_fortran_string(n))
+  end function behaviour_get_external_state_variable_type_by_name
+  !
+  function behaviour_get_external_state_variable_offset(o, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function behaviour_get_external_state_variable_offset_wrapper(o, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_external_state_variable_offset') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: o
+         type(c_ptr), intent(in), value :: b
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_external_state_variable_offset_wrapper
+    end interface
+    integer, intent (out) :: o
+    type(behaviour), intent(in) :: b
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    integer(kind=c_size_t) offset
+    integer(kind = c_size_t) :: nc
+        if(.not. convert_to_c_index(nc, n)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    s = behaviour_get_external_state_variable_offset_wrapper(offset, b%ptr, nc)
+    write(*,*) "c: ", nc, offset
+    o = offset+1
+  end function behaviour_get_external_state_variable_offset
+  !
+  function behaviour_get_external_state_variable_offset_by_name(o, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function behaviour_get_external_state_variable_offset_by_name_wrapper(o, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_external_state_variable_offset_by_name') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: o
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: r
+       end function behaviour_get_external_state_variable_offset_by_name_wrapper
+    end interface
+    integer, intent (out) :: o
+    type(behaviour), intent(in) :: b
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: s
+    integer(kind=c_size_t) offset
+    s = behaviour_get_external_state_variable_offset_by_name_wrapper( &
+         offset, b%ptr, convert_fortran_string(n))
+    o = offset+1
+  end function behaviour_get_external_state_variable_offset_by_name
   !
   function behaviour_computes_stored_energy(v, b) result(s)
     use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan

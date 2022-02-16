@@ -30,7 +30,25 @@ namespace mgis::behaviour {
     //! \brief name of the variable
     std::string name;
     //! \brief type of the variable
-    enum Type { SCALAR = 0, VECTOR = 1, STENSOR = 2, TENSOR = 3 } type;
+    enum Type {
+      SCALAR = 0,
+      VECTOR = 1,
+      VECTOR_1D = 11,
+      VECTOR_2D = 12,
+      VECTOR_3D = 13,
+      STENSOR = 2,
+      STENSOR_1D = 21,
+      STENSOR_2D = 22,
+      STENSOR_3D = 23,
+      TENSOR = 3,
+      TENSOR_1D = 31,
+      TENSOR_2D = 32,
+      TENSOR_3D = 33,
+      HIGHER_ORDER_TENSOR = 4,
+      ARRAY = 5,
+    } type;
+    //! brief type identifier
+    int type_identifier = 0;
   };  // end of struct Variable
 
   /*!
@@ -47,6 +65,11 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT const Variable &getVariable(const std::vector<Variable> &,
                                           const string_view);
+  /*!
+   * \return the type of a variable from an identifier
+   * \param[in] id: type identifier
+   */
+  MGIS_EXPORT Variable::Type getVariableType(const int);
   /*!
    * \return the size of a variable
    * \param[in] v: variable

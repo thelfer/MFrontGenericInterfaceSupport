@@ -101,6 +101,96 @@ namespace mgis {
                                                   const std::string &,
                                                   const Hypothesis);
     /*!
+     * \return the initialize functions associated with a the behaviour
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] h: hypothesis
+     */
+    std::vector<std::string> getBehaviourInitializeFunctions(
+        const std::string &, const std::string &, const Hypothesis);
+    /*!
+     * \return the initialize functions associated with a the behaviour
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] f: initialize function name
+     * \param[in] h: hypothesis
+     */
+    mgis::behaviour::BehaviourInitializeFctPtr getBehaviourInitializeFunction(
+        const std::string &,
+        const std::string &,
+        const std::string &,
+        const Hypothesis);
+    /*!
+     * \return the names of the inputs of an initialize function associated with
+     * a the behaviour
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] f: initialize function name
+     * \param[in] h: hypothesis
+     */
+    std::vector<std::string> getBehaviourInitializeFunctionInputsNames(
+        const std::string &,
+        const std::string &,
+        const std::string &,
+        const Hypothesis);
+    /*!
+     * \return the types of the inputs of an initialize function associated with
+     * a the behaviour
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] f: initialize function name
+     * \param[in] h: hypothesis
+     */
+    std::vector<int> getBehaviourInitializeFunctionInputsTypes(
+        const std::string &,
+        const std::string &,
+        const std::string &,
+        const Hypothesis);
+    /*!
+     * \return the post-processing functions associated with a the behaviour
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] h: hypothesis
+     */
+    std::vector<std::string> getBehaviourPostProcessings(const std::string &,
+                                                         const std::string &,
+                                                         const Hypothesis);
+    /*!
+     * \return the initialize functions associated with a the behaviour
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] f: initialize function name
+     * \param[in] h: hypothesis
+     */
+    mgis::behaviour::BehaviourPostProcessingFctPtr getBehaviourPostProcessing(
+        const std::string &,
+        const std::string &,
+        const std::string &,
+        const Hypothesis);
+    /*!
+     * \return the names of the outputs associated with a post-processing
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] p: post-processing name
+     * \param[in] h: hypothesis
+     */
+    std::vector<std::string> getBehaviourPostProcessingOutputsNames(
+        const std::string &,
+        const std::string &,
+        const std::string &,
+        const Hypothesis);
+    /*!
+     * \return the types of the outputs associated with a post-processing
+     * \param[in] l: library
+     * \param[in] b: behaviour name
+     * \param[in] p: post-processing name
+     * \param[in] h: hypothesis
+     */
+    std::vector<int> getBehaviourPostProcessingOutputsTypes(const std::string &,
+                                                            const std::string &,
+                                                            const std::string &,
+                                                            const Hypothesis);
+    /*!
      * \return the function implementing the rotation of the gradients of a
      * behaviour from the global frame to the material frame
      * \param[in] l: library
@@ -399,7 +489,7 @@ namespace mgis {
      * \param[in] f : law name
      */
     bool hasTemperatureBeenRemovedFromExternalStateVariables(
-        const std::string&, const std::string&);
+        const std::string &, const std::string &);
     /*!
      * \return the names of the external state variables associated with
      * a behaviour

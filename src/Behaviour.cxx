@@ -44,22 +44,7 @@ namespace mgis::behaviour {
           "the number of internal state variables types");
     }
     for (decltype(names.size()) i = 0; i != names.size(); ++i) {
-      switch (types[i]) {
-        case 0:
-          vars.push_back({names[i], Variable::SCALAR});
-          break;
-        case 1:
-          vars.push_back({names[i], Variable::STENSOR});
-          break;
-        case 2:
-          vars.push_back({names[i], Variable::VECTOR});
-          break;
-        case 3:
-          vars.push_back({names[i], Variable::TENSOR});
-          break;
-        default:
-          raise("unsupported internal state variable type");
-      }
+      vars.push_back({names[i], getVariableType(types[i]), types[i]});
     }
     return vars;
   }  // end of buildVariablesList
@@ -254,7 +239,7 @@ namespace mgis::behaviour {
                  "small strain kinematic hypothesis");
         checkGradientsAndThermodynamicForcesConsistency(
             raise, d.gradients, d.thermodynamic_forces,
-            {"Strain", Variable::STENSOR}, {"Stress", Variable::STENSOR});
+            {"Strain", Variable::STENSOR, 1}, {"Stress", Variable::STENSOR, 1});
         break;
       case Behaviour::COHESIVEZONEMODEL:
         if (d.kinematic != Behaviour::COHESIVEZONEKINEMATIC) {
@@ -262,15 +247,15 @@ namespace mgis::behaviour {
         }
         checkGradientsAndThermodynamicForcesConsistency(
             raise, d.gradients, d.thermodynamic_forces,
-            {"OpeningDisplacement", Variable::VECTOR},
-            {"CohesiveForce", Variable::VECTOR});
+            {"OpeningDisplacement", Variable::VECTOR, 2},
+            {"CohesiveForce", Variable::VECTOR, 2});
         break;
       case Behaviour::STANDARDFINITESTRAINBEHAVIOUR:
         if (d.kinematic == Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY) {
           checkGradientsAndThermodynamicForcesConsistency(
               raise, d.gradients, d.thermodynamic_forces,
-              {"DeformationGradient", Variable::TENSOR},
-              {"Stress", Variable::STENSOR});
+              {"DeformationGradient", Variable::TENSOR, 3},
+              {"Stress", Variable::STENSOR, 1});
         } else if (d.kinematic == Behaviour::FINITESTRAINKINEMATIC_ETO_PK1) {
           if (((h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) &&
                (h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))) {
@@ -280,7 +265,8 @@ namespace mgis::behaviour {
           }
           checkGradientsAndThermodynamicForcesConsistency(
               raise, d.gradients, d.thermodynamic_forces,
-              {"Strain", Variable::STENSOR}, {"Stresss", Variable::STENSOR});
+              {"Strain", Variable::STENSOR, 1},
+              {"Stresss", Variable::STENSOR, 1});
         } else {
           raise(
               "invalid kinematic hypothesis for finite strain "
@@ -382,6 +368,24 @@ namespace mgis::behaviour {
         raise("unsupported parameter type for parameter '" + pn[i] + "'");
       }
     }
+    // initialize functions
+    for (const auto i : lm.getBehaviourInitializeFunctions(l, b, h)) {
+      BehaviourInitializeFunction ifct;
+      ifct.f = lm.getBehaviourInitializeFunction(l, b, i, h);
+      ifct.inputs = buildVariablesList(
+          raise, lm.getBehaviourInitializeFunctionInputsNames(l, b, i, h),
+          lm.getBehaviourInitializeFunctionInputsTypes(l, b, i, h));
+      d.initialize_functions.insert({i, ifct});
+    }
+    // post-processings
+    for (const auto i : lm.getBehaviourPostProcessings(l, b, h)) {
+      BehaviourPostProcessing pfct;
+      pfct.f = lm.getBehaviourPostProcessing(l, b, i, h);
+      pfct.outputs = buildVariablesList(
+          raise, lm.getBehaviourPostProcessingOutputsNames(l, b, i, h),
+          lm.getBehaviourPostProcessingOutputsTypes(l, b, i, h));
+      d.postprocessings.insert({i, pfct});
+    }
     return d;
   }  // end of load_behaviour
 
@@ -443,11 +447,11 @@ namespace mgis::behaviour {
     } else if (o.stress_measure == FiniteStrainBehaviourOptions::PK2) {
       d.options[0] = mgis::real(1);
       d.thermodynamic_forces[0] = {"SecondPiolaKirchhoffStress",
-                                   Variable::STENSOR};
+                                   Variable::STENSOR, 1};
     } else if (o.stress_measure == FiniteStrainBehaviourOptions::PK1) {
       d.options[0] = mgis::real(2);
       d.thermodynamic_forces[0] = {"FirstPiolaKirchhoffStress",
-                                   Variable::TENSOR};
+                                   Variable::TENSOR, 3};
     } else {
       mgis::raise(
           "mgis::behaviour::load: "
@@ -457,13 +461,13 @@ namespace mgis::behaviour {
       d.options[1] = mgis::real(0);
     } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DS_DEGL) {
       d.options[1] = mgis::real(1);
-      d.to_blocks[0] = {{"SecondPiolaKirchhoffStress", Variable::STENSOR},
-                        {"GreenLagrangeStrain", Variable::STENSOR}};
+      d.to_blocks[0] = {{"SecondPiolaKirchhoffStress", Variable::STENSOR, 1},
+                        {"GreenLagrangeStrain", Variable::STENSOR, 1}};
 
     } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DPK1_DF) {
       d.options[1] = mgis::real(2);
-      d.to_blocks[0] = {{"FirstPiolaKirchhoffStress", Variable::TENSOR},
-                        {"DeformationGradient", Variable::TENSOR}};
+      d.to_blocks[0] = {{"FirstPiolaKirchhoffStress", Variable::TENSOR, 3},
+                        {"DeformationGradient", Variable::TENSOR, 3}};
     } else {
       mgis::raise(
           "mgis::behaviour::load: "
@@ -992,5 +996,45 @@ namespace mgis::behaviour {
   void print_markdown(std::ostream &,
                       const Behaviour &,
                       const mgis::size_type) {}  // end of print_markdown
+
+  size_type getInitializeFunctionVariablesArraySize(const Behaviour &b,
+                                                   const std::string_view n) {
+    const auto p = b.initialize_functions.find(n);
+    if (p == b.initialize_functions.end()) {
+      mgis::raise(
+          "getInitializeFunctionVariables: "
+          "no initialize function named '" +
+          std::string{n} + "'");
+    }
+    return getArraySize(p->second.inputs, b.hypothesis);
+  }  // end of getInitializeFunctionVariablesArraySize
+
+  std::vector<mgis::real> allocateInitializeFunctionVariables(
+      const Behaviour &b, const std::string_view n) {
+    const auto s = getInitializeFunctionVariablesArraySize(b, n);
+    std::vector<mgis::real> inputs;
+    inputs.resize(s, real{0});
+    return inputs;
+  }  // end of allocateInitializeFunctionVariables
+
+  size_type getPostProcessingVariablesArraySize(const Behaviour &b,
+                                                const std::string_view n) {
+    const auto p = b.postprocessings.find(n);
+    if (p == b.postprocessings.end()) {
+      mgis::raise(
+          "getPostProcessingVariables: "
+          "no post-processing named '" +
+          std::string{n} + "'");
+    }
+    return getArraySize(p->second.outputs, b.hypothesis);
+  }  // end of getPostProcessingVariablesArraySize
+
+  std::vector<mgis::real> allocatePostProcessingVariables(
+      const Behaviour &b, const std::string_view n) {
+    const auto s = getPostProcessingVariablesArraySize(b, n);
+    std::vector<mgis::real> outputs;
+    outputs.resize(s, real{0});
+    return outputs;
+  }
 
 }  // end of namespace mgis::behaviour

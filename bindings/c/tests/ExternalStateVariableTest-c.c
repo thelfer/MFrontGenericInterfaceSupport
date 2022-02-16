@@ -58,7 +58,7 @@ static void check_external_state_variable(
   mgis_bv_VariableType type;
   mgis_size_type offset;
   check_status(mgis_bv_behaviour_get_external_state_variable_name(&name, b, i));
-  check(strcmp(name, expected_variable_name), "invalid external state variable name");
+  check(strcmp(name, expected_variable_name) == 0, "invalid external state variable name");
   check_status(mgis_bv_behaviour_get_external_state_variable_type(&type, b, i));
   check(type == expected_variable_type, "invalid external state variable type");
   check_status(
@@ -221,6 +221,7 @@ int main(const int argc, const char* const* argv) {
   check_status(mgis_bv_load_behaviour(
       &b, argv[1], "TensorialExternalStateVariableTest", "Tridimensional"));
   //
+  check_behaviour(b);
   check_behaviour_data(b);
   check_material_data_manager(b);
   // clean-up

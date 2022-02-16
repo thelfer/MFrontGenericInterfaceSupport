@@ -175,4 +175,12 @@ namespace mgis::behaviour {
     update_values(m.s1, m.s0);
   }  // end of update
 
+  std::vector<mgis::real> allocatePostProcessingVariables(
+      const MaterialDataManager& m, const std::string_view n){
+    const auto s = getPostProcessingVariablesArraySize(m.b, n);
+    std::vector<mgis::real> outputs;
+    outputs.resize(s * m.n, real{0});
+    return outputs;
+  } // end of allocatePostProcessingVariables
+
 }  // end of namespace mgis::behaviour
