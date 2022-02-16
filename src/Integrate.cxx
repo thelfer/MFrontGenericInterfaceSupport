@@ -312,6 +312,27 @@ namespace mgis::behaviour {
   }  // end of integrate
 
   int executeInitializeFunction(BehaviourDataView& d,
+                                const Behaviour& b,
+                                const std::string_view n) {
+    const auto p = b.initialize_functions.find(n);
+    if (p == b.initialize_functions.end()) {
+      mgis::raise(
+          "executeInitializeFunction: "
+          "no initialize function named '" +
+          std::string{n} + "'");
+    }
+    if (!p->second.inputs.empty()) {
+      mgis::raise(
+          "executeInitializeFunction: "
+          "invalid size of the inputs '" +
+          std::string{n} + "'");
+    }
+    const auto& f = p->second.f;
+    return f(&d, nullptr);
+  }  // end of executeInitializeFunction
+
+
+  int executeInitializeFunction(BehaviourDataView& d,
                                 mgis::span<const real> inputs,
                                 const Behaviour& b,
                                 const std::string_view n) {

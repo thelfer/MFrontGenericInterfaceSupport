@@ -191,6 +191,21 @@ namespace mgis::behaviour {
                                             const Behaviour&,
                                             const std::string_view);
   /*!
+   * \brief execute the given initialize function.
+   * \param[in,out] d: behaviour data view
+   * \param[in,out] b: behaviour
+   * \param[in] n: name of the initialize function
+   * \note the initialize function is expected to have no inputs
+   * \note Due to the structure of the `BehaviourDataView` structure in which
+   * the state at the beginning of the time step is immutable, only the state
+   * variables at the end of the time step can be updated. Hence, for
+   * consistency, the behaviour data shall be updated after the call to all
+   * initialize functions.
+   */
+  MGIS_EXPORT int executeInitializeFunction(BehaviourDataView&,
+                                            const Behaviour&,
+                                            const std::string_view);
+  /*!
    * \brief execute the given post-processing
    * \param[out] outputs: post-processing results
    * \param[in,out] d: behaviour data

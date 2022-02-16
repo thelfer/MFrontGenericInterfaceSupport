@@ -17,10 +17,10 @@
 };
 
 @InitializeFunction ElasticStrainFromInitialStress {
-  const auto K = 2 / (3 * (1 - 2 * nu));
+  const auto K = young / (3 * (1 - 2 * nu));
   const auto pr = trace(sig) / 3;
   const auto s = deviator(sig);
-  eel = eval((pr / K) * Stensor::Id() + s / mu);
+  eel = eval((pr / (3 * K)) * Stensor::Id() + s / (2 * mu));
 }
 
 @InitializeFunctionVariable stress pr;

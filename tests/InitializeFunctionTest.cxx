@@ -105,6 +105,44 @@ void call_initialize_function(const mgis::behaviour::Behaviour& b) {
   }
 }  // end of call_initialize_function
 
+void call_initialize_function2(const mgis::behaviour::Behaviour& b) {
+  using namespace mgis::behaviour;
+  constexpr auto E = mgis::real{200e9};
+  constexpr auto nu = mgis::real{0.3};
+  constexpr auto sxx = mgis::real{150e6};
+  constexpr auto eps = 10 * sxx * std::numeric_limits<mgis::real>::epsilon();
+  auto d = BehaviourData{b};
+  // initialize the states
+  auto s_values = std::vector<mgis::real>{sxx, 0, 0, 0, 0, 0};
+  d.s0.thermodynamic_forces = s_values;
+  setExternalStateVariable(d.s0, "Temperature", 293.15);
+  setExternalStateVariable(d.s1, "Temperature", 293.15);
+  //
+  auto v = make_view(d);
+  executeInitializeFunction(v, b, "ElasticStrainFromInitialStress");
+  update(d);
+  auto eel_values =
+      std::vector<mgis::real>{sxx / E, -nu * sxx/ E, -nu * sxx / E, 0, 0, 0};
+  const auto& s0 = d.s0.thermodynamic_forces;
+  const auto& s1 = d.s1.thermodynamic_forces;
+  if (!check((s0.size() == 6u) && (s1.size() == 6u), "invalid stress size")) {
+    return;
+  }
+  const auto& eel0 = d.s0.internal_state_variables;
+  const auto& eel1 = d.s1.internal_state_variables;
+  for (mgis::size_type i = 0; i != 6; ++i) {
+    check(std::abs(eel0[i] - eel_values[i]) < eps,
+          "invalid elastic strain value at the beginning of the time step");
+    check(std::abs(eel1[i] - eel_values[i]) < eps,
+          "invalid elastic strain value at the beginning of the time step");
+    check(std::abs(s0[i] - s_values[i]) < eps,
+          "invalid stress value at the beginning of the time step");
+    check(std::abs(s1[i] - s_values[i]) < eps,
+          "invalid stress value at the end of the time step");
+  }
+}  // end of call_initialize_function
+
+
 int main(const int argc, const char* const* argv) {
   using namespace mgis::behaviour;
   constexpr const auto h = Hypothesis::TRIDIMENSIONAL;
@@ -115,6 +153,7 @@ int main(const int argc, const char* const* argv) {
     const auto b = load(argv[1], argv[2], h);
     check_behaviour(b, h);
     call_initialize_function(b);
+    call_initialize_function2(b);
   } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
