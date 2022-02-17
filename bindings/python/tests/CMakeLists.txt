@@ -62,4 +62,6 @@ test_python_bindings(IntegrateTest4)
 test_python_bindings(IntegrateTest5)
 test_python_bindings(IntegrateTest6)
 test_python_bindings(ExternalStateVariableTest)
+test_python_bindings(InitializeFunctionTest)
+test_python_bindings(PostProcessingTest)
 

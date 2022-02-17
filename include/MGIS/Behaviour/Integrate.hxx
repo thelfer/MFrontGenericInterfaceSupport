@@ -129,7 +129,108 @@ namespace mgis::behaviour {
     //! \brief integration results per threads
     std::vector<BehaviourIntegrationResult> results;
   };  // end of struct MultiThreadedBehaviourIntegrationResult
-
+  /*!
+   * \brief execute the given initialize function.
+   * \param[in,out] d: behaviour data view
+   * \param[in] inputs: inputs of the initialize function
+   * \param[in,out] b: behaviour
+   * \param[in] n: name of the initialize function
+   * \note Due to the structure of the `BehaviourDataView` structure in which
+   * the state at the beginning of the time step is immutable, only the state
+   * variables at the end of the time step can be updated. Hence, for
+   * consistency, the behaviour data shall be updated after the call to all
+   * initialize functions.
+   */
+  MGIS_EXPORT int executeInitializeFunction(BehaviourDataView&,
+                                            const Behaviour&,
+                                            const std::string_view,
+                                            mgis::span<const real>);
+  /*!
+   * \brief execute the given initialize function.
+   * \param[in,out] d: behaviour data view
+   * \param[in,out] b: behaviour
+   * \param[in] n: name of the initialize function
+   * \note the initialize function is expected to have no inputs
+   * \note Due to the structure of the `BehaviourDataView` structure in which
+   * the state at the beginning of the time step is immutable, only the state
+   * variables at the end of the time step can be updated. Hence, for
+   * consistency, the behaviour data shall be updated after the call to all
+   * initialize functions.
+   */
+  MGIS_EXPORT int executeInitializeFunction(BehaviourDataView&,
+                                            const Behaviour&,
+                                            const std::string_view);
+  /*!
+   * \brief execute the given initialize function
+   * \param[in,out] d: material data manager
+   * \param[in] n: name of the initialize function
+   */
+  MGIS_EXPORT BehaviourIntegrationResult executeInitializeFunction(
+      MaterialDataManager&, const std::string_view);
+  /*!
+   * \brief execute the given initialize function
+   * \param[in,out] d: material data manager
+   * \param[in] n: name of the initialize function
+   * \param[in] inputs: initialize function inputs
+   *
+   * \note the inputs can be uniform or not.
+   */
+  MGIS_EXPORT BehaviourIntegrationResult executeInitializeFunction(
+      MaterialDataManager&, const std::string_view, mgis::span<const real>);
+  /*!
+   * \brief execute the given initialize function over a range of integration points
+   * \param[in,out] d: material data manager
+   * \param[in] n: name of the initialize function
+   * \param[in] b: first index of the range
+   * \param[in] e: last index of the range
+   */
+  MGIS_EXPORT BehaviourIntegrationResult
+  executeInitializeFunction(MaterialDataManager&,
+                            const std::string_view,
+                            const size_type,
+                            const size_type);
+  /*!
+   * \brief execute the given initialize function over a range of integration points
+   * \param[in,out] d: material data manager
+   * \param[in] n: name of the initialize function
+   * \param[in] inputs: initialize function inputs
+   * \param[in] b: first index of the range
+   * \param[in] e: last index of the range
+   *
+   * \note the inputs can be uniform or not.
+   */
+  MGIS_EXPORT BehaviourIntegrationResult
+  executeInitializeFunction(MaterialDataManager&,
+                            const std::string_view,
+                            mgis::span<const real>,
+                            const size_type,
+                            const size_type);
+  /*!
+   * \brief execute the given initialize function  over all integration points using
+   * a thread pool to parallelize the integration.
+   * \param[in,out] p: thread pool
+   * \param[in,out] d: material data manager
+   * \param[in] n: name of the initialize function
+   */
+  MGIS_EXPORT MultiThreadedBehaviourIntegrationResult
+  executeInitializeFunction(ThreadPool&,
+                            MaterialDataManager&,
+                            const std::string_view);
+  /*!
+   * \brief execute the given initialize function  over all integration points using
+   * a thread pool to parallelize the integration.
+   * \param[in,out] p: thread pool
+   * \param[in,out] d: material data manager
+   * \param[in] n: name of the initialize function
+   * \param[in] inputs: initialize function inputs
+   *
+   * \note the inputs can be uniform or not.
+   */
+  MGIS_EXPORT MultiThreadedBehaviourIntegrationResult
+  executeInitializeFunction(ThreadPool&,
+                            MaterialDataManager&,
+                            const std::string_view,
+                            mgis::span<const real>);
   /*!
    * \brief integrate the behaviour. The returned value has the following
    * meaning:
@@ -175,48 +276,6 @@ namespace mgis::behaviour {
    */
   int integrate(BehaviourDataView&, const Behaviour&);
   /*!
-   * \brief execute the given initialize function.
-   * \param[in,out] d: behaviour data view
-   * \param[in] inputs: inputs of the initialize function
-   * \param[in,out] b: behaviour
-   * \param[in] n: name of the initialize function
-   * \note Due to the structure of the `BehaviourDataView` structure in which
-   * the state at the beginning of the time step is immutable, only the state
-   * variables at the end of the time step can be updated. Hence, for
-   * consistency, the behaviour data shall be updated after the call to all
-   * initialize functions.
-   */
-  MGIS_EXPORT int executeInitializeFunction(BehaviourDataView&,
-                                            mgis::span<const real>,
-                                            const Behaviour&,
-                                            const std::string_view);
-  /*!
-   * \brief execute the given initialize function.
-   * \param[in,out] d: behaviour data view
-   * \param[in,out] b: behaviour
-   * \param[in] n: name of the initialize function
-   * \note the initialize function is expected to have no inputs
-   * \note Due to the structure of the `BehaviourDataView` structure in which
-   * the state at the beginning of the time step is immutable, only the state
-   * variables at the end of the time step can be updated. Hence, for
-   * consistency, the behaviour data shall be updated after the call to all
-   * initialize functions.
-   */
-  MGIS_EXPORT int executeInitializeFunction(BehaviourDataView&,
-                                            const Behaviour&,
-                                            const std::string_view);
-  /*!
-   * \brief execute the given post-processing
-   * \param[out] outputs: post-processing results
-   * \param[in,out] d: behaviour data
-   * \param[in,out] b: behaviour
-   * \param[in] n: name of the post-processing
-   */
-  MGIS_EXPORT int executePostProcessing(mgis::span<real>,
-                                        BehaviourDataView&,
-                                        const Behaviour&,
-                                        const std::string_view);
-  /*!
    * \brief integrate the behaviour for a range of integration points.
    * \return the result of the behaviour integration.
    * \param[in,out] m: material data manager
@@ -234,7 +293,6 @@ namespace mgis::behaviour {
             const real,
             const size_type,
             const size_type);
-
   /*!
    * \brief integrate the behaviour over all integration points using a thread
    * pool to parallelize the integration.
@@ -252,7 +310,25 @@ namespace mgis::behaviour {
             MaterialDataManager&,
             const BehaviourIntegrationOptions&,
             const real);
-
+  /*!
+   * \brief integrate the behaviour for a range of integration points.
+   * \return an exit status. The returned value has the following meaning:
+   * - -1: integration failed for at least one integration point
+   * -  0: all integrations succeeded but results are unreliable for at least
+   *       one Gauss point
+   * -  1: integration succeeded and results are reliable.
+   *
+   * \param[in,out] p: thread pool
+   * \param[in,out] m: material data manager
+   * \param[in] dt: time step
+   *
+   * \note if required, the memory associated with the tangent operator blocks
+   * is automatically allocated.
+   */
+  MGIS_EXPORT int integrate(mgis::ThreadPool&,
+                            MaterialDataManager&,
+                            const IntegrationType it,
+                            const real);
   /*!
    * \brief integrate the behaviour for a range of integration points.
    * \return an exit status. The returned value has the following meaning:
@@ -274,26 +350,52 @@ namespace mgis::behaviour {
                             const real,
                             const size_type,
                             const size_type);
-
   /*!
-   * \brief integrate the behaviour for a range of integration points.
-   * \return an exit status. The returned value has the following meaning:
-   * - -1: integration failed for at least one integration point
-   * -  0: all integrations succeeded but results are unreliable for at least
-   *       one Gauss point
-   * -  1: integration succeeded and results are reliable.
-   *
-   * \param[in,out] p: thread pool
-   * \param[in,out] m: material data manager
-   * \param[in] dt: time step
-   *
-   * \note if required, the memory associated with the tangent operator blocks
-   * is automatically allocated.
+   * \brief execute the given post-processing
+   * \param[out] outputs: post-processing results
+   * \param[in,out] d: behaviour data
+   * \param[in,out] b: behaviour
+   * \param[in] n: name of the post-processing
    */
-  MGIS_EXPORT int integrate(mgis::ThreadPool&,
-                            MaterialDataManager&,
-                            const IntegrationType it,
-                            const real);
+  MGIS_EXPORT int executePostProcessing(mgis::span<real>,
+                                        BehaviourDataView&,
+                                        const Behaviour&,
+                                        const std::string_view);
+  /*!
+   * \brief execute the given post-processing
+   * \param[out] outputs: post-processing results
+   * \param[in,out] d: material data manager
+   * \param[in] n: name of the post-processing
+   */
+  MGIS_EXPORT BehaviourIntegrationResult executePostProcessing(
+      mgis::span<real>, MaterialDataManager&, const std::string_view);
+  /*!
+   * \brief execute the given post-processing over a range of integration points
+   * \param[out] outputs: post-processing results
+   * \param[in,out] d: material data manager
+   * \param[in] n: name of the post-processing
+   * \param[in] b: first index of the range
+   * \param[in] e: last index of the range
+   */
+  MGIS_EXPORT BehaviourIntegrationResult
+  executePostProcessing(mgis::span<real>,
+                        MaterialDataManager&,
+                        const std::string_view,
+                        const size_type,
+                        const size_type);
+  /*!
+   * \brief execute the given post-processing  over all integration points using
+   * a thread pool to parallelize the integration.
+   * \param[out] outputs: post-processing results
+   * \param[in,out] p: thread pool
+   * \param[in,out] d: material data manager
+   * \param[in] n: name of the post-processing
+   */
+  MGIS_EXPORT MultiThreadedBehaviourIntegrationResult
+  executePostProcessing(mgis::span<real>,
+                        ThreadPool&,
+                        MaterialDataManager&,
+                        const std::string_view);
 
 }  // end of namespace mgis::behaviour
 

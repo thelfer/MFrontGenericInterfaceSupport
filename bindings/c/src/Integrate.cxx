@@ -61,7 +61,7 @@ mgis_status mgis_bv_integrate_2(int* const r,
   auto v = mgis::behaviour::make_view(*d);
   auto s = mgis_bv_integrate(r, &v, b);
   return s;
-}  // end of mgis_bv_integrate
+}  // end of mgis_bv_integrate2
 
 mgis_status mgis_bv_integrate_material_data_manager(
     int* const r,

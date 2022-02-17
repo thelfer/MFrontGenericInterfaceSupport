@@ -240,6 +240,49 @@ static void rotate_tangent_operator_blocks_out_of_place(
       mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_tangent_operator_blocks_out_of_place
 
+static boost::python::list Behaviour_getInitializeFunctionsNames(
+    const mgis::behaviour::Behaviour &b) {
+  auto names = std::vector<std::string>{};
+  for (const auto& ifct : b.initialize_functions) {
+    names.push_back(ifct.first);
+  }
+  return mgis::python::convert_vector_to_list(names);
+}  // edn of Behaviour_getInitializeFunctionsNames
+
+static std::vector<mgis::behaviour::Variable>
+Behaviour_getInitializeFunctionInputs(const mgis::behaviour::Behaviour &b,
+                                      const std::string &n){
+  const auto p = b.initialize_functions.find(n);
+  if (p == b.initialize_functions.end()) {
+    mgis::raise(
+        "getInitializeFunctionInputs: "
+        "no initialize function named '" +
+        n + "'");
+  }
+  return p->second.inputs;
+} // end of Behaviour_getInitializeFunctionInputs
+
+static boost::python::list Behaviour_getPostProcessingsNames(
+    const mgis::behaviour::Behaviour &b) {
+  auto names = std::vector<std::string>{};
+  for (const auto& p : b.postprocessings) {
+    names.push_back(p.first);
+  }
+  return mgis::python::convert_vector_to_list(names);
+}  // edn of Behaviour_getPostProcessingsNames
+
+static std::vector<mgis::behaviour::Variable> Behaviour_getPostProcessingOutputs(
+    const mgis::behaviour::Behaviour &b, const std::string &n) {
+  const auto p = b.postprocessings.find(n);
+  if (p == b.postprocessings.end()) {
+    mgis::raise(
+        "getPostProcessingOutputs: "
+        "no initialize function named '" +
+        n + "'");
+  }
+  return p->second.outputs;
+}  // end of Behaviour_getPostProcessingOutputs
+
 void declareBehaviour() {
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::FiniteStrainBehaviourOptions;
@@ -406,6 +449,10 @@ void declareBehaviour() {
           "list of unsigned short parameters (same as the `usparams` property)")
       .add_property("tangent_operator_blocks",
                     Behaviour_getTangentOperatorBlocks)
+      .def("getInitializeFunctionsNames", Behaviour_getInitializeFunctionsNames)
+      .def("getInitializeFunctionInputs", Behaviour_getInitializeFunctionInputs)
+      .def("getPostProcessingsNames", Behaviour_getPostProcessingsNames)
+      .def("getPostProcessingOutputs", Behaviour_getPostProcessingOutputs)
       .def("setParameter", setParameter1)
       .def("setIntegerParameter", setParameter2)
       .def("setUnsignedShortParameter", setParameter3)

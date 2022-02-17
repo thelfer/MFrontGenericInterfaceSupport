@@ -9,8 +9,7 @@ except ImportError:
     import unittest
 import mgis.behaviour as mgis_bv
 
-
-class IntegrateTest(unittest.TestCase):
+class ExternalStateVariableTest(unittest.TestCase):
 
     def __get_behaviour(self, h):
         lib = os.environ['MGIS_TEST_BEHAVIOURS_LIBRARY']

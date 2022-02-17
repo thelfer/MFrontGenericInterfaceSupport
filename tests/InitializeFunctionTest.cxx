@@ -84,7 +84,7 @@ void call_initialize_function(const mgis::behaviour::Behaviour& b) {
   }
   inputs[0] = pr;
   auto v = make_view(d);
-  executeInitializeFunction(v, inputs, b, "StressFromInitialPressure");
+  executeInitializeFunction(v, b, "StressFromInitialPressure", inputs);
   const auto& s0 = d.s0.thermodynamic_forces;
   const auto& s1 = d.s1.thermodynamic_forces;
   if (!check((s0.size() == 6u) && (s1.size() == 6u), "invalid stress size")) {

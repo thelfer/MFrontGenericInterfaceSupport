@@ -19,6 +19,7 @@
 #include "MGIS/Behaviour/BehaviourData.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
+#include "MGIS/Python/NumPySupport.hxx"
 #include "MGIS/Python/VectorConverter.hxx"
 
 void declareIntegrate();
@@ -29,6 +30,115 @@ static int integrateBehaviourData1(mgis::behaviour::BehaviourData& d,
   const auto s = mgis::behaviour::integrate(v, b);
   return s;
 }  // end of integrateBehaviourData
+
+static int BehaviourDataView_executeInitializeFunction(
+    mgis::behaviour::BehaviourDataView& v,
+    const mgis::behaviour::Behaviour& b,
+    const std::string& n) {
+  return mgis::behaviour::executeInitializeFunction(v, b, n);
+}
+
+static int BehaviourDataView_executeInitializeFunction2(
+    mgis::behaviour::BehaviourDataView& v,
+    const mgis::behaviour::Behaviour& b,
+    const std::string& n,
+    boost::python::object i) {
+  const auto inputs = mgis::python::mgis_convert_to_span(i);
+  return mgis::behaviour::executeInitializeFunction(v, b, n, inputs);
+}
+
+static mgis::behaviour::BehaviourIntegrationResult
+MaterialDataManager_executeInitializeFunction(
+    mgis::behaviour::MaterialDataManager& m,
+    const std::string& n) {
+  return mgis::behaviour::executeInitializeFunction(m, n);
+}
+
+static mgis::behaviour::BehaviourIntegrationResult
+MaterialDataManager_executeInitializeFunction1(
+    mgis::behaviour::MaterialDataManager& m,
+    const std::string& n,
+    const mgis::size_type b,
+    const mgis::size_type e) {
+  return mgis::behaviour::executeInitializeFunction(m, n, b, e);
+}
+
+static mgis::behaviour::MultiThreadedBehaviourIntegrationResult
+MaterialDataManager_executeInitializeFunction2(
+    mgis::ThreadPool& t,
+    mgis::behaviour::MaterialDataManager& m,
+    const std::string& n) {
+  return mgis::behaviour::executeInitializeFunction(t, m, n);
+}
+
+static mgis::behaviour::BehaviourIntegrationResult
+MaterialDataManager_executeInitializeFunction3(
+    mgis::behaviour::MaterialDataManager& m,
+    const std::string& n,
+    boost::python::object i) {
+  const auto inputs = mgis::python::mgis_convert_to_span(i);
+  return mgis::behaviour::executeInitializeFunction(m, n, inputs);
+}
+
+static mgis::behaviour::BehaviourIntegrationResult
+MaterialDataManager_executeInitializeFunction4(
+    mgis::behaviour::MaterialDataManager& m,
+    const std::string& n,
+    boost::python::object i,
+    const mgis::size_type b,
+    const mgis::size_type e) {
+  const auto inputs = mgis::python::mgis_convert_to_span(i);
+  return mgis::behaviour::executeInitializeFunction(m, n, inputs, b, e);
+}
+
+static mgis::behaviour::MultiThreadedBehaviourIntegrationResult
+MaterialDataManager_executeInitializeFunction5(
+    mgis::ThreadPool& t,
+    mgis::behaviour::MaterialDataManager& m,
+    const std::string& n,
+    boost::python::object i) {
+  const auto inputs = mgis::python::mgis_convert_to_span(i);
+  return mgis::behaviour::executeInitializeFunction(t, m, n, inputs);
+}
+
+static int BehaviourDataView_executePostProcessing(
+    boost::python::object o,
+    mgis::behaviour::BehaviourDataView& v,
+    const mgis::behaviour::Behaviour& b,
+    const std::string& n) {
+  const auto output = mgis::python::mgis_convert_to_span(o);
+  return mgis::behaviour::executePostProcessing(output, v, b, n);
+}
+
+static mgis::behaviour::BehaviourIntegrationResult
+MaterialDataManager_executePostProcessing(
+    boost::python::object o,
+    mgis::behaviour::MaterialDataManager& m,
+    const std::string& n) {
+  const auto output = mgis::python::mgis_convert_to_span(o);
+  return mgis::behaviour::executePostProcessing(output, m, n);
+}
+
+static mgis::behaviour::BehaviourIntegrationResult
+MaterialDataManager_executePostProcessing2(
+    boost::python::object o,
+    mgis::behaviour::MaterialDataManager& m,
+    const std::string& n,
+    const mgis::size_type b,
+    const mgis::size_type e) {
+  const auto output = mgis::python::mgis_convert_to_span(o);
+  return mgis::behaviour::executePostProcessing(output, m, n, b, e);
+}
+
+mgis::behaviour::MultiThreadedBehaviourIntegrationResult
+MaterialDataManager_executePostProcessing3(
+    boost::python::object o,
+    mgis::ThreadPool& t,
+    mgis::behaviour::MaterialDataManager& m,
+    const std::string& n) {
+  const auto output = mgis::python::mgis_convert_to_span(o);
+  return mgis::behaviour::executePostProcessing(output, t, m, n);
+}
 
 void declareIntegrate() {
   using namespace mgis::behaviour;
@@ -107,6 +217,23 @@ void declareIntegrate() {
       .add_property("results",
                     &MultiThreadedBehaviourIntegrationResult::results);
 
+  boost::python::def("executeInitializeFunction",
+                     BehaviourDataView_executeInitializeFunction);
+  boost::python::def("executeInitializeFunction",
+                     BehaviourDataView_executeInitializeFunction2);
+  boost::python::def("executeInitializeFunction",
+                     MaterialDataManager_executeInitializeFunction);
+  boost::python::def("executeInitializeFunction",
+                     MaterialDataManager_executeInitializeFunction1);
+  boost::python::def("executeInitializeFunction",
+                     MaterialDataManager_executeInitializeFunction2);
+  boost::python::def("executeInitializeFunction",
+                     MaterialDataManager_executeInitializeFunction3);
+  boost::python::def("executeInitializeFunction",
+                     MaterialDataManager_executeInitializeFunction4);
+  boost::python::def("executeInitializeFunction",
+                     MaterialDataManager_executeInitializeFunction5);
+
   int (*integrate_ptr1)(BehaviourDataView&, const Behaviour&) = integrate;
   int (*integrate_ptr2)(MaterialDataManager&, const IntegrationType,
                         const mgis::real, const mgis::size_type,
@@ -127,4 +254,14 @@ void declareIntegrate() {
   boost::python::def("integrate", integrate_ptr3);
   boost::python::def("integrate", integrate_ptr4);
   boost::python::def("integrate", integrate_ptr5);
+
+  boost::python::def("executePostProcessing",
+                     BehaviourDataView_executePostProcessing);
+  boost::python::def("executePostProcessing",
+                     MaterialDataManager_executePostProcessing);
+  boost::python::def("executePostProcessing",
+                     MaterialDataManager_executePostProcessing2);
+  boost::python::def("executePostProcessing",
+                     MaterialDataManager_executePostProcessing3);
+
 }  // end of declareIntegrate
