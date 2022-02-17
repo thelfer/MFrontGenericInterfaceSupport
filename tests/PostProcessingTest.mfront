@@ -31,5 +31,5 @@ nu.setGlossaryName("PoissonRatio");
 εᵖ.setEntryName("PrincipalStrain");
 //! compute the principal strain
 @PostProcessing PrincipalStrain {
-  εᵖ = eto.computeEigenValues();
+  εᵖ = eto.computeEigenValues(Stensor::ASCENDING);
 }
