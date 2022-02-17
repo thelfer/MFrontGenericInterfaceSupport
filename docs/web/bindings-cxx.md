@@ -1,6 +1,22 @@
-% A brief introduction to the `MGIS` `C++` library for mechanical behaviours
-% Thomas Helfer
-% 14/05/2019
+---
+title: A brief introduction to the `MGIS` `C++` library for mechanical behaviours
+author: Thomas Helfer
+date: 2020
+lang: en-EN
+numbersections: true
+documentclass: article
+from: markdown+tex_math_single_backslash
+geometry:
+  - margin=2cm
+papersize: a4
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tabPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+bibliography: bibliography.bib
+---
 
 # Introduction
 
@@ -445,6 +461,61 @@ The third overload is similar to the second one but also takes an
 argument of the `ThreadPool` type allowing a parallelization of the
 behaviour integration. The user may refer to the `IntegrateTest2b.cxx`
 file to have an example on how this use this second overload.
+
+# Support for behaviours' initialize functions {#sec:mgis:2.1:initialize_functions}
+
+Since version 4.1, `MFront` behaviours can declare initialize functions
+which are meant to initialize the state of the material.
+
+The available initialize functions are described by the
+`initialize_functions` member of the `Behaviour` class which associates
+the name of the initialize function and a small data structure
+containing:
+
+- the pointer to the initialize function,
+- the list of inputs of the initialize function, if any.
+
+The `getInitializeFunctionVariablesArraySize` function returns the size
+of an array able to contain the inputs an initialize function for an
+integration point.
+
+The `allocateInitializeFunctionVariables` functions return an array able
+to store the inputs of an initialize function for a given integration
+point or a set of integrations points.
+
+The `executeInitializeFunction` functions execute an initialization
+function on a unique integration point or a set of integration points.
+
+> **Note**
+>
+> The `BehaviourDataView` class imposes that the initial state is immutable.
+> Thus, initialize functions can thus only initialize the state of the material
+> at the end of the time step. In most case, the call to the selected
+> initialize functions shall be follow to a call to the `update` function.
+
+# Support for behaviours' post-processings {#sec:mgis:2.1:postprocessings}
+
+Since version 4.1, `MFront` behaviours can declare postprocessings which
+are meant to process the state of the material after the behaviour
+integration.
+
+The available postprocessings are described by the `postprocessings`
+member of the `Behaviour` class which associates the name of the
+postprocessing and a small data structure containing:
+
+- the pointer to the postprocessing,
+- the list of outputs of the postprocessing.
+
+The `getPostProcessingVariablesArraySize` function returns the size
+of an array able to contain the outputs an postprocessing for an
+integration point.
+
+The `allocatePostProcessingVariables` functions return an array able to
+store the outputs of a postprocessing for a given integration point or a
+set of integrations points.
+
+The `executePostProcessing` functions execute a postprocessing on a
+unique integration point or a set of integration points.
 
 # Orthotropic behaviours
 
