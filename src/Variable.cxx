@@ -184,6 +184,70 @@ namespace mgis::behaviour::internals {
     return getArrayVariableSize(v, h);
   }
 
+  std::string getVariableTypeSymbolicRepresentation(int &);
+
+  static std::string getTinyVectorVariableTypeSymbolicRepresentation(int &v) {
+    // tiny vector
+    const auto N = extractAndShift(v, 2);
+    if (N == 0) {
+      return "tvector<N, real>";
+    }
+    return "tvector<" + std::to_string(N) + ", real>";
+  }  // end of getVariableTypeSymbolicRepresentation
+
+  static std::string getSymmetricTensorVariableTypeSymbolicRepresentation(
+      int &v) {
+    const auto N = extractAndShift(v, 2);
+    if (N == 0) {
+      return "stensor<N, real>";
+    }
+    return "stensor<" + std::to_string(N) + ", real>";
+  }  // end of getSymmetricTensorVariableTypeSymbolicRepresentation
+
+  static std::string getUnSymmetricTensorVariableTypeSymbolicRepresentation(
+      int &v) {
+    const auto N = extractAndShift(v, 2);
+    if (N == 0) {
+      return "tensor<N, real>";
+    }
+    return "tensor<" + std::to_string(N) + ", real>";
+  }  // end of getUnSymmetricTensorVariableTypeSymbolicRepresentation
+
+  static std::string getArrayVariableTypeSymbolicRepresentation(int &v) {
+    // number of dimension of the array
+    const auto a = extractAndShift(v, 3);
+    if (a == 0) {
+      mgis::raise("invalid array arity");
+    }
+    auto r = std::string{"array<"};
+    for (int i = 0; i != a; ++i) {
+      const auto d = extractAndShift(v, 7);
+      r += std::to_string(d) + ", ";
+    }
+    return r + getVariableTypeSymbolicRepresentation(v) + ">";
+  }  // end of getArrayVariableTypeSymbolicRepresentation
+
+  std::string getVariableTypeSymbolicRepresentation(int &v) {
+    const auto type = extractAndShift(v, 3);
+    if (type == 0) {
+      return "real";
+    } else if (type == 1) {
+      return getSymmetricTensorVariableTypeSymbolicRepresentation(v);
+    } else if (type == 2) {
+      return getTinyVectorVariableTypeSymbolicRepresentation(v);
+    } else if (type == 3) {
+      return getUnSymmetricTensorVariableTypeSymbolicRepresentation(v);
+    } else if (type == 4) {
+      // derivative type
+      const auto s1 = getVariableTypeSymbolicRepresentation(v);
+      const auto s2 = getVariableTypeSymbolicRepresentation(v);
+      return "derivative_type<" + s1 + ", " + s2 + ">";
+    } else if (type != 5) {
+      mgis::raise("unsupported variable type");
+    }
+    return getArrayVariableTypeSymbolicRepresentation(v);
+  }  // end of getVariableTypeSymbolicRepresentation
+
 }  // end of namespace mgis::behaviour::internals
 
 namespace mgis::behaviour {
@@ -273,5 +337,16 @@ namespace mgis::behaviour {
     }
     raise("getVariableOffset: no variable named '" + std::string(n) + "'");
   }  // end of getVariableOffset
+
+  std::string getVariableTypeSymbolicRepresentation(const int id) {
+    auto t = id;
+    const auto s = internals::getVariableTypeSymbolicRepresentation(t);
+    if (t != 0) {
+      mgis::raise(
+          "getVariableTypeSymbolicRepresentation: "
+          "invalid type identifier");
+    }
+    return s;
+  }  // end of getVariableTypeSymbolicRepresentation
 
 }  // end of namespace mgis::behaviour

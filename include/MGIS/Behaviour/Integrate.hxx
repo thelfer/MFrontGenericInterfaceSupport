@@ -18,6 +18,7 @@
 #include <thread>
 #include <vector>
 #include "MGIS/Config.hxx"
+#include "MGIS/Span.hxx"
 #include "MGIS/Behaviour/BehaviourDataView.hxx"
 
 namespace mgis {

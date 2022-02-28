@@ -23,10 +23,21 @@ extern "C" {
  * \brief type of a variable
  */
 typedef enum {
-  MGIS_BV_SCALAR  = 0,
-  MGIS_BV_VECTOR  = 1,
-  MGIS_BV_STENSOR = 2,
-  MGIS_BV_TENSOR  = 3
+  MGIS_BV_SCALAR = 0,
+  MGIS_BV_VECTOR = 2,
+  MGIS_BV_VECTOR_1D = 10,
+  MGIS_BV_VECTOR_2D = 18,
+  MGIS_BV_VECTOR_3D = 26,
+  MGIS_BV_STENSOR = 1,
+  MGIS_BV_STENSOR_1D = 9,
+  MGIS_BV_STENSOR_2D = 17,
+  MGIS_BV_STENSOR_3D = 25,
+  MGIS_BV_TENSOR = 3,
+  MGIS_BV_TENSOR_1D = 11,
+  MGIS_BV_TENSOR_2D = 19,
+  MGIS_BV_TENSOR_3D = 27,
+  MGIS_BV_HIGHER_ORDER_TENSOR = 4,
+  MGIS_BV_ARRAY = 5
 } mgis_bv_VariableType;
 
 /*!
@@ -36,8 +47,8 @@ typedef enum {
  * \param [in] t: variable type
  */
 MGIS_C_EXPORT mgis_status mgis_bv_get_variable_size(mgis_size_type* const,
-						    const char* const,
-						    const mgis_bv_VariableType);
+                                                    const char* const,
+                                                    const mgis_bv_VariableType);
 
 #ifdef __cplusplus
 }  // end of extern "C"

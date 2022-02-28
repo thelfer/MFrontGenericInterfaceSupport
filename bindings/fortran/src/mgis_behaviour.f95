@@ -1,10 +1,21 @@
 module mgis_behaviour
   use, intrinsic :: iso_c_binding, only: c_ptr, c_null_ptr
   enum, bind(C)
-     enumerator :: SCALAR  = 0
-     enumerator :: VECTOR  = 1
-     enumerator :: STENSOR = 2
-     enumerator :: TENSOR  = 3
+     enumerator :: SCALAR = 0
+     enumerator :: VECTOR = 2
+     enumerator :: VECTOR_1D = 10
+     enumerator :: VECTOR_2D = 18
+     enumerator :: VECTOR_3D = 26
+     enumerator :: STENSOR = 1
+     enumerator :: STENSOR_1D = 9
+     enumerator :: STENSOR_2D = 17
+     enumerator :: STENSOR_3D = 25
+     enumerator :: TENSOR = 3
+     enumerator :: TENSOR_1D = 11
+     enumerator :: TENSOR_2D = 19
+     enumerator :: TENSOR_3D = 27
+     enumerator :: HIGHER_ORDER_TENSOR = 4
+     enumerator :: ARRAY = 5
   end enum
   enum, bind(C)
      enumerator :: ISOTROPIC   = 0

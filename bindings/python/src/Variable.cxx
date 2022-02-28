@@ -54,11 +54,33 @@ void declareVariable() {
       .value("Scalar", Variable::SCALAR)
       .value("SCALAR", Variable::SCALAR)
       .value("Vector", Variable::VECTOR)
+      .value("Vector1D", Variable::VECTOR_1D)
+      .value("Vector2D", Variable::VECTOR_2D)
+      .value("Vector3D", Variable::VECTOR_3D)
       .value("VECTOR", Variable::VECTOR)
+      .value("VECTOR1D", Variable::VECTOR_1D)
+      .value("VECTOR2D", Variable::VECTOR_2D)
+      .value("VECTOR3D", Variable::VECTOR_3D)
       .value("Stensor", Variable::STENSOR)
+      .value("Stensor1D", Variable::STENSOR_1D)
+      .value("Stensor2D", Variable::STENSOR_2D)
+      .value("Stensor3D", Variable::STENSOR_3D)
       .value("STENSOR", Variable::STENSOR)
+      .value("STENSOR1D", Variable::STENSOR_1D)
+      .value("STENSOR2D", Variable::STENSOR_2D)
+      .value("STENSOR3D", Variable::STENSOR_3D)
       .value("Tensor", Variable::TENSOR)
-      .value("TENSOR", Variable::TENSOR);
+      .value("Tensor1D", Variable::TENSOR_1D)
+      .value("Tensor2D", Variable::TENSOR_2D)
+      .value("Tensor3D", Variable::TENSOR_3D)
+      .value("TENSOR", Variable::TENSOR)
+      .value("TENSOR1D", Variable::TENSOR_1D)
+      .value("TENSOR2D", Variable::TENSOR_2D)
+      .value("TENSOR3D", Variable::TENSOR_3D)
+      .value("HIGHER_ORDER_TENSOR", Variable::HIGHER_ORDER_TENSOR)
+      .value("HigherOrderTensor", Variable::HIGHER_ORDER_TENSOR)
+      .value("ARRAY", Variable::ARRAY)
+      .value("Array", Variable::ARRAY);
   // wrapping the Variable class
   boost::python::class_<Variable>("Variable")
       .def_readonly("name", &Variable::name, "the name of the variable")
@@ -79,5 +101,7 @@ void declareVariable() {
   boost::python::def("getVariableSize", &mgis::behaviour::getVariableSize);
   boost::python::def("getArraySize", &mgis::behaviour::getArraySize);
   boost::python::def("getVariableOffset", getVariableOffsetByString);
+  boost::python::def("getVariableTypeSymbolicRepresentation",
+                     &mgis::behaviour::getVariableTypeSymbolicRepresentation);
 
 }  // end of declareVariable

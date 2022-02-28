@@ -20,6 +20,11 @@ bibliography: bibliography.bib
 
 # Known incompatibilities
 
+## Integral values of `Variable::VECTOR` and `Variable::STENSOR`
+
+The integral values of `Variable::VECTOR` and `Variable::STENSOR` have
+changed to match `TFEL` conventions.
+
 ## Removed function in `C++`
 
 The following functions were removed:
@@ -29,7 +34,14 @@ The following functions were removed:
 - `getUniformExternalStateVariable`
 - `getNonUniformExternalStateVariable`
 
-## Removed function in `C`
+## `C` bindings
+
+### Integral values of `MGIS_BV_VECTOR` and `MGIS_BV_STENSOR`
+
+The integral values of `MGIS_BV_VECTOR` and `MGIS_BV_STENSOR` have
+changed to match `TFEL` conventions.
+
+### Removed functions
 
 The following functions were removed:
 
@@ -38,7 +50,16 @@ The following functions were removed:
 - `mgis_bv_material_state_manager_get_uniform_external_state_variable`
 - `mgis_bv_material_state_manager_get_non_uniform_external_state_variable`
 
-## Removed function in `fortran`
+## `fortran` bindings
+
+### `mgis_behaviour` module
+
+#### Integral values of `VECTOR` and `STENSOR` 
+
+The integral values of `VECTOR` and `STENSOR` have changed to match
+`TFEL` conventions.
+
+#### Removed functions
 
 The following functions were removed from the `mgis_behaviour` module:
 
@@ -48,6 +69,35 @@ The following functions were removed from the `mgis_behaviour` module:
 - `material_state_manager_get_non_uniform_external_state_variable`
 
 # New features
+
+## Support for extended types {#sec:mgis:2.1:exented_types}
+
+In previous versions, only four types of variables were supported
+(scalars, vectors, symmetric tensors and unsymmetric tensors). The size
+of those variables is a function on the modelling hypothesis. The type
+of the variables was given by the `Variable::Type` enumeration which
+could hold the values `SCALAR`, `VECTOR`, `STENSOR`, and `TENSOR`.
+
+The `Variable::Type` enumeration may now hold the following values:
+`SCALAR`, `VECTOR`, `VECTOR_1D`, `VECTOR_2D`, `VECTOR_3D`, `STENSOR`,
+`STENSOR_1D`, `STENSOR_2D`, `STENSOR_3D`, `TENSOR`, `TENSOR_1D`,
+`TENSOR_2D`, `TENSOR_3D`, `HIGHER_ORDER_TENSOR` and `ARRAY`.
+
+The `Variable` class exposes an integer named `type_identifier`
+describing more precisely the type of the variable. The meaning of this
+identifier is fully described in [this
+page](https://thelfer.github.io/tfel/web/mfront-types.html). 
+
+The `getVariableTypeSymbolicRepresentation` returns a symbolic
+representation of a object using a `C++`-like representation from a type
+identifier, as follows:
+
+~~~~{.bash}
+$ python3
+>>> import mgis.behaviour
+>>> print(mgis.behaviour.getVariableTypeSymbolicRepresentation(780))
+derivative_type<stensor<N, real>, tensor<N, real>>
+~~~~
 
 ## Support for behaviours' initialize functions {#sec:mgis:2.1:initialize_functions}
 
@@ -135,6 +185,12 @@ executePostProcessing(outputs, m, "PrincipalStrain");
 ~~~~
 
 # Issues solved
+
+## Issue #83: Add support for extended variable types 
+
+This feature is described in depth in Section @sec:mgis:2.1:extended_types.
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/83>.
 
 ## Issue #82: Add support for behaviour post-processings
 
