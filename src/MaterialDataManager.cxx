@@ -167,12 +167,12 @@ namespace mgis::behaviour {
 
   void update(MaterialDataManager& m) {
     std::fill(m.K.begin(), m.K.end(), real{0});
-    update_values(m.s0, m.s1);
+    updateValues(m.s0, m.s1);
   }  // end of update
 
   void revert(MaterialDataManager& m) {
     std::fill(m.K.begin(), m.K.end(), real{0});
-    update_values(m.s1, m.s0);
+    updateValues(m.s1, m.s0);
   }  // end of update
 
   std::vector<mgis::real> allocatePostProcessingVariables(

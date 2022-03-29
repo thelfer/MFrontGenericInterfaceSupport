@@ -261,11 +261,11 @@ namespace mgis::behaviour {
     return std::holds_alternative<real>(p->second);
   }  // end of isExternalStateVariableUniform
 
-  void update_values(MaterialStateManager& o, const MaterialStateManager& i) {
+  void updateValues(MaterialStateManager& o, const MaterialStateManager& i) {
     auto check_size = [](const mgis::size_type s1, const mgis::size_type s2) {
       if (s1 != s2) {
         mgis::raise(
-            "mgis::behaviour::update_values: "
+            "mgis::behaviour::updateValues: "
             "arrays' size does not match");
       }
     };  // end of check_size
@@ -323,7 +323,7 @@ namespace mgis::behaviour {
             if (std::find_if(b.mps.begin(), b.mps.end(), find_mp) ==
                 b.mps.end()) {
               mgis::raise(
-                  "mgis::behaviour::update_values: "
+                  "mgis::behaviour::updateValues: "
                   "material property '" +
                   mp.first +
                   "' defined in the material state manager is not defined "
@@ -333,7 +333,7 @@ namespace mgis::behaviour {
         };
     if (&i.b != &o.b) {
       mgis::raise(
-          "mgis::behaviour::update_values: the material state managers "
+          "mgis::behaviour::updateValues: the material state managers "
           "do not holds the same behaviour");
     }
     check_mps(o.b, i.material_properties);
@@ -365,6 +365,61 @@ namespace mgis::behaviour {
     for (const auto& ev : i.external_state_variables) {
       update_field_holder(o.external_state_variables[ev.first], ev.second);
     }
-  }  // end of update_values
+  }  // end of updateValues
+
+  namespace internals {
+
+    void extractScalarInternalStateVariable(
+        mgis::span<mgis::real> o,
+        const mgis::behaviour::MaterialStateManager& s,
+        const mgis::size_type offset) {
+      const auto stride = s.internal_state_variables_stride;
+      auto* const p = o.data();
+      const auto* const piv = s.internal_state_variables.data() + offset;
+      for (mgis::size_type i = 0; i != s.n; ++i) {
+        p[i] = piv[i * stride];
+      }
+    }  // end of extractScalarInternalStateVariable
+
+    void extractInternalStateVariable(
+        mgis::span<mgis::real> o,
+        const mgis::behaviour::MaterialStateManager& s,
+        const mgis::size_type nc,
+        const mgis::size_type offset) {
+      const auto stride = s.internal_state_variables_stride;
+      auto* p = o.data();
+      const auto* const piv = s.internal_state_variables.data() + offset;
+      for (mgis::size_type i = 0; i != s.n; ++i) {
+        const auto is = i * stride;
+        for (mgis::size_type j = 0; j != nc; ++j, ++p) {
+          *p = piv[is + j];
+        }
+      }
+    }  // end of extractScalarInternalStateVariable
+
+  }  // end of namespace internals
+
+  void extractInternalStateVariable(
+      mgis::span<mgis::real> o,
+      const mgis::behaviour::MaterialStateManager& s,
+      const mgis::string_view n) {
+    const auto& iv = mgis::behaviour::getVariable(s.b.isvs, n);
+    const auto nc = mgis::behaviour::getVariableSize(iv, s.b.hypothesis);
+    const auto offset =
+        mgis::behaviour::getVariableOffset(s.b.isvs, n, s.b.hypothesis);
+    // checking compatibility
+    if (o.size() != s.n * nc) {
+      mgis::raise(
+          "extractInternalStateVariable: "
+          "unmatched number of integration points");
+    }
+    if (nc == 1) {
+      mgis::behaviour::internals::extractScalarInternalStateVariable(o, s,
+                                                                     offset);
+    } else {
+      mgis::behaviour::internals::extractInternalStateVariable(o, s, nc,
+                                                               offset);
+    }
+  }  // end of extractInternalStateVariable
 
 }  // end of namespace mgis::behaviour

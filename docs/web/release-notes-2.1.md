@@ -184,7 +184,27 @@ auto outputs = allocatePostProcessingVariables(m, "PrincipalStrain");
 executePostProcessing(outputs, m, "PrincipalStrain");
 ~~~~
 
+## Utility function to extract the value of an internal state variable {#sec:mgis:2.1:extractInternalStateVariable}
+
+The `extractInternalStateVariable` function can now be used to extract
+the value of an internal state variable in a pre-allocated buffer.
+
+### Example of usage
+
+~~~~{.cxx}
+auto m = MaterialDataManager{b, 2u};
+...
+auto pr = std::vector<real>(2u);
+extractInternalStateVariable(pr, m.s1, "HydrostaticPressure");
+~~~~
+
 # Issues solved
+
+## Issue #95: Add an utility function to extract the value of an internal state variable
+
+This feature is described in Section @sec:mgis:2.1:extractInternalStateVariable.
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/95>.
 
 ## Issue #83: Add support for extended variable types 
 

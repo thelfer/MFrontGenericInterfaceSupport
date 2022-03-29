@@ -174,15 +174,14 @@ namespace mgis::behaviour {
     std::vector<mgis::real> stored_energies_values;
     //! \brief value of the dissipated energies, if hold internally
     std::vector<mgis::real> dissipated_energies_values;
-    //! move constructor
+    //! \brief move constructor
     MaterialStateManager(MaterialStateManager&&) = delete;
-    //! copy constructor
+    //! \brief copy constructor
     MaterialStateManager(const MaterialStateManager&) = delete;
-    //! move assignement
+    //! \brief move assignement
     MaterialStateManager& operator=(MaterialStateManager&&) = delete;
-    //! copy assignement
+    //! \brief copy assignement
     MaterialStateManager& operator=(const MaterialStateManager&) = delete;
-
   };  // end of struct MaterialStateManager
 
   /*!
@@ -269,8 +268,22 @@ namespace mgis::behaviour {
    * \param[out] o: output state
    * \param[out] i: input state
    */
-  MGIS_EXPORT void update_values(MaterialStateManager&,
-                                 const MaterialStateManager&);
+  MGIS_EXPORT void updateValues(MaterialStateManager&,
+                                const MaterialStateManager&);
+  /*!
+   * \brief extract an internal state variable
+   *
+   * \param[out] o: buffer in which the values of the given internal state
+   * variable is stored
+   * \param[in] s: material state manager
+   * \param[in] n: name of the internal state variables
+   *
+   * \note the output buffer must be allocated properly
+   */
+  MGIS_EXPORT void extractInternalStateVariable(
+      mgis::span<mgis::real>,
+      const mgis::behaviour::MaterialStateManager&,
+      const mgis::string_view);
 
 }  // end of namespace mgis::behaviour
 
