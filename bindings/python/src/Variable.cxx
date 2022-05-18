@@ -44,6 +44,21 @@ static mgis::size_type getVariableOffsetByString(
   return mgis::behaviour::getVariableOffset(vs, n, h);
 }  // getVariableOffsetByString
 
+// mgis::string_view is not exposed
+static const mgis::behaviour::Variable& getVariableByString(
+    const std::vector<mgis::behaviour::Variable>& vs,
+    const std::string& n) {
+  return mgis::behaviour::getVariable(vs, n);
+}  // getVariableByString
+
+// mgis::string_view is not exposed
+static mgis::size_type getVariableSizeByString(
+    const std::vector<mgis::behaviour::Variable>& vs,
+    const std::string& n,
+    const mgis::behaviour::Hypothesis h) {
+  return mgis::behaviour::getVariableSize(mgis::behaviour::getVariable(vs, n), h);
+}  // getVariableSizeByString
+
 // forward declaration
 void declareVariable();
 
@@ -96,9 +111,10 @@ void declareVariable() {
   mgis::python::initializeVectorConverter<
       std::vector<std::pair<Variable, Variable>>>();
   // free functions
-  boost::python::def("getVariable", &mgis::behaviour::getVariable,
+  boost::python::def("getVariable", getVariableByString,
                      boost::python::return_internal_reference<>());
   boost::python::def("getVariableSize", &mgis::behaviour::getVariableSize);
+  boost::python::def("getVariableSize", getVariableSizeByString);
   boost::python::def("getArraySize", &mgis::behaviour::getArraySize);
   boost::python::def("getVariableOffset", getVariableOffsetByString);
   boost::python::def("getVariableTypeSymbolicRepresentation",
