@@ -22,7 +22,6 @@ import mgis.behaviour as mgis_bv
 
 class QuadratureFunction:
     """An abstract class for functions defined at quadrature points"""
-
     def __init__(self, name, shape, hypothesis):
         self.shape = shape
         self.name = name
@@ -31,8 +30,10 @@ class QuadratureFunction:
     def initialize_function(self, mesh, quadrature_degree):
         self.quadrature_degree = quadrature_degree
         self.mesh = mesh
-        self.dx = Measure("dx", metadata={"quadrature_degree": quadrature_degree})
-        We = get_quadrature_element(mesh.ufl_cell(), quadrature_degree, self.shape)
+        self.dx = Measure("dx",
+                          metadata={"quadrature_degree": quadrature_degree})
+        We = get_quadrature_element(mesh.ufl_cell(), quadrature_degree,
+                                    self.shape)
         self.function_space = FunctionSpace(mesh, We)
         self.function = Function(self.function_space, name=self.name)
 
@@ -65,13 +66,12 @@ class QuadratureFunction:
             V = VectorFunctionSpace(self.mesh, space, degree, dim=self.shape)
         v = Function(V, name=self.name)
         v.assign(
-            project(
-                fun,
-                V,
-                form_compiler_parameters={"quadrature_degree": self.quadrature_degree},
-                **kwargs
-            )
-        )
+            project(fun,
+                    V,
+                    form_compiler_parameters={
+                        "quadrature_degree": self.quadrature_degree
+                    },
+                    **kwargs))
         return v
 
 
@@ -89,7 +89,6 @@ class Gradient(QuadratureFunction):
     This class is intended for internal use only. Gradient objects must be
     declared by the user using the registration concept.
     """
-
     def __init__(self, variable, expression, name, hypothesis, symmetric=None):
         self.variable = variable
         if symmetric is None:
@@ -101,8 +100,8 @@ class Gradient(QuadratureFunction):
             else:
                 converter = nonsymmetric_tensor_to_vector
             if hypothesis in [
-                mgis_bv.Hypothesis.PlaneStrain,
-                mgis_bv.Hypothesis.Axisymmetrical,
+                    mgis_bv.Hypothesis.PlaneStrain,
+                    mgis_bv.Hypothesis.Axisymmetrical,
             ]:
                 if ufl.shape(expression) == (2, 2):
                     T22 = 0
@@ -110,8 +109,8 @@ class Gradient(QuadratureFunction):
                 elif ufl.shape(expression) == (3, 3):
                     T22 = expression[2, 2]
                     expression_2d = ufl.as_tensor(
-                        [[expression[i, j] for j in range(2)] for i in range(2)]
-                    )
+                        [[expression[i, j] for j in range(2)]
+                         for i in range(2)])
                 self.expression = converter(expression_2d, T22)
             else:
                 self.expression = converter(expression)
@@ -144,12 +143,10 @@ class Gradient(QuadratureFunction):
     def variation(self, v):
         """ Directional derivative in direction v """
         # return ufl.algorithms.expand_derivatives(ufl.derivative(self.expression, self.variable, v))
-        deriv = sum(
-            [
-                ufl.derivative(self.expression, var, v_)
-                for (var, v_) in zip(split(self.variable), split(v))
-            ]
-        )
+        deriv = sum([
+            ufl.derivative(self.expression, var, v_)
+            for (var, v_) in zip(split(self.variable), split(v))
+        ])
         return ufl.algorithms.expand_derivatives(deriv)
 
     def initialize_function(self, mesh, quadrature_degree):
@@ -172,7 +169,6 @@ class Gradient(QuadratureFunction):
 
 class Var(Gradient):
     """ A simple variable """
-
     def __init__(self, variable, expression, name, hypothesis):
         Gradient.__init__(self, variable, expression, name, hypothesis)
 
@@ -182,7 +178,6 @@ class Var(Gradient):
 
 class QuadratureFunctionTangentBlocks(QuadratureFunction):
     """An abstract class for Flux and InternalStateVariables"""
-
     def initialize_tangent_blocks(self, variables):
         self.variables = variables
         values = [
@@ -196,8 +191,7 @@ class QuadratureFunctionTangentBlocks(QuadratureFunction):
                     ),
                 ),
                 name="d{}_d{}".format(self.name, v.name),
-            )
-            for v in self.variables
+            ) for v in self.variables
         ]
         keys = [v.name for v in self.variables]
         self.tangent_blocks = dict(zip(keys, values))
