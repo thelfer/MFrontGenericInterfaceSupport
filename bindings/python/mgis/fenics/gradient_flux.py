@@ -115,18 +115,6 @@ class Gradient(QuadratureFunction):
             else:
                 self.expression = converter(expression)
 
-        #     self.expression = as_vector(
-        #         [converter(expression)[i] for i in range(4)]
-        #     )
-        #     else:
-        #         self.expression = symmetric_tensor_to_vector(expression)
-        # else:
-        #     if ufl.shape(expression) == (2, 2):
-        #         self.expression = as_vector(
-        #             [nonsymmetric_tensor_to_vector(expression)[i] for i in range(5)]
-        #         )
-        #     else:
-        #         self.expression = nonsymmetric_tensor_to_vector(expression)
         shape = ufl.shape(self.expression)
         if len(shape) == 1:
             self.shape = shape[0]
