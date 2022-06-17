@@ -17,13 +17,15 @@ from .utils import (
     get_quadrature_element,
     vector_to_tensor,
 )
+import mgis.behaviour as mgis_bv
 
 
 class QuadratureFunction:
     """An abstract class for functions defined at quadrature points"""
-    def __init__(self, name, shape):
+    def __init__(self, name, shape, hypothesis):
         self.shape = shape
         self.name = name
+        self.hypothesis = hypothesis
 
     def initialize_function(self, mesh, quadrature_degree):
         self.quadrature_degree = quadrature_degree
@@ -87,26 +89,32 @@ class Gradient(QuadratureFunction):
     This class is intended for internal use only. Gradient objects must be
     declared by the user using the registration concept.
     """
-    def __init__(self, variable, expression, name, symmetric=None):
+    def __init__(self, variable, expression, name, hypothesis, symmetric=None):
         self.variable = variable
         if symmetric is None:
             self.expression = expression
         # TODO: treat axisymmetric case
-        elif symmetric:
-            if ufl.shape(expression) == (2, 2):
-                self.expression = as_vector([
-                    symmetric_tensor_to_vector(expression)[i] for i in range(4)
-                ])
-            else:
-                self.expression = symmetric_tensor_to_vector(expression)
         else:
-            if ufl.shape(expression) == (2, 2):
-                self.expression = as_vector([
-                    nonsymmetric_tensor_to_vector(expression)[i]
-                    for i in range(5)
-                ])
+            if symmetric:
+                converter = symmetric_tensor_to_vector
             else:
-                self.expression = nonsymmetric_tensor_to_vector(expression)
+                converter = nonsymmetric_tensor_to_vector
+            if hypothesis in [
+                    mgis_bv.Hypothesis.PlaneStrain,
+                    mgis_bv.Hypothesis.Axisymmetrical,
+            ]:
+                if ufl.shape(expression) == (2, 2):
+                    T22 = 0
+                    expression_2d = expression
+                elif ufl.shape(expression) == (3, 3):
+                    T22 = expression[2, 2]
+                    expression_2d = ufl.as_tensor(
+                        [[expression[i, j] for j in range(2)]
+                         for i in range(2)])
+                self.expression = converter(expression_2d, T22)
+            else:
+                self.expression = converter(expression)
+
         shape = ufl.shape(self.expression)
         if len(shape) == 1:
             self.shape = shape[0]
@@ -115,6 +123,7 @@ class Gradient(QuadratureFunction):
         else:
             self.shape = shape
         self.name = name
+        self.hypothesis = hypothesis
 
     def __call__(self, v):
         return ufl.replace(self.expression, {self.variable: v})
@@ -148,8 +157,8 @@ class Gradient(QuadratureFunction):
 
 class Var(Gradient):
     """ A simple variable """
-    def __init__(self, variable, expression, name):
-        Gradient.__init__(self, variable, expression, name)
+    def __init__(self, variable, expression, name, hypothesis):
+        Gradient.__init__(self, variable, expression, name, hypothesis)
 
     def _evaluate_at_quadrature_points(self, x):
         local_project(x, self.function_space, self.dx, self.function)

@@ -25,7 +25,7 @@ Grad = {
 }
 Id_Grad = {
     mgis_bv.Hypothesis.Tridimensional: lambda u: Identity(3) + grad(u),
-    mgis_bv.Hypothesis.PlaneStrain: lambda u: Identity(2) + grad(u),
+    mgis_bv.Hypothesis.PlaneStrain: lambda u: Identity(3) + grad_3d(u),
     mgis_bv.Hypothesis.Axisymmetrical:
     lambda r, u: Identity(3) + axi_grad(r, u),
 }
@@ -222,8 +222,16 @@ class AbstractNonlinearProblem:
             symmetric = True
         else:
             symmetric = None
-        self.gradients.update(
-            {name: Gradient(self.u, expression, name, symmetric=symmetric)})
+        self.gradients.update({
+            name:
+            Gradient(
+                self.u,
+                expression,
+                name,
+                self.material.hypothesis,
+                symmetric=symmetric,
+            )
+        })
 
     def register_external_state_variable(self, name, expression):
         """
@@ -245,7 +253,7 @@ class AbstractNonlinearProblem:
         if type(expression) == float:
             expression = Constant(expression)
         self.state_variables["external"].update(
-            {name: Var(self.u, expression, name)})
+            {name: Var(self.u, expression, name, self.material.hypothesis)})
 
     def set_loading(self, Fext):
         """
@@ -307,7 +315,7 @@ class AbstractNonlinearProblem:
         fluxes = []
         for (f, size) in zip(self.material.get_flux_names(),
                              self.material.get_flux_sizes()):
-            flux = Flux(f, size)
+            flux = Flux(f, size, self.material.hypothesis)
             flux.initialize_function(self.mesh, self.quadrature_degree)
             fluxes.append(flux)
         self.fluxes = dict(zip(self.material.get_flux_names(), fluxes))
@@ -318,7 +326,8 @@ class AbstractNonlinearProblem:
                 self.material.get_internal_state_variable_names(),
                 self.material.get_internal_state_variable_sizes(),
         ):
-            state_variable = InternalStateVariable(s, size)
+            state_variable = InternalStateVariable(s, size,
+                                                   self.material.hypothesis)
             state_variable.initialize_function(self.mesh,
                                                self.quadrature_degree)
             state_variables.append(state_variable)
