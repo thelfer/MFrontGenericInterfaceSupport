@@ -119,6 +119,20 @@ namespace mgis::behaviour {
     return v;
   }  // end of getJacobianBlockVariables
 
+  BehaviourInitializeFunction::BehaviourInitializeFunction() = default;
+  BehaviourInitializeFunction::BehaviourInitializeFunction(BehaviourInitializeFunction &&) = default;
+  BehaviourInitializeFunction::BehaviourInitializeFunction(const BehaviourInitializeFunction &) = default;
+  BehaviourInitializeFunction &BehaviourInitializeFunction::operator=(BehaviourInitializeFunction &&) = default;
+  BehaviourInitializeFunction &BehaviourInitializeFunction::operator=(const BehaviourInitializeFunction &) = default;
+  BehaviourInitializeFunction::~BehaviourInitializeFunction() = default;
+
+  BehaviourPostProcessing::BehaviourPostProcessing() = default;
+  BehaviourPostProcessing::BehaviourPostProcessing(BehaviourPostProcessing &&) = default;
+  BehaviourPostProcessing::BehaviourPostProcessing(const BehaviourPostProcessing &) = default;
+  BehaviourPostProcessing &BehaviourPostProcessing::operator=(BehaviourPostProcessing &&) = default;
+  BehaviourPostProcessing &BehaviourPostProcessing::operator=(const BehaviourPostProcessing &) = default;
+  BehaviourPostProcessing::~BehaviourPostProcessing() = default;
+
   Behaviour::Behaviour() = default;
   Behaviour::Behaviour(Behaviour &&) = default;
   Behaviour::Behaviour(const Behaviour &) = default;
@@ -169,8 +183,8 @@ namespace mgis::behaviour {
       msg += std::to_string(MGIS_BEHAVIOUR_API_VERSION);
       raise(msg);
     }
-
     d.tfel_version = lm.getTFELVersion(l, b);
+    d.unit_system = lm.getUnitSystem(l, b);
     d.source = lm.getSource(l, b);
     d.btype = [&l, &b, &lm, &raise] {
       /* - 0 : general behaviour

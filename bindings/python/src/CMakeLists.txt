@@ -72,6 +72,11 @@ mgis_python_module(mgis _mgis
  mgis-module.cxx
  ThreadPool.cxx)
 
+mgis_python_module(mgis_material_property material_property
+ material_property-module.cxx
+ MaterialProperty.cxx
+)
+
 mgis_python_module(mgis_behaviour behaviour
  behaviour-module.cxx
  NumPySupport.cxx

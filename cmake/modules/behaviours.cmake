@@ -62,7 +62,7 @@ function(mfront_behaviours_check_library name)
     add_library(${name} SHARED EXCLUDE_FROM_ALL ${${name}_SOURCES})
     add_dependencies(check ${name})
     target_include_directories(${name}
-      PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/${interface}/include"
+      PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include"
       PRIVATE "${TFEL_INCLUDE_PATH}")
     if(WIN32)
       if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")

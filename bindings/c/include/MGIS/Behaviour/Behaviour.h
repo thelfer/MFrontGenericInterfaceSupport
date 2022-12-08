@@ -85,11 +85,13 @@ typedef enum {
 typedef enum {
   MGIS_BV_DSIG_DF = 0, /*!< \brief derivative of the Cauchy stress with respect
                         *   to the deformation gradient */
-  MGIS_BV_DS_DEGL =
-      1,              /*!< \brief derivative of the second Piola-Kirchoff stress
-                       *   with respect to the Green-Lagrange strain */
-  MGIS_BV_DPK1_DF = 2 /*!< \brief derivative of the first Piola-Kirchoff stress
-                       *   with respect to the deformation gradient  */
+  MGIS_BV_DS_DEGL = 1, /*!< \brief derivative of the second Piola-Kirchhoff
+                        * stress with respect to the Green-Lagrange strain */
+  MGIS_BV_DPK1_DF = 2, /*!< \brief derivative of the first Piola-Kirchhoff stress
+                        *   with respect to the deformation gradient  */
+  MGIS_BV_DTAU_DDF = 3 /*!< \brief derivative of the Kirchhoff stress
+                        *   with respect to the spatial increment of the
+                        * deformation gradient  */
 } mgis_bv_FiniteStrainBehavourTangentOperator;
 
 /*!
@@ -765,7 +767,7 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_upper_physical_bound(
  * \param[in] b: behaviour
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_computes_stored_energy(
-      int* const, const mgis_bv_Behaviour* const );
+    int* const, const mgis_bv_Behaviour* const);
 /*!
  * \brief return if the behaviour computes the dissipated energy
  * \param[out] v: returned value

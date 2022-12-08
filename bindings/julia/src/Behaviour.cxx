@@ -75,6 +75,7 @@ void declareBehaviour(jlcxx::Module &m) {
   m.set_const("DPK1_DF", FiniteStrainBehaviourOptions::DPK1_DF);
   m.set_const("DS_DEGL", FiniteStrainBehaviourOptions::DS_DEGL);
   m.set_const("DPK2_DEGL", FiniteStrainBehaviourOptions::DS_DEGL);
+  m.set_const("DTAU_DDF", FiniteStrainBehaviourOptions::DTAU_DDF);
   //!
   m.add_bits<Behaviour::Symmetry>("BehaviourSymmetry");
   m.set_const("ISOTROPIC", Behaviour::ISOTROPIC);

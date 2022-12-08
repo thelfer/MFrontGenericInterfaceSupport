@@ -376,7 +376,8 @@ void declareBehaviour() {
       .value("DSIG_DF", FiniteStrainBehaviourOptions::DSIG_DF)
       .value("DCAUCHY_DF", FiniteStrainBehaviourOptions::DSIG_DF)
       .value("DPK1_DF", FiniteStrainBehaviourOptions::DPK1_DF)
-      .value("DS_DEGL", FiniteStrainBehaviourOptions::DS_DEGL);
+      .value("DS_DEGL", FiniteStrainBehaviourOptions::DS_DEGL)
+      .value("DTAU_DDF", FiniteStrainBehaviourOptions::DTAU_DDF);
   // wrapping the FiniteStrainBehaviourOptions class
   boost::python::class_<FiniteStrainBehaviourOptions>(
       "FiniteStrainBehaviourOptions")

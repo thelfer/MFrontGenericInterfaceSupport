@@ -1,6 +1,14 @@
 STRING(REPLACE "\\;" ";" MGIS_PATH_STRING "$ENV{PATH}")
 STRING(REPLACE ";" "\\;" MGIS_PATH_STRING "${MGIS_PATH_STRING}")
 
+mfront_material_properties_check_library(MaterialPropertyTest
+  MaterialPropertyBoundCheck
+  MaterialPropertyBoundCheck2
+  MaterialPropertyBoundCheck3
+  MaterialPropertyErrnoCheck
+  MaterialPropertyErrnoCheck2
+  Inconel600_YoungModulus)
+
 mfront_behaviours_check_library(BehaviourTest
   Elasticity
   OrthotropicElasticity
@@ -17,6 +25,23 @@ mfront_behaviours_check_library(BehaviourTest
 
 mfront_behaviours_check_library(ModelTest
   ode_rk54)
+
+#
+
+add_executable(LoadMaterialPropertyTest
+  EXCLUDE_FROM_ALL
+  LoadMaterialPropertyTest.cxx)
+target_link_libraries(LoadMaterialPropertyTest
+  PRIVATE MFrontGenericInterface)
+target_compile_definitions(LoadMaterialPropertyTest
+  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
+
+add_test(NAME LoadMaterialPropertyTest
+ COMMAND LoadMaterialPropertyTest
+ "$<TARGET_FILE:MaterialPropertyTest>")
+add_dependencies(check LoadMaterialPropertyTest)
+
+# Test on behaviours
 
 add_executable(MFrontGenericBehaviourInterfaceTest
   EXCLUDE_FROM_ALL

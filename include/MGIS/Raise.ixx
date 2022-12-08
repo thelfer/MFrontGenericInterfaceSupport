@@ -41,14 +41,14 @@ namespace mgis {
     const auto h = getExceptionHandler();
     if (h != nullptr) {
       try {
-        Exception e(std::forward<Args...>(a...));
+        Exception e(std::forward<Args>(a)...);
         throw(std::move(e));
       } catch (...) {
         h();
       }
       std::abort();
     } else {
-      Exception e(std::forward<Args...>(a...));
+      Exception e(std::forward<Args>(a)...);
       throw(std::move(e));
     }
   }  // end of raise
@@ -63,7 +63,7 @@ namespace mgis {
   template <typename Exception, typename... Args>
   void raise_if(const bool c, Args&&... a) {
     if (c) {
-      raise<Exception>(std::forward<Args...>(a...));
+      raise<Exception>(std::forward<Args>(a)...);
     }
   }  // end of raise
 

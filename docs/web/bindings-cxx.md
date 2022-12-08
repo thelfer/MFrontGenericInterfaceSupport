@@ -140,10 +140,12 @@ The following tangent operators are available:
 
 - `DSIG_DF`, the derivative of the Cauchy stress with respect to the
   deformation gradient.
-- `DS_DEGL`, the derivative of the second Piola-Kirchoff stress with
+- `DS_DEGL`, the derivative of the second Piola-Kirchhoff stress with
   respect to the Green-Lagrange strain.
-- `DPK1_DF`, the derivative of the first Piola-Kirchoff stress with
+- `DPK1_DF`, the derivative of the first Piola-Kirchhoff stress with
   respect to the deformation gradient.
+- `DTAU_DDF`, the derivative of the Kirchhoff stress with
+  respect to the spatial increment of the deformation gradient.
 
 ~~~~{.cxx}
 const auto h = Hypothesis::TRIDIMENSIONAL;

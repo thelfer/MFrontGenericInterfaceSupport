@@ -27,6 +27,7 @@
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 
 #include "MGIS/Config.hxx"
+#include "MGIS/MaterialProperty/MaterialPropertyFctPtr.hxx"
 #include "MGIS/Behaviour/FiniteStrainBehaviourOptions.hxx"
 #include "MGIS/Behaviour/BehaviourFctPtr.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
@@ -39,10 +40,10 @@ namespace mgis {
    */
   struct MGIS_VISIBILITY_EXPORT LibrariesManager {
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-    //! a simple alias
+    //! \brief a simple alias
     using libhandler = HINSTANCE__ *;
 #else
-    //! a simple alias
+    //! \brief a simple alias
     using libhandler = void *;
 #endif /* LIB_EXTERNALLIBRARYMANAGER_HXX */
     //! a simple alias
@@ -54,11 +55,17 @@ namespace mgis {
     LibrariesManager &operator=(LibrariesManager &&) = delete;
     LibrariesManager &operator=(const LibrariesManager &) = delete;
     /*!
-     * \return the `TFEL` version used to generate an `MGIS` entry point
+     * \return the `TFEL` version used to generate an `MFront` entry point
      * \param[in] l: library name
      * \param[in] n: entry point name
      */
     std::string getTFELVersion(const std::string &, const std::string &);
+    /*!
+     * \return the `UnitSystem` used by an `MFront` entry point
+     * \param[in] l: library name
+     * \param[in] n: entry point name
+     */
+    std::string getUnitSystem(const std::string &, const std::string &);
     /*!
      * \return the `TFEL`'s API version.
      *
@@ -91,6 +98,27 @@ namespace mgis {
      * \param[in] n: entry point name
      */
     std::string getSource(const std::string &, const std::string &);
+    /*!
+     * \return the function implementing the given material property
+     * \param[in] l: library
+     * \param[in] mp: material property' name
+     */
+    mgis::material_property::MaterialPropertyFctPtr getMaterialProperty(
+        const std::string &, const std::string &);
+    /*!
+     * \return the name of the output of the given material property
+     * \param[in] l: library name
+     * \param[in] mp: material property' name
+     */
+    std::string getMaterialPropertyOutputName(const std::string &,
+                                              const std::string &);
+    /*!
+     * \return the names of the inputs of the given material property
+     * \param[in] l: library name
+     * \param[in] mp: material property' name
+     */
+    std::vector<std::string> getMaterialPropertyInputsNames(
+        const std::string &, const std::string &);
     /*!
      * \return the function implementing the behaviour
      * \param[in] l: library
@@ -731,6 +759,16 @@ namespace mgis {
     LibrariesManager();
     //! \brief destructor
     ~LibrariesManager();
+    /*!
+     * \return the names of a group of variables associated with a symbol
+     * associated with the given entry point.
+     * \param[in] l: library name
+     * \param[in] e: entry point
+     * \param[in] n: name of the group of variables
+     */
+    std::vector<std::string> getNames(const std::string &,
+                                      const std::string &,
+                                      const std::string &);
     /*!
      * \return the names of a group of variables associated with a behaviour.
      * \param[in] l: library name

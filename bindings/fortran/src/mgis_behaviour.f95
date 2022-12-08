@@ -57,6 +57,7 @@ module mgis_behaviour
      enumerator :: DSIG_DF = 0
      enumerator :: DS_DEGL = 1
      enumerator :: DPK1_DF = 2
+     enumerator :: DTAU_DDF = 3
   end enum
   type :: FiniteStrainBehaviourOptions
     private

@@ -196,6 +196,27 @@ namespace mgis {
 
   LibrariesManager::LibrariesManager() = default;
 
+  mgis::material_property::MaterialPropertyFctPtr LibrariesManager::getMaterialProperty(
+      const std::string &l, const std::string &mp) {
+    const auto p = this->getSymbolAddress(l, mp);
+    if (p == nullptr) {
+      mgis::raise(
+          "LibrariesManager::getMaterialProperty: can't load material property '" +
+          mp + "' in library '" + l + "'");
+    }
+    return reinterpret_cast<mgis::material_property::MaterialPropertyFctPtr>(p);
+  }  // end of getMaterialProperty
+
+  std::vector<std::string> LibrariesManager::getMaterialPropertyInputsNames(
+      const std::string &l, const std::string &mp) {
+    return this->getNames(l, mp, "args");
+  }  // end of getMaterialPropertyInputsNames
+
+  std::string LibrariesManager::getMaterialPropertyOutputName(
+      const std::string &l, const std::string &mp) {
+    return *(this->extract<const char *const>(l, mp + "_output"));
+  }  // end of getMaterialPropertyOutputName
+
   std::vector<std::string> LibrariesManager::getBehaviourInitializeFunctions(
       const std::string &l, const std::string &b, const Hypothesis h) {
     return this->getNames(l, b, h, "InitializeFunctions");
@@ -493,6 +514,8 @@ namespace mgis {
         return "dsig_dF";
       } else if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DS_DEGL) {
         return "dPK2_degl";
+      } else if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DTAU_DDF) {
+        return "dtau_ddF";
       } else if (t != mgis::behaviour::FiniteStrainBehaviourOptions::DPK1_DF) {
         mgis::raise(
             "LibrariesManager::getRotateBehaviourTangentOperatorBlocksFunction:"
@@ -556,6 +579,15 @@ namespace mgis {
     }
     return *(static_cast<const char *const *>(p));
   }  // end of getTFELVersion
+
+  std::string LibrariesManager::getUnitSystem(const std::string &l,
+                                               const std::string &n) {
+    const auto p = this->getSymbolAddress(l, n + "_unit_system");
+    if (p == nullptr) {
+      return "";
+    }
+    return *(static_cast<const char *const *>(p));
+  }  // end of getUnitSystem
 
   unsigned short LibrariesManager::getAPIVersion(const std::string &l,
                                                  const std::string &n) {
@@ -668,6 +700,18 @@ namespace mgis {
   }  // end of extract
 
   std::vector<std::string> LibrariesManager::getNames(const std::string &l,
+                                                      const std::string &e,
+                                                      const std::string &n) {
+    std::vector<std::string> vars;
+    const auto nb = *(this->extract<unsigned short>(l, e + "_n" + n));
+    if (nb != 0u) {
+      const auto res = this->extract<const char *const>(l, e + '_' + n);
+      std::copy(res, res + nb, std::back_inserter(vars));
+    }
+    return vars;
+  }  // end of getNames
+
+  std::vector<std::string> LibrariesManager::getNames(const std::string &l,
                                                       const std::string &f,
                                                       const Hypothesis h,
                                                       const std::string &n) {
@@ -675,9 +719,11 @@ namespace mgis {
     const auto hn = toString(h);
     const auto nb = *(this->extract<unsigned short>(l, f + "_" + hn + "_n" + n,
                                                     f + "_n" + n));
-    const auto res = this->extract<const char *const>(l, f + "_" + hn + '_' + n,
-                                                      f + '_' + n);
-    std::copy(res, res + nb, std::back_inserter(vars));
+    if (nb != 0u) {
+      const auto res = this->extract<const char *const>(
+          l, f + "_" + hn + '_' + n, f + '_' + n);
+      std::copy(res, res + nb, std::back_inserter(vars));
+    }
     return vars;
   }  // end of getNames
 

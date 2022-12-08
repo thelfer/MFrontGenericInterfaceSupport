@@ -36,8 +36,10 @@ namespace mgis::behaviour {
                     deformation gradient */
       DS_DEGL, /*!< derivative of the second Piola-Kirchoff stress with
                     respect to the Green-Lagrange strain */
-      DPK1_DF  /*!< derivative of the first Piola-Kirchoff stress with
+      DPK1_DF, /*!< derivative of the first Piola-Kirchoff stress with
                     respect to the deformation gradient  */
+      DTAU_DDF /*!< derivative of the Kirchoff stress with
+                    respect to the spatial increment of the deformation gradient  */
     } tangent_operator = DSIG_DF;
   };  // end of struct FiniteStrainBehaviourOptions
 

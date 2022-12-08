@@ -30,6 +30,18 @@ namespace mgis::behaviour {
 
   //! \brief structure describing an initialize function of a behaviour
   struct MGIS_EXPORT BehaviourInitializeFunction {
+    //! \brief constructor
+    BehaviourInitializeFunction();
+    //! \brief move constructor
+    BehaviourInitializeFunction(BehaviourInitializeFunction &&);
+    //! \brief copy constructor
+    BehaviourInitializeFunction(const BehaviourInitializeFunction &);
+    //! \brief move assignement
+    BehaviourInitializeFunction &operator=(BehaviourInitializeFunction &&);
+    //! \brief standard assignement
+    BehaviourInitializeFunction &operator=(const BehaviourInitializeFunction &);
+    //! \brief destructor
+    ~BehaviourInitializeFunction();
     //! \brief pointer to the initialize function
     BehaviourInitializeFctPtr f;
     //! \brief inputs of the initialize function
@@ -38,6 +50,18 @@ namespace mgis::behaviour {
 
   //! \brief structure describing a post-processing of a behaviour
   struct MGIS_EXPORT BehaviourPostProcessing {
+    //! \brief constructor
+    BehaviourPostProcessing();
+    //! \brief move constructor
+    BehaviourPostProcessing(BehaviourPostProcessing &&);
+    //! \brief copy constructor
+    BehaviourPostProcessing(const BehaviourPostProcessing &);
+    //! \brief move assignement
+    BehaviourPostProcessing &operator=(BehaviourPostProcessing &&);
+    //! \brief standard assignement
+    BehaviourPostProcessing &operator=(const BehaviourPostProcessing &);
+    //! \brief destructor
+    ~BehaviourPostProcessing();
     //! \brief pointer to the post-processing
     BehaviourPostProcessingFctPtr f;
     //! \brief outputs of the post-processing
@@ -76,10 +100,12 @@ namespace mgis::behaviour {
      * modelling hypothesis)
      */
     std::string function;
-    //! \brief name of the `MGIS` source file used to generate the behaviour
+    //! \brief name of the `MFront` source file used to generate the behaviour
     std::string source;
     //! \brief version of `TFEL` used to generate the behaviour
     std::string tfel_version;
+    //! \brief unit system used by the behaviour
+    std::string unit_system;
     //! \brief list of initialize functions associated with the behaviour
     std::map<std::string, BehaviourInitializeFunction, std::less<>> initialize_functions;
     //! \brief pointer to the function implementing the behaviour

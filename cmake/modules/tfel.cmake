@@ -129,6 +129,7 @@ IF(TFEL_CONFIG AND MFRONT AND MFRONT_QUERY)
         ${${name}_dependencies_SOURCES})
   endmacro(add_mfront_dependency)
 
+  include(cmake/modules/material-properties.cmake)
   include(cmake/modules/behaviours.cmake)
   set(MGIS_HAVE_TFEL ON)
   

@@ -4,6 +4,7 @@ mgis_library(MFrontGenericInterface SHARED
 	  ThreadedTaskResult.cxx
 	  LibrariesManager.cxx
       Markdown.cxx
+      MaterialProperty.cxx
 	  RotationMatrix.cxx
 	  Variable.cxx
 	  Hypothesis.cxx
