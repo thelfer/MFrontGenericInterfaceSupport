@@ -419,29 +419,14 @@ namespace mgis::behaviour {
       d.rotate_gradients_ptr = lm.getRotateBehaviourGradientsFunction(l, b, h);
       d.rotate_array_of_gradients_ptr =
           lm.getRotateArrayOfBehaviourGradientsFunction(l, b, h);
-      if (d.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
-        d.rotate_thermodynamic_forces_ptr =
-            lm.getRotateBehaviourThermodynamicForcesFunction(
-                l, b, h, FiniteStrainBehaviourOptions::CAUCHY);
-        d.rotate_array_of_thermodynamic_forces_ptr =
-            lm.getRotateArrayOfBehaviourThermodynamicForcesFunction(
-                l, b, h, FiniteStrainBehaviourOptions::CAUCHY);
-        d.rotate_tangent_operator_blocks_ptr =
-            lm.getRotateBehaviourTangentOperatorBlocksFunction(
-                l, b, h, FiniteStrainBehaviourOptions::DSIG_DF);
-        d.rotate_array_of_tangent_operator_blocks_ptr =
-            lm.getRotateArrayOfBehaviourTangentOperatorBlocksFunction(
-                l, b, h, FiniteStrainBehaviourOptions::DSIG_DF);
-      } else {
-        d.rotate_thermodynamic_forces_ptr =
-            lm.getRotateBehaviourThermodynamicForcesFunction(l, b, h);
-        d.rotate_array_of_thermodynamic_forces_ptr =
-            lm.getRotateArrayOfBehaviourThermodynamicForcesFunction(l, b, h);
-        d.rotate_tangent_operator_blocks_ptr =
-            lm.getRotateBehaviourTangentOperatorBlocksFunction(l, b, h);
-        d.rotate_array_of_tangent_operator_blocks_ptr =
-            lm.getRotateArrayOfBehaviourTangentOperatorBlocksFunction(l, b, h);
-      }
+      d.rotate_thermodynamic_forces_ptr =
+	lm.getRotateBehaviourThermodynamicForcesFunction(l, b, h);
+      d.rotate_array_of_thermodynamic_forces_ptr =
+	lm.getRotateArrayOfBehaviourThermodynamicForcesFunction(l, b, h);
+      d.rotate_tangent_operator_blocks_ptr =
+	lm.getRotateBehaviourTangentOperatorBlocksFunction(l, b, h);
+      d.rotate_array_of_tangent_operator_blocks_ptr =
+	lm.getRotateArrayOfBehaviourTangentOperatorBlocksFunction(l, b, h);
     }
     return d;
   }  // end of load
@@ -482,6 +467,10 @@ namespace mgis::behaviour {
       d.options[1] = mgis::real(2);
       d.to_blocks[0] = {{"FirstPiolaKirchhoffStress", Variable::TENSOR, 3},
                         {"DeformationGradient", Variable::TENSOR, 3}};
+    } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DTAU_DDF) {
+      d.options[1] = mgis::real(3);
+      d.to_blocks[0] = {{"KirchhoffStress", Variable::STENSOR, 3},
+                        {"SpatialIncrementOfTheDeformationGradient", Variable::TENSOR, 3}};
     } else {
       mgis::raise(
           "mgis::behaviour::load: "
