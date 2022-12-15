@@ -203,15 +203,23 @@ if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 
 #detecting TFEL and MFront
-include(cmake/modules/tfel.cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
+find_package(TFEL)
+include(tfel)
+include(behaviours)
+include(material-properties)
 
 #documentations
-add_custom_target(doc)
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/docs)
 
 # add a target to generate API documentation with Doxygen
 option(enable-doxygen-doc "enable generation of the Doxygen documentation" OFF)
+
+if(enable-doxygen-doc OR enable-website)
+  add_custom_target(doc)
+endif(enable-doxygen-doc OR enable-website)
+
 if(enable-doxygen-doc)
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/docs)
   find_package(Doxygen)
   if(DOXYGEN_FOUND)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
@@ -261,10 +269,10 @@ set(CTEST_CONFIGURATION_TYPE "${JOB_BUILD_CONFIGURATION}")
 # (must be placed *before* any add_subdirectory, cmake bug ?)
 enable_testing()
 if(CMAKE_CONFIGURATION_TYPES)
-  add_custom_target(check COMMAND 
+  add_custom_target(check COMMAND
     ${CMAKE_CTEST_COMMAND} -T test -C $<CONFIGURATION>)
 else(CMAKE_CONFIGURATION_TYPES)
-  add_custom_target(check COMMAND 
+  add_custom_target(check COMMAND
     ${CMAKE_CTEST_COMMAND} -T test )
 endif(CMAKE_CONFIGURATION_TYPES)
 
