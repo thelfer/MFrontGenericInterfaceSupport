@@ -62,7 +62,7 @@ if(enable-python-bindings)
   # Fix a bug in FindBoost 1.70
   # https://github.com/boostorg/boost_install/issues/5
   if(NOT DEFINED BUILD_SHARED_LIBS)
-    set(TFEL_TMP_BUILD_SHARED_LIBS ON)
+    set(MGIS_TMP_BUILD_SHARED_LIBS ON)
     set(BUILD_SHARED_LIBS ON)
   endif(NOT DEFINED BUILD_SHARED_LIBS)
   find_package(Boost 1.36.0 COMPONENTS
@@ -116,12 +116,12 @@ if(enable-python-bindings)
     message(FATAL_ERROR "Boost python libraries not found.\n"
       "Required packages are :" ${BOOST_MANDATORY_COMPONENTS})
   endif(Boost_PYTHON_FOUND)
-  if(DEFINED TFEL_TMP_BUILD_SHARED_LIBS)
-    unset(TFEL_TMP_BUILD_SHARED_LIBS)
+  if(DEFINED MGIS_TMP_BUILD_SHARED_LIBS)
+    unset(MGIS_TMP_BUILD_SHARED_LIBS)
     unset(BUILD_SHARED_LIBS)
-  endif(DEFINED TFEL_TMP_BUILD_SHARED_LIBS)
+  endif(DEFINED MGIS_TMP_BUILD_SHARED_LIBS)
   list(APPEND CPACK_COMPONENTS_ALL python_bindings)
-  set(CPACK_COMPONENT_PYTHON_BINDINGS_DESCRIPTION 
+  set(CPACK_COMPONENT_PYTHON_BINDINGS_DESCRIPTION
     "Contains the python bindings for TFEL, MFront and MTest")
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DEPENDS  core mfront mtest)
   if(enable-broken-boost-python-module-visibility-handling)
@@ -205,9 +205,12 @@ endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 #detecting TFEL and MFront
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 find_package(TFEL)
-include(tfel)
-include(behaviours)
-include(material-properties)
+if(TFEL_FOUND)
+  include(tfel)
+  include(material-properties)
+  include(behaviours)
+endif(TFEL_FOUND)
+
 
 #documentations
 
