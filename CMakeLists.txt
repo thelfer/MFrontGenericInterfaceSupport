@@ -211,7 +211,6 @@ if(TFEL_FOUND)
   include(behaviours)
 endif(TFEL_FOUND)
 
-
 #documentations
 
 # add a target to generate API documentation with Doxygen
