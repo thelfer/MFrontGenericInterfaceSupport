@@ -207,8 +207,8 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 find_package(TFEL)
 if(TFEL_FOUND)
   include(tfel)
-  include(behaviours)
   include(material-properties)
+  include(behaviours)
 endif(TFEL_FOUND)
 
 #documentations
