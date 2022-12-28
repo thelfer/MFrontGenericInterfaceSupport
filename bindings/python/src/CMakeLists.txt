@@ -55,12 +55,17 @@ function(mgis_python_module name output_name)
         PRIVATE
         MFrontGenericInterface
         ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY})
+      if(APPLE)
+        target_link_options(py_${fullname}
+          PRIVATE "-undefined" "dynamic_lookup")
+      endif(APPLE)
     else(disable_python_library_linking)
       target_link_libraries(${module}
         PRIVATE
         MFrontGenericInterface
         ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
-	endif(disable_python_library_linking)
+	endif(disable_python_library_linking) 
+  endif(python-stati
   endif(MGIS_USES_CONAN)
   # installation
   install(TARGETS ${module}
