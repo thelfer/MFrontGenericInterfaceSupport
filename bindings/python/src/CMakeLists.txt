@@ -64,8 +64,7 @@ function(mgis_python_module name output_name)
         PRIVATE
         MFrontGenericInterface
         ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
-	endif(disable_python_library_linking) 
-  endif(python-stati
+    endif(disable_python_library_linking) 
   endif(MGIS_USES_CONAN)
   # installation
   install(TARGETS ${module}
