@@ -56,7 +56,7 @@ function(mgis_python_module name output_name)
         MFrontGenericInterface
         ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY})
       if(APPLE)
-        target_link_options(py_${fullname}
+        target_link_options(${module}
           PRIVATE "-undefined" "dynamic_lookup")
       endif(APPLE)
     else(disable_python_library_linking)
