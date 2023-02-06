@@ -20,7 +20,7 @@ function(mgis_python_module name output_name)
   # include directories
   target_include_directories(${module}
     SYSTEM
-    PRIVATE "${CMAKE_SOURCE_DIR}/bindings/python/include"
+    PRIVATE "${PROJECT_SOURCE_DIR}/bindings/python/include"
     PRIVATE "${Boost_INCLUDE_DIRS}"
     PRIVATE "${PYTHON_INCLUDE_DIRS}"
     PRIVATE "${PYTHON_NUMPY_INCLUDE_DIR}")
