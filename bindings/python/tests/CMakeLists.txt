@@ -34,16 +34,16 @@ function(test_python_bindings test)
 	CONFIGURATION ${conf})
       set_tests_properties(${test}_${conf}_py
     	PROPERTIES ENVIRONMENT
-        PYTHONPATH="${PROJECT_BINARY_DIR}/bindings/python/tests/:$ENV{PYTHONPATH}"
-        MGIS_TEST_BEHAVIOURS_LIBRARY="$<TARGET_FILE:BehaviourTest>"
-        MGIS_TEST_MODELS_LIBRARY="$<TARGET_FILE:ModelTest>")
+        PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python/tests/:$ENV{PYTHONPATH}
+        MGIS_TEST_BEHAVIOURS_LIBRARY=$<TARGET_FILE:BehaviourTest>
+        MGIS_TEST_MODELS_LIBRARY=$<TARGET_FILE:ModelTest>)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
     add_test(NAME ${test}_py
       COMMAND ${PYTHON_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/${test}.py")
     set_property(TEST ${test}_py
       PROPERTY ENVIRONMENT
-      PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python/tests/:$ENV{PYTHONPATH}
+      PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python/tests:$ENV{PYTHONPATH}
       MGIS_TEST_BEHAVIOURS_LIBRARY=$<TARGET_FILE:BehaviourTest>
       MGIS_TEST_MODELS_LIBRARY=$<TARGET_FILE:ModelTest>
       MGIS_TEST_TFEL_VERSION=${TFEL_VERSION})
