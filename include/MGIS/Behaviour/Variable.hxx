@@ -23,9 +23,7 @@
 
 namespace mgis::behaviour {
 
-  /*!
-   * \brief structure describing a variable
-   */
+  //! \brief structure describing a variable
   struct Variable {
     //! \brief name of the variable
     std::string name;

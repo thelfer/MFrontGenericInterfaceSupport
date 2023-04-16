@@ -24,6 +24,9 @@ typedef int (*mgis_bv_BehaviourFctPtr)(mgis_bv_BehaviourDataView* const);
 /*!
  * \brief type of the pointer of a function implementing the rotation of the
  * gradients from the global frame to the material frame
+ * \param[in] mg: gradients in the material frame
+ * \param[in] gg: gradients in the global frame
+ * \param[in] r: rotation matrix
  */
 typedef void (*mgis_bv_RotateBehaviourGradientsFctPtr)(mgis_real* const,
                                                        const mgis_real* const,
