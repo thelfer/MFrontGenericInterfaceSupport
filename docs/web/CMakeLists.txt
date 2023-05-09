@@ -55,7 +55,7 @@ if(MGIS_HAVE_JUPYTER_NBCONVERT)
 endif(MGIS_HAVE_JUPYTER_NBCONVERT)
 
 add_custom_target(website)
-add_dependencies(doc website)
+#add_dependencies(doc website)
 
 if(MGIS_HAVE_PANDOC)
   mgis_pandoc_generate_html_page(index "-c css/slideshow.css")
