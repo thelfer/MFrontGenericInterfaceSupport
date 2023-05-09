@@ -55,8 +55,10 @@ if(MGIS_HAVE_JUPYTER_NBCONVERT)
 endif(MGIS_HAVE_JUPYTER_NBCONVERT)
 
 add_custom_target(website)
+if(enable-website)
 add_dependencies(doc website)
-
+endif(enable-website)
+  
 if(MGIS_HAVE_PANDOC)
   mgis_pandoc_generate_html_page(index "-c css/slideshow.css")
   mgis_pandoc_generate_html_page(install)
@@ -85,7 +87,6 @@ endif(MGIS_HAVE_PANDOC)
 if(MGIS_HAVE_JUPYTER_NBCONVERT)
 #  mgis_jupyter_nbconvert_generate_html_page(mgis_fenics_multiphase_model)
 endif(MGIS_HAVE_JUPYTER_NBCONVERT)
-
 
 if(MGIS_APPEND_SUFFIX)
   install(DIRECTORY css img js
