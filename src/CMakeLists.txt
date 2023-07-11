@@ -8,6 +8,7 @@ mgis_library(MFrontGenericInterface SHARED
 	  RotationMatrix.cxx
 	  Variable.cxx
 	  Hypothesis.cxx
+	  BehaviourDescription.cxx
 	  Behaviour.cxx
 	  State.cxx
 	  BehaviourData.cxx

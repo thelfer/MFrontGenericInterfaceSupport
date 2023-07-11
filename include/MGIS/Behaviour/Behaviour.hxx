@@ -12,8 +12,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_BEHAVIOUR_DESCRIPTION_HXX
-#define LIB_MGIS_BEHAVIOUR_DESCRIPTION_HXX
+#ifndef LIB_MGIS_BEHAVIOUR_HXX
+#define LIB_MGIS_BEHAVIOUR_HXX
 
 #include <map>
 #include <iosfwd>
@@ -25,6 +25,7 @@
 #include "MGIS/Behaviour/RotationMatrix.hxx"
 #include "MGIS/Behaviour/FiniteStrainBehaviourOptions.hxx"
 #include "MGIS/Behaviour/BehaviourFctPtr.hxx"
+#include "MGIS/Behaviour/BehaviourDescription.hxx"
 
 namespace mgis::behaviour {
 
@@ -69,14 +70,7 @@ namespace mgis::behaviour {
   };  // end of BehaviourPostProcessing
 
   //! \brief structure describing a behaviour
-  struct MGIS_EXPORT Behaviour {
-    /*!
-     * \brief maximum number of behaviour options, whatever the kind of
-     * behaviour treated.
-     */
-    static constexpr const mgis::size_type nopts = 2;
-    //! \brief behaviour symmetry
-    enum Symmetry { ISOTROPIC, ORTHOTROPIC };
+  struct MGIS_EXPORT Behaviour : BehaviourDescription {
     //! \brief constructor
     Behaviour();
     //! \brief move constructor
@@ -89,25 +83,9 @@ namespace mgis::behaviour {
     Behaviour &operator=(const Behaviour &);
     //! \brief destructor
     ~Behaviour();
-    //! \brief name of the library providing the behaviour
-    std::string library;
-    //! \brief name of the behaviour
-    std::string behaviour;
-    //! \brief modelling hypothesis
-    Hypothesis hypothesis;
-    /*!
-     * \brief name of the function (build using the behaviour name and the
-     * modelling hypothesis)
-     */
-    std::string function;
-    //! \brief name of the `MFront` source file used to generate the behaviour
-    std::string source;
-    //! \brief version of `TFEL` used to generate the behaviour
-    std::string tfel_version;
-    //! \brief unit system used by the behaviour
-    std::string unit_system;
     //! \brief list of initialize functions associated with the behaviour
-    std::map<std::string, BehaviourInitializeFunction, std::less<>> initialize_functions;
+    std::map<std::string, BehaviourInitializeFunction, std::less<>>
+        initialize_functions;
     //! \brief pointer to the function implementing the behaviour
     BehaviourFctPtr b = nullptr;
     //! \brief list of post-processings associated with the behaviour
@@ -147,55 +125,6 @@ namespace mgis::behaviour {
      */
     RotateArrayOfBehaviourTangentOperatorBlocksFctPtr
         rotate_array_of_tangent_operator_blocks_ptr = nullptr;
-    //! \brief behaviour type
-    enum BehaviourType {
-      GENERALBEHAVIOUR,
-      STANDARDSTRAINBASEDBEHAVIOUR,
-      STANDARDFINITESTRAINBEHAVIOUR,
-      COHESIVEZONEMODEL
-    } btype;
-    //! \brief kinematic of the behaviour treated
-    enum Kinematic {
-      UNDEFINEDKINEMATIC,
-      SMALLSTRAINKINEMATIC,
-      COHESIVEZONEKINEMATIC,
-      FINITESTRAINKINEMATIC_F_CAUCHY,
-      FINITESTRAINKINEMATIC_ETO_PK1
-    } kinematic;
-    //! \brief behaviour symmetry
-    Symmetry symmetry;
-    //! \brief gradients
-    std::vector<Variable> gradients;
-    //! \brief thermodynamic forces associated to gradients
-    std::vector<Variable> thermodynamic_forces;
-    //! \brief material properties
-    std::vector<Variable> mps;
-    //! \brief internal state variables
-    std::vector<Variable> isvs;
-    //! \brief external state variables
-    std::vector<Variable> esvs;
-    //! \brief tangent operator blocks
-    std::vector<std::pair<Variable, Variable>> to_blocks;
-    //! \brief real parameters
-    std::vector<std::string> params;
-    //! \brief integer parameters
-    std::vector<std::string> iparams;
-    //! \brief unsigned short parameters
-    std::vector<std::string> usparams;
-    /*!
-     * \brief this boolean is true if the behaviour computes the
-     * energy stored by the material per unit of volume in the reference
-     * configuration. The physical meaning of this
-     * energy depends on the behaviour considered.
-     */
-    bool computesStoredEnergy;
-    /*!
-     * \brief this boolean is true if the behaviour computes the
-     * energy dissipated by the material per unit of volume in the
-     * reference configuration. The physical meaning of this
-     * energy depends on the behaviour considered.
-     */
-    bool computesDissipatedEnergy;
     /*!
      * \brief behaviour options
      *
@@ -222,20 +151,6 @@ namespace mgis::behaviour {
      */
     std::vector<mgis::real> options;
   };  // end of struct Behaviour
-
-  /*!
-   * \return if the given behaviour is a standard finite strain behaviour,
-   * i.e. is a finite strain behaviour using the standard finite strain
-   * kinematic
-   * (called F-Cauchy although the stress measure can be chosen when
-   * loading the behaviour)
-   * \param[in] l: library name
-   * \param[in] b: behaviour name
-   * \note: use of `std::string` rather than `mgis::string_view` is
-   * meaningfull here
-   */
-  MGIS_EXPORT bool isStandardFiniteStrainBehaviour(const std::string &,
-                                                   const std::string &);
 
   /*!
    * \brief load the description of a behaviour from a library
@@ -270,12 +185,6 @@ namespace mgis::behaviour {
                              const std::string &,
                              const std::string &,
                              const Hypothesis);
-  /*!
-   * \return the size of an array able to contain all the values of the
-   * tangent operator
-   * \param[in] b: behaviour
-   */
-  MGIS_EXPORT mgis::size_type getTangentOperatorArraySize(const Behaviour &);
   /*!
    * \brief rotate an array of gradients from the global frame to the material
    * frame.
@@ -534,112 +443,6 @@ namespace mgis::behaviour {
                                 const std::string &,
                                 const unsigned short);
   /*!
-   * \return the default value of a parameter
-   * \param[in] b: behaviour description
-   * \param[in] n: parameter name
-   */
-  template <typename T>
-  T getParameterDefaultValue(const Behaviour &, const std::string &);
-
-  /*!
-   * \return the default value of a parameter
-   * \param[in] b: behaviour description
-   * \param[in] n: parameter name
-   */
-  template <>
-  MGIS_EXPORT double getParameterDefaultValue<double>(const Behaviour &,
-                                                      const std::string &);
-  /*!
-   * \return the default value of a parameter
-   * \param[in] b: behaviour description
-   * \param[in] n: parameter name
-   */
-  template <>
-  MGIS_EXPORT int getParameterDefaultValue<int>(const Behaviour &,
-                                                const std::string &);
-  /*!
-   * \return the default value of a parameter
-   * \param[in] b: behaviour description
-   * \param[in] n: parameter name
-   */
-  template <>
-  MGIS_EXPORT unsigned short getParameterDefaultValue<unsigned short>(
-      const Behaviour &, const std::string &);
-  /*!
-   * \return true if the given variable has bounds
-   * \param[in] b: behaviour
-   * \param[in] v: variable name
-   */
-  MGIS_EXPORT bool hasBounds(const Behaviour &, const std::string &);
-  /*!
-   * \return true if the given variable has a lower bound
-   * \param[in] b: behaviour
-   * \param[in] v: variable name
-   */
-  MGIS_EXPORT bool hasLowerBound(const Behaviour &, const std::string &);
-  /*!
-   * \return true if the given variable has a upper bound
-   * \param[in] b: behaviour
-   * \param[in] v: variable name
-   */
-  MGIS_EXPORT bool hasUpperBound(const Behaviour &, const std::string &);
-  /*!
-   * \return the lower bound of the given variable
-   * \param[in] b: behaviour
-   * \param[in] v: variable name
-   */
-  MGIS_EXPORT long double getLowerBound(const Behaviour &, const std::string &);
-  /*!
-   * \return the upper bound of the given variable
-   * \param[in] b: behaviour
-   * \param[in] v: variable name
-   */
-  MGIS_EXPORT long double getUpperBound(const Behaviour &, const std::string &);
-  /*!
-   * \return true if the given variable has bounds
-   * \param[in] b: behaviour
-   * \param[in] v: variable name
-   */
-  MGIS_EXPORT bool hasPhysicalBounds(const Behaviour &, const std::string &);
-  /*!
-   * \return true if the given variable has a lower physical bound
-   * \param[in] b: behaviour
-   * \param[in] v: variable name
-   */
-  MGIS_EXPORT bool hasLowerPhysicalBound(const Behaviour &,
-                                         const std::string &);
-  /*!
-   * \return true if the given variable has a upper physical bound
-   * \param[in] b: behaviour
-   * \param[in] v: variable name
-   */
-  MGIS_EXPORT bool hasUpperPhysicalBound(const Behaviour &,
-                                         const std::string &);
-  /*!
-   * \return the lower bound of the given variable
-   * \param[in] b: behaviour
-   * \param[in] v: variable name
-   */
-  MGIS_EXPORT long double getLowerPhysicalBound(const Behaviour &,
-                                                const std::string &);
-  /*!
-   * \return the upper bound of the given variable
-   * \param[in] b: behaviour
-   * \param[in] v: variable name
-   */
-  MGIS_EXPORT long double getUpperPhysicalBound(const Behaviour &,
-                                                const std::string &);
-  /*!
-   * \brief print a detailled (verbose) description of the behaviour using
-   * a markdown format
-   * \param[in] os: ouptut stream
-   * \param[in] b: behaviour
-   * \param[in] l: title level
-   */
-  MGIS_EXPORT void print_markdown(std::ostream &,
-                                  const Behaviour &,
-                                  const mgis::size_type);
-  /*!
    * \return the size of an array able to contain the inputs of an
    * initialize function.
    * \param[in] b: behaviour
@@ -670,6 +473,6 @@ namespace mgis::behaviour {
   MGIS_EXPORT std::vector<mgis::real> allocatePostProcessingVariables(
       const Behaviour &, const std::string_view);
 
-  }  // end of namespace mgis::behaviour
+}  // end of namespace mgis::behaviour
 
-#endif /* LIB_MGIS_BEHAVIOUR_DESCRIPTION_HXX */
+#endif /* LIB_MGIS_BEHAVIOUR_HXX */

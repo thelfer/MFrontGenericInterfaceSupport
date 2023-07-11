@@ -86,6 +86,7 @@ mgis_python_module(mgis_behaviour behaviour
  NumPySupport.cxx
  Hypothesis.cxx
  Variable.cxx
+ BehaviourDescription.cxx
  Behaviour.cxx
  State.cxx
  BehaviourData.cxx

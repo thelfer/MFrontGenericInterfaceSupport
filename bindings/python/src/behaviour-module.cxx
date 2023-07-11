@@ -19,6 +19,7 @@
 void declareHypothesis();
 void declareVariable();
 void declareBehaviour();
+void declareBehaviourDescription();
 void declareState();
 void declareBehaviourData();
 void declareBehaviourDataView();
@@ -31,6 +32,7 @@ BOOST_PYTHON_MODULE(behaviour) {
   mgis::python::initializeNumPy();
   declareHypothesis();
   declareVariable();
+  declareBehaviourDescription();
   declareBehaviour();
   declareState();
   declareBehaviourData();

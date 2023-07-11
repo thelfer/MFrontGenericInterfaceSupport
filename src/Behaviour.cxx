@@ -32,93 +32,6 @@ namespace mgis::behaviour {
                                mgis::span<const mgis::real, 3u>{a2, 3u});
   }  // end of buildRotationMatrix
 
-  template <typename ErrorHandler>
-  static std::vector<Variable> buildVariablesList(
-      ErrorHandler &raise,
-      const std::vector<std::string> &names,
-      const std::vector<int> &types) {
-    std::vector<Variable> vars;
-    if (names.size() != types.size()) {
-      raise(
-          "the number of internal state variables names does not match "
-          "the number of internal state variables types");
-    }
-    for (decltype(names.size()) i = 0; i != names.size(); ++i) {
-      vars.push_back({names[i], getVariableType(types[i]), types[i]});
-    }
-    return vars;
-  }  // end of buildVariablesList
-
-  template <typename ErrorHandler>
-  static void checkGradientsAndThermodynamicForcesConsistency(
-      ErrorHandler &raise,
-      const std::vector<Variable> &gradients,
-      const std::vector<Variable> &thermodynamic_forces,
-      const Variable &g,
-      const Variable &t) {
-    auto raise_if = [&raise](const bool c, const std::string &m) {
-      if (c) {
-        raise(m);
-      }
-    };
-    raise_if(gradients.size() != thermodynamic_forces.size(),
-             "the number of gradients does not match the number of "
-             "thermodynamic forces");
-    raise_if(gradients.size() != 1u, "invalid number of gradients");
-    raise_if(gradients[0].name != g.name, "invalid gradient name");
-    raise_if(gradients[0].type != g.type, "invalid gradient type");
-    raise_if(thermodynamic_forces[0].name != t.name,
-             "invalid thermodynamic force name");
-    raise_if(thermodynamic_forces[0].type != t.type,
-             "invalid thermodynamic force type");
-  }  // end of checkGradientsAndThermodynamicForcesConsistency
-
-  static std::pair<Variable, Variable> getJacobianBlockVariables(
-      const Behaviour &b, const std::pair<std::string, std::string> &block) {
-    auto found = false;
-    std::pair<Variable, Variable> v;
-    auto assign_if = [&found, &block, &v](const Variable &v1,
-                                          const Variable &v2) {
-      mgis::raise_if(found,
-                     "getJacobianBlockVariables: "
-                     "multiple definition for block {" +
-                         block.first + "," + block.second + "}");
-      found = true;
-      v = {v1, v2};
-    };
-    for (const auto &f : b.thermodynamic_forces) {
-      for (const auto &g : b.gradients) {
-        if ((block.first == f.name) && (block.second == g.name)) {
-          assign_if(f, g);
-        }
-      }
-      for (const auto &e : b.esvs) {
-        if ((block.first == f.name) && (block.second == e.name)) {
-          assign_if(f, e);
-        }
-      }
-    }
-    for (const auto &i : b.isvs) {
-      for (const auto &g : b.gradients) {
-        if ((block.first == i.name) && (block.second == g.name)) {
-          assign_if(i, g);
-        }
-      }
-      for (const auto &e : b.esvs) {
-        if ((block.first == i.name) && (block.second == e.name)) {
-          assign_if(i, e);
-        }
-      }
-    }
-    if (!found) {
-      mgis::raise(
-          "getJacobianBlockVariables: "
-          "tangent operator block {" +
-          block.first + "," + block.second + "} is invalid");
-    }
-    return v;
-  }  // end of getJacobianBlockVariables
-
   BehaviourInitializeFunction::BehaviourInitializeFunction() = default;
   BehaviourInitializeFunction::BehaviourInitializeFunction(BehaviourInitializeFunction &&) = default;
   BehaviourInitializeFunction::BehaviourInitializeFunction(const BehaviourInitializeFunction &) = default;
@@ -140,13 +53,6 @@ namespace mgis::behaviour {
   Behaviour &Behaviour::operator=(const Behaviour &) = default;
   Behaviour::~Behaviour() = default;
 
-  bool isStandardFiniteStrainBehaviour(const std::string &l,
-                                       const std::string &b) {
-    auto &lm = mgis::LibrariesManager::get();
-    return (lm.getBehaviourType(l, b) == 2) &&
-           (lm.getBehaviourKinematic(l, b) == 3);
-  }  // end of isStandardFiniteStrainBehaviour
-
   static Behaviour load_behaviour(const std::string &l,
                                   const std::string &b,
                                   const Hypothesis h) {
@@ -163,241 +69,26 @@ namespace mgis::behaviour {
                     "' in library '" + l + "'\n");
       }
     };
+    //
     auto d = Behaviour{};
-
-    d.library = l;
-    d.behaviour = b;
-    d.function = fct;
-    d.hypothesis = h;
+    loadBehaviourDescription(d, l, b, h);
     d.b = lm.getBehaviour(l, b, h);
-
-    if (lm.getMaterialKnowledgeType(l, b) != 1u) {
-      raise("entry point '" + b + "' in library " + l + " is not a behaviour");
-    }
-
-    if (lm.getAPIVersion(l, b) != MGIS_BEHAVIOUR_API_VERSION) {
-      std::string msg("unmatched API version\n");
-      msg += "- the behaviour uses API version ";
-      msg += std::to_string(lm.getAPIVersion(l, b)) + "\n";
-      msg += "- mgis uses API version ";
-      msg += std::to_string(MGIS_BEHAVIOUR_API_VERSION);
-      raise(msg);
-    }
-    d.tfel_version = lm.getTFELVersion(l, b);
-    d.unit_system = lm.getUnitSystem(l, b);
-    d.source = lm.getSource(l, b);
-    d.btype = [&l, &b, &lm, &raise] {
-      /* - 0 : general behaviour
-       * - 1 : strain based behaviour *
-       * - 2 : standard finite strain behaviour *
-       * - 3 : cohesive zone model */
-      switch (lm.getBehaviourType(l, b)) {
-        case 0:
-          return Behaviour::GENERALBEHAVIOUR;
-        case 1:
-          return Behaviour::STANDARDSTRAINBASEDBEHAVIOUR;
-        case 2:
-          return Behaviour::STANDARDFINITESTRAINBEHAVIOUR;
-        case 3:
-          return Behaviour::COHESIVEZONEMODEL;
-      }
-      raise("unsupported behaviour type");
-    }();
-    if (d.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
+    //
+    if (d.btype == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       d.options.resize(2, mgis::real(0));
-    }
-    // behaviour kinematic
-    d.kinematic = [&l, &b, &lm, h, &raise] {
-      /* - 0: undefined kinematic
-       * - 1: standard small strain behaviour kinematic
-       * - 2: cohesive zone model kinematic
-       * - 3: standard finite strain kinematic (F-Cauchy)
-       * - 4: ptest finite strain kinematic (eto-pk1)
-       * - 5: Green-Lagrange strain
-       * - 6: Miehe Apel Lambrecht logarithmic strain framework */
-      switch (lm.getBehaviourKinematic(l, b)) {
-        case 0:
-          return Behaviour::UNDEFINEDKINEMATIC;
-        case 1:
-          return Behaviour::SMALLSTRAINKINEMATIC;
-        case 2:
-          return Behaviour::COHESIVEZONEKINEMATIC;
-        case 3:
-          return Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY;
-        case 4:
-          if (((h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) &&
-               (h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))) {
-            raise(
-                "invalid hypothesis for behaviour based on "
-                "the eto-pk1 kinematic");
-          }
-          return Behaviour::FINITESTRAINKINEMATIC_ETO_PK1;
-      }
-      raise("unsupported behaviour kinematic");
-    }();
-    // setting gradients and thermodynamic forces
-    d.gradients = buildVariablesList(raise, lm.getGradientsNames(l, b, h),
-                                     lm.getGradientsTypes(l, b, h));
-    d.thermodynamic_forces =
-        buildVariablesList(raise, lm.getThermodynamicForcesNames(l, b, h),
-                           lm.getThermodynamicForcesTypes(l, b, h));
-    raise_if(d.gradients.size() != d.thermodynamic_forces.size(),
-             "the number of the gradients does not match "
-             "the number of thermodynamic forces");
-    switch (d.btype) {
-      case Behaviour::GENERALBEHAVIOUR:
-        break;
-      case Behaviour::STANDARDSTRAINBASEDBEHAVIOUR:
-        raise_if(d.kinematic != Behaviour::SMALLSTRAINKINEMATIC,
-                 "strain based behaviour must be associated with the "
-                 "small strain kinematic hypothesis");
-        checkGradientsAndThermodynamicForcesConsistency(
-            raise, d.gradients, d.thermodynamic_forces,
-            {"Strain", Variable::STENSOR, 1}, {"Stress", Variable::STENSOR, 1});
-        break;
-      case Behaviour::COHESIVEZONEMODEL:
-        if (d.kinematic != Behaviour::COHESIVEZONEKINEMATIC) {
-          raise("invalid kinematic assumption for cohesive zone model");
-        }
-        checkGradientsAndThermodynamicForcesConsistency(
-            raise, d.gradients, d.thermodynamic_forces,
-            {"OpeningDisplacement", Variable::VECTOR, 2},
-            {"CohesiveForce", Variable::VECTOR, 2});
-        break;
-      case Behaviour::STANDARDFINITESTRAINBEHAVIOUR:
-        if (d.kinematic == Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY) {
-          checkGradientsAndThermodynamicForcesConsistency(
-              raise, d.gradients, d.thermodynamic_forces,
-              {"DeformationGradient", Variable::TENSOR, 3},
-              {"Stress", Variable::STENSOR, 1});
-        } else if (d.kinematic == Behaviour::FINITESTRAINKINEMATIC_ETO_PK1) {
-          if (((h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) &&
-               (h != Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))) {
-            raise(
-                "invalid hypothesis for behaviour based on "
-                "the eto-pk1 kinematic");
-          }
-          checkGradientsAndThermodynamicForcesConsistency(
-              raise, d.gradients, d.thermodynamic_forces,
-              {"Strain", Variable::STENSOR, 1},
-              {"Stresss", Variable::STENSOR, 1});
-        } else {
-          raise(
-              "invalid kinematic hypothesis for finite strain "
-              "behaviour");
-        }
-        break;
-      default:
-        raise("unsupported behaviour type");
-    };
-    // behaviour symmetry
-    d.symmetry = lm.getBehaviourSymmetry(l, b) == 0 ? Behaviour::ISOTROPIC
-                                                    : Behaviour::ORTHOTROPIC;
-    auto add_mp = [&d](const std::string &mp) {
-      d.mps.push_back({mp, Variable::SCALAR});
-    };
-    if (lm.requiresStiffnessTensor(l, b, h)) {
-      if (lm.getElasticStiffnessSymmetry(l, b) == 0) {
-        add_mp("YoungModulus");
-        add_mp("PoissonRatio");
-      } else {
-        if (d.symmetry != Behaviour::ORTHOTROPIC) {
-          raise(
-              "load: the behaviour must be orthotropic "
-              "for the elastic stiffness symmetry to be orthotropic");
-        }
-        add_mp("YoungModulus1");
-        add_mp("YoungModulus2");
-        add_mp("YoungModulus3");
-        add_mp("PoissonRatio12");
-        add_mp("PoissonRatio23");
-        add_mp("PoissonRatio13");
-        if ((h == Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-            (h == Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-        } else if ((h == Hypothesis::PLANESTRESS) ||
-                   (h == Hypothesis::PLANESTRAIN) ||
-                   (h == Hypothesis::AXISYMMETRICAL) ||
-                   (h == Hypothesis::GENERALISEDPLANESTRAIN)) {
-          add_mp("ShearModulus12");
-        } else if (h == Hypothesis::TRIDIMENSIONAL) {
-          add_mp("ShearModulus12");
-          add_mp("ShearModulus23");
-          add_mp("ShearModulus13");
-        }
-      }
-    }
-    if (lm.requiresThermalExpansionCoefficientTensor(l, b, h)) {
-      if (d.symmetry == Behaviour::ORTHOTROPIC) {
-        add_mp("ThermalExpansion1");
-        add_mp("ThermalExpansion2");
-        add_mp("ThermalExpansion3");
-      } else {
-        add_mp("ThermalExpansion");
-      }
-    }
-    // standard material properties
-    for (const auto &mp : lm.getMaterialPropertiesNames(l, b, h)) {
-      add_mp(mp);
-    }
-    // internal state variables
-    d.isvs =
-        buildVariablesList(raise, lm.getInternalStateVariablesNames(l, b, h),
-                           lm.getInternalStateVariablesTypes(l, b, h));
-    // external state variables
-    if (lm.hasTemperatureBeenRemovedFromExternalStateVariables(l, b)) {
-      d.esvs.push_back({"Temperature", Variable::SCALAR});
-    }
-    if (lm.hasExternalStateVariablesTypes(l, b, h)) {
-      const auto esvs =
-          buildVariablesList(raise, lm.getExternalStateVariablesNames(l, b, h),
-                             lm.getExternalStateVariablesTypes(l, b, h));
-      d.esvs.insert(d.esvs.end(), esvs.begin(), esvs.end());
-    } else {
-      // Prior to TFEL versions 3.4.4 and 4.1, external state variables were
-      // only scalars
-      for (const auto &esv : lm.getExternalStateVariablesNames(l, b, h)) {
-        d.esvs.push_back({esv, Variable::SCALAR});
-      }
-    }
-    // tangent operator blocks
-    for (const auto &block : lm.getTangentOperatorBlocksNames(l, b, h)) {
-      d.to_blocks.push_back(getJacobianBlockVariables(d, block));
-    }
-    d.computesStoredEnergy = lm.computesStoredEnergy(l, b, h);
-    d.computesDissipatedEnergy = lm.computesDissipatedEnergy(l, b, h);
-    //! parameters
-    const auto pn = lm.getParametersNames(l, b, h);
-    const auto pt = lm.getParametersTypes(l, b, h);
-    raise_if(pn.size() != pt.size(),
-             "inconsistent size between parameters' names and"
-             "parameters' sizes");
-    for (decltype(pn.size()) i = 0; i != pn.size(); ++i) {
-      if (pt[i] == 0) {
-        d.params.push_back(pn[i]);
-      } else if (pt[i] == 1) {
-        d.iparams.push_back(pn[i]);
-      } else if (pt[i] == 2) {
-        d.usparams.push_back(pn[i]);
-      } else {
-        raise("unsupported parameter type for parameter '" + pn[i] + "'");
-      }
     }
     // initialize functions
     for (const auto i : lm.getBehaviourInitializeFunctions(l, b, h)) {
       BehaviourInitializeFunction ifct;
       ifct.f = lm.getBehaviourInitializeFunction(l, b, i, h);
-      ifct.inputs = buildVariablesList(
-          raise, lm.getBehaviourInitializeFunctionInputsNames(l, b, i, h),
-          lm.getBehaviourInitializeFunctionInputsTypes(l, b, i, h));
+      ifct.inputs = getBehaviourInitializeFunctionInputs(l, b, i, h);
       d.initialize_functions.insert({i, ifct});
     }
     // post-processings
     for (const auto i : lm.getBehaviourPostProcessings(l, b, h)) {
       BehaviourPostProcessing pfct;
       pfct.f = lm.getBehaviourPostProcessing(l, b, i, h);
-      pfct.outputs = buildVariablesList(
-          raise, lm.getBehaviourPostProcessingOutputsNames(l, b, i, h),
-          lm.getBehaviourPostProcessingOutputsTypes(l, b, i, h));
+      pfct.outputs = getBehaviourPostProcessingOutputs(l, b, i, h);
       d.postprocessings.insert({i, pfct});
     }
     return d;
@@ -496,15 +187,6 @@ namespace mgis::behaviour {
     }
     return d;
   }  // end of load
-
-  mgis::size_type getTangentOperatorArraySize(const Behaviour &b) {
-    auto s = mgis::size_type{};
-    for (const auto &block : b.to_blocks) {
-      s += getVariableSize(block.first, b.hypothesis) *
-           getVariableSize(block.second, b.hypothesis);
-    }
-    return s;
-  }  // end of getTangentOperatorArraySize
 
   void rotateGradients(mgis::span<real> g,
                        const Behaviour &b,
@@ -923,82 +605,6 @@ namespace mgis::behaviour {
     auto &lm = mgis::LibrariesManager::get();
     lm.setParameter(b.library, b.behaviour, b.hypothesis, n, v);
   }  // end of setParameter
-
-  template <>
-  double getParameterDefaultValue<double>(const Behaviour &b,
-                                          const std::string &n) {
-    auto &lm = mgis::LibrariesManager::get();
-    return lm.getParameterDefaultValue(b.library, b.behaviour, b.hypothesis, n);
-  }  // end of getParameterDefaultValue<double>
-
-  template <>
-  int getParameterDefaultValue<int>(const Behaviour &b, const std::string &n) {
-    auto &lm = mgis::LibrariesManager::get();
-    return lm.getIntegerParameterDefaultValue(b.library, b.behaviour,
-                                              b.hypothesis, n);
-  }  // end of getParameterDefaultValue<int>
-
-  template <>
-  unsigned short getParameterDefaultValue<unsigned short>(
-      const Behaviour &b, const std::string &n) {
-    auto &lm = mgis::LibrariesManager::get();
-    return lm.getUnsignedShortParameterDefaultValue(b.library, b.behaviour,
-                                                    b.hypothesis, n);
-  }  // end of getParameterDefaultValue<unsigned short>
-
-  bool hasBounds(const Behaviour &b, const std::string &v) {
-    auto &lm = mgis::LibrariesManager::get();
-    return lm.hasBounds(b.library, b.behaviour, b.hypothesis, v);
-  }  // end of hasBounds
-
-  bool hasLowerBound(const Behaviour &b, const std::string &v) {
-    auto &lm = mgis::LibrariesManager::get();
-    return lm.hasLowerBound(b.library, b.behaviour, b.hypothesis, v);
-  }  // end of hasLowerBound
-
-  bool hasUpperBound(const Behaviour &b, const std::string &v) {
-    auto &lm = mgis::LibrariesManager::get();
-    return lm.hasUpperBound(b.library, b.behaviour, b.hypothesis, v);
-  }  // end of hasUpperBound
-
-  long double getLowerBound(const Behaviour &b, const std::string &v) {
-    auto &lm = mgis::LibrariesManager::get();
-    return lm.getLowerBound(b.library, b.behaviour, b.hypothesis, v);
-  }  // end of getLowerBound
-
-  long double getUpperBound(const Behaviour &b, const std::string &v) {
-    auto &lm = mgis::LibrariesManager::get();
-    return lm.getUpperBound(b.library, b.behaviour, b.hypothesis, v);
-  }  // end of getUpperBound
-
-  bool hasPhysicalBounds(const Behaviour &b, const std::string &v) {
-    auto &lm = mgis::LibrariesManager::get();
-    return lm.hasPhysicalBounds(b.library, b.behaviour, b.hypothesis, v);
-  }  // end of hasPhysicalBounds
-
-  bool hasLowerPhysicalBound(const Behaviour &b, const std::string &v) {
-    auto &lm = mgis::LibrariesManager::get();
-    return lm.hasLowerPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
-  }  // end of hasLowerPhysicalBound
-
-  bool hasUpperPhysicalBound(const Behaviour &b, const std::string &v) {
-    auto &lm = mgis::LibrariesManager::get();
-    return lm.hasUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
-  }  // end of hasUpperPhysicalBound
-
-  long double getLowerPhysicalBound(const Behaviour &b, const std::string &v) {
-    auto &lm = mgis::LibrariesManager::get();
-    return lm.getLowerPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
-  }  // end of getLowerPhysicalBound
-
-  long double getUpperPhysicalBound(const Behaviour &b, const std::string &v) {
-    auto &lm = mgis::LibrariesManager::get();
-    return lm.getUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
-  }  // end of getUpperPhysicalBound
-
-  void print_markdown(std::ostream &,
-                      const Behaviour &,
-                      const mgis::size_type) {}  // end of print_markdown
 
   size_type getInitializeFunctionVariablesArraySize(const Behaviour &b,
                                                    const std::string_view n) {
