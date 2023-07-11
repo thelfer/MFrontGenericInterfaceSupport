@@ -270,7 +270,7 @@ namespace mgis::behaviour {
    *   computed.
    * - if Ke is in [1.5:2.5]: the secant operator must be
    *   computed.
-   * - if Ke is in [2.5:3.5]: the secant operator must be
+   * - if Ke is in [2.5:3.5]: the tangent operator must be
    *   computed.
    * - if Ke is greater than 3.5, the consistent tangent operator
    *   must be computed.
