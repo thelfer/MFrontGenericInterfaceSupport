@@ -58,17 +58,6 @@ namespace mgis::behaviour {
                                   const Hypothesis h) {
     auto &lm = mgis::LibrariesManager::get();
     const auto fct = b + '_' + toString(h);
-    auto raise = [&b, &l](const std::string &msg) {
-      mgis::raise("load: " + msg + ".\nError while trying to load behaviour '" +
-                  b + "' in library '" + l + "'\n");
-    };
-    auto raise_if = [&b, &l](const bool c, const std::string &msg) {
-      if (c) {
-        mgis::raise("load: " + msg +
-                    ".\nError while trying to load behaviour '" + b +
-                    "' in library '" + l + "'\n");
-      }
-    };
     //
     auto d = Behaviour{};
     loadBehaviourDescription(d, l, b, h);
