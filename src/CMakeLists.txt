@@ -1,5 +1,5 @@
-mgis_library(MFrontGenericInterface SHARED
-	  Raise.cxx
+mgis_library(MFrontGenericInterface
+    	  Raise.cxx
 	  ThreadPool.cxx
 	  ThreadedTaskResult.cxx
 	  LibrariesManager.cxx

@@ -1,4 +1,4 @@
-mgis_library(MFrontGenericInterface-c SHARED
+mgis_library(MFrontGenericInterface-c
   Status.cxx
   ThreadPool.cxx
   Hypothesis.cxx

@@ -1,4 +1,4 @@
-mgis_library(MFrontGenericInterface-fortran SHARED
+mgis_library(MFrontGenericInterface-fortran
   mgis_fortran_utilities.f95
   mgis.f95
   mgis_behaviour.f95
