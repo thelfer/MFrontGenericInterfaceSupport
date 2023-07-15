@@ -24,25 +24,14 @@ function(mgis_library name)
           NAMESPACE mgis:: FILE ${name}Config.cmake)
   if(enable-static)
     add_library(${name}-static STATIC ${ARGN})
-    set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}")
-    # Now the library target "${name}-static" will be named "${name}.lib"
-    # with MS tools.
-    # This conflicts with the "${name}.lib" import library corresponding
-    # to "${name}.dll",
-    # so we add a "lib" prefix (which is default on other platforms
-    # anyway):
-    set_target_properties(${name}-static PROPERTIES PREFIX "lib")
-    # Help CMake 2.6.x and lower (not necessary for 2.8 and above, but
-    # doesn't hurt):
-    set_target_properties(${name}        PROPERTIES CLEAN_DIRECT_OUTPUT 1)
-    set_target_properties(${name}-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
-    set_target_properties(${name}-static PROPERTIES COMPILE_FLAGS "-D${name}_EXPORTS -DMGIS_STATIC_BUILD")
+    # set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}-static")
+    # set_target_properties(${name}-static PROPERTIES COMPILE_FLAGS "-D${name}_EXPORTS -DMGIS_STATIC_BUILD")
     if(WIN32)
-      install(TARGETS ${name}-static DESTINATION bin)
+      install(TARGETS ${name}-static EXPORT ${name}-static DESTINATION bin)
     else(WIN32)
-      install(TARGETS ${name}-static DESTINATION lib${LIB_SUFFIX})
+      install(TARGETS ${name}-static EXPORT ${name}-static DESTINATION lib${LIB_SUFFIX})
     endif(WIN32)
-    install(EXPORT ${name}-static DESTINATION ${export_install_path}
-            NAMESPACE mgis:: FILE ${name}Config.cmake)
+    # install(EXPORT ${name}-static DESTINATION ${export_install_path}
+    #         NAMESPACE mgis:: FILE ${name}Config.cmake)
   endif(enable-static)
 endfunction(mgis_library)
