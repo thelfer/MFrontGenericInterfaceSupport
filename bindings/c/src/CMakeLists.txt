@@ -1,4 +1,4 @@
-mgis_library(MFrontGenericInterface-c SHARED
+mgis_library(MFrontGenericInterface-c
   Status.cxx
   ThreadPool.cxx
   Hypothesis.cxx
@@ -17,3 +17,12 @@ target_include_directories(MFrontGenericInterface-c
   PUBLIC $<INSTALL_INTERFACE:include>)
 target_link_libraries(MFrontGenericInterface-c
    PRIVATE MFrontGenericInterface)
+
+if(enable-static)
+  target_include_directories(MFrontGenericInterface-c-static
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/bindings/c/include>
+    PUBLIC $<INSTALL_INTERFACE:include>)
+  target_link_libraries(MFrontGenericInterface-c-static
+    PRIVATE MFrontGenericInterface-static)
+endif(enable-static)
