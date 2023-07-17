@@ -15,7 +15,7 @@ if (COMPILER_DEFAULT_VISIBILITY_FLAG)
     PRIVATE "${COMPILER_DEFAULT_VISIBILITY_FLAG}")
 endif(COMPILER_DEFAULT_VISIBILITY_FLAG)
 target_include_directories(MFrontGenericInterfaceFEniCSTestingUtilities
-  PUBLIC "${CMAKE_SOURCE_DIR}/include" "${CMAKE_SOURCE_DIR}/bindings/fenics/tests/include")
+  PUBLIC "${PROJECT_SOURCE_DIR}/include" "${PROJECT_SOURCE_DIR}/bindings/fenics/tests/include")
 target_include_directories(MFrontGenericInterfaceFEniCSTestingUtilities
   SYSTEM PUBLIC ${DOLFIN_INCLUDE_DIRS} ${DOLFIN_3RD_PARTY_INCLUDE_DIRS})
 target_link_libraries(MFrontGenericInterfaceFEniCSTestingUtilities
@@ -27,7 +27,7 @@ function(test_fenics_bindings test)
   target_include_directories(${test}_fenics
     SYSTEM PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
   target_include_directories(${test}_fenics
-    PRIVATE "${CMAKE_SOURCE_DIR}/bindings/fenics/tests/include")
+    PRIVATE "${PROJECT_SOURCE_DIR}/bindings/fenics/tests/include")
   target_link_libraries(${test}_fenics
     PRIVATE MFrontGenericInterface-FEniCS
     PRIVATE MFrontGenericInterfaceFEniCSTestingUtilities)
@@ -45,7 +45,7 @@ function(test_fenics_bindings test)
     add_test(NAME ${test}_fenics COMMAND ${test}_fenics)
     set_property(TEST ${test}_fenics
       PROPERTY ENVIRONMENT
-      MGIS_FENICS_TEST_DATA=${CMAKE_SOURCE_DIR}/bindings/fenics/tests/data
+      MGIS_FENICS_TEST_DATA=${PROJECT_SOURCE_DIR}/bindings/fenics/tests/data
       MGIS_TEST_BEHAVIOURS_LIBRARY=$<TARGET_FILE:BehaviourTest>
       MGIS_TEST_TFEL_VERSION=${TFEL_VERSION})
     add_dependencies(check ${test}_fenics)
