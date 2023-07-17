@@ -28,7 +28,7 @@ function(mgis_julia_module name)
   set_target_properties(${module} PROPERTIES PREFIX "")
   # include directories
   target_include_directories(${module}
-    PRIVATE "${CMAKE_SOURCE_DIR}/bindings/julia/include")
+    PRIVATE "${PROJECT_SOURCE_DIR}/bindings/julia/include")
   # link flags
   if(MGIS_USES_CONAN)
     target_link_libraries(${module}

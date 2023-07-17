@@ -6,7 +6,7 @@ mgis_library(MFrontGenericInterface-fortran
 set_target_properties(MFrontGenericInterface-fortran
   PROPERTIES Fortran_MODULE_DIRECTORY "${CMAKE_BINARY_DIR}/bindings/fortran/modules")
 target_include_directories(MFrontGenericInterface-fortran
-	PRIVATE "${CMAKE_SOURCE_DIR}/include"
-	PRIVATE "${CMAKE_SOURCE_DIR}/bindings/c/include")
+	PRIVATE "${PROJECT_SOURCE_DIR}/include"
+	PRIVATE "${PROJECT_SOURCE_DIR}/bindings/c/include")
 target_link_libraries(MFrontGenericInterface-fortran
    PUBLIC MFrontGenericInterface-c MFrontGenericInterface)
