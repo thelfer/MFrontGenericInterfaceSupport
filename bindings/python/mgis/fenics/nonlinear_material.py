@@ -41,7 +41,7 @@ class MFrontNonlinearMaterial:
             path to the 'libMaterial.so' library containing MFront material laws
         name : str
             name of the MFront behaviour
-        hypothesis : {"plane_strain", "3d", "axisymmetric"}
+        hypothesis : {"plane_strain", "plane_stress", "3d", "axisymmetric"}
             modelling hypothesis
         material_properties : dict
             a dictionary of material properties. The dictionary keys must match

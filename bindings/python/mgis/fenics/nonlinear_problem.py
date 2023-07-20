@@ -16,16 +16,19 @@ from ufl import shape
 SymGrad = {
     mgis_bv.Hypothesis.Tridimensional: lambda u: sym(grad(u)),
     mgis_bv.Hypothesis.PlaneStrain: lambda u: sym(grad(u)),
+    mgis_bv.Hypothesis.PlaneStress: lambda u: sym(grad(u)),
     mgis_bv.Hypothesis.Axisymmetrical: lambda r, u: sym(axi_grad(r, u)),
 }
 Grad = {
     mgis_bv.Hypothesis.Tridimensional: lambda u: grad(u),
     mgis_bv.Hypothesis.PlaneStrain: lambda u: grad(u),
+    mgis_bv.Hypothesis.PlaneStress: lambda u: grad(u),
     mgis_bv.Hypothesis.Axisymmetrical: lambda r, u: axi_grad(r, u),
 }
 Id_Grad = {
     mgis_bv.Hypothesis.Tridimensional: lambda u: Identity(3) + grad(u),
     mgis_bv.Hypothesis.PlaneStrain: lambda u: Identity(3) + grad_3d(u),
+    mgis_bv.Hypothesis.PlaneStress: lambda u: Identity(3) + grad_3d(u),
     mgis_bv.Hypothesis.Axisymmetrical:
     lambda r, u: Identity(3) + axi_grad(r, u),
 }

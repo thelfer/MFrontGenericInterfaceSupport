@@ -101,6 +101,7 @@ class Gradient(QuadratureFunction):
                 converter = nonsymmetric_tensor_to_vector
             if hypothesis in [
                     mgis_bv.Hypothesis.PlaneStrain,
+                    mgis_bv.Hypothesis.PlaneStress,
                     mgis_bv.Hypothesis.Axisymmetrical,
             ]:
                 if ufl.shape(expression) == (2, 2):
