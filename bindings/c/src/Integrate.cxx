@@ -45,6 +45,64 @@ static mgis::behaviour::IntegrationType convertIntegrationType(
   return mgis::behaviour::IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR;
 }  // end of convertIntegrationType
 
+mgis_status mgis_bv_create_behaviour_integration_options(
+    mgis_bv_BehaviourIntegrationOptions** o) {
+  *o = nullptr;
+  try {
+    *o = new mgis::behaviour::BehaviourIntegrationOptions();
+    if (*o == nullptr) {
+      return mgis_report_failure(
+          "mgis_bv_behaviour_integration_options: "
+          "memory allocation failed");
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_create_behaviour_integration_options
+
+mgis_status mgis_bv_behaviour_integration_options_set_integration_type(
+    mgis_bv_BehaviourIntegrationOptions* const o,
+    const mgis_bv_IntegrationType s) {
+  if (o == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    o->integration_type = convertIntegrationType(s);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_integration_options_set_integration_type
+
+mgis_status mgis_bv_behaviour_integration_options_set_speed_of_sound_flag(
+    mgis_bv_BehaviourIntegrationOptions* const o,
+    const mgis_bv_SpeedOfSoundFlag s) {
+  if (o == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  if (s == MGIS_BV_INTEGRATION_WITHOUT_SPEED_OF_SOUND) {
+    o->compute_speed_of_sound = static_cast<bool>(mgis::behaviour::SpeedOfSoundFlag::INTEGRATION_WITHOUT_SPEED_OF_SOUND);
+  } else if (s == MGIS_BV_INTEGRATION_WITH_SPEED_OF_SOUND) {
+    o->compute_speed_of_sound = static_cast<bool>(mgis::behaviour::SpeedOfSoundFlag::INTEGRATION_WITH_SPEED_OF_SOUND);
+  } else {
+    return mgis_report_failure("invalid speed of sound flag");
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_integration_options_set_speed_of_sound_flag
+
+mgis_status mgis_bv_free_behaviour_integration_options(
+    mgis_bv_BehaviourIntegrationOptions** o) {
+  try {
+    delete *o;
+    *o = nullptr;
+  } catch (...) {
+    *o = nullptr;
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_free_behaviour_integration_options
+
 mgis_status mgis_bv_integrate(int* const r,
                               mgis_bv_BehaviourDataView* const d,
                               const mgis_bv_Behaviour* const b) {
@@ -71,7 +129,7 @@ mgis_status mgis_bv_integrate_material_data_manager(
     const mgis_real dt) {
   *r = -1;
   try {
-    *r = mgis::behaviour::integrate(*p, *m, convertIntegrationType(i), dt);
+    *r = mgis::behaviour::integrate(*p, convertIntegrationType(i), *m, dt);
     if ((*r != 1) && (*r != 0)) {
       return mgis_report_failure("behaviour integration failed");
     }
@@ -80,6 +138,25 @@ mgis_status mgis_bv_integrate_material_data_manager(
   }
   return mgis_report_success();
 }  // end of mgis_bv_integrate_material_data_manager
+
+mgis_status mgis_bv_integrate_material_data_manager_with_options(
+    int* const r,
+    mgis_ThreadPool* const p,
+    mgis_bv_MaterialDataManager* const m,
+    mgis_bv_BehaviourIntegrationOptions* const o,
+    const mgis_real dt) {
+  *r = -1;
+  try {
+    *r = mgis::behaviour::integrate(*p, *o, *m, dt);
+    if ((*r != 1) && (*r != 0)) {
+      return mgis_report_failure("behaviour integration failed");
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_integrate_material_data_manager_with_options
+
 
 mgis_status mgis_bv_integrate_material_data_manager_part(
     int* const r,
