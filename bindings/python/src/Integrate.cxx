@@ -238,8 +238,8 @@ void declareIntegrate() {
   int (*integrate_ptr2)(MaterialDataManager&, const IntegrationType,
                         const mgis::real, const mgis::size_type,
                         const mgis::size_type) = integrate;
-  int (*integrate_ptr3)(mgis::ThreadPool&, MaterialDataManager&,
-                        const IntegrationType, const mgis::real) = integrate;
+  int (*integrate_ptr3)(mgis::ThreadPool&, const IntegrationType,
+                        MaterialDataManager&, const mgis::real) = integrate;
   BehaviourIntegrationResult (*integrate_ptr4)(
       MaterialDataManager&, const BehaviourIntegrationOptions&,
       const mgis::real, const mgis::size_type, const mgis::size_type) =

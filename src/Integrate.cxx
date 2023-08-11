@@ -626,8 +626,16 @@ namespace mgis::behaviour {
   }  // end of integrate
 
   int integrate(ThreadPool& p,
+                const BehaviourIntegrationOptions& opts,
                 MaterialDataManager& m,
+                const real dt) {
+    const auto r = integrate(p, m, opts, dt);
+    return r.exit_status;
+  }  // end of integrate
+
+  int integrate(ThreadPool& p,
                 const IntegrationType it,
+                MaterialDataManager& m,
                 const real dt) {
     BehaviourIntegrationOptions opts;
     opts.integration_type = it;
