@@ -2560,7 +2560,7 @@ contains
        end function material_data_manager_initializer_bind_tangent_operator_wrapper
     end interface
     type(MaterialDataManagerInitializer), intent(in) :: d
-    real(kind=8), dimension(:,:), target, intent(out) :: K
+    real(kind=8), dimension(*), target, intent(out) :: K
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) K_ptr
@@ -2589,7 +2589,7 @@ contains
        end function material_data_manager_initializer_bind_speed_of_sound_wrapper
     end interface
     type(MaterialDataManagerInitializer), intent(in) :: d
-    real(kind=8), dimension(:,:), target, intent(out) :: p
+    real(kind=8), dimension(*), target, intent(out) :: p
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) p_ptr
@@ -2740,7 +2740,7 @@ contains
        end function mdm_use_array_of_tangent_operator_blocks_wrapper
     end interface
     type(MaterialDataManager), intent(in) :: d
-    real(kind=8), dimension(:,:), target, intent(out) :: p
+    real(kind=8), dimension(*), target, intent(out) :: p
     integer, intent(in) :: n
     type(mgis_status) :: r
     type(c_ptr) p_ptr
