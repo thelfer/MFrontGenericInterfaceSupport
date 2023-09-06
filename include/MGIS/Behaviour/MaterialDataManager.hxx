@@ -47,14 +47,18 @@ namespace mgis::behaviour {
     ~BehaviourIntegrationWorkSpace();
     //! \brief a buffer to hold error messages
     std::vector<char> error_message;
-    //! material properties at the beginning of the time step
+    //! \brief material properties at the beginning of the time step
     std::vector<mgis::real> mps0;
-    //! material properties at the end of the time step
+    //! \brief material properties at the end of the time step
     std::vector<mgis::real> mps1;
-    //! external state variables at the beginning of the time step
+    //! \brief external state variables at the beginning of the time step
     std::vector<mgis::real> esvs0;
-    //! external state variables at the end of the time step
+    //! \brief external state variables at the end of the time step
     std::vector<mgis::real> esvs1;
+    //! \brief mass density at the beginning of the time step
+    mgis::real rho0;
+    //! \brief mass density at the end of the time step
+    mgis::real rho1;
   };  // end of struct BehaviourIntegrationWorkSpace
 
   /*!

@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include <variant>
+#include <optional>
 #include "MGIS/Config.hxx"
 #include "MGIS/Span.hxx"
 #include "MGIS/StorageMode.hxx"
@@ -141,6 +142,14 @@ namespace mgis::behaviour {
      * case).
      */
     std::map<std::string, FieldHolder> material_properties;
+    /*! \brief mass density
+     * The mass density can be uniform or not.
+     * In the non uniform case, the data can be hold by the structure
+     * (std::vector<real>) or simply borrow a reference
+     * (mgis::span<mgis::real>
+     * case).
+     */
+    std::optional<FieldHolder> mass_density;
     //! \brief view to the values of the internal state variables
     mgis::span<mgis::real> internal_state_variables;
     /*!
@@ -215,14 +224,38 @@ namespace mgis::behaviour {
   MGIS_EXPORT bool isMaterialPropertyDefined(const MaterialStateManager&,
                                              const mgis::string_view&);
   /*!
-   * \brief set the given material property
+   * \brief chek if the given material property is uniform
    * \param[out] m: material data manager
    * \param[in] n: name
-   * \param[in] v: values
-   * \param[in] s: storage mode
    */
   MGIS_EXPORT bool isMaterialPropertyUniform(const MaterialStateManager&,
                                              const mgis::string_view&);
+  /*!
+   * \brief set the mass density
+   * \param[out] m: material data manager
+   * \param[in] v: value
+   */
+  MGIS_EXPORT void setMassDensity(MaterialStateManager&, const real);
+  /*!
+   * \brief set the mass density
+   * \param[out] m: material data manager
+   * \param[in] v: values
+   * \param[in] s: storage mode
+   */
+  MGIS_EXPORT void setMassDensity(MaterialStateManager&,
+                                  const mgis::span<mgis::real>&,
+                                  const MaterialStateManager::StorageMode =
+                                      MaterialStateManager::LOCAL_STORAGE);
+  /*!
+   * \return true if the given external state variable is defined.
+   * \param[out] m: material data manager
+   */
+  MGIS_EXPORT bool isMassDensityDefined(const MaterialStateManager&);
+  /*!
+   * \return true if the mass density is uniform
+   * \param[out] m: material data manager
+   */
+  MGIS_EXPORT bool isMassDensityUniform(const MaterialStateManager&);
   /*!
    * \brief set the given external state variable
    * \param[out] m: material data manager
@@ -258,8 +291,6 @@ namespace mgis::behaviour {
    * \return true if the given external state variable is uniform.
    * \param[out] m: material data manager
    * \param[in] n: name
-   * \param[in] v: values
-   * \param[in] s: storage mode
    */
   MGIS_EXPORT bool isExternalStateVariableUniform(const MaterialStateManager&,
                                                   const mgis::string_view&);

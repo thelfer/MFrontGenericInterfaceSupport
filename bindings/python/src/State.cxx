@@ -71,6 +71,7 @@ void declareState() {
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::State;
   boost::python::class_<State>("State", boost::python::no_init)
+      .add_property("mass_density", &State::mass_density)
       .add_property("stored_energy", &State::stored_energy)
       .add_property("dissipated_energy", &State::dissipated_energy)
       .add_property("gradients", &State_getGradients)

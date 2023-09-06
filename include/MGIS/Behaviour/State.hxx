@@ -56,6 +56,8 @@ namespace mgis::behaviour {
      * files) This output is optional.
      */
     real dissipated_energy;
+    //!
+    real mass_density = 0;
     //! \brief value of the gradients
     std::vector<real> gradients;
     //! \brief values of the thermodynamic_forces

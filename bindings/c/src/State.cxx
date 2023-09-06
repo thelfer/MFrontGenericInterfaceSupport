@@ -18,6 +18,15 @@
 
 extern "C" {
 
+mgis_status mgis_bv_state_set_mass_density(mgis_bv_State* const s,
+                                           const mgis_real v) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  s->mass_density = v;
+  return mgis_report_success();
+}  // end of mgis_bv_state_set_mass_density
+
 mgis_status mgis_bv_state_set_gradient_by_name(mgis_bv_State* const s,
                                                const char* const n,
                                                const mgis_real* const v) {

@@ -52,13 +52,13 @@ namespace mgis::behaviour::internals {
    * \brief uniform values are treated immediatly. For spatially variable
    * fields, we return the information needed to evaluate them
    */
-  static inline std::vector<Evaluator> buildEvaluator(
+  static std::vector<Evaluator> buildEvaluators(
       std::vector<real>& v,
       std::map<std::string, MaterialStateManager::FieldHolder>& values,
       const MaterialDataManager& m,
       const std::vector<Variable>& ds) {
     mgis::raise_if(v.size() != getArraySize(ds, m.b.hypothesis),
-                   "buildEvaluator: ill allocated memory");
+                   "buildEvaluators: ill allocated memory");
     // evaluators
     std::vector<Evaluator> evaluators;
     auto offset = mgis::size_type{};
@@ -66,7 +66,7 @@ namespace mgis::behaviour::internals {
       const auto s = getVariableSize(d, m.b.hypothesis);
       auto p = values.find(d.name);
       if (p == values.end()) {
-        auto msg = std::string{"buildEvaluator: no variable named '" + d.name +
+        auto msg = std::string{"buildEvaluators: no variable named '" + d.name +
                                "' declared"};
         if (!values.empty()) {
           msg += "\nThe following variables were declared: ";
@@ -91,7 +91,7 @@ namespace mgis::behaviour::internals {
       if (std::holds_alternative<real>(p->second)) {
         if (d.type != Variable::SCALAR) {
           mgis::raise(
-              "buildEvaluator: invalid type for "
+              "buildEvaluators: invalid type for "
               "variable '" +
               d.name + "'");
         }
@@ -104,7 +104,36 @@ namespace mgis::behaviour::internals {
       offset += s;
     }
     return evaluators;
-  }  // end of buildEvaluator
+  }  // end of buildEvaluators
+
+  static std::optional<Evaluator> buildMassDensityEvaluator(
+      mgis::real& rho, MaterialStateManager& s) {
+    if (!isMassDensityDefined(s)) {
+      rho = 0;
+      return {};
+    }
+    if (isMassDensityUniform(s)) {
+      rho = std::get<mgis::real>(*(s.mass_density));
+      return {};
+    }
+    auto check = [&s](const auto& values) {
+      if (values.size() != s.n) {
+        mgis::raise(
+            "buildMassDensityEvaluator: invalid size for the arrray of the "
+            "mass density (" +
+            std::to_string(values.size()) + " values given for '" +
+            std::to_string(s.n) + "'integration points)");
+      }
+    };
+    if (std::holds_alternative<std::vector<mgis::real>>(*(s.mass_density))) {
+      const auto& values = std::get<std::vector<mgis::real>>(*(s.mass_density));
+      check(values);
+      return std::make_tuple(0, 1, values.data());
+    }
+    const auto& values = std::get<mgis::span<mgis::real>>(*(s.mass_density));
+    check(values);
+    return std::make_tuple(0, 1, values.data());
+  }  // end of buildMassDensityEvaluator
 
   static inline void applyEvaluators(std::vector<real>& values,
                                      const std::vector<Evaluator>& evs,
@@ -147,6 +176,16 @@ namespace mgis::behaviour::internals {
      * end of the time step
      */
     std::vector<Evaluator> esvs1;
+    /*!
+     * \brief evaluator associated with the mass density at the beginning of
+     * the time step
+     */
+    std::optional<Evaluator> rho0;
+    /*!
+     * \brief evaluator associated with the mass density at the end of
+     * the time step
+     */
+    std::optional<Evaluator> rho1;
   };  // end of struct BehaviourEvaluators
 
   static inline BehaviourEvaluators buildBehaviourEvaluators(
@@ -154,14 +193,16 @@ namespace mgis::behaviour::internals {
     //
     auto evaluators = BehaviourEvaluators{};
     // treating uniform values
-    evaluators.mps0 = internals::buildEvaluator(
+    evaluators.mps0 = internals::buildEvaluators(
         ws.mps0, m.s0.material_properties, m, m.b.mps);
-    evaluators.mps1 = internals::buildEvaluator(
+    evaluators.mps1 = internals::buildEvaluators(
         ws.mps1, m.s1.material_properties, m, m.b.mps);
-    evaluators.esvs0 = internals::buildEvaluator(
+    evaluators.esvs0 = internals::buildEvaluators(
         ws.esvs0, m.s0.external_state_variables, m, m.b.esvs);
-    evaluators.esvs1 = internals::buildEvaluator(
+    evaluators.esvs1 = internals::buildEvaluators(
         ws.esvs1, m.s1.external_state_variables, m, m.b.esvs);
+    evaluators.rho0 = internals::buildMassDensityEvaluator(ws.rho0, m.s0);
+    evaluators.rho1 = internals::buildMassDensityEvaluator(ws.rho1, m.s1);
     return evaluators;
   }  // end of buildBehaviourEvaluator
 
@@ -173,6 +214,12 @@ namespace mgis::behaviour::internals {
     applyEvaluators(ws.mps1, evaluators.mps1, i);
     applyEvaluators(ws.esvs0, evaluators.esvs0, i);
     applyEvaluators(ws.esvs1, evaluators.esvs1, i);
+    if (evaluators.rho0.has_value()) {
+      ws.rho0 = *(std::get<2>(*(evaluators.rho0)) + i);
+    }
+    if (evaluators.rho1.has_value()) {
+      ws.rho1 = *(std::get<2>(*(evaluators.rho1)) + i);
+    }
   }
 
   static inline mgis::behaviour::BehaviourDataView initializeBehaviourDataView(
@@ -183,6 +230,8 @@ namespace mgis::behaviour::internals {
     v.s1.material_properties = ws.mps1.data();
     v.s0.external_state_variables = ws.esvs0.data();
     v.s1.external_state_variables = ws.esvs1.data();
+    v.s0.mass_density = &(ws.rho0);
+    v.s1.mass_density = &(ws.rho1);
     v.s0.stored_energy = nullptr;
     v.s1.stored_energy = nullptr;
     v.s0.dissipated_energy = nullptr;
