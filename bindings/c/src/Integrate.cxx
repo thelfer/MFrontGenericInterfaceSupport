@@ -40,9 +40,9 @@ static mgis::behaviour::IntegrationType convertIntegrationType(
       return mgis::behaviour::IntegrationType::
           INTEGRATION_CONSISTENT_TANGENT_OPERATOR;
     default:
-      mgis::raise("convertIntegrationType: invalid integration type");
+      break;
   }
-  return mgis::behaviour::IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR;
+  mgis::raise("convertIntegrationType: invalid integration type");
 }  // end of convertIntegrationType
 
 mgis_status mgis_bv_integrate(int* const r,
