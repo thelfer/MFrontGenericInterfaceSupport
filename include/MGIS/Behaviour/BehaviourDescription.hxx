@@ -45,6 +45,14 @@ namespace mgis::behaviour {
     std::string function;
     //! \brief name of the `MFront` source file used to generate the behaviour
     std::string source;
+    //! \brief author of the `MFront` file
+    std::string author;
+    //! \brief date
+    std::string date;
+    //! \brief validator of the `MFront` file
+    std::string validator;
+    //! \brief build identifier
+    std::string build_id;
     //! \brief version of `TFEL` used to generate the behaviour
     std::string tfel_version;
     //! \brief unit system used by the behaviour

@@ -864,6 +864,110 @@ contains
        l = get_empty_string();
     end if
   end function behaviour_get_source
+  ! behaviour_get_author
+  function behaviour_get_author(l,b) result(s)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_get_author_wrapper(l,b) bind(c,name = 'mgis_bv_behaviour_get_author') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_author_wrapper
+    end interface
+    character(len=:), allocatable, intent(out) :: l
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    type(c_ptr) :: lp
+    s = behaviour_get_author_wrapper(lp, b%ptr)
+    if (s % exit_status == MGIS_SUCCESS) then
+       l = convert_c_string(lp)
+    else
+       l = get_empty_string();
+    end if
+  end function behaviour_get_author
+  ! behaviour_get_date
+  function behaviour_get_date(l,b) result(s)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_get_date_wrapper(l,b) bind(c,name = 'mgis_bv_behaviour_get_date') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_date_wrapper
+    end interface
+    character(len=:), allocatable, intent(out) :: l
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    type(c_ptr) :: lp
+    s = behaviour_get_date_wrapper(lp, b%ptr)
+    if (s % exit_status == MGIS_SUCCESS) then
+       l = convert_c_string(lp)
+    else
+       l = get_empty_string();
+    end if
+  end function behaviour_get_date
+  ! behaviour_get_validator
+  function behaviour_get_validator(l,b) result(s)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_get_validator_wrapper(l,b) bind(c,name = 'mgis_bv_behaviour_get_validator') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_validator_wrapper
+    end interface
+    character(len=:), allocatable, intent(out) :: l
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    type(c_ptr) :: lp
+    s = behaviour_get_validator_wrapper(lp, b%ptr)
+    if (s % exit_status == MGIS_SUCCESS) then
+       l = convert_c_string(lp)
+    else
+       l = get_empty_string();
+    end if
+  end function behaviour_get_validator
+  ! behaviour_get_build_id
+  function behaviour_get_build_id(l,b) result(s)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_get_build_id_wrapper(l,b) bind(c,name = 'mgis_bv_behaviour_get_build_id') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_build_id_wrapper
+    end interface
+    character(len=:), allocatable, intent(out) :: l
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    type(c_ptr) :: lp
+    s = behaviour_get_build_id_wrapper(lp, b%ptr)
+    if (s % exit_status == MGIS_SUCCESS) then
+       l = convert_c_string(lp)
+    else
+       l = get_empty_string();
+    end if
+  end function behaviour_get_build_id
   ! behaviour_get_hypothesis
   function behaviour_get_hypothesis(l,b) result(s)
     use mgis_fortran_utilities

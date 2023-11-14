@@ -92,7 +92,31 @@ namespace mgis {
      */
     std::string getInterface(const std::string &, const std::string &);
     /*!
-     * \return the name of the `MGIS` file used to generate the given entry
+     * \return the author of the `MFront` file
+     * \param[in] l: library name
+     * \param[in] n: entry point name
+     */
+    std::string getAuthor(const std::string &, const std::string &);
+    /*!
+     * \return the date of the `MFront` file
+     * \param[in] l: library name
+     * \param[in] n: entry point name
+     */
+    std::string getDate(const std::string &, const std::string &);
+    /*!
+     * \return the validator of the `MFront` file
+     * \param[in] l: library name
+     * \param[in] n: entry point name
+     */
+    std::string getValidator(const std::string &, const std::string &);
+    /*!
+     * \return the build identifier
+     * \param[in] l: library name
+     * \param[in] n: entry point name
+     */
+    std::string getBuildIdentifier(const std::string &, const std::string &);
+    /*!
+     * \return the name of the `MFront` file used to generate the given entry
      * point
      * \param[in] l: library name
      * \param[in] n: entry point name

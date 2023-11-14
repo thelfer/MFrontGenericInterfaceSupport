@@ -154,6 +154,10 @@ namespace mgis::behaviour {
     d.tfel_version = lm.getTFELVersion(l, b);
     d.unit_system = lm.getUnitSystem(l, b);
     d.source = lm.getSource(l, b);
+    d.author = lm.getAuthor(l, b);
+    d.date = lm.getDate(l, b);
+    d.validator = lm.getValidator(l, b);
+    d.build_id = lm.getBuildIdentifier(l, b);
     d.btype = [&l, &b, &lm, &raise] {
       /* - 0 : general behaviour
        * - 1 : strain based behaviour *

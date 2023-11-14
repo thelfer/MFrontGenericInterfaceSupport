@@ -615,6 +615,42 @@ namespace mgis {
     return *(static_cast<const char *const *>(p));
   }  // end of getSource
 
+  std::string LibrariesManager::getAuthor(const std::string &l,
+                                          const std::string &n) {
+    const auto p = this->getSymbolAddress(l, n + "_author");
+    if (p == nullptr) {
+      return "";
+    }
+    return *(static_cast<const char *const *>(p));
+  }  // end of getAuthor
+
+  std::string LibrariesManager::getDate(const std::string &l,
+                                          const std::string &n) {
+    const auto p = this->getSymbolAddress(l, n + "_date");
+    if (p == nullptr) {
+      return "";
+    }
+    return *(static_cast<const char *const *>(p));
+  }  // end of getDate
+
+  std::string LibrariesManager::getValidator(const std::string &l,
+                                          const std::string &n) {
+    const auto p = this->getSymbolAddress(l, n + "_validator");
+    if (p == nullptr) {
+      return "";
+    }
+    return *(static_cast<const char *const *>(p));
+  }  // end of getValidator
+
+  std::string LibrariesManager::getBuildIdentifier(const std::string &l,
+                                          const std::string &n) {
+    const auto p = this->getSymbolAddress(l, n + "_build_id");
+    if (p == nullptr) {
+      return "";
+    }
+    return *(static_cast<const char *const *>(p));
+  }  // end of getBuildIdentifier
+
   std::string LibrariesManager::getInterface(const std::string &l,
                                              const std::string &n) {
     const auto p = this->getSymbolAddress(l, n + "_mfront_interface");

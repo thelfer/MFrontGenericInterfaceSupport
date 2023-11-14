@@ -328,6 +328,46 @@ mgis_status mgis_bv_behaviour_get_source(const char** s,
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_get_source
 
+mgis_status mgis_bv_behaviour_get_author(const char** s,
+                                         const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
+    *s = nullptr;
+    return mgis_report_failure("invalid argument");
+  }
+  *s = b->author.c_str();
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_author
+
+mgis_status mgis_bv_behaviour_get_date(const char** s,
+                                       const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
+    *s = nullptr;
+    return mgis_report_failure("invalid argument");
+  }
+  *s = b->date.c_str();
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_date
+
+mgis_status mgis_bv_behaviour_get_validator(const char** s,
+                                            const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
+    *s = nullptr;
+    return mgis_report_failure("invalid argument");
+  }
+  *s = b->validator.c_str();
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_validator
+
+mgis_status mgis_bv_behaviour_get_build_id(const char** s,
+                                           const mgis_bv_Behaviour* const b) {
+  if (b == nullptr) {
+    *s = nullptr;
+    return mgis_report_failure("invalid argument");
+  }
+  *s = b->build_id.c_str();
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_build_id
+
 mgis_status mgis_bv_behaviour_get_tfel_version(
     const char** v, const mgis_bv_Behaviour* const b) {
   if (b == nullptr) {

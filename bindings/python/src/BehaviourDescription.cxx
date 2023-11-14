@@ -232,6 +232,15 @@ void declareBehaviourDescription() {
                     "function implementing the behaviour")
       .def_readonly("source", &BehaviourDescription::source,
                     "name of the `MFront` source file")
+      .def_readonly("author", &BehaviourDescription::author,
+                    "author of the `MFront`'s file")
+      .def_readonly("date", &BehaviourDescription::date, "date")
+      .def_readonly("validator", &BehaviourDescription::validator,
+                    "validator of the `MFront`'s file")
+      .def_readonly("build_id", &BehaviourDescription::build_id,
+                    "build identifier of the `MFront`'s file")
+      .def_readonly("build_identifier", &BehaviourDescription::build_id,
+                    "build identifier of the `MFront`'s file")
       .def_readonly("tfel_version", &BehaviourDescription::tfel_version,
                     "version of TFEL used to generate the behaviour")
       .add_property("btype", &BehaviourDescription::btype,

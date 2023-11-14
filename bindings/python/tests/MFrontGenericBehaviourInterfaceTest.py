@@ -20,6 +20,10 @@ class IntegrateTest(unittest.TestCase):
         self.assertTrue(b.behaviour == "Gurson", "invalid behaviour name")
         self.assertTrue(b.hypothesis == h, "invalid hypothesis")
         self.assertTrue(b.source == "Gurson.mfront", "invalid source")
+        self.assertTrue(b.author == "Sebastien Melin", "invalid author");
+        self.assertTrue(b.date == "11 / 05 / 2015", "invalid date");
+        self.assertTrue(b.validator == "dummy validator", "invalid date");
+        self.assertTrue(b.build_identifier == "dummy build identifier", "invalid build identifier");
         self.assertTrue(b.tfel_version == version, "invalid TFEL version")
         self.assertTrue(
             len(b.mps) == 0, "invalid number of material properties")

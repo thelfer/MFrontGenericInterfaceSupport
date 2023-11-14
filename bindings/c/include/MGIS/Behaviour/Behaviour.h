@@ -371,12 +371,40 @@ mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_out_of_place(
 MGIS_C_EXPORT mgis_status
 mgis_bv_behaviour_get_library(const char**, const mgis_bv_Behaviour* const);
 /*!
- * \brief retrieve the source
+ * \brief retrieve the source of the `MFront`'s file
  * \param[out] s: source
  * \param[in] b: behaviour
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_behaviour_get_source(const char**, const mgis_bv_Behaviour* const);
+/*!
+ * \brief retrieve the author of the `MFront`'s file
+ * \param[out] s: author
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_author(const char**, const mgis_bv_Behaviour* const);
+/*!
+ * \brief retrieve the date of the `MFront`'s file
+ * \param[out] s: date
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_date(const char**, const mgis_bv_Behaviour* const);
+/*!
+ * \brief retrieve the validator of the `MFront`'s file
+ * \param[out] s: validator
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_validator(const char**, const mgis_bv_Behaviour* const);
+/*!
+ * \brief retrieve the build identifier of the `MFront`'s file
+ * \param[out] s: build identifier
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_build_id(const char**, const mgis_bv_Behaviour* const);
 /*!
  * \brief retrieve the hypothesis
  * \param[out] h: hypothesis

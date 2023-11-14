@@ -1,25 +1,28 @@
-@DSL    Implicit;
+@DSL Implicit{
+  validator : "dummy validator",  //
+  build_identifier : "dummy build identifier"
+};
 @Behaviour Gurson;
 @Author Sebastien Melin;
-@Date 11/05/2015;
+@Date 11 / 05 / 2015;
 
-@Description{
+@Description {
   "> Local and non-local Gurson-based"
   "> ductile damage and failure modelling"
   "> at large deformation"
   "> Reusch, Frederick and Svendsen, Bob and Klingbeil, Dietmar"
   "> European Journal of Mechanics - A/Solids. Nov 2003"
-}
+  }
 
-@Epsilon 1.e-12;
-@Theta 1.;
+  @Epsilon 1.e-12;
+  @Theta 1.;
 
-@UMATFiniteStrainStrategies[umat] {None,MieheApelLambrechtLogarithmicStrain};
+  @UMATFiniteStrainStrategies[umat]{None, MieheApelLambrechtLogarithmicStrain};
 
-@StateVariable strain p;
-p.setGlossaryName("EquivalentPlasticStrain");
-@StateVariable strain em;
-em.setEntryName("MatrixEquivalentPlasticStrain");
+  @StateVariable strain p;
+  p.setGlossaryName("EquivalentPlasticStrain");
+  @StateVariable strain em;
+  em.setEntryName("MatrixEquivalentPlasticStrain");
 @PhysicalBounds p  in [0:*[;
 @PhysicalBounds em in [0:*[;
 

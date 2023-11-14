@@ -15,6 +15,14 @@ subroutine test()
   character(len=:), allocatable :: h
   ! source
   character(len=:), allocatable :: s
+  ! author
+  character(len=:), allocatable :: author
+  ! date
+  character(len=:), allocatable :: date
+  ! validator
+  character(len=:), allocatable :: validator
+  ! build identifier
+  character(len=:), allocatable :: build_id
   ! version
   character(len=:), allocatable :: v
   ! name of the first internal state variable
@@ -68,6 +76,18 @@ subroutine test()
   ! source
   call check_status(behaviour_get_source(s, b))
   r = check_string(s, 'Gurson.mfront', 'invalid source')
+  ! author
+  call check_status(behaviour_get_author(author, b))
+  r = check_string(author, 'Sebastien Melin', 'invalid author')
+  ! date
+  call check_status(behaviour_get_date(date, b))
+  r = check_string(date, '11 / 05 / 2015', 'invalid date')
+  ! validator
+  call check_status(behaviour_get_validator(validator, b))
+  r = check_string(validator, 'dummy validator', 'invalid validator')
+  ! build identifier
+  call check_status(behaviour_get_build_id(build_id, b))
+  r = check_string(build_id, 'dummy build identifier', 'invalid build identifier')
   ! version
   call check_status(behaviour_get_tfel_version(v, b))
   r = check_string(v, get_tfel_version(), "invalid TFEL version")

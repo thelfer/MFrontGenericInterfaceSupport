@@ -67,6 +67,22 @@ int main(const int argc, const char* const* argv) {
   const char* s;
   check_status(mgis_bv_behaviour_get_source(&s, b));
   check_string(s, "Gurson.mfront", "invalid source");
+  // author
+  const char* author;
+  check_status(mgis_bv_behaviour_get_author(&author, b));
+  check_string(author, "Sebastien Melin", "invalid author");
+  // date
+  const char* date;
+  check_status(mgis_bv_behaviour_get_date(&date, b));
+  check_string(date, "11 / 05 / 2015", "invalid date");
+  // validator
+  const char* validator;
+  check_status(mgis_bv_behaviour_get_validator(&validator, b));
+  check_string(validator, "dummy validator", "invalid validator");
+  // build_id
+  const char* build_id;
+  check_status(mgis_bv_behaviour_get_build_id(&build_id, b));
+  check_string(build_id, "dummy build identifier", "invalid build identifier");
   // version
   const char* v;
   check_status(mgis_bv_behaviour_get_tfel_version(&v, b));
