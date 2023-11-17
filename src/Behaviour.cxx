@@ -57,7 +57,6 @@ namespace mgis::behaviour {
                                   const std::string &b,
                                   const Hypothesis h) {
     auto &lm = mgis::LibrariesManager::get();
-    const auto fct = b + '_' + toString(h);
     //
     auto d = Behaviour{};
     loadBehaviourDescription(d, l, b, h);
