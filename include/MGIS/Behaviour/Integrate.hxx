@@ -49,15 +49,20 @@ namespace mgis::behaviour {
     INTEGRATION_CONSISTENT_TANGENT_OPERATOR = 4
   };  // end of enum IntegrationType
 
+  enum struct SpeedOfSoundFlag {
+    INTEGRATION_WITHOUT_SPEED_OF_SOUND = false,
+    INTEGRATION_WITH_SPEED_OF_SOUND = true
+  };  // end of enum SpeedOfSoundFlag
+
   /*!
    * \brief structure defining various option
    */
-  struct BehaviourIntegrationOptions {
+  struct MGIS_EXPORT BehaviourIntegrationOptions {
     //! \brief type of integration to be performed
     IntegrationType integration_type =
         IntegrationType::INTEGRATION_CONSISTENT_TANGENT_OPERATOR;
     //! \brief if true, the speed of sound shall be computed
-    bool compute_speed_of_sound = false;
+    bool compute_speed_of_sound = static_cast<bool>(SpeedOfSoundFlag::INTEGRATION_WITHOUT_SPEED_OF_SOUND);
   };  // end of BehaviourIntegrationOptions
 
   /*!
@@ -327,8 +332,27 @@ namespace mgis::behaviour {
    * is automatically allocated.
    */
   MGIS_EXPORT int integrate(mgis::ThreadPool&,
+                            const BehaviourIntegrationOptions& opts,
                             MaterialDataManager&,
+                            const real);
+  /*!
+   * \brief integrate the behaviour for a range of integration points.
+   * \return an exit status. The returned value has the following meaning:
+   * - -1: integration failed for at least one integration point
+   * -  0: all integrations succeeded but results are unreliable for at least
+   *       one Gauss point
+   * -  1: integration succeeded and results are reliable.
+   *
+   * \param[in,out] p: thread pool
+   * \param[in,out] m: material data manager
+   * \param[in] dt: time step
+   *
+   * \note if required, the memory associated with the tangent operator blocks
+   * is automatically allocated.
+   */
+  MGIS_EXPORT int integrate(mgis::ThreadPool&,
                             const IntegrationType it,
+                            MaterialDataManager&,
                             const real);
   /*!
    * \brief integrate the behaviour for a range of integration points.

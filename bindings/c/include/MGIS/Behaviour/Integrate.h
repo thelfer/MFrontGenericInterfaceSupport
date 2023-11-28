@@ -23,8 +23,24 @@
 #include "MGIS/Behaviour/MaterialDataManager.h"
 
 #ifdef __cplusplus
+#include "MGIS/Behaviour/Integrate.hxx"
+#endif /*  __cplusplus */
+
+#ifdef __cplusplus
 extern "C" {
 #endif /*  __cplusplus */
+
+#ifdef __cplusplus
+using mgis_bv_BehaviourIntegrationOptions =
+    mgis::behaviour::BehaviourIntegrationOptions;
+#else
+/*!
+ * \brief an opaque structure which can only be accessed through the MGIS' API.
+ */
+typedef struct mgis_bv_BehaviourIntegrationOptions
+    mgis_bv_BehaviourIntegrationOptions;
+#endif
+
 
 //! kinematic of the behaviour treated
 typedef enum {
@@ -38,6 +54,48 @@ typedef enum {
   MGIS_BV_INTEGRATION_CONSISTENT_TANGENT_OPERATOR = 4
 } mgis_bv_IntegrationType;
 
+//! integration options speed of sound flag
+typedef enum {
+  MGIS_BV_INTEGRATION_WITHOUT_SPEED_OF_SOUND = 0,
+  MGIS_BV_INTEGRATION_WITH_SPEED_OF_SOUND = 1
+} mgis_bv_SpeedOfSoundFlag;
+
+
+
+/*!
+ * \brief allocate a new
+ * `mgis_bv_BehaviourIntegrationOptions` object
+ *
+ * \param[in] o: behaviour integration options
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_create_behaviour_integration_options(
+    mgis_bv_BehaviourIntegrationOptions**);
+/*!
+ * \brief set integration type
+ * \param[in] o: behaviour integration options
+ * \param[in] s: type
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_integration_options_set_integration_type(
+    mgis_bv_BehaviourIntegrationOptions* const,
+    const mgis_bv_IntegrationType);
+/*!
+ * \brief set speed of sound flag
+ * \param[in] o: behaviour integration options
+ * \param[in] s: flag
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_integration_options_set_speed_of_sound_flag(
+    mgis_bv_BehaviourIntegrationOptions* const,
+    const mgis_bv_SpeedOfSoundFlag);
+/*!
+ * \brief free the ressources associated with a
+ * `mgis_bv_BehaviourIntegrationOptions` object
+ *
+ * \param[in] o: integration behaviour options
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_free_behaviour_integration_options(
+    mgis_bv_BehaviourIntegrationOptions**);
 /*!
  * \brief integrate the behaviour. The returned value has the following
  * meaning:
@@ -49,6 +107,7 @@ typedef enum {
  * \param[in,out] d: behaviour data
  * \param[in,out] b: behaviour
  */
+
 MGIS_C_EXPORT mgis_status mgis_bv_integrate(int* const,
                                             mgis_bv_BehaviourDataView* const,
                                             const mgis_bv_Behaviour* const);
@@ -114,6 +173,13 @@ mgis_bv_integrate_material_data_manager(int* const,
                                         const mgis_bv_IntegrationType,
                                         const mgis_real);
 
+MGIS_C_EXPORT mgis_status
+mgis_bv_integrate_material_data_manager_with_options(int* const,
+                                                     mgis_ThreadPool* const,
+                                                     mgis_bv_MaterialDataManager* const,
+                                                     mgis_bv_BehaviourIntegrationOptions* const,
+                                                     const mgis_real);
+                                        
 #ifdef __cplusplus
 }
 #endif /*  __cplusplus */

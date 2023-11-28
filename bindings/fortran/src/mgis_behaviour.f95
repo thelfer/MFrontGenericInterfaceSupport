@@ -49,6 +49,10 @@ module mgis_behaviour
      enumerator :: INTEGRATION_CONSISTENT_TANGENT_OPERATOR = 4
   end enum
   enum, bind(C)
+     enumerator :: INTEGRATION_WITHOUT_SPEED_OF_SOUND = 0
+     enumerator :: INTEGRATION_WITH_SPEED_OF_SOUND = 1
+  end enum
+  enum, bind(C)
      enumerator :: CAUCHY = 0
      enumerator :: PK2 = 1
      enumerator :: PK1 = 2
@@ -82,6 +86,10 @@ module mgis_behaviour
     private
     type(c_ptr) :: ptr = c_null_ptr
   end type MaterialStateManager
+  type :: BehaviourIntegrationOptions
+    private
+    type(c_ptr) :: ptr = c_null_ptr
+  end type BehaviourIntegrationOptions
   type :: MaterialDataManagerInitializer
     private
     type(c_ptr) :: ptr = c_null_ptr
@@ -2664,7 +2672,7 @@ contains
        end function material_data_manager_initializer_bind_tangent_operator_wrapper
     end interface
     type(MaterialDataManagerInitializer), intent(in) :: d
-    real(kind=8), dimension(:,:), target, intent(out) :: K
+    real(kind=8), dimension(*), target, intent(out) :: K
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) K_ptr
@@ -2693,7 +2701,7 @@ contains
        end function material_data_manager_initializer_bind_speed_of_sound_wrapper
     end interface
     type(MaterialDataManagerInitializer), intent(in) :: d
-    real(kind=8), dimension(:,:), target, intent(out) :: p
+    real(kind=8), dimension(*), target, intent(out) :: p
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) p_ptr
@@ -2723,6 +2731,93 @@ contains
        r = free_material_data_manager_initializer_wrapper(ptr%ptr)
     end if
   end function free_material_data_manager_initializer
+  !
+  function create_behaviour_integration_options(o) result(s)
+   use mgis_fortran_utilities
+   use mgis, only: mgis_status, report_failure
+   implicit none
+   interface
+      function create_behaviour_integration_options_wrapper(ptr) &
+           bind(c,name = 'mgis_bv_create_behaviour_integration_options') &
+           result(r)
+        use, intrinsic :: iso_c_binding, only: c_ptr
+        use mgis, only: mgis_status
+        implicit none
+        type(c_ptr), intent(out) :: ptr
+        type(mgis_status) :: r
+      end function create_behaviour_integration_options_wrapper
+   end interface
+   type(BehaviourIntegrationOptions), intent(out) :: o
+   type(mgis_status) :: s
+   s = create_behaviour_integration_options_wrapper(o%ptr)
+  end function create_behaviour_integration_options
+  !
+  function behaviour_integration_options_set_speed_of_sound_flag(o, ss) result(s)
+   use, intrinsic :: iso_c_binding, only: c_int
+   use mgis_fortran_utilities
+   use mgis, only: mgis_status, report_failure
+   implicit none
+   interface
+      function bin_opts_set_speed_of_sound_flag_wrapper(o, ss) &
+           bind(c,name = 'mgis_bv_behaviour_integration_options_set_speed_of_sound_flag') &
+           result(r)
+        use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+        use mgis, only: mgis_status
+        implicit none
+        type(c_ptr), intent(in), value :: o
+        integer(kind=c_int), intent(in),value :: ss
+        type(mgis_status) :: r
+      end function bin_opts_set_speed_of_sound_flag_wrapper
+   end interface
+   type(BehaviourIntegrationOptions), intent(in) :: o
+   integer(kind=c_int), intent(in) :: ss
+   type(mgis_status) :: s
+   s = bin_opts_set_speed_of_sound_flag_wrapper(o%ptr,ss)
+  end function behaviour_integration_options_set_speed_of_sound_flag
+  !
+  function behaviour_integration_options_set_integration_type(o, ss) result(s)
+   use, intrinsic :: iso_c_binding, only: c_int
+   use mgis_fortran_utilities
+   use mgis, only: mgis_status, report_failure
+   implicit none
+   interface
+      function bin_opts_set_integration_type_wrapper(o, ss) &
+           bind(c,name = 'mgis_bv_behaviour_integration_options_set_integration_type') &
+           result(r)
+        use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+        use mgis, only: mgis_status
+        implicit none
+        type(c_ptr), intent(in), value :: o
+        integer(kind=c_int), intent(in),value :: ss
+        type(mgis_status) :: r
+      end function bin_opts_set_integration_type_wrapper
+   end interface
+   type(BehaviourIntegrationOptions), intent(in) :: o
+   integer(kind=c_int), intent(in) :: ss
+   type(mgis_status) :: s
+   s = bin_opts_set_integration_type_wrapper(o%ptr,ss)
+  end function behaviour_integration_options_set_integration_type
+  !
+  function free_behaviour_integration_options(ptr) result(r)
+   use, intrinsic :: iso_c_binding, only: c_associated
+   use mgis
+   implicit none
+   interface
+      function free_behaviour_integration_options_wrapper(ptr) &
+           bind(c, name='mgis_bv_free_behaviour_integration_options') result(r)
+        use, intrinsic :: iso_c_binding, only: c_ptr
+        use mgis
+        implicit none
+        type(c_ptr), intent(inout) :: ptr
+        type(mgis_status) :: r
+      end function free_behaviour_integration_options_wrapper
+   end interface
+   type(BehaviourIntegrationOptions), intent(inout) :: ptr
+   type(mgis_status) :: r
+   if (c_associated(ptr%ptr)) then
+      r = free_behaviour_integration_options_wrapper(ptr%ptr)
+   end if
+  end function free_behaviour_integration_options
   !
   function create_material_data_manager(d, b, n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t
@@ -2844,7 +2939,7 @@ contains
        end function mdm_use_array_of_tangent_operator_blocks_wrapper
     end interface
     type(MaterialDataManager), intent(in) :: d
-    real(kind=8), dimension(:,:), target, intent(out) :: p
+    real(kind=8), dimension(*), target, intent(out) :: p
     integer, intent(in) :: n
     type(mgis_status) :: r
     type(c_ptr) p_ptr
@@ -2910,7 +3005,7 @@ contains
        end function mdm_use_array_of_speed_of_sounds_wrapper
     end interface
     type(MaterialDataManager), intent(in) :: d
-    real(kind=8), dimension(:,:), target, intent(out) :: p
+    real(kind=8), dimension(*), target, intent(out) :: p
     integer, intent(in) :: n
     type(mgis_status) :: r
     type(c_ptr) p_ptr
@@ -3549,6 +3644,35 @@ contains
     type(mgis_status) :: s
     s = integrate_material_data_manager_wrapper(r, p%ptr, m%ptr, i, dt)
   end function integrate_material_data_manager
+  ! 
+  function integrate_material_data_manager_with_options(r, p, m, i, dt) result(s)
+   use, intrinsic :: iso_c_binding, only: c_size_t
+   use mgis_fortran_utilities, only: convert_to_c_index
+   use mgis, only: ThreadPool, mgis_status, report_failure
+   implicit none
+   interface
+      function integrate_material_data_manager_with_options_wrapper(r, p, m, i, dt) &
+           bind(c,name = 'mgis_bv_integrate_material_data_manager_with_options') &
+           result(s)
+        use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_double
+        use mgis, only: mgis_status
+        implicit none
+        integer(kind=c_int), intent(out) :: r
+        type(c_ptr), intent(in),value :: p
+        type(c_ptr), intent(in),value :: m
+        type(c_ptr), intent(in),value :: i
+        real(kind = c_double), intent(in),value :: dt
+        type(mgis_status) :: s
+      end function integrate_material_data_manager_with_options_wrapper
+   end interface
+   integer,                           intent(out) :: r
+   type(ThreadPool),                  intent(in) :: p
+   type(MaterialDataManager),         intent(in) :: m
+   type(BehaviourIntegrationOptions), intent(in) :: i
+   real(kind = 8), intent(in) :: dt
+   type(mgis_status) :: s
+   s = integrate_material_data_manager_with_options_wrapper(r, p%ptr, m%ptr, i%ptr, dt)
+  end function integrate_material_data_manager_with_options
   !
   function integrate_material_data_manager_part(r, m, i, dt, ni, ne) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t
