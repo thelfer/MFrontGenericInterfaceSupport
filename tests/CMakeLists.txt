@@ -21,7 +21,8 @@ mfront_behaviours_check_library(BehaviourTest
   StandardElastoViscoPlasticityPlasticityTest11
   TensorialExternalStateVariableTest
   InitializeFunctionTest
-  PostProcessingTest)
+  PostProcessingTest
+  ComputeSpeedOfSound)
 
 mfront_behaviours_check_library(ModelTest
   ode_rk54)
@@ -137,6 +138,16 @@ target_link_libraries(PostProcessingTest
 	PRIVATE MFrontGenericInterface)
 target_compile_definitions(PostProcessingTest
   PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
+
+add_executable(ComputeSpeedOfSoundTest
+  EXCLUDE_FROM_ALL ComputeSpeedOfSoundTest.cxx)
+target_link_libraries(ComputeSpeedOfSoundTest
+	PRIVATE MFrontGenericInterface)
+
+add_executable(ComputeSpeedOfSoundTest2
+  EXCLUDE_FROM_ALL ComputeSpeedOfSoundTest2.cxx)
+target_link_libraries(ComputeSpeedOfSoundTest2
+	PRIVATE MFrontGenericInterface)
 
 add_test(NAME MFrontGenericBehaviourInterfaceTest
  COMMAND MFrontGenericBehaviourInterfaceTest
@@ -332,5 +343,29 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
 else((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST PostProcessingTest
+    PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME ComputeSpeedOfSoundTest
+ COMMAND ComputeSpeedOfSoundTest "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(check ComputeSpeedOfSoundTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST ComputeSpeedOfSoundTest
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST ComputeSpeedOfSoundTest
+    PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME ComputeSpeedOfSoundTest2
+ COMMAND ComputeSpeedOfSoundTest2 "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(check ComputeSpeedOfSoundTest2)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST ComputeSpeedOfSoundTest2
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST ComputeSpeedOfSoundTest2
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))

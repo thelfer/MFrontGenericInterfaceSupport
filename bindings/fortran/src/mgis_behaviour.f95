@@ -2223,6 +2223,28 @@ contains
     end if
   end function free_behaviour_data
   !
+  function state_set_mass_density(s, v) result(r)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function state_set_mass_density_wrapper(s, v) &
+            bind(c,name = 'mgis_bv_state_set_mass_density') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in),value :: s
+         real(c_double), intent(in),value :: v
+         type(mgis_status) :: r
+       end function state_set_mass_density_wrapper
+    end interface
+    type(State), intent(in) :: s
+    real(kind=8) :: v
+    type(mgis_status) :: r
+    r = state_set_mass_density_wrapper(s%ptr, v)
+  end function state_set_mass_density
+  !
   function state_set_gradient_by_name(s, n, v) result(r)
     use, intrinsic :: iso_c_binding, only: c_loc
     use mgis_fortran_utilities
@@ -3328,6 +3350,87 @@ contains
        b = .false.
     end if
   end function material_state_manager_is_material_property_uniform
+  !
+  function material_state_manager_set_uniform_scalar_mass_density(s, v) &
+       result(r)
+    use mgis, only: mgis_status
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function msm_set_uniform_scalar_mass_density_wrapper(s, v) &
+            bind(c,name = 'mgis_bv_material_state_manager_set_uniform_scalar_mass_density') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_char
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in),value :: s
+         real(kind=c_double), intent(in), value :: v
+         type(mgis_status) :: r
+       end function msm_set_uniform_scalar_mass_density_wrapper
+    end interface
+    type(MaterialStateManager), intent(in) :: s
+    real(kind=8),     intent(in) :: v
+    type(mgis_status) :: r
+    r = msm_set_uniform_scalar_mass_density_wrapper(s %ptr, v)
+  end function material_state_manager_set_uniform_scalar_mass_density
+  !
+  function material_state_manager_is_mass_density_defined(b, s)&
+       result(r)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function msm_is_mass_density_defined(b, s) &
+            bind(c,name = 'mgis_bv_material_state_manager_is_mass_density_defined') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: b
+         type(c_ptr), intent(in),value :: s
+         type(mgis_status) :: r
+       end function msm_is_mass_density_defined
+    end interface
+    logical, intent(out) :: b
+    type(MaterialStateManager), intent(in) :: s
+    type(mgis_status) :: r
+    integer bc
+    r = msm_is_mass_density_defined(bc, s%ptr)
+    if( r % exit_status .eq. MGIS_SUCCESS) then
+       b = bc .eq. 1
+    else
+       b = .false.
+    end if
+  end function material_state_manager_is_mass_density_defined
+  !
+  function material_state_manager_is_mass_density_uniform(b, s)&
+       result(r)
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function msm_is_mass_density_uniform(b, s) &
+            bind(c,name = 'mgis_bv_material_state_manager_is_mass_density_uniform') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: b
+         type(c_ptr), intent(in),value :: s
+         type(mgis_status) :: r
+       end function msm_is_mass_density_uniform
+    end interface
+    logical, intent(out) :: b
+    type(MaterialStateManager), intent(in) :: s
+    type(mgis_status) :: r
+    integer bc
+    r = msm_is_mass_density_uniform(bc, s%ptr)
+    if( r % exit_status .eq. MGIS_SUCCESS) then
+       b = bc .eq. 1
+    else
+       b = .false.
+    end if
+  end function material_state_manager_is_mass_density_uniform
   !
   function material_state_manager_get_internal_state_variables_stride(n_isvs, s) &
        result(r)

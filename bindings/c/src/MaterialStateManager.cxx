@@ -266,7 +266,7 @@ mgis_status mgis_bv_material_state_manager_set_non_uniform_material_property(
     return mgis_report_failure("null state manager");
   }
   if (v == nullptr) {
-    return mgis_report_failure("null state values");
+    return mgis_report_failure("null material property values");
   }
   try {
     const auto& mp = getVariable(m->b.mps, n);
@@ -316,6 +316,76 @@ mgis_status mgis_bv_material_state_manager_is_material_property_uniform(
   }
   return mgis_report_success();
 }  // end of mgis_bv_material_state_manager_is_material_property_uniform
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_uniform_scalar_mass_density(
+    mgis_bv_MaterialStateManager* const m,
+    const mgis_real v) {
+  if (m == nullptr) {
+    return mgis_report_failure("null state manager");
+  }
+  try {
+    setMassDensity(*m, v);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_material_state_manager_set_uniform_scalar_mass_density
+
+mgis_status mgis_bv_material_state_manager_set_non_uniform_mass_density(
+    mgis_bv_MaterialStateManager* const m,
+    mgis_real* const v,
+    const mgis_bv_MaterialStateManagerStorageMode s) {
+  using index_type = mgis::span<mgis::real>::index_type;
+  if (m == nullptr) {
+    return mgis_report_failure("null state manager");
+  }
+  if (v == nullptr) {
+    return mgis_report_failure("null state values");
+  }
+  try {
+    if (s == MGIS_BV_LOCAL_STORAGE) {
+      setMassDensity(*m, {v, static_cast<index_type>(m->n)},
+                     mgis::behaviour::MaterialStateManager::LOCAL_STORAGE);
+    } else {
+      setMassDensity(*m, {v, static_cast<index_type>(m->n)},
+                     mgis::behaviour::MaterialStateManager::EXTERNAL_STORAGE);
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_material_state_manager_set_non_uniform_mass_density
+
+mgis_status mgis_bv_material_state_manager_is_mass_density_defined(
+    int* const b,
+    const mgis_bv_MaterialStateManager* const m) {
+  *b = 0;
+  if (m == nullptr) {
+    return mgis_report_failure("null state manager");
+  }
+  try {
+    *b = isMassDensityDefined(*m);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_material_state_manager_is_mass_density_defined
+
+mgis_status mgis_bv_material_state_manager_is_mass_density_uniform(
+    int* const b,
+    const mgis_bv_MaterialStateManager* const m) {
+  *b = 0;
+  if (m == nullptr) {
+    return mgis_report_failure("null state manager");
+  }
+  try {
+    *b = isMassDensityUniform(*m);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_material_state_manager_is_mass_density_uniform
 
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable(

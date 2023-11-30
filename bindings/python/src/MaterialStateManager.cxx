@@ -102,6 +102,19 @@ static void MaterialStateManager_setMaterialProperty2(
   setMaterialProperty(sm, n, mgis::python::mgis_convert_to_span(o), s);
 }  // end of MaterialStateManager_setMaterialProperty
 
+static void MaterialStateManager_setMassDensity(
+    mgis::behaviour::MaterialStateManager& s,
+    const mgis::real v) {
+  mgis::behaviour::setMassDensity(s, v);
+}  // end of MaterialStateManager_setMassDensity
+
+static void MaterialStateManager_setMassDensity2(
+    mgis::behaviour::MaterialStateManager& sm,
+    const boost::python::object& o,
+    const mgis::behaviour::MaterialStateManager::StorageMode s) {
+  setMassDensity(sm, mgis::python::mgis_convert_to_span(o), s);
+}  // end of MaterialStateManager_setMassDensity
+
 static void MaterialStateManager_setExternalStateVariable(
     mgis::behaviour::MaterialStateManager& s,
     const std::string& n,
@@ -174,6 +187,8 @@ void declareMaterialStateManager() {
                     &MaterialStateManager_getInternalStateVariables)
       .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty)
       .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty2)
+      .def("setMassDensity", &MaterialStateManager_setMassDensity)
+      .def("setMassDensity", &MaterialStateManager_setMassDensity2)
       .def("setExternalStateVariable",
            &MaterialStateManager_setExternalStateVariable)
       .def("setExternalStateVariable",
@@ -183,6 +198,10 @@ void declareMaterialStateManager() {
                      &MaterialStateManager_setMaterialProperty);
   boost::python::def("setMaterialProperty",
                      &MaterialStateManager_setMaterialProperty2);
+  boost::python::def("setMassDensity",
+                     &MaterialStateManager_setMassDensity);
+  boost::python::def("setMassDensity",
+                     &MaterialStateManager_setMassDensity2);
   boost::python::def("setExternalStateVariable",
                      &MaterialStateManager_setExternalStateVariable);
   boost::python::def("setExternalStateVariable",

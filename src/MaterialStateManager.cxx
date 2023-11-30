@@ -212,6 +212,35 @@ namespace mgis::behaviour {
     return std::holds_alternative<real>(p->second);
   }  // end of isMaterialPropertyUniform
 
+  void setMassDensity(MaterialStateManager& m, const real v) {
+    m.mass_density = v;
+  }  // end of setMassDensity
+
+  MGIS_EXPORT void setMassDensity(
+      MaterialStateManager& m,
+      const mgis::span<real>& v,
+      const MaterialStateManager::StorageMode s) {
+    mgis::raise_if(static_cast<mgis::size_type>(v.size()) != m.n,
+                   "setMassDensity: invalid number of values "
+                   "(does not match the number of integration points)");
+    if (s == MaterialStateManager::LOCAL_STORAGE) {
+      m.mass_density = std::vector<real>{v.begin(), v.end()};
+    } else {
+      m.mass_density = v;
+    }
+  }  // end of setMassDensity
+
+  bool isMassDensityDefined(const MaterialStateManager& m) {
+    return m.mass_density.has_value();
+  }  // end of isMassDensityDefined
+
+  bool isMassDensityUniform(const MaterialStateManager& m) {
+    if (!isMassDensityDefined(m)) {
+      mgis::raise("isMassDensityUniform: the mass density is undefined");
+    }
+    return std::holds_alternative<real>(*(m.mass_density));
+  }  // end of isMassDensityUniform
+
   void setExternalStateVariable(MaterialStateManager& m,
                                 const mgis::string_view& n,
                                 const real v) {
@@ -364,6 +393,14 @@ namespace mgis::behaviour {
     }
     for (const auto& ev : i.external_state_variables) {
       update_field_holder(o.external_state_variables[ev.first], ev.second);
+    }
+    if (i.mass_density.has_value()) {
+      if (!o.mass_density.has_value()) {
+        o.mass_density = mgis::real{};
+      }
+      update_field_holder(*(o.mass_density), *(i.mass_density));
+    } else {
+      o.mass_density.reset();
     }
   }  // end of updateValues
 

@@ -129,7 +129,7 @@ mgis_status mgis_bv_integrate_material_data_manager(
     const mgis_real dt) {
   *r = -1;
   try {
-    *r = mgis::behaviour::integrate(*p, convertIntegrationType(i), *m, dt);
+    *r = mgis::behaviour::integrate(*p, *m, convertIntegrationType(i), dt);
     if ((*r != 1) && (*r != 0)) {
       return mgis_report_failure("behaviour integration failed");
     }
@@ -147,7 +147,7 @@ mgis_status mgis_bv_integrate_material_data_manager_with_options(
     const mgis_real dt) {
   *r = -1;
   try {
-    *r = mgis::behaviour::integrate(*p, *o, *m, dt);
+    *r = mgis::behaviour::integrate(*p, *m, *o, dt).exit_status;
     if ((*r != 1) && (*r != 0)) {
       return mgis_report_failure("behaviour integration failed");
     }

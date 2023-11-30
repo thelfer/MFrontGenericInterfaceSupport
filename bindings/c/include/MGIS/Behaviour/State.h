@@ -35,6 +35,13 @@ typedef struct mgis_bv_State mgis_bv_State;
 #endif /*  __cplusplus */
 
 /*!
+ * \brief set the mass density
+ * \param[out] s: state
+ * \param[in]  v: value
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_state_set_mass_density(mgis_bv_State* const,
+                                                         const mgis_real);
+/*!
  * \brief set a gradient' value in a state
  * \param[out] s: state
  * \param[in]  n: name

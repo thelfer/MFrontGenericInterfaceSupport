@@ -198,6 +198,44 @@ MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_get_non_uniform_material_property(
     mgis_real** const, mgis_bv_MaterialStateManager* const, const char* const);
 
+/*!
+ * \brief set the value of an uniform scalar mass density
+ * \param[in] s: state manager
+ * \param[in] v: value of the mass density
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_uniform_scalar_mass_density(
+    mgis_bv_MaterialStateManager* const, const mgis_real);
+/*!
+ * \brief set the value of an uniform mass density
+ * \param[in] s: state manager
+ * \param[in] v: values of the mass density
+ * \param[in] sm: storage mode
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_non_uniform_mass_density(
+    mgis_bv_MaterialStateManager* const,
+    mgis_real* const,
+    const mgis_bv_MaterialStateManagerStorageMode);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_is_mass_density_defined(
+    int* const, const mgis_bv_MaterialStateManager* const);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_is_mass_density_uniform(
+    int* const, const mgis_bv_MaterialStateManager* const);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_get_uniform_mass_density(
+    mgis_real* const, mgis_bv_MaterialStateManager* const);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_get_non_uniform_mass_density(
+    mgis_real** const, mgis_bv_MaterialStateManager* const);
+
+//
+
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable(
     mgis_bv_MaterialStateManager* const, const char* const, const mgis_real);
