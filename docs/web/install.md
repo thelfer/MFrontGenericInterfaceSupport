@@ -80,3 +80,11 @@ $ spack install mgis
 By default, the `c`, `python` and `fortran` bindings are installed. The
 mgis package has numerous variants which allows customizing which
 bindings must be built.
+
+# Installing using `brew`
+
+Installing `mgis` using `brew` shall be as easy as:
+
+~~~~{.bash}
+$ brew install mgis
+~~~~

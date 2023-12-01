@@ -58,6 +58,7 @@ The following bindings are under consideration:
 
 # Versions, branches
 
+- Version `2.2` is meant to be build against `TFEL` 4.2
 - Version `2.1` is meant to be build against `TFEL` 4.1
 - Version `2.0` is meant to be build against `TFEL` 4.0
 - Version `1.2.2` is meant to be build against `TFEL` 3.4.3
@@ -71,6 +72,8 @@ The following branches are available:
 
 - The `master` branch follows the evolution of the `master` branch of
   the `TFEL` project
+- The `rliv-2.2` follows the evolution of the 4.2.x series of the `TFEL`
+  project.
 - The `rliv-2.1` follows the evolution of the 4.1.x series of the `TFEL`
   project.
 - The `rliv-2.0` follows the evolution of the 4.0.x series of the `TFEL`
