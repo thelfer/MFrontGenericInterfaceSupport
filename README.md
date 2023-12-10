@@ -2,7 +2,8 @@
 
 This project aims at providing tools (functions, classes, bindings,
 etc...) to handle behaviours written using `MFront` generic interface.
-For information about `MFront`, see <http://tfel.sourceforge.net>.
+For information about `MFront`, see
+<http://thelfer.github.io/tfel/web/index.html>.
 
 Those tools are meant to be used by (`FEM`, `FFT`, etc.) solver
 developers. This tools are *not* linked to the `TFEL` libraries.
