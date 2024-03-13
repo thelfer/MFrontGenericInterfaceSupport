@@ -213,6 +213,10 @@ endif(TFEL_FOUND)
 
 #documentations
 
+if(enable-doxygen-doc OR enable-website)
+  add_custom_target(doc)
+endif(enable-doxygen-doc OR enable-website)
+
 # add a target to generate API documentation with Doxygen
 option(enable-doxygen-doc "enable generation of the Doxygen documentation" OFF)
 if(enable-doxygen-doc)
@@ -258,10 +262,6 @@ if(enable-website)
 else(enable-website)
   message(STATUS "Generation of the MGIS website disabled")
 endif(enable-website)
-
-if(enable-doxygen-doc OR enable-website)
-  add_custom_target(doc)
-endif(enable-doxygen-doc OR enable-website)
 
 add_subdirectory(docs)
 
