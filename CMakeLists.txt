@@ -215,6 +215,7 @@ endif(TFEL_FOUND)
 
 # add a target to generate API documentation with Doxygen
 option(enable-doxygen-doc "enable generation of the Doxygen documentation" OFF)
+option(enable-website "enable generation of the website" ON)
 
 if(enable-doxygen-doc OR enable-website)
   add_custom_target(doc)
@@ -242,7 +243,6 @@ else(enable-doxygen-doc)
   message(STATUS "doxygen documentation is not enabled")
 endif(enable-doxygen-doc)
 
-option(enable-website "enable generation of the website" ON)
 if(enable-website)
   set(MGIS_GENERATE_WEBSITE OFF)
   # Looking for pandoc (http://johnmacfarlane.net/pandoc)
