@@ -11,15 +11,15 @@
 namespace mgis::behaviour {
 
   static std::vector<mgis::real> copyValuesIfRequired(
-      const mgis::span<const mgis::real>& values, const mgis::StorageMode& s) {
+      const std::span<const mgis::real>& values, const mgis::StorageMode& s) {
     if (s != mgis::StorageMode::LOCAL_STORAGE) {
       return {};
     }
     return {values.begin(), values.end()};
   }
 
-  static mgis::span<const mgis::real> initializeLocalSpan(
-      const mgis::span<const mgis::real>& evalues,
+  static std::span<const mgis::real> initializeLocalSpan(
+      const std::span<const mgis::real>& evalues,
       const std::vector<mgis::real>& lvalues,
       const mgis::StorageMode& s) {
     if (s == mgis::StorageMode::LOCAL_STORAGE) {
@@ -29,15 +29,15 @@ namespace mgis::behaviour {
   }  // end of initializeLocalSpan
 
   MaterialAxisStorage::MaterialAxisStorage(
-      const mgis::span<const mgis::real>& values, const mgis::StorageMode& s)
+      const std::span<const mgis::real>& values, const mgis::StorageMode& s)
       : a_values(copyValuesIfRequired(values, s)),
         a(initializeLocalSpan(values, this->a_values, s)) {
   }  // end of MaterialAxisStorage::MaterialAxisStorage
 
   MaterialAxisStorage::~MaterialAxisStorage() = default;
 
-  static mgis::span<const mgis::real> checkMaterialAxis2D(
-      const mgis::span<const mgis::real>& v) {
+  static std::span<const mgis::real> checkMaterialAxis2D(
+      const std::span<const mgis::real>& v) {
     if (v.empty()) {
       mgis::raise(
           "RotationMatrix2D::RotationMatrix2D: "
@@ -51,14 +51,14 @@ namespace mgis::behaviour {
     return v;
   }  // end of checkMaterialAxis3D
 
-  RotationMatrix2D::RotationMatrix2D(const mgis::span<const mgis::real>& v,
+  RotationMatrix2D::RotationMatrix2D(const std::span<const mgis::real>& v,
                                      const mgis::StorageMode& s)
       : MaterialAxisStorage(checkMaterialAxis2D(v), s) {}
 
   RotationMatrix2D::~RotationMatrix2D() = default;
 
-  static mgis::span<const mgis::real> checkMaterialAxis3D(
-      const mgis::span<const mgis::real>& v) {
+  static std::span<const mgis::real> checkMaterialAxis3D(
+      const std::span<const mgis::real>& v) {
     if (v.empty()) {
       mgis::raise(
           "RotationMatrix3D::RotationMatrix3D: "
@@ -73,9 +73,9 @@ namespace mgis::behaviour {
     return v;
   }  // end of checkMaterialAxis3D
 
-  RotationMatrix3D::RotationMatrix3D(const mgis::span<const mgis::real>& v1,
+  RotationMatrix3D::RotationMatrix3D(const std::span<const mgis::real>& v1,
                                      const mgis::StorageMode& s1,
-                                     const mgis::span<const mgis::real>& v2,
+                                     const std::span<const mgis::real>& v2,
                                      const mgis::StorageMode& s2)
       : a1(checkMaterialAxis3D(v1), s1), a2(checkMaterialAxis3D(v2), s2) {
     if (v1.empty()) {
@@ -85,8 +85,8 @@ namespace mgis::behaviour {
     }
   }
 
-  RotationMatrix3D::RotationMatrix3D(const mgis::span<const mgis::real>& v1,
-                                     const mgis::span<const mgis::real>& v2,
+  RotationMatrix3D::RotationMatrix3D(const std::span<const mgis::real>& v1,
+                                     const std::span<const mgis::real>& v2,
                                      const mgis::StorageMode& s)
       : a1(checkMaterialAxis3D(v1), s), a2(checkMaterialAxis3D(v2), s) {}
 

@@ -96,8 +96,8 @@ namespace mgis::behaviour::internals {
               d.name + "'");
         }
         v[offset] = std::get<real>(p->second);
-      } else if (std::holds_alternative<mgis::span<real>>(p->second)) {
-        set_values(std::get<mgis::span<real>>(p->second));
+      } else if (std::holds_alternative<std::span<real>>(p->second)) {
+        set_values(std::get<std::span<real>>(p->second));
       } else {
         set_values(std::get<std::vector<real>>(p->second));
       }
@@ -130,7 +130,7 @@ namespace mgis::behaviour::internals {
       check(values);
       return std::make_tuple(0, 1, values.data());
     }
-    const auto& values = std::get<mgis::span<mgis::real>>(*(s.mass_density));
+    const auto& values = std::get<std::span<mgis::real>>(*(s.mass_density));
     check(values);
     return std::make_tuple(0, 1, values.data());
   }  // end of buildMassDensityEvaluator
@@ -322,7 +322,7 @@ namespace mgis::behaviour::internals {
   static BehaviourIntegrationResult executeInitializeFunction(
       MaterialDataManager& m,
       const BehaviourInitializeFunction p,
-      mgis::span<const real> inputs,
+      std::span<const real> inputs,
       const mgis::size_type inputs_stride,
       const mgis::size_type b,
       const mgis::size_type e) {
@@ -403,7 +403,7 @@ namespace mgis::behaviour::internals {
    * points.
    */
   static BehaviourIntegrationResult executePostProcessing(
-      mgis::span<real> outputs,
+      std::span<real> outputs,
       MaterialDataManager& m,
       const BehaviourPostProcessing p,
       const mgis::size_type outputs_stride,
@@ -503,7 +503,7 @@ namespace mgis::behaviour {
   int executeInitializeFunction(BehaviourDataView& d,
                                 const Behaviour& b,
                                 const std::string_view n,
-                                mgis::span<const real> inputs) {
+                                std::span<const real> inputs) {
     const auto ifct = getBehaviourInitializeFunction(b,n);
     if (inputs.size() != getArraySize(ifct.inputs, b.hypothesis)) {
       mgis::raise(
@@ -534,7 +534,7 @@ namespace mgis::behaviour {
   BehaviourIntegrationResult executeInitializeFunction(
       MaterialDataManager& m,
       const std::string_view n,
-      mgis::span<const real> inputs,
+      std::span<const real> inputs,
       const size_type b,
       const size_type e) {
     const auto& ifct = getBehaviourInitializeFunction(m.b, n);
@@ -561,7 +561,7 @@ namespace mgis::behaviour {
   BehaviourIntegrationResult executeInitializeFunction(
       MaterialDataManager& m,
       const std::string_view n,
-      mgis::span<const real> inputs) {
+      std::span<const real> inputs) {
     return executeInitializeFunction(m, n, inputs, 0, m.n);
   }  // end of executeInitializeFunction
 
@@ -610,7 +610,7 @@ namespace mgis::behaviour {
       mgis::ThreadPool& p,
       MaterialDataManager& m,
       const std::string_view n,
-      mgis::span<const real> inputs) {
+      std::span<const real> inputs) {
     const auto& ifct = getBehaviourInitializeFunction(m.b, n);
     const auto istride = getArraySize(ifct.inputs, m.b.hypothesis);
     if ((inputs.size() != m.n * istride) && (inputs.size() != istride)) {
@@ -739,7 +739,7 @@ namespace mgis::behaviour {
     return p->second;
   }  // end of getBehaviourPostProcessing
 
-  int executePostProcessing(mgis::span<real> outputs,
+  int executePostProcessing(std::span<real> outputs,
                             BehaviourDataView& d,
                             const Behaviour& b,
                             const std::string_view n) {
@@ -753,7 +753,7 @@ namespace mgis::behaviour {
     return (p.f)(outputs.data(), &d);
   }  // end of executePostProcessing
 
-  BehaviourIntegrationResult executePostProcessing(mgis::span<real> outputs,
+  BehaviourIntegrationResult executePostProcessing(std::span<real> outputs,
                                                    MaterialDataManager& m,
                                                    const std::string_view n,
                                                    const size_type b,
@@ -770,14 +770,14 @@ namespace mgis::behaviour {
     return internals::executePostProcessing(outputs, m, p, ostride, b, e);
   }  // end of executePostProcessing
 
-  BehaviourIntegrationResult executePostProcessing(mgis::span<real> outputs,
+  BehaviourIntegrationResult executePostProcessing(std::span<real> outputs,
                                                    MaterialDataManager& m,
                                                    const std::string_view n) {
     return executePostProcessing(outputs, m, n, 0, m.n);
   }  // end of executePostProcessing
 
   MultiThreadedBehaviourIntegrationResult executePostProcessing(
-      mgis::span<real> outputs,
+      std::span<real> outputs,
       mgis::ThreadPool& p,
       MaterialDataManager& m,
       const std::string_view n) {

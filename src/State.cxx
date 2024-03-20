@@ -303,7 +303,7 @@ namespace mgis::behaviour {
 
   void setExternalStateVariable(State& s,
                                 const string_view n,
-                                const mgis::span<const real> v) {
+                                const std::span<const real> v) {
     const auto& ev = getVariable(s.b.esvs, n);
     const auto es = getVariableSize(ev, s.b.hypothesis);
     if (v.size() != es) {
@@ -326,7 +326,7 @@ namespace mgis::behaviour {
 
   void setExternalStateVariable(State& s,
                                 const size_type o,
-                                const mgis::span<const real> v) {
+                                const std::span<const real> v) {
     std::copy(v.begin(), v.end(), s.external_state_variables.begin() + o);
   }  // end of setExternalStateVariable
 

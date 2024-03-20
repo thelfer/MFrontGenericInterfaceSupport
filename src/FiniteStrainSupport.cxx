@@ -75,7 +75,7 @@ namespace mgis::behaviour {
            2;
   }  // end of convertFiniteStrainStress_PK1_3D
 
-  static void convertFiniteStrainStress_PK1_2D(mgis::span<real>& Ps,
+  static void convertFiniteStrainStress_PK1_2D(std::span<real>& Ps,
                                                const MaterialDataManager& m,
                                                const mgis::size_type b,
                                                const mgis::size_type e) {
@@ -94,7 +94,7 @@ namespace mgis::behaviour {
     }
   }  // end of convertFiniteStrainStress_PK1_2D
 
-  static void convertFiniteStrainStress_PK1_3D(mgis::span<real>& Ps,
+  static void convertFiniteStrainStress_PK1_3D(std::span<real>& Ps,
                                                const MaterialDataManager& m,
                                                const mgis::size_type b,
                                                const mgis::size_type e) {
@@ -113,7 +113,7 @@ namespace mgis::behaviour {
     }
   }  // end of convertFiniteStrainStress_PK1_3D
 
-  static void convertFiniteStrainStress_PK1_2D(mgis::span<real>& s,
+  static void convertFiniteStrainStress_PK1_2D(std::span<real>& s,
                                                const MaterialDataManager& m) {
     // check behaviour type
     if (m.b.btype != Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
@@ -132,7 +132,7 @@ namespace mgis::behaviour {
     convertFiniteStrainStress_PK1_2D(s, m, 0, m.n);
   }  // end of convertFiniteStrainStress_PK1_2D
 
-  static void convertFiniteStrainStress_PK1_3D(mgis::span<real>& s,
+  static void convertFiniteStrainStress_PK1_3D(std::span<real>& s,
                                                const MaterialDataManager& m) {
     // check behaviour type
     if (m.b.btype != Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
@@ -151,7 +151,7 @@ namespace mgis::behaviour {
     convertFiniteStrainStress_PK1_3D(s, m, 0, m.n);
   }  // end of convertFiniteStrainStress_PK1_3D
 
-  void convertFiniteStrainStress(mgis::span<real>& s,
+  void convertFiniteStrainStress(std::span<real>& s,
                                  const MaterialDataManager& m,
                                  const FiniteStrainStress t) {
     const auto h = m.b.hypothesis;
@@ -174,7 +174,7 @@ namespace mgis::behaviour {
     }
   }  // end of convertFiniteStrainStress
 
-  static void convertFiniteStrainStress_PK1_2D(mgis::span<real>& P,
+  static void convertFiniteStrainStress_PK1_2D(std::span<real>& P,
                                                const BehaviourData& d) {
     // check behaviour type
     if (d.s1.b.btype != Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
@@ -194,7 +194,7 @@ namespace mgis::behaviour {
                                      d.s1.thermodynamic_forces.data());
   }  // end of convertFiniteStrainStress_PK1_2D
 
-  static void convertFiniteStrainStress_PK1_3D(mgis::span<real>& P,
+  static void convertFiniteStrainStress_PK1_3D(std::span<real>& P,
                                                const BehaviourData& d) {
     // check behaviour type
     if (d.s1.b.btype != Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
@@ -214,7 +214,7 @@ namespace mgis::behaviour {
                                      d.s1.thermodynamic_forces.data());
   }  // end of convertFiniteStrainStress_PK1_3D
 
-  void convertFiniteStrainStress(mgis::span<real>& s,
+  void convertFiniteStrainStress(std::span<real>& s,
                                  const BehaviourData& d,
                                  const FiniteStrainStress t) {
     const auto h = d.s1.b.hypothesis;
@@ -700,7 +700,7 @@ namespace mgis::behaviour {
   }  // end of convertFiniteStrainTangentOperator_PK1_3D
 
   static void convertFiniteStrainTangentOperator_PK1_2D(
-      mgis::span<mgis::real>& dPs,
+      std::span<mgis::real>& dPs,
       const MaterialDataManager& m,
       const mgis::size_type b,
       const mgis::size_type e) {
@@ -726,7 +726,7 @@ namespace mgis::behaviour {
   }  // end of convertFiniteStrainTangentOperator_PK1_2D
 
   static void convertFiniteStrainTangentOperator_PK1_3D(
-      mgis::span<mgis::real>& dPs,
+      std::span<mgis::real>& dPs,
       const MaterialDataManager& m,
       const mgis::size_type b,
       const mgis::size_type e) {
@@ -752,7 +752,7 @@ namespace mgis::behaviour {
   }  // end of convertFiniteStrainTangentOperator_PK1_3D
 
   static void convertFiniteStrainTangentOperator_PK1_2D(
-      mgis::span<mgis::real>& K, const MaterialDataManager& m) {
+      std::span<mgis::real>& K, const MaterialDataManager& m) {
     // check behaviour type
     if (m.b.btype != Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
       mgis::raise(
@@ -773,7 +773,7 @@ namespace mgis::behaviour {
   }  // end of convertFiniteStrainTangentOperator_PK1_2D
 
   static void convertFiniteStrainTangentOperator_PK1_3D(
-      mgis::span<mgis::real>& K, const MaterialDataManager& m) {
+      std::span<mgis::real>& K, const MaterialDataManager& m) {
     // check behaviour type
     if (m.b.btype != Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
       mgis::raise(
@@ -793,7 +793,7 @@ namespace mgis::behaviour {
     convertFiniteStrainTangentOperator_PK1_3D(K, m, 0, m.n);
   }  // end of convertFiniteStrainTangentOperator_PK1_3D
 
-  void convertFiniteStrainTangentOperator(mgis::span<mgis::real>& K,
+  void convertFiniteStrainTangentOperator(std::span<mgis::real>& K,
                                           const MaterialDataManager& m,
                                           const FiniteStrainTangentOperator t) {
     const auto h = m.b.hypothesis;
@@ -817,7 +817,7 @@ namespace mgis::behaviour {
   }  // end of convertFiniteStrainTangentOperator
 
   static void convertFiniteStrainTangentOperator_PK1_2D(
-      mgis::span<mgis::real>& K, const BehaviourData& d) {
+      std::span<mgis::real>& K, const BehaviourData& d) {
     // check behaviour type
     if (d.s1.b.btype != Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
       mgis::raise(
@@ -840,7 +840,7 @@ namespace mgis::behaviour {
   }  // end of convertFiniteStrainTangentOperator_PK1_2D
 
   static void convertFiniteStrainTangentOperator_PK1_3D(
-      mgis::span<mgis::real>& K, const BehaviourData& d) {
+      std::span<mgis::real>& K, const BehaviourData& d) {
     // check behaviour type
     if (d.s1.b.btype != Behaviour::STANDARDFINITESTRAINBEHAVIOUR) {
       mgis::raise(
@@ -862,7 +862,7 @@ namespace mgis::behaviour {
                                               d.s1.thermodynamic_forces.data());
   }  // end of convertFiniteStrainTangentOperator_PK1_3D
 
-  void convertFiniteStrainTangentOperator(mgis::span<mgis::real>& K,
+  void convertFiniteStrainTangentOperator(std::span<mgis::real>& K,
                                           const BehaviourData& d,
                                           const FiniteStrainTangentOperator t) {
     const auto h = d.s1.b.hypothesis;

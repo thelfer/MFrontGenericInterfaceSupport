@@ -25,7 +25,7 @@ int main(const int argc, const char* const* argv) {
   using namespace mgis;
   using namespace mgis::behaviour;
   const auto yg = 150e9;
-  const auto rho = 7850;
+  const auto rho = real{7850};
   if (argc != 2) {
     std::cerr << "ComputeSpeedOfSoundTest: invalid number of arguments\n";
     std::exit(-1);

@@ -15,8 +15,8 @@
 #ifndef LIB_MGIS_BEHAVIOUR_FINITESTRAINSUPPORT_HXX
 #define LIB_MGIS_BEHAVIOUR_FINITESTRAINSUPPORT_HXX
 
+#include <span>
 #include "MGIS/Config.hxx"
-#include "MGIS/Span.hxx"
 
 namespace mgis::behaviour {
 
@@ -68,7 +68,7 @@ namespace mgis::behaviour {
    * \param[in] m: material data manager
    * \param[in] t: expected finite strain stress type
    */
-  MGIS_EXPORT void convertFiniteStrainStress(mgis::span<real>&,
+  MGIS_EXPORT void convertFiniteStrainStress(std::span<real>&,
                                              const MaterialDataManager&,
                                              const FiniteStrainStress);
   /*!
@@ -77,7 +77,7 @@ namespace mgis::behaviour {
    * \param[in] t: expected finite strain operator type
    */
   MGIS_EXPORT void convertFiniteStrainTangentOperator(
-      mgis::span<real>&,
+      std::span<real>&,
       const MaterialDataManager&,
       const FiniteStrainTangentOperator);
   /*!
@@ -85,7 +85,7 @@ namespace mgis::behaviour {
    * \param[in] d: behaviour data
    * \param[in] t: expected finite strain stress type
    */
-  MGIS_EXPORT void convertFiniteStrainStress(mgis::span<real>&,
+  MGIS_EXPORT void convertFiniteStrainStress(std::span<real>&,
                                              const BehaviourData&,
                                              const FiniteStrainStress);
   /*!
@@ -94,7 +94,7 @@ namespace mgis::behaviour {
    * \param[in] t: expected finite strain operator type
    */
   MGIS_EXPORT void convertFiniteStrainTangentOperator(
-      mgis::span<real>&,
+      std::span<real>&,
       const BehaviourData&,
       const FiniteStrainTangentOperator);
 

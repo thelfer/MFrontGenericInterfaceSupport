@@ -8,9 +8,9 @@
 #ifndef LIB_MGIS_BEHAVIOUR_ROTATIONMATRIX_HXX
 #define LIB_MGIS_BEHAVIOUR_ROTATIONMATRIX_HXX
 
+#include <span>
 #include <array>
 #include <vector>
-#include "MGIS/Span.hxx"
 #include "MGIS/StorageMode.hxx"
 
 namespace mgis::behaviour {
@@ -30,7 +30,7 @@ namespace mgis::behaviour {
    */
   struct MaterialAxisStorage {
     //! \brief constructor from an external array
-    MaterialAxisStorage(const mgis::span<const mgis::real> &,
+    MaterialAxisStorage(const std::span<const mgis::real> &,
                         const mgis::StorageMode &);
     /*!
      * \brief constructor from a temporary
@@ -46,7 +46,7 @@ namespace mgis::behaviour {
 
    public:
     //! \brief description of the material axis
-    const mgis::span<const mgis::real> a;
+    const std::span<const mgis::real> a;
   };  // end of struct MaterialAxisStorage
 
   /*!
@@ -61,7 +61,7 @@ namespace mgis::behaviour {
      * \param[in] v: values defining the first material axis
      * \param[in] s: storage mode used for the first material axis
      */
-    RotationMatrix2D(const mgis::span<const mgis::real> &,
+    RotationMatrix2D(const std::span<const mgis::real> &,
                      const mgis::StorageMode &);
     //! \brief destructor
     ~RotationMatrix2D();
@@ -76,9 +76,9 @@ namespace mgis::behaviour {
      * \param[in] v2: second material axis
      * \param[in] s1: storage mode used for the second material axis
      */
-    RotationMatrix3D(const mgis::span<const mgis::real> &,
+    RotationMatrix3D(const std::span<const mgis::real> &,
                      const mgis::StorageMode &,
-                     const mgis::span<const mgis::real> &,
+                     const std::span<const mgis::real> &,
                      const mgis::StorageMode &);
     /*!
      * \brief default constructor
@@ -86,8 +86,8 @@ namespace mgis::behaviour {
      * \param[in] v2: second material axis
      * \param[in] s: storage mode used for the second material axes
      */
-    RotationMatrix3D(const mgis::span<const mgis::real> &,
-                     const mgis::span<const mgis::real> &,
+    RotationMatrix3D(const std::span<const mgis::real> &,
+                     const std::span<const mgis::real> &,
                      const mgis::StorageMode &);
     //! \brief first material axis
     const MaterialAxisStorage a1;
@@ -103,7 +103,7 @@ namespace mgis::behaviour {
    * \param[in] a: material axis
    */
   std::array<mgis::real, 9u> buildRotationMatrix(
-      const mgis::span<const mgis::real, 2u> &);
+      const std::span<const mgis::real, 2u> &);
   /*!
    * \brief an helper function to build a 3D rotation matrix for an in-plane
    * unit vector.
@@ -111,8 +111,8 @@ namespace mgis::behaviour {
    * \param[in] a2: second material axis
    */
   std::array<mgis::real, 9u> buildRotationMatrix(
-      const mgis::span<const mgis::real, 3u> &,
-      const mgis::span<const mgis::real, 3u> &);
+      const std::span<const mgis::real, 3u> &,
+      const std::span<const mgis::real, 3u> &);
 
 }  // end of namespace mgis::behaviour
 

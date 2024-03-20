@@ -164,7 +164,7 @@ The following helper functions are thus provided:
 - `rotateThermodynamicForces`
 - `rotateTangentOperatorBlocks`
 
-Those functions takes memory blocks (wrapped in `mgis::span` objects)
+Those functions takes memory blocks (wrapped in `std::span` objects)
 and checks that the size of those blocks are consistent. For each of
 those functions, two overloads exist, one for in place rotation, one for
 out of place rotations.

@@ -136,7 +136,7 @@ int main() {
   mgis::size_type steps = 10;
   double dt = 0.1;
   while (step < steps) {
-    auto extract = [](const mgis::span<double>& v) {
+    auto extract = [](const std::span<double>& v) {
       return std::array<double, 6>{v[0], v[1], v[2], v[3], v[4], v[5]};
     };
     m.setTimeIncrement(dt);

@@ -330,7 +330,7 @@ mgis_status mgis_bv_state_set_external_state_variable_by_name(
   try {
     const auto& ev = getVariable(s->b.esvs, n);
     const auto es = getVariableSize(ev, s->b.hypothesis);
-    setExternalStateVariable(*s, n, mgis::span<const mgis::real>(v, es));
+    setExternalStateVariable(*s, n, std::span<const mgis::real>(v, es));
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
@@ -379,7 +379,7 @@ mgis_status mgis_bv_state_set_external_state_variable_by_offset(
     const mgis_real* const v,
     const mgis_size_type vs) {
   try {
-    setExternalStateVariable(*s, o, mgis::span<const mgis::real>(v, vs));
+    setExternalStateVariable(*s, o, std::span<const mgis::real>(v, vs));
   } catch (...) {
     return mgis_handle_cxx_exception();
   }

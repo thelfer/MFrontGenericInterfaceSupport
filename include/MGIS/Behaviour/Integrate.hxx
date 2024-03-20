@@ -14,11 +14,11 @@
 #ifndef LIB_MGIS_BEHAVIOUR_INTEGRATE_HXX
 #define LIB_MGIS_BEHAVIOUR_INTEGRATE_HXX
 
+#include <span>
 #include <limits>
 #include <thread>
 #include <vector>
 #include "MGIS/Config.hxx"
-#include "MGIS/Span.hxx"
 #include "MGIS/Behaviour/BehaviourDataView.hxx"
 
 namespace mgis {
@@ -150,7 +150,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT int executeInitializeFunction(BehaviourDataView&,
                                             const Behaviour&,
                                             const std::string_view,
-                                            mgis::span<const real>);
+                                            std::span<const real>);
   /*!
    * \brief execute the given initialize function.
    * \param[in,out] d: behaviour data view
@@ -182,7 +182,7 @@ namespace mgis::behaviour {
    * \note the inputs can be uniform or not.
    */
   MGIS_EXPORT BehaviourIntegrationResult executeInitializeFunction(
-      MaterialDataManager&, const std::string_view, mgis::span<const real>);
+      MaterialDataManager&, const std::string_view, std::span<const real>);
   /*!
    * \brief execute the given initialize function over a range of integration points
    * \param[in,out] d: material data manager
@@ -208,7 +208,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT BehaviourIntegrationResult
   executeInitializeFunction(MaterialDataManager&,
                             const std::string_view,
-                            mgis::span<const real>,
+                            std::span<const real>,
                             const size_type,
                             const size_type);
   /*!
@@ -236,7 +236,7 @@ namespace mgis::behaviour {
   executeInitializeFunction(ThreadPool&,
                             MaterialDataManager&,
                             const std::string_view,
-                            mgis::span<const real>);
+                            std::span<const real>);
   /*!
    * \brief integrate the behaviour. The returned value has the following
    * meaning:
@@ -377,7 +377,7 @@ namespace mgis::behaviour {
    * \param[in,out] b: behaviour
    * \param[in] n: name of the post-processing
    */
-  MGIS_EXPORT int executePostProcessing(mgis::span<real>,
+  MGIS_EXPORT int executePostProcessing(std::span<real>,
                                         BehaviourDataView&,
                                         const Behaviour&,
                                         const std::string_view);
@@ -388,7 +388,7 @@ namespace mgis::behaviour {
    * \param[in] n: name of the post-processing
    */
   MGIS_EXPORT BehaviourIntegrationResult executePostProcessing(
-      mgis::span<real>, MaterialDataManager&, const std::string_view);
+      std::span<real>, MaterialDataManager&, const std::string_view);
   /*!
    * \brief execute the given post-processing over a range of integration points
    * \param[out] outputs: post-processing results
@@ -398,7 +398,7 @@ namespace mgis::behaviour {
    * \param[in] e: last index of the range
    */
   MGIS_EXPORT BehaviourIntegrationResult
-  executePostProcessing(mgis::span<real>,
+  executePostProcessing(std::span<real>,
                         MaterialDataManager&,
                         const std::string_view,
                         const size_type,
@@ -412,7 +412,7 @@ namespace mgis::behaviour {
    * \param[in] n: name of the post-processing
    */
   MGIS_EXPORT MultiThreadedBehaviourIntegrationResult
-  executePostProcessing(mgis::span<real>,
+  executePostProcessing(std::span<real>,
                         ThreadPool&,
                         MaterialDataManager&,
                         const std::string_view);

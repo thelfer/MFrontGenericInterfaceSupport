@@ -75,13 +75,13 @@ namespace mgis::behaviour {
      * tangent operator. If empty, the material data manager will
      * initialize the required memory internally if required.
      */
-    mgis::span<mgis::real> K;
+    std::span<mgis::real> K;
     /*!
      * \brief view to an externally allocated memory used to store the
      * speed_of_sound. If empty, the material data manager will
      * initialize the required memory internally if required.
      */
-    mgis::span<mgis::real> speed_of_sound;
+    std::span<mgis::real> speed_of_sound;
     /*!
      * \brief object used to initalize the state manager associated with the
      * beginning of the time step.
@@ -148,7 +148,7 @@ namespace mgis::behaviour {
      * \note this method calls `releaseArrayOfTangentOperatorBlocks` before
      * allocating the memory.
      */
-    void useExternalArrayOfTangentOperatorBlocks(mgis::span<real>);
+    void useExternalArrayOfTangentOperatorBlocks(std::span<real>);
     /*!
      * \brief release the memory associated with the tangent operator blocks.
      *
@@ -180,7 +180,7 @@ namespace mgis::behaviour {
      * \note this method calls `releaseArrayOfSpeedOfSounds` before
      * allocating the memory.
      */
-    void useExternalArrayOfSpeedOfSounds(mgis::span<real>);
+    void useExternalArrayOfSpeedOfSounds(std::span<real>);
     /*!
      * \brief release the memory associated with the tangent operator blocks.
      *
@@ -211,11 +211,11 @@ namespace mgis::behaviour {
     //! \brief state at the end of the time step
     MaterialStateManager s1;
     //! \brief view of the stiffness matrices, if required.
-    mgis::span<real> K;
+    std::span<real> K;
     //! \brief proposed time step increment increase factor
     real rdt;
     //! \brief view on the speed of sound.
-    mgis::span<real> speed_of_sound;
+    std::span<real> speed_of_sound;
     //! \brief number of integration points
     const size_type n;
     /*!

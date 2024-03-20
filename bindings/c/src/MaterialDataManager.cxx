@@ -47,7 +47,7 @@ mgis_status mgis_bv_material_data_manager_initializer_bind_tangent_operator(
         "invalid tangent operator");
   }
   try {
-    d->K = mgis::span<mgis::real>(K, s);
+    d->K = std::span<mgis::real>(K, s);
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
@@ -69,7 +69,7 @@ mgis_status mgis_bv_material_data_manager_initializer_bind_speed_of_sound(
         "invalid tangent operator");
   }
   try {
-    d->speed_of_sound = mgis::span<mgis::real>(p, s);
+    d->speed_of_sound = std::span<mgis::real>(p, s);
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
@@ -201,7 +201,7 @@ mgis_bv_material_data_manager_use_external_array_of_tangent_operator_blocks(
         "null behaviour");
   }
   try {
-    d->useExternalArrayOfTangentOperatorBlocks(mgis::span<mgis::real>(p, n));
+    d->useExternalArrayOfTangentOperatorBlocks(std::span<mgis::real>(p, n));
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
@@ -251,7 +251,7 @@ mgis_status mgis_bv_material_data_manager_use_external_array_of_speed_of_sounds(
         "null behaviour");
   }
   try {
-    d->useExternalArrayOfSpeedOfSounds(mgis::span<mgis::real>(p, n));
+    d->useExternalArrayOfSpeedOfSounds(std::span<mgis::real>(p, n));
   } catch (...) {
     return mgis_handle_cxx_exception();
   }

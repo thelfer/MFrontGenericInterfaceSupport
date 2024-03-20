@@ -23,13 +23,13 @@
 namespace mgis::behaviour {
 
   static std::array<mgis::real, 9u> buildRotationMatrix(const real *const a) {
-    return buildRotationMatrix(mgis::span<const mgis::real, 2u>{a, 2u});
+    return buildRotationMatrix(std::span<const mgis::real, 2u>{a, 2u});
   }  // end of buildRotationMatrix
 
   static std::array<mgis::real, 9u> buildRotationMatrix(const real *const a1,
                                                         const real *const a2) {
-    return buildRotationMatrix(mgis::span<const mgis::real, 3u>{a1, 3u},
-                               mgis::span<const mgis::real, 3u>{a2, 3u});
+    return buildRotationMatrix(std::span<const mgis::real, 3u>{a1, 3u},
+                               std::span<const mgis::real, 3u>{a2, 3u});
   }  // end of buildRotationMatrix
 
   BehaviourInitializeFunction::BehaviourInitializeFunction() = default;
@@ -66,14 +66,14 @@ namespace mgis::behaviour {
       d.options.resize(2, mgis::real(0));
     }
     // initialize functions
-    for (const auto i : lm.getBehaviourInitializeFunctions(l, b, h)) {
+    for (const auto& i : lm.getBehaviourInitializeFunctions(l, b, h)) {
       BehaviourInitializeFunction ifct;
       ifct.f = lm.getBehaviourInitializeFunction(l, b, i, h);
       ifct.inputs = getBehaviourInitializeFunctionInputs(l, b, i, h);
       d.initialize_functions.insert({i, ifct});
     }
     // post-processings
-    for (const auto i : lm.getBehaviourPostProcessings(l, b, h)) {
+    for (const auto& i : lm.getBehaviourPostProcessings(l, b, h)) {
       BehaviourPostProcessing pfct;
       pfct.f = lm.getBehaviourPostProcessing(l, b, i, h);
       pfct.outputs = getBehaviourPostProcessingOutputs(l, b, i, h);
@@ -176,19 +176,19 @@ namespace mgis::behaviour {
     return d;
   }  // end of load
 
-  void rotateGradients(mgis::span<real> g,
+  void rotateGradients(std::span<real> g,
                        const Behaviour &b,
-                       const mgis::span<const real> &r) {
+                       const std::span<const real> &r) {
     rotateGradients(g, b, g, r);
   }  // end of rotateGradients
 
-  void rotateGradients(mgis::span<real> g,
+  void rotateGradients(std::span<real> g,
                        const Behaviour &b,
                        const RotationMatrix2D &r) {
     rotateGradients(g, b, g, r);
   }  // end of rotateGradients
 
-  void rotateGradients(mgis::span<real> g,
+  void rotateGradients(std::span<real> g,
                        const Behaviour &b,
                        const RotationMatrix3D &r) {
     rotateGradients(g, b, g, r);
@@ -196,13 +196,13 @@ namespace mgis::behaviour {
 
   static mgis::size_type checkRotateFunctionInputs(
       const char *const m,
-      const mgis::span<const real> &mv,
-      const mgis::span<const real> &gv,
+      const std::span<const real> &mv,
+      const std::span<const real> &gv,
       const mgis::size_type vsize) {
     if (gv.size() == 0) {
       mgis::raise(std::string(m) + ": no values given for the gradients");
     }
-    auto dv = std::div(gv.size(), vsize);
+    auto dv = std::div(static_cast<long long>(gv.size()), vsize);
     if (dv.rem != 0) {
       mgis::raise(std::string(m) +
                   ": invalid array size in the global frame "
@@ -267,10 +267,10 @@ namespace mgis::behaviour {
     }
   }  // end of checkBehaviourRotateGradients
 
-  void rotateGradients(mgis::span<real> mg,
+  void rotateGradients(std::span<real> mg,
                        const Behaviour &b,
-                       const mgis::span<const real> &gg,
-                       const mgis::span<const real> &r) {
+                       const std::span<const real> &gg,
+                       const std::span<const real> &r) {
     checkBehaviourRotateGradients(b);
     const auto gsize = getArraySize(b.gradients, b.hypothesis);
     const auto nipts =
@@ -278,7 +278,7 @@ namespace mgis::behaviour {
     if (r.size() == 0) {
       mgis::raise("rotateGradients: no values given for the rotation matrices");
     }
-    const auto rdv = std::div(r.size(), size_type{9});
+    const auto rdv = std::div(static_cast<long long>(r.size()), size_type{9});
     if (rdv.rem != 0) {
       mgis::raise(
           "rotateGradients: "
@@ -300,9 +300,9 @@ namespace mgis::behaviour {
     }
   }  // end of rotateGradients
 
-  void rotateGradients(mgis::span<real> mg,
+  void rotateGradients(std::span<real> mg,
                        const Behaviour &b,
-                       const mgis::span<const real> &gg,
+                       const std::span<const real> &gg,
                        const RotationMatrix2D &r) {
     checkBehaviourRotateGradients(b);
     const auto gsize = getArraySize(b.gradients, b.hypothesis);
@@ -321,9 +321,9 @@ namespace mgis::behaviour {
     }
   }  // end of rotateGradients
 
-  void rotateGradients(mgis::span<real> mg,
+  void rotateGradients(std::span<real> mg,
                        const Behaviour &b,
-                       const mgis::span<const real> &gg,
+                       const std::span<const real> &gg,
                        const RotationMatrix3D &r) {
     checkBehaviourRotateGradients(b);
     const auto gsize = getArraySize(b.gradients, b.hypothesis);
@@ -345,19 +345,19 @@ namespace mgis::behaviour {
     }
   }  // end of rotateGradients
 
-  void rotateThermodynamicForces(mgis::span<real> tf,
+  void rotateThermodynamicForces(std::span<real> tf,
                                  const Behaviour &b,
-                                 const mgis::span<const real> &r) {
+                                 const std::span<const real> &r) {
     rotateThermodynamicForces(tf, b, tf, r);
   }  // end of rotateThermodynamicForces
 
-  void rotateThermodynamicForces(mgis::span<real> tf,
+  void rotateThermodynamicForces(std::span<real> tf,
                                  const Behaviour &b,
                                  const RotationMatrix2D &r) {
     rotateThermodynamicForces(tf, b, tf, r);
   }  // end of rotateThermodynamicForces
 
-  void rotateThermodynamicForces(mgis::span<real> tf,
+  void rotateThermodynamicForces(std::span<real> tf,
                                  const Behaviour &b,
                                  const RotationMatrix3D &r) {
     rotateThermodynamicForces(tf, b, tf, r);
@@ -372,10 +372,10 @@ namespace mgis::behaviour {
     }
   }  // end of checkBehaviourRotateThermodynamicForces
 
-  void rotateThermodynamicForces(mgis::span<real> gtf,
+  void rotateThermodynamicForces(std::span<real> gtf,
                                  const Behaviour &b,
-                                 const mgis::span<const real> &mtf,
-                                 const mgis::span<const real> &r) {
+                                 const std::span<const real> &mtf,
+                                 const std::span<const real> &r) {
     checkBehaviourRotateThermodynamicForces(b);
     const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
     const auto nipts = checkRotateFunctionInputs("rotateThermodynamicForces",
@@ -385,7 +385,7 @@ namespace mgis::behaviour {
           "rotateThermodynamicForces: "
           "no values given for the rotation matrices");
     }
-    auto rdv = std::div(r.size(), size_type{9});
+    auto rdv = std::div(static_cast<long long>(r.size()), size_type{9});
     if (rdv.rem != 0) {
       mgis::raise(
           "rotateThermodynamicForces: "
@@ -411,9 +411,9 @@ namespace mgis::behaviour {
     }
   }  // end of rotateThermodynamicForces
 
-  void rotateThermodynamicForces(mgis::span<real> gtf,
+  void rotateThermodynamicForces(std::span<real> gtf,
                                  const Behaviour &b,
-                                 const mgis::span<const real> &mtf,
+                                 const std::span<const real> &mtf,
                                  const RotationMatrix2D &r) {
     checkBehaviourRotateThermodynamicForces(b);
     const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
@@ -434,9 +434,9 @@ namespace mgis::behaviour {
     }
   }  // end of rotateThermodynamicForces
 
-  void rotateThermodynamicForces(mgis::span<real> gtf,
+  void rotateThermodynamicForces(std::span<real> gtf,
                                  const Behaviour &b,
-                                 const mgis::span<const real> &mtf,
+                                 const std::span<const real> &mtf,
                                  const RotationMatrix3D &r) {
     checkBehaviourRotateThermodynamicForces(b);
     const auto tfsize = getArraySize(b.thermodynamic_forces, b.hypothesis);
@@ -460,19 +460,19 @@ namespace mgis::behaviour {
     }
   }  // end of rotateThermodynamicForces
 
-  void rotateTangentOperatorBlocks(mgis::span<real> K,
+  void rotateTangentOperatorBlocks(std::span<real> K,
                                    const Behaviour &b,
-                                   const mgis::span<const real> &r) {
+                                   const std::span<const real> &r) {
     rotateTangentOperatorBlocks(K, b, K, r);
   }  // end of rotateTangentOperatorBlocks
 
-  void rotateTangentOperatorBlocks(mgis::span<real> K,
+  void rotateTangentOperatorBlocks(std::span<real> K,
                                    const Behaviour &b,
                                    const RotationMatrix2D &r) {
     rotateTangentOperatorBlocks(K, b, K, r);
   }  // end of rotateTangentOperatorBlocks
 
-  void rotateTangentOperatorBlocks(mgis::span<real> K,
+  void rotateTangentOperatorBlocks(std::span<real> K,
                                    const Behaviour &b,
                                    const RotationMatrix3D &r) {
     rotateTangentOperatorBlocks(K, b, K, r);
@@ -487,10 +487,10 @@ namespace mgis::behaviour {
     }
   }  // end of checkBehaviourRotateTangentOperatorBlocks
 
-  void rotateTangentOperatorBlocks(mgis::span<real> gK,
+  void rotateTangentOperatorBlocks(std::span<real> gK,
                                    const Behaviour &b,
-                                   const mgis::span<const real> &mK,
-                                   const mgis::span<const real> &r) {
+                                   const std::span<const real> &mK,
+                                   const std::span<const real> &r) {
     checkBehaviourRotateTangentOperatorBlocks(b);
     const auto Ksize = getTangentOperatorArraySize(b);
     const auto nipts =
@@ -503,7 +503,7 @@ namespace mgis::behaviour {
     if (mK.size() != gK.size()) {
       mgis::raise("rotateTangentOperatorBlocks: unmatched array sizes");
     }
-    auto rdv = std::div(r.size(), size_type{9});
+    auto rdv = std::div(static_cast<long long>(r.size()), size_type{9});
     if (rdv.rem != 0) {
       mgis::raise(
           "rotateTangentOperatorBlocks: "
@@ -528,9 +528,9 @@ namespace mgis::behaviour {
     }
   }  // end of rotateTangentOperatorBlocks
 
-  void rotateTangentOperatorBlocks(mgis::span<real> gK,
+  void rotateTangentOperatorBlocks(std::span<real> gK,
                                    const Behaviour &b,
-                                   const mgis::span<const real> &mK,
+                                   const std::span<const real> &mK,
                                    const RotationMatrix2D &r) {
     checkBehaviourRotateTangentOperatorBlocks(b);
     const auto Ksize = getTangentOperatorArraySize(b);
@@ -551,9 +551,9 @@ namespace mgis::behaviour {
     }
   }  // end of rotateTangentOperatorBlocks
 
-  void rotateTangentOperatorBlocks(mgis::span<real> gK,
+  void rotateTangentOperatorBlocks(std::span<real> gK,
                                    const Behaviour &b,
-                                   const mgis::span<const real> &mK,
+                                   const std::span<const real> &mK,
                                    const RotationMatrix3D &r) {
     checkBehaviourRotateTangentOperatorBlocks(b);
     const auto Ksize = getTangentOperatorArraySize(b);

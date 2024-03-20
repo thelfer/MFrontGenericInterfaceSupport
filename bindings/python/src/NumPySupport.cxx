@@ -29,27 +29,27 @@ namespace mgis::python {
 
   void initializeNumPy() { wrapInitializeNumPy(); }  // end of initializeNumPy
 
-  boost::python::object wrapInNumPyArray(mgis::span<double>& v) {
-    npy_intp dims[1] = {v.size()};
+  boost::python::object wrapInNumPyArray(std::span<double>& v) {
+    npy_intp dims[1] = {static_cast<npy_intp>(v.size())};
     auto* const arr = PyArray_SimpleNewFromData(1, dims, NPY_DOUBLE, v.data());
     boost::python::handle<> handle(arr);
     return boost::python::object(handle);
   }  // end of wrapInNumPyArray
 
   boost::python::object wrapInNumPyArray(std::vector<double>& v) {
-    auto view = mgis::span<double>(v);
+    auto view = std::span<double>(v);
     return wrapInNumPyArray(view);
   }  // end of wrapInNumPyArray
 
   boost::python::object wrapInNumPyArray(
-      std::variant<mgis::span<double>, std::vector<double>>& v) {
+      std::variant<std::span<double>, std::vector<double>>& v) {
     if (std::holds_alternative<std::vector<double>>(v)) {
       return wrapInNumPyArray(std::get<std::vector<double>>(v));
     }
-    return wrapInNumPyArray(std::get<mgis::span<double>>(v));
+    return wrapInNumPyArray(std::get<std::span<double>>(v));
   }  // end of wrapInNumPyArray
 
-  boost::python::object wrapInNumPyArray(mgis::span<double>& v,
+  boost::python::object wrapInNumPyArray(std::span<double>& v,
                                          const size_type nc) {
     npy_intp dims[2] = {static_cast<npy_intp>(v.size() / nc),
                         static_cast<npy_intp>(nc)};
@@ -60,20 +60,20 @@ namespace mgis::python {
 
   boost::python::object wrapInNumPyArray(std::vector<double>& v,
                                          const size_type nc) {
-    auto view = mgis::span<double>(v);
+    auto view = std::span<double>(v);
     return wrapInNumPyArray(view, nc);
   }  // end of wrapInNumPyArray
 
   boost::python::object wrapInNumPyArray(
-      std::variant<mgis::span<double>, std::vector<double>>& v,
+      std::variant<std::span<double>, std::vector<double>>& v,
       const size_type nc) {
     if (std::holds_alternative<std::vector<double>>(v)) {
       return wrapInNumPyArray(std::get<std::vector<double>>(v), nc);
     }
-    return wrapInNumPyArray(std::get<mgis::span<double>>(v), nc);
+    return wrapInNumPyArray(std::get<std::span<double>>(v), nc);
   }  // end of wrapInNumPyArray
 
-  boost::python::object wrapInNumPyArray(mgis::span<double>& v,
+  boost::python::object wrapInNumPyArray(std::span<double>& v,
                                          const size_type nl,
                                          const size_type nc) {
     npy_intp dims[3] = {static_cast<npy_intp>(v.size() / (nc * nl)),
@@ -86,21 +86,21 @@ namespace mgis::python {
   boost::python::object wrapInNumPyArray(std::vector<double>& v,
                                          const size_type nl,
                                          const size_type nc) {
-    auto view = mgis::span<double>(v);
+    auto view = std::span<double>(v);
     return wrapInNumPyArray(view, nl, nc);
   }  // end of wrapInNumPyArray
 
   boost::python::object wrapInNumPyArray(
-      std::variant<mgis::span<double>, std::vector<double>>& v,
+      std::variant<std::span<double>, std::vector<double>>& v,
       const size_type nl,
       const size_type nc) {
     if (std::holds_alternative<std::vector<double>>(v)) {
       return wrapInNumPyArray(std::get<std::vector<double>>(v), nl, nc);
     }
-    return wrapInNumPyArray(std::get<mgis::span<double>>(v), nl, nc);
+    return wrapInNumPyArray(std::get<std::span<double>>(v), nl, nc);
   }  // end of wrapInNumPyArray
 
-  mgis::span<mgis::real> mgis_convert_to_span(const boost::python::object& o) {
+  std::span<mgis::real> mgis_convert_to_span(const boost::python::object& o) {
     if (!PyArray_Check(o.ptr())) {
       const auto type = std::string(o.ptr()->ob_type->tp_name);
       mgis::raise("convert_to_span: argument of type ('" + type +
@@ -121,7 +121,7 @@ namespace mgis::python {
     auto* const shape = PyArray_DIMS(a);
     const auto n = shape[0];
     auto* const values = static_cast<double*>(PyArray_GETPTR1(a, 0));
-    return {values, static_cast<mgis::span<mgis::real>::index_type>(n)};
+    return {values, static_cast<mgis_size_type>(n)};
   }  // end of mgis_convert_to_span
 
 }  // end of namespace mgis::python

@@ -16,7 +16,7 @@ namespace mgis {
    */
   enum struct StorageMode {
     LOCAL_STORAGE,    //!< \brief use `std::vector` to store the data
-    EXTERNAL_STORAGE  //!< \brief use `mgis::span`  to store the data
+    EXTERNAL_STORAGE  //!< \brief use `std::span`  to store the data
   };                  // end of StorageMode
 
 }  // namespace mgis

@@ -65,17 +65,17 @@ namespace mgis::behaviour {
   }  // end of MaterialDataManager
 
   static void allocateArrayWithoutSynchronization(
-      mgis::span<real>& v,
+      std::span<real>& v,
       std::vector<mgis::real>& values,
       const mgis::size_type s) {
     if (v.empty()) {
       constexpr const auto zero = real{0};
       values.resize(s, zero);
-      v = mgis::span<real>(values);
+      v = std::span<real>(values);
     }
   }  // end of allocateArrayWithoutSynchronization
 
-  static void allocateArrayWithSynchronization(mgis::span<real>& v,
+  static void allocateArrayWithSynchronization(std::span<real>& v,
                                                std::vector<mgis::real>& values,
                                                const mgis::size_type s) {
     static std::mutex mt;
@@ -98,12 +98,12 @@ namespace mgis::behaviour {
   }  // end of allocateArrayOfTangentOperatorBlocks
 
   void MaterialDataManager::releaseArrayOfTangentOperatorBlocks() {
-    this->K = mgis::span<real>();
+    this->K = std::span<real>();
     this->K_values.clear();
   }  // end of releaseArrayOfTangentOperatorBlocks
 
   void MaterialDataManager::useExternalArrayOfTangentOperatorBlocks(
-      mgis::span<real> m) {
+      std::span<real> m) {
     if (m.size() != this->n * this->K_stride) {
       mgis::raise(
           "MaterialDataManager::useExternalArrayOfTangentOperatorBlocks: "
@@ -124,12 +124,12 @@ namespace mgis::behaviour {
   }  // end of allocateArrayOfSpeedOfSounds
 
   void MaterialDataManager::releaseArrayOfSpeedOfSounds() {
-    this->speed_of_sound = mgis::span<real>();
+    this->speed_of_sound = std::span<real>();
     this->speed_of_sound_values.clear();
   }  // end of releaseArrayOfSpeedOfSounds
 
   void MaterialDataManager::useExternalArrayOfSpeedOfSounds(
-      mgis::span<real> m) {
+      std::span<real> m) {
     if (m.size() != this->n) {
       mgis::raise(
           "MaterialDataManager::useExternalArrayOfSpeedOfSounds: "

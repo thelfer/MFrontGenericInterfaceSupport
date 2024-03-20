@@ -15,10 +15,10 @@
 #ifndef LIB_MGIS_BEHAVIOUR_STATE_HXX
 #define LIB_MGIS_BEHAVIOUR_STATE_HXX
 
+#include <span>
 #include <iosfwd>
 #include <vector>
 #include "MGIS/Config.hxx"
-#include "MGIS/Span.hxx"
 #include "MGIS/StringView.hxx"
 #include "MGIS/Behaviour/StateView.hxx"
 
@@ -349,7 +349,7 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT void setExternalStateVariable(State&,
                                             const string_view,
-                                            const mgis::span<const real>);
+                                            const std::span<const real>);
   /*!
    * \brief set the value of a scalar external state variable
    * \param[out] s: state
@@ -367,7 +367,7 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT void setExternalStateVariable(State&,
                                             const size_type,
-                                            const mgis::span<const real>);
+                                            const std::span<const real>);
   /*!
    * \brief set the value of an external state variable
    * \param[out] s: state

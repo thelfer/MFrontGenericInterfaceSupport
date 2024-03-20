@@ -29,11 +29,11 @@ namespace mgis::behaviour {
             getArraySize(behaviour.isvs, behaviour.hypothesis)),
         n(s),
         b(behaviour) {
-    auto init = [this](mgis::span<mgis::real>& view,
+    auto init = [this](std::span<mgis::real>& view,
                        std::vector<mgis::real>& values, const size_type vs) {
       constexpr const auto zero = real{0};
       values.resize(this->n * vs, zero);
-      view = mgis::span<mgis::real>(values);
+      view = std::span<mgis::real>(values);
     };
     init(this->gradients, this->gradients_values, this->gradients_stride);
     if ((this->b.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) &&
@@ -68,14 +68,14 @@ namespace mgis::behaviour {
             getArraySize(behaviour.isvs, behaviour.hypothesis)),
         n(s),
         b(behaviour) {
-    auto init = [this](mgis::span<mgis::real>& view,
+    auto init = [this](std::span<mgis::real>& view,
                        std::vector<mgis::real>& values,
-                       const mgis::span<mgis::real>& evalues,
+                       const std::span<mgis::real>& evalues,
                        const size_type vs, const char* const vn) {
       if (evalues.empty()) {
         constexpr const auto zero = real{0};
         values.resize(this->n * vs, zero);
-        view = mgis::span<mgis::real>(values);
+        view = std::span<mgis::real>(values);
       } else {
         if (static_cast<size_type>(evalues.size()) != this->n * vs) {
           mgis::raise(
@@ -176,7 +176,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT void setMaterialProperty(
       MaterialStateManager& m,
       const mgis::string_view& n,
-      const mgis::span<real>& v,
+      const std::span<real>& v,
       const MaterialStateManager::StorageMode s) {
     const auto mp = getVariable(m.b.mps, n);
     mgis::raise_if(mp.type != Variable::SCALAR,
@@ -218,7 +218,7 @@ namespace mgis::behaviour {
 
   MGIS_EXPORT void setMassDensity(
       MaterialStateManager& m,
-      const mgis::span<real>& v,
+      const std::span<real>& v,
       const MaterialStateManager::StorageMode s) {
     mgis::raise_if(static_cast<mgis::size_type>(v.size()) != m.n,
                    "setMassDensity: invalid number of values "
@@ -255,7 +255,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT void setExternalStateVariable(
       MaterialStateManager& m,
       const mgis::string_view& n,
-      const mgis::span<real>& v,
+      const std::span<real>& v,
       const MaterialStateManager::StorageMode s) {
     const auto esv = getVariable(m.b.esvs, n);
     const auto vs = getVariableSize(esv, m.b.hypothesis);
@@ -298,8 +298,8 @@ namespace mgis::behaviour {
             "arrays' size does not match");
       }
     };  // end of check_size
-    auto update_span = [&check_size](mgis::span<real>& to,
-                                     const mgis::span<const real>& from) {
+    auto update_span = [&check_size](std::span<real>& to,
+                                     const std::span<const real>& from) {
       check_size(from.size(), to.size());
       std::copy(from.begin(), from.end(), to.begin());
     };  // end update_span
@@ -310,9 +310,9 @@ namespace mgis::behaviour {
             to = std::get<mgis::real>(from);
           } else if (std::holds_alternative<std::vector<mgis::real>>(from)) {
             const auto& from_v = std::get<std::vector<mgis::real>>(from);
-            if (std::holds_alternative<mgis::span<mgis::real>>(to)) {
+            if (std::holds_alternative<std::span<mgis::real>>(to)) {
               // reuse existing memory
-              auto& to_v = std::get<mgis::span<mgis::real>>(to);
+              auto& to_v = std::get<std::span<mgis::real>>(to);
               check_size(from_v.size(), to_v.size());
               std::copy(from_v.begin(), from_v.end(), to_v.begin());
             } else if (std::holds_alternative<std::vector<mgis::real>>(to)) {
@@ -325,10 +325,10 @@ namespace mgis::behaviour {
               to = std::get<std::vector<mgis::real>>(from);
             }
           } else {
-            const auto from_v = std::get<mgis::span<mgis::real>>(from);
-            if (std::holds_alternative<mgis::span<mgis::real>>(to)) {
+            const auto from_v = std::get<std::span<mgis::real>>(from);
+            if (std::holds_alternative<std::span<mgis::real>>(to)) {
               // reuse existing memory
-              auto to_v = std::get<mgis::span<mgis::real>>(to);
+              auto to_v = std::get<std::span<mgis::real>>(to);
               check_size(from_v.size(), to_v.size());
               std::copy(from_v.begin(), from_v.end(), to_v.begin());
             } else if (std::holds_alternative<std::vector<mgis::real>>(to)) {
@@ -407,7 +407,7 @@ namespace mgis::behaviour {
   namespace internals {
 
     void extractScalarInternalStateVariable(
-        mgis::span<mgis::real> o,
+        std::span<mgis::real> o,
         const mgis::behaviour::MaterialStateManager& s,
         const mgis::size_type offset) {
       const auto stride = s.internal_state_variables_stride;
@@ -419,7 +419,7 @@ namespace mgis::behaviour {
     }  // end of extractScalarInternalStateVariable
 
     void extractInternalStateVariable(
-        mgis::span<mgis::real> o,
+        std::span<mgis::real> o,
         const mgis::behaviour::MaterialStateManager& s,
         const mgis::size_type nc,
         const mgis::size_type offset) {
@@ -437,7 +437,7 @@ namespace mgis::behaviour {
   }  // end of namespace internals
 
   void extractInternalStateVariable(
-      mgis::span<mgis::real> o,
+      std::span<mgis::real> o,
       const mgis::behaviour::MaterialStateManager& s,
       const mgis::string_view n) {
     const auto& iv = mgis::behaviour::getVariable(s.b.isvs, n);

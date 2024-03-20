@@ -16,10 +16,10 @@
 #define LIB_MGIS_BEHAVIOUR_HXX
 
 #include <map>
+#include <span>
 #include <iosfwd>
 #include <vector>
 #include "MGIS/Config.hxx"
-#include "MGIS/Span.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
 #include "MGIS/Behaviour/Variable.hxx"
 #include "MGIS/Behaviour/RotationMatrix.hxx"
@@ -197,9 +197,9 @@ namespace mgis::behaviour {
    * - an array of size 9*n where n is the number of integration
    *   points which is interpreted as a field of 3x3 rotation matrix.
    */
-  MGIS_EXPORT void rotateGradients(mgis::span<real>,
+  MGIS_EXPORT void rotateGradients(std::span<real>,
                                    const Behaviour &,
-                                   const mgis::span<const real> &);
+                                   const std::span<const real> &);
   /*!
    * \brief rotate an array of gradients from the global frame to the material
    * frame.
@@ -213,10 +213,10 @@ namespace mgis::behaviour {
    * - an array of size 9*n where n is the number of integration
    *   points which is interpreted as a field of 3x3 rotation matrix.
    */
-  MGIS_EXPORT void rotateGradients(mgis::span<real>,
+  MGIS_EXPORT void rotateGradients(std::span<real>,
                                    const Behaviour &,
-                                   const mgis::span<const real> &,
-                                   const mgis::span<const real> &);
+                                   const std::span<const real> &,
+                                   const std::span<const real> &);
   /*!
    * \brief rotate an array of gradients from the global frame to the material
    * frame.
@@ -225,7 +225,7 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateGradients(mgis::span<real>,
+  MGIS_EXPORT void rotateGradients(std::span<real>,
                                    const Behaviour &,
                                    const RotationMatrix2D &);
   /*!
@@ -237,9 +237,9 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateGradients(mgis::span<real>,
+  MGIS_EXPORT void rotateGradients(std::span<real>,
                                    const Behaviour &,
-                                   const mgis::span<const real> &,
+                                   const std::span<const real> &,
                                    const RotationMatrix2D &);
   /*!
    * \brief rotate an array of gradients from the global frame to the material
@@ -249,7 +249,7 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateGradients(mgis::span<real>,
+  MGIS_EXPORT void rotateGradients(std::span<real>,
                                    const Behaviour &,
                                    const RotationMatrix3D &);
   /*!
@@ -261,9 +261,9 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateGradients(mgis::span<real>,
+  MGIS_EXPORT void rotateGradients(std::span<real>,
                                    const Behaviour &,
-                                   const mgis::span<const real> &,
+                                   const std::span<const real> &,
                                    const RotationMatrix3D &);
   /*!
    * \brief rotate an array of thermodynamics forces from the material frame
@@ -274,9 +274,9 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateThermodynamicForces(mgis::span<real>,
+  MGIS_EXPORT void rotateThermodynamicForces(std::span<real>,
                                              const Behaviour &,
-                                             const mgis::span<const real> &);
+                                             const std::span<const real> &);
   /*!
    * \brief rotate an array of thermodynamics forces from the material frame
    * to
@@ -286,7 +286,7 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateThermodynamicForces(mgis::span<real>,
+  MGIS_EXPORT void rotateThermodynamicForces(std::span<real>,
                                              const Behaviour &,
                                              const RotationMatrix2D &);
   /*!
@@ -298,7 +298,7 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateThermodynamicForces(mgis::span<real>,
+  MGIS_EXPORT void rotateThermodynamicForces(std::span<real>,
                                              const Behaviour &,
                                              const RotationMatrix3D &);
   /*!
@@ -311,10 +311,10 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateThermodynamicForces(mgis::span<real>,
+  MGIS_EXPORT void rotateThermodynamicForces(std::span<real>,
                                              const Behaviour &,
-                                             const mgis::span<const real> &,
-                                             const mgis::span<const real> &);
+                                             const std::span<const real> &,
+                                             const std::span<const real> &);
   /*!
    * \brief rotate an array of thermodynamics forces from the material frame
    * to
@@ -325,9 +325,9 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateThermodynamicForces(mgis::span<real>,
+  MGIS_EXPORT void rotateThermodynamicForces(std::span<real>,
                                              const Behaviour &,
-                                             const mgis::span<const real> &,
+                                             const std::span<const real> &,
                                              const RotationMatrix2D &);
   /*!
    * \brief rotate an array of thermodynamics forces from the material frame
@@ -339,9 +339,9 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateThermodynamicForces(mgis::span<real>,
+  MGIS_EXPORT void rotateThermodynamicForces(std::span<real>,
                                              const Behaviour &,
-                                             const mgis::span<const real> &,
+                                             const std::span<const real> &,
                                              const RotationMatrix3D &);
   /*!
    * \brief rotate an array of tangent operator blocks from the material frame
@@ -351,9 +351,9 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateTangentOperatorBlocks(mgis::span<real>,
+  MGIS_EXPORT void rotateTangentOperatorBlocks(std::span<real>,
                                                const Behaviour &,
-                                               const mgis::span<const real> &);
+                                               const std::span<const real> &);
   /*!
    * \brief rotate an array of tangent operator blocks from the material frame
    * to the global frame.
@@ -362,7 +362,7 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateTangentOperatorBlocks(mgis::span<real>,
+  MGIS_EXPORT void rotateTangentOperatorBlocks(std::span<real>,
                                                const Behaviour &,
                                                const RotationMatrix2D &);
   /*!
@@ -373,7 +373,7 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateTangentOperatorBlocks(mgis::span<real>,
+  MGIS_EXPORT void rotateTangentOperatorBlocks(std::span<real>,
                                                const Behaviour &,
                                                const RotationMatrix3D &);
   /*!
@@ -385,10 +385,10 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateTangentOperatorBlocks(mgis::span<real>,
+  MGIS_EXPORT void rotateTangentOperatorBlocks(std::span<real>,
                                                const Behaviour &,
-                                               const mgis::span<const real> &,
-                                               const mgis::span<const real> &);
+                                               const std::span<const real> &,
+                                               const std::span<const real> &);
   /*!
    * \brief rotate an array of tangent operator blocks from the material frame
    * to the global frame.
@@ -398,9 +398,9 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateTangentOperatorBlocks(mgis::span<real>,
+  MGIS_EXPORT void rotateTangentOperatorBlocks(std::span<real>,
                                                const Behaviour &,
-                                               const mgis::span<const real> &,
+                                               const std::span<const real> &,
                                                const RotationMatrix2D &);
   /*!
    * \brief rotate an array of tangent operator blocks from the material frame
@@ -411,9 +411,9 @@ namespace mgis::behaviour {
    * \param[in] r: rotation matrix from the global frame to the material
    * frame.
    */
-  MGIS_EXPORT void rotateTangentOperatorBlocks(mgis::span<real>,
+  MGIS_EXPORT void rotateTangentOperatorBlocks(std::span<real>,
                                                const Behaviour &,
-                                               const mgis::span<const real> &,
+                                               const std::span<const real> &,
                                                const RotationMatrix3D &);
   /*!
    * \brief set the value of a parameter

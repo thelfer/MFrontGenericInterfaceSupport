@@ -15,11 +15,11 @@
 #ifndef LIB_MGIS_PYTHON_NUMPYSUPPORT_HXX
 #define LIB_MGIS_PYTHON_NUMPYSUPPORT_HXX
 
+#include <span>
 #include <vector>
 #include <variant>
 #include <boost/python/object.hpp>
 #include "MGIS/Config.hxx"
-#include "MGIS/Span.hxx"
 
 namespace mgis::python {
 
@@ -32,7 +32,7 @@ namespace mgis::python {
    * the vector.
    * \param[in] v: values
    */
-  boost::python::object wrapInNumPyArray(mgis::span<double>&);
+  boost::python::object wrapInNumPyArray(std::span<double>&);
   /*!
    * \brief create a 1D-ndarray object from a vector.
    * The ndarray does not own the data, the lifetime of which is handled by
@@ -40,7 +40,7 @@ namespace mgis::python {
    * \param[in] v: values
    */
   boost::python::object wrapInNumPyArray(
-      std::variant<mgis::span<double>, std::vector<double>>&);
+      std::variant<std::span<double>, std::vector<double>>&);
   /*!
    * \brief create a 1D-ndarray object from a vector.
    * The ndarray does not own the data, the lifetime of which is handled by
@@ -55,7 +55,7 @@ namespace mgis::python {
    * \param[in] v: values
    * \param[in] nc: number of columns
    */
-  boost::python::object wrapInNumPyArray(mgis::span<double>&,
+  boost::python::object wrapInNumPyArray(std::span<double>&,
                                          const mgis::size_type);
   /*!
    * \brief create a 2D-ndarray object from a vector.
@@ -65,7 +65,7 @@ namespace mgis::python {
    * \param[in] nc: number of columns
    */
   boost::python::object wrapInNumPyArray(
-      std::variant<mgis::span<double>, std::vector<double>>&,
+      std::variant<std::span<double>, std::vector<double>>&,
       const mgis::size_type);
   /*!
    * \brief create a 2D-ndarray object from a vector.
@@ -84,7 +84,7 @@ namespace mgis::python {
    * \param[in] nl: number of line
    * \param[in] nc: number of columns
    */
-  boost::python::object wrapInNumPyArray(mgis::span<double>&,
+  boost::python::object wrapInNumPyArray(std::span<double>&,
                                          const mgis::size_type,
                                          const mgis::size_type);
   /*!
@@ -96,7 +96,7 @@ namespace mgis::python {
    * \param[in] nc: number of columns
    */
   boost::python::object wrapInNumPyArray(
-      std::variant<mgis::span<double>, std::vector<double>>&,
+      std::variant<std::span<double>, std::vector<double>>&,
       const mgis::size_type,
       const mgis::size_type);
   /*!
@@ -111,7 +111,7 @@ namespace mgis::python {
                                          const mgis::size_type,
                                          const mgis::size_type);
 
-  mgis::span<mgis::real> mgis_convert_to_span(const boost::python::object&);
+  std::span<mgis::real> mgis_convert_to_span(const boost::python::object&);
 
 }  // end of namespace mgis::python
 

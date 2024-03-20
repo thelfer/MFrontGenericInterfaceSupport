@@ -97,42 +97,42 @@ void check_material_data_manager(const mgis::behaviour::Behaviour&b){
   auto v_esv_values = std::vector<mgis::real>{1, 2, 3};
   // v_esv is uniform
   setExternalStateVariable(d.s0, "v_esv",
-                           mgis::span<mgis::real>(zeros.data(), 3u),
+                           std::span<mgis::real>(zeros.data(), 3u),
                            MaterialStateManager::EXTERNAL_STORAGE);
   setExternalStateVariable(d.s1, "v_esv", v_esv_values);
   // v2_esv[0] is not uniform
   auto v2_esv0_values = std::vector<mgis::real>{1, 2, 3, 7, 6, 5};
   setExternalStateVariable(d.s0, "v2_esv[0]",
-                           mgis::span<mgis::real>(zeros.data(), 3u),
+                           std::span<mgis::real>(zeros.data(), 3u),
                            MaterialStateManager::EXTERNAL_STORAGE);
   setExternalStateVariable(d.s1, "v2_esv[0]", v2_esv0_values);
   auto v2_esv1_values = std::vector<mgis::real>{9, 8, 2, 3, 6, 4};
   setExternalStateVariable(d.s0, "v2_esv[1]",
-                           mgis::span<mgis::real>(zeros.data(), 3u),
+                           std::span<mgis::real>(zeros.data(), 3u),
                            MaterialStateManager::EXTERNAL_STORAGE);
   setExternalStateVariable(d.s1, "v2_esv[1]", v2_esv1_values,
                            MaterialStateManager::EXTERNAL_STORAGE);
   auto init = [&zeros](MaterialStateManager& s) {
     setExternalStateVariable(s, "Temperature",
-                             mgis::span<mgis::real>(zeros.data(), 1u),
+                             std::span<mgis::real>(zeros.data(), 1u),
                              MaterialStateManager::EXTERNAL_STORAGE);
     setExternalStateVariable(s, "s_esv",
-                             mgis::span<mgis::real>(zeros.data(), 6u),
+                             std::span<mgis::real>(zeros.data(), 6u),
                              MaterialStateManager::EXTERNAL_STORAGE);
     setExternalStateVariable(s, "s2_esv[0]",
-                             mgis::span<mgis::real>(zeros.data(), 6u),
+                             std::span<mgis::real>(zeros.data(), 6u),
                              MaterialStateManager::EXTERNAL_STORAGE);
     setExternalStateVariable(s, "s2_esv[1]",
-                             mgis::span<mgis::real>(zeros.data(), 6u),
+                             std::span<mgis::real>(zeros.data(), 6u),
                              MaterialStateManager::EXTERNAL_STORAGE);
     setExternalStateVariable(s, "t_esv",
-                             mgis::span<mgis::real>(zeros.data(), 9u),
+                             std::span<mgis::real>(zeros.data(), 9u),
                              MaterialStateManager::EXTERNAL_STORAGE);
     setExternalStateVariable(s, "t2_esv[0]",
-                             mgis::span<mgis::real>(zeros.data(), 9u),
+                             std::span<mgis::real>(zeros.data(), 9u),
                              MaterialStateManager::EXTERNAL_STORAGE);
     setExternalStateVariable(s, "t2_esv[1]",
-                             mgis::span<mgis::real>(zeros.data(), 9u),
+                             std::span<mgis::real>(zeros.data(), 9u),
                              MaterialStateManager::EXTERNAL_STORAGE);
   };
   init(d.s0);

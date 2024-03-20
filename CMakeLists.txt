@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 include(cmake/modules/mgis.cmake)
 project("mfront-generic-interface")
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CXX_STANDARD_REQUIRED ON)
 
 # portable-build
