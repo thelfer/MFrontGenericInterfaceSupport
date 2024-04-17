@@ -21,11 +21,25 @@ namespace mgis::behaviour {
    * \brief option available for finite strain behaviours
    */
   struct FiniteStrainBehaviourOptions {
-    //! \brief stress measure requested for finite strain behaviours
+    /*!
+     * \brief stress measure requested for finite strain behaviours
+     *
+     * The first Piola-Kirchhoff stress \f(P\f) is related to the Cauchy stress
+     * \f(\sigma\) by:
+     *
+     * \f[
+     * ￼￼P = J \,\cdot\,\sigma\,F^{-T}
+     * \f]
+     *
+     * where \f(F\f) is the deformation gradient and \f(J\f) its determinant.
+     *
+     * \note some authors use a different convention to define the 
+     * first Piola-Kirchhoff stress using the transpose of \f(P\f)
+     */
     enum StressMeasure {
       CAUCHY,  //!< Cauchy stress
-      PK2,     //!< Second Piola-Kirchoff stress
-      PK1      //!< First Piola-Kirchoff stress
+      PK2,     //!< Second Piola-Kirchhoff stress
+      PK1      //!< First Piola-Kirchhoff stress
     } stress_measure = CAUCHY;
     /*!
      * \brief type of finite strain tangent operator requested for finite
