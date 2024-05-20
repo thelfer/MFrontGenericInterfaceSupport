@@ -76,22 +76,21 @@ An introduction to the `C++` library may be found [here](bindings-cxx.html)
 - [`MoFEM`](http://mofem.eng.gla.ac.uk/mofem/html/). See [this
   talk](https://github.com/thelfer/tfel-doc/blob/master/MFrontUserDays/SixthUserDays/Talk6-MoFEM_MFront.pdf)
   for details.
-- [`JuliaFEM`](http://www.juliafem.org/) through the
-  [`MFrontInterface.jl`](https://github.com/JuliaFEM/MFrontInterface.jl)
-  package.
 - [`Europlexus`](https://europlexus.jrc.ec.europa.eu/)
 - `XPer`. See this
   [talk](https://github.com/thelfer/tfel-doc/blob/master/MFrontUserDays/FifthUserDays/Xper-Perales-MFrontUserDays-2019.pdf)
   for details.
-- `Mefisto`.
+- [`MBDyn`](https://www.mbdyn.org/). See [this demo](https://www.youtube.com/watch?v=I8HENx5mszA).
+- The (yet to be released) solver `MANTA` developed at CEA [@jamond_manta_2022].
+- [`JuliaFEM`](http://www.juliafem.org/) through the
+  [`MFrontInterface.jl`](https://github.com/JuliaFEM/MFrontInterface.jl)
+  package.
 - [`Kratos Multiphysics`](https://github.com/KratosMultiphysics/Kratos)
   through the experimental `MGISApplication`
 - An example using `MGIS` and the [`DUNE`
   platform](https://www.dune-project.org/) is available
   [here](https://github.com/thelfer/dune-mgis).
 
-An interface coupling
-  
 # Bindings
 
 ## Existing bindings
