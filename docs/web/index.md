@@ -59,6 +59,7 @@ An introduction to the `C++` library may be found [here](bindings-cxx.html)
 
 # Projects using `MGIS` or in which `MGIS` can be coupled
 
+- [`code-aster`](https://code-aster.org)
 - [`OpenGeoSys`](https://www.opengeosys.org/). See this
   [talk](https://github.com/thelfer/tfel-doc/blob/master/MFrontUserDays/FifthUserDays/OpenGeoSys-Nagel-MFrontUserDays-2019.pdf)
   for details.
