@@ -30,7 +30,8 @@ bibliography: bibliography.bib
 
 This project aims at proving tools (functions, classes, bindings,
 etc...) to handle behaviours written using `MFront` generic interface.
-For information about `MFront`, see <http://tfel.sourceforge.net>.
+For information about `MFront`, see
+<http://thelfer.github.io/tfel/web/index.html>.
 
 Those tools are meant to be used by (`FEM`, `FFT`, etc.) solver
 developers. This tools are *not* linked to the `TFEL` libraries.
@@ -102,7 +103,6 @@ The following bindings are available:
 - `python` binding: this binding also provide an interface to `FEniCS` which is 
   discussed [here along with a collection of commented demos](mgis_fenics.html)
 - `fortran` binding
-- `julia` binding
 
 ## Future bindings (contributors are welcomed)
 
