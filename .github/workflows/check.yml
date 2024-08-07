@@ -25,11 +25,12 @@ jobs:
       shell: spack-sh {0}
       run: |
         spack install py-numpy
+        spack install boost+python+numpy+exception+container
         spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
     - name: cmake
       shell: spack-sh {0}
       run: |
-        spack load py-numpy tfel
+        spack load py-numpy boost tfel
         cmake -DCMAKE_BUILD_TYPE=Release . \
               -Denable-c-bindings=ON       \
               -Denable-fortran-bindings=ON \
@@ -39,10 +40,10 @@ jobs:
     - name: make
       shell: spack-sh {0}
       run: |
-        spack load py-numpy
+        spack load py-numpy boost
         make
     - name: make check
       shell: spack-sh {0}
       run: |
-        spack load py-numpy tfel
+        spack load py-numpy boost tfel
         make check
