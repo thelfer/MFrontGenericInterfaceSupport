@@ -21,14 +21,16 @@ jobs:
         color: true       # Force color output (SPACK_COLOR=always)
         path: ${{github.workspace}}/spack       # Where to clone Spack
 
-    - name: Install TFEL
+    - name: Install TFEL and NumPy
       shell: spack-sh {0}
       run: |
+        spack install numpy
         spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
     - name: cmake
       shell: spack-sh {0}
       run: |
         spack load tfel
+        spack load numpy
         cmake -DCMAKE_BUILD_TYPE=Release . \
               -Denable-c-bindings=ON       \
               -Denable-fortran-bindings=ON \
@@ -41,4 +43,5 @@ jobs:
       shell: spack-sh {0}
       run: |
         spack load tfel
+        spack load numpy
         make check
