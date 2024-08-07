@@ -52,12 +52,22 @@ IF(TFEL_CONFIG AND MFRONT AND MFRONT_QUERY)
       set(TFEL_PYTHON_BINDINGS ON)
   endif()
   
-  find_path(TFEL_CONFIG_INCLUDE_PATH TFELConfig.hxx
-      HINTS ${TFELHOME}/include/TFEL/Config
-  )
-  get_filename_component(TFEL_INCLUDE_PATH
-      ${TFEL_CONFIG_INCLUDE_PATH}/../.. ABSOLUTE CACHE
-  )
+  execute_process(COMMAND ${TFEL_CONFIG} "--include-path"
+      RESULT_VARIABLE TFEL_INCLUDE_PATH_RESULT
+      OUTPUT_VARIABLE TFEL_INCLUDE_PATH
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_QUIET
+      )
+  if(NOT TFEL_INCLUDE_PATH_RESULT EQUAL 0)
+      message(FATAL_ERROR "call to tfel-config failed")
+  endif()
+   
+  # find_path(TFEL_CONFIG_INCLUDE_PATH TFELConfig.hxx
+  #     HINTS ${TFELHOME}/include/TFEL/Config
+  # )
+  # get_filename_component(TFEL_INCLUDE_PATH
+  #     ${TFEL_CONFIG_INCLUDE_PATH}/../.. ABSOLUTE CACHE
+  # )
   
   set(tfel_libs
       TFELTests
