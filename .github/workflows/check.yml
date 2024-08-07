@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Spack
+      uses: spack/setup-spack@v2
+      with:
+        ref: develop      # Spack version (examples: develop, releases/v0.21)
+        buildcache: true  # Configure oci://ghcr.io/spack/github-actions-buildcache
+        color: true       # Force color output (SPACK_COLOR=always)
+        path: ${{github.workspace}}/spack       # Where to clone Spack
+
+    - name: Install TFEL
+      shell: spack-sh {0}
+      run: |
+        spack install tfel@master
+    - name: cmake
+      shell: spack-sh {0}
+      run: |
+        spack load tfel
+        cmake -DCMAKE_BUILD_TYPE=Release . \
+              -Denable-c-bindings=ON       \
+              -Denable-fortran-bindings=ON \
+              -Denable-python-bindings=ON  \
+              -Denable-portable-build=ON   \
+              -Denable-julia-bindings=OFF
+    - name: make
+      run: make
+    - name: make check
+      run: |
+        spack load tfel
+        make check
