@@ -38,6 +38,7 @@ jobs:
     - name: make
       run: make
     - name: make check
+      shell: spack-sh {0}
       run: |
         spack load tfel
         make check
