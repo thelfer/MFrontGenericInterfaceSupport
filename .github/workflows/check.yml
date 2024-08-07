@@ -29,8 +29,7 @@ jobs:
     - name: cmake
       shell: spack-sh {0}
       run: |
-        spack load tfel
-        spack load numpy
+        spack load numpy tfel
         cmake -DCMAKE_BUILD_TYPE=Release . \
               -Denable-c-bindings=ON       \
               -Denable-fortran-bindings=ON \
@@ -38,10 +37,12 @@ jobs:
               -Denable-portable-build=ON   \
               -Denable-julia-bindings=OFF
     - name: make
-      run: make
+      shell: spack-sh {0}
+      run: |
+        spack load numpy
+        make
     - name: make check
       shell: spack-sh {0}
       run: |
-        spack load tfel
-        spack load numpy
+        spack load numpy tfel
         make check
