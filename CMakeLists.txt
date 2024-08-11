@@ -283,3 +283,12 @@ if(MGIS_HAVE_TFEL)
   add_subdirectory(tests)
 endif(MGIS_HAVE_TFEL)
 add_subdirectory(bindings)
+
+set(CPACK_SOURCE_GENERATOR "TGZ")
+set(CPACK_SOURCE_IGNORE_FILES
+  \\.git/
+  build/
+  ".*~$"
+)
+set(CPACK_VERBATIM_VARIABLES YES)
+include(CPack)
