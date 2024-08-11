@@ -284,11 +284,7 @@ if(MGIS_HAVE_TFEL)
 endif(MGIS_HAVE_TFEL)
 add_subdirectory(bindings)
 
-set(CPACK_SOURCE_GENERATOR "TGZ")
-set(CPACK_SOURCE_IGNORE_FILES
-  \\.git/
-  build/
-  ".*~$"
-)
 set(CPACK_VERBATIM_VARIABLES YES)
+set(CPACK_SOURCE_GENERATOR "TGZ")
+set(CPACK_SOURCE_IGNORE_FILES "build;/\\\\.svn/;.*~")
 include(CPack)
