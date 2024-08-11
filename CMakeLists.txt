@@ -286,5 +286,5 @@ add_subdirectory(bindings)
 
 set(CPACK_VERBATIM_VARIABLES YES)
 set(CPACK_SOURCE_GENERATOR "TGZ")
-set(CPACK_SOURCE_IGNORE_FILES "build;/\\\\.svn/;.*~")
+set(CPACK_SOURCE_IGNORE_FILES "build;/\\.git/;.*~")
 include(CPack)
