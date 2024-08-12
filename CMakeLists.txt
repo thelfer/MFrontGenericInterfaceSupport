@@ -1,7 +1,15 @@
 cmake_minimum_required(VERSION 3.0)
+string(CONCAT MFrontGenericInterfaceSupportDescription
+	"The MFrontGenericInterfaceSupport project provides "
+	"useful feature for solvers' developpers to "
+    "integrate MFront generated material libraries.")
 
 include(cmake/modules/mgis.cmake)
-project("mfront-generic-interface")
+set(MFrontGenericInterfaceSupportDevelopmentVersion ON)
+project("mfront-generic-interface"
+        VERSION 3.0.0
+        DESCRIPTION  "${MFrontGenericInterfaceSupportDescription}"
+        HOMEPAGE_URL "https://thelfer.github.io/mgis/web/index.html")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CXX_STANDARD_REQUIRED ON)
@@ -283,3 +291,15 @@ if(MGIS_HAVE_TFEL)
   add_subdirectory(tests)
 endif(MGIS_HAVE_TFEL)
 add_subdirectory(bindings)
+
+# Packaging
+if(MFrontGenericInterfaceSupportDevelopmentVersion)
+  set(CPACK_PACKAGE_VERSION_PATCH "${CMAKE_PROJECT_VERSION_PATCH}-dev")
+endif()
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LGPL-3.0.txt")
+set(CPACK_VERBATIM_VARIABLES YES)
+if(NOT CPACK_SOURCE_GENERATOR)
+  set(CPACK_SOURCE_GENERATOR "TGZ")
+endif(NOT CPACK_SOURCE_GENERATOR)
+set(CPACK_SOURCE_IGNORE_FILES "build;/\\.git/;.*~")
+include(CPack)
