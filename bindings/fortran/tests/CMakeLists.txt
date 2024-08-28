@@ -6,7 +6,7 @@ add_library(MFrontGenericInterfaceFortranUnitTestingUtilities
   mgis_testing_utilities.f95
   mgis_testing_utilities.c)
 target_include_directories(MFrontGenericInterfaceFortranUnitTestingUtilities
- PRIVATE "${CMAKE_BINARY_DIR}/bindings/fortran/modules")
+ PRIVATE "${PROJECT_BINARY_DIR}/bindings/fortran/modules")
 target_link_libraries(MFrontGenericInterfaceFortranUnitTestingUtilities
    PRIVATE MFrontGenericInterface-fortran)
 
@@ -14,7 +14,7 @@ function(test_fortran_bindings test)
   add_executable(${test}_f
     EXCLUDE_FROM_ALL ${test}.f95)
   target_include_directories(${test}_f
-    PRIVATE "${CMAKE_BINARY_DIR}/bindings/fortran/modules")
+    PRIVATE "${PROJECT_BINARY_DIR}/bindings/fortran/modules")
   target_link_libraries(${test}_f
     PRIVATE MFrontGenericInterface-fortran MFrontGenericInterfaceFortranUnitTestingUtilities)
   if(CMAKE_CONFIGURATION_TYPES)

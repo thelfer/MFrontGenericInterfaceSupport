@@ -229,7 +229,7 @@ endif(enable-doxygen-doc OR enable-website)
 
 # add a target to generate API documentation with Doxygen
 if(enable-doxygen-doc)
-  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/docs)
+  file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/docs)
   find_package(Doxygen)
   if(DOXYGEN_FOUND)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
@@ -296,7 +296,7 @@ add_subdirectory(bindings)
 if(MFrontGenericInterfaceSupportDevelopmentVersion)
   set(CPACK_PACKAGE_VERSION_PATCH "${CMAKE_PROJECT_VERSION_PATCH}-dev")
 endif()
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LGPL-3.0.txt")
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LGPL-3.0.txt")
 set(CPACK_VERBATIM_VARIABLES YES)
 if(NOT CPACK_SOURCE_GENERATOR)
   set(CPACK_SOURCE_GENERATOR "TGZ")
