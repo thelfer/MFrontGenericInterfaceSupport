@@ -24,11 +24,11 @@ namespace mgis {
   struct ThreadPool::Wrapper {
     Wrapper(F&& f_) : f(f_) {}
     template <typename... Args>
-    ThreadedTaskResult<typename std::invoke_result<F(Args...)>::type> operator()(
+    ThreadedTaskResult<std::invoke_result_t<F, Args...>> operator()(
         Args&&... args) {
-      using result = typename std::invoke_result<F(Args...)>::type;
-      using apply = typename std::conditional<std::is_same<result, void>::value,
-                                              GetVoid, Get<result>>::type;
+      using result = std::invoke_result_t<F, Args...>;
+      using apply = std::conditional_t<std::is_same_v<result, void>, GetVoid,
+                                       Get<result>>;
       ThreadedTaskResult<result> r;
       apply::exe(r, f, std::forward<Args>(args)...);
       return r;
@@ -61,10 +61,9 @@ namespace mgis {
 
   // add new work item to the pool
   template <typename F, typename... Args>
-  std::future<ThreadedTaskResult<typename std::invoke_result<F(Args...)>::type>>
+  std::future<ThreadedTaskResult<std::invoke_result_t<F, Args...>>>
   ThreadPool::addTask(F&& f, Args&&... a) {
-    using return_type =
-        ThreadedTaskResult<typename std::invoke_result<F(Args...)>::type>;
+    using return_type = ThreadedTaskResult<std::invoke_result_t<F, Args...>>;
     using task = std::packaged_task<return_type()>;
     auto t = std::make_shared<task>(
         std::bind(Wrapper<F>(std::forward<F>(f)), std::forward<Args>(a)...));
