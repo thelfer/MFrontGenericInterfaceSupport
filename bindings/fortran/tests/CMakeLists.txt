@@ -3,7 +3,7 @@ STRING(REPLACE ";" "\\;" MGIS_PATH_STRING "${MGIS_PATH_STRING}")
 
 add_library(MFrontGenericInterfaceFortranUnitTestingUtilities
   EXCLUDE_FROM_ALL SHARED
-  mgis_testing_utilities.f95
+  mgis_testing_utilities.f90
   mgis_testing_utilities.c)
 target_include_directories(MFrontGenericInterfaceFortranUnitTestingUtilities
  PRIVATE "${PROJECT_BINARY_DIR}/bindings/fortran/modules")
@@ -12,7 +12,7 @@ target_link_libraries(MFrontGenericInterfaceFortranUnitTestingUtilities
 
 function(test_fortran_bindings test)
   add_executable(${test}_f
-    EXCLUDE_FROM_ALL ${test}.f95)
+    EXCLUDE_FROM_ALL ${test}.f90)
   target_include_directories(${test}_f
     PRIVATE "${PROJECT_BINARY_DIR}/bindings/fortran/modules")
   target_link_libraries(${test}_f
