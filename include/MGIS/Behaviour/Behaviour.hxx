@@ -159,8 +159,6 @@ namespace mgis::behaviour {
    * \param[in] b: behaviour name
    * \param[in] h: modelling hypothesis
    * \return the behaviour description
-   * \note: use of `std::string` rather than `mgis::string_view` is
-   * meaningfull here
    */
   MGIS_EXPORT Behaviour load(const std::string &,
                              const std::string &,
