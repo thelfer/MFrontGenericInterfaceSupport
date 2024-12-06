@@ -29,20 +29,16 @@ static const char *BehaviourDescription_getType(
   switch (b.btype) {
     case BehaviourDescription::GENERALBEHAVIOUR:
       return "GeneralBehaviour";
-      break;
     case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
       return "StandardStrainBasedBehaviour";
-      break;
     case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
       return "StandardFiniteStrainBehaviour";
-      break;
     case BehaviourDescription::COHESIVEZONEMODEL:
       return "CohesiveZoneModel";
-      break;
     default:
-      mgis::raise("BehaviourDescription_getType: unsupported behaviour type");
+      break;
   }
-  return "";
+  mgis::raise("BehaviourDescription_getType: unsupported behaviour type");
 }  // end of BehaviourDescription_getType
 
 static const char *BehaviourDescription_getKinematic(
@@ -51,16 +47,12 @@ static const char *BehaviourDescription_getKinematic(
   switch (b.kinematic) {
     case BehaviourDescription::SMALLSTRAINKINEMATIC:
       return "SmallStrainKinematic";
-      break;
     case BehaviourDescription::COHESIVEZONEKINEMATIC:
       return "CohesiveZoneKinematic";
-      break;
     case BehaviourDescription::FINITESTRAINKINEMATIC_F_CAUCHY:
       return "F_CAUCHY";
-      break;
     case BehaviourDescription::FINITESTRAINKINEMATIC_ETO_PK1:
       return "ETO_PK1";
-      break;
     case BehaviourDescription::UNDEFINEDKINEMATIC:
     default:
       break;
@@ -77,10 +69,9 @@ static const char *BehaviourDescription_getSymmetry(
     case BehaviourDescription::ORTHOTROPIC:
       return "Orthotropic";
     default:
-      mgis::raise("unsupported symmetry type");
       break;
   }
-  return "UndefinedSymemtry";
+  mgis::raise("unsupported symmetry type");
 }  // end of BehaviourDescription_getSymmetry
 
 static std::vector<mgis::behaviour::Variable> BehaviourDescription_getGradients(

@@ -130,7 +130,7 @@ MaterialDataManager_executePostProcessing2(
   return mgis::behaviour::executePostProcessing(output, m, n, b, e);
 }
 
-mgis::behaviour::MultiThreadedBehaviourIntegrationResult
+static mgis::behaviour::MultiThreadedBehaviourIntegrationResult
 MaterialDataManager_executePostProcessing3(
     boost::python::object o,
     mgis::ThreadPool& t,
