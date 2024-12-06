@@ -31,9 +31,9 @@ static const char* Variable_getType(const mgis::behaviour::Variable& v) {
     case Variable::TENSOR:
       return "Tensor";
     default:
-      mgis::raise("Variable_getType: unsupported type");
+      break;
   }
-  return "";
+  mgis::raise("Variable_getType: unsupported type");
 }  // end of Variable_getType
 
 // mgis::string_view is not exposed

@@ -131,39 +131,34 @@ namespace mgis::behaviour {
 
   static MaterialStateManager::FieldHolder& getFieldHolder(
       std::map<std::string, MaterialStateManager::FieldHolder>& m,
-      const mgis::string_view& n) {
+      const std::string_view& n) {
     // #if __cplusplus > 201103L
     //       return m[n];
     // #else  /* __cplusplus > 201103L */
-    return m[n.to_string()];
+    return m[std::string{n}];
     // #endif /* __cplusplus > 201103L */
   }  // end of getFieldHolder
 
   static std::map<std::string, MaterialStateManager::FieldHolder>::iterator
-  getFieldHolderIterator(
-      std::map<std::string, MaterialStateManager::FieldHolder>& m,
-      const mgis::string_view& n) {
-    // #if __cplusplus > 201103L
-    //       return m.find(n);
-    // #else  /* __cplusplus > 201103L */
-    return m.find(n.to_string());
-    // #endif /* __cplusplus > 201103L */
+  getFieldHolderIterator(std::map<std::string, MaterialStateManager::FieldHolder>& m,
+			 const std::string_view& n) {
+    return m.find(std::string{n});
   }  // end of getFieldHolder
-
+  
   static std::map<std::string,
                   MaterialStateManager::FieldHolder>::const_iterator
   getFieldHolderIterator(
       const std::map<std::string, MaterialStateManager::FieldHolder>& m,
-      const mgis::string_view& n) {
+      const std::string_view& n) {
     // #if __cplusplus > 201103L
     //       return m.find(n);
     // #else  /* __cplusplus > 201103L */
-    return m.find(n.to_string());
+    return m.find(std::string{n});
     // #endif /* __cplusplus > 201103L */
   }  // end of getFieldHolder
 
   void setMaterialProperty(MaterialStateManager& m,
-                           const mgis::string_view& n,
+                           const std::string_view& n,
                            const real v) {
     const auto mp = getVariable(m.b.mps, n);
     mgis::raise_if(mp.type != Variable::SCALAR,
@@ -175,7 +170,7 @@ namespace mgis::behaviour {
 
   MGIS_EXPORT void setMaterialProperty(
       MaterialStateManager& m,
-      const mgis::string_view& n,
+      const std::string_view& n,
       const mgis::span<real>& v,
       const MaterialStateManager::StorageMode s) {
     const auto mp = getVariable(m.b.mps, n);
@@ -195,63 +190,63 @@ namespace mgis::behaviour {
   }  // end of setMaterialProperty
 
   bool isMaterialPropertyDefined(const MaterialStateManager& m,
-                                 const mgis::string_view& n) {
+                                 const std::string_view& n) {
     const auto p = getFieldHolderIterator(m.material_properties, n);
     return p != m.material_properties.end();
   }  // end of isMaterialPropertyDefined
 
   bool isMaterialPropertyUniform(const MaterialStateManager& m,
-                                 const mgis::string_view& n) {
+                                 const std::string_view& n) {
     const auto p = getFieldHolderIterator(m.material_properties, n);
     if (p == m.material_properties.end()) {
       mgis::raise(
           "isMaterialPropertyUniform: "
           "no material property named '" +
-          n.to_string() + "' defined");
+          std::string{n} + "' defined");
     }
     return std::holds_alternative<real>(p->second);
   }  // end of isMaterialPropertyUniform
 
   real& getUniformMaterialProperty(MaterialStateManager& m,
-                                   const mgis::string_view& n) {
-    const auto p = getFieldHolderIterator(m.material_properties, n);
+                                   const std::string_view& n) {
+    auto p = getFieldHolderIterator(m.material_properties, n);
     mgis::raise_if(p == m.material_properties.end(),
                    "getUniformMaterialProperty: "
                    "no material property named '" +
-                       n.to_string() + "' defined");
+                       std::string{n} + "' defined");
     mgis::raise_if(!std::holds_alternative<real>(p->second),
                    "getUniformMaterialProperty: "
                    "material property '" +
-                       n.to_string() + "' is not uniform");
+                       std::string{n} + "' is not uniform");
     return std::get<real>(p->second);
   }  // end of getUniformMaterialProperty
 
   const real& getUniformMaterialProperty(const MaterialStateManager& m,
-                                         const mgis::string_view& n) {
+                                         const std::string_view& n) {
     const auto p = getFieldHolderIterator(m.material_properties, n);
     mgis::raise_if(p == m.material_properties.end(),
                    "getUniformMaterialProperty: "
                    "no material property named '" +
-                       n.to_string() + "' defined");
+                       std::string{n} + "' defined");
     mgis::raise_if(!std::holds_alternative<real>(p->second),
                    "getUniformMaterialProperty: "
                    "material property '" +
-                       n.to_string() + "' is not uniform");
+                       std::string{n} + "' is not uniform");
     return std::get<real>(p->second);
   }  // end of getUniformMaterialProperty
 
   mgis::span<real> getNonUniformMaterialProperty(MaterialStateManager& m,
-                                                 const mgis::string_view& n) {
+                                                 const std::string_view& n) {
     using index_type = span<real>::index_type;
     const auto p = getFieldHolderIterator(m.material_properties, n);
     mgis::raise_if(p == m.material_properties.end(),
                    "getNonUniformMaterialProperty: "
                    "no material property named '" +
-                       n.to_string() + "' defined");
+                       std::string{n} + "' defined");
     mgis::raise_if(std::holds_alternative<real>(p->second),
                    "getNonUniformMaterialProperty: "
                    "material property '" +
-                       n.to_string() + "' is uniform");
+                       std::string{n} + "' is uniform");
     if (std::holds_alternative<std::vector<real>>(p->second)) {
       auto& values = std::get<std::vector<real>>(p->second);
       return {&values[0], static_cast<index_type>(values.size())};
@@ -260,17 +255,17 @@ namespace mgis::behaviour {
   }  // end of getNonUniformMaterialProperty
 
   mgis::span<const real> getNonUniformMaterialProperty(
-      const MaterialStateManager& m, const mgis::string_view& n) {
+      const MaterialStateManager& m, const std::string_view& n) {
     using index_type = span<const real>::index_type;
     const auto p = getFieldHolderIterator(m.material_properties, n);
     mgis::raise_if(p == m.material_properties.end(),
                    "getNonUniformMaterialProperty: "
                    "no material property named '" +
-                       n.to_string() + "' defined");
+                       std::string{n} + "' defined");
     mgis::raise_if(std::holds_alternative<real>(p->second),
                    "getNonUniformMaterialProperty: "
                    "material property '" +
-                       n.to_string() + "' is uniform");
+                       std::string{n} + "' is uniform");
     if (std::holds_alternative<std::vector<real>>(p->second)) {
       const auto& values = std::get<std::vector<real>>(p->second);
       return {&values[0], static_cast<index_type>(values.size())};
@@ -279,7 +274,7 @@ namespace mgis::behaviour {
   }  // end of getNonUniformMaterialProperty
 
   void setExternalStateVariable(MaterialStateManager& m,
-                                const mgis::string_view& n,
+                                const std::string_view& n,
                                 const real v) {
     const auto esv = getVariable(m.b.esvs, n);
     mgis::raise_if(esv.type != Variable::SCALAR,
@@ -291,7 +286,7 @@ namespace mgis::behaviour {
 
   MGIS_EXPORT void setExternalStateVariable(
       MaterialStateManager& m,
-      const mgis::string_view& n,
+      const std::string_view& n,
       const mgis::span<real>& v,
       const MaterialStateManager::StorageMode s) {
     const auto esv = getVariable(m.b.esvs, n);
@@ -311,61 +306,61 @@ namespace mgis::behaviour {
   }  // end of setExternalStateVariable
 
   bool isExternalStateVariableDefined(const MaterialStateManager& m,
-                                      const mgis::string_view& n) {
+                                      const std::string_view& n) {
     const auto p = getFieldHolderIterator(m.external_state_variables, n);
     return p != m.external_state_variables.end();
   }  // end of isExternalStateVariableDefined
 
   bool isExternalStateVariableUniform(const MaterialStateManager& m,
-                                      const mgis::string_view& n) {
+                                      const std::string_view& n) {
     const auto p = getFieldHolderIterator(m.external_state_variables, n);
     mgis::raise_if(p == m.external_state_variables.end(),
                    "isExternalStateVariableUniform: "
                    "no external state variable named '" +
-                       n.to_string() + "' defined");
+                       std::string{n} + "' defined");
     return std::holds_alternative<real>(p->second);
   }  // end of isExternalStateVariableUniform
 
   real& getUniformExternalStateVariable(MaterialStateManager& m,
-                                        const mgis::string_view& n) {
+                                        const std::string_view& n) {
     const auto p = getFieldHolderIterator(m.external_state_variables, n);
     mgis::raise_if(p == m.external_state_variables.end(),
                    "getUniformExternalStateVariable: "
                    "no external state variable named '" +
-                       n.to_string() + "' defined");
+                       std::string{n} + "' defined");
     mgis::raise_if(!std::holds_alternative<real>(p->second),
                    "getUniformExternalStateVariable: "
                    "external state variable '" +
-                       n.to_string() + "' is not uniform");
+                       std::string{n} + "' is not uniform");
     return std::get<real>(p->second);
   }  // end of getUniformExternalStateVariable
 
   const real& getUniformExternalStateVariable(const MaterialStateManager& m,
-                                              const mgis::string_view& n) {
+                                              const std::string_view& n) {
     const auto p = getFieldHolderIterator(m.external_state_variables, n);
     mgis::raise_if(p == m.external_state_variables.end(),
                    "getUniformExternalStateVariable: "
                    "no external state variable named '" +
-                       n.to_string() + "' defined");
+                       std::string{n} + "' defined");
     mgis::raise_if(!std::holds_alternative<real>(p->second),
                    "getUniformExternalStateVariable: "
                    "external state variable '" +
-                       n.to_string() + "' is not uniform");
+                       std::string{n} + "' is not uniform");
     return std::get<real>(p->second);
   }  // end of getUniformExternalStateVariable
 
   mgis::span<real> getNonUniformExternalStateVariable(
-      MaterialStateManager& m, const mgis::string_view& n) {
+      MaterialStateManager& m, const std::string_view& n) {
     using index_type = span<real>::index_type;
-    const auto p = getFieldHolderIterator(m.external_state_variables, n);
+    auto p = getFieldHolderIterator(m.external_state_variables, n);
     mgis::raise_if(p == m.external_state_variables.end(),
                    "getNonUniformExternalStateVariable: "
                    "no external state variable named '" +
-                       n.to_string() + "' defined");
+                       std::string{n} + "' defined");
     mgis::raise_if(std::holds_alternative<real>(p->second),
                    "getNonUniformExternalStateVariable: "
                    "external state variable '" +
-                       n.to_string() + "' is uniform");
+                       std::string{n} + "' is uniform");
     if (std::holds_alternative<std::vector<real>>(p->second)) {
       auto& values = std::get<std::vector<real>>(p->second);
       return {&values[0], static_cast<index_type>(values.size())};
@@ -374,17 +369,17 @@ namespace mgis::behaviour {
   }  // end of getUniformExternalStateVariable
 
   mgis::span<const real> getNonUniformExternalStateVariable(
-      const MaterialStateManager& m, const mgis::string_view& n) {
+      const MaterialStateManager& m, const std::string_view& n) {
     const auto p = getFieldHolderIterator(m.external_state_variables, n);
     using index_type = span<const real>::index_type;
     mgis::raise_if(p == m.external_state_variables.end(),
                    "getNonUniformExternalStateVariable: "
                    "no external state variable named '" +
-                       n.to_string() + "' defined");
+                       std::string{n} + "' defined");
     mgis::raise_if(std::holds_alternative<real>(p->second),
                    "getNonUniformExternalStateVariable: "
                    "external state variable '" +
-                       n.to_string() + "' is uniform");
+                       std::string{n} + "' is uniform");
     if (std::holds_alternative<std::vector<real>>(p->second)) {
       const auto& values = std::get<std::vector<real>>(p->second);
       return {&values[0], static_cast<index_type>(values.size())};
