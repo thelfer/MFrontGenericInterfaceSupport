@@ -29,7 +29,7 @@ namespace mgis {
     void initializeNumPy() { wrapInitializeNumPy(); }  // end of initializeNumPy
 
     boost::python::object wrapInNumPyArray(std::vector<double>& v) {
-      npy_intp dims[1] = {v.size()};
+      npy_intp dims[1] = {static_cast<npy_intp>(v.size())};
       auto* const arr =
           PyArray_SimpleNewFromData(1, dims, NPY_DOUBLE, v.data());
       boost::python::handle<> handle(arr);
@@ -38,7 +38,8 @@ namespace mgis {
 
     boost::python::object wrapInNumPyArray(std::vector<double>& v,
                                            const size_type nc) {
-      npy_intp dims[2] = {v.size() / nc, nc};
+      npy_intp dims[2] = {static_cast<npy_intp>(v.size() / nc),
+	static_cast<npy_intp>(nc)};
       auto* const arr =
           PyArray_SimpleNewFromData(2, dims, NPY_DOUBLE, v.data());
       boost::python::handle<> handle(arr);
