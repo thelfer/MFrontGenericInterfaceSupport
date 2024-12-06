@@ -22,14 +22,14 @@
 // forward declaration
 void declareFiniteStrainSupport();
 
-void py_convertFiniteStrainStress(boost::python::object o,
+static void py_convertFiniteStrainStress(boost::python::object o,
                                const mgis::behaviour::MaterialDataManager& m,
                                const mgis::behaviour::FiniteStrainStress t){
   auto s = mgis::python::mgis_convert_to_span(o);
   mgis::behaviour::convertFiniteStrainStress(s, m, t);
 }  // end of py_py_convertFiniteStrainStress
 
-void py_convertFiniteStrainTangentOperator(
+static void py_convertFiniteStrainTangentOperator(
     boost::python::object o,
     const mgis::behaviour::MaterialDataManager& m,
     const mgis::behaviour::FiniteStrainTangentOperator t) {

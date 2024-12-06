@@ -57,7 +57,7 @@ class IntegrateTest2(unittest.TestCase):
         T = 293.15*numpy.ones(nig)
         # type of storage
         Ts = mgis_bv.MaterialStateManagerStorageMode.ExternalStorage
-        mgis_bv.setExternalStateVariable(m.s1,'Temperature', T,Ts)
+        mgis_bv.setExternalStateVariable(m.s1, 'Temperature', T, Ts)
         # copy d.s1 in d.s0
         mgis_bv.update(m);
         # index of the first integration point

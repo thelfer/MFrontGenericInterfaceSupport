@@ -41,9 +41,10 @@
 #ifndef LIB_MGIS_STRINGVIEW_HXX
 #define LIB_MGIS_STRINGVIEW_HXX
 
-#include <algorithm>
 #include <string>
 #include <ostream>
+#include <algorithm>
+
 
 namespace mgis{
 
@@ -361,42 +362,6 @@ namespace mgis{
                             size_type count) const;
 
     size_type find_first_of(const char_type* s, size_type pos = 0) const;
-
-    //------------------------------------------------------------------------
-
-    size_type find_last_of(basic_string_view v, size_type pos = npos) const;
-
-    size_type find_last_of(char_type c, size_type pos = npos) const;
-
-    size_type find_last_of(const char_type* s,
-                           size_type pos,
-                           size_type count) const;
-
-    size_type find_last_of(const char_type* s, size_type pos = npos) const;
-
-    //------------------------------------------------------------------------
-
-    size_type find_first_not_of(basic_string_view v, size_type pos = 0) const;
-
-    size_type find_first_not_of(char_type c, size_type pos = 0) const;
-
-    size_type find_first_not_of(const char_type* s,
-                                size_type pos,
-                                size_type count) const;
-
-    size_type find_first_not_of(const char_type* s, size_type pos = 0) const;
-
-    //------------------------------------------------------------------------
-
-    size_type find_last_not_of(basic_string_view v, size_type pos = npos) const;
-
-    size_type find_last_not_of(char_type c, size_type pos = npos) const;
-
-    size_type find_last_not_of(const char_type* s,
-                               size_type pos,
-                               size_type count) const;
-
-    size_type find_last_not_of(const char_type* s, size_type pos = npos) const;
 
     //------------------------------------------------------------------------
     // Iterators
