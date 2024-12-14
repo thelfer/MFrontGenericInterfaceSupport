@@ -237,10 +237,10 @@ namespace mgis::behaviour {
     }
   }  // end of convertFiniteStrainStress
 
-  void convertFiniteStrainTangentOperator_PK1_2D(mgis::real* const dP,
-                                                 const real* const ds,
-                                                 const real* const F,
-                                                 const real* const s) {
+  static void convertFiniteStrainTangentOperator_PK1_2D(mgis::real* const dP,
+							const real* const ds,
+							const real* const F,
+							const real* const s) {
     constexpr const real cste = 1.41421356237309504880;
     constexpr const real icste = 0.70710678118654752440;
     // diff(P[1],F[0])
@@ -297,10 +297,10 @@ namespace mgis::behaviour {
     dP[24] = -(cste * ds[9] * F[2] * F[3] - ds[19] * F[1] * F[2]) * icste;
   }  // end of convertFiniteStrainTangentOperator_PK1_2D
 
-  void convertFiniteStrainTangentOperator_PK1_3D(mgis::real* const dP,
-                                                 const real* const ds,
-                                                 const real* const F,
-                                                 const real* const s) {
+  static void convertFiniteStrainTangentOperator_PK1_3D(mgis::real* const dP,
+							const real* const ds,
+							const real* const F,
+							const real* const s) {
     constexpr const real cste = 1.41421356237309504880;
     //(%i15) f90(diff(P[1],F_0));
     dP[0] = -((2 * ds[0] * F[7] - cste * ds[27] * F[5]) * F[8] -

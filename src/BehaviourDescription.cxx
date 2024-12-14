@@ -172,6 +172,8 @@ namespace mgis::behaviour {
           return BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR;
         case 3:
           return BehaviourDescription::COHESIVEZONEMODEL;
+      default:
+	break;
       }
       raise("unsupported behaviour type");
     }();

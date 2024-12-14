@@ -14,6 +14,7 @@
 
 #include <bitset>
 #include <climits>
+#include <algorithm>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/Variable.hxx"
 
@@ -77,7 +78,7 @@ namespace mgis::behaviour::internals {
     }
   }  // end of getUnSymmetricTensorVariableType
 
-  mgis::behaviour::Variable::Type getVariableType(const int t) {
+  static mgis::behaviour::Variable::Type getVariableType(const int t) {
     int v = t;
     const auto type = extractAndShift(v, 3);
     if (type == 0) {
@@ -301,14 +302,14 @@ namespace mgis::behaviour {
     return s;
   }  // end of getVariableSize
 
-  bool contains(const std::vector<Variable> &vs, const string_view n) {
+  bool contains(const std::vector<Variable> &vs, const std::string_view n) {
     return std::find_if(vs.begin(), vs.end(), [&n](const Variable &v) {
              return v.name == n;
            }) != vs.end();
   }  // end of contains
 
   const Variable &getVariable(const std::vector<Variable> &vs,
-                              const string_view n) {
+                              const std::string_view n) {
     const auto p = std::find_if(
         vs.begin(), vs.end(), [&n](const Variable &v) { return v.name == n; });
     if (p == vs.end()) {
@@ -326,7 +327,7 @@ namespace mgis::behaviour {
   }  // end of getArraySize
 
   size_type getVariableOffset(const std::vector<Variable> &vs,
-                              const string_view n,
+                              const std::string_view n,
                               const Hypothesis h) {
     auto o = size_type{};
     for (const auto &v : vs) {

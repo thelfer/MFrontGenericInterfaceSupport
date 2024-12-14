@@ -184,7 +184,7 @@ namespace mgis {
     return r;
   }  // end of decomposeVariableName2
 
-  std::pair<std::string, std::string> decomposeVariableName(
+  static std::pair<std::string, std::string> decomposeVariableName(
       const std::string &n) {
     return {decomposeVariableName1(n), decomposeVariableName2(n)};
   }  // end of decomposeVariableName

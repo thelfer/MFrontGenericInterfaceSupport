@@ -17,8 +17,8 @@
 
 #include <string>
 #include <vector>
+#include <string_view>
 #include "MGIS/Config.hxx"
-#include "MGIS/StringView.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
 
 namespace mgis::behaviour {
@@ -57,14 +57,14 @@ namespace mgis::behaviour {
    * \param[in] vs: variables
    * \param[in] n: name
    */
-  MGIS_EXPORT bool contains(const std::vector<Variable> &, const string_view);
+  MGIS_EXPORT bool contains(const std::vector<Variable> &, const std::string_view);
   /*!
    * \return the variable with the given name
    * \param[in] vs: variables
    * \param[in] n: name
    */
   MGIS_EXPORT const Variable &getVariable(const std::vector<Variable> &,
-                                          const string_view);
+                                          const std::string_view);
   /*!
    * \return the type of a variable from an identifier
    * \param[in] id: type identifier
@@ -96,7 +96,7 @@ namespace mgis::behaviour {
    * \param[in] h: modelling hypothesis
    */
   MGIS_EXPORT size_type getVariableOffset(const std::vector<Variable> &,
-                                          const string_view,
+                                          const std::string_view,
                                           const Hypothesis);
   /*!
    * \return the type of the given variable as a string

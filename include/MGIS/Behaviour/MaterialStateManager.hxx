@@ -21,9 +21,10 @@
 #include <vector>
 #include <variant>
 #include <optional>
+#include <string_view>
 #include "MGIS/Config.hxx"
 #include "MGIS/StorageMode.hxx"
-#include "MGIS/StringView.hxx"
+
 
 namespace mgis::behaviour {
 
@@ -200,7 +201,7 @@ namespace mgis::behaviour {
    * \param[in] v: value
    */
   MGIS_EXPORT void setMaterialProperty(MaterialStateManager&,
-                                       const mgis::string_view&,
+                                       const std::string_view&,
                                        const real);
   /*!
    * \brief set the given material property
@@ -210,7 +211,7 @@ namespace mgis::behaviour {
    * \param[in] s: storage mode
    */
   MGIS_EXPORT void setMaterialProperty(MaterialStateManager&,
-                                       const mgis::string_view&,
+                                       const std::string_view&,
                                        const std::span<mgis::real>&,
                                        const MaterialStateManager::StorageMode =
                                            MaterialStateManager::LOCAL_STORAGE);
@@ -222,14 +223,14 @@ namespace mgis::behaviour {
    * \param[in] s: storage mode
    */
   MGIS_EXPORT bool isMaterialPropertyDefined(const MaterialStateManager&,
-                                             const mgis::string_view&);
+                                             const std::string_view&);
   /*!
    * \brief chek if the given material property is uniform
    * \param[out] m: material data manager
    * \param[in] n: name
    */
   MGIS_EXPORT bool isMaterialPropertyUniform(const MaterialStateManager&,
-                                             const mgis::string_view&);
+                                             const std::string_view&);
   /*!
    * \brief set the mass density
    * \param[out] m: material data manager
@@ -263,7 +264,7 @@ namespace mgis::behaviour {
    * \param[in] v: value
    */
   MGIS_EXPORT void setExternalStateVariable(MaterialStateManager&,
-                                            const mgis::string_view&,
+                                            const std::string_view&,
                                             const real);
   /*!
    * \brief set the given external state variable
@@ -274,7 +275,7 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT void setExternalStateVariable(
       MaterialStateManager&,
-      const mgis::string_view&,
+      const std::string_view&,
       const std::span<mgis::real>&,
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE);
@@ -286,14 +287,14 @@ namespace mgis::behaviour {
    * \param[in] s: storage mode
    */
   MGIS_EXPORT bool isExternalStateVariableDefined(const MaterialStateManager&,
-                                                  const mgis::string_view&);
+                                                  const std::string_view&);
   /*!
    * \return true if the given external state variable is uniform.
    * \param[out] m: material data manager
    * \param[in] n: name
    */
   MGIS_EXPORT bool isExternalStateVariableUniform(const MaterialStateManager&,
-                                                  const mgis::string_view&);
+                                                  const std::string_view&);
   /*!
    * \brief update the values of a state from another state
    * \param[out] o: output state
@@ -314,7 +315,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT void extractInternalStateVariable(
       std::span<mgis::real>,
       const mgis::behaviour::MaterialStateManager&,
-      const mgis::string_view);
+      const std::string_view);
 
 }  // end of namespace mgis::behaviour
 

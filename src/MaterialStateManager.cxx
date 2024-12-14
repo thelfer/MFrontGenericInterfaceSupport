@@ -131,18 +131,18 @@ namespace mgis::behaviour {
 
   static MaterialStateManager::FieldHolder& getFieldHolder(
       std::map<std::string, MaterialStateManager::FieldHolder>& m,
-      const mgis::string_view& n) {
+      const std::string_view& n) {
     // #if __cplusplus > 201103L
     //       return m[n];
     // #else  /* __cplusplus > 201103L */
-    return m[n.to_string()];
+    return m[std::string{n}];
     // #endif /* __cplusplus > 201103L */
   }  // end of getFieldHolder
 
   //   static std::map<std::string, MaterialStateManager::FieldHolder>::iterator
   //   getFieldHolderIterator(
   //       std::map<std::string, MaterialStateManager::FieldHolder>& m,
-  //       const mgis::string_view& n) {
+  //       const std::string_view& n) {
   //     // #if __cplusplus > 201103L
   //     //       return m.find(n);
   //     // #else  /* __cplusplus > 201103L */
@@ -154,16 +154,16 @@ namespace mgis::behaviour {
                   MaterialStateManager::FieldHolder>::const_iterator
   getFieldHolderIterator(
       const std::map<std::string, MaterialStateManager::FieldHolder>& m,
-      const mgis::string_view& n) {
+      const std::string_view& n) {
     // #if __cplusplus > 201103L
     //       return m.find(n);
     // #else  /* __cplusplus > 201103L */
-    return m.find(n.to_string());
+    return m.find(std::string{n});
     // #endif /* __cplusplus > 201103L */
   }  // end of getFieldHolder
 
   void setMaterialProperty(MaterialStateManager& m,
-                           const mgis::string_view& n,
+                           const std::string_view& n,
                            const real v) {
     const auto mp = getVariable(m.b.mps, n);
     mgis::raise_if(mp.type != Variable::SCALAR,
@@ -175,7 +175,7 @@ namespace mgis::behaviour {
 
   MGIS_EXPORT void setMaterialProperty(
       MaterialStateManager& m,
-      const mgis::string_view& n,
+      const std::string_view& n,
       const std::span<real>& v,
       const MaterialStateManager::StorageMode s) {
     const auto mp = getVariable(m.b.mps, n);
@@ -195,19 +195,19 @@ namespace mgis::behaviour {
   }  // end of setMaterialProperty
 
   bool isMaterialPropertyDefined(const MaterialStateManager& m,
-                                 const mgis::string_view& n) {
+                                 const std::string_view& n) {
     const auto p = getFieldHolderIterator(m.material_properties, n);
     return p != m.material_properties.end();
   }  // end of isMaterialPropertyDefined
 
   bool isMaterialPropertyUniform(const MaterialStateManager& m,
-                                 const mgis::string_view& n) {
+                                 const std::string_view& n) {
     const auto p = getFieldHolderIterator(m.material_properties, n);
     if (p == m.material_properties.end()) {
       mgis::raise(
           "isMaterialPropertyUniform: "
           "no material property named '" +
-          n.to_string() + "' defined");
+          std::string{n} + "' defined");
     }
     return std::holds_alternative<real>(p->second);
   }  // end of isMaterialPropertyUniform
@@ -242,7 +242,7 @@ namespace mgis::behaviour {
   }  // end of isMassDensityUniform
 
   void setExternalStateVariable(MaterialStateManager& m,
-                                const mgis::string_view& n,
+                                const std::string_view& n,
                                 const real v) {
     const auto esv = getVariable(m.b.esvs, n);
     mgis::raise_if(esv.type != Variable::SCALAR,
@@ -254,7 +254,7 @@ namespace mgis::behaviour {
 
   MGIS_EXPORT void setExternalStateVariable(
       MaterialStateManager& m,
-      const mgis::string_view& n,
+      const std::string_view& n,
       const std::span<real>& v,
       const MaterialStateManager::StorageMode s) {
     const auto esv = getVariable(m.b.esvs, n);
@@ -275,18 +275,18 @@ namespace mgis::behaviour {
   }  // end of setExternalStateVariable
 
   bool isExternalStateVariableDefined(const MaterialStateManager& m,
-                                      const mgis::string_view& n) {
+                                      const std::string_view& n) {
     const auto p = getFieldHolderIterator(m.external_state_variables, n);
     return p != m.external_state_variables.end();
   }  // end of isExternalStateVariableDefined
 
   bool isExternalStateVariableUniform(const MaterialStateManager& m,
-                                      const mgis::string_view& n) {
+                                      const std::string_view& n) {
     const auto p = getFieldHolderIterator(m.external_state_variables, n);
     mgis::raise_if(p == m.external_state_variables.end(),
                    "isExternalStateVariableUniform: "
                    "no external state variable named '" +
-                       n.to_string() + "' defined");
+                       std::string{n} + "' defined");
     return std::holds_alternative<real>(p->second);
   }  // end of isExternalStateVariableUniform
 
@@ -406,7 +406,7 @@ namespace mgis::behaviour {
 
   namespace internals {
 
-    void extractScalarInternalStateVariable(
+    static void extractScalarInternalStateVariable(
         std::span<mgis::real> o,
         const mgis::behaviour::MaterialStateManager& s,
         const mgis::size_type offset) {
@@ -418,7 +418,7 @@ namespace mgis::behaviour {
       }
     }  // end of extractScalarInternalStateVariable
 
-    void extractInternalStateVariable(
+    static void extractInternalStateVariable(
         std::span<mgis::real> o,
         const mgis::behaviour::MaterialStateManager& s,
         const mgis::size_type nc,
@@ -439,7 +439,7 @@ namespace mgis::behaviour {
   void extractInternalStateVariable(
       std::span<mgis::real> o,
       const mgis::behaviour::MaterialStateManager& s,
-      const mgis::string_view n) {
+      const std::string_view n) {
     const auto& iv = mgis::behaviour::getVariable(s.b.isvs, n);
     const auto nc = mgis::behaviour::getVariableSize(iv, s.b.hypothesis);
     const auto offset =

@@ -18,7 +18,7 @@ namespace mgis {
 
   namespace utilities {
 
-    std::string get_heading_signs(const mgis::size_type l) {
+    std::string get_heading_signs(const mgis::size_type) {
       return std::string(1, '#');
     }  // end of get_heading_signs
 
