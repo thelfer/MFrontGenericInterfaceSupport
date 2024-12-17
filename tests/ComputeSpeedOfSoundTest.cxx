@@ -1,6 +1,6 @@
 /*!
  * \file   tests/ComputeSpeedOfSoundTest.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   06/09/2023
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -29,7 +29,8 @@ int main(const int argc, const char* const* argv) {
     std::exit(-1);
   }
   try {
-    const auto b = load(argv[1], "ComputeSpeedOfSound", Hypothesis::TRIDIMENSIONAL);
+    const auto b =
+        load(argv[1], "ComputeSpeedOfSound", Hypothesis::TRIDIMENSIONAL);
     auto d = BehaviourData{b};
     const auto de = 5.e-5;
     d.dt = 180;
@@ -59,5 +60,3 @@ int main(const int argc, const char* const* argv) {
   }
   return EXIT_SUCCESS;
 }
-
-

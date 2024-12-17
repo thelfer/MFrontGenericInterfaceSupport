@@ -1,6 +1,6 @@
 /*!
  * \file   tests/InitializeFunctionTest.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   04/02/2022
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -34,11 +34,9 @@ bool check(const bool b, const std::string_view msg) {
 void check_behaviour(const mgis::behaviour::Behaviour& b,
                      const mgis::behaviour::Hypothesis h) {
   using namespace mgis::behaviour;
-  check(b.behaviour == "InitializeFunctionTest",
-        "invalid behaviour name");
+  check(b.behaviour == "InitializeFunctionTest", "invalid behaviour name");
   check(b.hypothesis == h, "invalid hypothesis");
-  check(b.source == "InitializeFunctionTest.mfront",
-        "invalid source");
+  check(b.source == "InitializeFunctionTest.mfront", "invalid source");
   check(b.tfel_version == TFEL_VERSION, "invalid TFEL version");
   check(b.initialize_functions.size() == 2u,
         "invalid number of initialize functions");
@@ -48,7 +46,8 @@ void check_behaviour(const mgis::behaviour::Behaviour& b,
   check(b.initialize_functions.find("StressFromInitialPressure") !=
             b.initialize_functions.end(),
         "'StressFromInitialPressure'  is not an initialize function");
-  const auto& ifct1 = b.initialize_functions.at("ElasticStrainFromInitialStress");
+  const auto& ifct1 =
+      b.initialize_functions.at("ElasticStrainFromInitialStress");
   check(ifct1.inputs.empty(),
         "invalid number of inputs for the 'ElasticStrainFromInitialStress' "
         "initialize function");
@@ -79,7 +78,7 @@ void call_initialize_function(const mgis::behaviour::Behaviour& b) {
   //
   auto inputs =
       allocateInitializeFunctionVariables(b, "StressFromInitialPressure");
-  if(!check(inputs.size() == 1u, "invalid inputs initialisation")){
+  if (!check(inputs.size() == 1u, "invalid inputs initialisation")) {
     return;
   }
   inputs[0] = pr;
@@ -122,7 +121,7 @@ void call_initialize_function2(const mgis::behaviour::Behaviour& b) {
   executeInitializeFunction(v, b, "ElasticStrainFromInitialStress");
   update(d);
   auto eel_values =
-      std::vector<mgis::real>{sxx / E, -nu * sxx/ E, -nu * sxx / E, 0, 0, 0};
+      std::vector<mgis::real>{sxx / E, -nu * sxx / E, -nu * sxx / E, 0, 0, 0};
   const auto& s0 = d.s0.thermodynamic_forces;
   const auto& s1 = d.s1.thermodynamic_forces;
   if (!check((s0.size() == 6u) && (s1.size() == 6u), "invalid stress size")) {
@@ -141,7 +140,6 @@ void call_initialize_function2(const mgis::behaviour::Behaviour& b) {
           "invalid stress value at the end of the time step");
   }
 }  // end of call_initialize_function
-
 
 int main(const int argc, const char* const* argv) {
   using namespace mgis::behaviour;

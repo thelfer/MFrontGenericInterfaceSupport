@@ -83,7 +83,9 @@ namespace mgis::behaviour {
    * \param[in]  n: name
    * \param[in]  v: values
    */
-  MGIS_EXPORT void setGradient(State&, const std::string_view, const real* const);
+  MGIS_EXPORT void setGradient(State&,
+                               const std::string_view,
+                               const real* const);
   /*!
    * \brief set the value of a gradient
    * \param[out] s: state
@@ -147,7 +149,9 @@ namespace mgis::behaviour {
    * \param[in]  n: name
    * \param[in]  v: value
    */
-  MGIS_EXPORT void setThermodynamicForce(State&, const std::string_view, const real);
+  MGIS_EXPORT void setThermodynamicForce(State&,
+                                         const std::string_view,
+                                         const real);
   /*!
    * \brief set the value of a thermodynamic force
    * \param[out] s: state
@@ -221,7 +225,9 @@ namespace mgis::behaviour {
    * \param[in]  n: name
    * \param[in]  v: value
    */
-  MGIS_EXPORT void setMaterialProperty(State&, const std::string_view, const real);
+  MGIS_EXPORT void setMaterialProperty(State&,
+                                       const std::string_view,
+                                       const real);
   /*!
    * \return a pointer to the value of a material property
    * \param[in] s: state
@@ -233,7 +239,8 @@ namespace mgis::behaviour {
    * \param[in] s: state
    * \param[in] n: name
    */
-  MGIS_EXPORT const real* getMaterialProperty(const State&, const std::string_view);
+  MGIS_EXPORT const real* getMaterialProperty(const State&,
+                                              const std::string_view);
   /*!
    * \brief set the value of a material property
    * \param[out] s: state

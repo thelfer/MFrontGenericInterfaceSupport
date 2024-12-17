@@ -1,6 +1,6 @@
 /*!
  * \file   tests/ExternalStateVariableTest.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   29/11/2021
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -62,7 +62,7 @@ void check_behaviour(const mgis::behaviour::Behaviour& b,
         "invalid array size for the external state variables");
 }  // end of check_behaviour
 
-void check_behaviour_data(const mgis::behaviour::Behaviour&b){
+void check_behaviour_data(const mgis::behaviour::Behaviour& b) {
   using namespace mgis::behaviour;
   constexpr const auto eps = 1.e-14;
   BehaviourData d{b};
@@ -82,9 +82,9 @@ void check_behaviour_data(const mgis::behaviour::Behaviour&b){
               eps,
           "invalid internal state variable value");
   }
-} // end of check_behaviour_data
+}  // end of check_behaviour_data
 
-void check_material_data_manager(const mgis::behaviour::Behaviour&b){
+void check_material_data_manager(const mgis::behaviour::Behaviour& b) {
   using namespace mgis::behaviour;
   constexpr const auto eps = 1.e-14;
   constexpr const auto dt = 0.1;
@@ -143,8 +143,7 @@ void check_material_data_manager(const mgis::behaviour::Behaviour&b){
   integrate(d, IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR, dt, 0, 2);
   //
   for (mgis::size_type i = 0; i != 3; ++i) {
-    check(std::abs(d.s1.internal_state_variables[i] - v_esv_values.at(i)) <
-              eps,
+    check(std::abs(d.s1.internal_state_variables[i] - v_esv_values.at(i)) < eps,
           "invalid internal state variable value");
     check(std::abs(d.s1.internal_state_variables[54 + i] - v_esv_values.at(i)) <
               eps,

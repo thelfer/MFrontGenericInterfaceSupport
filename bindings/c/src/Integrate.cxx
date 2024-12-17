@@ -82,9 +82,11 @@ mgis_status mgis_bv_behaviour_integration_options_set_speed_of_sound_flag(
     return mgis_report_failure("invalid argument");
   }
   if (s == MGIS_BV_INTEGRATION_WITHOUT_SPEED_OF_SOUND) {
-    o->compute_speed_of_sound = static_cast<bool>(mgis::behaviour::SpeedOfSoundFlag::INTEGRATION_WITHOUT_SPEED_OF_SOUND);
+    o->compute_speed_of_sound = static_cast<bool>(
+        mgis::behaviour::SpeedOfSoundFlag::INTEGRATION_WITHOUT_SPEED_OF_SOUND);
   } else if (s == MGIS_BV_INTEGRATION_WITH_SPEED_OF_SOUND) {
-    o->compute_speed_of_sound = static_cast<bool>(mgis::behaviour::SpeedOfSoundFlag::INTEGRATION_WITH_SPEED_OF_SOUND);
+    o->compute_speed_of_sound = static_cast<bool>(
+        mgis::behaviour::SpeedOfSoundFlag::INTEGRATION_WITH_SPEED_OF_SOUND);
   } else {
     return mgis_report_failure("invalid speed of sound flag");
   }
@@ -156,7 +158,6 @@ mgis_status mgis_bv_integrate_material_data_manager_with_options(
   }
   return mgis_report_success();
 }  // end of mgis_bv_integrate_material_data_manager_with_options
-
 
 mgis_status mgis_bv_integrate_material_data_manager_part(
     int* const r,

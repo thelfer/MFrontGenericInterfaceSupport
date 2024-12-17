@@ -1,6 +1,6 @@
 /*!
  * \file   Model.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/10/2021
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,9 +17,9 @@
 extern "C" {
 
 mgis_status mgis_model_load(mgis_model_Model** ptr,
-                                  const char* const l,
-                                  const char* const m,
-                                  const char* const h) {
+                            const char* const l,
+                            const char* const m,
+                            const char* const h) {
   *ptr = nullptr;
   try {
     const auto model = mgis::model::load(l, m, mgis::behaviour::fromString(h));
@@ -39,5 +39,4 @@ mgis_status mgis_model_free_model(mgis_model_Model** m) {
   return mgis_bv_free_behaviour(m);
 }  // end of mgis_model_free_model
 
-} // end of extern "C"
-
+}  // end of extern "C"

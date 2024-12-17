@@ -1,6 +1,6 @@
 /*!
  * \file   src/MaterialProperty.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   04/10/2022
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -15,13 +15,14 @@
 #include "MGIS/LibrariesManager.hxx"
 #include "MGIS/MaterialProperty/MaterialProperty.hxx"
 
-namespace mgis::material_property{
+namespace mgis::material_property {
 
   MaterialProperty::MaterialProperty() = default;
   MaterialProperty::MaterialProperty(MaterialProperty &&) = default;
   MaterialProperty::MaterialProperty(const MaterialProperty &) = default;
   MaterialProperty &MaterialProperty::operator=(MaterialProperty &&) = default;
-  MaterialProperty &MaterialProperty::operator=(const MaterialProperty &) = default;
+  MaterialProperty &MaterialProperty::operator=(const MaterialProperty &) =
+      default;
   MaterialProperty::~MaterialProperty() = default;
 
   MaterialProperty load(const std::string &l, const std::string &mp) {
@@ -38,4 +39,4 @@ namespace mgis::material_property{
     return d;
   }  // end of load_behaviour
 
-} // end of namespace mgis::material_property
+}  // end of namespace mgis::material_property

@@ -49,8 +49,7 @@ static int BehaviourDataView_executeInitializeFunction2(
 
 static mgis::behaviour::BehaviourIntegrationResult
 MaterialDataManager_executeInitializeFunction(
-    mgis::behaviour::MaterialDataManager& m,
-    const std::string& n) {
+    mgis::behaviour::MaterialDataManager& m, const std::string& n) {
   return mgis::behaviour::executeInitializeFunction(m, n);
 }
 

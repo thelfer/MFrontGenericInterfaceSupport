@@ -17,6 +17,4 @@
 // forward declaration
 void declareModel();
 
-BOOST_PYTHON_MODULE(model) {
-  declareModel();
-}  // end of module model
+BOOST_PYTHON_MODULE(model) { declareModel(); }  // end of module model

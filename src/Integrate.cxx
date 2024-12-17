@@ -489,7 +489,7 @@ namespace mgis::behaviour {
   int executeInitializeFunction(BehaviourDataView& d,
                                 const Behaviour& b,
                                 const std::string_view n) {
-    const auto ifct = getBehaviourInitializeFunction(b,n);
+    const auto ifct = getBehaviourInitializeFunction(b, n);
     if (!ifct.inputs.empty()) {
       mgis::raise(
           "executeInitializeFunction: "
@@ -504,7 +504,7 @@ namespace mgis::behaviour {
                                 const Behaviour& b,
                                 const std::string_view n,
                                 std::span<const real> inputs) {
-    const auto ifct = getBehaviourInitializeFunction(b,n);
+    const auto ifct = getBehaviourInitializeFunction(b, n);
     if (inputs.size() != getArraySize(ifct.inputs, b.hypothesis)) {
       mgis::raise(
           "executeInitializeFunction: "
@@ -515,11 +515,10 @@ namespace mgis::behaviour {
     return f(&d, inputs.data());
   }  // end of executeInitializeFunction
 
-  BehaviourIntegrationResult executeInitializeFunction(
-      MaterialDataManager& m,
-      const std::string_view n,
-      const size_type b,
-      const size_type e) {
+  BehaviourIntegrationResult executeInitializeFunction(MaterialDataManager& m,
+                                                       const std::string_view n,
+                                                       const size_type b,
+                                                       const size_type e) {
     internals::checkIntegrationPointsRange(m, b, e);
     const auto& ifct = getBehaviourInitializeFunction(m.b, n);
     if (!ifct.inputs.empty()) {
@@ -553,8 +552,7 @@ namespace mgis::behaviour {
   }  // end of executeInitializeFunction
 
   BehaviourIntegrationResult executeInitializeFunction(
-      MaterialDataManager& m,
-      const std::string_view n) {
+      MaterialDataManager& m, const std::string_view n) {
     return executeInitializeFunction(m, n, 0, m.n);
   }  // end of executeInitializeFunction
 
@@ -566,9 +564,7 @@ namespace mgis::behaviour {
   }  // end of executeInitializeFunction
 
   MultiThreadedBehaviourIntegrationResult executeInitializeFunction(
-      mgis::ThreadPool& p,
-      MaterialDataManager& m,
-      const std::string_view n) {
+      mgis::ThreadPool& p, MaterialDataManager& m, const std::string_view n) {
     const auto& ifct = getBehaviourInitializeFunction(m.b, n);
     if (!ifct.inputs.empty()) {
       mgis::raise(

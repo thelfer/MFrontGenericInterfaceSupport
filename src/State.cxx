@@ -230,7 +230,9 @@ namespace mgis::behaviour {
     return &(s.material_properties[o]);
   }  // end of getMaterialProperty
 
-  void setInternalStateVariable(State& s, const std::string_view n, const real v) {
+  void setInternalStateVariable(State& s,
+                                const std::string_view n,
+                                const real v) {
     const auto& iv = getVariable(s.b.isvs, n);
     const auto o = getVariableOffset(s.b.isvs, n, s.b.hypothesis);
     if (iv.type == Variable::SCALAR) {
@@ -279,7 +281,8 @@ namespace mgis::behaviour {
     return getInternalStateVariable(s, o);
   }  // end of getInternalStateVariable
 
-  const real* getInternalStateVariable(const State& s, const std::string_view n) {
+  const real* getInternalStateVariable(const State& s,
+                                       const std::string_view n) {
     const auto o = getVariableOffset(s.b.isvs, n, s.b.hypothesis);
     return getInternalStateVariable(s, o);
   }  // end of getInternalStateVariable
@@ -292,7 +295,9 @@ namespace mgis::behaviour {
     return &(s.internal_state_variables[o]);
   }  // end of getInternalStateVariable
 
-  void setExternalStateVariable(State& s, const std::string_view n, const real v) {
+  void setExternalStateVariable(State& s,
+                                const std::string_view n,
+                                const real v) {
     const auto& ev = getVariable(s.b.esvs, n);
     if (ev.type != Variable::SCALAR) {
       mgis::raise("setExternalStateVariable: external state variable '" +
@@ -336,7 +341,8 @@ namespace mgis::behaviour {
     return getExternalStateVariable(s, o);
   }  // end of getExternalStateVariable
 
-  const real* getExternalStateVariable(const State& s, const std::string_view n) {
+  const real* getExternalStateVariable(const State& s,
+                                       const std::string_view n) {
     const auto o = getVariableOffset(s.b.esvs, n, s.b.hypothesis);
     return getExternalStateVariable(s, o);
   }  // end of getExternalStateVariable

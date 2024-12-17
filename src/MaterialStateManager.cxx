@@ -70,8 +70,8 @@ namespace mgis::behaviour {
         b(behaviour) {
     auto init = [this](std::span<mgis::real>& view,
                        std::vector<mgis::real>& values,
-                       const std::span<mgis::real>& evalues,
-                       const size_type vs, const char* const vn) {
+                       const std::span<mgis::real>& evalues, const size_type vs,
+                       const char* const vn) {
       if (evalues.empty()) {
         constexpr const auto zero = real{0};
         values.resize(this->n * vs, zero);
@@ -216,10 +216,9 @@ namespace mgis::behaviour {
     m.mass_density = v;
   }  // end of setMassDensity
 
-  MGIS_EXPORT void setMassDensity(
-      MaterialStateManager& m,
-      const std::span<real>& v,
-      const MaterialStateManager::StorageMode s) {
+  MGIS_EXPORT void setMassDensity(MaterialStateManager& m,
+                                  const std::span<real>& v,
+                                  const MaterialStateManager::StorageMode s) {
     mgis::raise_if(static_cast<mgis::size_type>(v.size()) != m.n,
                    "setMassDensity: invalid number of values "
                    "(does not match the number of integration points)");

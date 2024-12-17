@@ -1,6 +1,6 @@
 /*!
  * \file   include/MGIS/MaterialProperty/OutputStatus.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   04/10/2022
  * \copyright (C) Copyright Thomas Helfer 2018.

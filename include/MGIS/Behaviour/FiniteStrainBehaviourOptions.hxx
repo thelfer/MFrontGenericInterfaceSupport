@@ -33,7 +33,7 @@ namespace mgis::behaviour {
      *
      * where \f(F\f) is the deformation gradient and \f(J\f) its determinant.
      *
-     * \note some authors use a different convention to define the 
+     * \note some authors use a different convention to define the
      * first Piola-Kirchhoff stress using the transpose of \f(P\f)
      */
     enum StressMeasure {
@@ -53,7 +53,8 @@ namespace mgis::behaviour {
       DPK1_DF, /*!< derivative of the first Piola-Kirchoff stress with
                     respect to the deformation gradient  */
       DTAU_DDF /*!< derivative of the Kirchoff stress with
-                    respect to the spatial increment of the deformation gradient  */
+                    respect to the spatial increment of the deformation gradient
+                */
     } tangent_operator = DSIG_DF;
   };  // end of struct FiniteStrainBehaviourOptions
 

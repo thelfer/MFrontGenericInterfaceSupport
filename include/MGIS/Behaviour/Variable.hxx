@@ -57,7 +57,8 @@ namespace mgis::behaviour {
    * \param[in] vs: variables
    * \param[in] n: name
    */
-  MGIS_EXPORT bool contains(const std::vector<Variable> &, const std::string_view);
+  MGIS_EXPORT bool contains(const std::vector<Variable> &,
+                            const std::string_view);
   /*!
    * \return the variable with the given name
    * \param[in] vs: variables

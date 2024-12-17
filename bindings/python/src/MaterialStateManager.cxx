@@ -103,8 +103,7 @@ static void MaterialStateManager_setMaterialProperty2(
 }  // end of MaterialStateManager_setMaterialProperty
 
 static void MaterialStateManager_setMassDensity(
-    mgis::behaviour::MaterialStateManager& s,
-    const mgis::real v) {
+    mgis::behaviour::MaterialStateManager& s, const mgis::real v) {
   mgis::behaviour::setMassDensity(s, v);
 }  // end of MaterialStateManager_setMassDensity
 
@@ -198,10 +197,8 @@ void declareMaterialStateManager() {
                      &MaterialStateManager_setMaterialProperty);
   boost::python::def("setMaterialProperty",
                      &MaterialStateManager_setMaterialProperty2);
-  boost::python::def("setMassDensity",
-                     &MaterialStateManager_setMassDensity);
-  boost::python::def("setMassDensity",
-                     &MaterialStateManager_setMassDensity2);
+  boost::python::def("setMassDensity", &MaterialStateManager_setMassDensity);
+  boost::python::def("setMassDensity", &MaterialStateManager_setMassDensity2);
   boost::python::def("setExternalStateVariable",
                      &MaterialStateManager_setExternalStateVariable);
   boost::python::def("setExternalStateVariable",

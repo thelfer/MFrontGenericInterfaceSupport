@@ -31,7 +31,8 @@ int main(const int argc, const char* const* argv) {
     std::exit(-1);
   }
   try {
-    const auto b = load(argv[1], "ComputeSpeedOfSound", Hypothesis::TRIDIMENSIONAL);
+    const auto b =
+        load(argv[1], "ComputeSpeedOfSound", Hypothesis::TRIDIMENSIONAL);
     MaterialDataManager m{b, 100};
     const auto de = 5.e-5;
     // initialize the external state variable
@@ -48,7 +49,7 @@ int main(const int argc, const char* const* argv) {
     opts.compute_speed_of_sound = true;
     integrate(m, opts, dt, 0, m.n);
     std::cerr.precision(14);
-    const auto v_ref = std::sqrt(yg/rho);
+    const auto v_ref = std::sqrt(yg / rho);
     if (std::abs(m.speed_of_sound[0] - v_ref) > 1.e-12 * v_ref) {
       std::cerr
           << "ComputeSpeedOfSoundTest: invalid value for the speed of sound\n";

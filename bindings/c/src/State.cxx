@@ -222,7 +222,7 @@ mgis_status mgis_bv_state_get_material_property_by_offset(
   }
   return mgis_report_success();
 }  // end of mgis_bv_state_get_material_property_by_offset
-  
+
 mgis_status mgis_bv_state_set_internal_state_variable_by_name(
     mgis_bv_State* const s, const char* const n, const mgis_real* const v) {
   if (s == nullptr) {
@@ -242,22 +242,22 @@ mgis_status mgis_bv_state_set_internal_state_variable_by_name(
   return mgis_report_success();
 }  // end of mgis_bv_state_set_internal_state_variable_by_name
 
-mgis_status mgis_bv_state_get_internal_state_variables(
-    mgis_real** v, mgis_bv_State* const s) {
+mgis_status mgis_bv_state_get_internal_state_variables(mgis_real** v,
+                                                       mgis_bv_State* const s) {
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
   }
   if (v == nullptr) {
     return mgis_report_failure("invalid argument (null values)");
   }
-  if(s->internal_state_variables.empty()){
+  if (s->internal_state_variables.empty()) {
     *v = nullptr;
     return mgis_report_failure("no internal state variables declared");
   }
   *v = s->internal_state_variables.data();
   return mgis_report_success();
 }  // end of mgis_bv_state_get_internal_state_variable_by_name
-  
+
 mgis_status mgis_bv_state_get_internal_state_variable_by_name(
     mgis_real** v, mgis_bv_State* const s, const char* const n) {
   if (s == nullptr) {
@@ -337,15 +337,15 @@ mgis_status mgis_bv_state_set_external_state_variable_by_name(
   return mgis_report_success();
 }  // end of mgis_bv_state_set_external_state_variable_by_name
 
-mgis_status mgis_bv_state_get_external_state_variables(
-    mgis_real** v, mgis_bv_State* const s) {
+mgis_status mgis_bv_state_get_external_state_variables(mgis_real** v,
+                                                       mgis_bv_State* const s) {
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
   }
   if (v == nullptr) {
     return mgis_report_failure("invalid argument (null values)");
   }
-  if(s->external_state_variables.empty()){
+  if (s->external_state_variables.empty()) {
     *v = nullptr;
     return mgis_report_failure("no external state variables declared");
   }

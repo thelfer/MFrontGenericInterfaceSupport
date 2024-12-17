@@ -595,7 +595,7 @@ mgis_status mgis_bv_behaviour_get_internal_state_variable_name(
   }
 }  // end of mgis_bv_behaviour_get_internal_state_variable_name
 
-namespace c_internals{
+namespace c_internals {
 
   static mgis_status getVariableType(mgis_bv_VariableType& t,
                                      const mgis::behaviour::Variable& v) {

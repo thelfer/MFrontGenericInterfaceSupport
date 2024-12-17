@@ -1,6 +1,6 @@
 /*!
  * \file   MaterialPropertyTest.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10/10/2022
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -298,7 +298,6 @@ static void test8(const std::string& library) {
     check(s.status == -4, "invalid output status");
   }
 }
-
 
 int main(const int argc, const char* const* argv) {
   if (argc != 2) {

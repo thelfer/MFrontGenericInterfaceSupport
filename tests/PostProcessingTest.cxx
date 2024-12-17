@@ -1,6 +1,6 @@
 /*!
  * \file   tests/PostProcessingTest.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   04/02/2022
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -35,11 +35,9 @@ bool check(const bool b, const std::string_view msg) {
 void check_behaviour(const mgis::behaviour::Behaviour& b,
                      const mgis::behaviour::Hypothesis h) {
   using namespace mgis::behaviour;
-  check(b.behaviour == "PostProcessingTest",
-        "invalid behaviour name");
+  check(b.behaviour == "PostProcessingTest", "invalid behaviour name");
   check(b.hypothesis == h, "invalid hypothesis");
-  check(b.source == "PostProcessingTest.mfront",
-        "invalid source");
+  check(b.source == "PostProcessingTest.mfront", "invalid source");
   check(b.tfel_version == TFEL_VERSION, "invalid TFEL version");
   check(b.postprocessings.size() == 1u, "invalid number of post-processings");
   check(b.postprocessings.find("PrincipalStrain") != b.postprocessings.end(),
@@ -54,7 +52,7 @@ void check_behaviour(const mgis::behaviour::Behaviour& b,
   check(getVariableSize(o, h) == 3, "invalid post-processing output size");
 }  // end of check_behaviour
 
-void call_postprocessing(const mgis::behaviour::Behaviour& b){
+void call_postprocessing(const mgis::behaviour::Behaviour& b) {
   using namespace mgis::behaviour;
   constexpr auto e =
       std::array<mgis::real, 6u>{1.3e-2, 1.2e-2, 1.4e-2, 0., 0., 0.};
@@ -79,9 +77,9 @@ void call_postprocessing(const mgis::behaviour::Behaviour& b){
   for (mgis::size_type i = 0; i != 3; ++i) {
     check(std::abs(outputs[i] - e2[i]) < eps, "invalid output value");
   }
-} // end of call_postprocessing
+}  // end of call_postprocessing
 
-void call_postprocessing2(const mgis::behaviour::Behaviour& b){
+void call_postprocessing2(const mgis::behaviour::Behaviour& b) {
   using namespace mgis::behaviour;
   constexpr auto e =
       std::array<mgis::real, 6u>{1.3e-2, 1.2e-2, 1.4e-2, 0., 0., 0.};
@@ -109,7 +107,7 @@ void call_postprocessing2(const mgis::behaviour::Behaviour& b){
     check(std::abs(outputs[i] - e2[i]) < eps, "invalid output value");
     check(std::abs(outputs[3 + i] - e2[i]) < eps, "invalid output value");
   }
-} // end of call_postprocessing2
+}  // end of call_postprocessing2
 
 int main(const int argc, const char* const* argv) {
   using namespace mgis::behaviour;

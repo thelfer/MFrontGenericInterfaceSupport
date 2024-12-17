@@ -1,6 +1,6 @@
 /*!
  * \file   include/MGIS/MaterialProperty/OutOfBoundsPolicy.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   04/10/2022
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -59,7 +59,7 @@ namespace mgis::material_property {
 
   using OutOfBoundsPolicy = ::mgis_mp_OutOfBoundsPolicy;
 
-} // end of namespace mgis::material_property
+}  // end of namespace mgis::material_property
 
 #endif /* __cplusplus */
 

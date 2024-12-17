@@ -128,8 +128,7 @@ namespace mgis::behaviour {
     this->speed_of_sound_values.clear();
   }  // end of releaseArrayOfSpeedOfSounds
 
-  void MaterialDataManager::useExternalArrayOfSpeedOfSounds(
-      std::span<real> m) {
+  void MaterialDataManager::useExternalArrayOfSpeedOfSounds(std::span<real> m) {
     if (m.size() != this->n) {
       mgis::raise(
           "MaterialDataManager::useExternalArrayOfSpeedOfSounds: "
@@ -176,11 +175,11 @@ namespace mgis::behaviour {
   }  // end of update
 
   std::vector<mgis::real> allocatePostProcessingVariables(
-      const MaterialDataManager& m, const std::string_view n){
+      const MaterialDataManager& m, const std::string_view n) {
     const auto s = getPostProcessingVariablesArraySize(m.b, n);
     std::vector<mgis::real> outputs;
     outputs.resize(s * m.n, real{0});
     return outputs;
-  } // end of allocatePostProcessingVariables
+  }  // end of allocatePostProcessingVariables
 
 }  // end of namespace mgis::behaviour

@@ -196,12 +196,14 @@ namespace mgis {
 
   LibrariesManager::LibrariesManager() = default;
 
-  mgis::material_property::MaterialPropertyFctPtr LibrariesManager::getMaterialProperty(
-      const std::string &l, const std::string &mp) {
+  mgis::material_property::MaterialPropertyFctPtr
+  LibrariesManager::getMaterialProperty(const std::string &l,
+                                        const std::string &mp) {
     const auto p = this->getSymbolAddress(l, mp);
     if (p == nullptr) {
       mgis::raise(
-          "LibrariesManager::getMaterialProperty: can't load material property '" +
+          "LibrariesManager::getMaterialProperty: can't load material property "
+          "'" +
           mp + "' in library '" + l + "'");
     }
     return reinterpret_cast<mgis::material_property::MaterialPropertyFctPtr>(p);
@@ -254,7 +256,7 @@ namespace mgis {
       const std::string &b,
       const std::string &p,
       const Hypothesis h) {
-    auto types = std::vector<int> {};
+    auto types = std::vector<int>{};
     const auto hn = toString(h);
     const auto outputs = "InitializeFunction_" + p + "_Inputs";
     const auto outputs_types = "InitializeFunction_" + p + "_InputsTypes";
@@ -303,11 +305,10 @@ namespace mgis {
   }  // end of getBehaviourPostProcessing
 
   std::vector<std::string>
-  LibrariesManager::getBehaviourPostProcessingOutputsNames(
-      const std::string &l,
-      const std::string &b,
-      const std::string &p,
-      const Hypothesis h) {
+  LibrariesManager::getBehaviourPostProcessingOutputsNames(const std::string &l,
+                                                           const std::string &b,
+                                                           const std::string &p,
+                                                           const Hypothesis h) {
     return this->getNames(l, b, h, "PostProcessing_" + p + "_Outputs");
   }  // end of getBehaviourPostProcessingOutputsNames
 
@@ -316,7 +317,7 @@ namespace mgis {
       const std::string &b,
       const std::string &p,
       const Hypothesis h) {
-    auto types = std::vector<int> {};
+    auto types = std::vector<int>{};
     const auto hn = toString(h);
     const auto outputs = "PostProcessing_" + p + "_Outputs";
     const auto outputs_types = "PostProcessing_" + p + "_OutputsTypes";
@@ -583,7 +584,7 @@ namespace mgis {
   }  // end of getTFELVersion
 
   std::string LibrariesManager::getUnitSystem(const std::string &l,
-                                               const std::string &n) {
+                                              const std::string &n) {
     const auto p = this->getSymbolAddress(l, n + "_unit_system");
     if (p == nullptr) {
       return "";
@@ -625,7 +626,7 @@ namespace mgis {
   }  // end of getAuthor
 
   std::string LibrariesManager::getDate(const std::string &l,
-                                          const std::string &n) {
+                                        const std::string &n) {
     const auto p = this->getSymbolAddress(l, n + "_date");
     if (p == nullptr) {
       return "";
@@ -634,7 +635,7 @@ namespace mgis {
   }  // end of getDate
 
   std::string LibrariesManager::getValidator(const std::string &l,
-                                          const std::string &n) {
+                                             const std::string &n) {
     const auto p = this->getSymbolAddress(l, n + "_validator");
     if (p == nullptr) {
       return "";
@@ -643,7 +644,7 @@ namespace mgis {
   }  // end of getValidator
 
   std::string LibrariesManager::getBuildIdentifier(const std::string &l,
-                                          const std::string &n) {
+                                                   const std::string &n) {
     const auto p = this->getSymbolAddress(l, n + "_build_id");
     if (p == nullptr) {
       return "";
@@ -1072,12 +1073,11 @@ namespace mgis {
     return this->hasLowerBound(l, b, h, n) || this->hasUpperBound(l, b, h, n);
   }  // end of hasBounds
 
-  bool LibrariesManager::hasBoundImplementation(
-      const std::string &l,
-      const std::string &b,
-      const Hypothesis h,
-      const std::string &n,
-      const std::string &bt) {
+  bool LibrariesManager::hasBoundImplementation(const std::string &l,
+                                                const std::string &b,
+                                                const Hypothesis h,
+                                                const std::string &n,
+                                                const std::string &bt) {
     const auto hn = toString(h);
     const auto vn = decomposeVariableName(n);
     const auto [n1, n2] = buildSymbolsNames(b, hn, vn.first + "_" + bt);
@@ -1086,12 +1086,11 @@ namespace mgis {
             (this->contains(l, n3)) || (this->contains(l, n4)));
   }  // end of hasBoundImplementation
 
-  long double LibrariesManager::getBoundImplementation(
-      const std::string &l,
-      const std::string &b,
-      const Hypothesis h,
-      const std::string &n,
-      const std::string &bt) {
+  long double LibrariesManager::getBoundImplementation(const std::string &l,
+                                                       const std::string &b,
+                                                       const Hypothesis h,
+                                                       const std::string &n,
+                                                       const std::string &bt) {
     const auto hn = toString(h);
     const auto vn = decomposeVariableName(n);
     const auto [n1, n2] = buildSymbolsNames(b, hn, vn.first + "_" + bt);

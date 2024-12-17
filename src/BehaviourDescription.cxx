@@ -64,7 +64,8 @@ namespace mgis::behaviour {
   }  // end of checkGradientsAndThermodynamicForcesConsistency
 
   static std::pair<Variable, Variable> getJacobianBlockVariables(
-      const BehaviourDescription &b, const std::pair<std::string, std::string> &block) {
+      const BehaviourDescription &b,
+      const std::pair<std::string, std::string> &block) {
     auto found = false;
     std::pair<Variable, Variable> v;
     auto assign_if = [&found, &block, &v](const Variable &v1,
@@ -111,15 +112,18 @@ namespace mgis::behaviour {
 
   BehaviourDescription::BehaviourDescription() = default;
   BehaviourDescription::BehaviourDescription(BehaviourDescription &&) = default;
-  BehaviourDescription::BehaviourDescription(const BehaviourDescription &) = default;
-  BehaviourDescription &BehaviourDescription::operator=(BehaviourDescription &&) = default;
-  BehaviourDescription &BehaviourDescription::operator=(const BehaviourDescription &) = default;
+  BehaviourDescription::BehaviourDescription(const BehaviourDescription &) =
+      default;
+  BehaviourDescription &BehaviourDescription::operator=(
+      BehaviourDescription &&) = default;
+  BehaviourDescription &BehaviourDescription::operator=(
+      const BehaviourDescription &) = default;
   BehaviourDescription::~BehaviourDescription() = default;
 
   void loadBehaviourDescription(BehaviourDescription &d,
-                         const std::string &l,
-                         const std::string &b,
-                         const Hypothesis h) {
+                                const std::string &l,
+                                const std::string &b,
+                                const Hypothesis h) {
     auto &lm = mgis::LibrariesManager::get();
     const auto fct = b + '_' + toString(h);
     auto raise = [&b, &l](const std::string &msg) {
@@ -172,8 +176,8 @@ namespace mgis::behaviour {
           return BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR;
         case 3:
           return BehaviourDescription::COHESIVEZONEMODEL;
-      default:
-	break;
+        default:
+          break;
       }
       raise("unsupported behaviour type");
     }();
@@ -236,7 +240,8 @@ namespace mgis::behaviour {
             {"CohesiveForce", Variable::VECTOR, 2});
         break;
       case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
-        if (d.kinematic == BehaviourDescription::FINITESTRAINKINEMATIC_F_CAUCHY) {
+        if (d.kinematic ==
+            BehaviourDescription::FINITESTRAINKINEMATIC_F_CAUCHY) {
           checkGradientsAndThermodynamicForcesConsistency(
               raise, d.gradients, d.thermodynamic_forces,
               {"DeformationGradient", Variable::TENSOR, 3},
@@ -411,12 +416,14 @@ namespace mgis::behaviour {
     return lm.hasUpperBound(b.library, b.behaviour, b.hypothesis, v);
   }  // end of hasUpperBound
 
-  long double getLowerBound(const BehaviourDescription &b, const std::string &v) {
+  long double getLowerBound(const BehaviourDescription &b,
+                            const std::string &v) {
     auto &lm = mgis::LibrariesManager::get();
     return lm.getLowerBound(b.library, b.behaviour, b.hypothesis, v);
   }  // end of getLowerBound
 
-  long double getUpperBound(const BehaviourDescription &b, const std::string &v) {
+  long double getUpperBound(const BehaviourDescription &b,
+                            const std::string &v) {
     auto &lm = mgis::LibrariesManager::get();
     return lm.getUpperBound(b.library, b.behaviour, b.hypothesis, v);
   }  // end of getUpperBound
@@ -426,12 +433,14 @@ namespace mgis::behaviour {
     return lm.hasPhysicalBounds(b.library, b.behaviour, b.hypothesis, v);
   }  // end of hasPhysicalBounds
 
-  bool hasLowerPhysicalBound(const BehaviourDescription &b, const std::string &v) {
+  bool hasLowerPhysicalBound(const BehaviourDescription &b,
+                             const std::string &v) {
     auto &lm = mgis::LibrariesManager::get();
     return lm.hasLowerPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
   }  // end of hasLowerPhysicalBound
 
-  bool hasUpperPhysicalBound(const BehaviourDescription &b, const std::string &v) {
+  bool hasUpperPhysicalBound(const BehaviourDescription &b,
+                             const std::string &v) {
     auto &lm = mgis::LibrariesManager::get();
     return lm.hasUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
   }  // end of hasUpperPhysicalBound
@@ -465,7 +474,7 @@ namespace mgis::behaviour {
     return buildVariablesList(
         raise, lm.getBehaviourInitializeFunctionInputsNames(l, b, i, h),
         lm.getBehaviourInitializeFunctionInputsTypes(l, b, i, h));
-  } // end of getBehaviourInitializeFunctionInputs
+  }  // end of getBehaviourInitializeFunctionInputs
 
   std::vector<Variable> getBehaviourPostProcessingOutputs(const std::string &l,
                                                           const std::string &b,

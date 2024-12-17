@@ -25,7 +25,6 @@
 #include "MGIS/Config.hxx"
 #include "MGIS/StorageMode.hxx"
 
-
 namespace mgis::behaviour {
 
   // forward declaration

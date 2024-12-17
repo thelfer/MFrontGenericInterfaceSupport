@@ -46,8 +46,7 @@ static mgis::size_type getVariableOffsetByString(
 
 // mgis::string_view is not exposed
 static const mgis::behaviour::Variable& getVariableByString(
-    const std::vector<mgis::behaviour::Variable>& vs,
-    const std::string& n) {
+    const std::vector<mgis::behaviour::Variable>& vs, const std::string& n) {
   return mgis::behaviour::getVariable(vs, n);
 }  // getVariableByString
 
@@ -56,7 +55,8 @@ static mgis::size_type getVariableSizeByString(
     const std::vector<mgis::behaviour::Variable>& vs,
     const std::string& n,
     const mgis::behaviour::Hypothesis h) {
-  return mgis::behaviour::getVariableSize(mgis::behaviour::getVariable(vs, n), h);
+  return mgis::behaviour::getVariableSize(mgis::behaviour::getVariable(vs, n),
+                                          h);
 }  // getVariableSizeByString
 
 // forward declaration

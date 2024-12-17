@@ -270,7 +270,8 @@ mgis_status mgis_bv_material_state_manager_set_non_uniform_material_property(
     const auto& mp = getVariable(m->b.mps, n);
     const auto mpsize = getVariableSize(mp, m->b.hypothesis);
     if (s == MGIS_BV_LOCAL_STORAGE) {
-      setMaterialProperty(*m, n, {v, static_cast<mgis_size_type>(m->n * mpsize)},
+      setMaterialProperty(*m, n,
+                          {v, static_cast<mgis_size_type>(m->n * mpsize)},
                           mgis::behaviour::MaterialStateManager::LOCAL_STORAGE);
     } else {
       setMaterialProperty(
@@ -317,8 +318,7 @@ mgis_status mgis_bv_material_state_manager_is_material_property_uniform(
 
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_set_uniform_scalar_mass_density(
-    mgis_bv_MaterialStateManager* const m,
-    const mgis_real v) {
+    mgis_bv_MaterialStateManager* const m, const mgis_real v) {
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
   }
@@ -355,8 +355,7 @@ mgis_status mgis_bv_material_state_manager_set_non_uniform_mass_density(
 }  // end of mgis_bv_material_state_manager_set_non_uniform_mass_density
 
 mgis_status mgis_bv_material_state_manager_is_mass_density_defined(
-    int* const b,
-    const mgis_bv_MaterialStateManager* const m) {
+    int* const b, const mgis_bv_MaterialStateManager* const m) {
   *b = 0;
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
@@ -370,8 +369,7 @@ mgis_status mgis_bv_material_state_manager_is_mass_density_defined(
 }  // end of mgis_bv_material_state_manager_is_mass_density_defined
 
 mgis_status mgis_bv_material_state_manager_is_mass_density_uniform(
-    int* const b,
-    const mgis_bv_MaterialStateManager* const m) {
+    int* const b, const mgis_bv_MaterialStateManager* const m) {
   *b = 0;
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
@@ -401,8 +399,7 @@ mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable(
 }  // end of
    // mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable
 
-mgis_status
-mgis_bv_material_state_manager_set_uniform_external_state_variable(
+mgis_status mgis_bv_material_state_manager_set_uniform_external_state_variable(
     mgis_bv_MaterialStateManager* const m,
     const char* const n,
     mgis_real* const v,
@@ -452,7 +449,7 @@ mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
           mgis::behaviour::MaterialStateManager::LOCAL_STORAGE);
     } else {
       setExternalStateVariable(
-			       *m, n, {v, static_cast<mgis_size_type>(esvsize * m->n)},
+          *m, n, {v, static_cast<mgis_size_type>(esvsize * m->n)},
           mgis::behaviour::MaterialStateManager::EXTERNAL_STORAGE);
     }
   } catch (...) {

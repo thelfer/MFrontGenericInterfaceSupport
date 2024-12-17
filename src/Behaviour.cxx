@@ -33,17 +33,25 @@ namespace mgis::behaviour {
   }  // end of buildRotationMatrix
 
   BehaviourInitializeFunction::BehaviourInitializeFunction() = default;
-  BehaviourInitializeFunction::BehaviourInitializeFunction(BehaviourInitializeFunction &&) = default;
-  BehaviourInitializeFunction::BehaviourInitializeFunction(const BehaviourInitializeFunction &) = default;
-  BehaviourInitializeFunction &BehaviourInitializeFunction::operator=(BehaviourInitializeFunction &&) = default;
-  BehaviourInitializeFunction &BehaviourInitializeFunction::operator=(const BehaviourInitializeFunction &) = default;
+  BehaviourInitializeFunction::BehaviourInitializeFunction(
+      BehaviourInitializeFunction &&) = default;
+  BehaviourInitializeFunction::BehaviourInitializeFunction(
+      const BehaviourInitializeFunction &) = default;
+  BehaviourInitializeFunction &BehaviourInitializeFunction::operator=(
+      BehaviourInitializeFunction &&) = default;
+  BehaviourInitializeFunction &BehaviourInitializeFunction::operator=(
+      const BehaviourInitializeFunction &) = default;
   BehaviourInitializeFunction::~BehaviourInitializeFunction() = default;
 
   BehaviourPostProcessing::BehaviourPostProcessing() = default;
-  BehaviourPostProcessing::BehaviourPostProcessing(BehaviourPostProcessing &&) = default;
-  BehaviourPostProcessing::BehaviourPostProcessing(const BehaviourPostProcessing &) = default;
-  BehaviourPostProcessing &BehaviourPostProcessing::operator=(BehaviourPostProcessing &&) = default;
-  BehaviourPostProcessing &BehaviourPostProcessing::operator=(const BehaviourPostProcessing &) = default;
+  BehaviourPostProcessing::BehaviourPostProcessing(BehaviourPostProcessing &&) =
+      default;
+  BehaviourPostProcessing::BehaviourPostProcessing(
+      const BehaviourPostProcessing &) = default;
+  BehaviourPostProcessing &BehaviourPostProcessing::operator=(
+      BehaviourPostProcessing &&) = default;
+  BehaviourPostProcessing &BehaviourPostProcessing::operator=(
+      const BehaviourPostProcessing &) = default;
   BehaviourPostProcessing::~BehaviourPostProcessing() = default;
 
   Behaviour::Behaviour() = default;
@@ -66,14 +74,14 @@ namespace mgis::behaviour {
       d.options.resize(2, mgis::real(0));
     }
     // initialize functions
-    for (const auto& i : lm.getBehaviourInitializeFunctions(l, b, h)) {
+    for (const auto &i : lm.getBehaviourInitializeFunctions(l, b, h)) {
       BehaviourInitializeFunction ifct;
       ifct.f = lm.getBehaviourInitializeFunction(l, b, i, h);
       ifct.inputs = getBehaviourInitializeFunctionInputs(l, b, i, h);
       d.initialize_functions.insert({i, ifct});
     }
     // post-processings
-    for (const auto& i : lm.getBehaviourPostProcessings(l, b, h)) {
+    for (const auto &i : lm.getBehaviourPostProcessings(l, b, h)) {
       BehaviourPostProcessing pfct;
       pfct.f = lm.getBehaviourPostProcessing(l, b, i, h);
       pfct.outputs = getBehaviourPostProcessingOutputs(l, b, i, h);
@@ -99,13 +107,13 @@ namespace mgis::behaviour {
       d.rotate_array_of_gradients_ptr =
           lm.getRotateArrayOfBehaviourGradientsFunction(l, b, h);
       d.rotate_thermodynamic_forces_ptr =
-	lm.getRotateBehaviourThermodynamicForcesFunction(l, b, h);
+          lm.getRotateBehaviourThermodynamicForcesFunction(l, b, h);
       d.rotate_array_of_thermodynamic_forces_ptr =
-	lm.getRotateArrayOfBehaviourThermodynamicForcesFunction(l, b, h);
+          lm.getRotateArrayOfBehaviourThermodynamicForcesFunction(l, b, h);
       d.rotate_tangent_operator_blocks_ptr =
-	lm.getRotateBehaviourTangentOperatorBlocksFunction(l, b, h);
+          lm.getRotateBehaviourTangentOperatorBlocksFunction(l, b, h);
       d.rotate_array_of_tangent_operator_blocks_ptr =
-	lm.getRotateArrayOfBehaviourTangentOperatorBlocksFunction(l, b, h);
+          lm.getRotateArrayOfBehaviourTangentOperatorBlocksFunction(l, b, h);
     }
     return d;
   }  // end of load
@@ -148,8 +156,9 @@ namespace mgis::behaviour {
                         {"DeformationGradient", Variable::TENSOR, 3}};
     } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DTAU_DDF) {
       d.options[1] = mgis::real(3);
-      d.to_blocks[0] = {{"KirchhoffStress", Variable::STENSOR, 3},
-                        {"SpatialIncrementOfTheDeformationGradient", Variable::TENSOR, 3}};
+      d.to_blocks[0] = {
+          {"KirchhoffStress", Variable::STENSOR, 3},
+          {"SpatialIncrementOfTheDeformationGradient", Variable::TENSOR, 3}};
     } else {
       mgis::raise(
           "mgis::behaviour::load: "
@@ -595,7 +604,7 @@ namespace mgis::behaviour {
   }  // end of setParameter
 
   size_type getInitializeFunctionVariablesArraySize(const Behaviour &b,
-                                                   const std::string_view n) {
+                                                    const std::string_view n) {
     const auto p = b.initialize_functions.find(n);
     if (p == b.initialize_functions.end()) {
       mgis::raise(

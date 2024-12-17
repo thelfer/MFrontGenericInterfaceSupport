@@ -171,8 +171,8 @@ namespace mgis::behaviour {
    * \param[in,out] d: material data manager
    * \param[in] n: name of the initialize function
    */
-  MGIS_EXPORT BehaviourIntegrationResult executeInitializeFunction(
-      MaterialDataManager&, const std::string_view);
+  MGIS_EXPORT BehaviourIntegrationResult
+  executeInitializeFunction(MaterialDataManager&, const std::string_view);
   /*!
    * \brief execute the given initialize function
    * \param[in,out] d: material data manager
@@ -184,11 +184,10 @@ namespace mgis::behaviour {
   MGIS_EXPORT BehaviourIntegrationResult executeInitializeFunction(
       MaterialDataManager&, const std::string_view, std::span<const real>);
   /*!
-   * \brief execute the given initialize function over a range of integration points
-   * \param[in,out] d: material data manager
-   * \param[in] n: name of the initialize function
-   * \param[in] b: first index of the range
-   * \param[in] e: last index of the range
+   * \brief execute the given initialize function over a range of integration
+   * points \param[in,out] d: material data manager \param[in] n: name of the
+   * initialize function \param[in] b: first index of the range \param[in] e:
+   * last index of the range
    */
   MGIS_EXPORT BehaviourIntegrationResult
   executeInitializeFunction(MaterialDataManager&,
@@ -196,10 +195,9 @@ namespace mgis::behaviour {
                             const size_type,
                             const size_type);
   /*!
-   * \brief execute the given initialize function over a range of integration points
-   * \param[in,out] d: material data manager
-   * \param[in] n: name of the initialize function
-   * \param[in] inputs: initialize function inputs
+   * \brief execute the given initialize function over a range of integration
+   * points \param[in,out] d: material data manager \param[in] n: name of the
+   * initialize function \param[in] inputs: initialize function inputs
    * \param[in] b: first index of the range
    * \param[in] e: last index of the range
    *
@@ -212,23 +210,18 @@ namespace mgis::behaviour {
                             const size_type,
                             const size_type);
   /*!
-   * \brief execute the given initialize function  over all integration points using
-   * a thread pool to parallelize the integration.
-   * \param[in,out] p: thread pool
-   * \param[in,out] d: material data manager
-   * \param[in] n: name of the initialize function
+   * \brief execute the given initialize function  over all integration points
+   * using a thread pool to parallelize the integration. \param[in,out] p:
+   * thread pool \param[in,out] d: material data manager \param[in] n: name of
+   * the initialize function
    */
-  MGIS_EXPORT MultiThreadedBehaviourIntegrationResult
-  executeInitializeFunction(ThreadPool&,
-                            MaterialDataManager&,
-                            const std::string_view);
+  MGIS_EXPORT MultiThreadedBehaviourIntegrationResult executeInitializeFunction(
+      ThreadPool&, MaterialDataManager&, const std::string_view);
   /*!
-   * \brief execute the given initialize function  over all integration points using
-   * a thread pool to parallelize the integration.
-   * \param[in,out] p: thread pool
-   * \param[in,out] d: material data manager
-   * \param[in] n: name of the initialize function
-   * \param[in] inputs: initialize function inputs
+   * \brief execute the given initialize function  over all integration points
+   * using a thread pool to parallelize the integration. \param[in,out] p:
+   * thread pool \param[in,out] d: material data manager \param[in] n: name of
+   * the initialize function \param[in] inputs: initialize function inputs
    *
    * \note the inputs can be uniform or not.
    */
@@ -291,10 +284,8 @@ namespace mgis::behaviour {
    * \note if required, the memory associated with the tangent operator blocks
    * is automatically allocated.
    */
-  MGIS_EXPORT BehaviourIntegrationResult
-  integrate(MaterialDataManager&,
-            const BehaviourIntegrationOptions&,
-            const real);
+  MGIS_EXPORT BehaviourIntegrationResult integrate(
+      MaterialDataManager&, const BehaviourIntegrationOptions&, const real);
   /*!
    * \brief integrate the behaviour for a range of integration points.
    * \return the result of the behaviour integration.
