@@ -5,9 +5,9 @@ string(CONCAT MFrontGenericInterfaceSupportDescription
     "integrate MFront generated material libraries.")
 
 include(cmake/modules/mgis.cmake)
-set(MFrontGenericInterfaceSupportDevelopmentVersion OFF)
+set(MFrontGenericInterfaceSupportDevelopmentVersion ON)
 project("mfront-generic-interface"
-        VERSION 3.0.0
+        VERSION 3.1.0
         DESCRIPTION  "${MFrontGenericInterfaceSupportDescription}"
         HOMEPAGE_URL "https://thelfer.github.io/mgis/web/index.html")
 
