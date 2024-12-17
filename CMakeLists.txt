@@ -5,7 +5,7 @@ string(CONCAT MFrontGenericInterfaceSupportDescription
     "integrate MFront generated material libraries.")
 
 include(cmake/modules/mgis.cmake)
-set(MFrontGenericInterfaceSupportDevelopmentVersion ON)
+set(MFrontGenericInterfaceSupportDevelopmentVersion OFF)
 project("mfront-generic-interface"
         VERSION 3.0.0
         DESCRIPTION  "${MFrontGenericInterfaceSupportDescription}"
