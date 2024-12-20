@@ -24,7 +24,7 @@ jobs:
     - name: Install TFEL and NumPy
       shell: spack-sh {0}
       run: |
-        spack install py-pybind11
+        spack install py-numpy py-pybind11
         spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
     - name: cmake
       shell: spack-sh {0}
