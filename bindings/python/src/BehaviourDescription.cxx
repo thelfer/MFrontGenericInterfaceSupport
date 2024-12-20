@@ -12,16 +12,14 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <boost/python/class.hpp>
-#include <boost/python/enum.hpp>
-#include <boost/python/def.hpp>
-#include "MGIS/Python/VectorConverter.hxx"
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MGIS/Python/NumPySupport.hxx"
 #include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/BehaviourDescription.hxx"
 
 // forward declaration
-void declareBehaviourDescription();
+void declareBehaviourDescription(pybind11::module_&);
 
 static const char *BehaviourDescription_getType(
     const mgis::behaviour::BehaviourDescription &b) {
@@ -103,21 +101,6 @@ BehaviourDescription_getExternalStateVariables(
   return b.esvs;
 }  // end of BehaviourDescription_getExternalStateVariables
 
-static boost::python::list BehaviourDescription_getParameters(
-    const mgis::behaviour::BehaviourDescription &b) {
-  return mgis::python::convert_vector_to_list(b.params);
-}  // end of BehaviourDescription_getParameters
-
-static boost::python::list BehaviourDescription_getIntegerParameters(
-    const mgis::behaviour::BehaviourDescription &b) {
-  return mgis::python::convert_vector_to_list(b.iparams);
-}  // end of BehaviourDescription_getIntegerParameters
-
-static boost::python::list BehaviourDescription_getUnsignedShortParameters(
-    const mgis::behaviour::BehaviourDescription &b) {
-  return mgis::python::convert_vector_to_list(b.usparams);
-}  // end of BehaviourDescription_getUnsignedShortParameters
-
 static std::vector<
     std::pair<mgis::behaviour::Variable, mgis::behaviour::Variable>>
 BehaviourDescription_getTangentOperatorBlocks(
@@ -125,7 +108,7 @@ BehaviourDescription_getTangentOperatorBlocks(
   return b.to_blocks;
 }  // end of BehaviourDescription_getTangentOperatorBlocks
 
-void declareBehaviourDescription() {
+void declareBehaviourDescription(pybind11::module_ &m) {
   using mgis::behaviour::BehaviourDescription;
   //
   double (*getParameterDefaultValue1)(const BehaviourDescription &,
@@ -165,13 +148,13 @@ void declareBehaviourDescription() {
       mgis::behaviour::getUpperPhysicalBound;
 
   // wrapping the BehaviourDescription::Symmetry enum
-  boost::python::enum_<BehaviourDescription::Symmetry>("BehaviourSymmetry")
+  pybind11::enum_<BehaviourDescription::Symmetry>(m, "BehaviourSymmetry")
       .value("ISOTROPIC", BehaviourDescription::Symmetry::ISOTROPIC)
       .value("Isotropic", BehaviourDescription::Symmetry::ISOTROPIC)
       .value("ORTHOTROPIC", BehaviourDescription::Symmetry::ORTHOTROPIC)
       .value("Orthotropic", BehaviourDescription::Symmetry::ORTHOTROPIC);
   // wrapping the BehaviourDescription::BehaviourType enum
-  boost::python::enum_<BehaviourDescription::BehaviourType>("BehaviourType")
+  pybind11::enum_<BehaviourDescription::BehaviourType>(m, "BehaviourType")
       .value("GENERALBEHAVIOUR",
              BehaviourDescription::BehaviourType::GENERALBEHAVIOUR)
       .value("GeneralBehaviour",
@@ -189,7 +172,7 @@ void declareBehaviourDescription() {
       .value("CohesiveZoneModel",
              BehaviourDescription::BehaviourType::COHESIVEZONEMODEL);
   // wrapping the BehaviourDescription::BehaviourType enum
-  boost::python::enum_<BehaviourDescription::Kinematic>("BehaviourKinematic")
+  pybind11::enum_<BehaviourDescription::Kinematic>(m, "BehaviourKinematic")
       .value("UNDEFINEDKINEMATIC",
              BehaviourDescription::Kinematic::UNDEFINEDKINEMATIC)
       .value("UndefinedKinematic",
@@ -211,8 +194,7 @@ void declareBehaviourDescription() {
       .value("FiniteStrainKinematic_Eto_PK1",
              BehaviourDescription::Kinematic::FINITESTRAINKINEMATIC_ETO_PK1);
   // wrapping the Behaviour class
-  boost::python::class_<BehaviourDescription, boost::noncopyable>(
-      "BehaviourDescription", boost::python::no_init)
+  pybind11::class_<BehaviourDescription>(m, "BehaviourDescription")
       .def_readonly("library", &BehaviourDescription::library,
                     "name of the library in which the behaviour is implemented")
       .def_readonly("behaviour", &BehaviourDescription::behaviour,
@@ -234,7 +216,7 @@ void declareBehaviourDescription() {
                     "build identifier of the `MFront`'s file")
       .def_readonly("tfel_version", &BehaviourDescription::tfel_version,
                     "version of TFEL used to generate the behaviour")
-      .add_property("btype", &BehaviourDescription::btype,
+      .def_readonly("btype", &BehaviourDescription::btype,
                     "return the type of the behaviour")
       .def_readonly(
           "computesStoredEnergy", &BehaviourDescription::computesStoredEnergy,
@@ -245,54 +227,54 @@ void declareBehaviourDescription() {
           "a boolean stating if the behaviour computes the dissipated energy")
       .def("getBehaviourType", &BehaviourDescription_getType,
            "return the type of the behaviour")
-      .add_property("kinematic", &BehaviourDescription::kinematic,
+      .def_readonly("kinematic", &BehaviourDescription::kinematic,
                     "return the behaviour kinematic")
       .def("getKinematic", &BehaviourDescription_getKinematic,
            "return the behaviour kinematic")
       .def("getSymmetry", &BehaviourDescription_getSymmetry,
            "return the behaviour symmetry")
-      .add_property("symmetry", &BehaviourDescription::symmetry,
+      .def_readonly("symmetry", &BehaviourDescription::symmetry,
                     "return the behaviour symmetry")
-      .add_property("gradients", &BehaviourDescription_getGradients,
-                    "list of gradients")
-      .add_property("thermodynamic_forces",
-                    &BehaviourDescription_getThermodynamicForces,
-                    "list of thermodynamic forces")
-      .add_property("mps", &BehaviourDescription_getMaterialProperties,
-                    "list of material properties")
-      .add_property("material_properties",
-                    &BehaviourDescription_getMaterialProperties,
-                    "list of material properties (same as the `mps` property)")
-      .add_property("isvs", &BehaviourDescription_getInternalStateVariables,
-                    "list of internal state variables")
-      .add_property(
+      .def_property_readonly("gradients", &BehaviourDescription_getGradients,
+                             "list of gradients")
+      .def_property_readonly("thermodynamic_forces",
+                             &BehaviourDescription_getThermodynamicForces,
+                             "list of thermodynamic forces")
+      .def_property_readonly("mps", &BehaviourDescription_getMaterialProperties,
+                             "list of material properties")
+      .def_property_readonly(
+          "material_properties", &BehaviourDescription_getMaterialProperties,
+          "list of material properties (same as the `mps` property)")
+      .def_property_readonly("isvs",
+                             &BehaviourDescription_getInternalStateVariables,
+                             "list of internal state variables")
+      .def_property_readonly(
           "internal_state_variables",
           &BehaviourDescription_getInternalStateVariables,
           "list of internal state variables (same as the `isvs` property)")
-      .add_property("esvs", &BehaviourDescription_getExternalStateVariables,
-                    "list of external state variables")
-      .add_property(
+      .def_property_readonly("esvs",
+                             &BehaviourDescription_getExternalStateVariables,
+                             "list of external state variables")
+      .def_property_readonly(
           "external_state_variables",
           &BehaviourDescription_getExternalStateVariables,
           "list of external state variables (same as the `esvs` property)")
-      .add_property("params", &BehaviourDescription_getParameters,
+      .def_readonly("params", &BehaviourDescription::params,
                     "list of parameters")
-      .add_property("parameters", &BehaviourDescription_getParameters,
+      .def_readonly("parameters", &BehaviourDescription::params,
                     "list of parameters (same as the `params` property")
-      .add_property("iparams", &BehaviourDescription_getIntegerParameters,
+      .def_readonly("iparams", &BehaviourDescription::iparams,
                     "list of integer parameters")
-      .add_property(
-          "integer_parameters", &BehaviourDescription_getIntegerParameters,
+      .def_readonly(
+          "integer_parameters", &BehaviourDescription::iparams,
           "list of integer parameters (same as the `integer_params` property")
-      .add_property("usparams",
-                    &BehaviourDescription_getUnsignedShortParameters,
+      .def_readonly("usparams", &BehaviourDescription::usparams,
                     "list of unsigned short parameters")
-      .add_property(
-          "unsigned_short_parameters",
-          &BehaviourDescription_getUnsignedShortParameters,
+      .def_readonly(
+          "unsigned_short_parameters", &BehaviourDescription::usparams,
           "list of unsigned short parameters (same as the `usparams` property)")
-      .add_property("tangent_operator_blocks",
-                    BehaviourDescription_getTangentOperatorBlocks)
+      .def_property_readonly("tangent_operator_blocks",
+                             BehaviourDescription_getTangentOperatorBlocks)
       .def("getParameterDefaultValue", getParameterDefaultValue1)
       .def("getIntegerParameterDefaultValue", getParameterDefaultValue2)
       .def("getUnsignedShortParameterDefaultValue", getParameterDefaultValue3)
@@ -307,27 +289,27 @@ void declareBehaviourDescription() {
       .def("getLowerPhysicalBound ", getLowerPhysicalBound)
       .def("getUpperPhysicalBound ", getUpperPhysicalBound);
 
-  boost::python::def(
+  m.def(
       "isStandardFiniteStrainBehaviour",
       mgis::behaviour::isStandardFiniteStrainBehaviour,
       "return if the given behaviour is a standard finite strain behaviour, "
       "i.e. is a finite strain behaviour using the standard finite strain "
       "kinematic (called F-Cauchy although the stress measure can be chosen "
       "when loading the behaviour)");
-  boost::python::def("getParameterDefaultValue", getParameterDefaultValue1);
-  boost::python::def("getIntegerParameterDefaultValue",
+  m.def("getParameterDefaultValue", getParameterDefaultValue1);
+  m.def("getIntegerParameterDefaultValue",
                      getParameterDefaultValue2);
-  boost::python::def("getUnsignedShortParameterDefaultValue",
+  m.def("getUnsignedShortParameterDefaultValue",
                      getParameterDefaultValue3);
-  boost::python::def("hasBounds", hasBounds);
-  boost::python::def("hasLowerBound", hasLowerBound);
-  boost::python::def("hasUpperBound", hasUpperBound);
-  boost::python::def("getLowerBound", getLowerBound);
-  boost::python::def("getUpperBound", getUpperBound);
-  boost::python::def("hasPhysicalBounds", hasPhysicalBounds);
-  boost::python::def("hasLowerPhysicalBound", hasLowerPhysicalBound);
-  boost::python::def("hasUpperPhysicalBound", hasUpperPhysicalBound);
-  boost::python::def("getLowerPhysicalBound", getLowerPhysicalBound);
-  boost::python::def("getUpperPhysicalBound", getUpperPhysicalBound);
+  m.def("hasBounds", hasBounds);
+  m.def("hasLowerBound", hasLowerBound);
+  m.def("hasUpperBound", hasUpperBound);
+  m.def("getLowerBound", getLowerBound);
+  m.def("getUpperBound", getUpperBound);
+  m.def("hasPhysicalBounds", hasPhysicalBounds);
+  m.def("hasLowerPhysicalBound", hasLowerPhysicalBound);
+  m.def("hasUpperPhysicalBound", hasUpperPhysicalBound);
+  m.def("getLowerPhysicalBound", getLowerPhysicalBound);
+  m.def("getUpperPhysicalBound", getUpperPhysicalBound);
 
 }  // end of declareBehaviour

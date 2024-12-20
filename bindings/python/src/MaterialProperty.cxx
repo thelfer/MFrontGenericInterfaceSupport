@@ -12,14 +12,16 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <boost/python/class.hpp>
-#include <boost/python/def.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MGIS/MaterialProperty/MaterialProperty.hxx"
 
-void declareMaterialProperty() {
+void declareMaterialProperty(pybind11::module_&);
+
+void declareMaterialProperty(pybind11::module_& m) {
   using mgis::material_property::MaterialProperty;
   // wrapping the MaterialProperty class
-  boost::python::class_<MaterialProperty>("MaterialProperty")
+  pybind11::class_<MaterialProperty>(m, "MaterialProperty")
       .def_readonly(
           "library", &MaterialProperty::library,
           "name of the library in which the material property is implemented")
@@ -34,6 +36,6 @@ void declareMaterialProperty() {
       .def_readonly("inputs", &MaterialProperty::inputs,
                     "inputs of the material property");
   // wrapping free functions
-  boost::python::def("load", mgis::material_property::load);
+  m.def("load", mgis::material_property::load);
 
 }  // end of declareMaterialProperty

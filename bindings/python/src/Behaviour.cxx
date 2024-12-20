@@ -12,46 +12,44 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <boost/python/class.hpp>
-#include <boost/python/enum.hpp>
-#include <boost/python/def.hpp>
-#include "MGIS/Python/VectorConverter.hxx"
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MGIS/Python/NumPySupport.hxx"
 #include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/Behaviour.hxx"
 
 // forward declaration
-void declareBehaviour();
+void declareBehaviour(pybind11::module_&);
 
 static void rotate_gradients_in_place_member(
     const mgis::behaviour::Behaviour &b,
-    boost::python::object &g,
-    boost::python::object &r) {
+    pybind11::object &g,
+    pybind11::object &r) {
   mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(g), b,
                                    mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_gradients_in_place_member
 
-static void rotate_gradients_in_place(boost::python::object &g,
+static void rotate_gradients_in_place(pybind11::object &g,
                                       const mgis::behaviour::Behaviour &b,
-                                      boost::python::object &r) {
+                                      pybind11::object &r) {
   mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(g), b,
                                    mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_gradients_in_place
 
 static void rotate_gradients_out_of_place_member(
     const mgis::behaviour::Behaviour &b,
-    boost::python::object &mg,
-    boost::python::object &gg,
-    boost::python::object &r) {
+    pybind11::object &mg,
+    pybind11::object &gg,
+    pybind11::object &r) {
   mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(mg), b,
                                    mgis::python::mgis_convert_to_span(gg),
                                    mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_gradients_out_of_place_member
 
-static void rotate_gradients_out_of_place(boost::python::object &mg,
+static void rotate_gradients_out_of_place(pybind11::object &mg,
                                           const mgis::behaviour::Behaviour &b,
-                                          boost::python::object &gg,
-                                          boost::python::object &r) {
+                                          pybind11::object &gg,
+                                          pybind11::object &r) {
   mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(mg), b,
                                    mgis::python::mgis_convert_to_span(gg),
                                    mgis::python::mgis_convert_to_span(r));
@@ -59,17 +57,17 @@ static void rotate_gradients_out_of_place(boost::python::object &mg,
 
 static void rotate_thermodynamic_forces_in_place_member(
     const mgis::behaviour::Behaviour &b,
-    boost::python::object &g,
-    boost::python::object &r) {
+    pybind11::object &g,
+    pybind11::object &r) {
   mgis::behaviour::rotateThermodynamicForces(
       mgis::python::mgis_convert_to_span(g), b,
       mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_thermodynamic_forces_in_place_member
 
 static void rotate_thermodynamic_forces_in_place(
-    boost::python::object &g,
+    pybind11::object &g,
     const mgis::behaviour::Behaviour &b,
-    boost::python::object &r) {
+    pybind11::object &r) {
   mgis::behaviour::rotateThermodynamicForces(
       mgis::python::mgis_convert_to_span(g), b,
       mgis::python::mgis_convert_to_span(r));
@@ -77,9 +75,9 @@ static void rotate_thermodynamic_forces_in_place(
 
 static void rotate_thermodynamic_forces_out_of_place_member(
     const mgis::behaviour::Behaviour &b,
-    boost::python::object &mg,
-    boost::python::object &gg,
-    boost::python::object &r) {
+    pybind11::object &mg,
+    pybind11::object &gg,
+    pybind11::object &r) {
   mgis::behaviour::rotateThermodynamicForces(
       mgis::python::mgis_convert_to_span(mg), b,
       mgis::python::mgis_convert_to_span(gg),
@@ -87,10 +85,10 @@ static void rotate_thermodynamic_forces_out_of_place_member(
 }  // end of rotate_thermodynamic_forces_out_of_place_member
 
 static void rotate_thermodynamic_forces_out_of_place(
-    boost::python::object &mg,
+    pybind11::object &mg,
     const mgis::behaviour::Behaviour &b,
-    boost::python::object &gg,
-    boost::python::object &r) {
+    pybind11::object &gg,
+    pybind11::object &r) {
   mgis::behaviour::rotateThermodynamicForces(
       mgis::python::mgis_convert_to_span(mg), b,
       mgis::python::mgis_convert_to_span(gg),
@@ -99,17 +97,17 @@ static void rotate_thermodynamic_forces_out_of_place(
 
 static void rotate_tangent_operator_blocks_in_place_member(
     const mgis::behaviour::Behaviour &b,
-    boost::python::object &g,
-    boost::python::object &r) {
+    pybind11::object &g,
+    pybind11::object &r) {
   mgis::behaviour::rotateTangentOperatorBlocks(
       mgis::python::mgis_convert_to_span(g), b,
       mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_tangent_operator_blocks_in_place_member
 
 static void rotate_tangent_operator_blocks_in_place(
-    boost::python::object &g,
+    pybind11::object &g,
     const mgis::behaviour::Behaviour &b,
-    boost::python::object &r) {
+    pybind11::object &r) {
   mgis::behaviour::rotateTangentOperatorBlocks(
       mgis::python::mgis_convert_to_span(g), b,
       mgis::python::mgis_convert_to_span(r));
@@ -117,9 +115,9 @@ static void rotate_tangent_operator_blocks_in_place(
 
 static void rotate_tangent_operator_blocks_out_of_place_member(
     const mgis::behaviour::Behaviour &b,
-    boost::python::object &mg,
-    boost::python::object &gg,
-    boost::python::object &r) {
+    pybind11::object &mg,
+    pybind11::object &gg,
+    pybind11::object &r) {
   mgis::behaviour::rotateTangentOperatorBlocks(
       mgis::python::mgis_convert_to_span(mg), b,
       mgis::python::mgis_convert_to_span(gg),
@@ -127,23 +125,23 @@ static void rotate_tangent_operator_blocks_out_of_place_member(
 }  // end of rotate_tangent_operator_blocks_out_of_place_member
 
 static void rotate_tangent_operator_blocks_out_of_place(
-    boost::python::object &mg,
+    pybind11::object &mg,
     const mgis::behaviour::Behaviour &b,
-    boost::python::object &gg,
-    boost::python::object &r) {
+    pybind11::object &gg,
+    pybind11::object &r) {
   mgis::behaviour::rotateTangentOperatorBlocks(
       mgis::python::mgis_convert_to_span(mg), b,
       mgis::python::mgis_convert_to_span(gg),
       mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_tangent_operator_blocks_out_of_place
 
-static boost::python::list Behaviour_getInitializeFunctionsNames(
+static std::vector<std::string> Behaviour_getInitializeFunctionsNames(
     const mgis::behaviour::Behaviour &b) {
   auto names = std::vector<std::string>{};
   for (const auto &ifct : b.initialize_functions) {
     names.push_back(ifct.first);
   }
-  return mgis::python::convert_vector_to_list(names);
+  return names;
 }  // edn of Behaviour_getInitializeFunctionsNames
 
 static std::vector<mgis::behaviour::Variable>
@@ -159,13 +157,13 @@ Behaviour_getInitializeFunctionInputs(const mgis::behaviour::Behaviour &b,
   return p->second.inputs;
 }  // end of Behaviour_getInitializeFunctionInputs
 
-static boost::python::list Behaviour_getPostProcessingsNames(
+static std::vector<std::string> Behaviour_getPostProcessingsNames(
     const mgis::behaviour::Behaviour &b) {
   auto names = std::vector<std::string>{};
   for (const auto &p : b.postprocessings) {
     names.push_back(p.first);
   }
-  return mgis::python::convert_vector_to_list(names);
+  return names;
 }  // edn of Behaviour_getPostProcessingsNames
 
 static std::vector<mgis::behaviour::Variable>
@@ -181,7 +179,7 @@ Behaviour_getPostProcessingOutputs(const mgis::behaviour::Behaviour &b,
   return p->second.outputs;
 }  // end of Behaviour_getPostProcessingOutputs
 
-void declareBehaviour() {
+void declareBehaviour(pybind11::module_ &m) {
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::BehaviourDescription;
   using mgis::behaviour::FiniteStrainBehaviourOptions;
@@ -198,22 +196,23 @@ void declareBehaviour() {
   void (*setParameter3)(const Behaviour &, const std::string &,
                         const unsigned short) = &mgis::behaviour::setParameter;
   // wrapping the FiniteStrainBehaviourOptions::StressMeasure enum
-  boost::python::enum_<FiniteStrainBehaviourOptions::StressMeasure>(
-      "FiniteStrainBehaviourOptionsStressMeasure")
+  pybind11::enum_<FiniteStrainBehaviourOptions::StressMeasure>(
+      m, "FiniteStrainBehaviourOptionsStressMeasure")
       .value("CAUCHY", FiniteStrainBehaviourOptions::CAUCHY)
       .value("PK1", FiniteStrainBehaviourOptions::PK1)
       .value("PK2", FiniteStrainBehaviourOptions::PK2);
   // wrapping the FiniteStrainBehaviourOptions::TangentOperator enum
-  boost::python::enum_<FiniteStrainBehaviourOptions::TangentOperator>(
-      "FiniteStrainBehaviourOptionsTangentOperator")
+  pybind11::enum_<FiniteStrainBehaviourOptions::TangentOperator>(
+      m, "FiniteStrainBehaviourOptionsTangentOperator")
       .value("DSIG_DF", FiniteStrainBehaviourOptions::DSIG_DF)
       .value("DCAUCHY_DF", FiniteStrainBehaviourOptions::DSIG_DF)
       .value("DPK1_DF", FiniteStrainBehaviourOptions::DPK1_DF)
       .value("DS_DEGL", FiniteStrainBehaviourOptions::DS_DEGL)
       .value("DTAU_DDF", FiniteStrainBehaviourOptions::DTAU_DDF);
   // wrapping the FiniteStrainBehaviourOptions class
-  boost::python::class_<FiniteStrainBehaviourOptions>(
-      "FiniteStrainBehaviourOptions")
+  pybind11::class_<FiniteStrainBehaviourOptions>(m,
+                                                 "FiniteStrainBehaviourOptions")
+      .def(pybind11::init<>())
       .def_readwrite("stress_measure",
                      &FiniteStrainBehaviourOptions::stress_measure,
                      "defines the stress measure")
@@ -221,9 +220,8 @@ void declareBehaviour() {
                      &FiniteStrainBehaviourOptions::tangent_operator,
                      "defines the tangent operator");
   // wrapping the Behaviour class
-  boost::python::class_<Behaviour, boost::python::bases<BehaviourDescription>>(
-      "Behaviour")
-      // boost::python::class_<Behaviour>("Behaviour")
+  pybind11::class_<Behaviour, BehaviourDescription>(m, "Behaviour")
+      // pybind11::class_<Behaviour>("Behaviour")
       .def("getInitializeFunctionsNames", Behaviour_getInitializeFunctionsNames)
       .def("getInitializeFunctionInputs", Behaviour_getInitializeFunctionInputs)
       .def("getPostProcessingsNames", Behaviour_getPostProcessingsNames)
@@ -242,21 +240,21 @@ void declareBehaviour() {
       .def("rotateTangentOperatorBlocks",
            rotate_tangent_operator_blocks_out_of_place_member);
   // wrapping free functions
-  boost::python::def("rotateGradients", rotate_gradients_in_place);
-  boost::python::def("rotateGradients", rotate_gradients_out_of_place);
-  boost::python::def("rotateThermodynamicForces",
+  m.def("rotateGradients", rotate_gradients_in_place);
+  m.def("rotateGradients", rotate_gradients_out_of_place);
+  m.def("rotateThermodynamicForces",
                      rotate_thermodynamic_forces_in_place);
-  boost::python::def("rotateThermodynamicForces",
+  m.def("rotateThermodynamicForces",
                      rotate_thermodynamic_forces_out_of_place);
-  boost::python::def("rotateTangentOperatorBlocks",
+  m.def("rotateTangentOperatorBlocks",
                      rotate_tangent_operator_blocks_in_place);
-  boost::python::def("rotateTangentOperatorBlocks",
+  m.def("rotateTangentOperatorBlocks",
                      rotate_tangent_operator_blocks_out_of_place);
 
-  boost::python::def("load", load_ptr);
-  boost::python::def("load", load_ptr2);
-  boost::python::def("setParameter", setParameter1);
-  boost::python::def("setIntegerParameter", setParameter2);
-  boost::python::def("setUnsignedShortParameter", setParameter3);
+  m.def("load", load_ptr);
+  m.def("load", load_ptr2);
+  m.def("setParameter", setParameter1);
+  m.def("setIntegerParameter", setParameter2);
+  m.def("setUnsignedShortParameter", setParameter3);
 
 }  // end of declareBehaviour

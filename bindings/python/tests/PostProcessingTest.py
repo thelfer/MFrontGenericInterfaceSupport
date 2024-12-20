@@ -48,13 +48,16 @@ class PostProcessingTest(unittest.TestCase):
         mgis_bv.update(m)
         m.s1.gradients[0:] = e
         m.s1.gradients[1:] = e
+        print(m.s1.gradients)
         outputs = numpy.empty(shape=(2, 3), dtype=numpy.float64)
         mgis_bv.executePostProcessing(outputs.reshape(6), m, "PrincipalStrain")
         for i in range(0, 3):
             self.assertTrue(
-                abs(outputs[0, i] - e2[i]) < eps, "invalid output value")
+                abs(outputs[0, i] - e2[i]) < eps,
+                f"invalid output value ({outputs[0, i]} vs {e2[i]})")
             self.assertTrue(
-                abs(outputs[1, i] - e2[i]) < eps, "invalid output value")
+                abs(outputs[1, i] - e2[i]) < eps,
+                f"invalid output value ({outputs[1, i]} vs {e2[i]})")
 
 
 if __name__ == '__main__':

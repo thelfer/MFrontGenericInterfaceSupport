@@ -12,12 +12,10 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <boost/python/class.hpp>
-#include <boost/python/def.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/Variable.hxx"
-#include "MGIS/Python/PairConverter.hxx"
-#include "MGIS/Python/VectorConverter.hxx"
 
 static const char* Variable_getType(const mgis::behaviour::Variable& v) {
   using mgis::behaviour::Variable;
@@ -60,12 +58,12 @@ static mgis::size_type getVariableSizeByString(
 }  // getVariableSizeByString
 
 // forward declaration
-void declareVariable();
+void declareVariable(pybind11::module_&);
 
-void declareVariable() {
+void declareVariable(pybind11::module_& m) {
   using mgis::behaviour::Variable;
   // wrapping the Variable::Type enum
-  boost::python::enum_<Variable::Type>("VariableType")
+  pybind11::enum_<Variable::Type>(m, "VariableType")
       .value("Scalar", Variable::SCALAR)
       .value("SCALAR", Variable::SCALAR)
       .value("Vector", Variable::VECTOR)
@@ -97,27 +95,20 @@ void declareVariable() {
       .value("ARRAY", Variable::ARRAY)
       .value("Array", Variable::ARRAY);
   // wrapping the Variable class
-  boost::python::class_<Variable>("Variable")
+  pybind11::class_<Variable>(m, "Variable")
       .def_readonly("name", &Variable::name, "the name of the variable")
-      .add_property("type", &Variable::type, "the type of the variable.")
+      .def_readonly("type", &Variable::type, "the type of the variable.")
       .def("getType", Variable_getType,
            "the type of the variable. "
            "Possible values are `Scalar`, `Vector`, `Stensor`, `Tensor`");
-  // wrapping std::vector<Variable>
-  mgis::python::initializeVectorConverter<std::vector<Variable>>();
-  //
-  mgis::python::initializePairConverter<Variable, Variable>();
-  // wrapping std::vector<std::pair<Variable,Variable>>
-  mgis::python::initializeVectorConverter<
-      std::vector<std::pair<Variable, Variable>>>();
   // free functions
-  boost::python::def("getVariable", getVariableByString,
-                     boost::python::return_internal_reference<>());
-  boost::python::def("getVariableSize", &mgis::behaviour::getVariableSize);
-  boost::python::def("getVariableSize", getVariableSizeByString);
-  boost::python::def("getArraySize", &mgis::behaviour::getArraySize);
-  boost::python::def("getVariableOffset", getVariableOffsetByString);
-  boost::python::def("getVariableTypeSymbolicRepresentation",
-                     &mgis::behaviour::getVariableTypeSymbolicRepresentation);
+  m.def("getVariable", getVariableByString,
+        pybind11::return_value_policy::reference);
+  m.def("getVariableSize", &mgis::behaviour::getVariableSize);
+  m.def("getVariableSize", getVariableSizeByString);
+  m.def("getArraySize", &mgis::behaviour::getArraySize);
+  m.def("getVariableOffset", getVariableOffsetByString);
+  m.def("getVariableTypeSymbolicRepresentation",
+        &mgis::behaviour::getVariableTypeSymbolicRepresentation);
 
 }  // end of declareVariable

@@ -12,13 +12,14 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <boost/python/class.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MGIS/Behaviour/BehaviourDataView.hxx"
 
-void declareBehaviourDataView();
+void declareBehaviourDataView(pybind11::module_&);
 
-void declareBehaviourDataView() {
+void declareBehaviourDataView(pybind11::module_& m) {
   using mgis::behaviour::BehaviourDataView;
   // exporting the BehaviourData class
-  boost::python::class_<BehaviourDataView>("BehaviourDataView");
+  pybind11::class_<BehaviourDataView>(m, "BehaviourDataView");
 }  // end of declareBehaviourData

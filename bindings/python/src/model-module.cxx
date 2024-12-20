@@ -12,9 +12,9 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <boost/python/module.hpp>
+#include <pybind11/pybind11.h>
 
 // forward declaration
-void declareModel();
+void declareModel(pybind11::module_&);
 
-BOOST_PYTHON_MODULE(model) { declareModel(); }  // end of module model
+PYBIND11_MODULE(model, m) { declareModel(m); }  // end of module model

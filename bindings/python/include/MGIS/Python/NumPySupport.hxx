@@ -18,28 +18,26 @@
 #include <span>
 #include <vector>
 #include <variant>
-#include <boost/python/object.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
 #include "MGIS/Config.hxx"
 
 namespace mgis::python {
 
-  //! \brief initialize NumPy
-  void initializeNumPy();
-
   /*!
    * \brief create a 1D-ndarray object from a vector.
    * The ndarray does not own the data, the lifetime of which is handled by
    * the vector.
    * \param[in] v: values
    */
-  boost::python::object wrapInNumPyArray(std::span<double>&);
+  pybind11::array_t<double> wrapInNumPyArray(std::span<double>&);
   /*!
    * \brief create a 1D-ndarray object from a vector.
    * The ndarray does not own the data, the lifetime of which is handled by
    * the vector.
    * \param[in] v: values
    */
-  boost::python::object wrapInNumPyArray(
+  pybind11::array_t<double> wrapInNumPyArray(
       std::variant<std::span<double>, std::vector<double>>&);
   /*!
    * \brief create a 1D-ndarray object from a vector.
@@ -47,7 +45,7 @@ namespace mgis::python {
    * the vector.
    * \param[in] v: vector holding the values
    */
-  boost::python::object wrapInNumPyArray(std::vector<double>&);
+  pybind11::array_t<double> wrapInNumPyArray(std::vector<double>&);
   /*!
    * \brief create a 2D-ndarray object from a vector.
    * The ndarray does not own the data, the lifetime of which is handled by
@@ -55,8 +53,8 @@ namespace mgis::python {
    * \param[in] v: values
    * \param[in] nc: number of columns
    */
-  boost::python::object wrapInNumPyArray(std::span<double>&,
-                                         const mgis::size_type);
+  pybind11::array_t<double> wrapInNumPyArray(std::span<double>&,
+                                             const mgis::size_type);
   /*!
    * \brief create a 2D-ndarray object from a vector.
    * The ndarray does not own the data, the lifetime of which is handled by
@@ -64,7 +62,7 @@ namespace mgis::python {
    * \param[in] v: values
    * \param[in] nc: number of columns
    */
-  boost::python::object wrapInNumPyArray(
+  pybind11::array_t<double> wrapInNumPyArray(
       std::variant<std::span<double>, std::vector<double>>&,
       const mgis::size_type);
   /*!
@@ -74,8 +72,8 @@ namespace mgis::python {
    * \param[in] v: vector holding the values
    * \param[in] nc: number of columns
    */
-  boost::python::object wrapInNumPyArray(std::vector<double>&,
-                                         const mgis::size_type);
+  pybind11::array_t<double> wrapInNumPyArray(std::vector<double>&,
+                                             const mgis::size_type);
   /*!
    * \brief create a 3D-ndarray object from a vector.
    * The ndarray does not own the data, the lifetime of which is handled by
@@ -84,9 +82,9 @@ namespace mgis::python {
    * \param[in] nl: number of line
    * \param[in] nc: number of columns
    */
-  boost::python::object wrapInNumPyArray(std::span<double>&,
-                                         const mgis::size_type,
-                                         const mgis::size_type);
+  pybind11::array_t<double> wrapInNumPyArray(std::span<double>&,
+                                             const mgis::size_type,
+                                             const mgis::size_type);
   /*!
    * \brief create a 3D-ndarray object from a vector.
    * The ndarray does not own the data, the lifetime of which is handled by
@@ -95,7 +93,7 @@ namespace mgis::python {
    * \param[in] nl: number of line
    * \param[in] nc: number of columns
    */
-  boost::python::object wrapInNumPyArray(
+  pybind11::array_t<double> wrapInNumPyArray(
       std::variant<std::span<double>, std::vector<double>>&,
       const mgis::size_type,
       const mgis::size_type);
@@ -107,11 +105,11 @@ namespace mgis::python {
    * \param[in] nl: number of line
    * \param[in] nc: number of columns
    */
-  boost::python::object wrapInNumPyArray(std::vector<double>&,
-                                         const mgis::size_type,
-                                         const mgis::size_type);
+  pybind11::array_t<double> wrapInNumPyArray(std::vector<double>&,
+                                             const mgis::size_type,
+                                             const mgis::size_type);
 
-  std::span<mgis::real> mgis_convert_to_span(const boost::python::object&);
+  std::span<mgis::real> mgis_convert_to_span(const pybind11::array_t<double>&);
 
 }  // end of namespace mgis::python
 

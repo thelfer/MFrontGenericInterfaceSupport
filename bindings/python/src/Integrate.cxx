@@ -12,17 +12,15 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <boost/python/def.hpp>
-#include <boost/python/enum.hpp>
-#include <boost/python/class.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MGIS/ThreadPool.hxx"
 #include "MGIS/Behaviour/BehaviourData.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
 #include "MGIS/Python/NumPySupport.hxx"
-#include "MGIS/Python/VectorConverter.hxx"
 
-void declareIntegrate();
+void declareIntegrate(pybind11::module_&);
 
 static int integrateBehaviourData1(mgis::behaviour::BehaviourData& d,
                                    const mgis::behaviour::Behaviour& b) {
@@ -42,7 +40,7 @@ static int BehaviourDataView_executeInitializeFunction2(
     mgis::behaviour::BehaviourDataView& v,
     const mgis::behaviour::Behaviour& b,
     const std::string& n,
-    boost::python::object i) {
+    pybind11::object i) {
   const auto inputs = mgis::python::mgis_convert_to_span(i);
   return mgis::behaviour::executeInitializeFunction(v, b, n, inputs);
 }
@@ -74,7 +72,7 @@ static mgis::behaviour::BehaviourIntegrationResult
 MaterialDataManager_executeInitializeFunction3(
     mgis::behaviour::MaterialDataManager& m,
     const std::string& n,
-    boost::python::object i) {
+    pybind11::object i) {
   const auto inputs = mgis::python::mgis_convert_to_span(i);
   return mgis::behaviour::executeInitializeFunction(m, n, inputs);
 }
@@ -83,7 +81,7 @@ static mgis::behaviour::BehaviourIntegrationResult
 MaterialDataManager_executeInitializeFunction4(
     mgis::behaviour::MaterialDataManager& m,
     const std::string& n,
-    boost::python::object i,
+    pybind11::object i,
     const mgis::size_type b,
     const mgis::size_type e) {
   const auto inputs = mgis::python::mgis_convert_to_span(i);
@@ -95,13 +93,13 @@ MaterialDataManager_executeInitializeFunction5(
     mgis::ThreadPool& t,
     mgis::behaviour::MaterialDataManager& m,
     const std::string& n,
-    boost::python::object i) {
+    pybind11::object i) {
   const auto inputs = mgis::python::mgis_convert_to_span(i);
   return mgis::behaviour::executeInitializeFunction(t, m, n, inputs);
 }
 
 static int BehaviourDataView_executePostProcessing(
-    boost::python::object o,
+    pybind11::object o,
     mgis::behaviour::BehaviourDataView& v,
     const mgis::behaviour::Behaviour& b,
     const std::string& n) {
@@ -111,7 +109,7 @@ static int BehaviourDataView_executePostProcessing(
 
 static mgis::behaviour::BehaviourIntegrationResult
 MaterialDataManager_executePostProcessing(
-    boost::python::object o,
+    pybind11::object o,
     mgis::behaviour::MaterialDataManager& m,
     const std::string& n) {
   const auto output = mgis::python::mgis_convert_to_span(o);
@@ -120,7 +118,7 @@ MaterialDataManager_executePostProcessing(
 
 static mgis::behaviour::BehaviourIntegrationResult
 MaterialDataManager_executePostProcessing2(
-    boost::python::object o,
+    pybind11::object o,
     mgis::behaviour::MaterialDataManager& m,
     const std::string& n,
     const mgis::size_type b,
@@ -131,7 +129,7 @@ MaterialDataManager_executePostProcessing2(
 
 static mgis::behaviour::MultiThreadedBehaviourIntegrationResult
 MaterialDataManager_executePostProcessing3(
-    boost::python::object o,
+    pybind11::object o,
     mgis::ThreadPool& t,
     mgis::behaviour::MaterialDataManager& m,
     const std::string& n) {
@@ -139,10 +137,10 @@ MaterialDataManager_executePostProcessing3(
   return mgis::behaviour::executePostProcessing(output, t, m, n);
 }
 
-void declareIntegrate() {
+void declareIntegrate(pybind11::module_& m) {
   using namespace mgis::behaviour;
 
-  boost::python::enum_<IntegrationType>("IntegrationType")
+  pybind11::enum_<IntegrationType>(m, "IntegrationType")
       .value("PREDICTION_TANGENT_OPERATOR",
              IntegrationType::PREDICTION_TANGENT_OPERATOR)
       .value("PredictionWithTangentOperator",
@@ -176,62 +174,57 @@ void declareIntegrate() {
       .value("IntegrationWithConsistentTangentOperator",
              IntegrationType::INTEGRATION_CONSISTENT_TANGENT_OPERATOR);
 
-  boost::python::class_<BehaviourIntegrationOptions>(
-      "BehaviourIntegrationOptions")
-      .add_property("integration_type",
+  pybind11::class_<BehaviourIntegrationOptions>(m,
+                                                "BehaviourIntegrationOptions")
+      .def_readonly("integration_type",
                     &BehaviourIntegrationOptions::integration_type)
-      .add_property("compute_speed_of_sound",
+      .def_readonly("compute_speed_of_sound",
                     &BehaviourIntegrationOptions::compute_speed_of_sound);
 
-  boost::python::class_<BehaviourIntegrationResult>(
-      "BehaviourIntegrationResult")
-      .add_property("exit_status", &BehaviourIntegrationResult::exit_status,
+  pybind11::class_<BehaviourIntegrationResult>(m, "BehaviourIntegrationResult")
+      .def_readonly("exit_status", &BehaviourIntegrationResult::exit_status,
                     "The returned value has the following meaning:\n"
                     "- -1: integration failed for at least one Gauss point\n"
                     "-  0: all integrations succeeded but results are\n "
                     "      unreliable for at least one Gauss point\n"
                     "-  1: integration succeeded and results are reliable.")
-      .add_property("time_step_increase_factor",
+      .def_readonly("time_step_increase_factor",
                     &BehaviourIntegrationResult::time_step_increase_factor)
-      .add_property("n", &BehaviourIntegrationResult::n,
+      .def_readonly("n", &BehaviourIntegrationResult::n,
                     "number of the integration point that failed\n"
                     "or number of the last integration point \n"
                     "that reported unreliable results")
-      .add_property("error_message",
+      .def_readonly("error_message",
                     &BehaviourIntegrationResult::error_message);
 
-  // wrapping std::vector<BehaviourIntegrationResult>
-  mgis::python::initializeVectorConverter<
-      std::vector<BehaviourIntegrationResult>>();
-
-  boost::python::class_<MultiThreadedBehaviourIntegrationResult>(
-      "MultiThreadedBehaviourIntegrationResult")
-      .add_property("exit_status",
+  pybind11::class_<MultiThreadedBehaviourIntegrationResult>(
+      m, "MultiThreadedBehaviourIntegrationResult")
+      .def_readonly("exit_status",
                     &MultiThreadedBehaviourIntegrationResult::exit_status,
                     "The returned value has the following meaning:\n"
                     "- -1: integration failed for at least one Gauss point\n"
                     "-  0: all integrations succeeded but results are\n "
                     "      unreliable for at least one Gauss point\n"
                     "-  1: integration succeeded and results are reliable.")
-      .add_property("results",
+      .def_readonly("results",
                     &MultiThreadedBehaviourIntegrationResult::results);
 
-  boost::python::def("executeInitializeFunction",
-                     BehaviourDataView_executeInitializeFunction);
-  boost::python::def("executeInitializeFunction",
-                     BehaviourDataView_executeInitializeFunction2);
-  boost::python::def("executeInitializeFunction",
-                     MaterialDataManager_executeInitializeFunction);
-  boost::python::def("executeInitializeFunction",
-                     MaterialDataManager_executeInitializeFunction1);
-  boost::python::def("executeInitializeFunction",
-                     MaterialDataManager_executeInitializeFunction2);
-  boost::python::def("executeInitializeFunction",
-                     MaterialDataManager_executeInitializeFunction3);
-  boost::python::def("executeInitializeFunction",
-                     MaterialDataManager_executeInitializeFunction4);
-  boost::python::def("executeInitializeFunction",
-                     MaterialDataManager_executeInitializeFunction5);
+  m.def("executeInitializeFunction",
+        BehaviourDataView_executeInitializeFunction);
+  m.def("executeInitializeFunction",
+        BehaviourDataView_executeInitializeFunction2);
+  m.def("executeInitializeFunction",
+        MaterialDataManager_executeInitializeFunction);
+  m.def("executeInitializeFunction",
+        MaterialDataManager_executeInitializeFunction1);
+  m.def("executeInitializeFunction",
+        MaterialDataManager_executeInitializeFunction2);
+  m.def("executeInitializeFunction",
+        MaterialDataManager_executeInitializeFunction3);
+  m.def("executeInitializeFunction",
+        MaterialDataManager_executeInitializeFunction4);
+  m.def("executeInitializeFunction",
+        MaterialDataManager_executeInitializeFunction5);
 
   int (*integrate_ptr1)(BehaviourDataView&, const Behaviour&) = integrate;
   int (*integrate_ptr2)(MaterialDataManager&, const IntegrationType,
@@ -247,20 +240,15 @@ void declareIntegrate() {
       mgis::ThreadPool&, MaterialDataManager&,
       const BehaviourIntegrationOptions&, const mgis::real) = integrate;
 
-  boost::python::def("integrate", &integrateBehaviourData1);
-  boost::python::def("integrate", integrate_ptr1);
-  boost::python::def("integrate", integrate_ptr2);
-  boost::python::def("integrate", integrate_ptr3);
-  boost::python::def("integrate", integrate_ptr4);
-  boost::python::def("integrate", integrate_ptr5);
-
-  boost::python::def("executePostProcessing",
-                     BehaviourDataView_executePostProcessing);
-  boost::python::def("executePostProcessing",
-                     MaterialDataManager_executePostProcessing);
-  boost::python::def("executePostProcessing",
-                     MaterialDataManager_executePostProcessing2);
-  boost::python::def("executePostProcessing",
-                     MaterialDataManager_executePostProcessing3);
+  m.def("integrate", &integrateBehaviourData1);
+  m.def("integrate", integrate_ptr1);
+  m.def("integrate", integrate_ptr2);
+  m.def("integrate", integrate_ptr3);
+  m.def("integrate", integrate_ptr4);
+  m.def("integrate", integrate_ptr5);
+  m.def("executePostProcessing", BehaviourDataView_executePostProcessing);
+  m.def("executePostProcessing", MaterialDataManager_executePostProcessing);
+  m.def("executePostProcessing", MaterialDataManager_executePostProcessing2);
+  m.def("executePostProcessing", MaterialDataManager_executePostProcessing3);
 
 }  // end of declareIntegrate

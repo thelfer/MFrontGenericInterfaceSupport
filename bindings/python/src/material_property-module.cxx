@@ -12,11 +12,10 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <boost/python/module.hpp>
+#include <pybind11/pybind11.h>
 
-// forward declarations
-void declareMaterialProperty();
+void declareMaterialProperty(pybind11::module_&);
 
-BOOST_PYTHON_MODULE(material_property) {
-  declareMaterialProperty();
+PYBIND11_MODULE(material_property, m) {
+  declareMaterialProperty(m);
 }  // end of module material_property

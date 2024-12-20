@@ -12,9 +12,10 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <boost/python/module.hpp>
+#include <pybind11/pybind11.h>
 
-// forward declarations
-void declareThreadPool();
+void declareThreadPool(pybind11::module_&);
 
-BOOST_PYTHON_MODULE(_mgis) { declareThreadPool(); }  // end of module behaviour
+PYBIND11_MODULE(_mgis, m) {
+  declareThreadPool(m);
+}  // end of module behaviour

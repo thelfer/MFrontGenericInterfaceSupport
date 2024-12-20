@@ -12,17 +12,17 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <boost/python/enum.hpp>
-#include <boost/python/def.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MGIS/Python/NumPySupport.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 #include "MGIS/Behaviour/FiniteStrainSupport.hxx"
 
 // forward declaration
-void declareFiniteStrainSupport();
+void declareFiniteStrainSupport(pybind11::module_&);
 
 static void py_convertFiniteStrainStress(
-    boost::python::object o,
+    pybind11::object o,
     const mgis::behaviour::MaterialDataManager& m,
     const mgis::behaviour::FiniteStrainStress t) {
   auto s = mgis::python::mgis_convert_to_span(o);
@@ -30,24 +30,22 @@ static void py_convertFiniteStrainStress(
 }  // end of py_py_convertFiniteStrainStress
 
 static void py_convertFiniteStrainTangentOperator(
-    boost::python::object o,
+    pybind11::object o,
     const mgis::behaviour::MaterialDataManager& m,
     const mgis::behaviour::FiniteStrainTangentOperator t) {
   auto K = mgis::python::mgis_convert_to_span(o);
   mgis::behaviour::convertFiniteStrainTangentOperator(K, m, t);
 }  // end of py_py_convertFiniteStrainTangentOperator
 
-void declareFiniteStrainSupport() {
+void declareFiniteStrainSupport(pybind11::module_& m) {
   using namespace mgis::behaviour;
-  boost::python::enum_<FiniteStrainStress>("FiniteStrainStress")
+  pybind11::enum_<FiniteStrainStress>(m, "FiniteStrainStress")
       .value("PK1", FiniteStrainStress::PK1)
       .value("FirstPiolaKirchhoffStress", FiniteStrainStress::PK1);
-  boost::python::enum_<FiniteStrainTangentOperator>(
-      "FiniteStrainTangentOperator")
+  pybind11::enum_<FiniteStrainTangentOperator>(m, "FiniteStrainTangentOperator")
       .value("DPK1_DF", FiniteStrainTangentOperator::DPK1_DF);
 
-  def("convertFiniteStrainStress", py_convertFiniteStrainStress);
-  def("convertFiniteStrainTangentOperator",
-      py_convertFiniteStrainTangentOperator);
-
+  m.def("convertFiniteStrainStress", py_convertFiniteStrainStress);
+  m.def("convertFiniteStrainTangentOperator",
+        py_convertFiniteStrainTangentOperator);
 }  // end of declareFiniteStrainSupport

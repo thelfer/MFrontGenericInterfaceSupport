@@ -12,33 +12,31 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <boost/python/module.hpp>
-#include "MGIS/Python/NumPySupport.hxx"
+#include <pybind11/pybind11.h>
 
 // forward declarations
-void declareHypothesis();
-void declareVariable();
-void declareBehaviour();
-void declareBehaviourDescription();
-void declareState();
-void declareBehaviourData();
-void declareBehaviourDataView();
-void declareMaterialDataManager();
-void declareMaterialStateManager();
-void declareIntegrate();
-void declareFiniteStrainSupport();
+void declareHypothesis(pybind11::module_&);
+void declareVariable(pybind11::module_&);
+void declareBehaviour(pybind11::module_&);
+void declareBehaviourDescription(pybind11::module_&);
+void declareState(pybind11::module_&);
+void declareBehaviourData(pybind11::module_&);
+void declareBehaviourDataView(pybind11::module_&);
+void declareMaterialDataManager(pybind11::module_&);
+void declareMaterialStateManager(pybind11::module_&);
+void declareIntegrate(pybind11::module_&);
+void declareFiniteStrainSupport(pybind11::module_&);
 
-BOOST_PYTHON_MODULE(behaviour) {
-  mgis::python::initializeNumPy();
-  declareHypothesis();
-  declareVariable();
-  declareBehaviourDescription();
-  declareBehaviour();
-  declareState();
-  declareBehaviourData();
-  declareBehaviourDataView();
-  declareMaterialDataManager();
-  declareMaterialStateManager();
-  declareIntegrate();
-  declareFiniteStrainSupport();
+PYBIND11_MODULE(behaviour, m) {
+  declareHypothesis(m);
+  declareVariable(m);
+  declareBehaviourDescription(m);
+  declareBehaviour(m);
+  declareState(m);
+  declareBehaviourData(m);
+  declareBehaviourDataView(m);
+  declareMaterialDataManager(m);
+  declareMaterialStateManager(m);
+  declareIntegrate(m);
+  declareFiniteStrainSupport(m);
 }  // end of module behaviour

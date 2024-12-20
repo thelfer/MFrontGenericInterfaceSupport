@@ -12,10 +12,10 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <boost/python/class.hpp>
+#include <pybind11/pybind11.h>
 #include "MGIS/ThreadPool.hxx"
 
-void declareThreadPool() {
-  boost::python::class_<mgis::ThreadPool, boost::noncopyable>(
-      "ThreadPool", boost::python::init<mgis::size_type>());
+void declareThreadPool(pybind11::module_& m) {
+  pybind11::class_<mgis::ThreadPool>(m, "ThreadPool")
+      .def(pybind11::init<mgis::size_type>());
 }  // end of declareThreadPool

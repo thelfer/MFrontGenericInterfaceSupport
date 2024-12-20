@@ -1,75 +1,23 @@
-function(mgis_python_module name output_name)
-  if(${ARGC} LESS 3)
+function(mgis_python_module fullname name)
+  if(${ARGC} LESS 1)
     message(FATAL_ERROR "mgis_python_module: no source specified")
-  endif(${ARGC} LESS 3)
-  set(module "py_${name}")
-  add_library(${module} MODULE ${ARGN})
-  if(enable-broken-boost-python-module-visibility-handling)
-    target_compile_definitions(${module}
-      PRIVATE BOOST_PYTHON_USE_GCC_SYMBOL_VISIBILITY)
-  endif(enable-broken-boost-python-module-visibility-handling)
-  if(WIN32)
-    set_target_properties(${module} PROPERTIES
-      COMPILE_FLAGS "-DHAVE_ROUND")
-    set_target_properties(${module} PROPERTIES SUFFIX ".pyd")
-  elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set_target_properties(${module} PROPERTIES SUFFIX ".so")
-  endif(WIN32)
-  set_target_properties(${module} PROPERTIES PREFIX "")
-  set_target_properties(${module} PROPERTIES OUTPUT_NAME "${output_name}")
-  # include directories
-  target_include_directories(${module}
-    SYSTEM
-    PRIVATE "${PROJECT_SOURCE_DIR}/bindings/python/include"
-    PRIVATE "${Boost_INCLUDE_DIRS}"
-    PRIVATE "${PYTHON_INCLUDE_DIRS}"
-    PRIVATE "${PYTHON_NUMPY_INCLUDE_DIR}")
-  if(NUMPY_INCLUDE_DIRS) 
-    target_include_directories(${module}
-      SYSTEM PRIVATE "${NUMPY_INCLUDE_DIRS}")
-  endif(NUMPY_INCLUDE_DIRS)
-  # Link flags for python modules.
-  #
-  # I removed links to the python library on MacOS system.
-  # Although linking with the python library do work
-  # with homebrew packages, it leads to a segfault
-  # when building `mgis` with `conda` packages.
-  # It seems that one shall never link modules with
-  # the python library (according to the `conda`
-  # community) but I need to figure out how things 
-  # work in `Windows` before doing so
-  if(MGIS_USES_CONAN)
-    if(APPLE)
-      target_link_libraries(${module}
-        PRIVATE
-        MFrontGenericInterface
-        ${CONAN_LIBS} ${PYTHON_LIBRARIES})
-    else(APPLE)
-      target_link_libraries(${module}
-        PRIVATE
-        MFrontGenericInterface ${CONAN_LIBS})
-	endif(APPLE)
-  else(MGIS_USES_CONAN)
-    if(disable_python_library_linking)
-      target_link_libraries(${module}
-        PRIVATE
-        MFrontGenericInterface
-        ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY})
-      if(APPLE)
-        target_link_options(${module}
-          PRIVATE "-undefined" "dynamic_lookup")
-      endif(APPLE)
-    else(disable_python_library_linking)
-      target_link_libraries(${module}
-        PRIVATE
-        MFrontGenericInterface
-        ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
-    endif(disable_python_library_linking) 
-  endif(MGIS_USES_CONAN)
-  # installation
-  install(TARGETS ${module}
-    DESTINATION ${MGIS_PYTHON_MODULES_INSTALL_DIRECTORY}
-    COMPONENT python_bindings)
+  endif(${ARGC} LESS 1)
+  add_library(py_${fullname} MODULE ${ARGN})
+  target_include_directories(py_${fullname} PRIVATE
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/bindings/python/include>)
+  target_link_libraries(py_${fullname} PRIVATE
+    MFrontGenericInterface
+    pybind11::module pybind11::lto pybind11::windows_extras)
+  pybind11_extension(py_${fullname})
+  if(NOT MSVC AND NOT ${CMAKE_BUILD_TYPE} MATCHES Debug|RelWithDebInfo)
+    # Strip unnecessary sections of the binary on Linux/macOS
+    pybind11_strip(py_${fullname})
+  endif()
+  set_target_properties(py_${fullname} PROPERTIES PREFIX "")
+  set_target_properties(py_${fullname} PROPERTIES OUTPUT_NAME ${name})
+  set_target_properties(py_${fullname} PROPERTIES
+    CXX_VISIBILITY_PRESET "hidden"
+    CUDA_VISIBILITY_PRESET "hidden")
 endfunction(mgis_python_module)
 
 mgis_python_module(mgis _mgis
@@ -78,8 +26,7 @@ mgis_python_module(mgis _mgis
 
 mgis_python_module(mgis_material_property material_property
  material_property-module.cxx
- MaterialProperty.cxx
-)
+ MaterialProperty.cxx)
 
 mgis_python_module(mgis_behaviour behaviour
  behaviour-module.cxx

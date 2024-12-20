@@ -1,5 +1,5 @@
 ---
-title: MFrontGenericInterfaceSupport Version 3.0
+title: MFrontGenericInterfaceSupport Version 3.1
 author: Thomas Helfer
 date: 2024
 lang: en-EN
@@ -18,14 +18,9 @@ eqnPrefixTemplate: "($$i$$)"
 bibliography: bibliography.bib
 ---
 
-Version 3.0.0 has been released on December, 17th 2024. The version has
-been release with Version 5.0.0 of the `TFEL` project.
+This version is meant to be used with `TFEL` Version 5.1.
 
-# Known incompatibilites
+# Python bindings
 
-The class `mgis::span` has been removed in favor of its standard counterpart.
-
-# New features
-
-## Port to `C++-20`
-
+Python bindings are now generated using the
+[`pybind11`](https://github.com/pybind/pybind11) library.

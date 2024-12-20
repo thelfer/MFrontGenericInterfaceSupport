@@ -12,38 +12,38 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <boost/python/def.hpp>
-#include <boost/python/class.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MGIS/Python/NumPySupport.hxx"
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 
-void declareMaterialDataManager();
+void declareMaterialDataManager(pybind11::module_&);
 
 static void MaterialDataManagerInitializer_bindTangentOperator(
     mgis::behaviour::MaterialDataManagerInitializer& i,
-    boost::python::object K) {
+    pybind11::object K) {
   i.K = mgis::python::mgis_convert_to_span(K);
 }  // end of MaterialDataManagerInitializer_bindTangentOperator
 
 static void MaterialDataManagerInitializer_bindSpeedOfSound(
     mgis::behaviour::MaterialDataManagerInitializer& i,
-    boost::python::object vs) {
+    pybind11::object vs) {
   i.speed_of_sound = mgis::python::mgis_convert_to_span(vs);
 }  // end of MaterialDataManagerInitializer_bindSpeedOfSound
 
 static void MaterialDataManager_useExternalArrayOfTangentOperatorBlocks(
-    mgis::behaviour::MaterialDataManager& m, boost::python::object K) {
+    mgis::behaviour::MaterialDataManager& m, pybind11::object K) {
   m.useExternalArrayOfTangentOperatorBlocks(
       mgis::python::mgis_convert_to_span(K));
 }  // end of MaterialDataManager_useExternalArrayOfTangentOperatorBlocks
 
 static void MaterialDataManager_useExternalArrayOfSpeedOfSounds(
-    mgis::behaviour::MaterialDataManager& m, boost::python::object vs) {
+    mgis::behaviour::MaterialDataManager& m, pybind11::object vs) {
   m.useExternalArrayOfSpeedOfSounds(mgis::python::mgis_convert_to_span(vs));
 }  // end of MaterialDataManager_useExternalArrayOfSpeedOfSounds
 
-static boost::python::object MaterialDataManager_getK(
+static pybind11::object MaterialDataManager_getK(
     mgis::behaviour::MaterialDataManager& d) {
   if (d.b.to_blocks.size() == 1u) {
     const auto nl =
@@ -56,7 +56,7 @@ static boost::python::object MaterialDataManager_getK(
   return mgis::python::wrapInNumPyArray(d.K, s);
 }  // end of MaterialDataManager_getK
 
-void declareMaterialDataManager() {
+void declareMaterialDataManager(pybind11::module_&m) {
   using mgis::size_type;
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::MaterialDataManager;
@@ -65,21 +65,20 @@ void declareMaterialDataManager() {
   void (*ptr_update)(MaterialDataManager&) = &mgis::behaviour::update;
   void (*ptr_revert)(MaterialDataManager&) = &mgis::behaviour::revert;
   // exporting the MaterialDataManager class
-  boost::python::class_<MaterialDataManagerInitializer>(
-      "MaterialDataManagerInitializer")
-      .add_property("s0", &MaterialDataManagerInitializer::s0)
-      .add_property("s1", &MaterialDataManagerInitializer::s1)
+  pybind11::class_<MaterialDataManagerInitializer>(
+      m, "MaterialDataManagerInitializer")
+      .def_readonly("s0", &MaterialDataManagerInitializer::s0)
+      .def_readonly("s1", &MaterialDataManagerInitializer::s1)
       .def("bindTangentOperator",
            &MaterialDataManagerInitializer_bindTangentOperator,
            "use the given array to store the tangent operator blocks")
       .def("bindSpeedOfSound", &MaterialDataManagerInitializer_bindSpeedOfSound,
            "use the given array to store the speed of sounds");
   // exporting the MaterialDataManager class
-  boost::python::class_<MaterialDataManager, boost::noncopyable>(
-      "MaterialDataManager",
-      boost::python::init<const Behaviour&, const size_type>())
-      .def(boost::python::init<const Behaviour&, const size_type,
-                               const MaterialDataManagerInitializer&>())
+  pybind11::class_<MaterialDataManager>(m, "MaterialDataManager")
+      .def(pybind11::init<const Behaviour&, const size_type>())
+      .def(pybind11::init<const Behaviour&, const size_type,
+                          const MaterialDataManagerInitializer&>())
       .def("setThreadSafe", &MaterialDataManager::setThreadSafe,
            "specify if various operations performed by the MaterialDataManager "
            "(memory allocations) shall be protected by a mutex")
@@ -104,13 +103,13 @@ void declareMaterialDataManager() {
            "release the array of speed of sounds")
       .def_readonly("n", &MaterialDataManager::n)
       .def_readonly("number_of_integration_points", &MaterialDataManager::n)
-      .add_property("s0", &MaterialDataManager::s0)
-      .add_property("s1", &MaterialDataManager::s1)
-      .add_property("K", &MaterialDataManager_getK)
+      .def_readonly("s0", &MaterialDataManager::s0)
+      .def_readonly("s1", &MaterialDataManager::s1)
+      .def_property_readonly("K", &MaterialDataManager_getK)
       .def("update", ptr_update)
       .def("revert", ptr_revert);
   // free functions
-  boost::python::def("update", ptr_update);
-  boost::python::def("revert", ptr_revert);
+  m.def("update", ptr_update);
+  m.def("revert", ptr_revert);
 
 }  // end of declareMaterialDataManager

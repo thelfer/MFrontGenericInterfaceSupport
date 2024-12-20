@@ -12,15 +12,15 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <boost/python/enum.hpp>
+#include <pybind11/pybind11.h>
 #include "MGIS/Behaviour/Hypothesis.hxx"
 
 // forward declaration
-void declareHypothesis();
+void declareHypothesis(pybind11::module_&);
 
-void declareHypothesis() {
+void declareHypothesis(pybind11::module_& m) {
   using mgis::behaviour::Hypothesis;
-  boost::python::enum_<mgis::behaviour::Hypothesis>("Hypothesis")
+  pybind11::enum_<mgis::behaviour::Hypothesis>(m, "Hypothesis")
       .value("AXISYMMETRICALGENERALISEDPLANESTRAIN",
              Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)
       .value("AxisymmetricalGeneralisedPlaneStrain",
