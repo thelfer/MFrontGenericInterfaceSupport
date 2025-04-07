@@ -13,16 +13,26 @@
  */
 
 #include <numpy/ndarrayobject.h>
-#include <boost/python/numpy.hpp>
+// #include <boost/python/numpy.hpp>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Python/NumPySupport.hxx"
 
 namespace mgis::python {
 
-  void initializeNumPy() { 
-    Py_Initialize();
-    boost::python::numpy::initialize();
- }  // end of initializeNumPy
+#if PY_MAJOR_VERSION == 2
+  static void wrapInitializeNumPy() { import_array(); }
+#else
+  static void* wrapInitializeNumPy() {
+    import_array();
+    return nullptr;
+  }
+#endif
+
+  void initializeNumPy() { wrapInitializeNumPy(); }  // end of initializeNumPy
+
+//  void initializeNumPy() { wrapInitializeNumPy(); }  // end of initializeNumPy  void initializeNumPy() { 
+//    boost::python::numpy::initialize();
+// }  // end of initializeNumPy
 
   boost::python::object wrapInNumPyArray(std::span<double>& v) {
     npy_intp dims[1] = {static_cast<npy_intp>(v.size())};

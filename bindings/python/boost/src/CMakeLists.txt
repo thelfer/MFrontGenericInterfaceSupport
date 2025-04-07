@@ -20,7 +20,7 @@ function(mgis_python_module name output_name)
   # include directories
   target_include_directories(${module}
     SYSTEM
-    PRIVATE "${PROJECT_SOURCE_DIR}/bindings/python/include"
+    PRIVATE "${PROJECT_SOURCE_DIR}/bindings/python/boost/include"
     PRIVATE "${Boost_INCLUDE_DIRS}")
   # Link flags for python modules.
   #
@@ -37,7 +37,7 @@ function(mgis_python_module name output_name)
       target_link_libraries(${module}
         PRIVATE
         MFrontGenericInterface
-        ${CONAN_LIBS} Python::NumPy Python::Module)
+        ${CONAN_LIBS} Python::Python Python::NumPy)
     else(APPLE)
       target_link_libraries(${module}
         PRIVATE
@@ -57,7 +57,8 @@ function(mgis_python_module name output_name)
       target_link_libraries(${module}
         PRIVATE
         MFrontGenericInterface
-        ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY} Python::NumPy Python::Module)
+        ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY}
+	Python::Python Python::NumPy)
     endif(disable_python_library_linking) 
   endif(MGIS_USES_CONAN)
   # installation
