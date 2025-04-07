@@ -1,0 +1,5 @@
+add_subdirectory(src)
+add_subdirectory(mgis)
+if(MGIS_HAVE_TFEL)
+  add_subdirectory(tests)
+endif(MGIS_HAVE_TFEL)
