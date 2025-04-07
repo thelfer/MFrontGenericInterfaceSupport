@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
 string(CONCAT MFrontGenericInterfaceSupportDescription
 	"The MFrontGenericInterfaceSupport project provides "
 	"useful feature for solvers' developpers to "
@@ -40,13 +40,13 @@ option(enable-broken-boost-python-module-visibility-handling
   "workaround a bug in boost python which occurs on FreeBSD+clang. See https://github.com/boostorg/python/issues/173 for details" OFF)
 
 if(enable-python-bindings)
-  find_package(PythonLibs REQUIRED)
+  find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
   set(HAVE_PYTHON ON)
-  get_filename_component(PYTHON_LIBRARY_PATH ${PYTHON_LIBRARIES} PATH)
-  get_filename_component(PYTHON_LIBRARY_FULL ${PYTHON_LIBRARIES} NAME)
+  get_filename_component(PYTHON_LIBRARY_PATH ${Python_LIBRARIES} PATH)
+  get_filename_component(PYTHON_LIBRARY_FULL ${Python_LIBRARIES} NAME)
   string(REGEX REPLACE "lib(.+)\\.(.+)$" "\\1" PYTHON_LIBRARY ${PYTHON_LIBRARY_FULL})
-  message(STATUS "found python          ${PYTHONLIBS_VERSION_STRING}")
-  message(STATUS "python include path   ${PYTHON_INCLUDE_DIRS}")
+  message(STATUS "found python          ${Python_VERSION}")
+  message(STATUS "python include path   ${Python_INCLUDE_DIRS}")
   message(STATUS "python libraries path ${PYTHON_LIBRARY_PATH}")
   message(STATUS "python library        ${PYTHON_LIBRARY}")
   string(REGEX REPLACE "[-a-z+]+.*$" "" PYTHONLIBS_VERSION_CLEANED "${PYTHONLIBS_VERSION_STRING}")
@@ -148,9 +148,13 @@ endif(enable-fenics-bindings)
 # julia-bindings (placed before compiler detection)
 option(enable-julia-bindings "enable julia bindings support" OFF)
 if(enable-julia-bindings)
+  # The current version (0.16.0) of CxxWrap overrides the
+  # CMAKE_CXX_STANDARD variables, so we reset it after
+  # calling find_package to the current version
+  set(_CMAKE_CXX_STANDARD "${CMAKE_CXX_STANDARD}")
   find_package(JlCxx REQUIRED)
+  set(CMAKE_CXX_STANDARD "${_CMAKE_CXX_STANDARD}")
 endif(enable-julia-bindings)
-
 
 # summary
 

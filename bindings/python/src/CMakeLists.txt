@@ -72,6 +72,8 @@ function(mgis_python_module name output_name)
     COMPONENT python_bindings)
 endfunction(mgis_python_module)
 
+message(FATAL_ERROR "Boost_NUMPY_LIBRARY: ${Boost_NUMPY_LIBRARY}" )
+
 mgis_python_module(mgis _mgis
  mgis-module.cxx
  ThreadPool.cxx)
