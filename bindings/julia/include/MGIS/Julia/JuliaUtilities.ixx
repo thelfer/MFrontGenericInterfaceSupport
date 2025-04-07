@@ -26,7 +26,7 @@ namespace mgis {
     void expose_std_vector(jlcxx::Module& m, const char* const n) {
       m.add_type<std::vector<T>>(n)
           .method("length",
-                  [](const std::vector<T>& v) -> std::int64_t {
+                  [](const std::vector<T>& v) noexcept -> std::int64_t {
                     return static_cast<std::int64_t>(v.size());
                   })
           .method("setindex!",

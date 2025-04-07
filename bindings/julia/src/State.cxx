@@ -24,21 +24,21 @@ void declareState(jlcxx::Module& m) {
   m.add_type<State>("State")
       .constructor<const Behaviour&>()
       .method("set_stored_energy!",
-              [](State& s, const mgis::real v) { s.stored_energy = v; })
+              [](State& s, const mgis::real v) noexcept { s.stored_energy = v; })
       .method("get_stored_energy",
-              [](State& s) -> mgis::real& { return s.stored_energy; })
+              [](State& s) noexcept -> mgis::real& { return s.stored_energy; })
       .method("set_dissipated_energy!",
-              [](State& s, const mgis::real v) { s.dissipated_energy = v; })
+              [](State& s, const mgis::real v) noexcept { s.dissipated_energy = v; })
       .method("get_dissipated_energy",
-              [](State& s) -> mgis::real& { return s.dissipated_energy; })
+              [](State& s) noexcept -> mgis::real& { return s.dissipated_energy; })
       .method("get_gradients",
-              [](State& s) -> std::vector<mgis::real>& { return s.gradients; })
+              [](State& s) noexcept -> std::vector<mgis::real>& { return s.gradients; })
       .method("set_gradients!",
               [](State& s, const jlcxx::ArrayRef<mgis::real>& a) {
                 mgis::julia::assign(s.gradients, a);
               })
       .method("get_thermodynamic_forces",
-              [](State& s) -> std::vector<mgis::real>& {
+              [](State& s) noexcept -> std::vector<mgis::real>& {
                 return s.thermodynamic_forces;
               })
       .method("set_thermodynamic_forces!",
@@ -46,7 +46,7 @@ void declareState(jlcxx::Module& m) {
                 mgis::julia::assign(s.thermodynamic_forces, a);
               })
       .method("get_material_properties",
-              [](State& s) -> std::vector<mgis::real>& {
+              [](State& s) noexcept -> std::vector<mgis::real>& {
                 return s.material_properties;
               })
       .method("set_material_properties!",
@@ -54,7 +54,7 @@ void declareState(jlcxx::Module& m) {
                 mgis::julia::assign(s.material_properties, a);
               })
       .method("get_internal_state_variables",
-              [](State& s) -> std::vector<mgis::real>& {
+              [](State& s) noexcept -> std::vector<mgis::real>& {
                 return s.internal_state_variables;
               })
       .method("set_internal_state_variables!",
@@ -62,7 +62,7 @@ void declareState(jlcxx::Module& m) {
                 mgis::julia::assign(s.internal_state_variables, a);
               })
       .method("get_external_state_variables",
-              [](State& s) -> std::vector<mgis::real>& {
+              [](State& s) noexcept -> std::vector<mgis::real>& {
                 return s.external_state_variables;
               })
       .method("set_external_state_variables!",
