@@ -24,8 +24,8 @@ void declareVariable(jlcxx::Module& m) {
   m.set_const("Tensor", Variable::TENSOR);
   m.set_const("TENSOR", Variable::TENSOR);
   m.add_type<Variable>("Variable")
-      .method("get_name", [](const Variable& v) { return v.name; })
-      .method("get_type", [](const Variable& v) { return v.type; })
+      .method("get_name", [](const Variable& v) noexcept { return v.name; })
+      .method("get_type", [](const Variable& v) noexcept { return v.type; })
       .method("get_variable_size",
               [](const Variable& v, const mgis::behaviour::Hypothesis h) {
                 return mgis::behaviour::getVariableSize(v, h);
