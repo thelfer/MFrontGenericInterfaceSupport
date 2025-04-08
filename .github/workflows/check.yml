@@ -47,5 +47,5 @@ jobs:
       shell: spack-sh {0}
       run: |
         # spack load python py-numpy py-pybind11 tfel
-	spack load tfel
+        spack load tfel
         make check
