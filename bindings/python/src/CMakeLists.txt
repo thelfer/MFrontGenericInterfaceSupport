@@ -20,14 +20,8 @@ function(mgis_python_module name output_name)
   # include directories
   target_include_directories(${module}
     SYSTEM
-    PRIVATE "${PROJECT_SOURCE_DIR}/bindings/python/include"
-    PRIVATE "${Boost_INCLUDE_DIRS}"
-    PRIVATE "${PYTHON_INCLUDE_DIRS}"
-    PRIVATE "${PYTHON_NUMPY_INCLUDE_DIR}")
-  if(NUMPY_INCLUDE_DIRS) 
-    target_include_directories(${module}
-      SYSTEM PRIVATE "${NUMPY_INCLUDE_DIRS}")
-  endif(NUMPY_INCLUDE_DIRS)
+    PRIVATE "${PROJECT_SOURCE_DIR}/bindings/python/boost/include"
+    PRIVATE "${Boost_INCLUDE_DIRS}")
   # Link flags for python modules.
   #
   # I removed links to the python library on MacOS system.
@@ -43,7 +37,7 @@ function(mgis_python_module name output_name)
       target_link_libraries(${module}
         PRIVATE
         MFrontGenericInterface
-        ${CONAN_LIBS} ${PYTHON_LIBRARIES})
+        ${CONAN_LIBS} Python::Python Python::NumPy)
     else(APPLE)
       target_link_libraries(${module}
         PRIVATE
@@ -63,7 +57,8 @@ function(mgis_python_module name output_name)
       target_link_libraries(${module}
         PRIVATE
         MFrontGenericInterface
-        ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
+        ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY}
+	Python::Python Python::NumPy)
     endif(disable_python_library_linking) 
   endif(MGIS_USES_CONAN)
   # installation

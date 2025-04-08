@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
 
 include(cmake/modules/mgis.cmake)
 project("mfront-generic-interface")
@@ -32,31 +32,18 @@ option(enable-broken-boost-python-module-visibility-handling
   "workaround a bug in boost python which occurs on FreeBSD+clang. See https://github.com/boostorg/python/issues/173 for details" OFF)
 
 if(enable-python-bindings)
-  find_package(PythonLibs REQUIRED)
+  find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
   set(HAVE_PYTHON ON)
-  get_filename_component(PYTHON_LIBRARY_PATH ${PYTHON_LIBRARIES} PATH)
-  get_filename_component(PYTHON_LIBRARY_FULL ${PYTHON_LIBRARIES} NAME)
+  get_filename_component(PYTHON_LIBRARY_PATH ${Python_LIBRARIES} PATH)
+  get_filename_component(PYTHON_LIBRARY_FULL ${Python_LIBRARIES} NAME)
   string(REGEX REPLACE "lib(.+)\\.(.+)$" "\\1" PYTHON_LIBRARY ${PYTHON_LIBRARY_FULL})
-  message(STATUS "found python          ${PYTHONLIBS_VERSION_STRING}")
-  message(STATUS "python include path   ${PYTHON_INCLUDE_DIRS}")
+  message(STATUS "found python          ${Python_VERSION}")
+  message(STATUS "python include path   ${Python_INCLUDE_DIRS}")
   message(STATUS "python libraries path ${PYTHON_LIBRARY_PATH}")
   message(STATUS "python library        ${PYTHON_LIBRARY}")
-  string(REGEX REPLACE "[-a-z+]+.*$" "" PYTHONLIBS_VERSION_CLEANED "${PYTHONLIBS_VERSION_STRING}")
-  find_package(PythonInterp ${PYTHONLIBS_VERSION_CLEANED} REQUIRED)
-  message(STATUS "python interpreter    ${PYTHON_EXECUTABLE}")
-  if(NOT HAVE_PYTHON)
-    message(FATAL_ERROR "python not found. python is mandatory for python bindings.")
-  endif(NOT HAVE_PYTHON)
-  # numpy detection
-  execute_process(
-    COMMAND "${PYTHON_EXECUTABLE}" -c
-            "from __future__ import print_function\ntry: import numpy; print(numpy.get_include(), end='')\nexcept:pass\n"
-            OUTPUT_VARIABLE NUMPY_INCLUDE_PATH)
-  find_path(PYTHON_NUMPY_INCLUDE_DIR numpy/arrayobject.h
-    HINTS "${NUMPY_INCLUDE_PATH}" "${PYTHON_INCLUDE_PATH}" NO_DEFAULT_PATH)
-  if(NOT PYTHON_NUMPY_INCLUDE_DIR)
-    message(FATAL_ERROR "numpy not found. numpy is mandatory for python bindings.")
-  endif(NOT PYTHON_NUMPY_INCLUDE_DIR)
+  message(STATUS "python interpreter    ${Python_EXECUTABLE}")
+  message(STATUS "Numpy version         ${Python_NumPy_VERSION}")
+  message(STATUS "Numpy header path     ${Python_NumPy_INCLUDE_DIRS}")
   # boost python detection
   message(STATUS "Trying to find libboost_python-py${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
   # Fix a bug in FindBoost 1.70
