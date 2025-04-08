@@ -21,28 +21,28 @@ jobs:
         color: true       # Force color output (SPACK_COLOR=always)
         path: ${{github.workspace}}/spack       # Where to clone Spack
 
-    - name: Install TFEL and NumPy
+    - name: Install TFEL
       shell: spack-sh {0}
       run: |
-        spack install python py-numpy py-pybind11
+        # spack install python py-numpy py-pybind11
         spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
     - name: cmake
       shell: spack-sh {0}
       run: |
-        spack load python py-numpy py-pybind11 tfel
-        cmake -DCMAKE_BUILD_TYPE=Release . \
-              -Denable-c-bindings=ON       \
-              -Denable-fortran-bindings=ON \
-              -Denable-python-bindings=ON  \
-              -Denable-portable-build=ON   \
+        # spack load python py-numpy py-pybind11 tfel
+        cmake -DCMAKE_BUILD_TYPE=Release .  \
+              -Denable-c-bindings=ON        \
+              -Denable-fortran-bindings=ON  \
+              -Denable-python-bindings=OFF  \
+              -Denable-portable-build=ON    \
               -Denable-julia-bindings=OFF
     - name: make
       shell: spack-sh {0}
       run: |
-        spack load py-numpy py-pybind11
+        # spack load python py-numpy py-pybind11
         make
     - name: make check
       shell: spack-sh {0}
       run: |
-        spack load py-numpy py-pybind11 tfel
+        # spack load python py-numpy py-pybind11 tfel
         make check
