@@ -202,12 +202,17 @@ add_subdirectory(docs)
 set(CTEST_CONFIGURATION_TYPE "${JOB_BUILD_CONFIGURATION}")
 # (must be placed *before* any add_subdirectory, cmake bug ?)
 enable_testing()
+
+if(CMAKE_VERSION VERSION_GREATER 3.21.4)
+  set(ctest_args )
+  list(APPEND ctest_args --output-junit ctest-results.xml) 
+endif(CMAKE_VERSION VERSION_GREATER 3.21.4)
 if(CMAKE_CONFIGURATION_TYPES)
   add_custom_target(check COMMAND
-    ${CMAKE_CTEST_COMMAND} -T test -C $<CONFIGURATION>)
+    ${CMAKE_CTEST_COMMAND} ${ctest_args} -T test -C $<CONFIGURATION>)
 else(CMAKE_CONFIGURATION_TYPES)
   add_custom_target(check COMMAND
-    ${CMAKE_CTEST_COMMAND} -T test )
+    ${CMAKE_CTEST_COMMAND} ${ctest_args} -T test )
 endif(CMAKE_CONFIGURATION_TYPES)
 
 add_subdirectory(include)
