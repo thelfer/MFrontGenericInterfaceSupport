@@ -29,7 +29,8 @@ jobs:
     - name: cmake
       shell: spack-sh {0}
       run: |
-        # spack load python py-numpy py-pybind11 tfel
+        # spack load python py-numpy py-pybind11
+	spack load tfel
         cmake -DCMAKE_BUILD_TYPE=Release .  \
               -Denable-c-bindings=ON        \
               -Denable-fortran-bindings=ON  \
@@ -40,9 +41,11 @@ jobs:
       shell: spack-sh {0}
       run: |
         # spack load python py-numpy py-pybind11
+	spack load tfel
         make
     - name: make check
       shell: spack-sh {0}
       run: |
         # spack load python py-numpy py-pybind11 tfel
+	spack load tfel
         make check
