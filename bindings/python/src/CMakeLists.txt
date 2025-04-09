@@ -20,7 +20,7 @@ function(mgis_python_module name output_name)
   # include directories
   target_include_directories(${module}
     SYSTEM
-    PRIVATE "${PROJECT_SOURCE_DIR}/bindings/python/boost/include"
+    PRIVATE "${PROJECT_SOURCE_DIR}/bindings/python/include"
     PRIVATE "${Boost_INCLUDE_DIRS}")
   # Link flags for python modules.
   #
