@@ -24,3 +24,9 @@ This version is meant to be used with `TFEL` Version 5.1.
 
 Python bindings are now generated using the
 [`pybind11`](https://github.com/pybind/pybind11) library.
+
+# Issues fixed
+
+## Issue 148: [doc] better document `rdt` usage
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/148>.
