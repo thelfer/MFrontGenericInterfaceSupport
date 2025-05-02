@@ -131,6 +131,11 @@ namespace mgis::function {
     size_type getDataOffset(const size_type) const noexcept;
   };  // end of struct FunctionDataLayout
 
+  //! \brief a simple helper function
+  template <size_type data_size, size_type data_offset, size_type data_stride>
+  constexpr bool has_dynamic_properties(
+      const FunctionDataLayout<data_size, data_offset, data_stride>&);
+
   /*!
    * \brief quadrature function defined on a partial quadrature space.
    *

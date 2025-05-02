@@ -369,3 +369,11 @@ else((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ComputeSpeedOfSoundTest2
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_executable(FunctionTest
+ EXCLUDE_FROM_ALL
+ FunctionTest.cxx)
+target_link_libraries(FunctionTest
+  PRIVATE MFrontGenericInterface)
+add_test(NAME FunctionTest COMMAND FunctionTest)
+add_dependencies(check FunctionTest)

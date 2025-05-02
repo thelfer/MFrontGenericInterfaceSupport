@@ -74,6 +74,14 @@ namespace mgis::function {
     }
   }  // end of getDataOffset
 
+  template <size_type data_size, size_type data_offset, size_type data_stride>
+  constexpr bool has_dynamic_properties(
+      const FunctionDataLayout<data_size, data_offset, data_stride>&){
+    return (data_size == dynamic_extent) ||    //
+           (data_offset == dynamic_extent) ||  //
+           (data_stride == dynamic_extent);
+  } // end of has_dynamic_properties
+
   inline const AbstractSpace& ImmutableFunctionView::getSpace() const noexcept {
     return *(this->qspace);
   }  // end of getSpace
