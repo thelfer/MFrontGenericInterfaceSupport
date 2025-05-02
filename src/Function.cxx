@@ -115,7 +115,7 @@ namespace mgis::function {
   Function::Function(Function&& f, const bool local_copy) {
     if (!f.local_values_storage.empty()) {
       // the function holds the memory, just take it from him
-      static_cast<FunctionDataLayout&>(*this).operator=(f);
+      static_cast<DataLayout&>(*this).operator=(f);
       this->qspace = f.qspace;
       this->local_values_storage = std::move(f.local_values_storage);
       this->values = local_values_storage;
@@ -154,7 +154,7 @@ namespace mgis::function {
         values(v) {}  // end of Function::Function
 
   void Function::makeView(Function& f) {
-    static_cast<FunctionDataLayout&>(*this).operator=(f);
+    static_cast<DataLayout&>(*this).operator=(f);
     this->qspace = f.qspace;
     this->values = f.values;
     this->immutable_values = f.immutable_values;

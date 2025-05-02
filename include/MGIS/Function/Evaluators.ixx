@@ -41,9 +41,9 @@ namespace mgis::function {
   template <size_type N>
   auto FixedSizedEvaluator<N>::operator()(const size_type i) const {
     if constexpr (N == 1) {
-      return this->function.getIntegrationPointValue(i);
+      return this->function.getValue(i);
     } else {
-      return this->function.template getIntegrationPointValues<N>(i);
+      return this->function.template getValues<N>(i);
     }
   }
 

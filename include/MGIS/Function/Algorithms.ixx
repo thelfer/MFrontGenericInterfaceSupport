@@ -71,10 +71,10 @@ namespace mgis::function {
     const auto ne = qspace.getSpaceSize();
     for (size_type i = 0; i != ne; ++i) {
       if constexpr (N == 1) {
-        auto& v = f.getIntegrationPointValue(i);
+        auto& v = f.getValue(i);
         v = e(i);
       } else {
-        auto lhs_values = f.template getIntegrationPointValues<N>(i);
+        auto lhs_values = f.template getValues<N>(i);
         const auto& rhs_values = e(i);
         algorithm::copy<N>(rhs_values.begin(), rhs_values.end(),
                            lhs_values.begin());
@@ -101,18 +101,18 @@ namespace mgis::function {
       using result_type = std::invoke_result_t<EvaluatorType, size_type>;
       if constexpr (std::same_as<std::decay_t<result_type>, real>) {
         for (size_type i = 0; i != ne; ++i) {
-          auto& lhs_value = f.getIntegrationPointValue(i);
+          auto& lhs_value = f.getValue(i);
           lhs_value = e(i);
         }
       } else {
         for (size_type i = 0; i != ne; ++i) {
-          auto lhs_value = f.getIntegrationPointValue(i);
+          auto lhs_value = f.getValue(i);
           lhs_value = *(e(i).begin());
         }
       }
     } else {
       for (size_type i = 0; i != ne; ++i) {
-        auto lhs_values = f.getIntegrationPointValues(i);
+        auto lhs_values = f.getValues(i);
         const auto& rhs_values = e(i);
         std::copy(rhs_values.begin(), rhs_values.end(), lhs_values.begin());
       }

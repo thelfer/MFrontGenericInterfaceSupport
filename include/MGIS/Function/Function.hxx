@@ -97,31 +97,38 @@ namespace mgis::function {
     size_type data_stride = size_type{};
   };  // end of FunctionDataStride<dynamic_extent>
 
+  struct DataLayoutDescription {
+    size_type size = dynamic_extent;
+    size_type offset = dynamic_extent;
+    size_type stride = dynamic_extent;
+  };
+
+  //! \brief a simple helper function
+  template <size_type data_size, size_type data_offset, size_type data_stride>
+  constexpr bool has_dynamic_properties(const DataLayoutDescription&);
+
   /*!
    * \brief a simple data structure describing how the data of a partial
    * quadrature function is mapped in memory
    */
-  template <size_type data_size,
-            size_type data_offset,
-            size_type data_stride = data_size>
-  struct MGIS_EXPORT FunctionDataLayout
-      : public FunctionDataSize<data_size>,
-        public FunctionDataOffset<data_offset>,
-        public FunctionDataStride<data_stride> {
+  template <DataLayoutDescription layout>
+  struct MGIS_EXPORT DataLayout : public FunctionDataSize<layout.size>,
+                                  public FunctionDataOffset<layout.offset>,
+                                  public FunctionDataStride<layout.stride> {
     // \brief default constructor
-    FunctionDataLayout() = default;
+    DataLayout() = default;
     // \brief move constructor
-    FunctionDataLayout(FunctionDataLayout&&) = default;
+    DataLayout(DataLayout&&) = default;
     // \brief copy constructor
-    FunctionDataLayout(const FunctionDataLayout&) = default;
+    DataLayout(const DataLayout&) = default;
     // \brief move assignement
-    FunctionDataLayout& operator=(FunctionDataLayout&&) = default;
+    DataLayout& operator=(DataLayout&&) = default;
     // \brief standard assignement
-    FunctionDataLayout& operator=(const FunctionDataLayout&) = default;
+    DataLayout& operator=(const DataLayout&) = default;
     //
     using FunctionDataOffset<dynamic_extent>::getDataOffset;
     //! \brief destructor
-    ~FunctionDataLayout() = default;
+    ~DataLayout() = default;
 
    protected:
     /*!
@@ -129,12 +136,7 @@ namespace mgis::function {
      * \param[in] i: integration point
      */
     size_type getDataOffset(const size_type) const noexcept;
-  };  // end of struct FunctionDataLayout
-
-  //! \brief a simple helper function
-  template <size_type data_size, size_type data_offset, size_type data_stride>
-  constexpr bool has_dynamic_properties(
-      const FunctionDataLayout<data_size, data_offset, data_stride>&);
+  };  // end of struct DataLayout
 
   /*!
    * \brief quadrature function defined on a partial quadrature space.
@@ -166,8 +168,7 @@ namespace mgis::function {
    * The size of the data hold by the function per integration point, i.e. th
    * number of components of the function is given by `data_size`.
    */
-  struct MGIS_EXPORT ImmutableFunctionView
-      : FunctionDataLayout<dynamic_extent, dynamic_extent, dynamic_extent> {
+  struct MGIS_EXPORT ImmutableFunctionView : DataLayout<{}> {
     /*!
      * \brief constructor
      * \param[in] s: quadrature space.
@@ -191,34 +192,18 @@ namespace mgis::function {
      * scalar
      */
 
-    const real& getIntegrationPointValue(const size_type) const;
-    /*!
-     * \brief return the data associated with an integration point
-     * \param[in] e: global element number
-     * \param[in] i: integration point number in the element
-     * \note this method is only meaningful when the quadrature function is
-     * scalar
-     */
-    const real& getIntegrationPointValue(const size_type,
-                                         const size_type) const;
+    const real& getValue(const size_type) const;
     /*!
      * \brief return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
     template <size_type N>
-    std::span<const real, N> getIntegrationPointValues(const size_type) const;
+    std::span<const real, N> getValues(const size_type) const;
     /*!
      * \brief return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
-    std::span<const real> getIntegrationPointValues(const size_type) const;
-    /*!
-     * \brief return the data associated with an integration point
-     * \param[in] e: global element number
-     * \param[in] i: integration point number in the element
-     */
-    std::span<const real> getIntegrationPointValues(const size_type,
-                                                    const size_type) const;
+    std::span<const real> getValues(const size_type) const;
     /*!
      * \return if the current function has the same quadrature space and the
      * same number of components than the given view
@@ -296,8 +281,7 @@ namespace mgis::function {
     //     //! \brief move assignement operator
     //     Function& operator=(Function&&);
     //
-    using ImmutableFunctionView::getIntegrationPointValue;
-    using ImmutableFunctionView::getIntegrationPointValues;
+    using ImmutableFunctionView::getValue;
     using ImmutableFunctionView::getValues;
     /*!
      * \brief return the value associated with an integration point
@@ -305,7 +289,7 @@ namespace mgis::function {
      * \note this method is only meaningful when the quadrature function is
      * scalar
      */
-    real& getIntegrationPointValue(const size_type);
+    real& getValue(const size_type);
     /*!
      * \brief return the value associated with an integration point
      * \param[in] e: global element number
@@ -313,24 +297,18 @@ namespace mgis::function {
      * \note this method is only meaningful when the quadrature function is
      * scalar
      */
-    real& getIntegrationPointValue(const size_type, const size_type);
+    real& getValue(const size_type, const size_type);
     /*!
      * \brief return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
     template <size_type N>
-    std::span<real, N> getIntegrationPointValues(const size_type);
+    std::span<real, N> getValues(const size_type);
     /*!
      * \brief return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
-    std::span<real> getIntegrationPointValues(const size_type);
-    /*!
-     * \brief return the data associated with an integration point
-     * \param[in] e: global element number
-     * \param[in] i: integration point number in the element
-     */
-    std::span<real> getIntegrationPointValues(const size_type, const size_type);
+    std::span<real> getValues(const size_type);
     //! \brief destructor
     ~Function();
 

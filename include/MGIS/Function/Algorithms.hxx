@@ -43,10 +43,10 @@ namespace mgis::function {
     auto r = init;
     for (size_type i = 0; i != ne; ++i) {
       if constexpr (expects_scalar_function) {
-        const auto v = f.getIntegrationPointValue(i);
+        const auto v = f.getValue(i);
         r = op(v, r);
       } else {
-        const auto v = f.getIntegrationPointValues(i);
+        const auto v = f.getValues(i);
         r = op(v, r);
       }
     }
