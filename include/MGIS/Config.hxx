@@ -15,6 +15,7 @@
 #ifndef LIB_MGIS_CONFIG_HXX
 #define LIB_MGIS_CONFIG_HXX
 
+#include <limits>
 #include "MGIS/Config-c.h"
 
 namespace mgis {
@@ -24,6 +25,10 @@ namespace mgis {
 
   //! alias to the numeric type used
   using real = mgis_real;
+
+  //! \brief a constant whose role is similar to std::dynamic_extent
+  inline constexpr size_type dynamic_extent =
+      std::numeric_limits<size_type>::max();
 
 }  // end of namespace mgis
 

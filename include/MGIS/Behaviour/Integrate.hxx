@@ -240,7 +240,6 @@ namespace mgis::behaviour {
    * \param[in,out] d: behaviour data
    * \param[in,out] b: behaviour
    *
-
    * \note: the type of integration to be performed, must be
    * explicitely set in d.K[0], as follows (see the `IntegrationType` enum).
    *

@@ -82,6 +82,7 @@ IF(TFEL_CONFIG AND MFRONT AND MFRONT_QUERY)
   endif()
   
   foreach(lib ${tfel_libs})
+      find_package(${lib} REQUIRED HINTS "${TFELHOME}/share/tfel/cmake")
       find_library(${lib}_LIBRARY ${lib} HINTS ${TFELHOME} PATH_SUFFIXES lib)
       list(APPEND TFEL_LIBRARIES ${${lib}_LIBRARY})
   endforeach(lib)

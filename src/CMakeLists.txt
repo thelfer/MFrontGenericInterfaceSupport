@@ -16,8 +16,11 @@ mgis_library(MFrontGenericInterface
   MaterialDataManager.cxx
   Integrate.cxx
   FiniteStrainSupport.cxx
-  AbstractIPEvaluator.cxx
-  Model.cxx)
+  Model.cxx
+  QuadratureFunction.cxx
+  Evaluators.cxx
+  MechanicalEvaluators.cxx
+  )
 target_include_directories(MFrontGenericInterface
    PUBLIC 
    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
@@ -28,6 +31,12 @@ if(enable-static)
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
 endif(enable-static)
+
+if(MGIS_HAVE_TFEL)
+  target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_HAVE_TFEL)
+  target_link_libraries(MFrontGenericInterface PUBLIC tfel::TFELMath)
+endif(MGIS_HAVE_TFEL)
+
 
 if(UNIX)
   if(Threads_FOUND)
@@ -55,4 +64,3 @@ else(UNIX)
     endif(enable-static)
   endif(Threads_FOUND)
 endif(UNIX)
-
