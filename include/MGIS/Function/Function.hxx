@@ -1,12 +1,12 @@
 /*!
- * \file   MGIS/QuadratureFunction/QuadratureFunction.hxx
+ * \file   MGIS/Function/Function.hxx
  * \brief
  * \author Thomas Helfer
  * \date   11/06/2020
  */
 
-#ifndef LIB_MGIS_QUADRATUREFUNCTION_QUADRATUREFUNCTION_HXX
-#define LIB_MGIS_QUADRATUREFUNCTION_QUADRATUREFUNCTION_HXX
+#ifndef LIB_MGIS_FUNCTION_FUNCTION_HXX
+#define LIB_MGIS_FUNCTION_FUNCTION_HXX
 
 #include <span>
 #include <limits>
@@ -15,24 +15,24 @@
 #include <functional>
 #include "MGIS/Config.hxx"
 
-namespace mgis::quadrature_function {
+namespace mgis::function {
 
   // forward declaration
-  struct AbstractQuadratureSpace;
+  struct AbstractSpace;
 
   /*!
    * \brief class describing the offset of the data manipulated by a quadrature
    * function.
    */
   template <size_type offset>
-  struct QuadratureFunctionDataOffset {
+  struct FunctionDataOffset {
     //! \return the offset of the first element
     constexpr size_type getDataOffset() const noexcept;
   };
 
   //! \brief partial specialisation in the dynamic_extent case
   template <>
-  struct QuadratureFunctionDataOffset<dynamic_extent> {
+  struct FunctionDataOffset<dynamic_extent> {
    protected:
     //! \return the offset of the first element
     size_type getDataOffset() const noexcept;
@@ -43,14 +43,14 @@ namespace mgis::quadrature_function {
      * beginning of data values)
      */
     size_type data_begin = size_type{};
-  };  // end of QuadratureFunctionDataOffset<dynamic_extent>
+  };  // end of FunctionDataOffset<dynamic_extent>
 
   /*!
    * \brief class describing the size (number of components) of the data
    * manipulated by a quadrature function.
    */
   template <size_type data_size>
-  struct QuadratureFunctionDataSize {
+  struct FunctionDataSize {
     //! \return the number of components
     constexpr bool isScalar() const noexcept;
     //! \return the number of components
@@ -59,7 +59,7 @@ namespace mgis::quadrature_function {
 
   //! \brief partial specialisation in the dynamic_extent case
   template <>
-  struct QuadratureFunctionDataSize<dynamic_extent> {
+  struct FunctionDataSize<dynamic_extent> {
     //! \return the number of components
     bool isScalar() const noexcept;
     //! \return the number of components
@@ -68,14 +68,14 @@ namespace mgis::quadrature_function {
    protected:
     //! \brief data size
     size_type data_size = size_type{};
-  };  // end of QuadratureFunctionDataSize<dynamic_extent>
+  };  // end of FunctionDataSize<dynamic_extent>
 
   /*!
    * \brief class describing the stride (number of components) of the data
    * manipulated by a quadrature function.
    */
   template <size_type data_stride>
-  struct QuadratureFunctionDataStride {
+  struct FunctionDataStride {
     /*!
      * \return the stride of data, i.e. the distance between the values of two
      * successive integration points.
@@ -85,7 +85,7 @@ namespace mgis::quadrature_function {
 
   //! \brief partial specialisation in the dynamic_extent case
   template <>
-  struct QuadratureFunctionDataStride<dynamic_extent> {
+  struct FunctionDataStride<dynamic_extent> {
     /*!
      * \return the stride of data, i.e. the distance between the values of two
      * successive integration points.
@@ -95,32 +95,33 @@ namespace mgis::quadrature_function {
    protected:
     //! \brief data size
     size_type data_stride = size_type{};
-  };  // end of QuadratureFunctionDataStride<dynamic_extent>
+  };  // end of FunctionDataStride<dynamic_extent>
 
   /*!
    * \brief a simple data structure describing how the data of a partial
    * quadrature function is mapped in memory
    */
-  struct MGIS_EXPORT QuadratureFunctionDataLayout
-      : public QuadratureFunctionDataOffset<dynamic_extent>,
-        public QuadratureFunctionDataSize<dynamic_extent>,
-        public QuadratureFunctionDataStride<dynamic_extent> {
+  template <size_type data_size,
+            size_type data_offset,
+            size_type data_stride = data_size>
+  struct MGIS_EXPORT FunctionDataLayout
+      : public FunctionDataSize<data_size>,
+        public FunctionDataOffset<data_offset>,
+        public FunctionDataStride<data_stride> {
     // \brief default constructor
-    QuadratureFunctionDataLayout() = default;
+    FunctionDataLayout() = default;
     // \brief move constructor
-    QuadratureFunctionDataLayout(QuadratureFunctionDataLayout&&) = default;
+    FunctionDataLayout(FunctionDataLayout&&) = default;
     // \brief copy constructor
-    QuadratureFunctionDataLayout(const QuadratureFunctionDataLayout&) = default;
+    FunctionDataLayout(const FunctionDataLayout&) = default;
     // \brief move assignement
-    QuadratureFunctionDataLayout& operator=(QuadratureFunctionDataLayout&&) =
-        default;
+    FunctionDataLayout& operator=(FunctionDataLayout&&) = default;
     // \brief standard assignement
-    QuadratureFunctionDataLayout& operator=(
-        const QuadratureFunctionDataLayout&) = default;
+    FunctionDataLayout& operator=(const FunctionDataLayout&) = default;
     //
-    using QuadratureFunctionDataOffset<dynamic_extent>::getDataOffset;
+    using FunctionDataOffset<dynamic_extent>::getDataOffset;
     //! \brief destructor
-    ~QuadratureFunctionDataLayout() = default;
+    ~FunctionDataLayout() = default;
 
    protected:
     /*!
@@ -128,12 +129,12 @@ namespace mgis::quadrature_function {
      * \param[in] i: integration point
      */
     size_type getDataOffset(const size_type) const noexcept;
-  };  // end of struct QuadratureFunctionDataLayout
+  };  // end of struct FunctionDataLayout
 
   /*!
    * \brief quadrature function defined on a partial quadrature space.
    *
-   * The `ImmutableQuadratureFunctionView` defines an immutable view
+   * The `ImmutableFunctionView` defines an immutable view
    * associated with a partial quadrature function on a memory region.
    *
    * This memory region may contain more data than the one associated with the
@@ -152,7 +153,7 @@ namespace mgis::quadrature_function {
    *
    * The size of the all data (including the one not related to the partial
    * quadrature function) associated with one integration point is called the
-   * `data_stride` in the `ImmutableQuadratureFunctionView` class.
+   * `data_stride` in the `ImmutableFunctionView` class.
    *
    * Inside the data associated with on integration point, the function data
    * starts at the offset given by `data_begin`.
@@ -160,8 +161,8 @@ namespace mgis::quadrature_function {
    * The size of the data hold by the function per integration point, i.e. th
    * number of components of the function is given by `data_size`.
    */
-  struct MGIS_EXPORT ImmutableQuadratureFunctionView
-      : QuadratureFunctionDataLayout {
+  struct MGIS_EXPORT ImmutableFunctionView
+      : FunctionDataLayout<dynamic_extent, dynamic_extent, dynamic_extent> {
     /*!
      * \brief constructor
      * \param[in] s: quadrature space.
@@ -169,16 +170,15 @@ namespace mgis::quadrature_function {
      * \param[in] db: offset of data
      * \param[in] ds: size of the data per integration points
      */
-    ImmutableQuadratureFunctionView(
-        std::shared_ptr<const AbstractQuadratureSpace>,
+    ImmutableFunctionView(
+        std::shared_ptr<const AbstractSpace>,
         std::span<const real>,
         const size_type = 0,
         const size_type = std::numeric_limits<size_type>::max());
     //! \return the underlying quadrature space
-    const AbstractQuadratureSpace& getQuadratureSpace() const noexcept;
+    const AbstractSpace& getSpace() const noexcept;
     //! \return the underlying quadrature space
-    std::shared_ptr<const AbstractQuadratureSpace> getQuadratureSpacePointer()
-        const noexcept;
+    std::shared_ptr<const AbstractSpace> getSpacePointer() const noexcept;
     /*!
      * \brief return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
@@ -219,15 +219,15 @@ namespace mgis::quadrature_function {
      * same number of components than the given view
      * \param[in] v: view
      */
-    bool checkCompatibility(const ImmutableQuadratureFunctionView&) const;
+    bool checkCompatibility(const ImmutableFunctionView&) const;
     //! \return a view to the function values
     std::span<const real> getValues() const;
     //! \brief destructor
-    ~ImmutableQuadratureFunctionView();
+    ~ImmutableFunctionView();
 
    protected:
     //! \brief default constructor
-    ImmutableQuadratureFunctionView();
+    ImmutableFunctionView();
     /*!
      * \brief constructor
      * \param[in] s: quadrature space.
@@ -235,28 +235,26 @@ namespace mgis::quadrature_function {
      * \param[in] db: start of the view inside the given data
      * \param[in] ds: size of the view (stride)
      */
-    ImmutableQuadratureFunctionView(
-        std::shared_ptr<const AbstractQuadratureSpace>,
-        const size_type,
-        const size_type,
-        const size_type);
+    ImmutableFunctionView(std::shared_ptr<const AbstractSpace>,
+                          const size_type,
+                          const size_type,
+                          const size_type);
     //! \brief underlying finite element space
-    std::shared_ptr<const AbstractQuadratureSpace> qspace;
+    std::shared_ptr<const AbstractSpace> qspace;
     //! \brief underlying values
     std::span<const real> immutable_values;
-  };  // end of ImmutableQuadratureFunctionView
+  };  // end of ImmutableFunctionView
 
   /*!
    * \brief quadrature function defined on a partial quadrature space.
    */
-  struct MGIS_EXPORT QuadratureFunction : ImmutableQuadratureFunctionView {
+  struct MGIS_EXPORT Function : ImmutableFunctionView {
     /*!
      * \brief constructor
      * \param[in] s: quadrature space.
      * \param[in] size: size of the data stored per integration points.
      */
-    QuadratureFunction(std::shared_ptr<const AbstractQuadratureSpace>,
-                       const size_type = 1);
+    Function(std::shared_ptr<const AbstractSpace>, const size_type = 1);
     /*!
      * \brief constructor
      * \param[in] s: quadrature space.
@@ -264,10 +262,10 @@ namespace mgis::quadrature_function {
      * \param[in] db: start of the view inside the given data
      * \param[in] ds: size of the view
      */
-    QuadratureFunction(std::shared_ptr<const AbstractQuadratureSpace>,
-                       std::span<real>,
-                       const size_type = 0,
-                       const size_type = std::numeric_limits<size_type>::max());
+    Function(std::shared_ptr<const AbstractSpace>,
+             std::span<real>,
+             const size_type = 0,
+             const size_type = std::numeric_limits<size_type>::max());
     /*!
      * \brief move constructor
      * \param[in] f: moved function
@@ -276,26 +274,26 @@ namespace mgis::quadrature_function {
      * \note if the moved function holds the memory, the move constructor will
      * take ownership of the memory
      */
-    QuadratureFunction(QuadratureFunction&&, const bool = false);
+    Function(Function&&, const bool = false);
     //! \brief copy constructor
-    QuadratureFunction(const QuadratureFunction&);
+    Function(const Function&);
     /*!
      * \brief constructor from an immutable view
      *
      * \note: data are copied in a local array
      * \param[in] v: view
      */
-    explicit QuadratureFunction(const ImmutableQuadratureFunctionView&);
+    explicit Function(const ImmutableFunctionView&);
     //! \brief assignement operator
-    QuadratureFunction& operator=(const ImmutableQuadratureFunctionView&);
+    Function& operator=(const ImmutableFunctionView&);
     //! \brief standard assignement operator
-    QuadratureFunction& operator=(const QuadratureFunction&);
+    Function& operator=(const Function&);
     //     //! \brief move assignement operator
-    //     QuadratureFunction& operator=(QuadratureFunction&&);
+    //     Function& operator=(Function&&);
     //
-    using ImmutableQuadratureFunctionView::getIntegrationPointValue;
-    using ImmutableQuadratureFunctionView::getIntegrationPointValues;
-    using ImmutableQuadratureFunctionView::getValues;
+    using ImmutableFunctionView::getIntegrationPointValue;
+    using ImmutableFunctionView::getIntegrationPointValues;
+    using ImmutableFunctionView::getValues;
     /*!
      * \brief return the value associated with an integration point
      * \param[in] o: offset associated with the integration point
@@ -329,25 +327,25 @@ namespace mgis::quadrature_function {
      */
     std::span<real> getIntegrationPointValues(const size_type, const size_type);
     //! \brief destructor
-    ~QuadratureFunction();
+    ~Function();
 
    protected:
     /*!
      * \brief turns this function into a view to the given function
      * \param[in] f: function
      */
-    void makeView(QuadratureFunction&);
+    void makeView(Function&);
     /*!
      * \brief turns this function into a view to the given function
      * \param[in] f: function
      */
-    void copy(const ImmutableQuadratureFunctionView&);
+    void copy(const ImmutableFunctionView&);
     /*!
      * \brief copy values for an immutable view
      * \param[in] v: view
      * \note: no compatibility checks are perfomed
      */
-    void copyValues(const ImmutableQuadratureFunctionView&);
+    void copyValues(const ImmutableFunctionView&);
     //! \brief underlying values
     std::span<real> values;
     /*!
@@ -355,10 +353,10 @@ namespace mgis::quadrature_function {
      * values
      */
     std::vector<real> local_values_storage;
-  };  // end of struct QuadratureFunction
+  };  // end of struct Function
 
-}  // namespace mgis::quadrature_function
+}  // namespace mgis::function
 
-#include "MGIS/QuadratureFunction/QuadratureFunction.ixx"
+#include "MGIS/Function/Function.ixx"
 
-#endif /* LIB_MGIS_QUADRATUREFUNCTION_QUADRATUREFUNCTION_HXX */
+#endif /* LIB_MGIS_FUNCTION_FUNCTION_HXX */

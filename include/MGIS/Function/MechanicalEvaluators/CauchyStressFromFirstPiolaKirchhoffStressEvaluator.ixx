@@ -1,19 +1,19 @@
 /*!
  * \file   CauchyStressFromFirstPiolaKirchhoffStressEvaluator.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   02/05/2025
  */
 
-#ifndef LIB_MGIS_QUADRATUREFUNCTION_CAUCHYSTRESSFROMFIRSTPIOLAKIRCHHOFFSTRESSEVALUATOR_IXX
-#define LIB_MGIS_QUADRATUREFUNCTION_CAUCHYSTRESSFROMFIRSTPIOLAKIRCHHOFFSTRESSEVALUATOR_IXX
+#ifndef LIB_MGIS_FUNCTION_CAUCHYSTRESSFROMFIRSTPIOLAKIRCHHOFFSTRESSEVALUATOR_IXX
+#define LIB_MGIS_FUNCTION_CAUCHYSTRESSFROMFIRSTPIOLAKIRCHHOFFSTRESSEVALUATOR_IXX
 
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Array/View.hxx"
 #include "MGIS/Raise.hxx"
 
-namespace mgis::quadrature_function{
+namespace mgis::function {
 
   template <unsigned short N,
             EvaluatorConcept DeformationGradientEvaluatorType,
@@ -39,10 +39,11 @@ namespace mgis::quadrature_function{
     using namespace tfel::math;
     this->deformation_gradient_evaluator.check();
     this->pk1_evaluator.check();
-    const auto nF = this->deformation_gradient_evaluator.getNumberOfComponents();
+    const auto nF =
+        this->deformation_gradient_evaluator.getNumberOfComponents();
     const auto nPK1 = this->pk1_evaluator.getNumberOfComponents();
-    checkMatchingAbstractQuadratureSpaces(this->deformation_gradient_evaluator,
-                                          this->pk1_evaluator);
+    checkMatchingAbstractSpaces(this->deformation_gradient_evaluator,
+                                this->pk1_evaluator);
     raise_if(nF != TensorDimeToSize<N>::value,
              "CauchyStressFromFirstPiolaKirchhoffStressEvaluator::check: "
              "incompatible number of components of the deformation gradient");
@@ -66,13 +67,12 @@ namespace mgis::quadrature_function{
   template <unsigned short N,
             EvaluatorConcept DeformationGradientEvaluatorType,
             EvaluatorConcept PK1EvaluatorType>
-  const AbstractQuadratureSpace&
-  CauchyStressFromFirstPiolaKirchhoffStressEvaluator<
+  const AbstractSpace& CauchyStressFromFirstPiolaKirchhoffStressEvaluator<
       N,
       DeformationGradientEvaluatorType,
-      PK1EvaluatorType>::getQuadratureSpace() const {
-    return this->deformation_gradient_evaluator.getQuadratureSpace();
-  }  // end of getQuadratureSpace
+      PK1EvaluatorType>::getSpace() const {
+    return this->deformation_gradient_evaluator.getSpace();
+  }  // end of getSpace
 
   template <unsigned short N,
             EvaluatorConcept DeformationGradientEvaluatorType,
@@ -96,8 +96,9 @@ namespace mgis::quadrature_function{
         map<tensor<N, real>>(this->deformation_gradient_evaluator(i).data());
     const auto pk1 = map<tensor<N, real>>(this->pk1_evaluator(i).data());
     return convertFirstPiolaKirchhoffStressToCauchyStress(pk1, F);
-  } // end of operator()
+  }  // end of operator()
 
-}  // end namespace mgis::quadrature_function
+}  // end namespace mgis::function
 
-#endif /* LIB_MGIS_QUADRATUREFUNCTION_CAUCHYSTRESSFROMFIRSTPIOLAKIRCHHOFFSTRESSEVALUATOR_IXX */
+#endif /* LIB_MGIS_FUNCTION_CAUCHYSTRESSFROMFIRSTPIOLAKIRCHHOFFSTRESSEVALUATOR_IXX \
+        */

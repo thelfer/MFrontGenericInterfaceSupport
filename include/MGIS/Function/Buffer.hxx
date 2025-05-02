@@ -1,12 +1,12 @@
 /*!
  * \file   MGIS/Buffer.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   30/04/2025
  */
 
-#ifndef LIB_MGIS_QUADRATUREFUNCTION_BUFFER_HXX
-#define LIB_MGIS_QUADRATUREFUNCTION_BUFFER_HXX
+#ifndef LIB_MGIS_FUNCTION_BUFFER_HXX
+#define LIB_MGIS_FUNCTION_BUFFER_HXX
 
 #include <span>
 #include <array>
@@ -14,7 +14,7 @@
 #include <type_traits>
 #include <MGIS/Config.hxx>
 
-namespace mgis::quadrature_function {
+namespace mgis::function {
 
   template <size_type Extent = dynamic_extent>
   using Buffer =
@@ -35,6 +35,6 @@ namespace mgis::quadrature_function {
     return std::span<const real>(b);
   }  // end of makeSpan
 
-}  // namespace mgis::quadrature_function
+}  // namespace mgis::function
 
-#endif /* LIB_MGIS_QUADRATUREFUNCTION_BUFFER_HXX */
+#endif /* LIB_MGIS_FUNCTION_BUFFER_HXX */

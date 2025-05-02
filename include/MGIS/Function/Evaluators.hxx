@@ -1,20 +1,20 @@
 /*!
- * \file   MGIS/QuadratureFunction/Evaluators.hxx
+ * \file   MGIS/Function/Evaluators.hxx
  * \brief
  * \author Thomas Helfer
  * \date   29/04/2025
  */
 
-#ifndef LIB_MGIS_QUADRATUREFUNCTION_EVALUATORS_HXX
-#define LIB_MGIS_QUADRATUREFUNCTION_EVALUATORS_HXX
+#ifndef LIB_MGIS_FUNCTION_EVALUATORS_HXX
+#define LIB_MGIS_FUNCTION_EVALUATORS_HXX
 
 #include <type_traits>
 #include "MGIS/Config.hxx"
-#include "MGIS/QuadratureFunction/Buffer.hxx"
-#include "MGIS/QuadratureFunction/AbstractQuadratureSpace.hxx"
-#include "MGIS/QuadratureFunction/QuadratureFunction.hxx"
+#include "MGIS/Function/Buffer.hxx"
+#include "MGIS/Function/AbstractSpace.hxx"
+#include "MGIS/Function/Function.hxx"
 
-namespace mgis::quadrature_function {
+namespace mgis::function {
 
   template <typename EvaluatorType>
   concept EvaluatorConcept = std::is_move_constructible_v<EvaluatorType> &&
@@ -23,7 +23,7 @@ namespace mgis::quadrature_function {
     e.allocateWorkspace();
   } && requires(const EvaluatorType& e) {
     e.check();
-    { e.getQuadratureSpace() } -> std::same_as<const AbstractQuadratureSpace&>;
+    { e.getSpace() } -> std::same_as<const AbstractSpace&>;
     { e.getNumberOfComponents() } -> std::same_as<size_type>;
   } &&((requires(const EvaluatorType& e, size_type i) { e(i); }) ||
        (requires(EvaluatorType & e, size_type i) { e(i); }));
@@ -38,13 +38,13 @@ namespace mgis::quadrature_function {
     /*!
      * \brief constructor
      */
-    FixedSizedEvaluator(const ImmutableQuadratureFunctionView&);
+    FixedSizedEvaluator(const ImmutableFunctionView&);
     //! \brief perform consistency checks
     void check() const;
     //! \brief allocate internal workspace
     void allocateWorkspace();
     //! \brief return the underlying partial quadrature space
-    const AbstractQuadratureSpace& getQuadratureSpace() const;
+    const AbstractSpace& getSpace() const;
     //! \return the number of components
     constexpr size_type getNumberOfComponents() const noexcept;
     /*!
@@ -55,19 +55,19 @@ namespace mgis::quadrature_function {
 
    private:
     //! \brief underlying partial quadrature space
-    const ImmutableQuadratureFunctionView& function;
-    };  // end of FixedSizedEvaluator
+    const ImmutableFunctionView& function;
+  };  // end of FixedSizedEvaluator
 
-    /*!
-     * \brief check if the given evaluators have the same partial quadrature
-     * space \param[in] e1: first evaluator \param[in] e2: second evaluator
-     */
-    template <EvaluatorConcept EvaluatorType1, EvaluatorConcept EvaluatorType2>
-    void checkMatchingAbstractQuadratureSpaces(const EvaluatorType1&,
-                                               const EvaluatorType2&);
+  /*!
+   * \brief check if the given evaluators have the same partial quadrature
+   * space \param[in] e1: first evaluator \param[in] e2: second evaluator
+   */
+  template <EvaluatorConcept EvaluatorType1, EvaluatorConcept EvaluatorType2>
+  void checkMatchingAbstractSpaces(const EvaluatorType1&,
+                                   const EvaluatorType2&);
 
-  }  // end of namespace mgis::quadrature_function
+}  // end of namespace mgis::function
 
-#include "MGIS/QuadratureFunction/Evaluators.ixx"
+#include "MGIS/Function/Evaluators.ixx"
 
-#endif /* LIB_MGIS_QUADRATUREFUNCTION_EVALUATORS_HXX */
+#endif /* LIB_MGIS_FUNCTION_EVALUATORS_HXX */

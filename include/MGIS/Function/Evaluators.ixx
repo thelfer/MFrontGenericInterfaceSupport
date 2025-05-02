@@ -1,20 +1,20 @@
 /*!
- * \file   MGIS/QuadratureFunction/Evaluators.ixx
+ * \file   MGIS/Function/Evaluators.ixx
  * \brief
  * \author Thomas Helfer
  * \date   29/04/2025
  */
 
-#ifndef LIB_MGIS_QUADRATUREFUNCTION_EVALUATORS_IXX
-#define LIB_MGIS_QUADRATUREFUNCTION_EVALUATORS_IXX
+#ifndef LIB_MGIS_FUNCTION_EVALUATORS_IXX
+#define LIB_MGIS_FUNCTION_EVALUATORS_IXX
 
 #include "MGIS/Raise.hxx"
 
-namespace mgis::quadrature_function {
+namespace mgis::function {
 
   template <size_type N>
   FixedSizedEvaluator<N>::FixedSizedEvaluator(
-      const ImmutableQuadratureFunctionView& values)
+      const ImmutableFunctionView& values)
       : function(values) {}
 
   template <size_type N>
@@ -28,9 +28,8 @@ namespace mgis::quadrature_function {
   void FixedSizedEvaluator<N>::allocateWorkspace() {}
 
   template <size_type N>
-  const AbstractQuadratureSpace& FixedSizedEvaluator<N>::getQuadratureSpace()
-      const {
-    return this->function.getQuadratureSpace();
+  const AbstractSpace& FixedSizedEvaluator<N>::getSpace() const {
+    return this->function.getSpace();
   }
 
   template <size_type N>
@@ -49,13 +48,13 @@ namespace mgis::quadrature_function {
   }
 
   template <EvaluatorConcept EvaluatorType1, EvaluatorConcept EvaluatorType2>
-  void checkMatchingAbstractQuadratureSpaces(const EvaluatorType1& e1,
-                                             const EvaluatorType2& e2) {
-    const auto& qspace1 = e1.getQuadratureSpace();
-    const auto& qspace2 = e2.getQuadratureSpace();
+  void checkMatchingAbstractSpaces(const EvaluatorType1& e1,
+                                   const EvaluatorType2& e2) {
+    const auto& qspace1 = e1.getSpace();
+    const auto& qspace2 = e2.getSpace();
     raise_if(&qspace1 != &qspace2, "unmatched quadrature spaces");
-  }  // end of checkMatchingAbstractQuadratureSpaces
+  }  // end of checkMatchingAbstractSpaces
 
-}  // end of namespace mgis::quadrature_function
+}  // end of namespace mgis::function
 
-#endif /* LIB_MGIS_QUADRATUREFUNCTION_EVALUATORS_IXX */
+#endif /* LIB_MGIS_FUNCTION_EVALUATORS_IXX */

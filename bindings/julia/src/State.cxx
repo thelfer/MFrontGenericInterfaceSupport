@@ -23,16 +23,22 @@ void declareState(jlcxx::Module& m) {
   using mgis::behaviour::State;
   m.add_type<State>("State")
       .constructor<const Behaviour&>()
-      .method("set_stored_energy!",
-              [](State& s, const mgis::real v) noexcept { s.stored_energy = v; })
+      .method(
+          "set_stored_energy!",
+          [](State& s, const mgis::real v) noexcept { s.stored_energy = v; })
       .method("get_stored_energy",
               [](State& s) noexcept -> mgis::real& { return s.stored_energy; })
       .method("set_dissipated_energy!",
-              [](State& s, const mgis::real v) noexcept { s.dissipated_energy = v; })
-      .method("get_dissipated_energy",
-              [](State& s) noexcept -> mgis::real& { return s.dissipated_energy; })
+              [](State& s, const mgis::real v) noexcept {
+                s.dissipated_energy = v;
+              })
+      .method(
+          "get_dissipated_energy",
+          [](State& s) noexcept -> mgis::real& { return s.dissipated_energy; })
       .method("get_gradients",
-              [](State& s) noexcept -> std::vector<mgis::real>& { return s.gradients; })
+              [](State& s) noexcept -> std::vector<mgis::real>& {
+                return s.gradients;
+              })
       .method("set_gradients!",
               [](State& s, const jlcxx::ArrayRef<mgis::real>& a) {
                 mgis::julia::assign(s.gradients, a);

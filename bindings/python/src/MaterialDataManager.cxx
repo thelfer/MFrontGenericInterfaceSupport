@@ -21,14 +21,12 @@
 void declareMaterialDataManager(pybind11::module_&);
 
 static void MaterialDataManagerInitializer_bindTangentOperator(
-    mgis::behaviour::MaterialDataManagerInitializer& i,
-    pybind11::object K) {
+    mgis::behaviour::MaterialDataManagerInitializer& i, pybind11::object K) {
   i.K = mgis::python::mgis_convert_to_span(K);
 }  // end of MaterialDataManagerInitializer_bindTangentOperator
 
 static void MaterialDataManagerInitializer_bindSpeedOfSound(
-    mgis::behaviour::MaterialDataManagerInitializer& i,
-    pybind11::object vs) {
+    mgis::behaviour::MaterialDataManagerInitializer& i, pybind11::object vs) {
   i.speed_of_sound = mgis::python::mgis_convert_to_span(vs);
 }  // end of MaterialDataManagerInitializer_bindSpeedOfSound
 
@@ -56,7 +54,7 @@ static pybind11::object MaterialDataManager_getK(
   return mgis::python::wrapInNumPyArray(d.K, s);
 }  // end of MaterialDataManager_getK
 
-void declareMaterialDataManager(pybind11::module_&m) {
+void declareMaterialDataManager(pybind11::module_& m) {
   using mgis::size_type;
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::MaterialDataManager;

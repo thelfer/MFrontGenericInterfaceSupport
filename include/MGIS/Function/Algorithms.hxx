@@ -1,39 +1,37 @@
 /*!
- * \file   MGIS/QuadratureFunction/Algorithms.hxx
- * \brief    
+ * \file   MGIS/Function/Algorithms.hxx
+ * \brief
  * \author Thomas Helfer
  * \date   23/04/2025
  */
 
-#ifndef LIB_MGIS_QUADRATUREFUNCTION_ALGORITHMS_HXX
-#define LIB_MGIS_QUADRATUREFUNCTION_ALGORITHMS_HXX
+#ifndef LIB_MGIS_FUNCTION_ALGORITHMS_HXX
+#define LIB_MGIS_FUNCTION_ALGORITHMS_HXX
 
 #include "MGIS/Config.hxx"
-#include "MGIS/QuadratureFunction.hxx"
-#include "MGIS/QuadratureFunctionEvaluators.hxx"
+#include "MGIS/Function.hxx"
+#include "MGIS/FunctionEvaluators.hxx"
 
-namespace mgis::quadrature_function{
+namespace mgis::function {
 
   /*!
    * \brief assign the evaluator to a partial quadrature function
    * \param[in] lhs: left hand side
    * \param[in] e: right hand side
    */
-  template <size_type N, typename QuadratureFunctionEvaluatorType>
-  bool assign(QuadratureFunction&,
-              QuadratureFunctionEvaluatorType) requires(N > 0);
+  template <size_type N, typename FunctionEvaluatorType>
+  bool assign(Function&, FunctionEvaluatorType) requires(N > 0);
   /*!
    * \brief assign the evaluator to a partial quadrature function
    * \param[in] lhs: left hand side
    * \param[in] e: right hand side
    */
-  template <typename QuadratureFunctionEvaluatorType>
-  bool assign(QuadratureFunction&,
-              QuadratureFunctionEvaluatorType);
+  template <typename FunctionEvaluatorType>
+  bool assign(Function&, FunctionEvaluatorType);
 
   /*!
   template <typename ValueType, typename BinaryOperator>
-  ValueType reduce(ImmutableQuadratureFunctionView f,
+  ValueType reduce(ImmutableFunctionView f,
                    const ValueType init,
                    BinaryOperator op) {
     constexpr bool expects_scalar_function =
@@ -41,7 +39,7 @@ namespace mgis::quadrature_function{
       op(v, v2);
     };
     const auto ne =
-        f.getQuadratureSpace().getNumberOfIntegrationPoints();
+        f.getSpace().getSpaceSize();
     auto r = init;
     for (size_type i = 0; i != ne; ++i) {
       if constexpr (expects_scalar_function) {
@@ -56,8 +54,8 @@ namespace mgis::quadrature_function{
   }
    */
 
-}  // end of namespace mgis::quadrature_function
+}  // end of namespace mgis::function
 
-#include "MGIS/QuadratureFunction/Algorithms.ixx"
+#include "MGIS/Function/Algorithms.ixx"
 
-#endif /* LIB_MGIS_QUADRATUREFUNCTION_ALGORITHMS_HXX */
+#endif /* LIB_MGIS_FUNCTION_ALGORITHMS_HXX */

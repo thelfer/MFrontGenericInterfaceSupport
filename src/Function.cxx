@@ -1,5 +1,5 @@
 /*!
- * \file   src/QuadratureFunction.cxx
+ * \file   src/Function.cxx
  * \brief
  * \author Thomas Helfer
  * \date   8/06/2020
@@ -10,10 +10,10 @@
 #include <algorithm>
 #include <type_traits>
 #include "MGIS/Raise.hxx"
-#include "MGIS/QuadratureFunction/AbstractQuadratureSpace.hxx"
-#include "MGIS/QuadratureFunction/QuadratureFunction.hxx"
+#include "MGIS/Function/AbstractSpace.hxx"
+#include "MGIS/Function/Function.hxx"
 
-namespace mgis::quadrature_function {
+namespace mgis::function {
 
   template <std::integral IntegerType>
   void check_positivity(
@@ -26,15 +26,15 @@ namespace mgis::quadrature_function {
   void check_positivity(IntegerType, const char* const) noexcept
       requires(std::is_unsigned_v<IntegerType>) {}
 
-  ImmutableQuadratureFunctionView::ImmutableQuadratureFunctionView() = default;
+  ImmutableFunctionView::ImmutableFunctionView() = default;
 
-  ImmutableQuadratureFunctionView::ImmutableQuadratureFunctionView(
-      std::shared_ptr<const AbstractQuadratureSpace> s,
+  ImmutableFunctionView::ImmutableFunctionView(
+      std::shared_ptr<const AbstractSpace> s,
       const size_type nv,
       const size_type db,
       const size_type ds)
       : qspace(s) {
-    if (this->qspace->getNumberOfIntegrationPoints() == 0) {
+    if (this->qspace->getSpaceSize() == 0) {
       // this may happen due to partionning in parallel
       this->data_begin = 0;
       this->data_stride = 0;
@@ -45,26 +45,26 @@ namespace mgis::quadrature_function {
     this->data_begin = db;
     this->data_size = nv;
     check_positivity(this->data_begin,
-                     "ImmutableQuadratureFunctionView::"
-                     "ImmutableQuadratureFunctionView: "
+                     "ImmutableFunctionView::"
+                     "ImmutableFunctionView: "
                      "invalid start of the data");
     raise_if(this->data_size <= 0,
-             "ImmutableQuadratureFunctionView::"
-             "ImmutableQuadratureFunctionView: "
+             "ImmutableFunctionView::"
+             "ImmutableFunctionView: "
              "invalid data size");
     raise_if(this->data_begin + this->data_size > this->data_stride,
-             "ImmutableQuadratureFunctionView::"
-             "ImmutableQuadratureFunctionView: "
+             "ImmutableFunctionView::"
+             "ImmutableFunctionView: "
              "invalid data range is outside the stride size");
-  }  // end of ImmutableQuadratureFunctionView
+  }  // end of ImmutableFunctionView
 
-  ImmutableQuadratureFunctionView::ImmutableQuadratureFunctionView(
-      std::shared_ptr<const AbstractQuadratureSpace> s,
+  ImmutableFunctionView::ImmutableFunctionView(
+      std::shared_ptr<const AbstractSpace> s,
       std::span<const real> v,
       const size_type db,
       const size_type ds)
       : qspace(s) {
-    if (this->qspace->getNumberOfIntegrationPoints() == 0) {
+    if (this->qspace->getSpaceSize() == 0) {
       // this may happen due to partionning in parallel
       this->data_begin = 0;
       this->data_stride = 0;
@@ -74,49 +74,48 @@ namespace mgis::quadrature_function {
     this->data_begin = db;
     this->data_size = ds;
     check_positivity(this->data_begin,
-                     "ImmutableQuadratureFunctionView::"
-                     "ImmutableQuadratureFunctionView: "
+                     "ImmutableFunctionView::"
+                     "ImmutableFunctionView: "
                      "invalid start of the data");
     raise_if(this->data_size <= 0,
-             "QuadratureFunction::QuadratureFunction: invalid "
+             "Function::Function: invalid "
              "data size");
-    const auto quotient = static_cast<size_type>(v.size()) /
-                          this->qspace->getNumberOfIntegrationPoints();
-    const auto remainder = static_cast<size_type>(v.size()) %
-                           this->qspace->getNumberOfIntegrationPoints();
+    const auto quotient =
+        static_cast<size_type>(v.size()) / this->qspace->getSpaceSize();
+    const auto remainder =
+        static_cast<size_type>(v.size()) % this->qspace->getSpaceSize();
     raise_if((remainder != 0) || (quotient <= 0),
-             "QuadratureFunction::QuadratureFunction: invalid "
+             "Function::Function: invalid "
              "values size");
     this->data_stride = quotient;
     raise_if(this->data_begin >= this->data_stride,
-             "QuadratureFunction::QuadratureFunction: invalid "
+             "Function::Function: invalid "
              "start of the data");
     if (ds == std::numeric_limits<size_type>::max()) {
       this->data_size = this->data_stride - this->data_begin;
     } else {
       raise_if(this->data_begin + ds > this->data_stride,
-               "QuadratureFunction::QuadratureFunction: invalid "
+               "Function::Function: invalid "
                "data range is outside the stride size");
       this->data_size = ds;
     }
     this->immutable_values = v;
-  }  // end of ImmutableQuadratureFunctionView
+  }  // end of ImmutableFunctionView
 
-  bool ImmutableQuadratureFunctionView::checkCompatibility(
-      const ImmutableQuadratureFunctionView& v) const {
-    if (this->getQuadratureSpacePointer() != v.getQuadratureSpacePointer()) {
+  bool ImmutableFunctionView::checkCompatibility(
+      const ImmutableFunctionView& v) const {
+    if (this->getSpacePointer() != v.getSpacePointer()) {
       return false;
     }
     return this->data_size == v.getNumberOfComponents();
   }  // end of checkCompatibility
 
-  ImmutableQuadratureFunctionView::~ImmutableQuadratureFunctionView() = default;
+  ImmutableFunctionView::~ImmutableFunctionView() = default;
 
-  QuadratureFunction::QuadratureFunction(QuadratureFunction&& f,
-                                         const bool local_copy) {
+  Function::Function(Function&& f, const bool local_copy) {
     if (!f.local_values_storage.empty()) {
       // the function holds the memory, just take it from him
-      static_cast<QuadratureFunctionDataLayout&>(*this).operator=(f);
+      static_cast<FunctionDataLayout&>(*this).operator=(f);
       this->qspace = f.qspace;
       this->local_values_storage = std::move(f.local_values_storage);
       this->values = local_values_storage;
@@ -129,61 +128,55 @@ namespace mgis::quadrature_function {
         this->makeView(f);
       }
     }
-  }  // end of QuadratureFunction
+  }  // end of Function
 
-  QuadratureFunction::QuadratureFunction(const QuadratureFunction& v)
-      : ImmutableQuadratureFunctionView() {
+  Function::Function(const Function& v) : ImmutableFunctionView() {
     this->copy(v);
-  }  // end of QuadratureFunction
+  }  // end of Function
 
-  QuadratureFunction::QuadratureFunction(
-      const ImmutableQuadratureFunctionView& v) {
+  Function::Function(const ImmutableFunctionView& v) {
     this->copy(v);
-  }  // end of ImmutableQuadratureFunctionView
+  }  // end of ImmutableFunctionView
 
-  QuadratureFunction::QuadratureFunction(
-      std::shared_ptr<const AbstractQuadratureSpace> s, const size_type nv)
-      : ImmutableQuadratureFunctionView(s, nv, 0, nv) {
-    this->local_values_storage.resize(
-        this->qspace->getNumberOfIntegrationPoints() * this->data_size);
+  Function::Function(std::shared_ptr<const AbstractSpace> s, const size_type nv)
+      : ImmutableFunctionView(s, nv, 0, nv) {
+    this->local_values_storage.resize(this->qspace->getSpaceSize() *
+                                      this->data_size);
     this->values = std::span<real>(this->local_values_storage);
     this->immutable_values = std::span<const real>(this->local_values_storage);
-  }  // end of QuadratureFunction::QuadratureFunction
+  }  // end of Function::Function
 
-  QuadratureFunction::QuadratureFunction(
-      std::shared_ptr<const AbstractQuadratureSpace> s,
-      std::span<real> v,
-      const size_type db,
-      const size_type ds)
-      : ImmutableQuadratureFunctionView(s, v, db, ds),
-        values(v) {}  // end of QuadratureFunction::QuadratureFunction
+  Function::Function(std::shared_ptr<const AbstractSpace> s,
+                     std::span<real> v,
+                     const size_type db,
+                     const size_type ds)
+      : ImmutableFunctionView(s, v, db, ds),
+        values(v) {}  // end of Function::Function
 
-  void QuadratureFunction::makeView(QuadratureFunction& f) {
-    static_cast<QuadratureFunctionDataLayout&>(*this).operator=(f);
+  void Function::makeView(Function& f) {
+    static_cast<FunctionDataLayout&>(*this).operator=(f);
     this->qspace = f.qspace;
     this->values = f.values;
     this->immutable_values = f.immutable_values;
   }
 
-  QuadratureFunction& QuadratureFunction::operator=(
-      const QuadratureFunction& src) {
+  Function& Function::operator=(const Function& src) {
     if (&src != this) {
       this->copy(src);
     }
     return *this;
   }
 
-  QuadratureFunction& QuadratureFunction::operator=(
-      const ImmutableQuadratureFunctionView& src) {
+  Function& Function::operator=(const ImmutableFunctionView& src) {
     if (&src != this) {
       this->copy(src);
     }
     return *this;
   }
 
-  void QuadratureFunction::copy(const ImmutableQuadratureFunctionView& v) {
-    this->qspace = v.getQuadratureSpacePointer();
-    const auto n = this->qspace->getNumberOfIntegrationPoints();
+  void Function::copy(const ImmutableFunctionView& v) {
+    this->qspace = v.getSpacePointer();
+    const auto n = this->qspace->getSpaceSize();
     this->data_begin = size_type{};
     this->data_size = v.getNumberOfComponents();
     this->data_stride = v.getNumberOfComponents();
@@ -193,10 +186,8 @@ namespace mgis::quadrature_function {
     this->copyValues(v);
   }  // end of copy
 
-  void QuadratureFunction::copyValues(
-      const ImmutableQuadratureFunctionView& v) {
-    const auto n =
-      this->getQuadratureSpace().getNumberOfIntegrationPoints();
+  void Function::copyValues(const ImmutableFunctionView& v) {
+    const auto n = this->getSpace().getSpaceSize();
     if (n == 0) {
       return;
     }
@@ -223,6 +214,6 @@ namespace mgis::quadrature_function {
     }
   }  // end of copy
 
-  QuadratureFunction::~QuadratureFunction() = default;
+  Function::~Function() = default;
 
-}  // end of namespace mgis::quadrature_function
+}  // end of namespace mgis::function

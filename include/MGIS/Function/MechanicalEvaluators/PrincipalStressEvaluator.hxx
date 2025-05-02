@@ -9,15 +9,15 @@
 #error "TFEL is required to use mechanical evaluators"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_QUADRATUREFUNCTION_PRINCIPALSTRESSEVALUATOR_HXX
-#define LIB_MGIS_QUADRATUREFUNCTION_PRINCIPALSTRESSEVALUATOR_HXX
+#ifndef LIB_MGIS_FUNCTION_PRINCIPALSTRESSEVALUATOR_HXX
+#define LIB_MGIS_FUNCTION_PRINCIPALSTRESSEVALUATOR_HXX
 
 #include <array>
 #include <TFEL/Math/stensor.hxx>
-#include "MGIS/QuadratureFunction/Evaluators.hxx"
-#include "MGIS/QuadratureFunction/MechanicalEvaluators/StressEvaluatorBase.hxx"
+#include "MGIS/Function/Evaluators.hxx"
+#include "MGIS/Function/MechanicalEvaluators/StressEvaluatorBase.hxx"
 
-namespace mgis::quadrature_function {
+namespace mgis::function {
 
   /*!
    * \brief an evaluator returning the von Mises stress from
@@ -34,7 +34,7 @@ namespace mgis::quadrature_function {
       : StressEvaluatorBase<N, StressEvaluatorType, true> {
     /*!
      * \brief default constructor
-     * \param[in] e: stress evaluator 
+     * \param[in] e: stress evaluator
      * \param[in] eps: small value (relative to the stress magnitude)
      */
     PrincipalStressEvaluator(const StressEvaluatorType&, const real);
@@ -60,8 +60,8 @@ namespace mgis::quadrature_function {
     const real seps;
   };
 
-}  // namespace mgis::quadrature_function
+}  // namespace mgis::function
 
-#include "MGIS/QuadratureFunction/MechanicalEvaluators/PrincipalStressEvaluator.ixx"
+#include "MGIS/Function/MechanicalEvaluators/PrincipalStressEvaluator.ixx"
 
-#endif /* LIB_MGIS_QUADRATUREFUNCTION_PRINCIPALSTRESSEVALUATOR_HXX */
+#endif /* LIB_MGIS_FUNCTION_PRINCIPALSTRESSEVALUATOR_HXX */

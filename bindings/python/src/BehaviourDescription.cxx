@@ -19,7 +19,7 @@
 #include "MGIS/Behaviour/BehaviourDescription.hxx"
 
 // forward declaration
-void declareBehaviourDescription(pybind11::module_&);
+void declareBehaviourDescription(pybind11::module_ &);
 
 static const char *BehaviourDescription_getType(
     const mgis::behaviour::BehaviourDescription &b) {
@@ -289,18 +289,15 @@ void declareBehaviourDescription(pybind11::module_ &m) {
       .def("getLowerPhysicalBound ", getLowerPhysicalBound)
       .def("getUpperPhysicalBound ", getUpperPhysicalBound);
 
-  m.def(
-      "isStandardFiniteStrainBehaviour",
-      mgis::behaviour::isStandardFiniteStrainBehaviour,
-      "return if the given behaviour is a standard finite strain behaviour, "
-      "i.e. is a finite strain behaviour using the standard finite strain "
-      "kinematic (called F-Cauchy although the stress measure can be chosen "
-      "when loading the behaviour)");
+  m.def("isStandardFiniteStrainBehaviour",
+        mgis::behaviour::isStandardFiniteStrainBehaviour,
+        "return if the given behaviour is a standard finite strain behaviour, "
+        "i.e. is a finite strain behaviour using the standard finite strain "
+        "kinematic (called F-Cauchy although the stress measure can be chosen "
+        "when loading the behaviour)");
   m.def("getParameterDefaultValue", getParameterDefaultValue1);
-  m.def("getIntegerParameterDefaultValue",
-                     getParameterDefaultValue2);
-  m.def("getUnsignedShortParameterDefaultValue",
-                     getParameterDefaultValue3);
+  m.def("getIntegerParameterDefaultValue", getParameterDefaultValue2);
+  m.def("getUnsignedShortParameterDefaultValue", getParameterDefaultValue3);
   m.def("hasBounds", hasBounds);
   m.def("hasLowerBound", hasLowerBound);
   m.def("hasUpperBound", hasUpperBound);

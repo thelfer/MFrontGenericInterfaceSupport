@@ -1,6 +1,6 @@
 /*!
  * \file   CauchyStressFromFirstPiolaKirchhoffStressEvaluator.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   02/05/2025
  */
@@ -12,9 +12,9 @@
 #ifndef LIB_MGIS_CAUCHYSTRESSFROMFIRSTPIOLAKIRCHHOFFSTRESSEVALUATOR_HXX
 #define LIB_MGIS_CAUCHYSTRESSFROMFIRSTPIOLAKIRCHHOFFSTRESSEVALUATOR_HXX
 
-#include "MGIS/QuadratureFunction/Evaluators.hxx"
+#include "MGIS/Function/Evaluators.hxx"
 
-namespace mgis::quadrature_function {
+namespace mgis::function {
 
   /*!
    * \brief an evaluator returning the Cauchy stress stress using evaluators of
@@ -41,7 +41,7 @@ namespace mgis::quadrature_function {
     //! \brief allocate internal workspace
     void allocateWorkspace();
     //! \brief return the underlying partial quadrature space
-    const AbstractQuadratureSpace& getQuadratureSpace() const;
+    const AbstractSpace& getSpace() const;
     //! \return the number of components
     constexpr size_type getNumberOfComponents() const noexcept;
     /*!
@@ -57,8 +57,8 @@ namespace mgis::quadrature_function {
     PK1EvaluatorType pk1_evaluator;
   };
 
-}  // end of namespace mgis::quadrature_function
+}  // end of namespace mgis::function
 
-#include "MGIS/QuadratureFunction/MechanicalEvaluators/CauchyStressFromFirstPiolaKirchhoffStressEvaluator.ixx"
+#include "MGIS/Function/MechanicalEvaluators/CauchyStressFromFirstPiolaKirchhoffStressEvaluator.ixx"
 
 #endif /* LIB_CAUCHYSTRESSFROMFIRSTPIOLAKIRCHHOFFSTRESSEVALUATOR_HXX */

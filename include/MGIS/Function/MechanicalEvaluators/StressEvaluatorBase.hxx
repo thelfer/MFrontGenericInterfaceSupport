@@ -9,12 +9,12 @@
 #error "TFEL is required to use mechanical evaluators"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_QUADRATUREFUNCTION_STRESSEVALUATORBASE_HXX
-#define LIB_MGIS_QUADRATUREFUNCTION_STRESSEVALUATORBASE_HXX
+#ifndef LIB_MGIS_FUNCTION_STRESSEVALUATORBASE_HXX
+#define LIB_MGIS_FUNCTION_STRESSEVALUATORBASE_HXX
 
-#include "MGIS/QuadratureFunction/Evaluators.hxx"
+#include "MGIS/Function/Evaluators.hxx"
 
-namespace mgis::quadrature_function {
+namespace mgis::function {
 
   /*!
    * \brief a base class for evaluators modifying a stress tensor
@@ -40,7 +40,7 @@ namespace mgis::quadrature_function {
     //! \brief allocate internal workspace
     void allocateWorkspace();
     //! \brief return the underlying partial quadrature space
-    const AbstractQuadratureSpace& getQuadratureSpace() const;
+    const AbstractSpace& getSpace() const;
     //! \return the number of components
     constexpr size_type getNumberOfComponents() const noexcept;
 
@@ -49,8 +49,8 @@ namespace mgis::quadrature_function {
     StressEvaluatorType stress_evaluator;
   };
 
-}  // namespace mgis::quadrature_function
+}  // namespace mgis::function
 
-#include "MGIS/QuadratureFunction/MechanicalEvaluators/StressEvaluatorBase.ixx"
+#include "MGIS/Function/MechanicalEvaluators/StressEvaluatorBase.ixx"
 
-#endif /* LIB_MGIS_QUADRATUREFUNCTION_STRESSEVALUATORBASE_HXX */
+#endif /* LIB_MGIS_FUNCTION_STRESSEVALUATORBASE_HXX */

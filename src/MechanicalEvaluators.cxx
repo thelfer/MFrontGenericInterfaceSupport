@@ -1,14 +1,14 @@
 /*!
  * \file   MechanicalEvaluators.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   02/05/2025
  */
 
-#include "MGIS/QuadratureFunction/Evaluators.hxx"
-#include "MGIS/QuadratureFunction/MechanicalEvaluators.hxx"
+#include "MGIS/Function/Evaluators.hxx"
+#include "MGIS/Function/MechanicalEvaluators.hxx"
 
-namespace mgis::quadrature_function {
+namespace mgis::function {
 
 #ifdef MGIS_HAVE_TFEL
 
@@ -24,4 +24,4 @@ namespace mgis::quadrature_function {
 
 #endif MGIS_HAVE_TFEL
 
-}  // end of namespace mgis::quadrature_function
+}  // end of namespace mgis::function

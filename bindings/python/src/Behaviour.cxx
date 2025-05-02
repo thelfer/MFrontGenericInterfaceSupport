@@ -19,7 +19,7 @@
 #include "MGIS/Behaviour/Behaviour.hxx"
 
 // forward declaration
-void declareBehaviour(pybind11::module_&);
+void declareBehaviour(pybind11::module_ &);
 
 static void rotate_gradients_in_place_member(
     const mgis::behaviour::Behaviour &b,
@@ -242,14 +242,11 @@ void declareBehaviour(pybind11::module_ &m) {
   // wrapping free functions
   m.def("rotateGradients", rotate_gradients_in_place);
   m.def("rotateGradients", rotate_gradients_out_of_place);
-  m.def("rotateThermodynamicForces",
-                     rotate_thermodynamic_forces_in_place);
-  m.def("rotateThermodynamicForces",
-                     rotate_thermodynamic_forces_out_of_place);
+  m.def("rotateThermodynamicForces", rotate_thermodynamic_forces_in_place);
+  m.def("rotateThermodynamicForces", rotate_thermodynamic_forces_out_of_place);
+  m.def("rotateTangentOperatorBlocks", rotate_tangent_operator_blocks_in_place);
   m.def("rotateTangentOperatorBlocks",
-                     rotate_tangent_operator_blocks_in_place);
-  m.def("rotateTangentOperatorBlocks",
-                     rotate_tangent_operator_blocks_out_of_place);
+        rotate_tangent_operator_blocks_out_of_place);
 
   m.def("load", load_ptr);
   m.def("load", load_ptr2);

@@ -1,14 +1,14 @@
 /*!
  * \file   Evaluators.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   02/05/2025
  */
 
-#include "MGIS/QuadratureFunction/Evaluators.hxx"
+#include "MGIS/Function/Evaluators.hxx"
 
-namespace mgis::quadrature_function {
+namespace mgis::function {
 
   static_assert(EvaluatorConcept<FixedSizedEvaluator<9>>);
 
-}  // end of namespace mgis::quadrature_function
+}  // end of namespace mgis::function

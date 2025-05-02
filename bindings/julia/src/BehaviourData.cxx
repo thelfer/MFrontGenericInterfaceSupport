@@ -30,7 +30,9 @@ void declareBehaviourData(jlcxx::Module& m) {
       .method("set_time_increment!",
               [](BehaviourData& d, const mgis::real v) noexcept { d.dt = v; })
       .method("get_tangent_operator",
-              [](BehaviourData& d) noexcept -> std::vector<mgis::real>& { return d.K; })
+              [](BehaviourData& d) noexcept -> std::vector<mgis::real>& {
+                return d.K;
+              })
       .method("set_tangent_operator!",
               [](BehaviourData& d, const jlcxx::ArrayRef<mgis::real>& a) {
                 mgis::julia::assign(d.K, a);
@@ -38,16 +40,20 @@ void declareBehaviourData(jlcxx::Module& m) {
       .method("get_time_increment_increase_factor",
               [](BehaviourData& d) noexcept -> mgis::real& { return d.rdt; })
       .method("set_time_increment_increase_factor!",
-              [](BehaviourData& d, const mgis::real& v) noexcept -> void { d.rdt = v; })
-      .method("get_s0", [](BehaviourData& d) noexcept -> State& { return d.s0; })
-      .method("get_s1", [](BehaviourData& d) noexcept -> State& { return d.s1; })
+              [](BehaviourData& d, const mgis::real& v) noexcept -> void {
+                d.rdt = v;
+              })
+      .method("get_s0",
+              [](BehaviourData& d) noexcept -> State& { return d.s0; })
+      .method("get_s1",
+              [](BehaviourData& d) noexcept -> State& { return d.s1; })
       .method("get_initial_state",
               [](BehaviourData& d) noexcept -> State& { return d.s0; })
       .method("get_final_state",
               [](BehaviourData& d) noexcept -> State& { return d.s1; })
-    .method("update",           [](BehaviourData& d)  { update(d); })
-        .method("revert",           [](BehaviourData& d)  { revert(d); })
-	.method("make_view",         [](BehaviourData& d) -> BehaviourDataView {
-	  return make_view(d);})
-    ;
+      .method("update", [](BehaviourData& d) { update(d); })
+      .method("revert", [](BehaviourData& d) { revert(d); })
+      .method("make_view", [](BehaviourData& d) -> BehaviourDataView {
+        return make_view(d);
+      });
 }  // end of declareBehaviourData

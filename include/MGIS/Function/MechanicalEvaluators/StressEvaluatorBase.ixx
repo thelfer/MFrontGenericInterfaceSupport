@@ -5,13 +5,13 @@
  * \date   02/05/2025
  */
 
-#ifndef LIB_MGIS_QUADRATUREFUNCTION_STRESSEVALUATORBASE_IXX
-#define LIB_MGIS_QUADRATUREFUNCTION_STRESSEVALUATORBASE_IXX
+#ifndef LIB_MGIS_FUNCTION_STRESSEVALUATORBASE_IXX
+#define LIB_MGIS_FUNCTION_STRESSEVALUATORBASE_IXX
 
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
 
-namespace mgis::quadrature_function {
+namespace mgis::function {
 
   template <unsigned short N,
             EvaluatorConcept StressEvaluatorType,
@@ -61,12 +61,11 @@ namespace mgis::quadrature_function {
   template <unsigned short N,
             EvaluatorConcept StressEvaluatorType,
             bool isSymmetric>
-  const AbstractQuadratureSpace&
-  StressEvaluatorBase<N, StressEvaluatorType, isSymmetric>::getQuadratureSpace()
-      const {
-    return this->stress_evaluator.getQuadratureSpace();
-  }  // end of getQuadratureSpace
+  const AbstractSpace&
+  StressEvaluatorBase<N, StressEvaluatorType, isSymmetric>::getSpace() const {
+    return this->stress_evaluator.getSpace();
+  }  // end of getSpace
 
-}  // namespace mgis::quadrature_function
+}  // namespace mgis::function
 
-#endif /* LIB_MGIS_QUADRATUREFUNCTION_STRESSEVALUATORBASE_IXX */
+#endif /* LIB_MGIS_FUNCTION_STRESSEVALUATORBASE_IXX */

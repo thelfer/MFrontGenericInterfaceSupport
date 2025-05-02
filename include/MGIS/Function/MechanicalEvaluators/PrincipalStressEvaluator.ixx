@@ -5,13 +5,13 @@
  * \date   01/05/2025
  */
 
-#ifndef LIB_MGIS_QUADRATUREFUNCTION_PRINCIPALSTRESSEVALUATOR_IXX
-#define LIB_MGIS_QUADRATUREFUNCTION_PRINCIPALSTRESSEVALUATOR_IXX
+#ifndef LIB_MGIS_FUNCTION_PRINCIPALSTRESSEVALUATOR_IXX
+#define LIB_MGIS_FUNCTION_PRINCIPALSTRESSEVALUATOR_IXX
 
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Array/View.hxx"
 
-namespace mgis::quadrature_function {
+namespace mgis::function {
 
   template <unsigned short N,
             EvaluatorConcept StressEvaluatorType,
@@ -54,6 +54,6 @@ namespace mgis::quadrature_function {
     return {vp[0], vp[1], vp[2]};
   }  // end of operator()
 
-}  // namespace mgis::quadrature_function
+}  // namespace mgis::function
 
-#endif /* LIB_MGIS_QUADRATUREFUNCTION_PRINCIPALSTRESSEVALUATOR_IXX */
+#endif /* LIB_MGIS_FUNCTION_PRINCIPALSTRESSEVALUATOR_IXX */

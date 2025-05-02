@@ -9,13 +9,13 @@
 #error "TFEL is required to use mechanical evaluators"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_QUADRATUREFUNCTION_VONMISESSTRESSEVALUATOR_HXX
-#define LIB_MGIS_QUADRATUREFUNCTION_VONMISESSTRESSEVALUATOR_HXX
+#ifndef LIB_MGIS_FUNCTION_VONMISESSTRESSEVALUATOR_HXX
+#define LIB_MGIS_FUNCTION_VONMISESSTRESSEVALUATOR_HXX
 
-#include "MGIS/QuadratureFunction/Evaluators.hxx"
-#include "MGIS/QuadratureFunction/MechanicalEvaluators/StressEvaluatorBase.hxx"
+#include "MGIS/Function/Evaluators.hxx"
+#include "MGIS/Function/MechanicalEvaluators/StressEvaluatorBase.hxx"
 
-namespace mgis::quadrature_function {
+namespace mgis::function {
 
   /*!
    * \brief an evaluator returning the von Mises stress from
@@ -38,8 +38,8 @@ namespace mgis::quadrature_function {
     real operator()(const size_type) const;
   };
 
-}  // namespace mgis::quadrature_function
+}  // namespace mgis::function
 
-#include "MGIS/QuadratureFunction/MechanicalEvaluators/vonMisesStressEvaluator.ixx"
+#include "MGIS/Function/MechanicalEvaluators/vonMisesStressEvaluator.ixx"
 
-#endif /* LIB_MGIS_QUADRATUREFUNCTION_VONMISESSTRESSEVALUATOR_HXX */
+#endif /* LIB_MGIS_FUNCTION_VONMISESSTRESSEVALUATOR_HXX */

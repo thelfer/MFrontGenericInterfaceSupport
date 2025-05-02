@@ -1,17 +1,17 @@
 /*!
- * \file   MGIS/QuadratureFunction/Algorithm.ixx
- * \brief    
+ * \file   MGIS/Function/Algorithm.ixx
+ * \brief
  * \author Thomas Helfer
  * \date   29/04/2025
  */
 
-#ifndef LIB_MGIS_QUADRATUREFUNCTION_ALGORITHMS_IXX
-#define LIB_MGIS_QUADRATUREFUNCTION_ALGORITHMS_IXX
+#ifndef LIB_MGIS_FUNCTION_ALGORITHMS_IXX
+#define LIB_MGIS_FUNCTION_ALGORITHMS_IXX
 
 #include <iterator>
 #include <algorithm>
 
-namespace mgis::quadrature_function::algorithm {
+namespace mgis::function::algorithm {
 
   /*!
    * \brief copy N values
@@ -52,13 +52,13 @@ namespace mgis::quadrature_function::algorithm {
     }
   }  // end of copy
 
-}  // end of namespace mgis::quadrature_function::algorithm
+}  // end of namespace mgis::function::algorithm
 
-namespace mgis::quadrature_function {
+namespace mgis::function {
 
-  template <size_type N, QuadratureFunctionEvalutorConcept EvaluatorType>
-  bool assign(QuadratureFunction& f, EvaluatorType e) requires(N > 0) {
-    checkMatchingAbstractQuadratureSpaces(f, e);
+  template <size_type N, FunctionEvalutorConcept EvaluatorType>
+  bool assign(Function& f, EvaluatorType e) requires(N > 0) {
+    checkMatchingAbstractSpaces(f, e);
     raise_if(f.getNumberOfComponents() != N,
              "assign: invalid number of components for the left hand size");
     raise_if(e.getNumberOfComponents() != N,
@@ -67,8 +67,8 @@ namespace mgis::quadrature_function {
     e.check();
     e.allocateWorkspace();
     //
-    const auto qspace = f.getQuadratureSpace();
-    const auto ne = qspace.getNumberOfIntegrationPoints();
+    const auto qspace = f.getSpace();
+    const auto ne = qspace.getSpaceSize();
     for (size_type i = 0; i != ne; ++i) {
       if constexpr (N == 1) {
         auto& v = f.getIntegrationPointValue(i);
@@ -83,10 +83,9 @@ namespace mgis::quadrature_function {
     return true;
   }  // end of assign
 
-  template <QuadratureFunctionEvalutorConcept EvaluatorType>
-  bool assign(QuadratureFunction& f,
-              EvaluatorType e) {
-    raise_if(&f.getQuadratureSpace() != &e.getQuadratureSpace(),
+  template <FunctionEvalutorConcept EvaluatorType>
+  bool assign(Function& f, EvaluatorType e) {
+    raise_if(&f.getSpace() != &e.getSpace(),
              "assign: unmatched number of components for the left hand size "
              "and the right hand side");
     raise_if(f.getNumberOfComponents() != e.getNumberOfComponents(),
@@ -96,8 +95,8 @@ namespace mgis::quadrature_function {
     e.check();
     e.allocateWorkspace();
     //
-    const auto qspace = f.getQuadratureSpace();
-    const auto ne = qspace.getNumberOfIntegrationPoints();
+    const auto qspace = f.getSpace();
+    const auto ne = qspace.getSpaceSize();
     if (f.isScalar()) {
       using result_type = std::invoke_result_t<EvaluatorType, size_type>;
       if constexpr (std::same_as<std::decay_t<result_type>, real>) {
@@ -121,6 +120,6 @@ namespace mgis::quadrature_function {
     return true;
   }  // end of assign
 
-} // end of mgis::quadrature_function
+}  // namespace mgis::function
 
-#endif /* LIB_MGIS_QUADRATUREFUNCTION_ALGORITHMS_IXX */
+#endif /* LIB_MGIS_FUNCTION_ALGORITHMS_IXX */

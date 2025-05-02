@@ -5,13 +5,13 @@
  * \date   01/05/2025
  */
 
-#ifndef LIB_MGIS_QUADRATUREFUNCTION_VONMISESSTRESSEVALUATOR_IXX
-#define LIB_MGIS_QUADRATUREFUNCTION_VONMISESSTRESSEVALUATOR_IXX
+#ifndef LIB_MGIS_FUNCTION_VONMISESSTRESSEVALUATOR_IXX
+#define LIB_MGIS_FUNCTION_VONMISESSTRESSEVALUATOR_IXX
 
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Array/View.hxx"
 
-namespace mgis::quadrature_function {
+namespace mgis::function {
 
   template <unsigned short N, EvaluatorConcept StressEvaluatorType>
   constexpr size_type
@@ -28,6 +28,6 @@ namespace mgis::quadrature_function {
     return sigmaeq(sig);
   }
 
-}  // namespace mgis::quadrature_function
+}  // namespace mgis::function
 
-#endif /* LIB_MGIS_QUADRATUREFUNCTION_VONMISESSTRESSEVALUATOR_IXX */
+#endif /* LIB_MGIS_FUNCTION_VONMISESSTRESSEVALUATOR_IXX */
