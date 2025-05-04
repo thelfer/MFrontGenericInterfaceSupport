@@ -41,7 +41,7 @@ namespace mgis::function {
     //! \brief allocate internal workspace
     void allocateWorkspace();
     //! \brief return the underlying partial quadrature space
-    const AbstractSpace& getSpace() const;
+    const auto& getSpace() const;
     //! \return the number of components
     constexpr size_type getNumberOfComponents() const noexcept;
     /*!

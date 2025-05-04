@@ -68,7 +68,7 @@ namespace mgis::function {
     e.allocateWorkspace();
     //
     const auto qspace = f.getSpace();
-    const auto ne = qspace.getSpaceSize();
+    const auto ne = qspace.size();
     for (size_type i = 0; i != ne; ++i) {
       if constexpr (N == 1) {
         auto& v = f.getValue(i);
@@ -96,7 +96,7 @@ namespace mgis::function {
     e.allocateWorkspace();
     //
     const auto qspace = f.getSpace();
-    const auto ne = qspace.getSpaceSize();
+    const auto ne = qspace.size();
     if (f.isScalar()) {
       using result_type = std::invoke_result_t<EvaluatorType, size_type>;
       if constexpr (std::same_as<std::decay_t<result_type>, real>) {

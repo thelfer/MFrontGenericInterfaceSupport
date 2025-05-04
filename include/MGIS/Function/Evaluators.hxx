@@ -11,7 +11,6 @@
 #include <type_traits>
 #include "MGIS/Config.hxx"
 #include "MGIS/Function/Buffer.hxx"
-#include "MGIS/Function/AbstractSpace.hxx"
 #include "MGIS/Function/Function.hxx"
 
 namespace mgis::function {
@@ -23,28 +22,39 @@ namespace mgis::function {
     e.allocateWorkspace();
   } && requires(const EvaluatorType& e) {
     e.check();
-    { e.getSpace() } -> std::same_as<const AbstractSpace&>;
+    FunctionalSpaceConcept<decltype(e.getSpace())>;
     { e.getNumberOfComponents() } -> std::same_as<size_type>;
-  } &&((requires(const EvaluatorType& e, size_type i) { e(i); }) ||
-       (requires(EvaluatorType & e, size_type i) { e(i); }));
+  } &&(LinearSpaceConcept<decltype(std::declval<EvaluatorType>().getSpace())>
+           ? ((requires(const EvaluatorType& e, size_type i) { e(i); }) ||
+              (requires(EvaluatorType & e, size_type i) { e(i); }))
+           : true) &&
+      (QuadratureSpaceConcept<
+           decltype(std::declval<EvaluatorType>().getSpace())>
+           ? ((requires(const EvaluatorType& e, size_type n, size_type i) {
+                e(n, i);
+              }) ||
+              (requires(EvaluatorType & e, size_type n, size_type i) {
+                e(n, i);
+              }))
+           : true);
 
   /*!
    * \brief an evaluator returning the values of an immutable partial
    * quadrature function view as a fixed size span or a scalar \tparam size of
    * the returned value
    */
-  template <size_type N>
+  template <FunctionalSpaceConcept Space, size_type N>
   struct FixedSizedEvaluator {
     /*!
      * \brief constructor
      */
-    FixedSizedEvaluator(const ImmutableFunctionView&);
+    FixedSizedEvaluator(const ImmutableFunctionView<Space, {}>&) noexcept;
     //! \brief perform consistency checks
     void check() const;
     //! \brief allocate internal workspace
     void allocateWorkspace();
     //! \brief return the underlying partial quadrature space
-    const AbstractSpace& getSpace() const;
+    const Space& getSpace() const;
     //! \return the number of components
     constexpr size_type getNumberOfComponents() const noexcept;
     /*!
@@ -55,7 +65,7 @@ namespace mgis::function {
 
    private:
     //! \brief underlying partial quadrature space
-    const ImmutableFunctionView& function;
+    const ImmutableFunctionView<Space, {}>& function;
   };  // end of FixedSizedEvaluator
 
   /*!

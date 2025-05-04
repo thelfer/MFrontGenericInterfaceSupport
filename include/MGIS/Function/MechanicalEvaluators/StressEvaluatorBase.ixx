@@ -61,7 +61,7 @@ namespace mgis::function {
   template <unsigned short N,
             EvaluatorConcept StressEvaluatorType,
             bool isSymmetric>
-  const AbstractSpace&
+  const auto&
   StressEvaluatorBase<N, StressEvaluatorType, isSymmetric>::getSpace() const {
     return this->stress_evaluator.getSpace();
   }  // end of getSpace

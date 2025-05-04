@@ -12,12 +12,14 @@
 #ifndef LIB_MGIS_FUNCTION_STRESSEVALUATORBASE_HXX
 #define LIB_MGIS_FUNCTION_STRESSEVALUATORBASE_HXX
 
+#include "MGIS/Function/Space.hxx"
 #include "MGIS/Function/Evaluators.hxx"
 
 namespace mgis::function {
 
   /*!
    * \brief a base class for evaluators modifying a stress tensor
+   * \tparam Space: discretization space
    * \tparam N: space dimension
    * \tparam StressEvaluatorType: evaluator of the stress
    * \tparam symmetric: boolean stating of the stress tensor is symmetric
@@ -40,7 +42,7 @@ namespace mgis::function {
     //! \brief allocate internal workspace
     void allocateWorkspace();
     //! \brief return the underlying partial quadrature space
-    const AbstractSpace& getSpace() const;
+    const auto& getSpace() const;
     //! \return the number of components
     constexpr size_type getNumberOfComponents() const noexcept;
 

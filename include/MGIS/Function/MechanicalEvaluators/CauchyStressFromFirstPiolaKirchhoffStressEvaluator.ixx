@@ -67,7 +67,7 @@ namespace mgis::function {
   template <unsigned short N,
             EvaluatorConcept DeformationGradientEvaluatorType,
             EvaluatorConcept PK1EvaluatorType>
-  const AbstractSpace& CauchyStressFromFirstPiolaKirchhoffStressEvaluator<
+  const auto& CauchyStressFromFirstPiolaKirchhoffStressEvaluator<
       N,
       DeformationGradientEvaluatorType,
       PK1EvaluatorType>::getSpace() const {

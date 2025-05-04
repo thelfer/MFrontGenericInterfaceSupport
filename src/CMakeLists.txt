@@ -17,7 +17,8 @@ mgis_library(MFrontGenericInterface
   Integrate.cxx
   FiniteStrainSupport.cxx
   Model.cxx
-  AbstractSpace.cxx
+  BasicLinearSpace.cxx
+  BasicLinearQuadratureSpace.cxx
   Function.cxx
   Evaluators.cxx
   MechanicalEvaluators.cxx

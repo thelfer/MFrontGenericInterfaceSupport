@@ -370,10 +370,14 @@ else((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
+if(MGIS_HAVE_TFEL)
+
 add_executable(FunctionTest
  EXCLUDE_FROM_ALL
  FunctionTest.cxx)
 target_link_libraries(FunctionTest
-  PRIVATE MFrontGenericInterface)
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME FunctionTest COMMAND FunctionTest)
 add_dependencies(check FunctionTest)
+
+endif(MGIS_HAVE_TFEL)

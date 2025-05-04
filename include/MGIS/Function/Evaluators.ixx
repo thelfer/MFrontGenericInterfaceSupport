@@ -12,34 +12,34 @@
 
 namespace mgis::function {
 
-  template <size_type N>
-  FixedSizedEvaluator<N>::FixedSizedEvaluator(
-      const ImmutableFunctionView& values)
-      : function(values) {}
+  template <FunctionalSpaceConcept Space, size_type N>
+  FixedSizedEvaluator<Space, N>::FixedSizedEvaluator(
+      const ImmutableFunctionView<Space, {}>& values) noexcept
+      : function(values) {}  // end of FixedSizedEvaluator
 
-  template <size_type N>
-  void FixedSizedEvaluator<N>::check() const {
+  template <FunctionalSpaceConcept Space, size_type N>
+  void FixedSizedEvaluator<Space, N>::check() const {
     raise_if(this->function.getNumberOfComponents() != N,
              "FixedSizeImmutableView::FixedSizeImmutableView: "
              "unmatched size");
   }
 
-  template <size_type N>
-  void FixedSizedEvaluator<N>::allocateWorkspace() {}
+  template <FunctionalSpaceConcept Space, size_type N>
+  void FixedSizedEvaluator<Space, N>::allocateWorkspace() {}
 
-  template <size_type N>
-  const AbstractSpace& FixedSizedEvaluator<N>::getSpace() const {
+  template <FunctionalSpaceConcept Space, size_type N>
+  const Space& FixedSizedEvaluator<Space, N>::getSpace() const {
     return this->function.getSpace();
   }
 
-  template <size_type N>
-  constexpr size_type FixedSizedEvaluator<N>::getNumberOfComponents()
+  template <FunctionalSpaceConcept Space, size_type N>
+  constexpr size_type FixedSizedEvaluator<Space, N>::getNumberOfComponents()
       const noexcept {
     return N;
   }
 
-  template <size_type N>
-  auto FixedSizedEvaluator<N>::operator()(const size_type i) const {
+  template <FunctionalSpaceConcept Space, size_type N>
+  auto FixedSizedEvaluator<Space, N>::operator()(const size_type i) const {
     if constexpr (N == 1) {
       return this->function.getValue(i);
     } else {

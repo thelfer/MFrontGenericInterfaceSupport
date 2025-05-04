@@ -39,7 +39,7 @@ namespace mgis::function {
       op(v, v2);
     };
     const auto ne =
-        f.getSpace().getSpaceSize();
+        f.getSpace().size();
     auto r = init;
     for (size_type i = 0; i != ne; ++i) {
       if constexpr (expects_scalar_function) {

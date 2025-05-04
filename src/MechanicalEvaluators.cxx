@@ -5,6 +5,7 @@
  * \date   02/05/2025
  */
 
+#include "MGIS/Function/BasicLinearSpace.hxx"
 #include "MGIS/Function/Evaluators.hxx"
 #include "MGIS/Function/MechanicalEvaluators.hxx"
 
@@ -15,12 +16,16 @@ namespace mgis::function {
   static_assert(
       EvaluatorConcept<CauchyStressFromFirstPiolaKirchhoffStressEvaluator<
           3,
-          FixedSizedEvaluator<9>,
-          FixedSizedEvaluator<9>>>);
+          FixedSizedEvaluator<BasicLinearSpace, 9>,
+          FixedSizedEvaluator<BasicLinearSpace, 9>>>);
   static_assert(
-      EvaluatorConcept<vonMisesStressEvaluator<3, FixedSizedEvaluator<6>>>);
+      EvaluatorConcept<
+          vonMisesStressEvaluator<3,
+                                  FixedSizedEvaluator<BasicLinearSpace, 6>>>);
   static_assert(
-      EvaluatorConcept<PrincipalStressEvaluator<3, FixedSizedEvaluator<6>>>);
+      EvaluatorConcept<
+          PrincipalStressEvaluator<3,
+                                   FixedSizedEvaluator<BasicLinearSpace, 6>>>);
 
 #endif MGIS_HAVE_TFEL
 
