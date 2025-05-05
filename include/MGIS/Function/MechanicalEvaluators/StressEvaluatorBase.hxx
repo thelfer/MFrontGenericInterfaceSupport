@@ -46,7 +46,7 @@ namespace mgis::function {
     //! \return the number of components
     constexpr size_type getNumberOfComponents() const noexcept;
 
-   private:
+   protected:
     //! \brief evaluator of the stress
     StressEvaluatorType stress_evaluator;
   };

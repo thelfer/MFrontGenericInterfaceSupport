@@ -28,6 +28,12 @@ namespace mgis::function {
     return sigmaeq(sig);
   }
 
+  template <unsigned short N, EvaluatorConcept StressEvaluatorType>
+  auto vmis(const StressEvaluatorType& e) requires((N == 1) || (N == 2) ||
+                                                   (N == 3)) {
+    return vonMisesStressEvaluator<N, StressEvaluatorType>(e);
+  }  // end of vmis
+
 }  // namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_VONMISESSTRESSEVALUATOR_IXX */

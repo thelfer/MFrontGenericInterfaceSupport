@@ -11,6 +11,7 @@
 #ifdef MGIS_HAVE_TFEL
 #include "MGIS/Function/MechanicalEvaluators/vonMisesStressEvaluator.hxx"
 #include "MGIS/Function/MechanicalEvaluators/PrincipalStressEvaluator.hxx"
+#include "MGIS/Function/MechanicalEvaluators/HydrostaticStressEvaluator.hxx"
 #include "MGIS/Function/MechanicalEvaluators/CauchyStressFromFirstPiolaKirchhoffStressEvaluator.hxx"
 #endif MGIS_HAVE_TFEL
 

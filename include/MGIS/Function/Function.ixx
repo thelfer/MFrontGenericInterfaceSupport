@@ -70,7 +70,7 @@ namespace mgis::function {
   void check_positivity(IntegerType, const char* const) noexcept
       requires(std::is_unsigned_v<IntegerType>) {}
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   bool FunctionView<Space, layout, is_mutable>::checkPreconditions(
@@ -87,7 +87,7 @@ namespace mgis::function {
     return v.size() >= layout.stride * (space_size - 1) + layout.size;
   }
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   FunctionView<Space, layout, is_mutable>::FunctionView(
@@ -102,7 +102,7 @@ namespace mgis::function {
              " invalid values size");
   }
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   bool FunctionView<Space, layout, is_mutable>::checkPreconditions(
@@ -122,7 +122,7 @@ namespace mgis::function {
     return v.size() >= min_size;
   }  // end of FunctionView
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   FunctionView<Space, layout, is_mutable>::FunctionView(
@@ -137,7 +137,7 @@ namespace mgis::function {
     this->data_size = dsize;
   }  // end of FunctionView
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   bool FunctionView<Space, layout, is_mutable>::checkPreconditions(
@@ -157,7 +157,7 @@ namespace mgis::function {
     return v.size() >= min_size;
   }  // end of FunctionView
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   FunctionView<Space, layout, is_mutable>::FunctionView(
@@ -172,7 +172,7 @@ namespace mgis::function {
     this->data_stride = dstride;
   }  // end of FunctionView
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   bool FunctionView<Space, layout, is_mutable>::checkPreconditions(
@@ -199,7 +199,7 @@ namespace mgis::function {
     return v.size() >= min_size;
   }  // end of checkPreconditions
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   bool FunctionView<Space, layout, is_mutable>::checkPreconditions(
@@ -210,7 +210,7 @@ namespace mgis::function {
     return checkPreconditions(s, v, dsize, dsize);
   }  // end of checkPreconditions
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   FunctionView<Space, layout, is_mutable>::FunctionView(
@@ -227,7 +227,7 @@ namespace mgis::function {
     this->data_stride = dstride;
   }  // end of FunctionView
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   FunctionView<Space, layout, is_mutable>::FunctionView(
@@ -237,7 +237,7 @@ namespace mgis::function {
                                       (layout.stride == dynamic_extent))
       : FunctionView(s, v, dsize, dsize) {}  // end of FunctionView
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   FunctionView<Space, layout, is_mutable>::FunctionView(
@@ -247,7 +247,7 @@ namespace mgis::function {
                                             (layout.stride == dynamic_extent))
       : FunctionView(s, v, l.size, l.stride) {}  // end of FunctionView
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   FunctionView<Space, layout, is_mutable>::FunctionView(
@@ -257,7 +257,7 @@ namespace mgis::function {
                                             (layout.stride == dynamic_extent))
       : FunctionView(s, v, l.stride) {}
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   FunctionView<Space, layout, is_mutable>::FunctionView(
@@ -267,7 +267,7 @@ namespace mgis::function {
                                             (layout.stride != dynamic_extent))
       : FunctionView(s, v, l.size) {}  // end of FunctionView
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   bool FunctionView<Space, layout, is_mutable>::checkCompatibility(
@@ -278,7 +278,7 @@ namespace mgis::function {
     return this->data_size == v.getNumberOfComponents();
   }  // end of checkCompatibility
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   const Space& FunctionView<Space, layout, is_mutable>::getSpace()
@@ -286,7 +286,7 @@ namespace mgis::function {
     return *(this->space);
   }  // end of getSpace
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   std::shared_ptr<const Space>
@@ -294,7 +294,7 @@ namespace mgis::function {
     return this->space;
   }  // end of getSpacePointer
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   real&
@@ -303,7 +303,7 @@ namespace mgis::function {
     return *(this->values.data() + this->getDataOffset(o));
   }  // end of getValues
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   typename FunctionView<Space, layout, is_mutable>::ValuesView
@@ -313,7 +313,7 @@ namespace mgis::function {
                       this->getNumberOfComponents());
   }  // end of getValues
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   template <size_type N>
@@ -324,7 +324,7 @@ namespace mgis::function {
                               this->getNumberOfComponents());
   }  // end of getValues
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   real& FunctionView<Space, layout, is_mutable>::getValue(
@@ -334,7 +334,7 @@ namespace mgis::function {
     return this->getValue(this->space->getQuadraturePointOffset(e, i));
   }  // end of getValues
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   typename FunctionView<Space, layout, is_mutable>::ValuesView
@@ -345,7 +345,7 @@ namespace mgis::function {
     return this->getValues(this->space->getQuadraturePointOffset(e, i));
   }  // end of getValues
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   template <size_type N>
@@ -358,7 +358,7 @@ namespace mgis::function {
         this->space->getQuadraturePointOffset(e, i));
   }  // end of getValues
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   const real& FunctionView<Space, layout, is_mutable>::getValue(
@@ -367,7 +367,7 @@ namespace mgis::function {
     return *(this->values.data() + this->getDataOffset(o));
   }  // end of getValues
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   typename FunctionView<Space, layout, is_mutable>::ConstValuesView
@@ -377,7 +377,7 @@ namespace mgis::function {
                            this->getNumberOfComponents());
   }  // end of getValues
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   template <size_type N>
@@ -388,7 +388,7 @@ namespace mgis::function {
         this->getNumberOfComponents());
   }  // end of getValues
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   const real& FunctionView<Space, layout, is_mutable>::getValue(
@@ -397,7 +397,7 @@ namespace mgis::function {
     return this->getValue(this->space->getQuadraturePointOffset(e, i));
   }  // end of getValues
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   typename FunctionView<Space, layout, is_mutable>::ConstValuesView
@@ -407,7 +407,7 @@ namespace mgis::function {
     return this->getValues(this->space->getQuadraturePointOffset(e, i));
   }  // end of getValues
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   template <size_type N>
@@ -418,7 +418,7 @@ namespace mgis::function {
         this->space->getQuadraturePointOffset(e, i));
   }  // end of getValues
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   std::span<const real> FunctionView<Space, layout, is_mutable>::getValues()
@@ -426,7 +426,7 @@ namespace mgis::function {
     return this->values;
   }
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
   FunctionView<Space, layout, is_mutable>::~FunctionView() noexcept = default;

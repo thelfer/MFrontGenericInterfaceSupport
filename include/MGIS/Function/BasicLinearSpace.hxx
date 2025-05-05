@@ -34,7 +34,9 @@ namespace mgis::function {
 
   template <>
   struct SpaceTraits<BasicLinearSpace> : SpaceTraitsBase {
+    static constexpr bool linear_element_indexing = true;
     using size_type = mgis::size_type;
+    using element_index_type = mgis::size_type;
   };
 
 }  // end of namespace mgis::function

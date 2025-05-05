@@ -60,11 +60,18 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N>
   struct FixedSizeEvaluator {
     /*!
-     * \brief constructor
+     * \brief method checking that the precondition of the constructor are met.
+     * \param[in] values: function
      */
-    FixedSizeEvaluator(const ImmutableFunctionView<Space, {}>&) noexcept;
+    static bool checkPreconditions(
+        const ImmutableFunctionView<Space, {}>&) noexcept;
+    /*!
+     * \brief constructor
+     * \param[in] values: function
+     */
+    FixedSizeEvaluator(const ImmutableFunctionView<Space, {}>&);
     //! \brief perform consistency checks
-    void check() const;
+    bool check() const noexcept;
     //! \brief allocate internal workspace
     void allocateWorkspace();
     //! \brief return the underlying partial quadrature space
@@ -75,16 +82,16 @@ namespace mgis::function {
      * \brief call operator
      * \param[in] i: integration point index
      */
-    auto operator()(const typename SpaceTraits<Space>::size_type) const
+    auto operator()(const typename SpaceTraits<Space>::element_index_type) const
         requires(LinearSpaceConcept<Space>);
     /*!
      * \brief call operator
-     * \param[in] e: element number
+     * \param[in] e: cell index
      * \param[in] i: integration point index
      */
     auto operator()(
-        const typename SpaceTraits<Space>::ElementWorkspace&,
-        const typename SpaceTraits<Space>::element_index_type,
+        const typename SpaceTraits<Space>::CellWorkspace&,
+        const typename SpaceTraits<Space>::cell_index_type,
         const typename SpaceTraits<Space>::quadrature_point_index_type) const
         requires(LinearQuadratureSpaceConcept<Space>);
 

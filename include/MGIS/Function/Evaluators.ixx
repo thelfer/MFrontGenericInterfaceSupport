@@ -13,15 +13,23 @@
 namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N>
-  FixedSizeEvaluator<Space, N>::FixedSizeEvaluator(
-      const ImmutableFunctionView<Space, {}>& values) noexcept
-      : function(values) {}  // end of FixedSizeEvaluator
+  bool FixedSizeEvaluator<Space, N>::checkPreconditions(
+      const ImmutableFunctionView<Space, {}>& values) noexcept {
+    return values.getNumberOfComponents() == N;
+  }  // end of checkPreconditions
 
   template <FunctionalSpaceConcept Space, size_type N>
-  void FixedSizeEvaluator<Space, N>::check() const {
-    raise_if(this->function.getNumberOfComponents() != N,
+  FixedSizeEvaluator<Space, N>::FixedSizeEvaluator(
+      const ImmutableFunctionView<Space, {}>& values)
+      : function(values) {
+    raise_if(!checkPreconditions(values),
              "FixedSizeImmutableView::FixedSizeImmutableView: "
              "unmatched size");
+  }  // end of FixedSizeEvaluator
+
+  template <FunctionalSpaceConcept Space, size_type N>
+  bool FixedSizeEvaluator<Space, N>::check() const noexcept {
+    return true;
   }
 
   template <FunctionalSpaceConcept Space, size_type N>
@@ -40,7 +48,7 @@ namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N>
   auto FixedSizeEvaluator<Space, N>::operator()(
-      const typename SpaceTraits<Space>::size_type i) const
+      const typename SpaceTraits<Space>::element_index_type i) const
       requires(LinearSpaceConcept<Space>) {
     if constexpr (N == 1) {
       return this->function.getValue(i);
@@ -51,8 +59,8 @@ namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N>
   auto FixedSizeEvaluator<Space, N>::operator()(
-      const typename SpaceTraits<Space>::ElementWorkspace&,
-      const typename SpaceTraits<Space>::element_index_type e,
+      const typename SpaceTraits<Space>::CellWorkspace&,
+      const typename SpaceTraits<Space>::cell_index_type e,
       const typename SpaceTraits<Space>::quadrature_point_index_type i) const
       requires(LinearQuadratureSpaceConcept<Space>) {
     if constexpr (N == 1) {

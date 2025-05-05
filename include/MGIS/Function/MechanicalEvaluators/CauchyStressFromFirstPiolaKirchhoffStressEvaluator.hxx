@@ -46,7 +46,7 @@ namespace mgis::function {
     constexpr size_type getNumberOfComponents() const noexcept;
     /*!
      * \brief call operator
-     * \param[in] i: integration point index
+     * \param[in] i: cell index
      */
     real operator()(const size_type) const;
 

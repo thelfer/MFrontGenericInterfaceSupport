@@ -35,31 +35,16 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     using namespace mgis;
     using namespace mgis::function;
     constexpr auto eps = real{1e-14};
-    auto space = std::make_shared<BasicLinearSpace>(3);
+    auto space = std::make_shared<BasicLinearSpace>(1);
     auto values = std::vector<real>{1, 2, 3};
-    const auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 1);
-    TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 1);
-    TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 1);
-    TFEL_TESTS_ASSERT(std::abs(f.getValue(0) - 1) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f.getValue(1) - 2) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f.getValue(2) - 3) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f.getValues(0)[0] - 1) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f.getValues(1)[0] - 2) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f.getValues(2)[0] - 3) < eps);
-    auto values2 = std::vector<real>{1, 2, 3, 4};
-    const auto f2 = ImmutableFunctionView<BasicLinearSpace>(space, values2, 1);
-    TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 1);
-    TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 1);
-    TFEL_TESTS_ASSERT(std::abs(f.getValue(0) - 1) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f.getValue(1) - 2) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f.getValue(2) - 3) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f.getValues(0)[0] - 1) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f.getValues(1)[0] - 2) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f.getValues(2)[0] - 3) < eps);
-    auto values3 = std::vector<real>{1, 2};
-    TFEL_TESTS_CHECK_THROW(
-        ImmutableFunctionView<BasicLinearSpace>(space, values3, 1),
-        std::runtime_error);
+    const auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 3);
+    TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 3);
+    TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 3);
+    const auto s = FixedSizeEvaluator<BasicLinearSpace, 3>(f);
+    const auto e = vmis<1>(s);
+    TFEL_TESTS_ASSERT(std::abs(e(0) - std::sqrt(3)) < eps);
+    const auto e2 = hydrostatic_stress<1>(s);
+    TFEL_TESTS_ASSERT(std::abs(e2(0) - 2) < eps);
   }
 };
 

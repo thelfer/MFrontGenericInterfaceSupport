@@ -15,12 +15,12 @@ namespace mgis::function {
 
   /*!
    * \brief a minimal implementation of linear quadrature space
-   * \param N: number of integration points per element
+   * \param N: number of integration points per cells
    */
   template <size_type N>
   requires(N > 0) struct MGIS_EXPORT BasicLinearQuadratureSpace {
     //! \brief an empty element workspace
-    struct DummyElementWorkspace {};
+    struct DummyCellWorkspace {};
     /*!
      * \brief constructor
      * \param[in] n: number of elements
@@ -31,24 +31,24 @@ namespace mgis::function {
         const BasicLinearQuadratureSpace&) noexcept;
     //! \return the number of quadrature points
     constexpr size_type size() const noexcept;
-    //! \return the number of elements
-    constexpr size_type getNumberOfElements() const noexcept;
+    //! \return the number of cells in the quadrature space
+    constexpr size_type getNumberOfCells() const noexcept;
     /*!
      * \return the number quadrature points for the given element
-     * \param[in] e: element index
+     * \param[in] e: cell index
      */
     constexpr size_type getNumberOfQuadraturePoints(
         const size_type) const noexcept;
     /*!
      * \return the workspace of the element
-     * \param[in] e: element index
+     * \param[in] e: cell index
      */
-    constexpr DummyElementWorkspace getElementWorkspace(
+    constexpr DummyCellWorkspace getCellWorkspace(
         const size_type) const noexcept;
     /*!
      * \return the offset associated with a quadrature space
      * \param[in] wk: element workspace
-     * \param[in] e: element index
+     * \param[in] e: cell index
      * \param[in] i: quadrature point index
      */
     constexpr size_type getQuadraturePointOffset(
@@ -63,10 +63,15 @@ namespace mgis::function {
 
   template <size_type N>
   struct SpaceTraits<BasicLinearQuadratureSpace<N>> {
-    using ElementWorkspace =
-        typename BasicLinearQuadratureSpace<N>::DummyElementWorkspace;
     using size_type = mgis::size_type;
+    //
+    static constexpr bool linear_element_indexing = true;
     using element_index_type = mgis::size_type;
+    //
+    using CellWorkspace =
+        typename BasicLinearQuadratureSpace<N>::DummyCellWorkspace;
+    static constexpr bool linear_cell_indexing = true;
+    using cell_index_type = mgis::size_type;
     using quadrature_point_index_type = mgis::size_type;
   };
 

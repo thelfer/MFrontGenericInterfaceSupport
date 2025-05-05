@@ -29,7 +29,7 @@ namespace mgis::function {
   }  // end of size
 
   template <size_type N>
-  constexpr size_type BasicLinearQuadratureSpace<N>::getNumberOfElements()
+  constexpr size_type BasicLinearQuadratureSpace<N>::getNumberOfCells()
       const noexcept {
     return this->nelts;
   }  // end of getNumberOfElements
@@ -42,11 +42,11 @@ namespace mgis::function {
   }  // end of getNumberOfQuadraturePoints
 
   template <size_type N>
-  constexpr typename BasicLinearQuadratureSpace<N>::DummyElementWorkspace
-  BasicLinearQuadratureSpace<N>::getElementWorkspace(
+  constexpr typename BasicLinearQuadratureSpace<N>::DummyCellWorkspace
+  BasicLinearQuadratureSpace<N>::getCellWorkspace(
       const size_type) const noexcept {
     return {};
-  }  // end of getElementWorkspace
+  }  // end of getCellWorkspace
 
   template <size_type N>
   constexpr size_type BasicLinearQuadratureSpace<N>::getQuadraturePointOffset(

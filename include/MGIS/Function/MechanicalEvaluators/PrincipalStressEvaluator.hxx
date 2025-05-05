@@ -30,7 +30,7 @@ namespace mgis::function {
             EvaluatorConcept StressEvaluatorType,
             tfel::math::stensor_common::EigenSolver esolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
-  struct PrincipalStressEvaluator
+  requires((N == 1) || (N == 2) || (N == 3)) struct PrincipalStressEvaluator
       : StressEvaluatorBase<N, StressEvaluatorType, true> {
     /*!
      * \brief default constructor
@@ -46,7 +46,7 @@ namespace mgis::function {
     constexpr size_type getNumberOfComponents() const noexcept;
     /*!
      * \brief call operator
-     * \param[in] i: integration point index
+     * \param[in] i: element index
      */
     std::array<real, 3u> operator()(const size_type) const;
 
@@ -59,6 +59,14 @@ namespace mgis::function {
      */
     const real seps;
   };
+
+  template <unsigned short N,
+            EvaluatorConcept StressEvaluatorType,
+            tfel::math::stensor_common::EigenSolver esolver =
+                tfel::math::stensor_common::TFELEIGENSOLVER>
+  auto principal_stress(const StressEvaluatorType&) requires((N == 1) ||
+                                                             (N == 2) ||
+                                                             (N == 3));
 
 }  // namespace mgis::function
 

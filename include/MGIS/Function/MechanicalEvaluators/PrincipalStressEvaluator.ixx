@@ -54,6 +54,16 @@ namespace mgis::function {
     return {vp[0], vp[1], vp[2]};
   }  // end of operator()
 
+  template <unsigned short N,
+            EvaluatorConcept StressEvaluatorType,
+            tfel::math::stensor_common::EigenSolver esolver =
+                tfel::math::stensor_common::TFELEIGENSOLVER>
+  auto principal_stress(const StressEvaluatorType& e) requires((N == 1) ||
+                                                               (N == 2) ||
+                                                               (N == 3)) {
+    return PrincipalStressEvaluator<N, StressEvaluatorType, esolver>(e);
+  }  // end of principal_stress
+
 }  // namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_PRINCIPALSTRESSEVALUATOR_IXX */

@@ -1,5 +1,5 @@
 /*!
- * \file   vonMisesStressEvaluator.hxx
+ * \file   HydrostaticStressEvaluator.hxx
  * \brief
  * \author Thomas Helfer
  * \date   01/05/2025
@@ -9,8 +9,8 @@
 #error "TFEL is required to use mechanical evaluators"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_FUNCTION_VONMISESSTRESSEVALUATOR_HXX
-#define LIB_MGIS_FUNCTION_VONMISESSTRESSEVALUATOR_HXX
+#ifndef LIB_MGIS_FUNCTION_HYDROSTATICSTRESSSTRESSEVALUATOR_HXX
+#define LIB_MGIS_FUNCTION_HYDROSTATICSTRESSSTRESSEVALUATOR_HXX
 
 #include "MGIS/Function/Evaluators.hxx"
 #include "MGIS/Function/MechanicalEvaluators/StressEvaluatorBase.hxx"
@@ -24,7 +24,7 @@ namespace mgis::function {
    * \tparam StressEvaluatorType: evaluator of the stress
    */
   template <unsigned short N, EvaluatorConcept StressEvaluatorType>
-  requires((N == 1) || (N == 2) || (N == 3)) struct vonMisesStressEvaluator
+  requires((N == 1) || (N == 2) || (N == 3)) struct HydrostaticStressEvaluator
       : StressEvaluatorBase<N, StressEvaluatorType, true> {
     // inheriting constructors
     using StressEvaluatorBase<N, StressEvaluatorType, true>::
@@ -44,6 +44,6 @@ namespace mgis::function {
 
 }  // namespace mgis::function
 
-#include "MGIS/Function/MechanicalEvaluators/vonMisesStressEvaluator.ixx"
+#include "MGIS/Function/MechanicalEvaluators/HydrostaticStressEvaluator.ixx"
 
-#endif /* LIB_MGIS_FUNCTION_VONMISESSTRESSEVALUATOR_HXX */
+#endif /* LIB_MGIS_FUNCTION_HYDROSTATICSTRESSSTRESSEVALUATOR_HXX */

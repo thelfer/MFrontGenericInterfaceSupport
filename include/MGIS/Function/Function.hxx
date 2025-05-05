@@ -22,7 +22,7 @@ namespace mgis::function {
    * manipulated by a quadrature function.
    */
   template <size_type data_size>
-  struct FunctionDataSize {
+  requires(data_size > 0) struct FunctionDataSize {
     //! \return the number of components
     constexpr bool isScalar() const noexcept;
     //! \return the number of components
@@ -47,7 +47,7 @@ namespace mgis::function {
    * manipulated by a quadrature function.
    */
   template <size_type data_stride>
-  struct FunctionDataStride {
+  requires(data_stride > 0) struct FunctionDataStride {
     /*!
      * \return the stride of data, i.e. the distance between the values of two
      * successive integration points.
@@ -82,11 +82,10 @@ namespace mgis::function {
    * quadrature function is mapped in memory
    */
   template <DataLayoutDescription layout>
-  struct MGIS_EXPORT DataLayout : public FunctionDataSize<layout.size>,
-                                  public FunctionDataStride<layout.stride> {
-    //
-    static_assert((layout.size > 0) && (layout.stride >= layout.size),
-                  "invalid layout");
+  requires((layout.size > 0) &&
+           (layout.stride > 0)) struct MGIS_EXPORT DataLayout
+      : public FunctionDataSize<layout.size>,
+        public FunctionDataStride<layout.stride> {
     // \brief default constructor
     DataLayout() = default;
     // \brief move constructor
@@ -134,7 +133,7 @@ namespace mgis::function {
    * The size of the data hold by the function per element of the space, i.e. th
    * number of components of the function is given by `data_size`.
    */
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout = {},
             bool is_mutable = true>
   struct FunctionView : DataLayout<layout> {
@@ -414,15 +413,36 @@ namespace mgis::function {
   };  // end of FunctionView
 
   //! \brief a simple alias
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             DataLayoutDescription layout = {}>
   using ImmutableFunctionView = FunctionView<Space, layout, false>;
 
-  //   template <FunctionalSpaceConcept Space, size_type N = dynamic_extent>
-  //   struct Function : public FunctionStorage<Space, N>,
-  //                     public FunctionView<Space, {.size = N, .stride = N},
-  //                     true> {
-  //   };
+  template <LinearFunctionalSpaceConcept Space, size_type N>
+  struct FunctionStorage {
+    FunctionStorage(const Space& s) requires(N != dynamic_extent)
+        : storage_values(N * s.size()) {}
+    FunctionStorage(const Space& s,
+                    const size_type dsize) requires(N == dynamic_extent)
+        : storage_values(s.size() * dsize) {}
+
+   protected:
+    //! \brief values
+    std::vector<real> storage_values;
+  };
+
+  template <LinearFunctionalSpaceConcept Space, size_type N = dynamic_extent>
+  struct Function : public FunctionStorage<Space, N>,
+                    public FunctionView<Space, {.size = N, .stride = N}, true> {
+    Function(std::shared_ptr<const Space> s) requires(N != dynamic_extent)
+        : FunctionStorage<Space, N>(*s),
+          FunctionView<Space, {.size = N, .stride = N}, true>(
+              s, this->storage_values) {}
+    Function(std::shared_ptr<const Space> s,
+             const size_type dsize) requires(N == dynamic_extent)
+        : FunctionStorage<Space, N>(*s, dsize),
+          FunctionView<Space, {.size = N, .stride = N}, true>(
+              s, this->storage_values, dsize, dsize) {}
+  };
 
   }  // namespace mgis::function
 

@@ -32,6 +32,7 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     this->test5();
     this->test6();
     this->test7();
+    this->test8();
     return this->result;
   }
 
@@ -187,13 +188,20 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(std::abs(f.getValue(i) - (i + 1)) < eps);
       TFEL_TESTS_ASSERT(std::abs(f.getValues(i)[0] - (i + 1)) < eps);
     }
-    for (size_type e = 0; e != space->getNumberOfElements(); ++e) {
+    for (size_type e = 0; e != space->getNumberOfCells(); ++e) {
       for (size_type i = 0; i != space->getNumberOfQuadraturePoints(e); ++i) {
         const auto v = e * 3 + i + 1;
         TFEL_TESTS_ASSERT(std::abs(f.getValue(e, i) - v) < eps);
         TFEL_TESTS_ASSERT(std::abs(f.getValues(e, i)[0] - v) < eps);
       }
     }
+  }
+  void test8() {
+    using namespace mgis;
+    using namespace mgis::function;
+    auto space = std::make_shared<BasicLinearSpace>(2);
+    auto f = Function<BasicLinearSpace>(space, 2);
+    TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 2);
   }
 };
 

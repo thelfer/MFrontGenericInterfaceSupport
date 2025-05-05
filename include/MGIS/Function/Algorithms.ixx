@@ -64,7 +64,9 @@ namespace mgis::function {
     raise_if(e.getNumberOfComponents() != N,
              "assign: invalid number of components for the right hand size");
     //
-    e.check();
+    if (!e.check()) {
+      return false;
+    }
     e.allocateWorkspace();
     //
     const auto qspace = f.getSpace();
@@ -92,7 +94,9 @@ namespace mgis::function {
              "assign: unmatched number of components for the left hand size "
              "and the right hand side");
     //
-    e.check();
+    if (!e.check()) {
+      return false;
+    }
     e.allocateWorkspace();
     //
     const auto qspace = f.getSpace();
