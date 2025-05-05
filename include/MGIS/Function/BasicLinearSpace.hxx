@@ -33,7 +33,7 @@ namespace mgis::function {
   };
 
   template <>
-  struct SpaceTraits<BasicLinearSpace> {
+  struct SpaceTraits<BasicLinearSpace> : SpaceTraitsBase {
     using size_type = mgis::size_type;
   };
 

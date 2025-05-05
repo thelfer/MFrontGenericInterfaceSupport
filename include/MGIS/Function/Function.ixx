@@ -36,7 +36,7 @@ namespace mgis::function {
   template <size_type data_stride>
   constexpr size_type FunctionDataStride<data_stride>::getDataStride()
       const noexcept {
-    return this->data_stride;
+    return data_stride;
   }  // end of getDataStride
 
   inline size_type FunctionDataStride<dynamic_extent>::getDataStride()
@@ -70,151 +70,366 @@ namespace mgis::function {
   void check_positivity(IntegerType, const char* const) noexcept
       requires(std::is_unsigned_v<IntegerType>) {}
 
-  template <FunctionalSpaceConcept Space, DataLayoutDescription layout>
-  ImmutableFunctionView<Space, layout>::ImmutableFunctionView() = default;
-
-  template <FunctionalSpaceConcept Space, DataLayoutDescription layout>
-  ImmutableFunctionView<Space, layout>::ImmutableFunctionView(
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  bool FunctionView<Space, layout, is_mutable>::checkPreconditions(
       std::shared_ptr<const Space> s,
-      const size_type nv,
-      const size_type ds) requires((layout.size != dynamic_extent) &&
-                                   (layout.stride != dynamic_extent))
-      : space(s) {
-    this->data_stride = ds;
-    this->data_size = nv;
-    raise_if(this->data_size <= 0,
-             "ImmutableFunctionView::"
-             "ImmutableFunctionView: "
-             "invalid data size");
-    raise_if(this->data_size > this->data_stride,
-             "ImmutableFunctionView::"
-             "ImmutableFunctionView: "
-             "invalid data range is outside the stride size");
-  }  // end of ImmutableFunctionView
-
-  template <FunctionalSpaceConcept Space, DataLayoutDescription layout>
-  ImmutableFunctionView<Space, layout>::ImmutableFunctionView(
-      std::shared_ptr<const Space> s,
-      std::span<const real> v,
-      const size_type ds) requires(layout.size == dynamic_extent)
-      : space(s) {
-    this->data_size = ds;
-    raise_if(this->data_size <= 0,
-             "Function::Function: invalid "
-             "data size");
-    if (this->space->size() == 0) {
+      typename FunctionView::ExternalData v) requires((layout.size !=
+                                                       dynamic_extent) &&
+                                                      (layout.stride !=
+                                                       dynamic_extent)) {
+    const auto space_size = s->size();
+    if (space_size == 0) {
       // this may happen due to partionning in parallel
-      if constexpr (layout.stride != dynamic_extent) {
-        this->data_stride = dynamic_extent;
-      }
-      return;
+      return true;
     }
-    const auto quotient =
-        static_cast<size_type>(v.size()) / this->space->size();
-    const auto remainder =
-        static_cast<size_type>(v.size()) % this->space->size();
-    raise_if((remainder != 0) || (quotient <= 0),
-             "Function::Function: invalid "
-             "values size");
-    if constexpr (layout.stride != dynamic_extent) {
-      this->data_stride = quotient;
-      if (this->data_size == dynamic_extent) {
-        this->data_size = this->data_stride;
-      } else {
-        raise_if(this->data_size > this->data_stride,
-                 "ImmutableFunctionView::ImmutableFunctionView: invalid "
-                 "data range is outside the stride size");
-      }
-    } else {
-    }
-    this->immutable_values = v;
-  }  // end of ImmutableFunctionView
-
-  template <FunctionalSpaceConcept Space, DataLayoutDescription layout>
-  ImmutableFunctionView<Space, layout>::ImmutableFunctionView(
-      std::shared_ptr<const Space> s, std::span<const real> v)
-      : space(s), immutable_values(v) {
-    if (this->space->size() == 0) {
-      // this may happen due to partionning in parallel
-      if constexpr (layout.stride != dynamic_extent) {
-        this->data_stride = dynamic_extent;
-      }
-      return;
-    }
-    const auto quotient =
-        static_cast<size_type>(v.size()) / this->space->size();
-    const auto remainder =
-        static_cast<size_type>(v.size()) % this->space->size();
-    raise_if((remainder != 0) || (quotient <= 0),
-             "ImmutableFunctionView::ImmutableFunctionView: invalid "
-             "values size");
-    if constexpr (layout.size == dynamic_extent) {
-      this->data_size = quotient;
-    } else {
-      raise_if(layout.size > quotient,
-               "ImmutableFunctionView::ImmutableFunctionView: size"
-               "does not match");
-    }
-    if constexpr (layout.stride == dynamic_extent) {
-      this->data_stride = quotient;
-    } else {
-      raise_if(quotient != layout.stride,
-               "ImmutableFunctionView::ImmutableFunctionView: stride "
-               "does not match");
-    }
+    return v.size() >= layout.stride * (space_size - 1) + layout.size;
   }
 
-  template <FunctionalSpaceConcept Space, DataLayoutDescription layout>
-  bool ImmutableFunctionView<Space, layout>::checkCompatibility(
-      const ImmutableFunctionView& v) const {
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  FunctionView<Space, layout, is_mutable>::FunctionView(
+      std::shared_ptr<const Space> s,
+      typename FunctionView::ExternalData v) requires((layout.size !=
+                                                       dynamic_extent) &&
+                                                      (layout.stride !=
+                                                       dynamic_extent))
+      : space(s), values(v) {
+    raise_if(!checkPreconditions(s, v),
+             "FunctionView::FunctionView:"
+             " invalid values size");
+  }
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  bool FunctionView<Space, layout, is_mutable>::checkPreconditions(
+      std::shared_ptr<const Space> s,
+      FunctionView::ExternalData v,
+      const size_type dsize) requires((layout.size == dynamic_extent) &&
+                                      (layout.stride != dynamic_extent)) {
+    if (dsize <= 0) {
+      return false;
+    }
+    const auto space_size = s->size();
+    if (space_size == 0) {
+      // this may happen due to partionning in parallel
+      return true;
+    }
+    const auto min_size = (layout.stride) * (space_size - 1) + dsize;
+    return v.size() >= min_size;
+  }  // end of FunctionView
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  FunctionView<Space, layout, is_mutable>::FunctionView(
+      std::shared_ptr<const Space> s,
+      FunctionView::ExternalData v,
+      const size_type dsize) requires((layout.size == dynamic_extent) &&
+                                      (layout.stride != dynamic_extent))
+      : space(s), values(v) {
+    raise_if(!checkPreconditions(s, v, dsize),
+             "FunctionView::FunctionView:"
+             " invalid values size");
+    this->data_size = dsize;
+  }  // end of FunctionView
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  bool FunctionView<Space, layout, is_mutable>::checkPreconditions(
+      std::shared_ptr<const Space> s,
+      FunctionView::ExternalData v,
+      const size_type dstride) requires((layout.size != dynamic_extent) &&
+                                        (layout.stride == dynamic_extent)) {
+    if (dstride <= 0) {
+      return false;
+    }
+    const auto space_size = s->size();
+    if (space_size == 0) {
+      // this may happen due to partionning in parallel
+      return true;
+    }
+    const auto min_size = dstride * (space_size - 1) + layout.size;
+    return v.size() >= min_size;
+  }  // end of FunctionView
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  FunctionView<Space, layout, is_mutable>::FunctionView(
+      std::shared_ptr<const Space> s,
+      FunctionView::ExternalData v,
+      const size_type dstride) requires((layout.size != dynamic_extent) &&
+                                        (layout.stride == dynamic_extent))
+      : space(s), values(v) {
+    raise_if(!checkPreconditions(s, v, dstride),
+             "FunctionView::FunctionView:"
+             " invalid values size");
+    this->data_stride = dstride;
+  }  // end of FunctionView
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  bool FunctionView<Space, layout, is_mutable>::checkPreconditions(
+      std::shared_ptr<const Space> s,
+      FunctionView::ExternalData v,
+      const size_type dsize,
+      const size_type dstride) requires((layout.size == dynamic_extent) &&
+                                        (layout.stride == dynamic_extent)) {
+    if (dsize <= 0) {
+      return false;
+    }
+    if (dstride <= 0) {
+      return false;
+    }
+    if (dsize > dstride) {
+      return false;
+    }
+    const auto space_size = s->size();
+    if (space_size == 0) {
+      // this may happen due to partionning in parallel
+      return true;
+    }
+    const auto min_size = dstride * (space_size - 1) + dsize;
+    return v.size() >= min_size;
+  }  // end of checkPreconditions
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  bool FunctionView<Space, layout, is_mutable>::checkPreconditions(
+      std::shared_ptr<const Space> s,
+      FunctionView::ExternalData v,
+      const size_type dsize) requires((layout.size == dynamic_extent) &&
+                                      (layout.stride == dynamic_extent)) {
+    return checkPreconditions(s, v, dsize, dsize);
+  }  // end of checkPreconditions
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  FunctionView<Space, layout, is_mutable>::FunctionView(
+      std::shared_ptr<const Space> s,
+      FunctionView::ExternalData v,
+      const size_type dsize,
+      const size_type dstride) requires((layout.size == dynamic_extent) &&
+                                        (layout.stride == dynamic_extent))
+      : space(s), values(v) {
+    raise_if(!checkPreconditions(s, v, dsize, dstride),
+             "FunctionView::FunctionView:"
+             " invalid values size");
+    this->data_size = dsize;
+    this->data_stride = dstride;
+  }  // end of FunctionView
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  FunctionView<Space, layout, is_mutable>::FunctionView(
+      std::shared_ptr<const Space> s,
+      FunctionView::ExternalData v,
+      const size_type dsize) requires((layout.size == dynamic_extent) &&
+                                      (layout.stride == dynamic_extent))
+      : FunctionView(s, v, dsize, dsize) {}  // end of FunctionView
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  FunctionView<Space, layout, is_mutable>::FunctionView(
+      std::shared_ptr<const Space> s,
+      FunctionView::ExternalData v,
+      const DataLayout<layout>& l) requires((layout.size == dynamic_extent) &&
+                                            (layout.stride == dynamic_extent))
+      : FunctionView(s, v, l.size, l.stride) {}  // end of FunctionView
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  FunctionView<Space, layout, is_mutable>::FunctionView(
+      std::shared_ptr<const Space> s,
+      FunctionView::ExternalData v,
+      const DataLayout<layout>& l) requires((layout.size != dynamic_extent) &&
+                                            (layout.stride == dynamic_extent))
+      : FunctionView(s, v, l.stride) {}
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  FunctionView<Space, layout, is_mutable>::FunctionView(
+      std::shared_ptr<const Space> s,
+      FunctionView::ExternalData v,
+      const DataLayout<layout>& l) requires((layout.size == dynamic_extent) &&
+                                            (layout.stride != dynamic_extent))
+      : FunctionView(s, v, l.size) {}  // end of FunctionView
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  bool FunctionView<Space, layout, is_mutable>::checkCompatibility(
+      const FunctionView& v) const {
     if (this->getSpacePointer() != v.getSpacePointer()) {
       return false;
     }
     return this->data_size == v.getNumberOfComponents();
   }  // end of checkCompatibility
 
-  template <FunctionalSpaceConcept Space, DataLayoutDescription layout>
-  const Space& ImmutableFunctionView<Space, layout>::getSpace() const noexcept {
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  const Space& FunctionView<Space, layout, is_mutable>::getSpace()
+      const noexcept {
     return *(this->space);
   }  // end of getSpace
 
-  template <FunctionalSpaceConcept Space, DataLayoutDescription layout>
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
   std::shared_ptr<const Space>
-  ImmutableFunctionView<Space, layout>::getSpacePointer() const noexcept {
+  FunctionView<Space, layout, is_mutable>::getSpacePointer() const noexcept {
     return this->space;
   }  // end of getSpacePointer
 
-  template <FunctionalSpaceConcept Space, DataLayoutDescription layout>
-  const real& ImmutableFunctionView<Space, layout>::getValue(
-      const size_type o) const requires(LinearSpaceConcept<Space>) {
-    return *(this->immutable_values.data() + this->getDataOffset(o));
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  real&
+  FunctionView<Space, layout, is_mutable>::getValue(const size_type o) requires(
+      allowScalarAccessor&& is_mutable&& LinearSpaceConcept<Space>) {
+    return *(this->values.data() + this->getDataOffset(o));
   }  // end of getValues
 
-  template <FunctionalSpaceConcept Space, DataLayoutDescription layout>
-  std::span<const real> ImmutableFunctionView<Space, layout>::getValues(
-      const size_type o) const requires(LinearSpaceConcept<Space>) {
-    return std::span<const real>(
-        this->immutable_values.data() + this->getDataOffset(o),
-        this->getNumberOfComponents());
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  typename FunctionView<Space, layout, is_mutable>::ValuesView
+  FunctionView<Space, layout, is_mutable>::getValues(
+      const size_type o) requires(is_mutable&& LinearSpaceConcept<Space>) {
+    return ValuesView(this->values.data() + this->getDataOffset(o),
+                      this->getNumberOfComponents());
   }  // end of getValues
 
-  template <FunctionalSpaceConcept Space, DataLayoutDescription layout>
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
   template <size_type N>
-  std::span<const real, N> ImmutableFunctionView<Space, layout>::getValues(
+  std::span<real, N> FunctionView<Space, layout, is_mutable>::getValues(
+      const size_type o) requires((layout.size == dynamic_extent) &&
+                                  is_mutable && LinearSpaceConcept<Space>) {
+    return std::span<real, N>(this->values.data() + this->getDataOffset(o),
+                              this->getNumberOfComponents());
+  }  // end of getValues
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  real& FunctionView<Space, layout, is_mutable>::getValue(
+      const size_type e,
+      const size_type i) requires(allowScalarAccessor&& is_mutable&&
+                                      LinearQuadratureSpaceConcept<Space>) {
+    return this->getValue(this->space->getQuadraturePointOffset(e, i));
+  }  // end of getValues
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  typename FunctionView<Space, layout, is_mutable>::ValuesView
+  FunctionView<Space, layout, is_mutable>::getValues(
+      const size_type e,
+      const size_type
+          i) requires(is_mutable&& LinearQuadratureSpaceConcept<Space>) {
+    return this->getValues(this->space->getQuadraturePointOffset(e, i));
+  }  // end of getValues
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  template <size_type N>
+  std::span<real, N> FunctionView<Space, layout, is_mutable>::getValues(
+      const size_type e,
+      const size_type i) requires((layout.size == dynamic_extent) &&
+                                  is_mutable &&
+                                  LinearQuadratureSpaceConcept<Space>) {
+    return this->template getValues<N>(
+        this->space->getQuadraturePointOffset(e, i));
+  }  // end of getValues
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  const real& FunctionView<Space, layout, is_mutable>::getValue(
+      const size_type o) const
+      requires(allowScalarAccessor&& LinearSpaceConcept<Space>) {
+    return *(this->values.data() + this->getDataOffset(o));
+  }  // end of getValues
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  typename FunctionView<Space, layout, is_mutable>::ConstValuesView
+  FunctionView<Space, layout, is_mutable>::getValues(const size_type o) const
+      requires(LinearSpaceConcept<Space>) {
+    return ConstValuesView(this->values.data() + this->getDataOffset(o),
+                           this->getNumberOfComponents());
+  }  // end of getValues
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  template <size_type N>
+  std::span<const real, N> FunctionView<Space, layout, is_mutable>::getValues(
       const size_type o) const requires(LinearSpaceConcept<Space>) {
     return std::span<const real, N>(
-        this->immutable_values.data() + this->getDataOffset(o),
+        this->values.data() + this->getDataOffset(o),
         this->getNumberOfComponents());
   }  // end of getValues
 
-  template <FunctionalSpaceConcept Space, DataLayoutDescription layout>
-  std::span<const real> ImmutableFunctionView<Space, layout>::getValues()
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  const real& FunctionView<Space, layout, is_mutable>::getValue(
+      const size_type e, const size_type i) const
+      requires(allowScalarAccessor&& LinearQuadratureSpaceConcept<Space>) {
+    return this->getValue(this->space->getQuadraturePointOffset(e, i));
+  }  // end of getValues
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  typename FunctionView<Space, layout, is_mutable>::ConstValuesView
+  FunctionView<Space, layout, is_mutable>::getValues(const size_type e,
+                                                     const size_type i) const
+      requires(LinearQuadratureSpaceConcept<Space>) {
+    return this->getValues(this->space->getQuadraturePointOffset(e, i));
+  }  // end of getValues
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  template <size_type N>
+  std::span<const real, N> FunctionView<Space, layout, is_mutable>::getValues(
+      const size_type e, const size_type i) const
+      requires(LinearQuadratureSpaceConcept<Space>) {
+    return this->template getValues<N>(
+        this->space->getQuadraturePointOffset(e, i));
+  }  // end of getValues
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  std::span<const real> FunctionView<Space, layout, is_mutable>::getValues()
       const {
-    return this->immutable_values;
+    return this->values;
   }
 
-  template <FunctionalSpaceConcept Space, DataLayoutDescription layout>
-  ImmutableFunctionView<Space, layout>::~ImmutableFunctionView() = default;
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  FunctionView<Space, layout, is_mutable>::~FunctionView() noexcept = default;
 
   /*!
     inline real& Function::getValue(const size_type o) {

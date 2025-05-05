@@ -42,6 +42,19 @@ namespace mgis::function {
   }  // end of getNumberOfQuadraturePoints
 
   template <size_type N>
+  constexpr typename BasicLinearQuadratureSpace<N>::DummyElementWorkspace
+  BasicLinearQuadratureSpace<N>::getElementWorkspace(
+      const size_type) const noexcept {
+    return {};
+  }  // end of getElementWorkspace
+
+  template <size_type N>
+  constexpr size_type BasicLinearQuadratureSpace<N>::getQuadraturePointOffset(
+      const size_type e, const size_type i) const noexcept {
+    return e * N + i;
+  } // end of getQuadraturePointOffset
+
+  template <size_type N>
   constexpr BasicLinearQuadratureSpace<
       N>::~BasicLinearQuadratureSpace() noexcept = default;
 

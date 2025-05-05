@@ -82,9 +82,8 @@ namespace mgis::function {
    * quadrature function is mapped in memory
    */
   template <DataLayoutDescription layout>
-  struct MGIS_EXPORT DataLayout
-      : public FunctionDataSize<layout.size>,
-        public FunctionDataStride<layout.stride> {
+  struct MGIS_EXPORT DataLayout : public FunctionDataSize<layout.size>,
+                                  public FunctionDataStride<layout.stride> {
     //
     static_assert((layout.size > 0) && (layout.stride >= layout.size),
                   "invalid layout");
@@ -110,13 +109,12 @@ namespace mgis::function {
   };  // end of struct DataLayout
 
   /*!
-   * \brief quadrature function defined on a partial quadrature space.
+   * \brief function defined on a space.
    *
-   * The `ImmutableFunctionView` defines an immutable view
-   * associated with a partial quadrature function on a memory region.
+   * The `FunctionView ` defines a function using an external memory region.
    *
    * This memory region may contain more data than the one associated with the
-   * quadrature function as illustrated by the following figure:
+   * function as illustrated by the following figure:
    *
    * |---------------------------------------------------------------|
    * <-                         Raw data                            ->
@@ -129,194 +127,304 @@ namespace mgis::function {
    *             data_size                   |
    *                                     data_stride
    *
-   * The size of the all data (including the one not related to the partial
-   * quadrature function) associated with one integration point is called the
-   * `data_stride` in the `ImmutableFunctionView` class.
+   * The size of the all data (including the one not related to the function)
+   * associated with one element of the space is called the `data_stride` in
+   * the `FunctionView ` class.
    *
-   * Inside the data associated with on integration point, the function data
-   * starts at the offset given by `data_begin`.
-   *
-   * The size of the data hold by the function per integration point, i.e. th
+   * The size of the data hold by the function per element of the space, i.e. th
    * number of components of the function is given by `data_size`.
    */
-  template <FunctionalSpaceConcept Space, DataLayoutDescription layout>
-  struct MGIS_EXPORT ImmutableFunctionView : DataLayout<layout> {
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout = {},
+            bool is_mutable = true>
+  struct FunctionView : DataLayout<layout> {
+    //! \brief a simple alias to the type holding the data used by the view
+    using ExternalData =
+        std::conditional_t<is_mutable, std::span<real>, std::span<const real>>;
+    //! \brief return this of the getValues function
+    using ValuesView = std::conditional_t<layout.size == dynamic_extent,
+                                          std::span<real>,
+                                          std::span<real, layout.size>>;
+    //! \brief return this of the getValues function (const case)
+    using ConstValuesView = std::conditional_t<layout.size == dynamic_extent,
+                                          std::span<const real>,
+                                          std::span<const real, layout.size>>;
+    //
+    static constexpr bool allowScalarAccessor =
+        (layout.size == dynamic_extent) ? true : layout.size == 1;
+    /*!
+     * \brief check that the preconditions to build the view are met
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     */
+    static bool checkPreconditions(
+        std::shared_ptr<const Space>,
+        ExternalData) requires((layout.size != dynamic_extent) &&
+                               (layout.stride != dynamic_extent));
+    /*!
+     * \brief check that the preconditions to build the view are met
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] dsize: size of the data per elements
+     */
+    static bool checkPreconditions(
+        std::shared_ptr<const Space>,
+        ExternalData,
+        const size_type) requires((layout.size == dynamic_extent) &&
+                                  (layout.stride != dynamic_extent));
+    /*!
+     * \brief check that the preconditions to build the view are met
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] dstride: data stride
+     */
+    static bool checkPreconditions(
+        std::shared_ptr<const Space>,
+        ExternalData,
+        const size_type) requires((layout.size != dynamic_extent) &&
+                                  (layout.stride == dynamic_extent));
+    /*!
+     * \brief check that the preconditions to build the view are met
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] dsize: size of the data per elements
+     */
+    static bool checkPreconditions(
+        std::shared_ptr<const Space>,
+        ExternalData,
+        const size_type) requires((layout.size == dynamic_extent) &&
+                                  (layout.stride == dynamic_extent));
+    /*!
+     * \brief check that the preconditions to build the view are met
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] dsize: size of the data per elements
+     * \param[in] dstride: data stride
+     */
+    static bool checkPreconditions(
+        std::shared_ptr<const Space>,
+        ExternalData,
+        const size_type,
+        const size_type) requires((layout.size == dynamic_extent) &&
+                                  (layout.stride == dynamic_extent));
     /*!
      * \brief constructor
      * \param[in] s: quadrature space.
      * \param[in] v: values
-     * \param[in] ds: size of the data per elements
+     * \param[in] dstride: size of the data per elements
      */
-    ImmutableFunctionView(std::shared_ptr<const Space>,
-                          std::span<const real>,
-                          const size_type)  //
-        requires(layout.size == dynamic_extent);
+    FunctionView(std::shared_ptr<const Space>,
+                 ExternalData,
+                 const size_type)  //
+        requires((layout.size != dynamic_extent) &&
+                 (layout.stride == dynamic_extent));
+    /*!
+     * \brief constructor
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] dsize: size of the data per elements
+     * \param[in] dstride: data stride
+     */
+    FunctionView(std::shared_ptr<const Space>,
+                 ExternalData,
+                 const size_type,
+                 const size_type)  //
+        requires((layout.size == dynamic_extent) &&
+                 (layout.stride == dynamic_extent));
+    /*!
+     * \brief constructor
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] dsize: size of the data per elements
+     */
+    FunctionView(std::shared_ptr<const Space>,
+                 ExternalData,
+                 const size_type)  //
+        requires((layout.size == dynamic_extent) &&
+                 (layout.stride == dynamic_extent));
+    /*!
+     * \brief constructor
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] dsize: size of the data per elements
+     */
+    FunctionView(std::shared_ptr<const Space>,
+                 ExternalData,
+                 const size_type)  //
+        requires((layout.size == dynamic_extent) &&
+                 (layout.stride != dynamic_extent));
     /*!
      * \brief constructor
      * \param[in] s: quadrature space.
      * \param[in] v: values
      */
-    ImmutableFunctionView(std::shared_ptr<const Space>,
-                          std::span<const real>);
+    FunctionView(std::shared_ptr<const Space>,
+                 ExternalData)  //
+        requires((layout.size != dynamic_extent) &&
+                 (layout.stride != dynamic_extent));
+    /*!
+     * \brief check that the preconditions to build the view are met
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] l: data layout
+     */
+    FunctionView(
+        std::shared_ptr<const Space>,
+        ExternalData,
+        const DataLayout<layout>&) requires((layout.size == dynamic_extent) &&
+                                            (layout.stride == dynamic_extent));
+    /*!
+     * \brief check that the preconditions to build the view are met
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] l: data layout
+     */
+    FunctionView(
+        std::shared_ptr<const Space>,
+        ExternalData,
+        const DataLayout<layout>&) requires((layout.size != dynamic_extent) &&
+                                            (layout.stride == dynamic_extent));
+    /*!
+     * \brief check that the preconditions to build the view are met
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] l: data layout
+     */
+    FunctionView(
+        std::shared_ptr<const Space>,
+        ExternalData,
+        const DataLayout<layout>&) requires((layout.size == dynamic_extent) &&
+                                            (layout.stride != dynamic_extent));
     //! \return the underlying quadrature space
     const Space& getSpace() const noexcept;
     //! \return the underlying quadrature space
     std::shared_ptr<const Space> getSpacePointer() const noexcept;
     /*!
-     * \brief return the data associated with an integration point
+     * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
+     *
+     * \note this method is only meaningful when the quadrature function is
+     * scalar
+     */
+    real& getValue(const size_type) requires(
+        allowScalarAccessor&& is_mutable&& LinearSpaceConcept<Space>);
+    /*!
+     * \return the data associated with an integration point
+     * \param[in] o: offset associated with the integration point
+     */
+    template <size_type N>
+    std::span<real, N> getValues(const size_type) requires(
+        (layout.size == dynamic_extent) && is_mutable &&
+        LinearSpaceConcept<Space>);
+    /*!
+     * \return the data associated with an integration point
+     * \param[in] o: offset associated with the integration point
+     */
+    ValuesView getValues(const size_type) requires(
+        is_mutable&& LinearSpaceConcept<Space>);
+    /*!
+     * \return the data associated with an integration point
+     * \param[in] e: element index
+     * \param[in] i: quadrature point index
+     *
+     * \note this method is only meaningful when the quadrature function is
+     * scalar
+     */
+    real& getValue(const size_type, const size_type) requires(
+        allowScalarAccessor&& is_mutable&& LinearQuadratureSpaceConcept<Space>);
+    /*!
+     * \return the data associated with an integration point
+     * \param[in] e: element index
+     * \param[in] i: quadrature point index
+     */
+    template <size_type N>
+    std::span<real, N> getValues(const size_type, const size_type) requires(
+        (layout.size == dynamic_extent) && is_mutable &&
+        LinearQuadratureSpaceConcept<Space>);
+    /*!
+     * \return the data associated with an integration point
+     * \param[in] e: element index
+     * \param[in] i: quadrature point index
+     */
+    ValuesView getValues(const size_type, const size_type) requires(
+        is_mutable&& LinearQuadratureSpaceConcept<Space>);
+    /*!
+     * \return the data associated with an integration point
+     * \param[in] o: offset associated with the integration point
+     *
      * \note this method is only meaningful when the quadrature function is
      * scalar
      */
     const real& getValue(const size_type) const
-        requires(LinearSpaceConcept<Space>);
+        requires(allowScalarAccessor&& LinearSpaceConcept<Space>);
     /*!
-     * \brief return the data associated with an integration point
+     * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
     template <size_type N>
     std::span<const real, N> getValues(const size_type) const
         requires(LinearSpaceConcept<Space>);
     /*!
-     * \brief return the data associated with an integration point
+     * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
-    std::span<const real> getValues(const size_type) const
+    ConstValuesView getValues(const size_type) const
         requires(LinearSpaceConcept<Space>);
+    /*!
+     * \return the data associated with an integration point
+     * \param[in] e: element index
+     * \param[in] i: quadrature point index
+     *
+     * \note this method is only meaningful when the quadrature function is
+     * scalar
+     */
+    const real& getValue(const size_type, const size_type) const
+        requires(allowScalarAccessor&& LinearQuadratureSpaceConcept<Space>);
+    /*!
+     * \return the data associated with an integration point
+     * \param[in] e: element index
+     * \param[in] i: quadrature point index
+     */
+    template <size_type N>
+    std::span<const real, N> getValues(const size_type, const size_type) const
+        requires(LinearQuadratureSpaceConcept<Space>);
+    /*!
+     * \return the data associated with an integration point
+     * \param[in] e: element index
+     * \param[in] i: quadrature point index
+     */
+    ConstValuesView getValues(const size_type, const size_type) const
+        requires(LinearQuadratureSpaceConcept<Space>);
     /*!
      * \return if the current function has the same quadrature space and the
      * same number of components than the given view
      * \param[in] v: view
      */
-    bool checkCompatibility(const ImmutableFunctionView&) const;
+    bool checkCompatibility(const FunctionView&) const;
     //! \return a view to the function values
     std::span<const real> getValues() const;
     //! \brief destructor
-    ~ImmutableFunctionView();
+    ~FunctionView() noexcept;
 
    protected:
-    //! \brief default constructor
-    ImmutableFunctionView();
-    /*!
-     * \brief constructor
-     * \param[in] s: quadrature space.
-     * \param[in] ds: data size
-     * \param[in] ds: size of the view (stride)
-     */
-    ImmutableFunctionView(
-        std::shared_ptr<const Space>,
-        const size_type,
-        const size_type) requires((layout.size != dynamic_extent) &&
-                                  (layout.stride != dynamic_extent));
     //! \brief underlying discretization space
     std::shared_ptr<const Space> space;
     //! \brief underlying values
-    std::span<const real> immutable_values;
-  };  // end of ImmutableFunctionView
+    ExternalData values;
+  };  // end of FunctionView
 
-  //   /*!
-  //    * \brief quadrature function defined on a partial quadrature space.
-  //    */
-  //   struct MGIS_EXPORT Function : ImmutableFunctionView {
-  //     /*!
-  //      * \brief constructor
-  //      * \param[in] s: quadrature space.
-  //      * \param[in] size: size of the data stored per integration points.
-  //      */
-  //     Function(std::shared_ptr<const Space>, const size_type = 1);
-  //     /*!
-  //      * \brief constructor
-  //      * \param[in] s: quadrature space.
-  //      * \param[in] v: values
-  //      * \param[in] ds: size of the view
-  //      */
-  //     Function(std::shared_ptr<const Space>,
-  //              std::span<real>,
-  //              const size_type = std::numeric_limits<size_type>::max());
-  //     /*!
-  //      * \brief move constructor
-  //      * \param[in] f: moved function
-  //      * \param[in] local_copy: copy locally the function values if the moved
-  //      * function does not holds them, i.e. is a view.
-  //      * \note if the moved function holds the memory, the move constructor
-  //      will
-  //      * take ownership of the memory
-  //      */
-  //     Function(Function&&, const bool = false);
-  //     //! \brief copy constructor
-  //     Function(const Function&);
-  //     /*!
-  //      * \brief constructor from an immutable view
-  //      *
-  //      * \note: data are copied in a local array
-  //      * \param[in] v: view
-  //      */
-  //     explicit Function(const ImmutableFunctionView&);
-  //     //! \brief assignement operator
-  //     Function& operator=(const ImmutableFunctionView&);
-  //     //! \brief standard assignement operator
-  //     Function& operator=(const Function&);
-  //     //     //! \brief move assignement operator
-  //     //     Function& operator=(Function&&);
-  //     //
-  //     using ImmutableFunctionView::getValue;
-  //     using ImmutableFunctionView::getValues;
-  //     /*!
-  //      * \brief return the value associated with an integration point
-  //      * \param[in] o: offset associated with the integration point
-  //      * \note this method is only meaningful when the quadrature function is
-  //      * scalar
-  //      */
-  //     real& getValue(const size_type);
-  //     /*!
-  //      * \brief return the value associated with an integration point
-  //      * \param[in] e: global element number
-  //      * \param[in] i: integration point number in the element
-  //      * \note this method is only meaningful when the quadrature function is
-  //      * scalar
-  //      */
-  //     real& getValue(const size_type, const size_type);
-  //     /*!
-  //      * \brief return the data associated with an integration point
-  //      * \param[in] o: offset associated with the integration point
-  //      */
-  //     template <size_type N>
-  //     std::span<real, N> getValues(const size_type);
-  //     /*!
-  //      * \brief return the data associated with an integration point
-  //      * \param[in] o: offset associated with the integration point
-  //      */
-  //     std::span<real> getValues(const size_type);
-  //     //! \brief destructor
-  //     ~Function();
-  //
-  //    protected:
-  //     /*!
-  //      * \brief turns this function into a view to the given function
-  //      * \param[in] f: function
-  //      */
-  //     void makeView(Function&);
-  //     /*!
-  //      * \brief turns this function into a view to the given function
-  //      * \param[in] f: function
-  //      */
-  //     void copy(const ImmutableFunctionView&);
-  //     /*!
-  //      * \brief copy values for an immutable view
-  //      * \param[in] v: view
-  //      * \note: no compatibility checks are perfomed
-  //      */
-  //     void copyValues(const ImmutableFunctionView&);
-  //     //! \brief underlying values
-  //     std::span<real> values;
-  //     /*!
-  //      * \brief storage for the values when the partial function holds the
-  //      * values
-  //      */
-  //     std::vector<real> local_values_storage;
-  //   };  // end of struct Function
+  //! \brief a simple alias
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout = {}>
+  using ImmutableFunctionView = FunctionView<Space, layout, false>;
 
-}  // namespace mgis::function
+  //   template <FunctionalSpaceConcept Space, size_type N = dynamic_extent>
+  //   struct Function : public FunctionStorage<Space, N>,
+  //                     public FunctionView<Space, {.size = N, .stride = N},
+  //                     true> {
+  //   };
+
+  }  // namespace mgis::function
 
 #include "MGIS/Function/Function.ixx"
 

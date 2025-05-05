@@ -380,4 +380,20 @@ target_link_libraries(FunctionTest
 add_test(NAME FunctionTest COMMAND FunctionTest)
 add_dependencies(check FunctionTest)
 
+add_executable(EvaluatorsTest
+ EXCLUDE_FROM_ALL
+ EvaluatorsTest.cxx)
+target_link_libraries(EvaluatorsTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME EvaluatorsTest COMMAND EvaluatorsTest)
+add_dependencies(check EvaluatorsTest)
+
+add_executable(MechanicalEvaluatorsTest
+ EXCLUDE_FROM_ALL
+ MechanicalEvaluatorsTest.cxx)
+target_link_libraries(MechanicalEvaluatorsTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME MechanicalEvaluatorsTest COMMAND MechanicalEvaluatorsTest)
+add_dependencies(check MechanicalEvaluatorsTest)
+
 endif(MGIS_HAVE_TFEL)

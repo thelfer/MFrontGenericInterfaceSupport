@@ -19,6 +19,8 @@ namespace mgis::function {
    */
   template <size_type N>
   requires(N > 0) struct MGIS_EXPORT BasicLinearQuadratureSpace {
+    //! \brief an empty element workspace
+    struct DummyElementWorkspace {};
     /*!
      * \brief constructor
      * \param[in] n: number of elements
@@ -37,6 +39,20 @@ namespace mgis::function {
      */
     constexpr size_type getNumberOfQuadraturePoints(
         const size_type) const noexcept;
+    /*!
+     * \return the workspace of the element
+     * \param[in] e: element index
+     */
+    constexpr DummyElementWorkspace getElementWorkspace(
+        const size_type) const noexcept;
+    /*!
+     * \return the offset associated with a quadrature space
+     * \param[in] wk: element workspace
+     * \param[in] e: element index
+     * \param[in] i: quadrature point index
+     */
+    constexpr size_type getQuadraturePointOffset(
+        const size_type, const size_type) const noexcept;
     //! \brief destructor
     constexpr ~BasicLinearQuadratureSpace() noexcept;
 
@@ -47,6 +63,8 @@ namespace mgis::function {
 
   template <size_type N>
   struct SpaceTraits<BasicLinearQuadratureSpace<N>> {
+    using ElementWorkspace =
+        typename BasicLinearQuadratureSpace<N>::DummyElementWorkspace;
     using size_type = mgis::size_type;
     using element_index_type = mgis::size_type;
     using quadrature_point_index_type = mgis::size_type;

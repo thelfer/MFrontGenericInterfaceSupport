@@ -13,33 +13,35 @@
 namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N>
-  FixedSizedEvaluator<Space, N>::FixedSizedEvaluator(
+  FixedSizeEvaluator<Space, N>::FixedSizeEvaluator(
       const ImmutableFunctionView<Space, {}>& values) noexcept
-      : function(values) {}  // end of FixedSizedEvaluator
+      : function(values) {}  // end of FixedSizeEvaluator
 
   template <FunctionalSpaceConcept Space, size_type N>
-  void FixedSizedEvaluator<Space, N>::check() const {
+  void FixedSizeEvaluator<Space, N>::check() const {
     raise_if(this->function.getNumberOfComponents() != N,
              "FixedSizeImmutableView::FixedSizeImmutableView: "
              "unmatched size");
   }
 
   template <FunctionalSpaceConcept Space, size_type N>
-  void FixedSizedEvaluator<Space, N>::allocateWorkspace() {}
+  void FixedSizeEvaluator<Space, N>::allocateWorkspace() {}
 
   template <FunctionalSpaceConcept Space, size_type N>
-  const Space& FixedSizedEvaluator<Space, N>::getSpace() const {
+  const Space& FixedSizeEvaluator<Space, N>::getSpace() const {
     return this->function.getSpace();
   }
 
   template <FunctionalSpaceConcept Space, size_type N>
-  constexpr size_type FixedSizedEvaluator<Space, N>::getNumberOfComponents()
+  constexpr size_type FixedSizeEvaluator<Space, N>::getNumberOfComponents()
       const noexcept {
     return N;
   }
 
   template <FunctionalSpaceConcept Space, size_type N>
-  auto FixedSizedEvaluator<Space, N>::operator()(const size_type i) const {
+  auto FixedSizeEvaluator<Space, N>::operator()(
+      const typename SpaceTraits<Space>::size_type i) const
+      requires(LinearSpaceConcept<Space>) {
     if constexpr (N == 1) {
       return this->function.getValue(i);
     } else {
@@ -47,9 +49,21 @@ namespace mgis::function {
     }
   }
 
-  template <EvaluatorConcept EvaluatorType1, EvaluatorConcept EvaluatorType2>
-  void checkMatchingAbstractSpaces(const EvaluatorType1& e1,
-                                   const EvaluatorType2& e2) {
+  template <FunctionalSpaceConcept Space, size_type N>
+  auto FixedSizeEvaluator<Space, N>::operator()(
+      const typename SpaceTraits<Space>::ElementWorkspace&,
+      const typename SpaceTraits<Space>::element_index_type e,
+      const typename SpaceTraits<Space>::quadrature_point_index_type i) const
+      requires(LinearQuadratureSpaceConcept<Space>) {
+    if constexpr (N == 1) {
+      return this->function.getValue(e, i);
+    } else {
+      return this->function.template getValues<N>(e, i);
+    }
+  }
+
+  void checkMatchingAbstractSpaces(const EvaluatorConceptBase auto& e1,
+                                   const EvaluatorConceptBase auto& e2) {
     const auto& qspace1 = e1.getSpace();
     const auto& qspace2 = e2.getSpace();
     raise_if(&qspace1 != &qspace2, "unmatched quadrature spaces");

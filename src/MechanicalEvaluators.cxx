@@ -16,16 +16,15 @@ namespace mgis::function {
   static_assert(
       EvaluatorConcept<CauchyStressFromFirstPiolaKirchhoffStressEvaluator<
           3,
-          FixedSizedEvaluator<BasicLinearSpace, 9>,
-          FixedSizedEvaluator<BasicLinearSpace, 9>>>);
+          FixedSizeEvaluator<BasicLinearSpace, 9>,
+          FixedSizeEvaluator<BasicLinearSpace, 9>>>);
   static_assert(
       EvaluatorConcept<
-          vonMisesStressEvaluator<3,
-                                  FixedSizedEvaluator<BasicLinearSpace, 6>>>);
+          vonMisesStressEvaluator<3, FixedSizeEvaluator<BasicLinearSpace, 6>>>);
   static_assert(
       EvaluatorConcept<
           PrincipalStressEvaluator<3,
-                                   FixedSizedEvaluator<BasicLinearSpace, 6>>>);
+                                   FixedSizeEvaluator<BasicLinearSpace, 6>>>);
 
 #endif MGIS_HAVE_TFEL
 
