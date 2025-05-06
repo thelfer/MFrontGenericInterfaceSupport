@@ -38,9 +38,15 @@ namespace mgis::function {
     real operator()(const size_type) const;
   };
 
-  template <unsigned short N, EvaluatorConcept StressEvaluatorType>
-  auto vmis(const StressEvaluatorType&) requires((N == 1) || (N == 2) ||
-                                                 (N == 3));
+  template <unsigned short N>
+  requires((N == 1) || (N == 2) || (N == 3))
+  struct vmis_fn {
+    template <EvaluatorConcept StressEvaluatorType>
+    constexpr auto operator()(StressEvaluatorType&&) const;
+  };
+
+  template <unsigned short N>
+  inline constexpr vmis_fn<N> vmis = {};
 
 }  // namespace mgis::function
 

@@ -1,3 +1,4 @@
+
 /*!
  * \file   HydrostaticStressEvaluator.hxx
  * \brief
@@ -39,8 +40,9 @@ namespace mgis::function {
   };
 
   template <unsigned short N, EvaluatorConcept StressEvaluatorType>
-  auto vmis(const StressEvaluatorType&) requires((N == 1) || (N == 2) ||
-                                                 (N == 3));
+  auto hydrostati_stress(const StressEvaluatorType&) requires((N == 1) ||
+                                                              (N == 2) ||
+                                                              (N == 3));
 
 }  // namespace mgis::function
 

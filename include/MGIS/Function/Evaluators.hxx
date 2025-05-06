@@ -42,13 +42,13 @@ namespace mgis::function {
        (requires(EvaluatorType & e, size_type n, size_type i) { e(n, i); }));
 
   template <typename EvaluatorType>
-  concept EvaluatorConcept = LinearEvaluatorConcept<EvaluatorType> ||
-      QuadratureEvaluatorConcept<EvaluatorType>;
+  concept EvaluatorConcept = LinearEvaluatorConcept<std::decay_t<EvaluatorType>> ||
+      QuadratureEvaluatorConcept<std::decay_t<EvaluatorType>>;
 
   template <typename EvaluatorType>
   concept LinearQuadratureEvaluatorConcept =
-      LinearEvaluatorConcept<EvaluatorType> &&
-      QuadratureEvaluatorConcept<EvaluatorType>;
+      LinearEvaluatorConcept<std::decay_t<EvaluatorType>> &&
+      QuadratureEvaluatorConcept<std::decay_t<EvaluatorType>>;
 
   /*!
    * \brief an evaluator returning the values of an immutable partial

@@ -8,6 +8,7 @@
 #ifndef LIB_MGIS_FUNCTION_VONMISESSTRESSEVALUATOR_IXX
 #define LIB_MGIS_FUNCTION_VONMISESSTRESSEVALUATOR_IXX
 
+#include <utility>
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Array/View.hxx"
 
@@ -28,10 +29,11 @@ namespace mgis::function {
     return sigmaeq(sig);
   }
 
-  template <unsigned short N, EvaluatorConcept StressEvaluatorType>
-  auto vmis(const StressEvaluatorType& e) requires((N == 1) || (N == 2) ||
-                                                   (N == 3)) {
-    return vonMisesStressEvaluator<N, StressEvaluatorType>(e);
+  template <unsigned short N>
+  template <EvaluatorConcept StressEvaluatorType>
+  constexpr auto vmis_fn<N>::operator()(StressEvaluatorType&& e) const {
+    return vonMisesStressEvaluator<N, StressEvaluatorType>(
+        std::forward<StressEvaluatorType>(e));
   }  // end of vmis
 
 }  // namespace mgis::function
