@@ -16,25 +16,6 @@ namespace mgis::function {
   template <unsigned short N,
             EvaluatorConcept StressEvaluatorType,
             tfel::math::stensor_common::EigenSolver esolver>
-  PrincipalStressEvaluator<N, StressEvaluatorType, esolver>::
-      PrincipalStressEvaluator(const StressEvaluatorType& e, const real eps)
-      : StressEvaluatorBase<N, StressEvaluatorType, true>(e), seps(eps) {}
-
-  template <unsigned short N,
-            EvaluatorConcept StressEvaluatorType,
-            tfel::math::stensor_common::EigenSolver esolver>
-  PrincipalStressEvaluator<N, StressEvaluatorType, esolver>::
-      PrincipalStressEvaluator(const PrincipalStressEvaluator&) = default;
-
-  template <unsigned short N,
-            EvaluatorConcept StressEvaluatorType,
-            tfel::math::stensor_common::EigenSolver esolver>
-  PrincipalStressEvaluator<N, StressEvaluatorType, esolver>::
-      PrincipalStressEvaluator(PrincipalStressEvaluator&&) = default;
-
-  template <unsigned short N,
-            EvaluatorConcept StressEvaluatorType,
-            tfel::math::stensor_common::EigenSolver esolver>
   constexpr size_type PrincipalStressEvaluator<N,
                                                StressEvaluatorType,
                                                esolver>::getNumberOfComponents()
@@ -46,11 +27,11 @@ namespace mgis::function {
             EvaluatorConcept StressEvaluatorType,
             tfel::math::stensor_common::EigenSolver esolver>
   std::array<real, 3u>
-  PrincipalStressEvaluator<N, StressEvaluatorType, esolver>::operator()(
-      const size_type i) const {
+  PrincipalStressEvaluator<N, StressEvaluatorType, esolver>::apply(
+      const auto& values) const {
     using namespace tfel::math;
-    const auto sig = stensor<N, real>(this->stress_evaluator(i).data());
-    const auto vp = sig.template computeEigenValues<esolver>(this->seps);
+    const auto sig = stensor<N, real>(values.data());
+    const auto vp = sig.template computeEigenValues<esolver>();
     return {vp[0], vp[1], vp[2]};
   }  // end of operator()
 
@@ -62,6 +43,7 @@ namespace mgis::function {
                                                                (N == 2) ||
                                                                (N == 3)) {
     return PrincipalStressEvaluator<N, StressEvaluatorType, esolver>(e);
+
   }  // end of principal_stress
 
 }  // namespace mgis::function

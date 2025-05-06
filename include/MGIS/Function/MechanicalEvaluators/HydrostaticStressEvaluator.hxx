@@ -1,4 +1,3 @@
-
 /*!
  * \file   HydrostaticStressEvaluator.hxx
  * \brief
@@ -26,23 +25,28 @@ namespace mgis::function {
    */
   template <unsigned short N, EvaluatorConcept StressEvaluatorType>
   requires((N == 1) || (N == 2) || (N == 3)) struct HydrostaticStressEvaluator
-      : StressEvaluatorBase<N, StressEvaluatorType, true> {
+      : StressEvaluatorBase<HydrostaticStressEvaluator<N, StressEvaluatorType>,
+                            N,
+                            StressEvaluatorType,
+                            true> {
     // inheriting constructors
-    using StressEvaluatorBase<N, StressEvaluatorType, true>::
-        StressEvaluatorBase;
+    using StressEvaluatorBase<HydrostaticStressEvaluator,
+                              N,
+                              StressEvaluatorType,
+                              true>::StressEvaluatorBase;
     //! \return the number of components
     constexpr size_type getNumberOfComponents() const noexcept;
     /*!
      * \brief call operator
-     * \param[in] i: element index
+     * \param[in] values: values of the stress
      */
-    real operator()(const size_type) const;
+    real apply(const auto&) const;
   };
 
-  template <unsigned short N, EvaluatorConcept StressEvaluatorType>
-  auto hydrostati_stress(const StressEvaluatorType&) requires((N == 1) ||
-                                                              (N == 2) ||
-                                                              (N == 3));
+  template <unsigned short N, typename StressEvaluatorType>
+  auto hydrostatic_stress(StressEvaluatorType&&) requires(
+      EvaluatorConcept<std::decay_t<StressEvaluatorType>> &&
+      ((N == 1) || (N == 2) || (N == 3)));
 
 }  // namespace mgis::function
 

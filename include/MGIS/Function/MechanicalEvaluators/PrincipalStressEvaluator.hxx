@@ -31,33 +31,24 @@ namespace mgis::function {
             tfel::math::stensor_common::EigenSolver esolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
   requires((N == 1) || (N == 2) || (N == 3)) struct PrincipalStressEvaluator
-      : StressEvaluatorBase<N, StressEvaluatorType, true> {
-    /*!
-     * \brief default constructor
-     * \param[in] e: stress evaluator
-     * \param[in] eps: small value (relative to the stress magnitude)
-     */
-    PrincipalStressEvaluator(const StressEvaluatorType&, const real);
-    //! \brief copy constructor
-    PrincipalStressEvaluator(const PrincipalStressEvaluator&);
-    //! \brief move constructor
-    PrincipalStressEvaluator(PrincipalStressEvaluator&&);
+      : StressEvaluatorBase<
+            PrincipalStressEvaluator<N, StressEvaluatorType, esolver>,
+            N,
+            StressEvaluatorType,
+            true> {
+    // constructors
+    using StressEvaluatorBase<
+        PrincipalStressEvaluator<N, StressEvaluatorType, esolver>,
+        N,
+        StressEvaluatorType,
+        true>::StressEvaluatorBase;
     //! \return the number of components
     constexpr size_type getNumberOfComponents() const noexcept;
     /*!
      * \brief call operator
-     * \param[in] i: element index
+     * \param[in] values: stress values
      */
-    std::array<real, 3u> operator()(const size_type) const;
-
-   private:
-    /*!
-     * \brief small value, relative to the expected stress values, required by
-     * some eigensolvers.
-     *
-     * Typically 1e-15 * Young's modulus is a good estimate
-     */
-    const real seps;
+    std::array<real, 3u> apply(const auto&) const;
   };
 
   template <unsigned short N,

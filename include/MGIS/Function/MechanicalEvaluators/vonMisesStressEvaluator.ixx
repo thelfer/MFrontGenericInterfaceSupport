@@ -22,10 +22,10 @@ namespace mgis::function {
   }  // end of getNumberOfComponents
 
   template <unsigned short N, EvaluatorConcept StressEvaluatorType>
-  real vonMisesStressEvaluator<N, StressEvaluatorType>::operator()(
-      const size_type i) const {
+  real vonMisesStressEvaluator<N, StressEvaluatorType>::apply(
+      const auto& values) const {
     using namespace tfel::math;
-    const auto sig = map<stensor<N, real>>(this->stress_evaluator(i).data());
+    const auto sig = map<stensor<N, real>>(values.data());
     return sigmaeq(sig);
   }
 

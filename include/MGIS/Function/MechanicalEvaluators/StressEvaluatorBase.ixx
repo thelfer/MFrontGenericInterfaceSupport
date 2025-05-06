@@ -13,29 +13,34 @@
 
 namespace mgis::function {
 
-  template <unsigned short N,
+  template <typename Child,
+            unsigned short N,
             EvaluatorConcept StressEvaluatorType,
             bool isSymmetric>
-  StressEvaluatorBase<N, StressEvaluatorType, isSymmetric>::StressEvaluatorBase(
-      const StressEvaluatorType& e)
+  StressEvaluatorBase<Child, N, StressEvaluatorType, isSymmetric>::
+      StressEvaluatorBase(const StressEvaluatorType& e)
       : stress_evaluator(e) {}  // end of StressEvaluatorBase
 
-  template <unsigned short N,
+  template <typename Child,
+            unsigned short N,
             EvaluatorConcept StressEvaluatorType,
             bool isSymmetric>
-  StressEvaluatorBase<N, StressEvaluatorType, isSymmetric>::StressEvaluatorBase(
-      const StressEvaluatorBase&) = default;
+  StressEvaluatorBase<Child, N, StressEvaluatorType, isSymmetric>::
+      StressEvaluatorBase(const StressEvaluatorBase&) = default;
 
-  template <unsigned short N,
+  template <typename Child,
+            unsigned short N,
             EvaluatorConcept StressEvaluatorType,
             bool isSymmetric>
-  StressEvaluatorBase<N, StressEvaluatorType, isSymmetric>::StressEvaluatorBase(
-      StressEvaluatorBase&&) = default;
+  StressEvaluatorBase<Child, N, StressEvaluatorType, isSymmetric>::
+      StressEvaluatorBase(StressEvaluatorBase&&) = default;
 
-  template <unsigned short N,
+  template <typename Child,
+            unsigned short N,
             EvaluatorConcept StressEvaluatorType,
             bool isSymmetric>
-  void StressEvaluatorBase<N, StressEvaluatorType, isSymmetric>::check() const {
+  void StressEvaluatorBase<Child, N, StressEvaluatorType, isSymmetric>::check()
+      const {
     using namespace tfel::math;
     this->stress_evaluator.check();
     const auto nc = this->stress_evaluator.getNumberOfComponents();
@@ -50,21 +55,74 @@ namespace mgis::function {
     }
   }  // end of check
 
-  template <unsigned short N,
+  template <typename Child,
+            unsigned short N,
             EvaluatorConcept StressEvaluatorType,
             bool isSymmetric>
-  void StressEvaluatorBase<N, StressEvaluatorType, isSymmetric>::
+  void StressEvaluatorBase<Child, N, StressEvaluatorType, isSymmetric>::
       allocateWorkspace() {
     this->stress_evaluator.allocatWorkspace();
   }  // end of allocatWorkspace
 
-  template <unsigned short N,
+  template <typename Child,
+            unsigned short N,
             EvaluatorConcept StressEvaluatorType,
             bool isSymmetric>
   const auto&
-  StressEvaluatorBase<N, StressEvaluatorType, isSymmetric>::getSpace() const {
+  StressEvaluatorBase<Child, N, StressEvaluatorType, isSymmetric>::getSpace()
+      const {
     return this->stress_evaluator.getSpace();
   }  // end of getSpace
+
+  template <typename Child,
+            unsigned short N,
+            EvaluatorConcept StressEvaluatorType,
+            bool isSymmetric>
+  auto
+  StressEvaluatorBase<Child, N, StressEvaluatorType, isSymmetric>::operator()(
+      const element_index<Space>& e) const
+      requires(ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>)) {
+    const auto& child = static_cast<const Child&>(*this);
+    return child.apply(this->stress_evaluator(e));
+  }  // end of operator()
+
+  template <typename Child,
+            unsigned short N,
+            EvaluatorConcept StressEvaluatorType,
+            bool isSymmetric>
+  auto
+  StressEvaluatorBase<Child, N, StressEvaluatorType, isSymmetric>::operator()(
+      const element_workspace<Space>& wk, const element_index<Space>& e) const
+      requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>) {
+    const auto& child = static_cast<const Child&>(*this);
+    return child.apply(this->stress_evaluator(wk, e));
+  }  // end of operator()
+
+  template <typename Child,
+            unsigned short N,
+            EvaluatorConcept StressEvaluatorType,
+            bool isSymmetric>
+  auto
+  StressEvaluatorBase<Child, N, StressEvaluatorType, isSymmetric>::operator()(
+      const cell_index<Space> e, const quadrature_point_index<Space> i) const
+      requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>)) {
+    const auto& child = static_cast<const Child&>(*this);
+    return child.apply(this->stress_evaluator(e, i));
+  }  // end of operator()
+
+  template <typename Child,
+            unsigned short N,
+            EvaluatorConcept StressEvaluatorType,
+            bool isSymmetric>
+  auto
+  StressEvaluatorBase<Child, N, StressEvaluatorType, isSymmetric>::operator()(
+      const cell_workspace<Space>& wk,
+      const cell_index<Space> e,
+      const quadrature_point_index<Space> i) const
+      requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>) {
+    const auto& child = static_cast<const Child&>(*this);
+    return child.apply(this->stress_evaluator(wk, e, i));
+  }  // end of operator()
 
 }  // namespace mgis::function
 

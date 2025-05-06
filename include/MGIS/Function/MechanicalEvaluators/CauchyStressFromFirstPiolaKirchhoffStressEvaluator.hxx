@@ -29,6 +29,9 @@ namespace mgis::function {
             EvaluatorConcept DeformationGradientEvaluatorType,
             EvaluatorConcept PK1EvaluatorType>
   struct CauchyStressFromFirstPiolaKirchhoffStressEvaluator {
+    //! \brief a simple alias
+    using Space = std::decay_t<
+        decltype(std::declval<std::decay_t<PK1EvaluatorType>>().getSpace())>;
     /*!
      * \brief constructor
      * \param[in] e1: evaluator of the deformation gradient
@@ -46,11 +49,38 @@ namespace mgis::function {
     constexpr size_type getNumberOfComponents() const noexcept;
     /*!
      * \brief call operator
-     * \param[in] i: cell index
+     * \param[in] i: integration point index
      */
-    real operator()(const size_type) const;
+    auto operator()(const element_index<Space>&) const
+        requires(ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>));
+    /*!
+     * \brief call operator
+     * \param[in] i: integration point index
+     */
+    auto operator()(const element_workspace<Space>&,
+                    const element_index<Space>&) const
+        requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>);
+    /*!
+     * \brief call operator
+     * \param[in] e: cell index
+     * \param[in] i: integration point index
+     */
+    auto operator()(const cell_index<Space>,
+                    const quadrature_point_index<Space>) const
+        requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>));
+    /*!
+     * \brief call operator
+     * \param[in] e: cell index
+     * \param[in] i: integration point index
+     */
+    auto operator()(const cell_workspace<Space>&,
+                    const cell_index<Space>,
+                    const quadrature_point_index<Space>) const
+        requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>);
 
    private:
+    //
+    auto apply(const auto& pk1_values, const auto& F_values) const;
     //! \brief evaluator of deformation gradient
     DeformationGradientEvaluatorType deformation_gradient_evaluator;
     //! \brief evaluator of the first Piola-Kirchhoff stress

@@ -19,15 +19,20 @@ namespace mgis::function {
 
   /*!
    * \brief a base class for evaluators modifying a stress tensor
+   * \tparam Child: child class
    * \tparam Space: discretization space
    * \tparam N: space dimension
    * \tparam StressEvaluatorType: evaluator of the stress
    * \tparam symmetric: boolean stating of the stress tensor is symmetric
    */
-  template <unsigned short N,
+  template <typename Child,
+            unsigned short N,
             EvaluatorConcept StressEvaluatorType,
             bool isSymmetric>
   struct StressEvaluatorBase {
+    //! \brief a simple alias
+    using Space = std::decay_t<
+        decltype(std::declval<std::decay_t<StressEvaluatorType>>().getSpace())>;
     /*!
      * \brief constructor
      * \param[in] e: evaluator of the stress
@@ -45,6 +50,36 @@ namespace mgis::function {
     const auto& getSpace() const;
     //! \return the number of components
     constexpr size_type getNumberOfComponents() const noexcept;
+    /*!
+     * \brief call operator
+     * \param[in] i: integration point index
+     */
+    auto operator()(const element_index<Space>&) const
+        requires(ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>));
+    /*!
+     * \brief call operator
+     * \param[in] i: integration point index
+     */
+    auto operator()(const element_workspace<Space>&,
+                    const element_index<Space>&) const
+        requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>);
+    /*!
+     * \brief call operator
+     * \param[in] e: cell index
+     * \param[in] i: integration point index
+     */
+    auto operator()(const cell_index<Space>,
+                    const quadrature_point_index<Space>) const
+        requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>));
+    /*!
+     * \brief call operator
+     * \param[in] e: cell index
+     * \param[in] i: integration point index
+     */
+    auto operator()(const cell_workspace<Space>&,
+                    const cell_index<Space>,
+                    const quadrature_point_index<Space>) const
+        requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>);
 
    protected:
     //! \brief evaluator of the stress

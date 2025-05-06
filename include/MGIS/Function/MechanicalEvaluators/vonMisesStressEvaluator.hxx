@@ -25,17 +25,22 @@ namespace mgis::function {
    */
   template <unsigned short N, EvaluatorConcept StressEvaluatorType>
   requires((N == 1) || (N == 2) || (N == 3)) struct vonMisesStressEvaluator
-      : StressEvaluatorBase<N, StressEvaluatorType, true> {
+      : StressEvaluatorBase<vonMisesStressEvaluator<N, StressEvaluatorType>,
+                            N,
+                            StressEvaluatorType,
+                            true> {
     // inheriting constructors
-    using StressEvaluatorBase<N, StressEvaluatorType, true>::
-        StressEvaluatorBase;
+    using StressEvaluatorBase<vonMisesStressEvaluator,
+                              N,
+                              StressEvaluatorType,
+                              true>::StressEvaluatorBase;
     //! \return the number of components
     constexpr size_type getNumberOfComponents() const noexcept;
     /*!
      * \brief call operator
-     * \param[in] i: element index
+     * \param[in] values: values of the stress
      */
-    real operator()(const size_type) const;
+    real apply(const auto&) const;
   };
 
   template <unsigned short N>

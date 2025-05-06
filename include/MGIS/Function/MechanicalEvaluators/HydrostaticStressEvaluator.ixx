@@ -21,18 +21,18 @@ namespace mgis::function {
   }  // end of getNumberOfComponents
 
   template <unsigned short N, EvaluatorConcept StressEvaluatorType>
-  real HydrostaticStressEvaluator<N, StressEvaluatorType>::operator()(
-      const size_type i) const {
+  real HydrostaticStressEvaluator<N, StressEvaluatorType>::apply(
+      const auto& values) const {
     using namespace tfel::math;
-    const auto sig = map<stensor<N, real>>(this->stress_evaluator(i).data());
+    const auto sig = map<stensor<N, real>>(values.data());
     return trace(sig) / 3;
   }
 
-  template <unsigned short N, EvaluatorConcept StressEvaluatorType>
-  auto hydrostatic_stress(const StressEvaluatorType& e) requires((N == 1) ||
-                                                                 (N == 2) ||
-                                                                 (N == 3)) {
-    return HydrostaticStressEvaluator<N, StressEvaluatorType>(e);
+  template <unsigned short N, typename StressEvaluatorType>
+  auto hydrostatic_stress(StressEvaluatorType&& e) requires(
+      EvaluatorConcept<std::decay_t<StressEvaluatorType>> &&
+      ((N == 1) || (N == 2) || (N == 3))) {
+    return HydrostaticStressEvaluator<N, std::decay_t<StressEvaluatorType>>(e);
   }  // end of hydrostatic_stress
 
 }  // namespace mgis::function

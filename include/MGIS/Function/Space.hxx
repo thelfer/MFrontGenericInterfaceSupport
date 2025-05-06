@@ -135,17 +135,14 @@ namespace mgis::function {
    */
   template <typename SpaceType>
   concept SpaceConcept = requires(const SpaceType& s) {
-    std::integral<typename std::decay_t<SpaceType>::size_type>;
-    {
-      s.size()
-      } -> internals::same_decay_type<
-          typename std::decay_t<SpaceType>::size_type>;
+    std::integral<typename SpaceType::size_type>;
+    { s.size() } -> internals::same_decay_type<typename SpaceType::size_type>;
   };
 
   template <typename SpaceType>
   concept ElementSpaceConcept = requires(const SpaceType& s) {
     SpaceConcept<SpaceType>;
-    typename std::decay_t<SpaceType>::element_index_type;
+    typename SpaceType::element_index_type;
   };
 
   //! \brief a simple alias
@@ -168,9 +165,8 @@ namespace mgis::function {
    * does not expose an ElementWorkspace structure
    */
   template <SpaceConcept SpaceType>
-  using element_workspace = typename internals::ElementWorkspaceSelector<
-      hasElementWorkspace<std::decay_t<SpaceType>>,
-      std::decay_t<SpaceType>>::type;
+  using element_workspace = typename internals::
+      ElementWorkspaceSelector<hasElementWorkspace<SpaceType>, SpaceType>::type;
 
   /*!
    * \brief a concept describing a space where all the elements
@@ -180,7 +176,7 @@ namespace mgis::function {
   concept LinearElementSpaceConcept = requires(const SpaceType& s) {
     ElementSpaceConcept<SpaceType>;
     SpaceType::linear_element_indexing;
-    std::integral<typename std::decay_t<SpaceType>::element_index_type>;
+    std::integral<typename SpaceType::element_index_type>;
   };
 
   /*!
@@ -191,16 +187,13 @@ namespace mgis::function {
   template <typename SpaceType>
   concept QuadratureSpaceConcept = requires(const SpaceType& s) {
     typename SpaceType::cell_index_type;
-    std::integral<
-        typename std::decay_t<SpaceType>::quadrature_point_index_type>;
-    {
-      s.getNumberOfCells()
-      } -> std::same_as<typename std::decay_t<SpaceType>::size_type>;
+    std::integral<typename SpaceType::quadrature_point_index_type>;
+    { s.getNumberOfCells() } -> std::same_as<typename SpaceType::size_type>;
     {
       s.getNumberOfQuadraturePoints(
-          std::declval<typename std::decay_t<SpaceType>::cell_index_type>())
+          std::declval<typename SpaceType::cell_index_type>())
       } -> internals::same_decay_type<
-          typename std::decay_t<SpaceType>::quadrature_point_index_type>;
+          typename SpaceType::quadrature_point_index_type>;
   };
 
   //! \brief a simple alias
@@ -219,12 +212,11 @@ namespace mgis::function {
   concept LinearQuadratureSpaceConcept = QuadratureSpaceConcept<SpaceType> &&
       requires(const SpaceType& s) {
     SpaceType::linear_cell_indexing;
-    std::integral<typename std::decay_t<SpaceType>::cell_index_type>;
+    std::integral<typename SpaceType::cell_index_type>;
     {
       s.getQuadraturePointOffset(
-          std::declval<typename std::decay_t<SpaceType>::cell_index_type>(),
-          std::declval<
-              typename std::decay_t<SpaceType>::quadrature_point_index_type>())
+          std::declval<typename SpaceType::cell_index_type>(),
+          std::declval<typename SpaceType::quadrature_point_index_type>())
       } -> std::integral;
   };
 
@@ -243,9 +235,9 @@ namespace mgis::function {
    * does not expose an CellWorkspace structure
    */
   template <SpaceConcept SpaceType>
-  using cell_workspace = typename internals::CellWorkspaceSelector<
-      hasCellWorkspace<std::decay_t<SpaceType>>,
-      std::decay_t<SpaceType>>::type;
+  using cell_workspace =
+      typename internals::CellWorkspaceSelector<hasCellWorkspace<SpaceType>,
+                                                SpaceType>::type;
 
   template <typename SpaceType>
   concept FunctionalSpaceConcept =
