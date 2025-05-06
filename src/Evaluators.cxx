@@ -10,15 +10,11 @@
 
 namespace mgis::function {
 
-  static_assert(
-      std::same_as<
-          decltype(std::declval<FixedSizeEvaluator<BasicLinearSpace, 9>>()
-                       .getSpace()
-                       .size()),
-          size_type>);
-  static_assert(
-      std::same_as<SpaceTraits<BasicLinearSpace>::size_type, size_type>);
-  static_assert(EvaluatorConceptBase<FixedSizeEvaluator<BasicLinearSpace, 9>>);
-  static_assert(LinearEvaluatorConcept<FixedSizeEvaluator<BasicLinearSpace, 9>>);
+  static_assert(std::same_as<
+                decltype(std::declval<FixedSizeEvaluator<BasicLinearSpace, 9>>()
+                             .getSpace()
+                             .size()),
+                size_type>);
+  static_assert(std::same_as<BasicLinearSpace::size_type, size_type>);
 
 }  // end of namespace mgis::function

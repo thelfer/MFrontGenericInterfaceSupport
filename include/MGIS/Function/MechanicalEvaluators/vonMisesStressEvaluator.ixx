@@ -30,9 +30,10 @@ namespace mgis::function {
   }
 
   template <unsigned short N>
-  template <EvaluatorConcept StressEvaluatorType>
-  constexpr auto vmis_fn<N>::operator()(StressEvaluatorType&& e) const {
-    return vonMisesStressEvaluator<N, StressEvaluatorType>(
+  template <typename StressEvaluatorType>
+  constexpr auto vmis_fn<N>::operator()(StressEvaluatorType&& e) const
+      requires(EvaluatorConcept<std::decay_t<StressEvaluatorType>>) {
+    return vonMisesStressEvaluator<N, std::decay_t<StressEvaluatorType>>(
         std::forward<StressEvaluatorType>(e));
   }  // end of vmis
 

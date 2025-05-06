@@ -10,8 +10,7 @@
 
 namespace mgis::function {
 
-  static_assert(LinearSpaceConcept<BasicLinearQuadratureSpace<4>>);
-  static_assert(QuadratureSpaceConcept<BasicLinearQuadratureSpace<4>>);
-  static_assert(LinearFunctionalSpaceConcept<BasicLinearQuadratureSpace<4>>);
+  static_assert(LinearElementSpaceConcept<BasicLinearQuadratureSpace<4>>);
+  static_assert(LinearQuadratureSpaceConcept<BasicLinearQuadratureSpace<4>>);
 
 }  // end of namespace mgis::function

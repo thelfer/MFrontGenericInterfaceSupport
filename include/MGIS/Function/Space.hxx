@@ -14,29 +14,120 @@
 
 namespace mgis::function {
 
-  /*!
-   * \brief a base class for all traits class related to spaces.
-   */
-  struct SpaceTraitsBase {
-    struct Invalid;
-    // type that shall be returned by the size method
-    using size_type = Invalid;
-    //
-    static constexpr bool linear_element_indexing = false;
-    using element_index_type = Invalid;
-    //
-    static constexpr bool linear_cell_indexing = false;
-    using CellWorkspace = Invalid;
-    using cell_index_type = Invalid;
-    using quadrature_point_index_type = Invalid;
-  };
+  namespace internals {
 
-  /*!
-   * \brief a traits class describing a space
-   * \tparam SpaceType: type of the space
-   */
-  template <typename SpaceType>
-  struct SpaceTraits : SpaceTraitsBase {};
+    /*!
+     * \brief concept satisfied if the given types are the same once
+     * `std::decay_t` is applied
+     *
+     * \tparam T: first type
+     * \tparam U: second type
+     */
+    template <typename T, typename U>
+    concept same_decay_type = std::same_as<std::decay_t<T>, std::decay_t<U>>;
+
+    /*!
+     * \brief a metafunction returning an undefined type
+     */
+    struct UndefinedTypeSelector {
+      //! \brief a simple place holder
+      struct Undefined;
+      //! \brief result
+      using type = Undefined;
+    };
+
+    /*!
+     * \brief a meta function used to return SpaceType::element_index_type if it
+     * is defined, UndefinedTypeSelector::Undefined otherwise
+     *
+     * \tparam hasElementIndexType: boolean stating if
+     * SpaceType::ElementIndexType exists
+     * \tparam SpaceType: type of the space
+     * considered
+     */
+    template <bool hasElementIndexType, typename Space>
+    struct ElementIndexTypeSelector : UndefinedTypeSelector {};
+
+    template <typename Space>
+    struct ElementIndexTypeSelector<true, Space> {
+      //! \brief the type exposed by Space
+      using type = typename Space::element_index_type;
+    };
+
+    /*!
+     * \brief a meta function used to return SpaceType::ElementWorkspace if it
+     * is defined, UndefinedTypeSelector::Undefined otherwise
+     *
+     * \tparam hasElementWorkspace: boolean stating if
+     * SpaceType::ElementWorkspace exists
+     * \tparam SpaceType: type of the space
+     * considered
+     */
+    template <bool hasElementWorkspace, typename Space>
+    struct ElementWorkspaceSelector : UndefinedTypeSelector {};
+
+    template <typename Space>
+    struct ElementWorkspaceSelector<true, Space> {
+      //! \brief the type exposed by Space
+      using type = typename Space::ElementWorkspace;
+    };
+
+    /*!
+     * \brief a meta function used to return SpaceType::cell_index_type if it
+     * is defined, UndefinedTypeSelector::Undefined otherwise
+     *
+     * \tparam hasCellIndexType: boolean stating if
+     * SpaceType::CellIndexType exists
+     * \tparam SpaceType: type of the space
+     * considered
+     */
+    template <bool hasCellIndexType, typename Space>
+    struct CellIndexTypeSelector : UndefinedTypeSelector {};
+
+    template <typename Space>
+    struct CellIndexTypeSelector<true, Space> {
+      //! \brief the type exposed by Space
+      using type = typename Space::cell_index_type;
+    };
+
+    /*!
+     * \brief a meta function used to return
+     * SpaceType::quadrature_point_index_type if it is defined,
+     * UndefinedTypeSelector::Undefined otherwise
+     *
+     * \tparam hasQuadraturePointIndexType: boolean stating if
+     * SpaceType::QuadraturePointIndexType exists
+     * \tparam SpaceType: type of the space
+     * considered
+     */
+    template <bool hasQuadraturePointIndexType, typename Space>
+    struct QuadraturePointIndexTypeSelector : UndefinedTypeSelector {};
+
+    template <typename Space>
+    struct QuadraturePointIndexTypeSelector<true, Space> {
+      //! \brief the type exposed by Space
+      using type = typename Space::quadrature_point_index_type;
+    };
+
+    /*!
+     * \brief a meta function used to return SpaceType::CellWorkspace if it
+     * is defined, UndefinedTypeSelector::Undefined otherwise
+     *
+     * \tparam hasCellWorkspace: boolean stating if
+     * SpaceType::CellWorkspace exists
+     * \tparam SpaceType: type of the space
+     * considered
+     */
+    template <bool hasCellWorkspace, typename Space>
+    struct CellWorkspaceSelector : UndefinedTypeSelector {};
+
+    template <typename Space>
+    struct CellWorkspaceSelector<true, Space> {
+      //! \brief the type exposed by Space
+      using type = typename Space::CellWorkspace;
+    };
+
+  }  // namespace internals
 
   /*!
    * \brief a concept describing a space where all the elements
@@ -44,25 +135,52 @@ namespace mgis::function {
    */
   template <typename SpaceType>
   concept SpaceConcept = requires(const SpaceType& s) {
-    std::integral<typename SpaceTraits<std::decay_t<SpaceType>>::size_type>;
+    std::integral<typename std::decay_t<SpaceType>::size_type>;
     {
       s.size()
-      }
-      -> std::same_as<typename SpaceTraits<std::decay_t<SpaceType>>::size_type>;
+      } -> internals::same_decay_type<
+          typename std::decay_t<SpaceType>::size_type>;
   };
+
+  template <typename SpaceType>
+  concept ElementSpaceConcept = requires(const SpaceType& s) {
+    SpaceConcept<SpaceType>;
+    typename std::decay_t<SpaceType>::element_index_type;
+  };
+
+  //! \brief a simple alias
+  template <SpaceConcept SpaceType>
+  using element_index = typename internals::
+      ElementIndexTypeSelector<ElementSpaceConcept<SpaceType>, SpaceType>::type;
+
+  /*!
+   * \brief  a simple meta function stating if SpaceType
+   * does not expose an ElementWorkspace structure
+   */
+  template <ElementSpaceConcept SpaceType>
+  inline constexpr bool hasElementWorkspace = requires {
+    typename SpaceType::ElementWorkspace;
+  };
+
+  /*!
+   * \brief a simple alias
+   * \note this alias leads to an undefined type if SpaceType
+   * does not expose an ElementWorkspace structure
+   */
+  template <SpaceConcept SpaceType>
+  using element_workspace = typename internals::ElementWorkspaceSelector<
+      hasElementWorkspace<std::decay_t<SpaceType>>,
+      std::decay_t<SpaceType>>::type;
 
   /*!
    * \brief a concept describing a space where all the elements
    * are stored for 0 to size() - 1
    */
   template <typename SpaceType>
-  concept LinearSpaceConcept = requires(const SpaceType& s) {
-    SpaceConcept<SpaceType>;
-    SpaceTraits<SpaceType>::linear_element_indexing;
-    SpaceTraits<std::decay_t<SpaceType>>::linear_element_indexing
-        ? std::integral<
-              typename SpaceTraits<std::decay_t<SpaceType>>::element_index_type>
-        : true;
+  concept LinearElementSpaceConcept = requires(const SpaceType& s) {
+    ElementSpaceConcept<SpaceType>;
+    SpaceType::linear_element_indexing;
+    std::integral<typename std::decay_t<SpaceType>::element_index_type>;
   };
 
   /*!
@@ -72,55 +190,66 @@ namespace mgis::function {
    */
   template <typename SpaceType>
   concept QuadratureSpaceConcept = requires(const SpaceType& s) {
-    !std::same_as<
-        typename SpaceTraits<std::decay_t<SpaceType>>::CellWorkspace,
-        typename SpaceTraitsBase::Invalid>;
-    !std::same_as<
-        typename SpaceTraits<std::decay_t<SpaceType>>::cell_index_type,
-        typename SpaceTraitsBase::Invalid>;
-    SpaceTraits<std::decay_t<SpaceType>>::linear_cell_indexing
-        ? std::integral<
-              typename SpaceTraits<std::decay_t<SpaceType>>::cell_index_type>
-        : true;
-    std::integral<typename SpaceTraits<
-        std::decay_t<SpaceType>>::quadrature_point_index_type>;
+    typename SpaceType::cell_index_type;
+    std::integral<
+        typename std::decay_t<SpaceType>::quadrature_point_index_type>;
     {
       s.getNumberOfCells()
-      }
-      -> std::same_as<typename SpaceTraits<std::decay_t<SpaceType>>::size_type>;
+      } -> std::same_as<typename std::decay_t<SpaceType>::size_type>;
     {
       s.getNumberOfQuadraturePoints(
-          std::declval<typename SpaceTraits<
-              std::decay_t<SpaceType>>::cell_index_type>())
-      } -> std::same_as<typename SpaceTraits<
-          std::decay_t<SpaceType>>::quadrature_point_index_type>;
-    {
-      s.getCellWorkspace(std::declval<typename SpaceTraits<
-                                std::decay_t<SpaceType>>::cell_index_type>())
-      } -> std::same_as<
-          typename SpaceTraits<std::decay_t<SpaceType>>::CellWorkspace>;
+          std::declval<typename std::decay_t<SpaceType>::cell_index_type>())
+      } -> internals::same_decay_type<
+          typename std::decay_t<SpaceType>::quadrature_point_index_type>;
   };
 
+  //! \brief a simple alias
+  template <SpaceConcept SpaceType>
+  using cell_index = typename internals::
+      CellIndexTypeSelector<QuadratureSpaceConcept<SpaceType>, SpaceType>::type;
+
+  //! \brief a simple alias
+  template <SpaceConcept SpaceType>
+  using quadrature_point_index =
+      typename internals::QuadraturePointIndexTypeSelector<
+          QuadratureSpaceConcept<SpaceType>,
+          SpaceType>::type;
+
   template <typename SpaceType>
-  concept LinearQuadratureSpaceConcept = LinearSpaceConcept<SpaceType> &&
-      QuadratureSpaceConcept<SpaceType> &&  //
+  concept LinearQuadratureSpaceConcept = QuadratureSpaceConcept<SpaceType> &&
       requires(const SpaceType& s) {
+    SpaceType::linear_cell_indexing;
+    std::integral<typename std::decay_t<SpaceType>::cell_index_type>;
     {
       s.getQuadraturePointOffset(
-          std::declval<typename SpaceTraits<
-              std::decay_t<SpaceType>>::element_index_type>(),
-          std::declval<typename SpaceTraits<
-              std::decay_t<SpaceType>>::quadrature_point_index_type>())
+          std::declval<typename std::decay_t<SpaceType>::cell_index_type>(),
+          std::declval<
+              typename std::decay_t<SpaceType>::quadrature_point_index_type>())
       } -> std::integral;
   };
 
-  template <typename SpaceType>
-  concept FunctionalSpaceConcept =
-      SpaceConcept<SpaceType> || QuadratureSpaceConcept<SpaceType>;
+  /*!
+   * \brief  a simple meta function stating if SpaceType
+   * does not expose an CellWorkspace structure
+   */
+  template <SpaceConcept SpaceType>
+  inline constexpr bool hasCellWorkspace = requires {
+    typename SpaceType::CellWorkspace;
+  };
+
+  /*!
+   * \brief a simple alias
+   * \note this alias leads to an undefined type if SpaceType
+   * does not expose an CellWorkspace structure
+   */
+  template <SpaceConcept SpaceType>
+  using cell_workspace = typename internals::CellWorkspaceSelector<
+      hasCellWorkspace<std::decay_t<SpaceType>>,
+      std::decay_t<SpaceType>>::type;
 
   template <typename SpaceType>
-  concept LinearFunctionalSpaceConcept =
-      LinearSpaceConcept<SpaceType> || LinearQuadratureSpaceConcept<SpaceType>;
+  concept FunctionalSpaceConcept =
+      ElementSpaceConcept<SpaceType> || QuadratureSpaceConcept<SpaceType>;
 
 }  // end of namespace mgis::function
 

@@ -10,7 +10,7 @@
 
 namespace mgis::function {
 
-  static_assert(LinearSpaceConcept<BasicLinearSpace>);
+  static_assert(LinearElementSpaceConcept<BasicLinearSpace>);
 
 }  // end of namespace mgis::function
 

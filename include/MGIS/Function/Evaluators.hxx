@@ -16,39 +16,43 @@
 namespace mgis::function {
 
   template <typename EvaluatorType>
-  concept EvaluatorConceptBase = std::is_move_constructible_v<EvaluatorType> &&
+  concept EvaluatorConcept = std::is_move_constructible_v<EvaluatorType> &&
       std::is_copy_constructible_v<EvaluatorType> &&
       requires(EvaluatorType& e) {
     e.allocateWorkspace();
   } && requires(const EvaluatorType& e) {
     e.check();
-    FunctionalSpaceConcept<decltype(e.getSpace())>;
+    FunctionalSpaceConcept<std::decay_t<decltype(e.getSpace())>>;
     { e.getNumberOfComponents() } -> std::same_as<size_type>;
+    (ElementSpaceConcept<std::decay_t<decltype(e.getSpace())>>&&
+        hasElementWorkspace<std::decay_t<decltype(e.getSpace())>>
+        ? requires(const EvaluatorType& e2) {
+      e2(std::declval<element_workspace<std::decay_t<decltype(e.getSpace())>>>(),
+         std::declval<element_index<std::decay_t<decltype(e.getSpace())>>>());
+    }
+:true);
+    (ElementSpaceConcept<std::decay_t<decltype(e.getSpace())>> &&
+        (!hasElementWorkspace<std::decay_t<decltype(e.getSpace())>>)
+        ? requires(const EvaluatorType& e2) {
+      e2(std::declval<element_index<std::decay_t<decltype(e.getSpace())>>>());
+}
+:true);
+    (QuadratureSpaceConcept<std::decay_t<decltype(e.getSpace())>>&&
+        hasCellWorkspace<std::decay_t<decltype(e.getSpace())>>
+        ? requires(const EvaluatorType& e2) {
+      e2(std::declval<cell_workspace<std::decay_t<decltype(e.getSpace())>>>(),
+         std::declval<cell_index<std::decay_t<decltype(e.getSpace())>>>(),
+         std::declval<quadrature_point_index<std::decay_t<decltype(e.getSpace())>>>());
+}
+:true);
+    (QuadratureSpaceConcept<std::decay_t<decltype(e.getSpace())>> &&
+        (!hasCellWorkspace<std::decay_t<decltype(e.getSpace())>>)
+        ? requires(const EvaluatorType& e2) {
+      e2(std::declval<cell_index<std::decay_t<decltype(e.getSpace())>>>(),
+         std::declval<quadrature_point_index<std::decay_t<decltype(e.getSpace())>>>());
+}
+:true);
   };
-
-  template <typename EvaluatorType>
-  concept LinearEvaluatorConcept = EvaluatorConceptBase<EvaluatorType> &&
-      LinearSpaceConcept<decltype(std::declval<EvaluatorType>().getSpace())> &&
-      ((requires(const EvaluatorType& e, size_type i) { e(i); }) ||
-       (requires(EvaluatorType & e, size_type i) { e(i); }));
-
-  template <typename EvaluatorType>
-  concept QuadratureEvaluatorConcept = EvaluatorConceptBase<EvaluatorType> &&
-      QuadratureSpaceConcept<
-          decltype(std::declval<EvaluatorType>().getSpace())> &&
-      ((requires(const EvaluatorType& e, size_type n, size_type i) {
-         e(n, i);
-       }) ||
-       (requires(EvaluatorType & e, size_type n, size_type i) { e(n, i); }));
-
-  template <typename EvaluatorType>
-  concept EvaluatorConcept = LinearEvaluatorConcept<std::decay_t<EvaluatorType>> ||
-      QuadratureEvaluatorConcept<std::decay_t<EvaluatorType>>;
-
-  template <typename EvaluatorType>
-  concept LinearQuadratureEvaluatorConcept =
-      LinearEvaluatorConcept<std::decay_t<EvaluatorType>> &&
-      QuadratureEvaluatorConcept<std::decay_t<EvaluatorType>>;
 
   /*!
    * \brief an evaluator returning the values of an immutable partial
@@ -82,18 +86,32 @@ namespace mgis::function {
      * \brief call operator
      * \param[in] i: integration point index
      */
-    auto operator()(const typename SpaceTraits<Space>::element_index_type) const
-        requires(LinearSpaceConcept<Space>);
+    auto operator()(const element_index<Space>&) const
+        requires(ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>));
+    /*!
+     * \brief call operator
+     * \param[in] i: integration point index
+     */
+    auto operator()(const element_workspace<Space>&,
+                    const element_index<Space>&) const
+        requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>);
     /*!
      * \brief call operator
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    auto operator()(
-        const typename SpaceTraits<Space>::CellWorkspace&,
-        const typename SpaceTraits<Space>::cell_index_type,
-        const typename SpaceTraits<Space>::quadrature_point_index_type) const
-        requires(LinearQuadratureSpaceConcept<Space>);
+    auto operator()(const cell_index<Space>,
+                    const quadrature_point_index<Space>) const
+        requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>));
+    /*!
+     * \brief call operator
+     * \param[in] e: cell index
+     * \param[in] i: integration point index
+     */
+    auto operator()(const cell_workspace<Space>&,
+                    const cell_index<Space>,
+                    const quadrature_point_index<Space>) const
+        requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>);
 
    private:
     //! \brief underlying partial quadrature space
@@ -107,8 +125,8 @@ namespace mgis::function {
    * \param[in] e1: first evaluator
    * \param[in] e2: second evaluator
    */
-  void checkMatchingAbstractSpaces(const EvaluatorConceptBase auto&,
-                                   const EvaluatorConceptBase auto&);
+  void checkMatchingAbstractSpaces(const EvaluatorConcept auto&,
+                                   const EvaluatorConcept auto&);
 
 }  // end of namespace mgis::function
 

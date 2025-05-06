@@ -48,8 +48,8 @@ namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N>
   auto FixedSizeEvaluator<Space, N>::operator()(
-      const typename SpaceTraits<Space>::element_index_type i) const
-      requires(LinearSpaceConcept<Space>) {
+      const element_index<Space>& i) const
+      requires(ElementSpaceConcept<Space> && (!hasElementWorkspace<Space>)) {
     if constexpr (N == 1) {
       return this->function.getValue(i);
     } else {
@@ -59,10 +59,10 @@ namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N>
   auto FixedSizeEvaluator<Space, N>::operator()(
-      const typename SpaceTraits<Space>::CellWorkspace&,
-      const typename SpaceTraits<Space>::cell_index_type e,
-      const typename SpaceTraits<Space>::quadrature_point_index_type i) const
-      requires(LinearQuadratureSpaceConcept<Space>) {
+      const cell_workspace<Space>&,
+      const cell_index<Space> e,
+      const quadrature_point_index<Space> i) const
+      requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>) {
     if constexpr (N == 1) {
       return this->function.getValue(e, i);
     } else {
@@ -70,8 +70,8 @@ namespace mgis::function {
     }
   }
 
-  void checkMatchingAbstractSpaces(const EvaluatorConceptBase auto& e1,
-                                   const EvaluatorConceptBase auto& e2) {
+  void checkMatchingAbstractSpaces(const EvaluatorConcept auto& e1,
+                                   const EvaluatorConcept auto& e2) {
     const auto& qspace1 = e1.getSpace();
     const auto& qspace2 = e2.getSpace();
     raise_if(&qspace1 != &qspace2, "unmatched quadrature spaces");

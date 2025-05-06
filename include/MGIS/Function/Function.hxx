@@ -133,7 +133,7 @@ namespace mgis::function {
    * The size of the data hold by the function per element of the space, i.e. th
    * number of components of the function is given by `data_size`.
    */
-  template <LinearFunctionalSpaceConcept Space,
+  template <FunctionalSpaceConcept Space,
             DataLayoutDescription layout = {},
             bool is_mutable = true>
   struct FunctionView : DataLayout<layout> {
@@ -145,9 +145,10 @@ namespace mgis::function {
                                           std::span<real>,
                                           std::span<real, layout.size>>;
     //! \brief return this of the getValues function (const case)
-    using ConstValuesView = std::conditional_t<layout.size == dynamic_extent,
-                                          std::span<const real>,
-                                          std::span<const real, layout.size>>;
+    using ConstValuesView =
+        std::conditional_t<layout.size == dynamic_extent,
+                           std::span<const real>,
+                           std::span<const real, layout.size>>;
     //
     static constexpr bool allowScalarAccessor =
         (layout.size == dynamic_extent) ? true : layout.size == 1;
@@ -306,7 +307,7 @@ namespace mgis::function {
      * scalar
      */
     real& getValue(const size_type) requires(
-        allowScalarAccessor&& is_mutable&& LinearSpaceConcept<Space>);
+        allowScalarAccessor&& is_mutable&& LinearElementSpaceConcept<Space>);
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
@@ -314,13 +315,13 @@ namespace mgis::function {
     template <size_type N>
     std::span<real, N> getValues(const size_type) requires(
         (layout.size == dynamic_extent) && is_mutable &&
-        LinearSpaceConcept<Space>);
+        LinearElementSpaceConcept<Space>);
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
     ValuesView getValues(const size_type) requires(
-        is_mutable&& LinearSpaceConcept<Space>);
+        is_mutable&& LinearElementSpaceConcept<Space>);
     /*!
      * \return the data associated with an integration point
      * \param[in] e: element index
@@ -355,20 +356,20 @@ namespace mgis::function {
      * scalar
      */
     const real& getValue(const size_type) const
-        requires(allowScalarAccessor&& LinearSpaceConcept<Space>);
+        requires(allowScalarAccessor&& LinearElementSpaceConcept<Space>);
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
     template <size_type N>
     std::span<const real, N> getValues(const size_type) const
-        requires(LinearSpaceConcept<Space>);
+        requires(LinearElementSpaceConcept<Space>);
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
     ConstValuesView getValues(const size_type) const
-        requires(LinearSpaceConcept<Space>);
+        requires(LinearElementSpaceConcept<Space>);
     /*!
      * \return the data associated with an integration point
      * \param[in] e: element index
@@ -413,11 +414,10 @@ namespace mgis::function {
   };  // end of FunctionView
 
   //! \brief a simple alias
-  template <LinearFunctionalSpaceConcept Space,
-            DataLayoutDescription layout = {}>
+  template <FunctionalSpaceConcept Space, DataLayoutDescription layout = {}>
   using ImmutableFunctionView = FunctionView<Space, layout, false>;
 
-  template <LinearFunctionalSpaceConcept Space, size_type N>
+  template <FunctionalSpaceConcept Space, size_type N>
   struct FunctionStorage {
     FunctionStorage(const Space& s) requires(N != dynamic_extent)
         : storage_values(N * s.size()) {}
@@ -430,7 +430,7 @@ namespace mgis::function {
     std::vector<real> storage_values;
   };
 
-  template <LinearFunctionalSpaceConcept Space, size_type N = dynamic_extent>
+  template <FunctionalSpaceConcept Space, size_type N = dynamic_extent>
   struct Function : public FunctionStorage<Space, N>,
                     public FunctionView<Space, {.size = N, .stride = N}, true> {
     Function(std::shared_ptr<const Space> s) requires(N != dynamic_extent)
@@ -444,7 +444,7 @@ namespace mgis::function {
               s, this->storage_values, dsize, dsize) {}
   };
 
-  }  // namespace mgis::function
+}  // namespace mgis::function
 
 #include "MGIS/Function/Function.ixx"
 

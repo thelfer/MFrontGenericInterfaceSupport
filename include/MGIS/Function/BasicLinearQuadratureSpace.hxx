@@ -19,6 +19,12 @@ namespace mgis::function {
    */
   template <size_type N>
   requires(N > 0) struct MGIS_EXPORT BasicLinearQuadratureSpace {
+    static constexpr bool linear_element_indexing = true;
+    static constexpr bool linear_cell_indexing = true;
+    using size_type = mgis::size_type;
+    using element_index_type = mgis::size_type;
+    using cell_index_type = mgis::size_type;
+    using quadrature_point_index_type = mgis::size_type;
     //! \brief an empty element workspace
     struct DummyCellWorkspace {};
     /*!
@@ -59,20 +65,6 @@ namespace mgis::function {
    private:
     //! \brief number of elements of the the space
     size_type nelts;
-  };
-
-  template <size_type N>
-  struct SpaceTraits<BasicLinearQuadratureSpace<N>> {
-    using size_type = mgis::size_type;
-    //
-    static constexpr bool linear_element_indexing = true;
-    using element_index_type = mgis::size_type;
-    //
-    using CellWorkspace =
-        typename BasicLinearQuadratureSpace<N>::DummyCellWorkspace;
-    static constexpr bool linear_cell_indexing = true;
-    using cell_index_type = mgis::size_type;
-    using quadrature_point_index_type = mgis::size_type;
   };
 
 }  // end of namespace mgis::function

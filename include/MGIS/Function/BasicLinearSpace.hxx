@@ -15,6 +15,9 @@ namespace mgis::function {
 
   //! \brief the simpliest implementation of a linear space
   struct MGIS_EXPORT BasicLinearSpace {
+    static constexpr bool linear_element_indexing = true;
+    using size_type = mgis::size_type;
+    using element_index_type = mgis::size_type;
     /*!
      * \brief constructor
      * \param[in] s: size of the space
@@ -30,13 +33,6 @@ namespace mgis::function {
    private:
     //! \brief number of elements of the the space
     size_type nelts;
-  };
-
-  template <>
-  struct SpaceTraits<BasicLinearSpace> : SpaceTraitsBase {
-    static constexpr bool linear_element_indexing = true;
-    using size_type = mgis::size_type;
-    using element_index_type = mgis::size_type;
   };
 
 }  // end of namespace mgis::function

@@ -41,8 +41,9 @@ namespace mgis::function {
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))
   struct vmis_fn {
-    template <EvaluatorConcept StressEvaluatorType>
-    constexpr auto operator()(StressEvaluatorType&&) const;
+    template <typename StressEvaluatorType>
+    constexpr auto operator()(StressEvaluatorType&&) const
+        requires(EvaluatorConcept<std::decay_t<StressEvaluatorType>>);
   };
 
   template <unsigned short N>
