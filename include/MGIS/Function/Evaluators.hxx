@@ -54,7 +54,7 @@ namespace mgis::function {
   };
 
   /*!
-   * \brief an evaluator returning the values of an immutable 
+   * \brief an evaluator returning the values of an immutable
    * function view as a fixed size span or a scalar
    *
    * \tparam Space: functional space

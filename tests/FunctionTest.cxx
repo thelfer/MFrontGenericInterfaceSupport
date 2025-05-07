@@ -1,6 +1,6 @@
 /*!
  * \file   FunctionTest.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   02/05/2025
  */
@@ -49,7 +49,7 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 2);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 3);
   }
-  void test2(){
+  void test2() {
     using namespace mgis;
     using namespace mgis::function;
     constexpr auto eps = real{1e-14};
@@ -96,8 +96,8 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     auto space = std::make_shared<BasicLinearSpace>(3);
     auto values = std::vector<real>{1, 2, 3, 4, 5, 6};
     TFEL_TESTS_ASSERT(
-        ImmutableFunctionView<BasicLinearSpace>::checkPreconditions(
-            space, values, 2));
+        ImmutableFunctionView<BasicLinearSpace>::checkPreconditions(space,
+                                                                    values, 2));
     auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 2);
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 2);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 2);

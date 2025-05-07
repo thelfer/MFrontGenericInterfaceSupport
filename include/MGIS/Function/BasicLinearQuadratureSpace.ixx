@@ -52,7 +52,7 @@ namespace mgis::function {
   constexpr size_type BasicLinearQuadratureSpace<N>::getQuadraturePointOffset(
       const size_type e, const size_type i) const noexcept {
     return e * N + i;
-  } // end of getQuadraturePointOffset
+  }  // end of getQuadraturePointOffset
 
   template <size_type N>
   constexpr BasicLinearQuadratureSpace<

@@ -1,6 +1,6 @@
 /*!
  * \file   BasicLinearQuadratureSpace.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   02/05/2025
  */
