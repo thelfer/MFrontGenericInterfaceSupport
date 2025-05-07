@@ -370,6 +370,22 @@ else((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
+add_executable(InvalidResultTest
+ EXCLUDE_FROM_ALL
+ InvalidResultTest.cxx)
+target_link_libraries(InvalidResultTest
+  PRIVATE MFrontGenericInterface)
+add_test(NAME InvalidResultTest COMMAND InvalidResultTest)
+add_dependencies(check InvalidResultTest)
+
+add_executable(ErrorBacktraceTest
+ EXCLUDE_FROM_ALL
+ ErrorBacktraceTest.cxx)
+target_link_libraries(ErrorBacktraceTest
+  PRIVATE MFrontGenericInterface)
+add_test(NAME ErrorBacktraceTest COMMAND ErrorBacktraceTest)
+add_dependencies(check ErrorBacktraceTest)
+
 if(MGIS_HAVE_TFEL)
 
 add_executable(FunctionTest

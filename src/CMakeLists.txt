@@ -1,5 +1,8 @@
 mgis_library(MFrontGenericInterface
   Raise.cxx
+  VerbosityLevel.cxx
+  ErrorBacktrace.cxx
+  Context.cxx
   ThreadPool.cxx
   ThreadedTaskResult.cxx
   LibrariesManager.cxx
@@ -23,22 +26,29 @@ mgis_library(MFrontGenericInterface
   Evaluators.cxx
   MechanicalEvaluators.cxx
   )
+
 target_include_directories(MFrontGenericInterface
    PUBLIC 
    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_DEBUG)
+endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
 if(enable-static)
   target_include_directories(MFrontGenericInterface-static
     PUBLIC 
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
+  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_DEBUG)
+  endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif(enable-static)
 
 if(MGIS_HAVE_TFEL)
   target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_HAVE_TFEL)
   target_link_libraries(MFrontGenericInterface PUBLIC tfel::TFELMath)
 endif(MGIS_HAVE_TFEL)
-
 
 if(UNIX)
   if(Threads_FOUND)
