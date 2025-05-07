@@ -78,8 +78,8 @@ namespace mgis::function {
   constexpr bool has_dynamic_properties(const DataLayoutDescription&);
 
   /*!
-   * \brief a simple data structure describing how the data of a partial
-   * quadrature function is mapped in memory
+   * \brief a simple data structure describing how the data of a
+   * function is mapped in memory
    */
   template <DataLayoutDescription layout>
   requires((layout.size > 0) &&

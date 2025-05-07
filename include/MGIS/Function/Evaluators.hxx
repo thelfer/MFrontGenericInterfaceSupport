@@ -21,7 +21,6 @@ namespace mgis::function {
       requires(EvaluatorType& e) {
     e.allocateWorkspace();
   } && requires(const EvaluatorType& e) {
-    e.check();
     FunctionalSpaceConcept<std::decay_t<decltype(e.getSpace())>>;
     { e.getNumberOfComponents() } -> std::same_as<size_type>;
     (ElementSpaceConcept<std::decay_t<decltype(e.getSpace())>>&&
@@ -55,8 +54,8 @@ namespace mgis::function {
   };
 
   /*!
-   * \brief an evaluator returning the values of an immutable partial
-   * quadrature function view as a fixed size span or a scalar
+   * \brief an evaluator returning the values of an immutable 
+   * function view as a fixed size span or a scalar
    *
    * \tparam Space: functional space
    * \tparam N: size of the returned value
@@ -78,7 +77,7 @@ namespace mgis::function {
     bool check() const noexcept;
     //! \brief allocate internal workspace
     void allocateWorkspace();
-    //! \brief return the underlying partial quadrature space
+    //! \brief return the underlying  space
     const Space& getSpace() const;
     //! \return the number of components
     constexpr size_type getNumberOfComponents() const noexcept;
@@ -114,19 +113,18 @@ namespace mgis::function {
         requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>);
 
    private:
-    //! \brief underlying partial quadrature space
+    //! \brief underlying function
     const ImmutableFunctionView<Space, {}>& function;
   };  // end of FixedSizeEvaluator
 
   /*!
-   * \brief check if the given evaluators have the same partial quadrature
-   * space
+   * \brief check if the given evaluators shares the same space
    *
    * \param[in] e1: first evaluator
    * \param[in] e2: second evaluator
    */
-  void checkMatchingAbstractSpaces(const EvaluatorConcept auto&,
-                                   const EvaluatorConcept auto&);
+  void checkMatchingSpaces(const EvaluatorConcept auto&,
+                           const EvaluatorConcept auto&);
 
 }  // end of namespace mgis::function
 

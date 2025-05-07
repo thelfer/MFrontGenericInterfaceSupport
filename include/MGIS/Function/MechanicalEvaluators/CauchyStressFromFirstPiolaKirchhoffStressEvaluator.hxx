@@ -13,6 +13,7 @@
 #define LIB_MGIS_CAUCHYSTRESSFROMFIRSTPIOLAKIRCHHOFFSTRESSEVALUATOR_HXX
 
 #include "MGIS/Function/Evaluators.hxx"
+#include "MGIS/Function/BinaryOperationEvaluatorBase.hxx"
 
 namespace mgis::function {
 
@@ -26,65 +27,37 @@ namespace mgis::function {
    * \tparam PK1EvaluatorType: evaluator of the first Piola-Kirchhoff stress
    */
   template <unsigned short N,
-            EvaluatorConcept DeformationGradientEvaluatorType,
-            EvaluatorConcept PK1EvaluatorType>
-  struct CauchyStressFromFirstPiolaKirchhoffStressEvaluator {
+            EvaluatorConcept PK1EvaluatorType,
+            EvaluatorConcept DeformationGradientEvaluatorType>
+  struct CauchyStressFromFirstPiolaKirchhoffStressEvaluator
+      : public BinaryOperationEvaluatorBase<
+            CauchyStressFromFirstPiolaKirchhoffStressEvaluator<
+                N,
+                PK1EvaluatorType,
+                DeformationGradientEvaluatorType>,
+            PK1EvaluatorType,
+            DeformationGradientEvaluatorType> {
+    //! \brief inheriting constructors
+    using BinaryOperationEvaluatorBase<
+        CauchyStressFromFirstPiolaKirchhoffStressEvaluator<
+            N,
+            PK1EvaluatorType,
+            DeformationGradientEvaluatorType>,
+        PK1EvaluatorType,
+        DeformationGradientEvaluatorType>::BinaryOperationEvaluatorBase;
     //! \brief a simple alias
     using Space = std::decay_t<
         decltype(std::declval<std::decay_t<PK1EvaluatorType>>().getSpace())>;
-    /*!
-     * \brief constructor
-     * \param[in] e1: evaluator of the deformation gradient
-     * \param[in] e2: evaluator of the first Piola-Kirchhoff stress
-     */
-    CauchyStressFromFirstPiolaKirchhoffStressEvaluator(
-        const DeformationGradientEvaluatorType&, const PK1EvaluatorType&);
     //! \brief perform consistency checks
     void check() const;
-    //! \brief allocate internal workspace
-    void allocateWorkspace();
-    //! \brief return the underlying partial quadrature space
-    const auto& getSpace() const;
     //! \return the number of components
     constexpr size_type getNumberOfComponents() const noexcept;
     /*!
-     * \brief call operator
-     * \param[in] i: integration point index
+     * do the conversion
+     * \param[in] pk1_values
+     * \param[in] F_values
      */
-    auto operator()(const element_index<Space>&) const
-        requires(ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>));
-    /*!
-     * \brief call operator
-     * \param[in] i: integration point index
-     */
-    auto operator()(const element_workspace<Space>&,
-                    const element_index<Space>&) const
-        requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>);
-    /*!
-     * \brief call operator
-     * \param[in] e: cell index
-     * \param[in] i: integration point index
-     */
-    auto operator()(const cell_index<Space>,
-                    const quadrature_point_index<Space>) const
-        requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>));
-    /*!
-     * \brief call operator
-     * \param[in] e: cell index
-     * \param[in] i: integration point index
-     */
-    auto operator()(const cell_workspace<Space>&,
-                    const cell_index<Space>,
-                    const quadrature_point_index<Space>) const
-        requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>);
-
-   private:
-    //
-    auto apply(const auto& pk1_values, const auto& F_values) const;
-    //! \brief evaluator of deformation gradient
-    DeformationGradientEvaluatorType deformation_gradient_evaluator;
-    //! \brief evaluator of the first Piola-Kirchhoff stress
-    PK1EvaluatorType pk1_evaluator;
+    auto apply(const auto&, const auto&) const;
   };
 
 }  // end of namespace mgis::function

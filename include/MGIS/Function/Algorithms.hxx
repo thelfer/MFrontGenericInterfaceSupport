@@ -15,14 +15,14 @@
 namespace mgis::function {
 
   /*!
-   * \brief assign the evaluator to a partial quadrature function
+   * \brief assign the evaluator to a function
    * \param[in] lhs: left hand side
    * \param[in] e: right hand side
    */
   template <size_type N, typename FunctionEvaluatorType>
   bool assign(Function&, FunctionEvaluatorType) requires(N > 0);
   /*!
-   * \brief assign the evaluator to a partial quadrature function
+   * \brief assign the evaluator to a function
    * \param[in] lhs: left hand side
    * \param[in] e: right hand side
    */

@@ -1,12 +1,12 @@
 /*!
- * \file   MGIS/Function/EvaluatorModifierBase.hxx
+ * \file   MGIS/Function/BinaryOperationEvaluatorBase.hxx
  * \brief
  * \author Thomas Helfer
  * \date   07/05/2025
  */
 
-#ifndef LIB_MGIS_FUNCTION_EVALUATORMODIFIERBASE_HXX
-#define LIB_MGIS_FUNCTION_EVALUATORMODIFIERBASE_HXX
+#ifndef LIB_MGIS_FUNCTION_BINARYOPERATIONEVALUATORBASE_HXX
+#define LIB_MGIS_FUNCTION_BINARYOPERATIONEVALUATORBASE_HXX
 
 #include "MGIS/Function/Space.hxx"
 #include "MGIS/Function/Evaluators.hxx"
@@ -14,25 +14,35 @@
 namespace mgis::function {
 
   /*!
-   * \brief a base class to construct a new evaluator by applying a modifier to
-   * the values returned by an existing evaluator
+   * \brief a base class to construct an evaluator by applying a binary
+   * operation on the results of two evaluators.
    * \tparam Child: child class
-   * \tparam EvaluatorType: modified evaluator
+   * \tparam FirstEvaluatorType: evaluator used to compute
+   * the first argument of the binary operation
+   * \tparam SecondEvaluatorType: evaluator used to compute
+   * the first second of the binary operation
    */
-  template <typename Child, EvaluatorConcept EvaluatorType>
-  struct EvaluatorModifierBase {
+  template <typename Child,
+            EvaluatorConcept FirstEvaluatorType,
+            EvaluatorConcept SecondEvaluatorType>
+  requires(internals::same_decay_type<
+           decltype(std::declval<FirstEvaluatorType>().getSpace()),
+           decltype(std::declval<FirstEvaluatorType>().getSpace())>)  //
+      struct BinaryOperationEvaluatorBase {
     //! \brief a simple alias
     using Space =
-        std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
+        std::decay_t<decltype(std::declval<FirstEvaluatorType>().getSpace())>;
     /*!
      * \brief constructor
-     * \param[in] e: modified evaluator
+     * \param[in] e1: first evaluator
+     * \param[in] e2: second evaluator
      */
-    EvaluatorModifierBase(const EvaluatorType&);
+    BinaryOperationEvaluatorBase(const FirstEvaluatorType&,
+                                 const SecondEvaluatorType&);
     //! \brief copy constructor
-    EvaluatorModifierBase(const EvaluatorModifierBase&);
+    BinaryOperationEvaluatorBase(const BinaryOperationEvaluatorBase&);
     //! \brief move constructor
-    EvaluatorModifierBase(EvaluatorModifierBase&&);
+    BinaryOperationEvaluatorBase(BinaryOperationEvaluatorBase&&);
     //! \brief perform consistency checks
     void check() const;
     //! \brief allocate internal workspace
@@ -71,12 +81,14 @@ namespace mgis::function {
         requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>);
 
    protected:
-    //! \brief underlying evaluator
-    EvaluatorType evaluator;
+    //! \brief evaluator of the first argument of the binary operation
+    FirstEvaluatorType first_evaluator;
+    //! \brief evaluator of the second argument of the binary operation
+    SecondEvaluatorType second_evaluator;
   };
 
-}  // namespace mgis::function
+}  // end of namespace mgis::function
 
-#include "MGIS/Function/EvaluatorModifierBase.ixx"
+#include "MGIS/Function/BinaryOperationEvaluatorBase.ixx"
 
-#endif /* LIB_MGIS_FUNCTION_EVALUATORMODIFIERBASE_HXX */
+#endif /* LIB_MGIS_FUNCTION_BINARYOPERATIONEVALUATORBASE_HXX */

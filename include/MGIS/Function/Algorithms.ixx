@@ -58,7 +58,7 @@ namespace mgis::function {
 
   template <size_type N, FunctionEvalutorConcept EvaluatorType>
   bool assign(Function& f, EvaluatorType e) requires(N > 0) {
-    checkMatchingAbstractSpaces(f, e);
+    checkMatchingSpaces(f, e);
     raise_if(f.getNumberOfComponents() != N,
              "assign: invalid number of components for the left hand size");
     raise_if(e.getNumberOfComponents() != N,

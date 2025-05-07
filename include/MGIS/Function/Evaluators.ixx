@@ -70,12 +70,12 @@ namespace mgis::function {
     }
   }
 
-  void checkMatchingAbstractSpaces(const EvaluatorConcept auto& e1,
-                                   const EvaluatorConcept auto& e2) {
+  void checkMatchingSpaces(const EvaluatorConcept auto& e1,
+                           const EvaluatorConcept auto& e2) {
     const auto& qspace1 = e1.getSpace();
     const auto& qspace2 = e2.getSpace();
     raise_if(&qspace1 != &qspace2, "unmatched quadrature spaces");
-  }  // end of checkMatchingAbstractSpaces
+  }  // end of checkMatchingSpaces
 
 }  // end of namespace mgis::function
 
