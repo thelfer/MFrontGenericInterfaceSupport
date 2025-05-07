@@ -36,7 +36,7 @@ namespace mgis::function {
     using EvaluatorModifierBase<Child,
                                 StressEvaluatorType>::EvaluatorModifierBase;
     //! \brief perform consistency checks
-    void check() const;
+    bool check(Context&) const;
   };
 
 }  // namespace mgis::function

@@ -18,24 +18,29 @@ namespace mgis::function {
   template <unsigned short N,
             EvaluatorConcept PK1EvaluatorType,
             EvaluatorConcept DeformationGradientEvaluatorType>
-  void CauchyStressFromFirstPiolaKirchhoffStressEvaluator<
+  bool CauchyStressFromFirstPiolaKirchhoffStressEvaluator<
       N,
       PK1EvaluatorType,
-      DeformationGradientEvaluatorType>::check() const {
+      DeformationGradientEvaluatorType>::check(Context& ctx) const {
     using namespace tfel::math;
-    BinaryOperationEvaluatorBase<
-        CauchyStressFromFirstPiolaKirchhoffStressEvaluator<
-            N, PK1EvaluatorType, DeformationGradientEvaluatorType>,
-        PK1EvaluatorType, DeformationGradientEvaluatorType>::check();
+    if (!BinaryOperationEvaluatorBase<
+            CauchyStressFromFirstPiolaKirchhoffStressEvaluator<
+                N, PK1EvaluatorType, DeformationGradientEvaluatorType>,
+            PK1EvaluatorType, DeformationGradientEvaluatorType>::check(ctx)) {
+      return false;
+    }
     const auto nPK1 = this->first_evaluator.getNumberOfComponents();
-    raise_if(nPK1 != TensorDimeToSize<N>::value,
-             "CauchyStressFromFirstPiolaKirchhoffStressEvaluator::check: "
-             "incompatible number of components of the first Piola-Kirchhoff "
-             "stress");
+    if (nPK1 != TensorDimeToSize<N>::value) {
+      return ctx.registerErrorMessage(
+          "incompatible number of components of the first Piola-Kirchhoff "
+          "stress");
+    }
     const auto nF = this->second_evaluator.getNumberOfComponents();
-    raise_if(nF != TensorDimeToSize<N>::value,
-             "CauchyStressFromFirstPiolaKirchhoffStressEvaluator::check: "
-             "incompatible number of components of the deformation gradient");
+    if (nF != TensorDimeToSize<N>::value) {
+      return ctx.registerErrorMessage(
+          "incompatible number of components of the deformation gradient");
+    }
+    return true;
   }  // end of check
 
   template <unsigned short N,

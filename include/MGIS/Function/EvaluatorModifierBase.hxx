@@ -34,7 +34,7 @@ namespace mgis::function {
     //! \brief move constructor
     EvaluatorModifierBase(EvaluatorModifierBase&&);
     //! \brief perform consistency checks
-    void check() const;
+    bool check(Context&) const;
     //! \brief allocate internal workspace
     void allocateWorkspace();
     //! \brief return the underlying space

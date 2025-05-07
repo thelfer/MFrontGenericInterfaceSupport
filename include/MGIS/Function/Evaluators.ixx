@@ -28,7 +28,7 @@ namespace mgis::function {
   }  // end of FixedSizeEvaluator
 
   template <FunctionalSpaceConcept Space, size_type N>
-  bool FixedSizeEvaluator<Space, N>::check() const noexcept {
+  bool FixedSizeEvaluator<Space, N>::check(Context&) const noexcept {
     return true;
   }
 
@@ -70,11 +70,15 @@ namespace mgis::function {
     }
   }
 
-  void checkMatchingSpaces(const EvaluatorConcept auto& e1,
+  bool checkMatchingSpaces(Context& ctx,
+                           const EvaluatorConcept auto& e1,
                            const EvaluatorConcept auto& e2) {
     const auto& qspace1 = e1.getSpace();
     const auto& qspace2 = e2.getSpace();
-    raise_if(&qspace1 != &qspace2, "unmatched quadrature spaces");
+    if (&qspace1 != &qspace2) {
+      return ctx.registerErrorMessage("unmatched quadrature spaces");
+    }
+    return true;
   }  // end of checkMatchingSpaces
 
 }  // end of namespace mgis::function

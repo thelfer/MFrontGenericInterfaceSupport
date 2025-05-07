@@ -10,6 +10,7 @@
 
 #include <type_traits>
 #include "MGIS/Config.hxx"
+#include "MGIS/Context.hxx"
 #include "MGIS/Function/Buffer.hxx"
 #include "MGIS/Function/Function.hxx"
 
@@ -20,8 +21,9 @@ namespace mgis::function {
       std::is_copy_constructible_v<EvaluatorType> &&
       requires(EvaluatorType& e) {
     e.allocateWorkspace();
-  } && requires(const EvaluatorType& e) {
+  } && requires(const EvaluatorType& e, Context& ctx) {
     FunctionalSpaceConcept<std::decay_t<decltype(e.getSpace())>>;
+    { e.check(ctx) } -> std::same_as<bool>;
     { e.getNumberOfComponents() } -> std::same_as<size_type>;
     (ElementSpaceConcept<std::decay_t<decltype(e.getSpace())>>&&
         hasElementWorkspace<std::decay_t<decltype(e.getSpace())>>
@@ -74,7 +76,7 @@ namespace mgis::function {
      */
     FixedSizeEvaluator(const ImmutableFunctionView<Space, {}>&);
     //! \brief perform consistency checks
-    bool check() const noexcept;
+    bool check(Context&) const noexcept;
     //! \brief allocate internal workspace
     void allocateWorkspace();
     //! \brief return the underlying  space
@@ -120,10 +122,12 @@ namespace mgis::function {
   /*!
    * \brief check if the given evaluators shares the same space
    *
+   * \param[in] ctx: context
    * \param[in] e1: first evaluator
    * \param[in] e2: second evaluator
    */
-  void checkMatchingSpaces(const EvaluatorConcept auto&,
+  bool checkMatchingSpaces(Context&,
+                           const EvaluatorConcept auto&,
                            const EvaluatorConcept auto&);
 
 }  // end of namespace mgis::function

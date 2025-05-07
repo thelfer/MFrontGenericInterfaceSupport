@@ -35,12 +35,21 @@ namespace mgis::function {
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
-  void BinaryOperationEvaluatorBase<Child,
+  bool BinaryOperationEvaluatorBase<Child,
                                     FirstEvaluatorType,
-                                    SecondEvaluatorType>::check() const {
-    checkMatchingSpaces(this->first_evaluator, this->second_evaluator);
-    this->first_evaluator.check();
-    this->second_evaluator.check();
+                                    SecondEvaluatorType>::check(Context& ctx)
+      const {
+    if (!checkMatchingSpaces(ctx, this->first_evaluator,
+                             this->second_evaluator)) {
+      return false;
+    }
+    if (!this->first_evaluator.check(ctx)) {
+      return false;
+    }
+    if (!this->second_evaluator.check(ctx)) {
+      return false;
+    }
+    return true;
   }  // end of check
 
   template <typename Child,

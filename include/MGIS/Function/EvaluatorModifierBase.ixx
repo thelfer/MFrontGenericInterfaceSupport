@@ -24,8 +24,8 @@ namespace mgis::function {
       EvaluatorModifierBase&&) = default;
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  void EvaluatorModifierBase<Child, EvaluatorType>::check() const {
-    this->evaluator.check();
+  bool EvaluatorModifierBase<Child, EvaluatorType>::check(Context& ctx) const {
+    return this->evaluator.check(ctx);
   }  // end of check
 
   template <typename Child, EvaluatorConcept EvaluatorType>

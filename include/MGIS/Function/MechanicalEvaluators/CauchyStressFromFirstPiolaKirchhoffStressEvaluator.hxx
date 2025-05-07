@@ -49,7 +49,7 @@ namespace mgis::function {
     using Space = std::decay_t<
         decltype(std::declval<std::decay_t<PK1EvaluatorType>>().getSpace())>;
     //! \brief perform consistency checks
-    void check() const;
+    bool check(Context&) const;
     //! \return the number of components
     constexpr size_type getNumberOfComponents() const noexcept;
     /*!

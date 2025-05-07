@@ -9,6 +9,7 @@
 #define LIB_MGIS_FUNCTION_ALGORITHMS_HXX
 
 #include "MGIS/Config.hxx"
+#include "MGIS/Context.hxx"
 #include "MGIS/Function.hxx"
 #include "MGIS/FunctionEvaluators.hxx"
 
@@ -16,18 +17,20 @@ namespace mgis::function {
 
   /*!
    * \brief assign the evaluator to a function
+   * \param[in] ctx: execution context
    * \param[in] lhs: left hand side
    * \param[in] e: right hand side
    */
   template <size_type N, typename FunctionEvaluatorType>
-  bool assign(Function&, FunctionEvaluatorType) requires(N > 0);
+  bool assign(Context&, Function&, FunctionEvaluatorType) requires(N > 0);
   /*!
    * \brief assign the evaluator to a function
+   * \param[in] ctx: execution context
    * \param[in] lhs: left hand side
    * \param[in] e: right hand side
    */
   template <typename FunctionEvaluatorType>
-  bool assign(Function&, FunctionEvaluatorType);
+  bool assign(Context&, Function&, FunctionEvaluatorType);
 
   /*!
   template <typename ValueType, typename BinaryOperator>

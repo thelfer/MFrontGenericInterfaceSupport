@@ -65,4 +65,3 @@ int main() {
   }  // end of ConstructTest
   return EXIT_SUCCESS;
 }
-

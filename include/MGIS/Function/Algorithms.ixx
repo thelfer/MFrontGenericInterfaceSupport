@@ -57,14 +57,18 @@ namespace mgis::function::algorithm {
 namespace mgis::function {
 
   template <size_type N, FunctionEvalutorConcept EvaluatorType>
-  bool assign(Function& f, EvaluatorType e) requires(N > 0) {
+  bool assign(Context& ctx, Function& f, EvaluatorType e) requires(N > 0) {
     checkMatchingSpaces(f, e);
-    raise_if(f.getNumberOfComponents() != N,
-             "assign: invalid number of components for the left hand size");
-    raise_if(e.getNumberOfComponents() != N,
-             "assign: invalid number of components for the right hand size");
+    if (f.getNumberOfComponents() != N) {
+      return ctx.registerErrorMessage(
+          "assign: invalid number of components for the left hand size");
+    }
+    if (e.getNumberOfComponents() != N) {
+      return ctx.registerErrorMessage(
+          "assign: invalid number of components for the right hand size");
+    }
     //
-    if (!e.check()) {
+    if (!e.check(ctx)) {
       return false;
     }
     e.allocateWorkspace();
@@ -87,14 +91,18 @@ namespace mgis::function {
 
   template <FunctionEvalutorConcept EvaluatorType>
   bool assign(Function& f, EvaluatorType e) {
-    raise_if(&f.getSpace() != &e.getSpace(),
-             "assign: unmatched number of components for the left hand size "
-             "and the right hand side");
-    raise_if(f.getNumberOfComponents() != e.getNumberOfComponents(),
-             "assign: unmatched number of components for the left hand size "
-             "and the right hand side");
+    if (&f.getSpace() != &e.getSpace()) {
+      return ctx.registerErrorMessage(
+          "assign: unmatched number of components for the left hand size "
+          "and the right hand side");
+    }
+    if (f.getNumberOfComponents() != e.getNumberOfComponents()) {
+      return ctx.registerErrorMessage(
+          "assign: unmatched number of components for the left hand size "
+          "and the right hand side");
+    }
     //
-    if (!e.check()) {
+    if (!e.check(ctx)) {
       return false;
     }
     e.allocateWorkspace();

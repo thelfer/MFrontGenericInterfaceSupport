@@ -17,20 +17,25 @@ namespace mgis::function {
             unsigned short N,
             EvaluatorConcept StressEvaluatorType,
             bool isSymmetric>
-  void StressEvaluatorBase<Child, N, StressEvaluatorType, isSymmetric>::check()
-      const {
+  bool StressEvaluatorBase<Child, N, StressEvaluatorType, isSymmetric>::check(
+      Context& ctx) const {
     using namespace tfel::math;
-    EvaluatorModifierBase<Child, StressEvaluatorType>::check();
+    if (!EvaluatorModifierBase<Child, StressEvaluatorType>::check(ctx)) {
+      return false;
+    }
     const auto nc = this->evaluator.getNumberOfComponents();
     if constexpr (isSymmetric) {
-      raise_if(nc != StensorDimeToSize<N>::value,
-               "StressEvaluatorBase::check: "
-               "incompatible number of components of the stress");
+      if (nc != StensorDimeToSize<N>::value) {
+        return ctx.registerErrorMessage(
+            "incompatible number of components of the stress");
+      }
     } else {
-      raise_if(nc != TensorDimeToSize<N>::value,
-               "StressEvaluatorBase::check: "
-               "incompatible number of components of the stress");
+      if (nc != TensorDimeToSize<N>::value) {
+        return ctx.registerErrorMessage(
+            "incompatible number of components of the stress");
+      }
     }
+    return true;
   }  // end of check
 
 }  // namespace mgis::function
