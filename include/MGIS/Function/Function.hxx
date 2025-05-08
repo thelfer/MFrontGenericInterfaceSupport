@@ -469,24 +469,41 @@ namespace mgis::function {
     FunctionStorage(const Space& s,
                     const size_type dsize) requires(N == dynamic_extent)
         : storage_values(s.size() * dsize) {}
+    FunctionStorage(FunctionStorage&&) = default;
+    FunctionStorage(const FunctionStorage&) = default;
 
    protected:
     //! \brief values
     std::vector<real> storage_values;
   };
 
+  /*!
+   * \brief default implementation of a function
+   *
+   * \tparam Space: type of the functional space
+   * \tparam N: number of components
+   *
+   * \note the data stride is equal to the data size
+   */
   template <FunctionalSpaceConcept Space, size_type N = dynamic_extent>
   struct Function : public FunctionStorage<Space, N>,
                     public FunctionView<Space, {.size = N, .stride = N}, true> {
-    Function(std::shared_ptr<const Space> s) requires(N != dynamic_extent)
-        : FunctionStorage<Space, N>(*s),
-          FunctionView<Space, {.size = N, .stride = N}, true>(
-              s, this->storage_values) {}
-    Function(std::shared_ptr<const Space> s,
-             const size_type dsize) requires(N == dynamic_extent)
-        : FunctionStorage<Space, N>(*s, dsize),
-          FunctionView<Space, {.size = N, .stride = N}, true>(
-              s, this->storage_values, dsize, dsize) {}
+    /*!
+     * \brief constructor from a space
+     * \param[in] s: space
+     */
+    Function(std::shared_ptr<const Space>) requires(N != dynamic_extent);
+    /*!
+     * \brief constructor from a space and a data size
+     * \param[in] s: space
+     * \param[in] dsize: data size
+     */
+    Function(std::shared_ptr<const Space>,
+             const size_type) requires(N == dynamic_extent);
+    //! \brief copy constructor
+    Function(const Function&);
+    //! \brief assignement constructor
+    Function(Function&&);
   };
 
 }  // namespace mgis::function

@@ -491,6 +491,39 @@ namespace mgis::function {
             bool is_mutable>
   FunctionView<Space, layout, is_mutable>::~FunctionView() noexcept = default;
 
+  template <FunctionalSpaceConcept Space, size_type N>
+  Function<Space, N>::Function(std::shared_ptr<const Space> s)  //
+      requires(N != dynamic_extent)
+      : FunctionStorage<Space, N>(*s),
+        FunctionView<Space, {.size = N, .stride = N}, true>(
+            s, this->storage_values) {}
+
+  template <FunctionalSpaceConcept Space, size_type N>
+  Function<Space, N>::Function(std::shared_ptr<const Space> s,
+                               const size_type dsize)  //
+      requires(N == dynamic_extent)
+      : FunctionStorage<Space, N>(*s, dsize),
+        FunctionView<Space, {.size = N, .stride = N}, true>(
+            s, this->storage_values, dsize, dsize) {}
+
+  template <FunctionalSpaceConcept Space, size_type N>
+  Function<Space, N>::Function(const Function& f)
+      : FunctionStorage<Space, N>(f),
+        FunctionView<Space, {.size = N, .stride = N}, true>(
+            f.getDataSpacePointer(),
+            this->storage_values,
+            f.getDataSize(),
+            f.getDataSize()) {}  // end of Function
+
+  template <FunctionalSpaceConcept Space, size_type N>
+  Function<Space, N>::Function(Function&& f)
+      : FunctionStorage<Space, N>(std::forward<FunctionStorage<Space, N>>(f)),
+        FunctionView<Space, {.size = N, .stride = N}, true>(
+            f.getDataSpacePointer(),
+            this->storage_values,
+            f.getDataSize(),
+            f.getDataSize()) {}  // end of Function
+
 }  // end of namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_FUNCTION_IXX */
