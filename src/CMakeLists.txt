@@ -23,7 +23,7 @@ mgis_library(MFrontGenericInterface
   BasicLinearSpace.cxx
   BasicLinearQuadratureSpace.cxx
   Function.cxx
-  Evaluators.cxx
+  Evaluator.cxx
   MechanicalEvaluators.cxx
   )
 

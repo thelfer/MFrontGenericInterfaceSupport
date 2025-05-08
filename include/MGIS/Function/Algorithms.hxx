@@ -11,7 +11,7 @@
 #include "MGIS/Config.hxx"
 #include "MGIS/Context.hxx"
 #include "MGIS/Function.hxx"
-#include "MGIS/FunctionEvaluators.hxx"
+#include "MGIS/Evaluator.hxx"
 
 namespace mgis::function {
 

@@ -32,7 +32,6 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     this->test5();
     this->test6();
     this->test7();
-    this->test8();
     return this->result;
   }
 
@@ -169,6 +168,10 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(f.getValues(0)[1] - 2) < eps);
     TFEL_TESTS_ASSERT(std::abs(f.getValues(1)[0] - 4) < eps);
     TFEL_TESTS_ASSERT(std::abs(f.getValues(1)[1] - 5) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f(0)[0] - 1) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f(0)[1] - 2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f(1)[0] - 4) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f(1)[1] - 5) < eps);
   }
   void test7() {
     using namespace mgis;
@@ -196,16 +199,60 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
       }
     }
   }
-  void test8() {
-    using namespace mgis;
-    using namespace mgis::function;
-    auto space = std::make_shared<BasicLinearSpace>(2);
-    auto f = Function<BasicLinearSpace>(space, 2);
-    TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 2);
-  }
 };
 
 TFEL_TESTS_GENERATE_PROXY(ImmutableFunctionTest, "ImmutableFunctionTest");
+
+struct FunctionTest final : public tfel::tests::TestCase {
+  FunctionTest()
+      : tfel::tests::TestCase("MGIS/Function", "FunctionTest") {
+  }  // end of ImmutableFunctionTest
+  tfel::tests::TestResult execute() override {
+    this->test1();
+    this->test2();
+    return this->result;
+  }
+
+ private:
+  void test1() {
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    auto space = std::make_shared<BasicLinearSpace>(2);
+    auto f = Function<BasicLinearSpace>(space, 2);
+    TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 2);
+    TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 2);
+    f.getValues(0)[0] = 1;
+    f.getValues(0)[1] = 2;
+    f.getValues(1)[0] = 3;
+    f.getValues(1)[1] = 4;
+    const auto values = f.getValues();
+    TFEL_TESTS_ASSERT(std::abs(values[0] - 1) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[1] - 2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[2] - 3) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[3] - 4) < eps);
+  }
+  void test2() {
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    auto space = std::make_shared<BasicLinearSpace>(2);
+    auto f = Function<BasicLinearSpace>(space, 2);
+    TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 2);
+    TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 2);
+    f(0)[0] = 1;
+    f(0)[1] = 2;
+    f(1)[0] = 3;
+    f(1)[1] = 4;
+    const auto values = f.getValues();
+    TFEL_TESTS_ASSERT(std::abs(values[0] - 1) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[1] - 2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[2] - 3) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[3] - 4) < eps);
+  }
+};
+
+TFEL_TESTS_GENERATE_PROXY(FunctionTest, "FunctionTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {

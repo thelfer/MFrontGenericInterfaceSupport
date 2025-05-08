@@ -13,7 +13,7 @@
 #define LIB_MGIS_FUNCTION_STRESSEVALUATORBASE_HXX
 
 #include "MGIS/Function/Space.hxx"
-#include "MGIS/Function/Evaluators.hxx"
+#include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/EvaluatorModifierBase.hxx"
 
 namespace mgis::function {

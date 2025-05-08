@@ -286,9 +286,23 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
+  bool FunctionView<Space, layout, is_mutable>::check(Context&) const noexcept {
+    return true;
+  }  // end of allocateWorkspace
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  void FunctionView<Space, layout, is_mutable>::allocateWorkspace() noexcept {
+  }  // end of allocateWorkspace
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
   real&
   FunctionView<Space, layout, is_mutable>::getValue(const size_type o) requires(
-      allowScalarAccessor&& is_mutable&& LinearElementSpaceConcept<Space>) {
+      allowScalarAccessor&& is_mutable&& LinearElementSpaceConcept<Space> &&
+      (!hasElementWorkspace<Space>)) {
     return *(this->values.data() + this->getDataOffset(o));
   }  // end of getValues
 
@@ -298,7 +312,8 @@ namespace mgis::function {
   typename FunctionView<Space, layout, is_mutable>::ValuesView
   FunctionView<Space, layout, is_mutable>::getValues(
       const size_type
-          o) requires(is_mutable&& LinearElementSpaceConcept<Space>) {
+          o) requires(is_mutable&& LinearElementSpaceConcept<Space> &&
+                      (!hasElementWorkspace<Space>)) {
     return ValuesView(this->values.data() + this->getDataOffset(o),
                       this->getNumberOfComponents());
   }  // end of getValues
@@ -310,7 +325,8 @@ namespace mgis::function {
   std::span<real, N> FunctionView<Space, layout, is_mutable>::getValues(
       const size_type o) requires((layout.size == dynamic_extent) &&
                                   is_mutable &&
-                                  LinearElementSpaceConcept<Space>) {
+                                  LinearElementSpaceConcept<Space> &&
+                                  (!hasElementWorkspace<Space>)) {
     return std::span<real, N>(this->values.data() + this->getDataOffset(o),
                               this->getNumberOfComponents());
   }  // end of getValues
@@ -321,7 +337,8 @@ namespace mgis::function {
   real& FunctionView<Space, layout, is_mutable>::getValue(
       const size_type e,
       const size_type i) requires(allowScalarAccessor&& is_mutable&&
-                                      LinearQuadratureSpaceConcept<Space>) {
+                                      LinearQuadratureSpaceConcept<Space> &&
+                                  (!hasCellWorkspace<Space>)) {
     return this->getValue(this->space->getQuadraturePointOffset(e, i));
   }  // end of getValues
 
@@ -332,7 +349,8 @@ namespace mgis::function {
   FunctionView<Space, layout, is_mutable>::getValues(
       const size_type e,
       const size_type
-          i) requires(is_mutable&& LinearQuadratureSpaceConcept<Space>) {
+          i) requires(is_mutable&& LinearQuadratureSpaceConcept<Space> &&
+                      (!hasCellWorkspace<Space>)) {
     return this->getValues(this->space->getQuadraturePointOffset(e, i));
   }  // end of getValues
 
@@ -344,7 +362,8 @@ namespace mgis::function {
       const size_type e,
       const size_type i) requires((layout.size == dynamic_extent) &&
                                   is_mutable &&
-                                  LinearQuadratureSpaceConcept<Space>) {
+                                  LinearQuadratureSpaceConcept<Space> &&
+                                  (!hasCellWorkspace<Space>)) {
     return this->template getValues<N>(
         this->space->getQuadraturePointOffset(e, i));
   }  // end of getValues
@@ -354,7 +373,8 @@ namespace mgis::function {
             bool is_mutable>
   const real& FunctionView<Space, layout, is_mutable>::getValue(
       const size_type o) const
-      requires(allowScalarAccessor&& LinearElementSpaceConcept<Space>) {
+      requires(allowScalarAccessor&& LinearElementSpaceConcept<Space> &&
+               (!hasElementWorkspace<Space>)) {
     return *(this->values.data() + this->getDataOffset(o));
   }  // end of getValues
 
@@ -363,7 +383,8 @@ namespace mgis::function {
             bool is_mutable>
   typename FunctionView<Space, layout, is_mutable>::ConstValuesView
   FunctionView<Space, layout, is_mutable>::getValues(const size_type o) const
-      requires(LinearElementSpaceConcept<Space>) {
+      requires(LinearElementSpaceConcept<Space> &&
+      (!hasElementWorkspace<Space>)) {
     return ConstValuesView(this->values.data() + this->getDataOffset(o),
                            this->getNumberOfComponents());
   }  // end of getValues
@@ -373,7 +394,8 @@ namespace mgis::function {
             bool is_mutable>
   template <size_type N>
   std::span<const real, N> FunctionView<Space, layout, is_mutable>::getValues(
-      const size_type o) const requires(LinearElementSpaceConcept<Space>) {
+      const size_type o) const requires(LinearElementSpaceConcept<Space> &&
+      (!hasElementWorkspace<Space>)) {
     return std::span<const real, N>(
         this->values.data() + this->getDataOffset(o),
         this->getNumberOfComponents());
@@ -384,7 +406,8 @@ namespace mgis::function {
             bool is_mutable>
   const real& FunctionView<Space, layout, is_mutable>::getValue(
       const size_type e, const size_type i) const
-      requires(allowScalarAccessor&& LinearQuadratureSpaceConcept<Space>) {
+      requires(allowScalarAccessor&& LinearQuadratureSpaceConcept<Space> &&
+               (!hasCellWorkspace<Space>)) {
     return this->getValue(this->space->getQuadraturePointOffset(e, i));
   }  // end of getValues
 
@@ -394,7 +417,8 @@ namespace mgis::function {
   typename FunctionView<Space, layout, is_mutable>::ConstValuesView
   FunctionView<Space, layout, is_mutable>::getValues(const size_type e,
                                                      const size_type i) const
-      requires(LinearQuadratureSpaceConcept<Space>) {
+      requires(LinearQuadratureSpaceConcept<Space> &&
+               (!hasCellWorkspace<Space>)) {
     return this->getValues(this->space->getQuadraturePointOffset(e, i));
   }  // end of getValues
 
@@ -404,10 +428,55 @@ namespace mgis::function {
   template <size_type N>
   std::span<const real, N> FunctionView<Space, layout, is_mutable>::getValues(
       const size_type e, const size_type i) const
-      requires(LinearQuadratureSpaceConcept<Space>) {
+      requires(LinearQuadratureSpaceConcept<Space> &&
+      (!hasCellWorkspace<Space>)) {
     return this->template getValues<N>(
         this->space->getQuadraturePointOffset(e, i));
   }  // end of getValues
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  typename FunctionView<Space, layout, is_mutable>::ValuesView
+  FunctionView<Space, layout, is_mutable>::operator()(const size_type o)  //
+      requires(is_mutable&& LinearElementSpaceConcept<Space> &&
+               (!hasElementWorkspace<Space>)) {
+    return ValuesView(this->values.data() + this->getDataOffset(o),
+                           this->getNumberOfComponents());
+  }  // end of operator()
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  typename FunctionView<Space, layout, is_mutable>::ValuesView
+  FunctionView<Space, layout, is_mutable>::operator()(const size_type e,
+                                                      const size_type i)  //
+      requires(is_mutable&& LinearQuadratureSpaceConcept<Space> &&
+               (!hasCellWorkspace<Space>)) {
+    return this->operator()(this->space->getQuadraturePointOffset(e, i));
+  }  // end of operator()
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  typename FunctionView<Space, layout, is_mutable>::ConstValuesView
+  FunctionView<Space, layout, is_mutable>::operator()(const size_type o) const
+      requires(LinearElementSpaceConcept<Space> &&
+               (!hasElementWorkspace<Space>)) {
+    return ConstValuesView(this->values.data() + this->getDataOffset(o),
+                           this->getNumberOfComponents());
+  }  // end of operator()
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  typename FunctionView<Space, layout, is_mutable>::ConstValuesView
+  FunctionView<Space, layout, is_mutable>::operator()(const size_type e,
+                                                      const size_type i) const
+      requires(LinearQuadratureSpaceConcept<Space> &&
+               (!hasCellWorkspace<Space>)) {
+    return this->operator()(this->space->getQuadraturePointOffset(e, i));
+  }  // end of operator()
 
   template <FunctionalSpaceConcept Space,
             DataLayoutDescription layout,

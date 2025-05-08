@@ -14,7 +14,7 @@
 
 #include <array>
 #include <TFEL/Math/stensor.hxx>
-#include "MGIS/Function/Evaluators.hxx"
+#include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/MechanicalEvaluators/StressEvaluatorBase.hxx"
 
 namespace mgis::function {

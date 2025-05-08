@@ -6,7 +6,7 @@
  */
 
 #include "MGIS/Function/BasicLinearSpace.hxx"
-#include "MGIS/Function/Evaluators.hxx"
+#include "MGIS/Function/FixedSizeEvaluator.hxx"
 #include "MGIS/Function/MechanicalEvaluators.hxx"
 
 namespace mgis::function {

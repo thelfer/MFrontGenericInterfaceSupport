@@ -129,10 +129,7 @@ namespace mgis::function {
 
   }  // namespace internals
 
-  /*!
-   * \brief a concept describing a space where all the elements
-   * are stored for 0 to size() - 1
-   */
+  //! \brief a concept describing a space
   template <typename SpaceType>
   concept SpaceConcept = requires(const SpaceType& s) {
     std::integral<typename SpaceType::size_type>;

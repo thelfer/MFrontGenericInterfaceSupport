@@ -12,7 +12,7 @@
 #ifndef LIB_MGIS_FUNCTION_VONMISESSTRESSEVALUATOR_HXX
 #define LIB_MGIS_FUNCTION_VONMISESSTRESSEVALUATOR_HXX
 
-#include "MGIS/Function/Evaluators.hxx"
+#include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/MechanicalEvaluators/StressEvaluatorBase.hxx"
 
 namespace mgis::function {

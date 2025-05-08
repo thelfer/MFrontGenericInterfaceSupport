@@ -19,7 +19,8 @@
 #include "MGIS/Function/BasicLinearSpace.hxx"
 #include "MGIS/Function/BasicLinearQuadratureSpace.hxx"
 #include "MGIS/Function/Function.hxx"
-#include "MGIS/Function/Evaluators.hxx"
+#include "MGIS/Function/Evaluator.hxx"
+#include "MGIS/Function/FixedSizeEvaluator.hxx"
 
 struct EvaluatorsTest final : public tfel::tests::TestCase {
   EvaluatorsTest()

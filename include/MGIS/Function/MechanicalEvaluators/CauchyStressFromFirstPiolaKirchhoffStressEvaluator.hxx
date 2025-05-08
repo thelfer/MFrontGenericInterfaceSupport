@@ -12,7 +12,7 @@
 #ifndef LIB_MGIS_CAUCHYSTRESSFROMFIRSTPIOLAKIRCHHOFFSTRESSEVALUATOR_HXX
 #define LIB_MGIS_CAUCHYSTRESSFROMFIRSTPIOLAKIRCHHOFFSTRESSEVALUATOR_HXX
 
-#include "MGIS/Function/Evaluators.hxx"
+#include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/BinaryOperationEvaluatorBase.hxx"
 
 namespace mgis::function {

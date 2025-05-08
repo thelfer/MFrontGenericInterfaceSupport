@@ -14,6 +14,7 @@
 #include <vector>
 #include "MGIS/Config.hxx"
 #include "MGIS/Function/Space.hxx"
+#include "MGIS/Function/Evaluator.hxx"
 
 namespace mgis::function {
 
@@ -299,6 +300,10 @@ namespace mgis::function {
     const Space& getSpace() const noexcept;
     //! \return the underlying quadrature space
     std::shared_ptr<const Space> getSpacePointer() const noexcept;
+    //! \brief a noop function to match the EvaluatorConcept concept
+    bool check(Context&) const noexcept;
+    //! \brief a noop function to match the EvaluatorConcept concept
+    void allocateWorkspace() noexcept;
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
@@ -307,7 +312,8 @@ namespace mgis::function {
      * scalar
      */
     real& getValue(const size_type) requires(
-        allowScalarAccessor&& is_mutable&& LinearElementSpaceConcept<Space>);
+        allowScalarAccessor&& is_mutable&& LinearElementSpaceConcept<Space> &&
+        (!hasElementWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
@@ -315,13 +321,14 @@ namespace mgis::function {
     template <size_type N>
     std::span<real, N> getValues(const size_type) requires(
         (layout.size == dynamic_extent) && is_mutable &&
-        LinearElementSpaceConcept<Space>);
+        LinearElementSpaceConcept<Space> && (!hasElementWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
     ValuesView getValues(const size_type) requires(
-        is_mutable&& LinearElementSpaceConcept<Space>);
+        is_mutable&& LinearElementSpaceConcept<Space> &&
+        (!hasElementWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] e: element index
@@ -331,7 +338,9 @@ namespace mgis::function {
      * scalar
      */
     real& getValue(const size_type, const size_type) requires(
-        allowScalarAccessor&& is_mutable&& LinearQuadratureSpaceConcept<Space>);
+        allowScalarAccessor&& is_mutable&&
+            LinearQuadratureSpaceConcept<Space> &&
+        (!hasCellWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] e: element index
@@ -340,14 +349,14 @@ namespace mgis::function {
     template <size_type N>
     std::span<real, N> getValues(const size_type, const size_type) requires(
         (layout.size == dynamic_extent) && is_mutable &&
-        LinearQuadratureSpaceConcept<Space>);
+        LinearQuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] e: element index
      * \param[in] i: quadrature point index
      */
     ValuesView getValues(const size_type, const size_type) requires(
-        is_mutable&& LinearQuadratureSpaceConcept<Space>);
+        is_mutable&& LinearQuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
@@ -356,20 +365,23 @@ namespace mgis::function {
      * scalar
      */
     const real& getValue(const size_type) const
-        requires(allowScalarAccessor&& LinearElementSpaceConcept<Space>);
+        requires(allowScalarAccessor&& LinearElementSpaceConcept<Space> &&
+                 (!hasElementWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
     template <size_type N>
     std::span<const real, N> getValues(const size_type) const
-        requires(LinearElementSpaceConcept<Space>);
+        requires(LinearElementSpaceConcept<Space> &&
+                 (!hasElementWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
     ConstValuesView getValues(const size_type) const
-        requires(LinearElementSpaceConcept<Space>);
+        requires(LinearElementSpaceConcept<Space> &&
+                 (!hasElementWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] e: element index
@@ -379,7 +391,8 @@ namespace mgis::function {
      * scalar
      */
     const real& getValue(const size_type, const size_type) const
-        requires(allowScalarAccessor&& LinearQuadratureSpaceConcept<Space>);
+        requires(allowScalarAccessor&& LinearQuadratureSpaceConcept<Space> &&
+                 (!hasCellWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] e: element index
@@ -387,14 +400,46 @@ namespace mgis::function {
      */
     template <size_type N>
     std::span<const real, N> getValues(const size_type, const size_type) const
-        requires(LinearQuadratureSpaceConcept<Space>);
+        requires(LinearQuadratureSpaceConcept<Space> &&
+                 (!hasCellWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] e: element index
      * \param[in] i: quadrature point index
      */
     ConstValuesView getValues(const size_type, const size_type) const
-        requires(LinearQuadratureSpaceConcept<Space>);
+        requires(LinearQuadratureSpaceConcept<Space> &&
+                 (!hasCellWorkspace<Space>));
+    /*!
+     * \return the data associated with an integration point
+     * \param[in] o: offset associated with the integration point
+     */
+    ValuesView operator()(const size_type) requires(
+        is_mutable&& LinearElementSpaceConcept<Space> &&
+        (!hasElementWorkspace<Space>));
+    /*!
+     * \return the data associated with an integration point
+     * \param[in] e: element index
+     * \param[in] i: quadrature point index
+     */
+    ValuesView operator()(const size_type, const size_type) requires(
+        is_mutable&& LinearQuadratureSpaceConcept<Space> &&
+        (!hasCellWorkspace<Space>));
+    /*!
+     * \return the data associated with an integration point
+     * \param[in] o: offset associated with the integration point
+     */
+    ConstValuesView operator()(const size_type) const
+        requires(LinearElementSpaceConcept<Space> &&
+                 (!hasElementWorkspace<Space>));
+    /*!
+     * \return the data associated with an integration point
+     * \param[in] e: element index
+     * \param[in] i: quadrature point index
+     */
+    ConstValuesView operator()(const size_type, const size_type) const
+        requires(LinearQuadratureSpaceConcept<Space> &&
+                 (!hasCellWorkspace<Space>));
     /*!
      * \return if the current function has the same quadrature space and the
      * same number of components than the given view
