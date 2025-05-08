@@ -12,7 +12,7 @@ namespace mgis::function {
 
   static_assert(EvaluatorConcept<ImmutableFunctionView<BasicLinearSpace>>);
 
-#pragma message("This shall not work as Function is not a lightweight obect")
-  static_assert(EvaluatorConcept<Function<BasicLinearSpace>>);
+  // This shall not work as Function is not a lightweight obect
+  static_assert(!EvaluatorConcept<Function<BasicLinearSpace>>);
 
 }  // end of namespace mgis::function

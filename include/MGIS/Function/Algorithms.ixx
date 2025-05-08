@@ -56,50 +56,58 @@ namespace mgis::function::algorithm {
 
 namespace mgis::function {
 
-  template <size_type N, FunctionEvalutorConcept EvaluatorType>
-  bool assign(Context& ctx, Function& f, EvaluatorType e) requires(N > 0) {
-    checkMatchingSpaces(f, e);
-    if (f.getNumberOfComponents() != N) {
-      return ctx.registerErrorMessage(
-          "assign: invalid number of components for the left hand size");
-    }
-    if (e.getNumberOfComponents() != N) {
-      return ctx.registerErrorMessage(
-          "assign: invalid number of components for the right hand size");
-    }
-    //
-    if (!e.check(ctx)) {
-      return false;
-    }
-    e.allocateWorkspace();
-    //
-    const auto qspace = f.getSpace();
-    const auto ne = qspace.size();
-    for (size_type i = 0; i != ne; ++i) {
-      if constexpr (N == 1) {
-        auto& v = f.getValue(i);
-        v = e(i);
-      } else {
-        auto lhs_values = f.template getValues<N>(i);
-        const auto& rhs_values = e(i);
-        algorithm::copy<N>(rhs_values.begin(), rhs_values.end(),
-                           lhs_values.begin());
-      }
-    }
-    return true;
-  }  // end of assign
+  //   template <size_type N, FunctionEvalutorConcept EvaluatorType>
+  //   bool assign(Context& ctx, Function& f, EvaluatorType e) requires(N > 0) {
+  //     checkMatchingSpaces(f, e);
+  //     if (f.getNumberOfComponents() != N) {
+  //       return ctx.registerErrorMessage(
+  //           "assign: invalid number of components for the left hand size");
+  //     }
+  //     if (e.getNumberOfComponents() != N) {
+  //       return ctx.registerErrorMessage(
+  //           "assign: invalid number of components for the right hand size");
+  //     }
+  //     //
+  //     if (!e.check(ctx)) {
+  //       return false;
+  //     }
+  //     e.allocateWorkspace();
+  //     //
+  //     const auto qspace = f.getSpace();
+  //     const auto ne = qspace.size();
+  //     for (size_type i = 0; i != ne; ++i) {
+  //       if constexpr (N == 1) {
+  //         auto& v = f.getValue(i);
+  //         v = e(i);
+  //       } else {
+  //         auto lhs_values = f.template getValues<N>(i);
+  //         const auto& rhs_values = e(i);
+  //         algorithm::copy<N>(rhs_values.begin(), rhs_values.end(),
+  //                            lhs_values.begin());
+  //       }
+  //     }
+  //     return true;
+  //   }  // end of assign
 
-  template <FunctionEvalutorConcept EvaluatorType>
-  bool assign(Function& f, EvaluatorType e) {
-    if (&f.getSpace() != &e.getSpace()) {
-      return ctx.registerErrorMessage(
-          "assign: unmatched number of components for the left hand size "
-          "and the right hand side");
+  template <typename FunctionType, EvaluatorConcept EvaluatorType>
+  bool assign(Context& ctx,
+              FunctionType& f,
+              EvaluatorType e)  //
+      requires(((LinearElementSpaceConcept<std::decay_t<
+                     decltype(std::declval<EvaluatorType>().getSpace())>>) ||
+                (LinearQuadratureSpaceConcept<std::decay_t<
+                     decltype(std::declval<EvaluatorType>().getSpace())>>)) &&
+               internals::same_decay_type<
+                   decltype(std::declval<FunctionType>().getSpace()),
+                   decltype(std::declval<EvaluatorType>().getSpace())>) {
+    using Space = std::decay_t<decltype(f.getSpace())>;
+    using result_type = std::invoke_result_t<EvaluatorType, size_type>;
+    const auto& space = f.getSpace();
+    if (&space != &(e.getSpace())) {
+      return ctx.registerErrorMessage("unmatched spaces");
     }
     if (f.getNumberOfComponents() != e.getNumberOfComponents()) {
-      return ctx.registerErrorMessage(
-          "assign: unmatched number of components for the left hand size "
-          "and the right hand side");
+      return ctx.registerErrorMessage("unmatched number of components");
     }
     //
     if (!e.check(ctx)) {
@@ -107,27 +115,61 @@ namespace mgis::function {
     }
     e.allocateWorkspace();
     //
-    const auto qspace = f.getSpace();
-    const auto ne = qspace.size();
-    if (f.isScalar()) {
-      using result_type = std::invoke_result_t<EvaluatorType, size_type>;
-      if constexpr (std::same_as<std::decay_t<result_type>, real>) {
-        for (size_type i = 0; i != ne; ++i) {
-          auto& lhs_value = f.getValue(i);
-          lhs_value = e(i);
+    if constexpr ((LinearElementSpaceConcept<Space>)&&(
+                      !hasElementWorkspace<Space>)) {
+      const auto ne = space.size();
+      if (f.isScalar()) {
+        if constexpr (internals::same_decay_type<result_type, real>) {
+          for (size_type i = 0; i != ne; ++i) {
+            auto& lhs_value = f.getValue(i);
+            lhs_value = e(i);
+          }
+        } else {
+          for (size_type i = 0; i != ne; ++i) {
+            auto lhs_value = f.getValue(i);
+            lhs_value = e(i)[0];
+          }
         }
       } else {
-        for (size_type i = 0; i != ne; ++i) {
-          auto lhs_value = f.getValue(i);
-          lhs_value = *(e(i).begin());
+        // this if constexpr to avoid the compilation of the body
+        if constexpr (!internals::same_decay_type<result_type, real>) {
+          for (size_type i = 0; i != ne; ++i) {
+            auto lhs_values = f.getValues(i);
+            const auto& rhs_values = e(i);
+            std::copy(rhs_values.begin(), rhs_values.end(), lhs_values.begin());
+          }
+        }
+      }
+    } else if constexpr ((LinearElementSpaceConcept<Space>)&&(
+                             hasElementWorkspace<Space>)) {
+      const auto ne = space.size();
+      if (f.isScalar()) {
+        if constexpr (!internals::same_decay_type<result_type, real>) {
+          for (size_type i = 0; i != ne; ++i) {
+            const auto& wk = space.getElementWorkspace(i);
+            auto& lhs_value = f.getValue(wk, i);
+            lhs_value = e(wk, i);
+          }
+        } else {
+          for (size_type i = 0; i != ne; ++i) {
+            const auto& wk = space.getElementWorkspace(i);
+            auto lhs_value = f.getValue(wk, i);
+            lhs_value = e(wk, i)[0];
+          }
+        }
+      } else {
+        // this if constexpr to avoid the compilation of the body
+        if constexpr (!internals::same_decay_type<result_type, real>) {
+          for (size_type i = 0; i != ne; ++i) {
+            const auto& wk = space.getElementWorkspace(i);
+            auto lhs_values = f.getValues(wk, i);
+            const auto& rhs_values = e(wk, i);
+            std::copy(rhs_values.begin(), rhs_values.end(), lhs_values.begin());
+          }
         }
       }
     } else {
-      for (size_type i = 0; i != ne; ++i) {
-        auto lhs_values = f.getValues(i);
-        const auto& rhs_values = e(i);
-        std::copy(rhs_values.begin(), rhs_values.end(), lhs_values.begin());
-      }
+      static_assert("assign: unimplemented case");
     }
     return true;
   }  // end of assign

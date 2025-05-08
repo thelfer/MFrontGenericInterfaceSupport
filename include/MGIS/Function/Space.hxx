@@ -174,6 +174,8 @@ namespace mgis::function {
     ElementSpaceConcept<SpaceType>;
     SpaceType::linear_element_indexing;
     std::integral<typename SpaceType::element_index_type>;
+    std::same_as<typename SpaceType::size_type,
+                 typename SpaceType::element_index_type>;
   };
 
   /*!

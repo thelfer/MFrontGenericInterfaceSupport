@@ -28,6 +28,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
   }  // end of MechanicalEvaluatorsTest
   tfel::tests::TestResult execute() override {
     this->test1();
+    this->test2();
     return this->result;
   }
 
@@ -46,6 +47,19 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(e(0) - std::sqrt(3)) < eps);
     const auto e2 = hydrostatic_stress<1>(s);
     TFEL_TESTS_ASSERT(std::abs(e2(0) - 2) < eps);
+  }
+  void test2() {
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    auto space = std::make_shared<BasicLinearSpace>(1);
+    const auto values = std::vector<real>{1, 2, 3};
+    const auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 3);
+    auto seq = Function<BasicLinearSpace>(space, 1);
+    TFEL_TESTS_ASSERT(seq.isScalar());
+    const auto ok = f | vmis<1> | seq;
+    TFEL_TESTS_ASSERT(ok);
+    TFEL_TESTS_ASSERT(std::abs(seq.getValue(0) - std::sqrt(3)) < eps);
   }
 };
 

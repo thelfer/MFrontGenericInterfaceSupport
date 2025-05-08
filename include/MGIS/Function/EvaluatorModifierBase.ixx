@@ -30,7 +30,7 @@ namespace mgis::function {
 
   template <typename Child, EvaluatorConcept EvaluatorType>
   void EvaluatorModifierBase<Child, EvaluatorType>::allocateWorkspace() {
-    this->evaluator.allocatWorkspace();
+    this->evaluator.allocateWorkspace();
   }  // end of allocatWorkspace
 
   template <typename Child, EvaluatorConcept EvaluatorType>

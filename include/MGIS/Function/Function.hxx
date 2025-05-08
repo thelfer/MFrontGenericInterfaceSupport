@@ -137,7 +137,9 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space,
             DataLayoutDescription layout = {},
             bool is_mutable = true>
-  struct FunctionView : DataLayout<layout> {
+  requires(LinearElementSpaceConcept<Space> ||
+           LinearQuadratureSpaceConcept<Space>)  //
+      struct FunctionView : DataLayout<layout> {
     //! \brief a simple alias to the type holding the data used by the view
     using ExternalData =
         std::conditional_t<is_mutable, std::span<real>, std::span<const real>>;
@@ -155,54 +157,64 @@ namespace mgis::function {
         (layout.size == dynamic_extent) ? true : layout.size == 1;
     /*!
      * \brief check that the preconditions to build the view are met
+     * \param[in] ctx: execution context.
      * \param[in] s: quadrature space.
      * \param[in] v: values
      */
-    static bool checkPreconditions(
+    [[nodiscard]] static bool checkPreconditions(
+        Context&,
         std::shared_ptr<const Space>,
         ExternalData) requires((layout.size != dynamic_extent) &&
                                (layout.stride != dynamic_extent));
     /*!
      * \brief check that the preconditions to build the view are met
+     * \param[in] ctx: execution context.
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] dsize: size of the data per elements
      */
-    static bool checkPreconditions(
+    [[nodiscard]] static bool checkPreconditions(
+        Context&,
         std::shared_ptr<const Space>,
         ExternalData,
         const size_type) requires((layout.size == dynamic_extent) &&
                                   (layout.stride != dynamic_extent));
     /*!
      * \brief check that the preconditions to build the view are met
+     * \param[in] ctx: execution context.
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] dstride: data stride
      */
-    static bool checkPreconditions(
+    [[nodiscard]] static bool checkPreconditions(
+        Context&,
         std::shared_ptr<const Space>,
         ExternalData,
         const size_type) requires((layout.size != dynamic_extent) &&
                                   (layout.stride == dynamic_extent));
     /*!
      * \brief check that the preconditions to build the view are met
+     * \param[in] ctx: execution context.
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] dsize: size of the data per elements
      */
-    static bool checkPreconditions(
+    [[nodiscard]] static bool checkPreconditions(
+        Context&,
         std::shared_ptr<const Space>,
         ExternalData,
         const size_type) requires((layout.size == dynamic_extent) &&
                                   (layout.stride == dynamic_extent));
     /*!
      * \brief check that the preconditions to build the view are met
+     * \param[in] ctx: execution context.
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] dsize: size of the data per elements
      * \param[in] dstride: data stride
      */
-    static bool checkPreconditions(
+    [[nodiscard]] static bool checkPreconditions(
+        Context&,
         std::shared_ptr<const Space>,
         ExternalData,
         const size_type,
@@ -356,7 +368,8 @@ namespace mgis::function {
      * \param[in] i: quadrature point index
      */
     ValuesView getValues(const size_type, const size_type) requires(
-        is_mutable&& LinearQuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>));
+        is_mutable&& LinearQuadratureSpaceConcept<Space> &&
+        (!hasCellWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
@@ -486,13 +499,36 @@ namespace mgis::function {
    * \note the data stride is equal to the data size
    */
   template <FunctionalSpaceConcept Space, size_type N = dynamic_extent>
-  struct Function : public FunctionStorage<Space, N>,
-                    public FunctionView<Space, {.size = N, .stride = N}, true> {
+  requires((N > 0) && (LinearElementSpaceConcept<Space> ||
+                       LinearQuadratureSpaceConcept<Space>))  //
+      struct Function
+      : public FunctionStorage<Space, N>,
+        public FunctionView<Space, {.size = N, .stride = N}, true> {
+    /*!
+     * \brief constructor from a space and a data size
+     * \param[in] ctx: execution context
+     * \param[in] s: space
+     */
+    [[nodiscard]] static bool checkPreconditions(
+        Context&,
+        const std::shared_ptr<const Space>&)  //
+        requires(N != dynamic_extent);
     /*!
      * \brief constructor from a space
      * \param[in] s: space
      */
     Function(std::shared_ptr<const Space>) requires(N != dynamic_extent);
+    /*!
+     * \brief constructor from a space and a data size
+     * \param[in] ctx: execution context
+     * \param[in] s: space
+     * \param[in] dsize: data size
+     */
+    [[nodiscard]] static bool checkPreconditions(
+        Context&,
+        const std::shared_ptr<const Space>&,
+        const size_type)  //
+        requires(N == dynamic_extent);
     /*!
      * \brief constructor from a space and a data size
      * \param[in] s: space
@@ -501,10 +537,53 @@ namespace mgis::function {
     Function(std::shared_ptr<const Space>,
              const size_type) requires(N == dynamic_extent);
     //! \brief copy constructor
-    Function(const Function&);
+    Function(const Function&) requires(N == dynamic_extent);
     //! \brief assignement constructor
-    Function(Function&&);
+    Function(Function&&) requires(N == dynamic_extent);
+    //! \brief copy constructor
+    Function(const Function&) requires(N != dynamic_extent);
+    //! \brief assignement constructor
+    Function(Function&&) requires(N != dynamic_extent);
+    //! \brief return a view of the function
+    FunctionView<Space, {.size = N, .stride = N}, true> view();
+    //! \brief return a view of the function
+    FunctionView<Space, {.size = N, .stride = N}, false> view() const;
+
+   protected:
+    /*
+     * This function is made protected to avoid Function from being treated
+     * as an evaluator
+     */
+    using FunctionView<Space, {.size = N, .stride = N}, true>::check;
+    /*
+     * This function is made protected to avoid Function from being treated as
+     * an evaluator
+     */
+    using FunctionView<Space, {.size = N, .stride = N}, true>::
+        allocateWorkspace;
   };
+
+  /*!
+   * \brief convert a function to a immutable view
+   * \param[in] f: function
+   */
+  template <FunctionalSpaceConcept Space, size_type N>
+  auto view(const Function<Space, N>&);
+
+  /*!
+   * \brief assign an evaluator to a mutable function view
+   * \param[in] ctx: execution context
+   * \param[in] e: evaluator
+   * \param[in] f: function
+   */
+  template <EvaluatorConcept EvaluatorType,
+            FunctionalSpaceConcept Space,
+            DataLayoutDescription layout>
+  [[nodiscard]] bool operator|(
+      EvaluatorType,
+      FunctionView<Space, layout>&) requires(requires(const EvaluatorType& ev) {
+    { ev.getSpace() } -> internals::same_decay_type<Space>;
+  });
 
 }  // namespace mgis::function
 

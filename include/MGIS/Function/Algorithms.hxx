@@ -10,52 +10,47 @@
 
 #include "MGIS/Config.hxx"
 #include "MGIS/Context.hxx"
-#include "MGIS/Function.hxx"
-#include "MGIS/Evaluator.hxx"
+#include "MGIS/Function/Evaluator.hxx"
 
 namespace mgis::function {
 
-  /*!
-   * \brief assign the evaluator to a function
-   * \param[in] ctx: execution context
-   * \param[in] lhs: left hand side
-   * \param[in] e: right hand side
-   */
-  template <size_type N, typename FunctionEvaluatorType>
-  bool assign(Context&, Function&, FunctionEvaluatorType) requires(N > 0);
-  /*!
-   * \brief assign the evaluator to a function
-   * \param[in] ctx: execution context
-   * \param[in] lhs: left hand side
-   * \param[in] e: right hand side
-   */
-  template <typename FunctionEvaluatorType>
-  bool assign(Context&, Function&, FunctionEvaluatorType);
+  //  /*!
+  //   * \brief assign the evaluator to a function
+  //   * \param[in] ctx: execution context
+  //   * \param[in] lhs: left hand side
+  //   * \param[in] e: right hand side
+  //   */
+  //   template <size_type N, typename FunctionType, EvaluatorConcept
+  //   EvaluatorType>
+  //   [[nodiscard]] bool assign(Context&,
+  //                             FunctionType&,
+  //                             const EvaluatorType&)  //
+  //       requires(
+  //           (N > 0) &&
+  //           ((LinearElementSpaceConcept<std::decay_t<
+  //                 decltype(std::declval<EvaluatorType>().getSpace())>>) ||
+  //            (LinearQuadratureSpaceConcept<std::decay_t<
+  //                 decltype(std::declval<EvaluatorType>().getSpace())>>)) &&
+  //           internals::same_decay_type<decltype(std::declval<FunctionType>().getSpace()),
+  //                                      decltype(std::declval<EvaluatorType>().getSpace())>);
 
   /*!
-  template <typename ValueType, typename BinaryOperator>
-  ValueType reduce(ImmutableFunctionView f,
-                   const ValueType init,
-                   BinaryOperator op) {
-    constexpr bool expects_scalar_function =
-        requires(const real v, const ValueType& v2) {
-      op(v, v2);
-    };
-    const auto ne =
-        f.getSpace().size();
-    auto r = init;
-    for (size_type i = 0; i != ne; ++i) {
-      if constexpr (expects_scalar_function) {
-        const auto v = f.getValue(i);
-        r = op(v, r);
-      } else {
-        const auto v = f.getValues(i);
-        r = op(v, r);
-      }
-    }
-    return r;
-  }
+   * \brief assign the evaluator to a function
+   * \param[in] ctx: execution context
+   * \param[in] lhs: left hand side
+   * \param[in] e: right hand side
    */
+  template <typename FunctionType, EvaluatorConcept EvaluatorType>
+  [[nodiscard]] bool assign(Context&,
+                            FunctionType&,
+                            EvaluatorType)  //
+      requires(((LinearElementSpaceConcept<std::decay_t<
+                     decltype(std::declval<EvaluatorType>().getSpace())>>) ||
+                (LinearQuadratureSpaceConcept<std::decay_t<
+                     decltype(std::declval<EvaluatorType>().getSpace())>>)) &&
+               internals::same_decay_type<
+                   decltype(std::declval<FunctionType>().getSpace()),
+                   decltype(std::declval<EvaluatorType>().getSpace())>);
 
 }  // end of namespace mgis::function
 

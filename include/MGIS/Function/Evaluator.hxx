@@ -66,6 +66,18 @@ requires(const EvaluatorType& e, Context& ctx) {
                            const EvaluatorConcept auto&,
                            const EvaluatorConcept auto&);
 
+  /*!
+   * \return the evaluator resulting from appling the modifier to the evaluator
+   * \param[in] e: evaluator
+   * \param[in] m: modifier
+   */
+  template <EvaluatorConcept EvaluatorType, typename ModifierType>
+  auto operator|(EvaluatorType,
+                 ModifierType)  //
+      requires(requires(EvaluatorType e1, ModifierType m1) {
+        { m1(e1) } -> EvaluatorConcept;
+      });
+
 }  // end of namespace mgis::function
 
 #include "MGIS/Function/Evaluator.ixx"
