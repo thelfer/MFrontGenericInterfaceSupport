@@ -616,12 +616,12 @@ namespace mgis::function {
       return FunctionView<Space, {.size = N, .stride = N}, false>(
           this->getSpacePointer(), this->storage_values);
     }
-  } // end of view
+  }  // end of view
 
   template <FunctionalSpaceConcept Space, size_type N>
-  auto view(const Function<Space, N>& f){
+  auto view(const Function<Space, N>& f) {
     return f.view();
-  } // end of view
+  }  // end of view
 
   /*!
    * \brief assign an evaluator to a mutable function view
@@ -631,11 +631,10 @@ namespace mgis::function {
   template <EvaluatorConcept EvaluatorType,
             FunctionalSpaceConcept Space,
             DataLayoutDescription layout>
-  bool operator|(EvaluatorType e,
-                 FunctionView<Space, layout>&
-                     f) requires(requires(const EvaluatorType& ev) {
-    { ev.getSpace() } -> internals::same_decay_type<Space>;
-  }) {
+  bool operator|(EvaluatorType e, FunctionView<Space, layout>& f) requires(
+      requires(const EvaluatorType& ev) {
+        { ev.getSpace() } -> internals::same_decay_type<Space>;
+      }) {
     Context ctx;
     return assign(ctx, f, e);
   }  // end of operator |
