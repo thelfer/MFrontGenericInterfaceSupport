@@ -78,6 +78,12 @@ namespace mgis::function {
     const ImmutableFunctionView<Space, {}>& function;
   };  // end of FixedSizeEvaluator
 
+  /*!
+   * \brief convert a function to a immutable view
+   * \param[in] f: function
+   */
+  template <size_type N, FunctionalSpaceConcept Space>
+  auto view(const ImmutableFunctionView<Space, {}>&) requires(N > 0);
 
   /*!
    * \brief convert a function to a immutable view

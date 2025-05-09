@@ -71,6 +71,11 @@ namespace mgis::function {
   }
 
   template <size_type N, FunctionalSpaceConcept Space>
+  auto view(const ImmutableFunctionView<Space, {}>& f) requires(N > 0) {
+    return FixedSizeEvaluator<Space, N>(f);
+  }  // end of view
+
+  template <size_type N, FunctionalSpaceConcept Space>
   auto view(const Function<Space, dynamic_extent>& f)  //
       requires((N > 0) && (N != dynamic_extent)) {
     return FixedSizeEvaluator<Space, N>(f.view());

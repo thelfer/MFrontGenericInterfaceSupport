@@ -81,5 +81,7 @@ requires(const EvaluatorType& e, Context& ctx) {
 }  // end of namespace mgis::function
 
 #include "MGIS/Function/Evaluator.ixx"
+#include "MGIS/Function/EvaluatorUtilities.hxx"
+#include "MGIS/Function/TransformEvaluatorModifier.hxx"
 
 #endif /* LIB_MGIS_FUNCTION_EVALUATOR_HXX */

@@ -1,0 +1,52 @@
+/*!
+ * \file   MGIS/Function/TransformEvaluatorModifier.ixx
+ * \brief
+ * \author Thomas Helfer
+ * \date   09/05/2025
+ */
+
+#ifndef LIB_MGIS_FUNCTION_TRANSFORMEVALUATORMODIFIER_IXX
+#define LIB_MGIS_FUNCTION_TRANSFORMEVALUATORMODIFIER_IXX
+
+namespace mgis::function {
+
+  template <EvaluatorConcept EvaluatorType, typename CallableType>
+  TransformEvaluatorModifier<EvaluatorType, CallableType>::
+      TransformEvaluatorModifier(const EvaluatorType& e, const CallableType& c)
+      : EvaluatorModifierBase<
+            TransformEvaluatorModifier<EvaluatorType, CallableType>,
+            EvaluatorType>(e),
+        modifier(c) {}  // end of TransformEvaluatorModifier
+
+  template <EvaluatorConcept EvaluatorType, typename CallableType>
+  auto TransformEvaluatorModifier<EvaluatorType, CallableType>::apply(
+      const evaluator_result<EvaluatorType>& values) const {
+    return this->modifier(values);
+  }  // end of apply
+
+  namespace internals {
+
+    template <typename CallableType>
+    transform_modifier<CallableType>::transform_modifier(CallableType&& c)
+        : modifier(std::forward<CallableType>(c)) {}
+
+    template <typename CallableType>
+    template <typename EvaluatorType>
+    auto transform_modifier<CallableType>::operator()(EvaluatorType&& e) const
+        requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
+            std::invocable<CallableType, evaluator_result<EvaluatorType>>)) {
+      return TransformEvaluatorModifier<std::decay_t<EvaluatorType>,
+                                        CallableType>(e, this->modifier);
+    }  // end of operator()
+
+  }  // namespace internals
+
+  template <typename CallableType>
+  auto transform(CallableType&& c) {
+    return internals::transform_modifier<std::decay_t<CallableType>>(
+        std::forward<CallableType>(c));
+  }  // end of transform
+
+}  // end of namespace mgis::function
+
+#endif /* LIB_MGIS_FUNCTION_TRANSFORMEVALUATORMODIFIER_IXX */
