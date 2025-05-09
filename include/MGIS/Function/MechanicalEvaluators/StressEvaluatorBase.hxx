@@ -21,7 +21,6 @@ namespace mgis::function {
   /*!
    * \brief a base class for evaluators modifying a stress tensor
    * \tparam Child: child class
-   * \tparam Space: discretization space
    * \tparam N: space dimension
    * \tparam StressEvaluatorType: evaluator of the stress
    * \tparam symmetric: boolean stating of the stress tensor is symmetric
