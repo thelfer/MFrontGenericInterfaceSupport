@@ -22,7 +22,7 @@ namespace mgis::function {
    * \tparam N: size of the returned value
    */
   template <FunctionalSpaceConcept Space, size_type N>
-  struct FixedSizeEvaluator {
+  requires(N > 0) struct FixedSizeEvaluator {
     /*!
      * \brief method checking that the precondition of the constructor are met.
      * \param[in] values: function
@@ -77,6 +77,15 @@ namespace mgis::function {
     //! \brief underlying function
     const ImmutableFunctionView<Space, {}>& function;
   };  // end of FixedSizeEvaluator
+
+
+  /*!
+   * \brief convert a function to a immutable view
+   * \param[in] f: function
+   */
+  template <size_type N, FunctionalSpaceConcept Space>
+  auto view(const Function<Space, dynamic_extent>&)  //
+      requires((N > 0) && (N != dynamic_extent));
 
 }  // end of namespace mgis::function
 

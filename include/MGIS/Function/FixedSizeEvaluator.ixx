@@ -70,6 +70,12 @@ namespace mgis::function {
     }
   }
 
+  template <size_type N, FunctionalSpaceConcept Space>
+  auto view(const Function<Space, dynamic_extent>& f)  //
+      requires((N > 0) && (N != dynamic_extent)) {
+    return FixedSizeEvaluator<Space, N>(f.view());
+  }  // end of view
+
 }  // end of namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_FIXEDSIZEEVALUATOR_IXX */

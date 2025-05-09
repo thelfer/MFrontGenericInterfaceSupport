@@ -219,6 +219,8 @@ struct FunctionTest final : public tfel::tests::TestCase {
     this->test2();
     this->test3();
     this->test4();
+    this->test5();
+    this->test6();
     return this->result;
   }
 
@@ -344,6 +346,48 @@ struct FunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(values4[1] - 2) < eps);
     TFEL_TESTS_ASSERT(std::abs(values4[2] - 3) < eps);
     TFEL_TESTS_ASSERT(std::abs(values4[3] - 4) < eps);
+  }
+  void test5() {
+    // check that view<N> work with a dynamic sized function
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    Context ctx;
+    auto space = std::make_shared<BasicLinearSpace>(2);
+    auto f2 = [&space] {
+      auto f = Function<BasicLinearSpace>(space, 2);
+      f(0)[0] = 1;
+      f(0)[1] = 2;
+      f(1)[0] = 3;
+      f(1)[1] = 4;
+      return f;
+    }();
+    const auto f3 = view<2>(f2);
+    TFEL_TESTS_ASSERT(std::abs(f3(0)[0] - 1) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f3(0)[1] - 2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f3(1)[0] - 3) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f3(1)[1] - 4) < eps);
+  }
+  void test6() {
+    // check that view<N> work with a fixed size function
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    Context ctx;
+    auto space = std::make_shared<BasicLinearSpace>(2);
+    auto f2 = [&space] {
+      auto f = Function<BasicLinearSpace, 2>(space);
+      f(0)[0] = 1;
+      f(0)[1] = 2;
+      f(1)[0] = 3;
+      f(1)[1] = 4;
+      return f;
+    }();
+    const auto f3 = view<2>(f2);
+    TFEL_TESTS_ASSERT(std::abs(f3(0)[0] - 1) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f3(0)[1] - 2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f3(1)[0] - 3) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f3(1)[1] - 4) < eps);
   }
 };
 

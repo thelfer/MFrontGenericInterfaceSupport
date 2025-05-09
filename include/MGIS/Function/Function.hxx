@@ -571,6 +571,14 @@ namespace mgis::function {
   auto view(const Function<Space, N>&);
 
   /*!
+   * \brief convert a function to a immutable view
+   * \param[in] f: function
+   */
+  template <size_type N, FunctionalSpaceConcept Space, size_type N2>
+  auto view(const Function<Space, N2>&)  //
+      requires((N > 0) && (N != dynamic_extent) && (N == N2));
+
+  /*!
    * \brief assign an evaluator to a mutable function view
    * \param[in] ctx: execution context
    * \param[in] e: evaluator
@@ -588,5 +596,6 @@ namespace mgis::function {
 }  // namespace mgis::function
 
 #include "MGIS/Function/Function.ixx"
+#include "MGIS/Function/FixedSizeEvaluator.hxx"
 
 #endif /* LIB_MGIS_FUNCTION_FUNCTION_HXX */

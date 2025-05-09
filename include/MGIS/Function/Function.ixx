@@ -623,6 +623,12 @@ namespace mgis::function {
     return f.view();
   }  // end of view
 
+  template <size_type N, FunctionalSpaceConcept Space, size_type N2>
+  auto view(const Function<Space, N2>& f)  //
+      requires((N > 0) && (N != dynamic_extent) && (N == N2)) {
+    return f.view();
+  }  // end of view
+
   /*!
    * \brief assign an evaluator to a mutable function view
    * \param[in] e: evaluator
