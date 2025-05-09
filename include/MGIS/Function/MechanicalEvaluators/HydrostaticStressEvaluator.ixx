@@ -28,12 +28,18 @@ namespace mgis::function {
     return trace(sig) / 3;
   }
 
-  template <unsigned short N, typename StressEvaluatorType>
-  auto hydrostatic_stress(StressEvaluatorType&& e) requires(
-      EvaluatorConcept<std::decay_t<StressEvaluatorType>> &&
-      ((N == 1) || (N == 2) || (N == 3))) {
-    return HydrostaticStressEvaluator<N, std::decay_t<StressEvaluatorType>>(e);
-  }  // end of hydrostatic_stress
+  namespace internals {
+
+    template <unsigned short N>
+    template <typename StressEvaluatorType>
+    constexpr auto hydrostatic_stress_modifier<N>::operator()(
+        StressEvaluatorType&& e) const
+        requires(EvaluatorConcept<std::decay_t<StressEvaluatorType>>) {
+      return HydrostaticStressEvaluator<N, std::decay_t<StressEvaluatorType>>(
+          std::forward<StressEvaluatorType>(e));
+    }  // end of hydrostatic_stress
+
+  }  // namespace internals
 
 }  // namespace mgis::function
 

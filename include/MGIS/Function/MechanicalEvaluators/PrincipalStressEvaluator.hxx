@@ -51,13 +51,25 @@ namespace mgis::function {
     std::array<real, 3u> apply(const auto&) const;
   };
 
+  namespace internals {
+
+    template <unsigned short N,
+              tfel::math::stensor_common::EigenSolver esolver =
+                  tfel::math::stensor_common::TFELEIGENSOLVER>
+    requires((N == 1) || (N == 2) ||
+             (N == 3)) struct principal_stress_modifier {
+      template <typename StressEvaluatorType>
+      constexpr auto operator()(StressEvaluatorType&&) const
+          requires(EvaluatorConcept<std::decay_t<StressEvaluatorType>>);
+    };
+
+  }  // namespace internals
+
   template <unsigned short N,
-            EvaluatorConcept StressEvaluatorType,
             tfel::math::stensor_common::EigenSolver esolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
-  auto principal_stress(const StressEvaluatorType&) requires((N == 1) ||
-                                                             (N == 2) ||
-                                                             (N == 3));
+  inline constexpr internals::principal_stress_modifier<N, esolver>
+      principal_stress = {};
 
 }  // namespace mgis::function
 

@@ -35,16 +35,19 @@ namespace mgis::function {
     return {vp[0], vp[1], vp[2]};
   }  // end of operator()
 
-  template <unsigned short N,
-            EvaluatorConcept StressEvaluatorType,
-            tfel::math::stensor_common::EigenSolver esolver =
-                tfel::math::stensor_common::TFELEIGENSOLVER>
-  auto principal_stress(const StressEvaluatorType& e) requires((N == 1) ||
-                                                               (N == 2) ||
-                                                               (N == 3)) {
-    return PrincipalStressEvaluator<N, StressEvaluatorType, esolver>(e);
+  namespace internals {
 
-  }  // end of principal_stress
+    template <unsigned short N, tfel::math::stensor_common::EigenSolver esolver>
+    template <typename StressEvaluatorType>
+    constexpr auto principal_stress_modifier<N, esolver>::operator()(
+        StressEvaluatorType&& e) const
+        requires(EvaluatorConcept<std::decay_t<StressEvaluatorType>>) {
+      return PrincipalStressEvaluator<N, std::decay_t<StressEvaluatorType>,
+                                      esolver>(
+          std::forward<StressEvaluatorType>(e));
+    }  // end of principal_stress
+
+  }  // namespace internals
 
 }  // namespace mgis::function
 

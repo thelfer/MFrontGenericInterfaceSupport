@@ -68,6 +68,35 @@ namespace mgis::function {
     return convertFirstPiolaKirchhoffStressToCauchyStress(pk1, F);
   }  // end of operator()
 
+  namespace internals {
+
+    template <unsigned short N,
+              EvaluatorConcept DeformationGradientEvaluatorType>
+    from_pk1_to_cauchy_modifier<N, DeformationGradientEvaluatorType>::
+        from_pk1_to_cauchy_modifier(DeformationGradientEvaluatorType&& e)
+        : F(std::forward<DeformationGradientEvaluatorType>(e)) {}
+
+    template <unsigned short N,
+              EvaluatorConcept DeformationGradientEvaluatorType>
+    template <typename PK1EvaluatorType>
+    auto from_pk1_to_cauchy_modifier<N, DeformationGradientEvaluatorType>::
+    operator()(PK1EvaluatorType&& s) const
+        requires(EvaluatorConcept<std::decay_t<PK1EvaluatorType>>) {
+      return CauchyStressFromFirstPiolaKirchhoffStressEvaluator<
+          N, std::decay_t<PK1EvaluatorType>, DeformationGradientEvaluatorType>(
+          s, this->F);
+    }  // end of operator()
+
+  }  // namespace internals
+
+  template <unsigned short N, typename DeformationGradientEvaluatorType>
+  auto from_pk1_to_cauchy(DeformationGradientEvaluatorType&& F) requires(
+      EvaluatorConcept<std::decay_t<DeformationGradientEvaluatorType>>) {
+    return internals::from_pk1_to_cauchy_modifier<
+        N, std::decay_t<DeformationGradientEvaluatorType>>(
+        std::forward<DeformationGradientEvaluatorType>(F));
+  }
+
 }  // end namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_CAUCHYSTRESSFROMFIRSTPIOLAKIRCHHOFFSTRESSEVALUATOR_IXX \

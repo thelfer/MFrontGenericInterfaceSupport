@@ -43,15 +43,19 @@ namespace mgis::function {
     real apply(const auto&) const;
   };
 
-  template <unsigned short N>
-  requires((N == 1) || (N == 2) || (N == 3)) struct vmis_fn {
-    template <typename StressEvaluatorType>
-    constexpr auto operator()(StressEvaluatorType&&) const
-        requires(EvaluatorConcept<std::decay_t<StressEvaluatorType>>);
-  };
+  namespace internals {
+
+    template <unsigned short N>
+    requires((N == 1) || (N == 2) || (N == 3)) struct vmis_modifier {
+      template <typename StressEvaluatorType>
+      constexpr auto operator()(StressEvaluatorType&&) const
+          requires(EvaluatorConcept<std::decay_t<StressEvaluatorType>>);
+    };
+
+  }  // namespace internals
 
   template <unsigned short N>
-  inline constexpr vmis_fn<N> vmis = {};
+  inline constexpr internals::vmis_modifier<N> vmis = {};
 
 }  // namespace mgis::function
 

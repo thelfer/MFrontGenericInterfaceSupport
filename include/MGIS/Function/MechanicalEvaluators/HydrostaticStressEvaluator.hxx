@@ -43,10 +43,21 @@ namespace mgis::function {
     real apply(const auto&) const;
   };
 
-  template <unsigned short N, typename StressEvaluatorType>
-  auto hydrostatic_stress(StressEvaluatorType&&) requires(
-      EvaluatorConcept<std::decay_t<StressEvaluatorType>> &&
-      ((N == 1) || (N == 2) || (N == 3)));
+  namespace internals {
+
+    template <unsigned short N>
+    requires((N == 1) || (N == 2) ||
+             (N == 3)) struct hydrostatic_stress_modifier {
+      template <typename StressEvaluatorType>
+      constexpr auto operator()(StressEvaluatorType&&) const
+          requires(EvaluatorConcept<std::decay_t<StressEvaluatorType>>);
+    };
+
+  }  // namespace internals
+
+  template <unsigned short N>
+  inline constexpr internals::hydrostatic_stress_modifier<N>
+      hydrostatic_stress = {};
 
 }  // namespace mgis::function
 

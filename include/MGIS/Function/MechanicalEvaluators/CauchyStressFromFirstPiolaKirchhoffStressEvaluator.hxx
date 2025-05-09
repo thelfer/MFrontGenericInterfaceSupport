@@ -29,7 +29,8 @@ namespace mgis::function {
   template <unsigned short N,
             EvaluatorConcept PK1EvaluatorType,
             EvaluatorConcept DeformationGradientEvaluatorType>
-  struct CauchyStressFromFirstPiolaKirchhoffStressEvaluator
+  requires((N == 1) || (N == 2) || (N == 3))  //
+      struct CauchyStressFromFirstPiolaKirchhoffStressEvaluator
       : public BinaryOperationEvaluatorBase<
             CauchyStressFromFirstPiolaKirchhoffStressEvaluator<
                 N,
@@ -59,6 +60,29 @@ namespace mgis::function {
      */
     auto apply(const auto&, const auto&) const;
   };
+
+  namespace internals {
+
+    template <unsigned short N,
+              EvaluatorConcept DeformationGradientEvaluatorType>
+    requires((N == 1) || (N == 2) ||
+             (N == 3)) struct from_pk1_to_cauchy_modifier {
+      //
+      from_pk1_to_cauchy_modifier(DeformationGradientEvaluatorType&&);
+      //
+      template <typename PK1EvaluatorType>
+      auto operator()(PK1EvaluatorType&&) const
+          requires(EvaluatorConcept<std::decay_t<PK1EvaluatorType>>);
+
+     private:
+      DeformationGradientEvaluatorType F;
+    };
+
+  }  // namespace internals
+
+  template <unsigned short N, typename DeformationGradientEvaluatorType>
+  auto from_pk1_to_cauchy(DeformationGradientEvaluatorType&&) requires(
+      EvaluatorConcept<std::decay_t<DeformationGradientEvaluatorType>>);
 
 }  // end of namespace mgis::function
 

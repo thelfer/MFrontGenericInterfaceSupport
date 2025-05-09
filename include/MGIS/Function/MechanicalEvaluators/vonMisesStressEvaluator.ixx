@@ -29,13 +29,17 @@ namespace mgis::function {
     return sigmaeq(sig);
   }
 
-  template <unsigned short N>
-  template <typename StressEvaluatorType>
-  constexpr auto vmis_fn<N>::operator()(StressEvaluatorType&& e) const
-      requires(EvaluatorConcept<std::decay_t<StressEvaluatorType>>) {
-    return vonMisesStressEvaluator<N, std::decay_t<StressEvaluatorType>>(
-        std::forward<StressEvaluatorType>(e));
-  }  // end of vmis
+  namespace internals {
+
+    template <unsigned short N>
+    template <typename StressEvaluatorType>
+    constexpr auto vmis_modifier<N>::operator()(StressEvaluatorType&& e) const
+        requires(EvaluatorConcept<std::decay_t<StressEvaluatorType>>) {
+      return vonMisesStressEvaluator<N, std::decay_t<StressEvaluatorType>>(
+          std::forward<StressEvaluatorType>(e));
+    }  // end of vmis
+
+  }  // namespace internals
 
 }  // namespace mgis::function
 
