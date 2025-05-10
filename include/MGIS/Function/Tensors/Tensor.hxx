@@ -1,6 +1,6 @@
 /*!
  * \file   MGIS/Function/Tensors/Tensor.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10/05/2025
  */
@@ -59,6 +59,6 @@ namespace mgis::function::internals {
   struct CompileTimeSize<tfel::math::View<T>>
       : CompileTimeSize<std::remove_cv_t<T>> {};
 
-} // end of mgis::function
+}  // namespace mgis::function::internals
 
 #endif /* LIB_MGIS_FUNCTION_TENSOR_HXX */

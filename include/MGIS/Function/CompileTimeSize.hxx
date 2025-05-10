@@ -1,6 +1,6 @@
 /*!
  * \file   MGIS/Function/CompileTimeSize.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10/05/2025
  */
