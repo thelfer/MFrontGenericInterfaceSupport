@@ -28,6 +28,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
   }  // end of EvaluatorsTest
   tfel::tests::TestResult execute() override {
     this->test1();
+    this->test2();
     return this->result;
   }
 
@@ -52,6 +53,17 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(e2(0) - 1) < eps);
     TFEL_TESTS_ASSERT(std::abs(e2(1) - 4) < eps);
     TFEL_TESTS_ASSERT(std::abs(e2(2) - 9) < eps);
+  }
+  void test2() {
+    using namespace mgis;
+    using namespace mgis::function;
+    struct InvalidEvaluator {
+      double getSpace() const;
+    };
+    TFEL_TESTS_STATIC_ASSERT(!EvaluatorConcept<double>);
+    TFEL_TESTS_STATIC_ASSERT(!EvaluatorConcept<Test>);
+    TFEL_TESTS_STATIC_ASSERT(
+        EvaluatorConcept<ImmutableFunctionView<BasicLinearSpace>>);
   }
 };
 

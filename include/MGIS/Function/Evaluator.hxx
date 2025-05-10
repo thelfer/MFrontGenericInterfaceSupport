@@ -12,48 +12,181 @@
 #include "MGIS/Config.hxx"
 #include "MGIS/Context.hxx"
 #include "MGIS/Function/Space.hxx"
+#include "MGIS/Function/CompileTimeSize.hxx"
 
 namespace mgis::function {
+
+  namespace internals {
+
+    template <bool, typename EvaluatorType>
+    struct EvaluatorResultQueryImplementation1 {
+      struct InvalidResult;
+      using type = InvalidResult;
+    };
+
+    template <typename EvaluatorType>
+    struct EvaluatorResultQueryImplementation1<true, EvaluatorType> {
+      using Space =
+          std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
+      using type = std::invoke_result_t<EvaluatorType, element_index<Space>>;
+    };
+
+    template <bool, typename EvaluatorType>
+    struct EvaluatorResultQueryImplementation2 {
+      struct InvalidResult;
+      using type = InvalidResult;
+    };
+
+    template <typename EvaluatorType>
+    struct EvaluatorResultQueryImplementation2<true, EvaluatorType> {
+      using Space =
+          std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
+      using type = std::invoke_result_t<EvaluatorType,
+                                        element_workspace<Space>,
+                                        element_index<Space>>;
+    };
+
+    template <bool, typename EvaluatorType>
+    struct EvaluatorResultQueryImplementation3 {
+      struct InvalidResult;
+      using type = InvalidResult;
+    };
+
+    template <typename EvaluatorType>
+    struct EvaluatorResultQueryImplementation3<true, EvaluatorType> {
+      using Space =
+          std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
+      using type = std::invoke_result_t<EvaluatorType,
+                                        cell_index<Space>,
+                                        quadrature_point_index<Space>>;
+    };
+
+    template <bool, typename EvaluatorType>
+    struct EvaluatorResultQueryImplementation4 {
+      struct InvalidResult;
+      using type = InvalidResult;
+    };
+
+    template <typename EvaluatorType>
+    struct EvaluatorResultQueryImplementation4<true, EvaluatorType> {
+      using Space =
+          std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
+      using type = std::invoke_result_t<EvaluatorType,
+                                        cell_workspace<Space>,
+                                        cell_index<Space>,
+                                        quadrature_point_index<Space>>;
+    };
+
+    template <bool, typename EvaluatorType>
+    struct EvaluatorResultQueryImplementation {
+      struct InvalidResult;
+      static constexpr bool b1 = false;
+      static constexpr bool b2 = false;
+      static constexpr bool b3 = false;
+      static constexpr bool b4 = false;
+      using ResultType1 = InvalidResult;
+      using ResultType2 = InvalidResult;
+      using ResultType3 = InvalidResult;
+      using ResultType4 = InvalidResult;
+    };
+
+    template <typename EvaluatorType>
+    struct EvaluatorResultQueryImplementation<true, EvaluatorType> {
+      using Space =
+          std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
+      static constexpr bool b1 = ((requires(EvaluatorType & e) {
+                                    e(std::declval<element_index<Space>>());
+                                  }) &&
+                                  (ElementSpaceConcept<Space>));
+      static constexpr bool b2 = ((requires(EvaluatorType & e) {
+                                    e(std::declval<element_workspace<Space>>(),
+                                      std::declval<element_index<Space>>());
+                                  }) &&
+                                  (ElementSpaceConcept<Space>));
+      static constexpr bool b3 = ((requires(EvaluatorType & e) {
+                                    e(std::declval<cell_workspace<Space>>(),
+                                      std::declval<cell_index<Space>>());
+                                  }) &&
+                                  (QuadratureSpaceConcept<Space>));
+      static constexpr bool b4 =
+          ((requires(EvaluatorType & e) {
+             e(std::declval<cell_workspace<Space>>(),
+               std::declval<cell_index<Space>>(),
+               std::declval<quadrature_point_index<Space>>());
+           }) &&
+           (QuadratureSpaceConcept<Space>));
+      using ResultType1 =
+          typename EvaluatorResultQueryImplementation1<b1, EvaluatorType>::type;
+      using ResultType2 =
+          typename EvaluatorResultQueryImplementation2<b2, EvaluatorType>::type;
+      using ResultType3 =
+          typename EvaluatorResultQueryImplementation3<b3, EvaluatorType>::type;
+      using ResultType4 =
+          typename EvaluatorResultQueryImplementation4<b4, EvaluatorType>::type;
+      using type = std::conditional_t<
+          b1,
+          ResultType1,
+          std::conditional_t<b2,
+                             ResultType2,
+                             std::conditional_t<b3, ResultType3, ResultType4>>>;
+    };
+
+    template <typename EvaluatorType>
+    struct EvaluatorResultQuery
+        : EvaluatorResultQueryImplementation<requires(EvaluatorType& e){
+      e.getSpace();
+    }, EvaluatorType > {};
+
+  }  // namespace internals
 
   template <typename EvaluatorType>
   concept EvaluatorConcept = std::is_move_constructible_v<EvaluatorType> &&
       std::is_copy_constructible_v<EvaluatorType> &&
       requires(EvaluatorType& e) {
     e.allocateWorkspace();
-  } && 
-    (ElementSpaceConcept<std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>>&&
-        hasElementWorkspace<std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>>
-        ? requires(const EvaluatorType& e) {
-     {e2(std::declval<element_workspace<std::decay_t<decltype(e.getSpace())>>>(),
-         std::declval<element_index<std::decay_t<decltype(e.getSpace())>>>())};
-    }
-:true) &&
-     (ElementSpaceConcept<std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>> &&
-         (!hasElementWorkspace<std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>>)
-         ? requires(const EvaluatorType& e) {
-      {e(std::declval<element_index<std::decay_t<decltype(e.getSpace())>>>())};
- }
- :true)&&
-  (QuadratureSpaceConcept<std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>>&&
-         hasCellWorkspace<std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>>
-         ? requires(const EvaluatorType& e) {
-      {e(std::declval<cell_workspace<std::decay_t<decltype(e.getSpace())>>>(),
-          std::declval<cell_index<std::decay_t<decltype(e.getSpace())>>>(),
-          std::declval<quadrature_point_index<std::decay_t<decltype(e.getSpace())>>>())};
- }
- :true)&&
-  (QuadratureSpaceConcept<std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>> &&
-         (!hasCellWorkspace<std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>>)
-         ? requires(const EvaluatorType& e) {
-        {e(std::declval<cell_index<std::decay_t<decltype(e.getSpace())>>>(),
-          std::declval<quadrature_point_index<std::decay_t<decltype(e.getSpace())>>>())};
- }
- :true)&&
-requires(const EvaluatorType& e, Context& ctx) {
-    FunctionalSpaceConcept<std::decay_t<decltype(e.getSpace())>>;
-    { e.check(ctx) } -> std::same_as<bool>;
-    { e.getNumberOfComponents() } -> std::same_as<size_type>;
-  };
+  } &&((internals::EvaluatorResultQuery<EvaluatorType>::b1) ||
+       (internals::EvaluatorResultQuery<EvaluatorType>::b2) ||
+       (internals::EvaluatorResultQuery<EvaluatorType>::b3) ||
+       (internals::EvaluatorResultQuery<EvaluatorType>::b4)) &&
+      (internals::EvaluatorResultQuery<EvaluatorType>::b1
+           ? std::same_as<
+                 typename internals::EvaluatorResultQuery<
+                     EvaluatorType>::ResultType1,
+                 typename internals::EvaluatorResultQuery<EvaluatorType>::type>
+           : true) &&
+      (internals::EvaluatorResultQuery<EvaluatorType>::b2
+           ? std::same_as<
+                 typename internals::EvaluatorResultQuery<
+                     EvaluatorType>::ResultType2,
+                 typename internals::EvaluatorResultQuery<EvaluatorType>::type>
+           : true) &&
+      (internals::EvaluatorResultQuery<EvaluatorType>::b3
+           ? std::same_as<
+                 typename internals::EvaluatorResultQuery<
+                     EvaluatorType>::ResultType3,
+                 typename internals::EvaluatorResultQuery<EvaluatorType>::type>
+           : true) &&
+      (internals::EvaluatorResultQuery<EvaluatorType>::b4
+           ? std::same_as<
+                 typename internals::EvaluatorResultQuery<
+                     EvaluatorType>::ResultType4,
+                 typename internals::EvaluatorResultQuery<EvaluatorType>::type>
+           : true);
+
+  /*!
+   * \brief type of the result of an evaluator
+   */
+  template <EvaluatorConcept EvaluatorType>
+  using evaluator_result =
+      typename internals::EvaluatorResultQuery<EvaluatorType>::type;
+
+  /*!
+   * \brief number of components of a type when known at compile-time,
+   * dynamic_extent otherwise
+   */
+  template <EvaluatorConcept EvaluatorType>
+  inline constexpr size_type number_of_components =
+      internals::CompileTimeSize<evaluator_result<EvaluatorType>>::value;
 
   /*!
    * \brief check if the given evaluators shares the same space
@@ -81,7 +214,6 @@ requires(const EvaluatorType& e, Context& ctx) {
 }  // end of namespace mgis::function
 
 #include "MGIS/Function/Evaluator.ixx"
-#include "MGIS/Function/EvaluatorUtilities.hxx"
 #include "MGIS/Function/TransformEvaluatorModifier.hxx"
 
 #endif /* LIB_MGIS_FUNCTION_EVALUATOR_HXX */

@@ -19,10 +19,8 @@ namespace mgis::function {
     template <EvaluatorConcept EvaluatorType, typename CallableType>
     struct TransformEvaluatorModifierBase {
       static constexpr size_type getNumberOfComponents() noexcept {
-        using evaluator_result_type =
-            typename EvaluatorResult<EvaluatorType>::type;
         using result_type =
-            std::invoke_result_t<CallableType, evaluator_result_type>;
+            std::invoke_result_t<CallableType, evaluator_result<EvaluatorType>>;
         return compile_time_size<result_type>;
       }
       static_assert(getNumberOfComponents() != dynamic_extent);
