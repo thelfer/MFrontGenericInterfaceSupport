@@ -102,12 +102,14 @@ namespace mgis::function {
                                     e(std::declval<element_workspace<Space>>(),
                                       std::declval<element_index<Space>>());
                                   }) &&
-                                  (ElementSpaceConcept<Space>));
+                                  (ElementSpaceConcept<Space> &&
+                                   hasElementWorkspace<Space>));
       static constexpr bool b3 = ((requires(EvaluatorType & e) {
                                     e(std::declval<cell_workspace<Space>>(),
                                       std::declval<cell_index<Space>>());
                                   }) &&
-                                  (QuadratureSpaceConcept<Space>));
+                                  (QuadratureSpaceConcept<Space> &&
+                                   hasCellWorkspace<Space>));
       static constexpr bool b4 =
           ((requires(EvaluatorType & e) {
              e(std::declval<cell_workspace<Space>>(),
@@ -139,9 +141,13 @@ namespace mgis::function {
 
   }  // namespace internals
 
+  /*!
+   * \brief a concept that must satisfy an evaluator
+   */
   template <typename EvaluatorType>
   concept EvaluatorConcept = std::is_move_constructible_v<EvaluatorType> &&
-      std::is_copy_constructible_v<EvaluatorType> &&
+      std::is_copy_constructible_v<EvaluatorType> && SpaceConcept<
+          std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>> &&
       requires(EvaluatorType& e) {
     e.allocateWorkspace();
   } &&((internals::EvaluatorResultQuery<EvaluatorType>::b1) ||
@@ -173,47 +179,63 @@ namespace mgis::function {
                  typename internals::EvaluatorResultQuery<EvaluatorType>::type>
            : true);
 
-  /*!
-   * \brief type of the result of an evaluator
-   */
-  template <EvaluatorConcept EvaluatorType>
-  using evaluator_result =
-      typename internals::EvaluatorResultQuery<EvaluatorType>::type;
+//! concept defining evaluators working on an element space
+template <typename EvaluatorType>
+concept ElementEvaluatorConcept = EvaluatorConcept<EvaluatorType> &&
+    ((internals::EvaluatorResultQuery<EvaluatorType>::b1) ||
+     (internals::EvaluatorResultQuery<EvaluatorType>::b2));
 
-  /*!
-   * \brief number of components of a type when known at compile-time,
-   * dynamic_extent otherwise
-   */
-  template <EvaluatorConcept EvaluatorType>
-  inline constexpr size_type number_of_components =
-      internals::CompileTimeSize<evaluator_result<EvaluatorType>>::value;
+//! concept defining evaluators working on a quadrature space
+template <typename EvaluatorType>
+concept QuadratureEvaluatorConcept = EvaluatorConcept<EvaluatorType> &&
+    ((internals::EvaluatorResultQuery<EvaluatorType>::b3) ||
+     (internals::EvaluatorResultQuery<EvaluatorType>::b4));
 
-  /*!
-   * \brief check if the given evaluators shares the same space
-   *
-   * \param[in] ctx: context
-   * \param[in] e1: first evaluator
-   * \param[in] e2: second evaluator
-   */
-  bool checkMatchingSpaces(Context&,
-                           const EvaluatorConcept auto&,
-                           const EvaluatorConcept auto&);
+/*!
+ * \brief type of the result of an evaluator
+ */
+template <EvaluatorConcept EvaluatorType>
+using evaluator_result =
+    typename internals::EvaluatorResultQuery<EvaluatorType>::type;
 
-  /*!
-   * \return the evaluator resulting from appling the modifier to the evaluator
-   * \param[in] e: evaluator
-   * \param[in] m: modifier
-   */
-  template <EvaluatorConcept EvaluatorType, typename ModifierType>
-  auto operator|(EvaluatorType,
-                 ModifierType)  //
-      requires(requires(EvaluatorType e1, ModifierType m1) {
-        { m1(e1) } -> EvaluatorConcept;
-      });
+/*!
+ * \brief number of components of a type when known at compile-time,
+ * dynamic_extent otherwise
+ */
+template <EvaluatorConcept EvaluatorType>
+inline constexpr size_type number_of_components =
+    internals::CompileTimeSize<evaluator_result<EvaluatorType>>::value;
+
+/*!
+ * \brief check if the given evaluators shares the same space
+ *
+ * \param[in] ctx: context
+ * \param[in] e1: first evaluator
+ * \param[in] e2: second evaluator
+ */
+bool checkMatchingSpaces(Context&,
+                         const EvaluatorConcept auto&,
+                         const EvaluatorConcept auto&);
+
+/*!
+ * \return the evaluator resulting from appling the modifier to the evaluator
+ * \param[in] e: evaluator
+ * \param[in] m: modifier
+ */
+template <EvaluatorConcept EvaluatorType, typename ModifierType>
+auto operator|(EvaluatorType,
+               ModifierType)  //
+    requires(requires(EvaluatorType e1, ModifierType m1) {
+      { m1(e1) } -> EvaluatorConcept;
+    });
 
 }  // end of namespace mgis::function
 
 #include "MGIS/Function/Evaluator.ixx"
 #include "MGIS/Function/TransformEvaluatorModifier.hxx"
+
+#ifndef MGIS_HAVE_TFEL
+#include "MGIS/Function/Tensors/Tensor.hxx"
+#endif /* MGIS_HAVE_TFEL */
 
 #endif /* LIB_MGIS_FUNCTION_EVALUATOR_HXX */

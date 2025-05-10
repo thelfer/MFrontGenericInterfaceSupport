@@ -41,7 +41,8 @@ namespace mgis::function {
   template <typename Child, EvaluatorConcept EvaluatorType>
   auto EvaluatorModifierBase<Child, EvaluatorType>::operator()(
       const element_index<Space>& e) const
-      requires(ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>)) {
+      requires((ElementEvaluatorConcept<EvaluatorType>)&&  //
+               (!(hasElementWorkspace<Space>))) {
     const auto& child = static_cast<const Child&>(*this);
     return child.apply(this->evaluator(e));
   }  // end of operator()
@@ -49,7 +50,8 @@ namespace mgis::function {
   template <typename Child, EvaluatorConcept EvaluatorType>
   auto EvaluatorModifierBase<Child, EvaluatorType>::operator()(
       const element_workspace<Space>& wk, const element_index<Space>& e) const
-      requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>) {
+      requires((ElementEvaluatorConcept<EvaluatorType>)&&  //
+               (hasElementWorkspace<Space>)) {
     const auto& child = static_cast<const Child&>(*this);
     return child.apply(this->evaluator(wk, e));
   }  // end of operator()
@@ -57,7 +59,8 @@ namespace mgis::function {
   template <typename Child, EvaluatorConcept EvaluatorType>
   auto EvaluatorModifierBase<Child, EvaluatorType>::operator()(
       const cell_index<Space> e, const quadrature_point_index<Space> i) const
-      requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>)) {
+      requires((QuadratureEvaluatorConcept<EvaluatorType>)&&(
+          (!hasCellWorkspace<Space>))) {
     const auto& child = static_cast<const Child&>(*this);
     return child.apply(this->evaluator(e, i));
   }  // end of operator()
@@ -67,7 +70,8 @@ namespace mgis::function {
       const cell_workspace<Space>& wk,
       const cell_index<Space> e,
       const quadrature_point_index<Space> i) const
-      requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>) {
+      requires((QuadratureEvaluatorConcept<EvaluatorType>)&&  //
+               (hasCellWorkspace<Space>)) {
     const auto& child = static_cast<const Child&>(*this);
     return child.apply(this->evaluator(wk, e, i));
   }  // end of operator()

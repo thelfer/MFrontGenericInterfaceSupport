@@ -44,14 +44,16 @@ namespace mgis::function {
      * \param[in] i: integration point index
      */
     auto operator()(const element_index<Space>&) const
-        requires(ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>));
+        requires((ElementEvaluatorConcept<EvaluatorType>)&&(
+            !(hasElementWorkspace<Space>)));
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
     auto operator()(const element_workspace<Space>&,
                     const element_index<Space>&) const
-        requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>);
+        requires((ElementEvaluatorConcept<EvaluatorType>)&&(
+            hasElementWorkspace<Space>));
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -59,7 +61,8 @@ namespace mgis::function {
      */
     auto operator()(const cell_index<Space>,
                     const quadrature_point_index<Space>) const
-        requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>));
+        requires((QuadratureEvaluatorConcept<EvaluatorType>)&&(
+            !hasCellWorkspace<Space>));
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -68,7 +71,8 @@ namespace mgis::function {
     auto operator()(const cell_workspace<Space>&,
                     const cell_index<Space>,
                     const quadrature_point_index<Space>) const
-        requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>);
+        requires((QuadratureEvaluatorConcept<EvaluatorType>)&&(
+            hasCellWorkspace<Space>));
 
    protected:
     //! \brief underlying evaluator
