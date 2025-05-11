@@ -78,7 +78,8 @@ namespace mgis::function {
   auto
   BinaryOperationEvaluatorBase<Child, FirstEvaluatorType, SecondEvaluatorType>::
   operator()(const element_index<Space>& e) const
-      requires(ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>)) {
+      requires(BinaryOperationEvaluatorBase::isElementEvaluator &&
+               !(hasElementWorkspace<Space>)) {
     const auto& child = static_cast<const Child&>(*this);
     return child.apply(this->first_evaluator(e), this->second_evaluator(e));
   }  // end of operator()
@@ -90,7 +91,8 @@ namespace mgis::function {
   BinaryOperationEvaluatorBase<Child, FirstEvaluatorType, SecondEvaluatorType>::
   operator()(const element_workspace<Space>& wk,
              const element_index<Space>& e) const
-      requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>) {
+      requires(BinaryOperationEvaluatorBase::isElementEvaluator&&
+                   hasElementWorkspace<Space>) {
     const auto& child = static_cast<const Child&>(*this);
     return child.apply(this->first_evaluator(wk, e),
                        this->second_evaluator(wk, e));
@@ -103,7 +105,8 @@ namespace mgis::function {
   BinaryOperationEvaluatorBase<Child, FirstEvaluatorType, SecondEvaluatorType>::
   operator()(const cell_index<Space> e,
              const quadrature_point_index<Space> i) const
-      requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>)) {
+      requires(BinaryOperationEvaluatorBase::isQuadratureEvaluator &&
+               (!hasCellWorkspace<Space>)) {
     const auto& child = static_cast<const Child&>(*this);
     return child.apply(this->first_evaluator(e, i),
                        this->second_evaluator(e, i));
@@ -117,7 +120,8 @@ namespace mgis::function {
   operator()(const cell_workspace<Space>& wk,
              const cell_index<Space> e,
              const quadrature_point_index<Space> i) const
-      requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>) {
+      requires(BinaryOperationEvaluatorBase::isQuadratureEvaluator&&
+                   hasCellWorkspace<Space>) {
     const auto& child = static_cast<const Child&>(*this);
     return child.apply(this->first_evaluator(wk, e, i),
                        this->second_evaluator(wk, e, i));

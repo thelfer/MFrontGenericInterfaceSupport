@@ -17,7 +17,7 @@ namespace mgis::function {
 
   namespace internals {
 
-    template <EvaluatorConcept EvaluatorType, typename CallableType>
+    template <typename CallableType, EvaluatorConcept EvaluatorType>
     struct TransformEvaluatorModifierBase {
       static constexpr size_type getNumberOfComponents() noexcept {
         using result_type =
@@ -31,24 +31,24 @@ namespace mgis::function {
 
   /*!
    * \brief a base class for evaluators modifying a stress tensor
-   * \tparam EvaluatorType: evaluator of the stress
    * \tparam CallableType: type of the modifier
+   * \tparam EvaluatorType: evaluator of the stress
    */
-  template <EvaluatorConcept EvaluatorType, typename CallableType>
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
   requires((std::is_copy_constructible_v<CallableType>)&&(
       std::invocable<CallableType,
                      evaluator_result<EvaluatorType>>))  //
       struct TransformEvaluatorModifier
       : EvaluatorModifierBase<
-            TransformEvaluatorModifier<EvaluatorType, CallableType>,
+            TransformEvaluatorModifier<CallableType, EvaluatorType>,
             EvaluatorType>,
-        internals::TransformEvaluatorModifierBase<EvaluatorType, CallableType> {
+        internals::TransformEvaluatorModifierBase<CallableType, EvaluatorType> {
     /*!
      * \brief constructor
-     * \param[in] e: modified evaluator
      * \param[in] c: callable type
+     * \param[in] e: modified evaluator
      */
-    TransformEvaluatorModifier(const EvaluatorType&, const CallableType&);
+    TransformEvaluatorModifier(const CallableType&, const EvaluatorType&);
     //! \brief apply the modifier
     auto apply(const evaluator_result<EvaluatorType>&) const;
 
@@ -58,18 +58,18 @@ namespace mgis::function {
 
   /*!
    * \brief a base class for evaluators modifying a stress tensor
-   * \tparam EvaluatorType: evaluator of the stress
    * \tparam CallableType: type of the modifier
+   * \tparam EvaluatorType: evaluator of the stress
    */
-  template <EvaluatorConcept EvaluatorType, typename CallableType>
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
   requires((std::is_trivially_default_constructible_v<CallableType>)&&(
       std::invocable<CallableType,
                      evaluator_result<EvaluatorType>>))  //
       struct TransformEvaluatorModifier2
       : EvaluatorModifierBase<
-            TransformEvaluatorModifier2<EvaluatorType, CallableType>,
+            TransformEvaluatorModifier2<CallableType, EvaluatorType>,
             EvaluatorType>,
-        internals::TransformEvaluatorModifierBase<EvaluatorType, CallableType> {
+        internals::TransformEvaluatorModifierBase<CallableType, EvaluatorType> {
     // inheriting constructor
     using EvaluatorModifierBase<TransformEvaluatorModifier2,
                                 EvaluatorType>::EvaluatorModifierBase;
@@ -95,13 +95,16 @@ namespace mgis::function {
     };
 
     template <typename CallableType>
-    struct transform_modifier2 {
+    struct transform_modifier2_impl {
       template <typename EvaluatorType>
       auto operator()(EvaluatorType&&) const
           requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
               std::invocable<CallableType,
                              evaluator_result<std::decay_t<EvaluatorType>>>));
     };
+
+    template <typename CallableType>
+    constexpr auto transform_modifier2(CallableType);
 
   }  // namespace internals
 

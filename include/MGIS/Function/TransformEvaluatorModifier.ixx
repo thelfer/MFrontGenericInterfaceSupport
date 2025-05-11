@@ -10,22 +10,22 @@
 
 namespace mgis::function {
 
-  template <EvaluatorConcept EvaluatorType, typename CallableType>
-  TransformEvaluatorModifier<EvaluatorType, CallableType>::
-      TransformEvaluatorModifier(const EvaluatorType& e, const CallableType& c)
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
+  TransformEvaluatorModifier<CallableType, EvaluatorType>::
+      TransformEvaluatorModifier(const CallableType& c, const EvaluatorType& e)
       : EvaluatorModifierBase<
-            TransformEvaluatorModifier<EvaluatorType, CallableType>,
+            TransformEvaluatorModifier<CallableType, EvaluatorType>,
             EvaluatorType>(e),
         modifier(c) {}  // end of TransformEvaluatorModifier
 
-  template <EvaluatorConcept EvaluatorType, typename CallableType>
-  auto TransformEvaluatorModifier<EvaluatorType, CallableType>::apply(
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
+  auto TransformEvaluatorModifier<CallableType, EvaluatorType>::apply(
       const evaluator_result<EvaluatorType>& values) const {
     return this->modifier(values);
   }  // end of apply
 
-  template <EvaluatorConcept EvaluatorType, typename CallableType>
-  auto TransformEvaluatorModifier2<EvaluatorType, CallableType>::apply(
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
+  auto TransformEvaluatorModifier2<CallableType, EvaluatorType>::apply(
       const evaluator_result<EvaluatorType>& values) const {
     auto c = CallableType{};
     return c(values);
@@ -43,19 +43,26 @@ namespace mgis::function {
         requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
             std::invocable<CallableType,
                            evaluator_result<std::decay_t<EvaluatorType>>>)) {
-      return TransformEvaluatorModifier<std::decay_t<EvaluatorType>,
-                                        CallableType>(e, this->modifier);
+      return TransformEvaluatorModifier<CallableType,
+                                        std::decay_t<EvaluatorType>>(
+          this->modifier, std::forward<EvaluatorType>(e));
     }  // end of operator()
 
     template <typename CallableType>
     template <typename EvaluatorType>
-    auto transform_modifier2<CallableType>::operator()(EvaluatorType&& e) const
+    auto transform_modifier2_impl<CallableType>::operator()(EvaluatorType&& e) const
         requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
             std::invocable<CallableType,
                            evaluator_result<std::decay_t<EvaluatorType>>>)) {
-      return TransformEvaluatorModifier2<std::decay_t<EvaluatorType>,
-                                         CallableType>(e);
+      return TransformEvaluatorModifier2<CallableType,
+                                         std::decay_t<EvaluatorType>>(
+          std::forward<EvaluatorType>(e));
     }  // end of operator()
+
+    template <typename CallableType>
+    constexpr auto transform_modifier2(CallableType){
+      return transform_modifier2_impl<CallableType>{};
+    } // end of transform_modifier2
 
   }  // namespace internals
 

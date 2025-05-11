@@ -233,6 +233,7 @@ namespace mgis::function {
 
 #include "MGIS/Function/Evaluator.ixx"
 #include "MGIS/Function/TransformEvaluatorModifier.hxx"
+#include "MGIS/Function/BinaryOperationEvaluator.hxx"
 
 #ifdef MGIS_HAVE_TFEL
 #include "MGIS/Function/Tensors/TensorialObject.hxx"

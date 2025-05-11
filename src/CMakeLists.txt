@@ -24,7 +24,6 @@ mgis_library(MFrontGenericInterface
   BasicLinearQuadratureSpace.cxx
   Function.cxx
   Evaluator.cxx
-  MechanicalEvaluators.cxx
   )
 
 target_include_directories(MFrontGenericInterface

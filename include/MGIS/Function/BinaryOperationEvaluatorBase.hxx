@@ -26,13 +26,25 @@ namespace mgis::function {
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
-  requires(internals::same_decay_type<
-           decltype(std::declval<FirstEvaluatorType>().getSpace()),
-           decltype(std::declval<FirstEvaluatorType>().getSpace())>)  //
+  requires((internals::same_decay_type<
+            decltype(std::declval<FirstEvaluatorType>().getSpace()),
+            decltype(std::declval<FirstEvaluatorType>().getSpace())>)&&  //
+           (((ElementEvaluatorConcept<FirstEvaluatorType>)&&(
+                ElementEvaluatorConcept<SecondEvaluatorType>)) ||
+            ((QuadratureEvaluatorConcept<FirstEvaluatorType>)&&(
+                QuadratureEvaluatorConcept<SecondEvaluatorType>))))  //
       struct BinaryOperationEvaluatorBase {
     //! \brief a simple alias
     using Space =
         std::decay_t<decltype(std::declval<FirstEvaluatorType>().getSpace())>;
+    // boolean stating if both evaluators matches the ElementEvaluatorConcept
+    static constexpr auto isElementEvaluator =
+        (ElementEvaluatorConcept<FirstEvaluatorType>)&&(
+            ElementEvaluatorConcept<SecondEvaluatorType>);
+    // boolean stating if both evaluators matches the QuadratureEvaluatorConcept
+    static constexpr auto isQuadratureEvaluator =
+        (QuadratureEvaluatorConcept<FirstEvaluatorType>)&&(
+            QuadratureEvaluatorConcept<SecondEvaluatorType>);
     /*!
      * \brief constructor
      * \param[in] e1: first evaluator
@@ -55,14 +67,14 @@ namespace mgis::function {
      * \param[in] i: integration point index
      */
     auto operator()(const element_index<Space>&) const
-        requires(ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>));
+        requires(isElementEvaluator && (!hasElementWorkspace<Space>));
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
     auto operator()(const element_workspace<Space>&,
                     const element_index<Space>&) const
-        requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>);
+        requires(isElementEvaluator&& hasElementWorkspace<Space>);
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -70,7 +82,7 @@ namespace mgis::function {
      */
     auto operator()(const cell_index<Space>,
                     const quadrature_point_index<Space>) const
-        requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>));
+        requires(isQuadratureEvaluator && (!hasCellWorkspace<Space>));
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -79,7 +91,7 @@ namespace mgis::function {
     auto operator()(const cell_workspace<Space>&,
                     const cell_index<Space>,
                     const quadrature_point_index<Space>) const
-        requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>);
+        requires(isQuadratureEvaluator&& hasCellWorkspace<Space>);
 
    protected:
     //! \brief evaluator of the first argument of the binary operation
