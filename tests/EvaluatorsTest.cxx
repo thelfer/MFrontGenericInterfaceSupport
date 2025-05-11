@@ -21,6 +21,7 @@
 #include "MGIS/Function/Function.hxx"
 #include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/FixedSizeEvaluator.hxx"
+#include "MGIS/Function/Tensors/SymmetricTensorModifiers.hxx"
 
 struct EvaluatorsTest final : public tfel::tests::TestCase {
   EvaluatorsTest()
@@ -29,6 +30,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
+    this->test3();
     return this->result;
   }
 
@@ -64,6 +66,28 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(!EvaluatorConcept<Test>);
     TFEL_TESTS_STATIC_ASSERT(
         EvaluatorConcept<ImmutableFunctionView<BasicLinearSpace>>);
+  }
+  void test3() {
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    Context ctx;
+    auto space = std::make_shared<BasicLinearSpace>(1);
+    auto values = std::vector<real>{1, 2, 3};
+    const auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 3);
+    TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 3);
+    TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 3);
+    const auto e = view<3>(f);
+    TFEL_TESTS_ASSERT(e.check(ctx));
+    TFEL_TESTS_ASSERT(std::abs(e(0)[0] - 1) < eps);
+    TFEL_TESTS_ASSERT(std::abs(e(0)[1] - 2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(e(0)[2] - 3) < eps);
+    const auto e2 = e | as_stensor<1>;
+    TFEL_TESTS_ASSERT(e2.check(ctx));
+    TFEL_TESTS_ASSERT(std::abs(tfel::math::trace(e2(0)) - 6) < eps);
+    const auto e3 = e | as_stensor<1> | trace;
+    TFEL_TESTS_ASSERT(e3.check(ctx));
+    TFEL_TESTS_ASSERT(std::abs(e3(0) - 6) < eps);
   }
 };
 

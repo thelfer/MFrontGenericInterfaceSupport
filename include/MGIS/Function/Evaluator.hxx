@@ -234,8 +234,9 @@ namespace mgis::function {
 #include "MGIS/Function/Evaluator.ixx"
 #include "MGIS/Function/TransformEvaluatorModifier.hxx"
 
-#ifndef MGIS_HAVE_TFEL
-#include "MGIS/Function/Tensors/Tensor.hxx"
+#ifdef MGIS_HAVE_TFEL
+#include "MGIS/Function/Tensors/TensorialObject.hxx"
+#include "MGIS/Function/TensorialEvaluatorModifier.hxx"
 #endif /* MGIS_HAVE_TFEL */
 
 #endif /* LIB_MGIS_FUNCTION_EVALUATOR_HXX */

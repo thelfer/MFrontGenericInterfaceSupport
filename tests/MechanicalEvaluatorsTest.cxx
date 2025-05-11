@@ -42,10 +42,10 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     const auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 3);
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 3);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 3);
-    const auto s = FixedSizeEvaluator<BasicLinearSpace, 3>(f);
-    const auto e = vmis<1>(s);
+    const auto s = view<3>(f) | as_stensor<1>;
+    const auto e = vmis(s);
     TFEL_TESTS_ASSERT(std::abs(e(0) - std::sqrt(3)) < eps);
-    const auto e2 = hydrostatic_stress<1>(s);
+    const auto e2 = hydrostatic_stress(s);
     TFEL_TESTS_ASSERT(std::abs(e2(0) - 2) < eps);
   }
   void test2() {
@@ -57,9 +57,13 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     const auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 3);
     auto seq = Function<BasicLinearSpace>(space, 1);
     TFEL_TESTS_ASSERT(seq.isScalar());
-    const auto ok = f | vmis<1> | seq;
+    const auto ok = view<3>(f) | as_stensor<1> | vmis | seq;
     TFEL_TESTS_ASSERT(ok);
     TFEL_TESTS_ASSERT(std::abs(seq.getValue(0) - std::sqrt(3)) < eps);
+    auto seq2 = Function<BasicLinearSpace>(space, 1);
+    const auto ok2 =  vmis(as_stensor<1>(view<3>(f))) | seq2;
+    TFEL_TESTS_ASSERT(ok2);
+    TFEL_TESTS_ASSERT(std::abs(seq2.getValue(0) - std::sqrt(3)) < eps);
   }
 };
 

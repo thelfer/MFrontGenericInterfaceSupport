@@ -18,17 +18,6 @@ namespace mgis::function {
           3,
           FixedSizeEvaluator<BasicLinearSpace, 9>,
           FixedSizeEvaluator<BasicLinearSpace, 9>>>);
-  static_assert(
-      EvaluatorConcept<
-          vonMisesStressEvaluator<3, FixedSizeEvaluator<BasicLinearSpace, 6>>>);
-  static_assert(
-      EvaluatorConcept<
-          PrincipalStressEvaluator<3,
-                                   FixedSizeEvaluator<BasicLinearSpace, 6>>>);
-  static_assert(
-      EvaluatorConcept<
-          HydrostaticStressEvaluator<3,
-                                     FixedSizeEvaluator<BasicLinearSpace, 6>>>);
 
 #endif MGIS_HAVE_TFEL
 

@@ -24,6 +24,13 @@ namespace mgis::function {
     return this->modifier(values);
   }  // end of apply
 
+  template <EvaluatorConcept EvaluatorType, typename CallableType>
+  auto TransformEvaluatorModifier2<EvaluatorType, CallableType>::apply(
+      const evaluator_result<EvaluatorType>& values) const {
+    auto c = CallableType{};
+    return c(values);
+  }  // end of apply
+
   namespace internals {
 
     template <typename CallableType>
@@ -34,9 +41,20 @@ namespace mgis::function {
     template <typename EvaluatorType>
     auto transform_modifier<CallableType>::operator()(EvaluatorType&& e) const
         requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
-            std::invocable<CallableType, evaluator_result<EvaluatorType>>)) {
+            std::invocable<CallableType,
+                           evaluator_result<std::decay_t<EvaluatorType>>>)) {
       return TransformEvaluatorModifier<std::decay_t<EvaluatorType>,
                                         CallableType>(e, this->modifier);
+    }  // end of operator()
+
+    template <typename CallableType>
+    template <typename EvaluatorType>
+    auto transform_modifier2<CallableType>::operator()(EvaluatorType&& e) const
+        requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
+            std::invocable<CallableType,
+                           evaluator_result<std::decay_t<EvaluatorType>>>)) {
+      return TransformEvaluatorModifier2<std::decay_t<EvaluatorType>,
+                                         CallableType>(e);
     }  // end of operator()
 
   }  // namespace internals
