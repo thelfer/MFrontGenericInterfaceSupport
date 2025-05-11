@@ -11,6 +11,13 @@
 
 #include <span>
 #include <type_traits>
+
+#ifdef MGIS_HAVE_TFEL
+#include "TFEL/Math/General/BasicOperations.hxx"
+#include "TFEL/Math/General/UnaryResultType.hxx"
+#include "TFEL/Math/General/ResultType.hxx"
+#endif MGIS_HAVE_TFEL
+
 #include "MGIS/Function/EvaluatorModifierBase.hxx"
 
 namespace mgis::function {
@@ -114,5 +121,47 @@ namespace mgis::function {
 }  // end of namespace mgis::function
 
 #include "MGIS/Function/TransformEvaluatorModifier.ixx"
+
+#ifdef MGIS_HAVE_TFEL
+
+namespace mgis::function {
+
+  inline constexpr auto negate = internals::transform_modifier2(
+      []<typename OperandType>(const OperandType& a)
+          -> tfel::math::unary_result_type<OperandType, tfel::math::OpNeg>  //
+      requires(
+          compile_time_size<
+              tfel::math::unary_result_type<OperandType, tfel::math::OpNeg>> !=
+          dynamic_extent) {  //
+        return -a;
+      });
+
+  inline auto multiply_by_scalar(const real s) {
+    auto c = [b = s]<typename FirstOperandType>(const FirstOperandType& a)
+        -> tfel::math::result_type<FirstOperandType, real,
+                                   tfel::math::OpMult>  //
+    requires(compile_time_size<tfel::math::result_type<FirstOperandType, real,
+                                                       tfel::math::OpMult>> !=
+             dynamic_extent) {
+      return a * b;
+    };
+    return internals::transform_modifier(c);
+  }
+
+  inline auto divide_by_scalar(const real s) {
+    auto c = [b = s]<typename FirstOperandType>(const FirstOperandType& a)
+        -> tfel::math::result_type<FirstOperandType, real,
+                                   tfel::math::OpDiv>  //
+    requires(compile_time_size<tfel::math::result_type<FirstOperandType, real,
+                                                       tfel::math::OpDiv>> !=
+             dynamic_extent) {
+      return a / b;
+    };
+    return internals::transform_modifier(c);
+  } // end of divide_by_scalar
+
+}  // end of namespace mgis::function
+
+#endif /* MGIS_HAVE_TFEL */
 
 #endif /* LIB_MGIS_FUNCTION_TRANSFORMEVALUATORMODIFIER_HXX */

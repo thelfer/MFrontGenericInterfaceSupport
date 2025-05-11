@@ -23,6 +23,12 @@ bibliography: bibliography.bib
 ## Unary modifiers
 
 - `view`
+- `negate`
+
+#### Modifiers's generators
+
+- `multiply_by_scalar`
+- `divide_by_scalar`
 
 ### Tensors
 
@@ -40,7 +46,7 @@ bibliography: bibliography.bib
 - `trace`
 - `det`
 
-### Mechanical evaluators
+### Modifiers dedicated to mechanics
 
 - `hydrostatic_stress`
 - `vmis`
@@ -48,7 +54,18 @@ bibliography: bibliography.bib
 
 ## Binary modifiers
 
-#### Modifiers on tensor-valuated evaluators
+-  `add`
+-  `substract`
+-  `multiply`
+-  `divide`
+-  `mean_value`
+-  `inner_product`
+
+### Binary modifiers on tensor-valuated evaluators
 
 - `rotate`
 - `rotate_backwards`
+
+### Binary modifiers dedicated to mechanics
+
+- `from_pk1_to_cauchy`

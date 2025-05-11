@@ -8,6 +8,11 @@
 #ifndef LIB_MGIS_FUNCTION_BINARYOPERATIONEVALUATOR_HXX
 #define LIB_MGIS_FUNCTION_BINARYOPERATIONEVALUATOR_HXX
 
+#ifdef MGIS_HAVE_TFEL
+#include "TFEL/Math/General/BasicOperations.hxx"
+#include "TFEL/Math/General/ResultType.hxx"
+#endif MGIS_HAVE_TFEL
+
 #include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/CompileTimeSize.hxx"
 #include "MGIS/Function/TransformEvaluatorModifier.hxx"
@@ -188,22 +193,90 @@ namespace mgis::function {
                    evaluator_result<std::decay_t<FirstEvaluatorType>>,
                    evaluator_result<std::decay_t<SecondEvaluatorType>>>));
 
-  //   template <typename CallableType, typename SecondEvaluatorType>
-  //   auto binary_operation(CallableType&&, SecondEvaluatorType&&) requires(
-  //       EvaluatorConcept<std::decay_t<SecondEvaluatorType>>);
-
-  //   inline constexpr auto add =
-  //   internals::binary_operation_modifier2<decltype([
-  //   ]<typename FirstOperandType, typename SecondOperandType>(
-  //       const FirstOperandType& a,
-  //       const SecondOperandType& b) requires(CompileTimeSize<decltype(a + b)>
-  //       !=
-  //                                            dynamic_extent) {
-  //     return a + b;
-  //   })>{};
-
 }  // end of namespace mgis::function
 
 #include "MGIS/Function/BinaryOperationEvaluator.ixx"
+
+#ifdef MGIS_HAVE_TFEL
+
+namespace mgis::function {
+
+  inline constexpr auto add = internals::binary_operation_modifier2(
+      []<typename FirstOperandType, typename SecondOperandType>(
+          const FirstOperandType& a, const SecondOperandType& b)
+          -> tfel::math::result_type<FirstOperandType,
+                                     SecondOperandType,
+                                     tfel::math::OpPlus>  //
+      requires(compile_time_size<tfel::math::result_type<FirstOperandType,
+                                                         SecondOperandType,
+                                                         tfel::math::OpPlus>> !=
+               dynamic_extent) { return a + b; });
+
+  inline constexpr auto substract = internals::binary_operation_modifier2(
+      []<typename FirstOperandType, typename SecondOperandType>(
+          const FirstOperandType& a, const SecondOperandType& b)
+          -> tfel::math::result_type<FirstOperandType,
+                                     SecondOperandType,
+                                     tfel::math::OpMinus>  //
+      requires(
+          compile_time_size<tfel::math::result_type<FirstOperandType,
+                                                    SecondOperandType,
+                                                    tfel::math::OpMinus>> !=
+          dynamic_extent) { return a - b; });
+
+  inline constexpr auto mean_value = internals::binary_operation_modifier2(
+      []<typename FirstOperandType, typename SecondOperandType>(
+          const FirstOperandType& a, const SecondOperandType& b)
+          -> tfel::math::result_type<
+              tfel::math::result_type<FirstOperandType,
+                                      SecondOperandType,
+                                      tfel::math::OpMinus>,
+              real,
+              tfel::math::OpDiv>  //
+      requires(compile_time_size<tfel::math::result_type<
+                   tfel::math::result_type<FirstOperandType,
+                                           SecondOperandType,
+                                           tfel::math::OpMinus>,
+                   real,
+                   tfel::math::OpDiv>> != dynamic_extent) {
+        return (a + b) / 2;
+      });
+
+  inline constexpr auto multiply = internals::binary_operation_modifier2(
+      []<typename FirstOperandType, typename SecondOperandType>(
+          const FirstOperandType& a, const SecondOperandType& b)
+          -> tfel::math::result_type<FirstOperandType,
+                                     SecondOperandType,
+                                     tfel::math::OpMult>  //
+      requires(compile_time_size<tfel::math::result_type<FirstOperandType,
+                                                         SecondOperandType,
+                                                         tfel::math::OpMult>> !=
+               dynamic_extent) { return a * b; });
+
+  inline constexpr auto divide = internals::binary_operation_modifier2(
+      []<typename FirstOperandType, typename SecondOperandType>(
+          const FirstOperandType& a, const SecondOperandType& b)
+          -> tfel::math::result_type<FirstOperandType,
+                                     SecondOperandType,
+                                     tfel::math::OpDiv>  //
+      requires(compile_time_size<tfel::math::result_type<FirstOperandType,
+                                                         SecondOperandType,
+                                                         tfel::math::OpDiv>> !=
+               dynamic_extent) { return a / b; });
+
+  inline constexpr auto inner_product = internals::binary_operation_modifier2(
+      []<typename FirstOperandType, typename SecondOperandType>(
+          const FirstOperandType& a, const SecondOperandType& b)
+          -> tfel::math::result_type<FirstOperandType,
+                                     SecondOperandType,
+                                     tfel::math::OpDotProduct>  //
+      requires(compile_time_size<tfel::math::result_type<FirstOperandType,
+                                                         SecondOperandType,
+                                                         tfel::math::OpDotProduct>> !=
+               dynamic_extent) { return a | b; });
+
+}  // end of namespace mgis::function
+
+#endif /* MGIS_HAVE_TFEL */
 
 #endif /* LIB_MGIS_FUNCTIONBINARYOPERATIONEVALUATOR_HXX */
