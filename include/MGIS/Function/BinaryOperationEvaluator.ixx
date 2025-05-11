@@ -121,7 +121,7 @@ namespace mgis::function {
 
       template <typename CallableType>
       template <typename SecondEvaluatorType>
-      auto binary_operation_modifier2<CallableType>::operator()(
+      auto binary_operation_modifier2_impl<CallableType>::operator()(
           SecondEvaluatorType&& e2) const
           requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>) {
         return BinaryOperatorCurrying2<CallableType,
@@ -131,21 +131,25 @@ namespace mgis::function {
 
       template <typename CallableType>
       template <typename FirstEvaluatorType, typename SecondEvaluatorType>
-      auto binary_operation_modifier2<CallableType>::operator()(
-          FirstEvaluatorType&& e1, SecondEvaluatorType&& e2)
-          const requires(
-              (EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&   //
-              (EvaluatorConcept<std::decay_t<SecondEvaluatorType>>)&&  //
-              (std::invocable<
-                  CallableType,
-                  evaluator_result<std::decay_t<FirstEvaluatorType>>,
-                  evaluator_result<std::decay_t<SecondEvaluatorType>>>)) {
+      auto binary_operation_modifier2_impl<CallableType>::operator()(
+          FirstEvaluatorType&& e1, SecondEvaluatorType&& e2) const
+          requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&   //
+                   (EvaluatorConcept<std::decay_t<SecondEvaluatorType>>)&&  //
+                   (std::invocable<
+                       CallableType,
+                       evaluator_result<std::decay_t<FirstEvaluatorType>>,
+                       evaluator_result<std::decay_t<SecondEvaluatorType>>>)) {
         return BinaryOperationEvaluatorModifier2<
             CallableType, std::decay_t<FirstEvaluatorType>,
             std::decay_t<SecondEvaluatorType>>(
             std::forward<FirstEvaluatorType>(e1),
             std::forward<SecondEvaluatorType>(e2));
       }  // end of operator()
+
+      template <typename CallableType>
+      constexpr auto binary_operation_modifier2(CallableType) {
+        return binary_operation_modifier2_impl<CallableType>{};
+      }  // end of binary_operation_modifier2
 
     }  // namespace internals
 

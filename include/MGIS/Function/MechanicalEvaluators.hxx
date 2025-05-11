@@ -35,12 +35,12 @@ namespace mgis::function{
   inline constexpr auto principal_stress = eigen_values<esolver>;
 
   inline constexpr auto from_pk1_to_cauchy =
-      internals::binary_operation_modifier2<decltype(
+      internals::binary_operation_modifier2(
           []<tfel::math::TensorConcept TensorType>(const TensorType& pk1,
                                                    const TensorType& F) {
             return tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress(
                 pk1, F);
-          })>{};
+          });
 
 } // end of namespace mgis::function
 

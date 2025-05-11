@@ -40,22 +40,22 @@ namespace mgis::function{
         return s2.template computeEigenValues<esolver>();
       });
 
-  inline constexpr auto rotate = internals::binary_operation_modifier2<decltype(
+  inline constexpr auto rotate = internals::binary_operation_modifier2(
       []<typename TensorType>(const TensorType& pk1,
                               const tfel::math::tmatrix<3, 3>& R)  //
       requires((tfel::math::TensorConcept<TensorType>) ||
                (tfel::math::StensorConcept<TensorType>)) {
         return tfel::math::change_basis(pk1, R);
-      })>{};
+      });
 
   inline constexpr auto rotate_backwards =
-      internals::binary_operation_modifier2<decltype(
+      internals::binary_operation_modifier2(
           []<typename TensorType>(const TensorType& pk1,
                                   const tfel::math::tmatrix<3, 3>& R)  //
           requires((tfel::math::TensorConcept<TensorType>) ||
                    (tfel::math::StensorConcept<TensorType>)) {
             return tfel::math::change_basis(pk1, transpose(R));
-          })>{};
+          });
 
 } // end of namespace mgis::function
 

@@ -1,6 +1,6 @@
 /*!
  * \file   MGIS/Function/BinaryOperationEvaluator.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   11/05/2025
  */
@@ -154,7 +154,7 @@ namespace mgis::function {
     };
 
     template <typename CallableType>
-    struct binary_operation_modifier2 {
+    struct binary_operation_modifier2_impl {
       //
       template <typename SecondEvaluatorType>
       auto operator()(SecondEvaluatorType&&) const
@@ -169,6 +169,9 @@ namespace mgis::function {
                        evaluator_result<std::decay_t<FirstEvaluatorType>>,
                        evaluator_result<std::decay_t<SecondEvaluatorType>>>));
     };
+
+    template <typename CallableType>
+    constexpr auto binary_operation_modifier2(CallableType);
 
   }  // namespace internals
 
@@ -188,6 +191,16 @@ namespace mgis::function {
   //   template <typename CallableType, typename SecondEvaluatorType>
   //   auto binary_operation(CallableType&&, SecondEvaluatorType&&) requires(
   //       EvaluatorConcept<std::decay_t<SecondEvaluatorType>>);
+
+  //   inline constexpr auto add =
+  //   internals::binary_operation_modifier2<decltype([
+  //   ]<typename FirstOperandType, typename SecondOperandType>(
+  //       const FirstOperandType& a,
+  //       const SecondOperandType& b) requires(CompileTimeSize<decltype(a + b)>
+  //       !=
+  //                                            dynamic_extent) {
+  //     return a + b;
+  //   })>{};
 
 }  // end of namespace mgis::function
 
