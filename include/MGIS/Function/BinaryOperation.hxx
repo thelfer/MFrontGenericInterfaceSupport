@@ -139,7 +139,7 @@ namespace mgis::function {
     template <typename CallableType>
     struct binary_operation_modifier {
       //
-      binary_operation_modifier(CallableType&&);
+      binary_operation_modifier(const CallableType&);
       //
       template <typename SecondEvaluatorType>
       auto operator()(SecondEvaluatorType&&) const
@@ -180,6 +180,11 @@ namespace mgis::function {
 
   }  // namespace internals
 
+  template <typename CallableType, typename SecondEvaluatorType>
+  auto binary_operation(CallableType&&,
+                        SecondEvaluatorType&&)  //
+      requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>);
+
   template <typename CallableType,
             typename FirstEvaluatorType,
             typename SecondEvaluatorType>
@@ -204,10 +209,10 @@ namespace mgis::function {
   inline constexpr auto add = internals::binary_operation_modifier2(
       []<typename FirstOperandType, typename SecondOperandType>(
           const FirstOperandType& a, const SecondOperandType& b)
-          -> tfel::math::result_type<FirstOperandType,
-                                     SecondOperandType,
-                                     tfel::math::OpPlus>  //
-      requires(compile_time_size<tfel::math::result_type<FirstOperandType,
+          -> tfel::math::BinaryOperationResult<FirstOperandType,
+                                               SecondOperandType,
+                                               tfel::math::OpPlus>  //
+      requires(compile_time_size<tfel::math::BinaryOperationResult<FirstOperandType,
                                                          SecondOperandType,
                                                          tfel::math::OpPlus>> !=
                dynamic_extent) { return a + b; });
@@ -215,11 +220,11 @@ namespace mgis::function {
   inline constexpr auto substract = internals::binary_operation_modifier2(
       []<typename FirstOperandType, typename SecondOperandType>(
           const FirstOperandType& a, const SecondOperandType& b)
-          -> tfel::math::result_type<FirstOperandType,
+          -> tfel::math::BinaryOperationResult<FirstOperandType,
                                      SecondOperandType,
                                      tfel::math::OpMinus>  //
       requires(
-          compile_time_size<tfel::math::result_type<FirstOperandType,
+          compile_time_size<tfel::math::BinaryOperationResult<FirstOperandType,
                                                     SecondOperandType,
                                                     tfel::math::OpMinus>> !=
           dynamic_extent) { return a - b; });
@@ -227,14 +232,14 @@ namespace mgis::function {
   inline constexpr auto mean_value = internals::binary_operation_modifier2(
       []<typename FirstOperandType, typename SecondOperandType>(
           const FirstOperandType& a, const SecondOperandType& b)
-          -> tfel::math::result_type<
-              tfel::math::result_type<FirstOperandType,
+          -> tfel::math::BinaryOperationResult<
+              tfel::math::BinaryOperationResult<FirstOperandType,
                                       SecondOperandType,
                                       tfel::math::OpMinus>,
               real,
               tfel::math::OpDiv>  //
-      requires(compile_time_size<tfel::math::result_type<
-                   tfel::math::result_type<FirstOperandType,
+      requires(compile_time_size<tfel::math::BinaryOperationResult<
+                   tfel::math::BinaryOperationResult<FirstOperandType,
                                            SecondOperandType,
                                            tfel::math::OpMinus>,
                    real,
@@ -245,10 +250,10 @@ namespace mgis::function {
   inline constexpr auto multiply = internals::binary_operation_modifier2(
       []<typename FirstOperandType, typename SecondOperandType>(
           const FirstOperandType& a, const SecondOperandType& b)
-          -> tfel::math::result_type<FirstOperandType,
+          -> tfel::math::BinaryOperationResult<FirstOperandType,
                                      SecondOperandType,
                                      tfel::math::OpMult>  //
-      requires(compile_time_size<tfel::math::result_type<FirstOperandType,
+      requires(compile_time_size<tfel::math::BinaryOperationResult<FirstOperandType,
                                                          SecondOperandType,
                                                          tfel::math::OpMult>> !=
                dynamic_extent) { return a * b; });
@@ -256,10 +261,10 @@ namespace mgis::function {
   inline constexpr auto divide = internals::binary_operation_modifier2(
       []<typename FirstOperandType, typename SecondOperandType>(
           const FirstOperandType& a, const SecondOperandType& b)
-          -> tfel::math::result_type<FirstOperandType,
+          -> tfel::math::BinaryOperationResult<FirstOperandType,
                                      SecondOperandType,
                                      tfel::math::OpDiv>  //
-      requires(compile_time_size<tfel::math::result_type<FirstOperandType,
+      requires(compile_time_size<tfel::math::BinaryOperationResult<FirstOperandType,
                                                          SecondOperandType,
                                                          tfel::math::OpDiv>> !=
                dynamic_extent) { return a / b; });
@@ -267,11 +272,11 @@ namespace mgis::function {
   inline constexpr auto inner_product = internals::binary_operation_modifier2(
       []<typename FirstOperandType, typename SecondOperandType>(
           const FirstOperandType& a, const SecondOperandType& b)
-          -> tfel::math::result_type<FirstOperandType,
+          -> tfel::math::BinaryOperationResult<FirstOperandType,
                                      SecondOperandType,
                                      tfel::math::OpDotProduct>  //
       requires(compile_time_size<
-                   tfel::math::result_type<FirstOperandType,
+                   tfel::math::BinaryOperationResult<FirstOperandType,
                                            SecondOperandType,
                                            tfel::math::OpDotProduct>> !=
                dynamic_extent) { return a | b; });

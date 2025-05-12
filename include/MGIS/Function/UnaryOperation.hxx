@@ -27,9 +27,9 @@ namespace mgis::function {
     template <typename CallableType, EvaluatorConcept EvaluatorType>
     struct UnaryOperationBase {
       static constexpr size_type getNumberOfComponents() noexcept {
-        using result_type =
+        using BinaryOperationResult =
             std::invoke_result_t<CallableType, evaluator_result<EvaluatorType>>;
-        return compile_time_size<result_type>;
+        return compile_time_size<BinaryOperationResult>;
       }
       static_assert(getNumberOfComponents() != dynamic_extent);
     };
@@ -87,7 +87,7 @@ namespace mgis::function {
     template <typename CallableType>
     struct unary_operation_modifier {
       //
-      unary_operation_modifier(CallableType&&);
+      unary_operation_modifier(const CallableType&);
       //
       template <typename EvaluatorType>
       auto operator()(EvaluatorType&&) const
@@ -114,6 +114,9 @@ namespace mgis::function {
   }  // namespace internals
 
   template <typename CallableType>
+  auto unary_operation(CallableType&&);
+
+  template <typename CallableType>
   auto transform(CallableType&&);
 
 }  // end of namespace mgis::function
@@ -126,20 +129,22 @@ namespace mgis::function {
 
   inline constexpr auto negate = internals::unary_operation_modifier2(
       []<typename OperandType>(const OperandType& a)
-          -> tfel::math::unary_result_type<OperandType, tfel::math::OpNeg>  //
+          -> tfel::math::UnaryOperationResult<OperandType,
+                                                     tfel::math::OpNeg>  //
       requires(
           compile_time_size<
-              tfel::math::unary_result_type<OperandType, tfel::math::OpNeg>> !=
+              tfel::math::UnaryOperationResult<OperandType,
+                                                      tfel::math::OpNeg>> !=
           dynamic_extent) {  //
         return -a;
       });
 
   inline auto multiply_by_scalar(const real s) {
     auto c = [b = s]<typename FirstOperandType>(const FirstOperandType& a)
-        -> tfel::math::result_type<FirstOperandType, real,
-                                   tfel::math::OpMult>  //
-    requires(compile_time_size<tfel::math::result_type<FirstOperandType, real,
-                                                       tfel::math::OpMult>> !=
+        -> tfel::math::BinaryOperationResult<FirstOperandType, real,
+                                             tfel::math::OpMult>  //
+    requires(compile_time_size<tfel::math::BinaryOperationResult<
+                 FirstOperandType, real, tfel::math::OpMult>> !=
              dynamic_extent) {
       return a * b;
     };
@@ -148,10 +153,10 @@ namespace mgis::function {
 
   inline auto divide_by_scalar(const real s) {
     auto c = [b = s]<typename FirstOperandType>(const FirstOperandType& a)
-        -> tfel::math::result_type<FirstOperandType, real,
-                                   tfel::math::OpDiv>  //
-    requires(compile_time_size<tfel::math::result_type<FirstOperandType, real,
-                                                       tfel::math::OpDiv>> !=
+        -> tfel::math::BinaryOperationResult<FirstOperandType, real,
+                                             tfel::math::OpDiv>  //
+    requires(compile_time_size<tfel::math::BinaryOperationResult<
+                 FirstOperandType, real, tfel::math::OpDiv>> !=
              dynamic_extent) {
       return a / b;
     };

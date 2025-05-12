@@ -18,6 +18,10 @@
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/t2tot2.hxx"
+#include "TFEL/Math/t2tost2.hxx"
+#include "TFEL/Math/st2tot2.hxx"
+#include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Math/Array/View.hxx"
 #include "MGIS/Function/CompileTimeSize.hxx"
 
@@ -47,11 +51,44 @@ namespace mgis::function::internals {
       struct CompileTimeSize<tfel::math::stensor<N, real>> {
     static constexpr size_type value = tfel::math::StensorDimeToSize<N>::value;
   };
+
   //! \brief partial specialization for tensors
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //
       struct CompileTimeSize<tfel::math::tensor<N, real>> {
     static constexpr size_type value = tfel::math::TensorDimeToSize<N>::value;
+  };
+
+  //! \brief partial specialization for fourth order tensors
+  template <unsigned short N>
+  requires((N == 1) || (N == 2) || (N == 3))  //
+      struct CompileTimeSize<tfel::math::t2tot2<N, real>> {
+    static constexpr size_type value = tfel::math::TensorDimeToSize<N>::value *
+                                       tfel::math::TensorDimeToSize<N>::value;
+  };
+
+  //! \brief partial specialization for fourth order tensors
+  template <unsigned short N>
+  requires((N == 1) || (N == 2) || (N == 3))  //
+      struct CompileTimeSize<tfel::math::t2tost2<N, real>> {
+    static constexpr size_type value = tfel::math::TensorDimeToSize<N>::value *
+                                       tfel::math::StensorDimeToSize<N>::value;
+  };
+
+  //! \brief partial specialization for fourth order tensors
+  template <unsigned short N>
+  requires((N == 1) || (N == 2) || (N == 3))  //
+      struct CompileTimeSize<tfel::math::st2tot2<N, real>> {
+    static constexpr size_type value = tfel::math::StensorDimeToSize<N>::value *
+                                       tfel::math::TensorDimeToSize<N>::value;
+  };
+
+  //! \brief partial specialization for fourth order tensors
+  template <unsigned short N>
+  requires((N == 1) || (N == 2) || (N == 3))  //
+      struct CompileTimeSize<tfel::math::st2tost2<N, real>> {
+    static constexpr size_type value = tfel::math::StensorDimeToSize<N>::value *
+                                       tfel::math::StensorDimeToSize<N>::value;
   };
 
   //! \brief partial specialization for mutable and immutable views
@@ -78,6 +115,22 @@ namespace mgis::function::internals {
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //
   struct IsTensorialObject<tfel::math::tensor<N, real>> : std::true_type {};
+
+  template <unsigned short N>
+  requires((N == 1) || (N == 2) || (N == 3))  //
+  struct IsTensorialObject<tfel::math::t2tot2<N, real>> : std::true_type {};
+
+  template <unsigned short N>
+  requires((N == 1) || (N == 2) || (N == 3))  //
+  struct IsTensorialObject<tfel::math::t2tost2<N, real>> : std::true_type {};
+
+  template <unsigned short N>
+  requires((N == 1) || (N == 2) || (N == 3))  //
+  struct IsTensorialObject<tfel::math::st2tot2<N, real>> : std::true_type {};
+
+  template <unsigned short N>
+  requires((N == 1) || (N == 2) || (N == 3))  //
+  struct IsTensorialObject<tfel::math::st2tost2<N, real>> : std::true_type {};
 
 }  // namespace mgis::function::internals
 

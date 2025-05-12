@@ -34,8 +34,8 @@ namespace mgis::function {
 
     template <typename CallableType>
     unary_operation_modifier<CallableType>::unary_operation_modifier(
-        CallableType&& c)
-        : modifier(std::forward<CallableType>(c)) {}
+        const CallableType& c)
+        : modifier(c) {}
 
     template <typename CallableType>
     template <typename EvaluatorType>
@@ -64,6 +64,12 @@ namespace mgis::function {
     }  // end of unary_operation_modifier2
 
   }  // namespace internals
+
+  template <typename CallableType>
+  auto unary_operation(CallableType&& c) {
+    return internals::unary_operation_modifier<std::decay_t<CallableType>>(
+        std::forward<CallableType>(c));
+  }  // end of unary_operation
 
   template <typename CallableType>
   auto transform(CallableType&& c) {

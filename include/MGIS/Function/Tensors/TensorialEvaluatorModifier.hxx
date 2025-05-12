@@ -95,6 +95,6 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#include "MGIS/Function/TensorialEvaluatorModifier.ixx"
+#include "MGIS/Function/Tensors/TensorialEvaluatorModifier.ixx"
 
 #endif /* LIB_MGIS_FUNCTION_TENSORIALEVALUATORMODIFIER_HXX */

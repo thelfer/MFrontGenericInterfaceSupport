@@ -237,7 +237,7 @@ namespace mgis::function {
 
 #ifdef MGIS_HAVE_TFEL
 #include "MGIS/Function/Tensors/TensorialObject.hxx"
-#include "MGIS/Function/TensorialEvaluatorModifier.hxx"
+#include "MGIS/Function/Tensors/TensorialEvaluatorModifier.hxx"
 #endif /* MGIS_HAVE_TFEL */
 
 #endif /* LIB_MGIS_FUNCTION_EVALUATOR_HXX */

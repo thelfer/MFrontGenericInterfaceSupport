@@ -88,9 +88,8 @@ namespace mgis::function {
 
     template <typename CallableType>
     binary_operation_modifier<CallableType>::binary_operation_modifier(
-        CallableType&& c)
-        : modifier(std::forward<CallableType>(c)) {
-    }  // end of binary_operation_modifier
+        const CallableType& c)
+        : modifier(c) {}  // end of binary_operation_modifier
 
     template <typename CallableType>
     template <typename SecondEvaluatorType>
@@ -152,6 +151,35 @@ namespace mgis::function {
     }  // end of binary_operation_modifier2
 
   }  // namespace internals
+
+  template <typename CallableType, typename SecondEvaluatorType>
+  auto binary_operation(CallableType&& c,
+                        SecondEvaluatorType&& e2)  //
+      requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>){
+    auto modifier =
+        internals::binary_operation_modifier<std::decay_t<CallableType>>(
+            std::forward<CallableType>(c));
+    return modifier(std::forward<SecondEvaluatorType>(e2));
+  }
+
+  template <typename CallableType,
+            typename FirstEvaluatorType,
+            typename SecondEvaluatorType>
+  auto binary_operation(CallableType&& c,
+                        FirstEvaluatorType&& e1,
+                        SecondEvaluatorType&& e2)                       //
+      requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&   //
+               (EvaluatorConcept<std::decay_t<SecondEvaluatorType>>)&&  //
+               (std::invocable<
+                   std::decay_t<CallableType>,
+                   evaluator_result<std::decay_t<FirstEvaluatorType>>,
+                   evaluator_result<std::decay_t<SecondEvaluatorType>>>)){
+    auto modifier =
+        internals::binary_operation_modifier<std::decay_t<CallableType>>(
+            std::forward<CallableType>(c));
+    return modifier(std::forward<SecondEvaluatorType>(e1),
+                    std::forward<SecondEvaluatorType>(e2));
+  } // end of binary_operation
 
 }  // end of namespace mgis::function
 
