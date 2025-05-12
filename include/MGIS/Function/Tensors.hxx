@@ -57,6 +57,19 @@ namespace mgis::function{
             return tfel::math::change_basis(pk1, transpose(R));
           });
 
+  template <tfel::math::stensor_common::EigenSolver esolver =
+                tfel::math::stensor_common::TFELEIGENSOLVER>
+  inline constexpr auto logarithmic_strain =
+      internals::transform_modifier2([](const tfel::math::TensorConcept auto& F) {
+        using namespace tfel::math;
+        constexpr auto N = getSpaceDimension<decltype(F)>();
+        const auto e = computeGreenLagrangeTensor(F);
+        const auto [vp, m] = e.template computeEigenVectors<esolver>();
+        const auto log_vp =
+            map([](const real x) { return std::log1p(2 * x) / 2; }, vp);
+        return stensor<N, real>::computeIsotropicFunction(e, m);
+      });
+
 } // end of namespace mgis::function
 
 #endif MGIS_HAVE_TFEL
