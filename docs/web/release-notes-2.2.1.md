@@ -1,7 +1,7 @@
 ---
-title: MFrontGenericInterfaceSupport Version 3.0.1
+title: MFrontGenericInterfaceSupport Version 2.1
 author: Thomas Helfer
-date: 2024
+date: 2025
 lang: en-EN
 numbersections: true
 documentclass: article
@@ -18,13 +18,8 @@ eqnPrefixTemplate: "($$i$$)"
 bibliography: bibliography.bib
 ---
 
-The page describes the new functionalities of Version 3.0.1 of the
-`MFrontGenericInterfaceSupport` project.
+The page describes the new functionalities of Version 2.2.1 of the
+`MFrontGenericInterfaceSupport` project. This version is meant to
+be used with `TFEL` version 4.2.3.
 
 This version was released on May 12, 2025.
-
-# Issues fixed
-
-## [python bindings] Backport support of `pybind11` onto 3.0.x branch
-
-For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/145>
