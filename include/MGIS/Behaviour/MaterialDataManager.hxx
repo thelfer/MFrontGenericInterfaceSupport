@@ -212,8 +212,17 @@ namespace mgis::behaviour {
     MaterialStateManager s1;
     //! \brief view of the stiffness matrices, if required.
     std::span<real> K;
-    //! \brief proposed time step increment increase factor
-    real rdt;
+    /*!
+     * \brief proposed time step increment increase factor
+     *
+     * The calling solver shall set a suitable value on input
+     * depending on its policy **before** each call to integrate.
+     *
+     * For instance, if the solver want to limit the increase to 20% at most, it
+     * shall set it to 1.2. But setting it to 1, the solver won't allow the
+     * behaviour to request an increase of the time step.
+     */
+    real rdt = 1;
     //! \brief view on the speed of sound.
     std::span<real> speed_of_sound;
     //! \brief number of integration points

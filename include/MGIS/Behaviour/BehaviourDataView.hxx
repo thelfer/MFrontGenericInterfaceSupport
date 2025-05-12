@@ -98,7 +98,16 @@ struct mgis_bv_BehaviourDataView {
    *   stress with respect to the deformation gradient is returned
    */
   mgis_real* K;
-  //! \brief proposed time step increment increase factor
+  /*!
+   * \brief proposed time step increment increase factor
+   *
+   * The calling solver shall set a suitable value on input
+   * depending on its policy befor each call to integrate.
+   *
+   * For instance, if the solver want to limit the increase to 20% at most, it
+   * shall set it to 1.2. But setting it to 1, the solver won't allow the
+   * behaviour to request an increase of the time step.
+   */
   mgis_real* rdt;
   //! \brief speed of sound (only computed if requested)
   mgis_real* speed_of_sound;
