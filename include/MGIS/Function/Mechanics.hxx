@@ -1,31 +1,29 @@
 /*!
- * \file   MGIS/Function/MechanicalEvaluators.hxx
+ * \file   MGIS/Function/Mechanics.hxx
  * \brief
  * \author Thomas Helfer
  * \date   02/05/2025
  */
 
-#ifndef LIB_MGIS_FUNCTION_MECHANICALEVALUATORS_HXX
-#define LIB_MGIS_FUNCTION_MECHANICALEVALUATORS_HXX
+#ifndef LIB_MGIS_FUNCTION_MECHANICS_HXX
+#define LIB_MGIS_FUNCTION_MECHANICS_HXX
 
 #include "MGIS/Function/Evaluator.hxx"
-#include "MGIS/Function/TransformEvaluatorModifier.hxx"
-#include "MGIS/Function/BinaryOperationEvaluator.hxx"
 #include "MGIS/Function/Tensors.hxx"
 
 #ifdef MGIS_HAVE_TFEL
 
 #include "MGIS/Function/Tensors/TensorialObject.hxx"
 
-namespace mgis::function{
+namespace mgis::function {
 
   inline constexpr auto hydrostatic_stress =
-      internals::transform_modifier2(
+      internals::unary_operation_modifier2(
           [](const tfel::math::StensorConcept auto& s) {
             return tfel::math::trace(s) / 3;
           });
 
-  inline constexpr auto vmis = internals::transform_modifier2(
+  inline constexpr auto vmis = internals::unary_operation_modifier2(
       [](const tfel::math::StensorConcept auto& s) {
         return tfel::math::sigmaeq(s);
       });
@@ -42,8 +40,8 @@ namespace mgis::function{
                 pk1, F);
           });
 
-} // end of namespace mgis::function
+}  // end of namespace mgis::function
 
 #endif MGIS_HAVE_TFEL
 
-#endif /* LIB_MGIS_FUNCTION_MECHANICALEVALUATORS_HXX */
+#endif /* LIB_MGIS_FUNCTION_MECHANICS_HXX */

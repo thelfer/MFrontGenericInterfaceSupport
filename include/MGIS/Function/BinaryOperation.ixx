@@ -1,35 +1,35 @@
 /*!
- * \file   MGIS/Function/BinaryOperationEvaluator.ixx
- * \brief    
+ * \file   MGIS/Function/BinaryOperation.ixx
+ * \brief
  * \author Thomas Helfer
  * \date   11/05/2025
  */
 
-#ifndef LIB_MGIS_FUNCTION_BINARYOPERATIONEVALUATOR_IXX
-#define LIB_MGIS_FUNCTION_BINARYOPERATIONEVALUATOR_IXX
+#ifndef LIB_MGIS_FUNCTION_BINARYOPERATION_IXX
+#define LIB_MGIS_FUNCTION_BINARYOPERATION_IXX
 
 namespace mgis::function {
 
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
-  BinaryOperationEvaluatorModifier<CallableType,
-                                   FirstEvaluatorType,
-                                   SecondEvaluatorType>::
-      BinaryOperationEvaluatorModifier(const CallableType& c,
-                                       const FirstEvaluatorType& e1,
-                                       const SecondEvaluatorType& e2)
-      : BinaryOperationEvaluatorBase<BinaryOperationEvaluatorModifier,
+  BinaryOperationModifier<CallableType,
+                          FirstEvaluatorType,
+                          SecondEvaluatorType>::
+      BinaryOperationModifier(const CallableType& c,
+                              const FirstEvaluatorType& e1,
+                              const SecondEvaluatorType& e2)
+      : BinaryOperationEvaluatorBase<BinaryOperationModifier,
                                      FirstEvaluatorType,
                                      SecondEvaluatorType>(e1, e2),
-        modifier(c) {}  // end of BinaryOperationEvaluatorModifier
+        modifier(c) {}  // end of BinaryOperationModifier
 
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
-  auto BinaryOperationEvaluatorModifier<CallableType,
-                                        FirstEvaluatorType,
-                                        SecondEvaluatorType>::
+  auto BinaryOperationModifier<CallableType,
+                               FirstEvaluatorType,
+                               SecondEvaluatorType>::
       apply(const evaluator_result<FirstEvaluatorType>& v1,
             const evaluator_result<SecondEvaluatorType>& v2) const {
     return this->modifier(v1, v2);
@@ -38,14 +38,14 @@ namespace mgis::function {
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
-  auto BinaryOperationEvaluatorModifier2<CallableType,
-                                         FirstEvaluatorType,
-                                         SecondEvaluatorType>::
+  auto BinaryOperationModifier2<CallableType,
+                                FirstEvaluatorType,
+                                SecondEvaluatorType>::
       apply(const evaluator_result<FirstEvaluatorType>& v1,
             const evaluator_result<SecondEvaluatorType>& v2) const {
     auto c = CallableType{};
     return c(v1, v2);
-  } // end of apply
+  }  // end of apply
 
   namespace internals {
 
@@ -63,7 +63,7 @@ namespace mgis::function {
             std::invocable<CallableType,
                            evaluator_result<std::decay_t<FirstEvaluatorType>>,
                            evaluator_result<SecondEvaluatorType>>)) {
-      return BinaryOperationEvaluatorModifier(
+      return BinaryOperationModifier(
           this->modifier, std::forward<FirstEvaluatorType>(e1), this->e2);
     }  // end of operator()
 
@@ -81,7 +81,7 @@ namespace mgis::function {
             (std::invocable<CallableType,
                             evaluator_result<std::decay_t<FirstEvaluatorType>>,
                             evaluator_result<SecondEvaluatorType>>)) {
-      return BinaryOperationEvaluatorModifier2<
+      return BinaryOperationModifier2<
           CallableType, std::decay_t<FirstEvaluatorType>, SecondEvaluatorType>(
           std::forward<FirstEvaluatorType>(e1), this->e2);
     }  // end of operator()
@@ -112,47 +112,47 @@ namespace mgis::function {
                      CallableType,
                      evaluator_result<std::decay_t<FirstEvaluatorType>>,
                      evaluator_result<std::decay_t<SecondEvaluatorType>>>)) {
-      return BinaryOperationEvaluatorModifier<
-          CallableType, std::decay_t<FirstEvaluatorType>,
-          std::decay_t<SecondEvaluatorType>>(
+      return BinaryOperationModifier<CallableType,
+                                     std::decay_t<FirstEvaluatorType>,
+                                     std::decay_t<SecondEvaluatorType>>(
           this->modifier, std::forward<FirstEvaluatorType>(e1),
           std::forward<SecondEvaluatorType>(e2));
-      }  // end of operator()
+    }  // end of operator()
 
-      template <typename CallableType>
-      template <typename SecondEvaluatorType>
-      auto binary_operation_modifier2_impl<CallableType>::operator()(
-          SecondEvaluatorType&& e2) const
-          requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>) {
-        return BinaryOperatorCurrying2<CallableType,
-                                       std::decay_t<SecondEvaluatorType>>(
-            std::forward<SecondEvaluatorType>(e2));
-      }  // end of operator()
+    template <typename CallableType>
+    template <typename SecondEvaluatorType>
+    auto binary_operation_modifier2_impl<CallableType>::operator()(
+        SecondEvaluatorType&& e2) const
+        requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>) {
+      return BinaryOperatorCurrying2<CallableType,
+                                     std::decay_t<SecondEvaluatorType>>(
+          std::forward<SecondEvaluatorType>(e2));
+    }  // end of operator()
 
-      template <typename CallableType>
-      template <typename FirstEvaluatorType, typename SecondEvaluatorType>
-      auto binary_operation_modifier2_impl<CallableType>::operator()(
-          FirstEvaluatorType&& e1, SecondEvaluatorType&& e2) const
-          requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&   //
-                   (EvaluatorConcept<std::decay_t<SecondEvaluatorType>>)&&  //
-                   (std::invocable<
-                       CallableType,
-                       evaluator_result<std::decay_t<FirstEvaluatorType>>,
-                       evaluator_result<std::decay_t<SecondEvaluatorType>>>)) {
-        return BinaryOperationEvaluatorModifier2<
-            CallableType, std::decay_t<FirstEvaluatorType>,
-            std::decay_t<SecondEvaluatorType>>(
-            std::forward<FirstEvaluatorType>(e1),
-            std::forward<SecondEvaluatorType>(e2));
-      }  // end of operator()
+    template <typename CallableType>
+    template <typename FirstEvaluatorType, typename SecondEvaluatorType>
+    auto binary_operation_modifier2_impl<CallableType>::operator()(
+        FirstEvaluatorType&& e1, SecondEvaluatorType&& e2) const
+        requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&   //
+                 (EvaluatorConcept<std::decay_t<SecondEvaluatorType>>)&&  //
+                 (std::invocable<
+                     CallableType,
+                     evaluator_result<std::decay_t<FirstEvaluatorType>>,
+                     evaluator_result<std::decay_t<SecondEvaluatorType>>>)) {
+      return BinaryOperationModifier2<CallableType,
+                                      std::decay_t<FirstEvaluatorType>,
+                                      std::decay_t<SecondEvaluatorType>>(
+          std::forward<FirstEvaluatorType>(e1),
+          std::forward<SecondEvaluatorType>(e2));
+    }  // end of operator()
 
-      template <typename CallableType>
-      constexpr auto binary_operation_modifier2(CallableType) {
-        return binary_operation_modifier2_impl<CallableType>{};
-      }  // end of binary_operation_modifier2
+    template <typename CallableType>
+    constexpr auto binary_operation_modifier2(CallableType) {
+      return binary_operation_modifier2_impl<CallableType>{};
+    }  // end of binary_operation_modifier2
 
-    }  // namespace internals
+  }  // namespace internals
 
 }  // end of namespace mgis::function
 
-#endif /* LIB_MGIS_FUNCTION_BINARYOPERATIONEVALUATOR_IXX */
+#endif /* LIB_MGIS_FUNCTION_BINARYOPERATION_IXX */

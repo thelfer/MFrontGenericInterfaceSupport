@@ -8,7 +8,6 @@
 #include "MGIS/Function/BasicLinearSpace.hxx"
 #include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/FixedSizeEvaluator.hxx"
-#include "MGIS/Function/TransformEvaluatorModifier.hxx"
 
 namespace mgis::function {
 

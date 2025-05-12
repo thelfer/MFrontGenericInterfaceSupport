@@ -1,13 +1,13 @@
 /*!
- * \file   MGIS/Function/TransformEvaluatorModifier.hxx
- * \brief  This file declares the TransformEvaluatorModifier class and the
+ * \file   MGIS/Function/UnaryOperation.hxx
+ * \brief  This file declares the UnaryOperation class and the
  * transform function
  * \author Thomas Helfer
  * \date   09/05/2025
  */
 
-#ifndef LIB_MGIS_FUNCTION_TRANSFORMEVALUATORMODIFIER_HXX
-#define LIB_MGIS_FUNCTION_TRANSFORMEVALUATORMODIFIER_HXX
+#ifndef LIB_MGIS_FUNCTION_UNARYOPERATION_HXX
+#define LIB_MGIS_FUNCTION_UNARYOPERATION_HXX
 
 #include <span>
 #include <type_traits>
@@ -25,7 +25,7 @@ namespace mgis::function {
   namespace internals {
 
     template <typename CallableType, EvaluatorConcept EvaluatorType>
-    struct TransformEvaluatorModifierBase {
+    struct UnaryOperationBase {
       static constexpr size_type getNumberOfComponents() noexcept {
         using result_type =
             std::invoke_result_t<CallableType, evaluator_result<EvaluatorType>>;
@@ -45,17 +45,16 @@ namespace mgis::function {
   requires((std::is_copy_constructible_v<CallableType>)&&(
       std::invocable<CallableType,
                      evaluator_result<EvaluatorType>>))  //
-      struct TransformEvaluatorModifier
-      : EvaluatorModifierBase<
-            TransformEvaluatorModifier<CallableType, EvaluatorType>,
-            EvaluatorType>,
-        internals::TransformEvaluatorModifierBase<CallableType, EvaluatorType> {
+      struct UnaryOperation
+      : EvaluatorModifierBase<UnaryOperation<CallableType, EvaluatorType>,
+                              EvaluatorType>,
+        internals::UnaryOperationBase<CallableType, EvaluatorType> {
     /*!
      * \brief constructor
      * \param[in] c: callable type
      * \param[in] e: modified evaluator
      */
-    TransformEvaluatorModifier(const CallableType&, const EvaluatorType&);
+    UnaryOperation(const CallableType&, const EvaluatorType&);
     //! \brief apply the modifier
     auto apply(const evaluator_result<EvaluatorType>&) const;
 
@@ -72,13 +71,12 @@ namespace mgis::function {
   requires((std::is_trivially_default_constructible_v<CallableType>)&&(
       std::invocable<CallableType,
                      evaluator_result<EvaluatorType>>))  //
-      struct TransformEvaluatorModifier2
-      : EvaluatorModifierBase<
-            TransformEvaluatorModifier2<CallableType, EvaluatorType>,
-            EvaluatorType>,
-        internals::TransformEvaluatorModifierBase<CallableType, EvaluatorType> {
+      struct UnaryOperation2
+      : EvaluatorModifierBase<UnaryOperation2<CallableType, EvaluatorType>,
+                              EvaluatorType>,
+        internals::UnaryOperationBase<CallableType, EvaluatorType> {
     // inheriting constructor
-    using EvaluatorModifierBase<TransformEvaluatorModifier2,
+    using EvaluatorModifierBase<UnaryOperation2,
                                 EvaluatorType>::EvaluatorModifierBase;
     //! \brief apply the modifier
     auto apply(const evaluator_result<EvaluatorType>&) const;
@@ -87,9 +85,9 @@ namespace mgis::function {
   namespace internals {
 
     template <typename CallableType>
-    struct transform_modifier {
+    struct unary_operation_modifier {
       //
-      transform_modifier(CallableType&&);
+      unary_operation_modifier(CallableType&&);
       //
       template <typename EvaluatorType>
       auto operator()(EvaluatorType&&) const
@@ -102,7 +100,7 @@ namespace mgis::function {
     };
 
     template <typename CallableType>
-    struct transform_modifier2_impl {
+    struct unary_operation_modifier2_impl {
       template <typename EvaluatorType>
       auto operator()(EvaluatorType&&) const
           requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
@@ -111,7 +109,7 @@ namespace mgis::function {
     };
 
     template <typename CallableType>
-    constexpr auto transform_modifier2(CallableType);
+    constexpr auto unary_operation_modifier2(CallableType);
 
   }  // namespace internals
 
@@ -120,13 +118,13 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#include "MGIS/Function/TransformEvaluatorModifier.ixx"
+#include "MGIS/Function/UnaryOperation.ixx"
 
 #ifdef MGIS_HAVE_TFEL
 
 namespace mgis::function {
 
-  inline constexpr auto negate = internals::transform_modifier2(
+  inline constexpr auto negate = internals::unary_operation_modifier2(
       []<typename OperandType>(const OperandType& a)
           -> tfel::math::unary_result_type<OperandType, tfel::math::OpNeg>  //
       requires(
@@ -145,7 +143,7 @@ namespace mgis::function {
              dynamic_extent) {
       return a * b;
     };
-    return internals::transform_modifier(c);
+    return internals::unary_operation_modifier(c);
   }
 
   inline auto divide_by_scalar(const real s) {
@@ -157,11 +155,11 @@ namespace mgis::function {
              dynamic_extent) {
       return a / b;
     };
-    return internals::transform_modifier(c);
-  } // end of divide_by_scalar
+    return internals::unary_operation_modifier(c);
+  }  // end of divide_by_scalar
 
 }  // end of namespace mgis::function
 
 #endif /* MGIS_HAVE_TFEL */
 
-#endif /* LIB_MGIS_FUNCTION_TRANSFORMEVALUATORMODIFIER_HXX */
+#endif /* LIB_MGIS_FUNCTION_UNARYOPERATION_HXX */
