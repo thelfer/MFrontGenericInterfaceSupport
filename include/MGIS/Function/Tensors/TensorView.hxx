@@ -1,31 +1,34 @@
 /*!
- * \file   MGIS/Function/FixedSizeView.hxx
- * \brief
+ * \file   MGIS/Function/TensorView.hxx
+ * \brief  This file declares the TensorView class and the
+ * transform function, as well as the as_fsarray, as_tvector,
+ * as_tmatrix, as_stensor and as_tensor modifiers.
  * \author Thomas Helfer
- * \date   07/05/2025
+ * \date   09/05/2025
  */
 
-#ifndef LIB_MGIS_FUNCTION_FIXEDSIZEVIEW_HXX
-#define LIB_MGIS_FUNCTION_FIXEDSIZEVIEW_HXX
+#ifndef LIB_MGIS_FUNCTION_TENSORVIEW_HXX
+#define LIB_MGIS_FUNCTION_TENSORVIEW_HXX
 
-#include "MGIS/Function/Space.hxx"
-#include "MGIS/Function/Evaluator.hxx"
+#include <span>
 #include "MGIS/Function/Function.hxx"
+#include "MGIS/Function/Tensors/TensorConcept.hxx"
 
 namespace mgis::function {
 
   /*!
-   * \brief an evaluator returning the values of a
+   * \brief an evaluator returning the values of an immutable
    * function view as a fixed size span or a scalar
    *
    * \tparam Space: functional space
-   * \tparam N: size of the returned value
+   * \tparam TensorType: type of the tensor
+   * \tparam is_mutable: boolean stating if the call operators can return
+   * mutable values
    */
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable = false>
-  requires(N > 0) struct FixedSizeView {
-    //! \brief value returned by non-const call operator
-    using mutable_value_type =
-        std::conditional_t<N == 1, real&, std::span<real, N>>;
+  template <FunctionalSpaceConcept Space,
+            TensorConcept TensorType,
+            bool is_mutable = false>
+  struct TensorView {
     /*!
      * \brief method checking that the precondition of the constructor are met.
      * \param[in] values: function
@@ -36,7 +39,7 @@ namespace mgis::function {
      * \brief constructor
      * \param[in] values: function
      */
-    FixedSizeView(const FunctionView<Space, {}, is_mutable>&);
+    TensorView(const FunctionView<Space, {}, is_mutable>&);
     //! \brief perform consistency checks
     bool check(Context&) const noexcept;
     //! \brief allocate internal workspace
@@ -79,15 +82,14 @@ namespace mgis::function {
      * \brief call operator
      * \param[in] i: integration point index
      */
-    mutable_value_type
-    operator()(const element_index<Space>&) requires(
+    auto operator()(const element_index<Space>&) requires(
         is_mutable&& ElementSpaceConcept<Space> &&
         !(hasElementWorkspace<Space>));
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    mutable_value_type operator()(
+    auto operator()(
         const element_workspace<Space>&,
         const element_index<
             Space>&) requires(is_mutable&& ElementSpaceConcept<Space>&&
@@ -97,7 +99,7 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    mutable_value_type operator()(
+    auto operator()(
         const cell_index<Space>,
         const quadrature_point_index<
             Space>) requires(is_mutable&& QuadratureSpaceConcept<Space> &&
@@ -107,7 +109,7 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    mutable_value_type operator()(
+    auto operator()(
         const cell_workspace<Space>&,
         const cell_index<Space>,
         const quadrature_point_index<
@@ -120,32 +122,10 @@ namespace mgis::function {
                        FunctionView<Space, {}, is_mutable>,
                        const FunctionView<Space, {}, is_mutable>>
         function;
-  };  // end of FixedSizeView
-
-  /*!
-   * \brief convert a function to a immutable view
-   * \param[in] f: function
-   */
-  template <size_type N, FunctionalSpaceConcept Space, bool is_mutable>
-  auto view(const FunctionView<Space, {}, is_mutable>&) requires(N > 0);
-
-  /*!
-   * \brief convert a function to a immutable view
-   * \param[in] f: function
-   */
-  template <size_type N, FunctionalSpaceConcept Space>
-  auto view(const Function<Space, dynamic_extent>&)  //
-      requires((N > 0) && (N != dynamic_extent));
-  /*!
-   * \brief convert a function to a mutable view
-   * \param[in] f: function
-   */
-  template <size_type N, FunctionalSpaceConcept Space>
-  auto view(Function<Space, dynamic_extent>&)  //
-      requires((N > 0) && (N != dynamic_extent));
+  };  // end of TensorView
 
 }  // end of namespace mgis::function
 
-#include "MGIS/Function/FixedSizeView.ixx"
+#include "MGIS/Function/Tensors/TensorView.ixx"
 
-#endif /* LIB_MGIS_FUNCTION_FIXEDSIZEVIEW_HXX */
+#endif /* LIB_MGIS_FUNCTION_TENSORVIEW_HXX */

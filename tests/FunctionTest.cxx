@@ -123,11 +123,11 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     auto values = std::vector<real>{1, 2, 3, 4, 5, 6};
     const auto ok =
         ImmutableFunctionView<BasicLinearSpace,
-                              {.size = 2}>::checkPreconditions(ctx, space,
+                              {.data_size = 2}>::checkPreconditions(ctx, space,
                                                                values, 2);
     TFEL_TESTS_ASSERT(ok);
     auto f =
-        ImmutableFunctionView<BasicLinearSpace, {.size = 2}>(space, values, 2);
+        ImmutableFunctionView<BasicLinearSpace, {.data_size = 2}>(space, values, 2);
     TFEL_TESTS_STATIC_ASSERT(f.getNumberOfComponents() == 2);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 2);
     TFEL_TESTS_ASSERT(std::abs(f.getValues(0)[0] - 1) < eps);
@@ -165,9 +165,11 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     auto space = std::make_shared<BasicLinearSpace>(2);
     auto values = std::vector<real>{1, 2, 3, 4, 5, 6};
     TFEL_TESTS_ASSERT(
-        (ImmutableFunctionView<BasicLinearSpace, {.size = 2, .stride = 3}>::
-             checkPreconditions(ctx, space, values)));
-    auto f = ImmutableFunctionView<BasicLinearSpace, {.size = 2, .stride = 3}>(
+        (ImmutableFunctionView<
+            BasicLinearSpace,
+            {.data_size = 2, .data_stride = 3}>::checkPreconditions(ctx, space,
+                                                                    values)));
+    auto f = ImmutableFunctionView<BasicLinearSpace, {.data_size = 2, .data_stride = 3}>(
         space, values);
     TFEL_TESTS_STATIC_ASSERT(f.getNumberOfComponents() == 2);
     TFEL_TESTS_STATIC_ASSERT(f.getDataStride() == 3);
@@ -363,26 +365,37 @@ struct FunctionTest final : public tfel::tests::TestCase {
       f(1)[1] = 4;
       return f;
     }();
-    TFEL_TESTS_ASSERT(std::abs(f2(0)[0] - 1) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f2(0)[1] - 2) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f2(1)[0] - 3) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f2(1)[1] - 4) < eps);
-    const auto f3 = view<2>(f2);
+    auto f3 = view<2>(f2);
     TFEL_TESTS_ASSERT(f3.check(ctx));
-    //     std::cout << f3(0)[0] << " " << f3(0)[1] << " " << f3(1)[0] << " "
-    //               << f3(1)[1] << std::endl;
     TFEL_TESTS_ASSERT(std::abs(f3(0)[0] - 1) < eps);
     TFEL_TESTS_ASSERT(std::abs(f3(0)[1] - 2) < eps);
     TFEL_TESTS_ASSERT(std::abs(f3(1)[0] - 3) < eps);
     TFEL_TESTS_ASSERT(std::abs(f3(1)[1] - 4) < eps);
-    f2(0)[0] = 4;
-    f2(0)[1] = 5;
-    f2(1)[0] = 6;
-    f2(1)[1] = 7;
-    TFEL_TESTS_ASSERT(std::abs(f3(0)[0] - 4) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f3(0)[1] - 5) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f3(1)[0] - 6) < eps);
-    TFEL_TESTS_ASSERT(std::abs(f3(1)[1] - 7) < eps);
+    // changing f2 value using the view
+    f3(0)[0] = 4;
+    f3(0)[1] = 5;
+    f3(1)[0] = 6;
+    f3(1)[1] = 9;
+    TFEL_TESTS_ASSERT(std::abs(f2(0)[0] - 4) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f2(0)[1] - 5) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f2(1)[0] - 6) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f2(1)[1] - 9) < eps);
+    // scalar case
+    auto f4 = [&space] {
+      auto f = Function<BasicLinearSpace>(space, 1);
+      f(0)[0] = 1;
+      f(1)[0] = 2;
+      return f;
+    }();
+    auto f5 = view<1>(f4);
+    TFEL_TESTS_ASSERT(f5.check(ctx));
+    TFEL_TESTS_ASSERT(std::abs(f5(0) - 1) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f5(1) - 2) < eps);
+    // changing f4 value using the view
+    f5(0) = 4;
+    f5(1) = 5;
+    TFEL_TESTS_ASSERT(std::abs(f4(0)[0] - 4) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f4(1)[0] - 5) < eps);
   }
   void test6() {
     // check that view<N> work with a fixed size function

@@ -47,15 +47,15 @@ namespace mgis::function {
   }  // end of getDataStride
 
   constexpr bool has_dynamic_properties(const DataLayoutDescription& layout) {
-    return (layout.size == dynamic_extent) ||  //
-           (layout.stride == dynamic_extent);
+    return (layout.data_size == dynamic_extent) ||  //
+           (layout.data_stride == dynamic_extent);
   }  // end of has_dynamic_properties
 
   template <DataLayoutDescription layout>
-  requires((layout.size > 0) && (layout.stride > 0)) inline size_type
+  requires((layout.data_size > 0) && (layout.data_stride > 0)) inline size_type
       DataLayout<layout>::getDataOffset(const size_type i) const noexcept {
-    if constexpr (layout.stride != dynamic_extent) {
-      return i * layout.stride;
+    if constexpr (layout.data_stride != dynamic_extent) {
+      return i * layout.data_stride;
     } else {
       return i * (this->getDataStride());
     }
@@ -69,9 +69,9 @@ namespace mgis::function {
       bool FunctionView<Space, layout, is_mutable>::checkPreconditions(
           Context& ctx,
           std::shared_ptr<const Space> s,
-          typename FunctionView::ExternalData v) requires((layout.size !=
+          typename FunctionView::ExternalData v) requires((layout.data_size !=
                                                            dynamic_extent) &&
-                                                          (layout.stride !=
+                                                          (layout.data_stride !=
                                                            dynamic_extent)) {
     if (s.get() == nullptr) {
       return ctx.registerErrorMessage("invalid space");
@@ -81,7 +81,7 @@ namespace mgis::function {
       // this may happen due to partionning in parallel
       return true;
     }
-    return v.size() >= layout.stride * (space_size - 1) + layout.size;
+    return v.size() >= layout.data_stride * (space_size - 1) + layout.data_size;
   }
 
   template <FunctionalSpaceConcept Space,
@@ -91,7 +91,8 @@ namespace mgis::function {
            LinearQuadratureSpaceConcept<Space>)  //
       FunctionView<Space, layout, is_mutable>::FunctionView(
           std::shared_ptr<const Space> s, typename FunctionView::ExternalData v)
-  requires((layout.size != dynamic_extent) && (layout.stride != dynamic_extent))
+  requires((layout.data_size != dynamic_extent) &&
+           (layout.data_stride != dynamic_extent))
       : space(s), values(v) {
     Context ctx;
     if (!checkPreconditions(ctx, s, v)) {
@@ -108,8 +109,10 @@ namespace mgis::function {
           Context& ctx,
           std::shared_ptr<const Space> s,
           FunctionView::ExternalData v,
-          const size_type dsize) requires((layout.size == dynamic_extent) &&
-                                          (layout.stride != dynamic_extent)) {
+          const size_type dsize) requires((layout.data_size ==
+                                           dynamic_extent) &&
+                                          (layout.data_stride !=
+                                           dynamic_extent)) {
     if (s.get() == nullptr) {
       return ctx.registerErrorMessage("invalid space");
     }
@@ -121,7 +124,7 @@ namespace mgis::function {
       // this may happen due to partionning in parallel
       return true;
     }
-    const auto min_size = (layout.stride) * (space_size - 1) + dsize;
+    const auto min_size = (layout.data_stride) * (space_size - 1) + dsize;
     return v.size() >= min_size;
   }  // end of FunctionView
 
@@ -134,7 +137,8 @@ namespace mgis::function {
           std::shared_ptr<const Space> s,
           FunctionView::ExternalData v,
           const size_type dsize)
-  requires((layout.size == dynamic_extent) && (layout.stride != dynamic_extent))
+  requires((layout.data_size == dynamic_extent) &&
+           (layout.data_stride != dynamic_extent))
       : space(s), values(v) {
     Context ctx;
     if (!checkPreconditions(ctx, s, v, dsize)) {
@@ -152,8 +156,10 @@ namespace mgis::function {
           Context& ctx,
           std::shared_ptr<const Space> s,
           FunctionView::ExternalData v,
-          const size_type dstride) requires((layout.size != dynamic_extent) &&
-                                            (layout.stride == dynamic_extent)) {
+          const size_type dstride) requires((layout.data_size !=
+                                             dynamic_extent) &&
+                                            (layout.data_stride ==
+                                             dynamic_extent)) {
     if (s.get() == nullptr) {
       return ctx.registerErrorMessage("invalid space");
     }
@@ -165,7 +171,7 @@ namespace mgis::function {
       // this may happen due to partionning in parallel
       return true;
     }
-    const auto min_size = dstride * (space_size - 1) + layout.size;
+    const auto min_size = dstride * (space_size - 1) + layout.data_size;
     if (v.size() < min_size) {
       return ctx.registerErrorMessage("invalid external data size");
     }
@@ -181,7 +187,8 @@ namespace mgis::function {
           std::shared_ptr<const Space> s,
           FunctionView::ExternalData v,
           const size_type dstride)
-  requires((layout.size != dynamic_extent) && (layout.stride == dynamic_extent))
+  requires((layout.data_size != dynamic_extent) &&
+           (layout.data_stride == dynamic_extent))
       : space(s), values(v) {
     Context ctx;
     if (!checkPreconditions(ctx, s, v, dstride)) {
@@ -200,8 +207,10 @@ namespace mgis::function {
           std::shared_ptr<const Space> s,
           FunctionView::ExternalData v,
           const size_type dsize,
-          const size_type dstride) requires((layout.size == dynamic_extent) &&
-                                            (layout.stride == dynamic_extent)) {
+          const size_type dstride) requires((layout.data_size ==
+                                             dynamic_extent) &&
+                                            (layout.data_stride ==
+                                             dynamic_extent)) {
     if (s.get() == nullptr) {
       return ctx.registerErrorMessage("invalid space");
     }
@@ -236,8 +245,10 @@ namespace mgis::function {
           Context& ctx,
           std::shared_ptr<const Space> s,
           FunctionView::ExternalData v,
-          const size_type dsize) requires((layout.size == dynamic_extent) &&
-                                          (layout.stride == dynamic_extent)) {
+          const size_type dsize) requires((layout.data_size ==
+                                           dynamic_extent) &&
+                                          (layout.data_stride ==
+                                           dynamic_extent)) {
     return checkPreconditions(ctx, s, v, dsize, dsize);
   }  // end of checkPreconditions
 
@@ -251,7 +262,8 @@ namespace mgis::function {
           FunctionView::ExternalData v,
           const size_type dsize,
           const size_type dstride)
-  requires((layout.size == dynamic_extent) && (layout.stride == dynamic_extent))
+  requires((layout.data_size == dynamic_extent) &&
+           (layout.data_stride == dynamic_extent))
       : space(s), values(v) {
     Context ctx;
     if (!checkPreconditions(ctx, s, v, dsize, dstride)) {
@@ -270,7 +282,8 @@ namespace mgis::function {
           std::shared_ptr<const Space> s,
           FunctionView::ExternalData v,
           const size_type dsize)
-  requires((layout.size == dynamic_extent) && (layout.stride == dynamic_extent))
+  requires((layout.data_size == dynamic_extent) &&
+           (layout.data_stride == dynamic_extent))
       : FunctionView(s, v, dsize, dsize) {}  // end of FunctionView
 
   template <FunctionalSpaceConcept Space,
@@ -282,7 +295,8 @@ namespace mgis::function {
           std::shared_ptr<const Space> s,
           FunctionView::ExternalData v,
           const DataLayout<layout>& l)
-  requires((layout.size == dynamic_extent) && (layout.stride == dynamic_extent))
+  requires((layout.data_size == dynamic_extent) &&
+           (layout.data_stride == dynamic_extent))
       : FunctionView(s, v, l.size, l.stride) {}  // end of FunctionView
 
   template <FunctionalSpaceConcept Space,
@@ -294,7 +308,8 @@ namespace mgis::function {
           std::shared_ptr<const Space> s,
           FunctionView::ExternalData v,
           const DataLayout<layout>& l)
-  requires((layout.size != dynamic_extent) && (layout.stride == dynamic_extent))
+  requires((layout.data_size != dynamic_extent) &&
+           (layout.data_stride == dynamic_extent))
       : FunctionView(s, v, l.stride) {}
 
   template <FunctionalSpaceConcept Space,
@@ -306,7 +321,8 @@ namespace mgis::function {
           std::shared_ptr<const Space> s,
           FunctionView::ExternalData v,
           const DataLayout<layout>& l)
-  requires((layout.size == dynamic_extent) && (layout.stride != dynamic_extent))
+  requires((layout.data_size == dynamic_extent) &&
+           (layout.data_stride != dynamic_extent))
       : FunctionView(s, v, l.size) {}  // end of FunctionView
 
   template <FunctionalSpaceConcept Space,
@@ -392,7 +408,7 @@ namespace mgis::function {
            LinearQuadratureSpaceConcept<Space>)  //
       template <size_type N>
       std::span<real, N> FunctionView<Space, layout, is_mutable>::getValues(
-          const size_type o) requires((layout.size == dynamic_extent) &&
+          const size_type o) requires((layout.data_size == dynamic_extent) &&
                                       is_mutable &&
                                       LinearElementSpaceConcept<Space> &&
                                       (!hasElementWorkspace<Space>)) {
@@ -435,7 +451,7 @@ namespace mgis::function {
       template <size_type N>
       std::span<real, N> FunctionView<Space, layout, is_mutable>::getValues(
           const size_type e,
-          const size_type i) requires((layout.size == dynamic_extent) &&
+          const size_type i) requires((layout.data_size == dynamic_extent) &&
                                       is_mutable &&
                                       LinearQuadratureSpaceConcept<Space> &&
                                       (!hasCellWorkspace<Space>)) {
@@ -608,7 +624,7 @@ namespace mgis::function {
       Function<Space, N>::Function(std::shared_ptr<const Space> s)  //
   requires(N != dynamic_extent)
       : FunctionStorage<Space, N>(*s),
-        FunctionView<Space, {.size = N, .stride = N}, true>(
+        FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
             s, this->storage_values) {
     Context ctx;
     if (!checkPreconditions(ctx, s)) {
@@ -639,7 +655,7 @@ namespace mgis::function {
                                    const size_type dsize)  //
   requires(N == dynamic_extent)
       : FunctionStorage<Space, N>(*s, dsize),
-        FunctionView<Space, {.size = N, .stride = N}, true>(
+        FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
             s, this->storage_values, dsize, dsize) {
     Context ctx;
     if (!checkPreconditions(ctx, s, dsize)) {
@@ -653,7 +669,7 @@ namespace mgis::function {
       Function<Space, N>::Function(const Function& f)
   requires(N == dynamic_extent)
       : FunctionStorage<Space, N>(f),
-        FunctionView<Space, {.size = N, .stride = N}, true>(
+        FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
             f.getSpacePointer(),
             this->storage_values,
             f.getNumberOfComponents(),
@@ -665,7 +681,7 @@ namespace mgis::function {
       Function<Space, N>::Function(Function&& f)
   requires(N == dynamic_extent)
       : FunctionStorage<Space, N>(std::forward<FunctionStorage<Space, N>>(f)),
-        FunctionView<Space, {.size = N, .stride = N}, true>(
+        FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
             f.getSpacePointer(),
             this->storage_values,
             f.getNumberOfComponents(),
@@ -677,7 +693,7 @@ namespace mgis::function {
       Function<Space, N>::Function(const Function& f)
   requires(N != dynamic_extent)
       : FunctionStorage<Space, N>(f),
-        FunctionView<Space, {.size = N, .stride = N}, true>(
+        FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
             f.getSpacePointer(), this->storage_values) {}  // end of Function
 
   template <FunctionalSpaceConcept Space, size_type N>
@@ -686,29 +702,31 @@ namespace mgis::function {
       Function<Space, N>::Function(Function&& f)
   requires(N != dynamic_extent)
       : FunctionStorage<Space, N>(std::forward<FunctionStorage<Space, N>>(f)),
-        FunctionView<Space, {.size = N, .stride = N}, true>(
+        FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
             f.getSpacePointer(), this->storage_values) {}  // end of Function
 
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
-      FunctionView<Space, {.size = N, .stride = N}, true> Function<Space,
-                                                                   N>::view() {
+      FunctionView<Space,
+                   {.data_size = N, .data_stride = N},
+                   true> Function<Space, N>::view() {
     return *this;
   }  // end of view
 
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
-      FunctionView<Space, {.size = N, .stride = N}, false> Function<Space,
-                                                                    N>::view()
+      FunctionView<Space,
+                   {.data_size = N, .data_stride = N},
+                   false> Function<Space, N>::view()
   const {
     if constexpr (N == dynamic_extent) {
-      return FunctionView<Space, {.size = N, .stride = N}, false>(
+      return FunctionView<Space, {.data_size = N, .data_stride = N}, false>(
           this->getSpacePointer(), this->storage_values,
           this->getNumberOfComponents(), this->getNumberOfComponents());
     } else {
-      return FunctionView<Space, {.size = N, .stride = N}, false>(
+      return FunctionView<Space, {.data_size = N, .data_stride = N}, false>(
           this->getSpacePointer(), this->storage_values);
     }
   }  // end of view

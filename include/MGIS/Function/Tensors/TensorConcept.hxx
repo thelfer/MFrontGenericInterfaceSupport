@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/Tensors/TensorialObject.hxx
+ * \file   MGIS/Function/Tensors/TensorConcept.hxx
  * \brief
  * \author Thomas Helfer
  * \date   10/05/2025
@@ -9,8 +9,8 @@
 #error "TFEL is required to use tensor evaluators"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_FUNCTION_TENSORIALOBJECT_HXX
-#define LIB_MGIS_FUNCTION_TENSORIALOBJECT_HXX
+#ifndef LIB_MGIS_FUNCTION_TENSORCONCEPT_HXX
+#define LIB_MGIS_FUNCTION_TENSORCONCEPT_HXX
 
 #include <type_traits>
 #include "TFEL/Math/fsarray.hxx"
@@ -97,45 +97,45 @@ namespace mgis::function::internals {
       : CompileTimeSize<std::remove_cv_t<T>> {};
 
   template <typename T>
-  struct IsTensorialObject : std::false_type {};
+  struct IsTensor : std::false_type {};
 
   template <unsigned short N>
-  struct IsTensorialObject<tfel::math::fsarray<N, real>> : std::true_type {};
+  struct IsTensor<tfel::math::fsarray<N, real>> : std::true_type {};
 
   template <unsigned short N>
-  struct IsTensorialObject<tfel::math::tvector<N, real>> : std::true_type {};
+  struct IsTensor<tfel::math::tvector<N, real>> : std::true_type {};
 
   template <unsigned short N, unsigned short M>
-  struct IsTensorialObject<tfel::math::tmatrix<N, M, real>> : std::true_type {};
+  struct IsTensor<tfel::math::tmatrix<N, M, real>> : std::true_type {};
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct IsTensorialObject<tfel::math::stensor<N, real>> : std::true_type {
+      struct IsTensor<tfel::math::stensor<N, real>> : std::true_type {
   };
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct IsTensorialObject<tfel::math::tensor<N, real>> : std::true_type {
+      struct IsTensor<tfel::math::tensor<N, real>> : std::true_type {
   };
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct IsTensorialObject<tfel::math::t2tot2<N, real>> : std::true_type {
+      struct IsTensor<tfel::math::t2tot2<N, real>> : std::true_type {
   };
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct IsTensorialObject<tfel::math::t2tost2<N, real>> : std::true_type {
+      struct IsTensor<tfel::math::t2tost2<N, real>> : std::true_type {
   };
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct IsTensorialObject<tfel::math::st2tot2<N, real>> : std::true_type {
+      struct IsTensor<tfel::math::st2tot2<N, real>> : std::true_type {
   };
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct IsTensorialObject<tfel::math::st2tost2<N, real>> : std::true_type {
+      struct IsTensor<tfel::math::st2tost2<N, real>> : std::true_type {
   };
 
 }  // namespace mgis::function::internals
@@ -143,8 +143,8 @@ namespace mgis::function::internals {
 namespace mgis::function {
 
   template <typename T>
-  concept TensorialObjectConcept = internals::IsTensorialObject<T>::value;
+  concept TensorConcept = internals::IsTensor<T>::value;
 
 }  // end of namespace mgis::function
 
-#endif /* LIB_MGIS_FUNCTION_TENSORIALOBJECT_HXX */
+#endif /* LIB_MGIS_FUNCTION_TENSORCONCEPT_HXX */

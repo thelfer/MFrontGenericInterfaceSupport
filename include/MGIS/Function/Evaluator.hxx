@@ -28,7 +28,7 @@ namespace mgis::function {
     struct EvaluatorResultQueryImplementation1<true, EvaluatorType> {
       using Space =
           std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
-      using type = std::invoke_result_t<EvaluatorType, element_index<Space>>;
+      using type = std::invoke_result_t<const EvaluatorType, element_index<Space>>;
     };
 
     template <bool, typename EvaluatorType>
@@ -41,7 +41,7 @@ namespace mgis::function {
     struct EvaluatorResultQueryImplementation2<true, EvaluatorType> {
       using Space =
           std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
-      using type = std::invoke_result_t<EvaluatorType,
+      using type = std::invoke_result_t<const EvaluatorType,
                                         element_workspace<Space>,
                                         element_index<Space>>;
     };
@@ -56,7 +56,7 @@ namespace mgis::function {
     struct EvaluatorResultQueryImplementation3<true, EvaluatorType> {
       using Space =
           std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
-      using type = std::invoke_result_t<EvaluatorType,
+      using type = std::invoke_result_t<const EvaluatorType,
                                         cell_index<Space>,
                                         quadrature_point_index<Space>>;
     };
@@ -71,7 +71,7 @@ namespace mgis::function {
     struct EvaluatorResultQueryImplementation4<true, EvaluatorType> {
       using Space =
           std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
-      using type = std::invoke_result_t<EvaluatorType,
+      using type = std::invoke_result_t<const EvaluatorType,
                                         cell_workspace<Space>,
                                         cell_index<Space>,
                                         quadrature_point_index<Space>>;
@@ -234,10 +234,5 @@ namespace mgis::function {
 #include "MGIS/Function/Evaluator.ixx"
 #include "MGIS/Function/UnaryOperation.hxx"
 #include "MGIS/Function/BinaryOperation.hxx"
-
-#ifdef MGIS_HAVE_TFEL
-#include "MGIS/Function/Tensors/TensorialObject.hxx"
-#include "MGIS/Function/Tensors/TensorialEvaluatorModifier.hxx"
-#endif /* MGIS_HAVE_TFEL */
 
 #endif /* LIB_MGIS_FUNCTION_EVALUATOR_HXX */

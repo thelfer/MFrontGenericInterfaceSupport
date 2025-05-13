@@ -13,8 +13,6 @@
 
 #ifdef MGIS_HAVE_TFEL
 
-#include "MGIS/Function/Tensors/TensorialObject.hxx"
-
 namespace mgis::function {
 
   inline constexpr auto hydrostatic_stress =

@@ -201,26 +201,27 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(a5(1)[1] + 4) < eps);
   }
   void test5() {
-    //     using namespace mgis;
-    //     using namespace mgis::function;
-    //     constexpr auto eps = real{1e-14};
-    //     Context ctx;
-    //     auto space = std::make_shared<BasicLinearSpace>(1);
-    //     auto values = std::vector<real>{1e-3, 2e-3, -5e-3, 4e-3};
-    //     const auto strain =
-    //         ImmutableFunctionView<BasicLinearSpace>(space, values, 4) |
-    //         as_stensor<2>;
-    //     auto values2 = std::vector<real>{0, 0, 0, 0};
-    //     auto stress = FunctionView<BasicLinearSpace>(space, values2, 4) |
-    //     as_stensor<2>; auto hooke_law = [l = 150e9,
-    //                       m = 75e9](const tfel::math::StensorConcept auto& e)
-    //                       {
-    //       using namespace tfel::math;
-    //       constexpr auto N = getSpaceDimension<decltype(e)>();
-    //       constexpr auto id = stensor<N, real>{};
-    //       return l * tfel::math::trace(e) * id + 2 * m * e;
-    //     };
-    //     assign(stress, strain | transform(hooke_law));
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    Context ctx;
+    auto space = std::make_shared<BasicLinearSpace>(1);
+    auto values = std::vector<real>{1e-3, 2e-3, -5e-3, 4e-3};
+    auto strain =
+        FunctionView<BasicLinearSpace>(space, values, 4) | as_stensor<2>;
+    TFEL_TESTS_ASSERT(strain.check(ctx));
+    strain(0) = 1e-3 * tfel::math::stensor<2, real>::Id();
+    TFEL_TESTS_ASSERT(std::abs(values[0] - 1e-3) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[1] - 1e-3) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[2] - 1e-3) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[3] - 0) < eps);
+    //
+    constexpr auto K = real{150e9};
+    const auto stress = strain | multiply_by_scalar(K);
+    TFEL_TESTS_ASSERT(std::abs(stress(0)[0] - 150e6) < K * eps);
+    TFEL_TESTS_ASSERT(std::abs(stress(0)[1] - 150e6) < K * eps);
+    TFEL_TESTS_ASSERT(std::abs(stress(0)[2] - 150e6) < K * eps);
+    TFEL_TESTS_ASSERT(std::abs(stress(0)[3] - 0) < K * eps);
   }
 };
 

@@ -8,13 +8,88 @@
 #ifndef LIB_MGIS_FUNCTION_TENSORS_HXX
 #define LIB_MGIS_FUNCTION_TENSORS_HXX
 
+#include "MGIS/Function/Function.hxx"
 #include "MGIS/Function/Evaluator.hxx"
 
 #ifdef MGIS_HAVE_TFEL
 
-#include "MGIS/Function/Tensors/TensorialObject.hxx"
+#include "MGIS/Function/Tensors/TensorConcept.hxx"
+#include "MGIS/Function/Tensors/TensorView.hxx"
+#include "MGIS/Function/Tensors/TensorModifier.hxx"
+
+namespace mgis::function::internals {
+
+  template <TensorConcept TensorType>
+  struct tensor_modifier {
+    template <FunctionalSpaceConcept Space,
+              DataLayoutDescription layout,
+              bool is_mutable>
+    auto operator()(const FunctionView<Space, layout, is_mutable>&) const
+        requires(layout.data_size == dynamic_extent
+                     ? true
+                     : compile_time_size<TensorType> == layout.data_size);
+
+    template <FunctionalSpaceConcept Space, size_type N>
+    auto operator()(const Function<Space, N>&) const
+        requires(N == dynamic_extent ? true
+                                     : compile_time_size<TensorType> == N);
+
+    template <FunctionalSpaceConcept Space, size_type N>
+    auto operator()(Function<Space, N>&) const
+        requires(N == dynamic_extent ? true
+                                     : compile_time_size<TensorType> == N);
+
+    template <typename EvaluatorType>
+    auto operator()(EvaluatorType&&) const
+        requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
+            areTensorModifierRequirementsSatisfied<TensorType, EvaluatorType>));
+  };
+
+}  // end of namespace mgis::function::internals
 
 namespace mgis::function {
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable,
+            TensorConcept TensorType>
+  auto operator|(const FunctionView<Space, layout, is_mutable>&,
+                 const internals::tensor_modifier<TensorType>&)  //
+      requires(layout.data_size == dynamic_extent
+                   ? true
+                   : compile_time_size<TensorType> == layout.data_size);
+
+  template <FunctionalSpaceConcept Space, size_type N, TensorConcept TensorType>
+  auto operator|(const Function<Space, N>&,
+                 const internals::tensor_modifier<TensorType>&)  //
+      requires(N == dynamic_extent ? true : compile_time_size<TensorType> == N);
+
+  template <FunctionalSpaceConcept Space, size_type N, TensorConcept TensorType>
+  auto operator|(Function<Space, N>& f,
+                 const internals::tensor_modifier<TensorType>&)  //
+      requires(N == dynamic_extent ? true : compile_time_size<TensorType> == N);
+
+  template <unsigned short N>
+  requires((N == 1) || (N == 2) || (N == 3))  //
+      inline constexpr auto as_stensor =
+          internals::tensor_modifier<tfel::math::stensor<N, real>>{};
+
+  template <unsigned short N>
+  requires((N == 1) || (N == 2) || (N == 3))  //
+      inline constexpr auto as_tensor =
+          internals::tensor_modifier<tfel::math::tensor<N, real>>{};
+
+  template <unsigned short N>
+  inline constexpr auto as_fsarray =
+      internals::tensor_modifier<tfel::math::fsarray<N, real>>{};
+
+  template <unsigned short N>
+  inline constexpr auto as_tvector =
+      internals::tensor_modifier<tfel::math::tvector<N, real>>{};
+
+  template <unsigned short N, unsigned short M>
+  inline constexpr auto as_tmatrix =
+      internals::tensor_modifier<tfel::math::tmatrix<N, M, real>>{};
 
   inline constexpr auto trace = internals::unary_operation_modifier2(
       []<typename TensorType>(const TensorType& t) requires(
@@ -72,5 +147,7 @@ namespace mgis::function {
 }  // end of namespace mgis::function
 
 #endif MGIS_HAVE_TFEL
+
+#include "MGIS/Function/Tensors.ixx"
 
 #endif /* LIB_MGIS_FUNCTION_TENSORS_HXX */
