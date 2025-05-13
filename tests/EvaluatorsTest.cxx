@@ -20,7 +20,7 @@
 #include "MGIS/Function/BasicLinearQuadratureSpace.hxx"
 #include "MGIS/Function/Function.hxx"
 #include "MGIS/Function/Evaluator.hxx"
-#include "MGIS/Function/FixedSizeEvaluator.hxx"
+#include "MGIS/Function/FixedSizeView.hxx"
 #include "MGIS/Function/Tensors.hxx"
 
 struct EvaluatorsTest final : public tfel::tests::TestCase {
@@ -47,7 +47,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     const auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 1);
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 1);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 1);
-    const auto e = FixedSizeEvaluator<BasicLinearSpace, 1>(f);
+    const auto e = FixedSizeView<BasicLinearSpace, 1>(f);
     TFEL_TESTS_ASSERT(e.check(ctx));
     TFEL_TESTS_ASSERT(std::abs(e(0) - 1) < eps);
     TFEL_TESTS_ASSERT(std::abs(e(1) - 2) < eps);
@@ -99,7 +99,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     auto space = std::make_shared<BasicLinearSpace>(2);
     auto values = std::vector<real>{1, 2, 3, 4};
     const auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 2) |
-                    as_tvector<2>;
+                   as_tvector<2>;
     TFEL_TESTS_ASSERT(f.check(ctx));
     auto values2 = std::vector<real>{1, -2, 3, -4};
     const auto f2 = ImmutableFunctionView<BasicLinearSpace>(space, values2, 2) |

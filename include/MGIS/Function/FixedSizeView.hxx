@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/FixedSizeEvaluator.hxx
+ * \file   MGIS/Function/FixedSizeView.hxx
  * \brief
  * \author Thomas Helfer
  * \date   07/05/2025
@@ -22,7 +22,7 @@ namespace mgis::function {
    * \tparam N: size of the returned value
    */
   template <FunctionalSpaceConcept Space, size_type N>
-  requires(N > 0) struct FixedSizeEvaluator {
+  requires(N > 0) struct FixedSizeView {
     /*!
      * \brief method checking that the precondition of the constructor are met.
      * \param[in] values: function
@@ -33,7 +33,7 @@ namespace mgis::function {
      * \brief constructor
      * \param[in] values: function
      */
-    FixedSizeEvaluator(const ImmutableFunctionView<Space, {}>&);
+    FixedSizeView(const ImmutableFunctionView<Space, {}>&);
     //! \brief perform consistency checks
     bool check(Context&) const noexcept;
     //! \brief allocate internal workspace
@@ -75,8 +75,8 @@ namespace mgis::function {
 
    private:
     //! \brief underlying function
-    const ImmutableFunctionView<Space, {}>& function;
-  };  // end of FixedSizeEvaluator
+    const ImmutableFunctionView<Space, {}> function;
+  };  // end of FixedSizeView
 
   /*!
    * \brief convert a function to a immutable view
@@ -95,6 +95,6 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#include "MGIS/Function/FixedSizeEvaluator.ixx"
+#include "MGIS/Function/FixedSizeView.ixx"
 
 #endif /* LIB_MGIS_FUNCTION_FIXEDSIZEEVALUATOR_HXX */

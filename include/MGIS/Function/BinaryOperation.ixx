@@ -13,12 +13,15 @@ namespace mgis::function {
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
-  BinaryOperationModifier<CallableType,
-                          FirstEvaluatorType,
-                          SecondEvaluatorType>::
-      BinaryOperationModifier(const CallableType& c,
-                              const FirstEvaluatorType& e1,
-                              const SecondEvaluatorType& e2)
+  requires(BinaryOperationModifierRequirements<CallableType,
+                                               FirstEvaluatorType,
+                                               SecondEvaluatorType>)  //
+      BinaryOperationModifier<CallableType,
+                              FirstEvaluatorType,
+                              SecondEvaluatorType>::
+          BinaryOperationModifier(const CallableType& c,
+                                  const FirstEvaluatorType& e1,
+                                  const SecondEvaluatorType& e2)
       : BinaryOperationEvaluatorBase<BinaryOperationModifier,
                                      FirstEvaluatorType,
                                      SecondEvaluatorType>(e1, e2),
@@ -27,22 +30,28 @@ namespace mgis::function {
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
-  auto BinaryOperationModifier<CallableType,
-                               FirstEvaluatorType,
-                               SecondEvaluatorType>::
-      apply(const evaluator_result<FirstEvaluatorType>& v1,
-            const evaluator_result<SecondEvaluatorType>& v2) const {
+  requires(BinaryOperationModifierRequirements<CallableType,
+                                               FirstEvaluatorType,
+                                               SecondEvaluatorType>)  //
+      auto BinaryOperationModifier<CallableType,
+                                   FirstEvaluatorType,
+                                   SecondEvaluatorType>::
+          apply(const evaluator_result<FirstEvaluatorType>& v1,
+                const evaluator_result<SecondEvaluatorType>& v2) const {
     return this->modifier(v1, v2);
   }
 
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
-  auto BinaryOperationModifier2<CallableType,
-                                FirstEvaluatorType,
-                                SecondEvaluatorType>::
-      apply(const evaluator_result<FirstEvaluatorType>& v1,
-            const evaluator_result<SecondEvaluatorType>& v2) const {
+  requires(BinaryOperationModifier2Requirements<CallableType,
+                                                FirstEvaluatorType,
+                                                SecondEvaluatorType>)  //
+      auto BinaryOperationModifier2<CallableType,
+                                    FirstEvaluatorType,
+                                    SecondEvaluatorType>::
+          apply(const evaluator_result<FirstEvaluatorType>& v1,
+                const evaluator_result<SecondEvaluatorType>& v2) const {
     auto c = CallableType{};
     return c(v1, v2);
   }  // end of apply
@@ -50,13 +59,15 @@ namespace mgis::function {
   namespace internals {
 
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>
-    BinaryOperatorCurrying<CallableType, SecondEvaluatorType>::
-        BinaryOperatorCurrying(const CallableType& c,
-                               const SecondEvaluatorType& e)
+    requires(std::is_copy_constructible_v<CallableType>)
+        BinaryOperatorCurrying<CallableType, SecondEvaluatorType>::
+            BinaryOperatorCurrying(const CallableType& c,
+                                   const SecondEvaluatorType& e)
         : modifier(c), e2(e) {}  // end of BinaryOperatorCurrying
 
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>
-    template <typename FirstEvaluatorType>
+    requires(std::is_copy_constructible_v<CallableType>) template <
+        typename FirstEvaluatorType>
     auto BinaryOperatorCurrying<CallableType, SecondEvaluatorType>::operator()(
         FirstEvaluatorType&& e1) const
         requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&(
@@ -68,12 +79,14 @@ namespace mgis::function {
     }  // end of operator()
 
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>
-    BinaryOperatorCurrying2<CallableType, SecondEvaluatorType>::
-        BinaryOperatorCurrying2(const SecondEvaluatorType& e)
+    requires(std::is_trivially_default_constructible_v<CallableType>)
+        BinaryOperatorCurrying2<CallableType, SecondEvaluatorType>::
+            BinaryOperatorCurrying2(const SecondEvaluatorType& e)
         : e2(e) {}
 
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>
-    template <typename FirstEvaluatorType>
+    requires(std::is_trivially_default_constructible_v<CallableType>) template <
+        typename FirstEvaluatorType>
     auto BinaryOperatorCurrying2<CallableType, SecondEvaluatorType>::operator()(
         FirstEvaluatorType&& e1) const
         requires(
@@ -155,7 +168,7 @@ namespace mgis::function {
   template <typename CallableType, typename SecondEvaluatorType>
   auto binary_operation(CallableType&& c,
                         SecondEvaluatorType&& e2)  //
-      requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>){
+      requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>) {
     auto modifier =
         internals::binary_operation_modifier<std::decay_t<CallableType>>(
             std::forward<CallableType>(c));
@@ -173,13 +186,13 @@ namespace mgis::function {
                (std::invocable<
                    std::decay_t<CallableType>,
                    evaluator_result<std::decay_t<FirstEvaluatorType>>,
-                   evaluator_result<std::decay_t<SecondEvaluatorType>>>)){
+                   evaluator_result<std::decay_t<SecondEvaluatorType>>>)) {
     auto modifier =
         internals::binary_operation_modifier<std::decay_t<CallableType>>(
             std::forward<CallableType>(c));
     return modifier(std::forward<SecondEvaluatorType>(e1),
                     std::forward<SecondEvaluatorType>(e2));
-  } // end of binary_operation
+  }  // end of binary_operation
 
 }  // end of namespace mgis::function
 

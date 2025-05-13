@@ -14,6 +14,17 @@
 
 namespace mgis::function {
 
+  template <EvaluatorConcept FirstEvaluatorType,
+            EvaluatorConcept SecondEvaluatorType>
+  inline constexpr auto BinaryOperationEvaluatorBaseRequirement =
+      (internals::same_decay_type<
+          decltype(std::declval<FirstEvaluatorType>().getSpace()),
+          decltype(std::declval<FirstEvaluatorType>().getSpace())>)&&  //
+      (((ElementEvaluatorConcept<FirstEvaluatorType>)&&(
+           ElementEvaluatorConcept<SecondEvaluatorType>)) ||
+       ((QuadratureEvaluatorConcept<FirstEvaluatorType>)&&(
+           QuadratureEvaluatorConcept<SecondEvaluatorType>)));
+
   /*!
    * \brief a base class to construct an evaluator by applying a binary
    * operation on the results of two evaluators.
@@ -26,13 +37,8 @@ namespace mgis::function {
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
-  requires((internals::same_decay_type<
-            decltype(std::declval<FirstEvaluatorType>().getSpace()),
-            decltype(std::declval<FirstEvaluatorType>().getSpace())>)&&  //
-           (((ElementEvaluatorConcept<FirstEvaluatorType>)&&(
-                ElementEvaluatorConcept<SecondEvaluatorType>)) ||
-            ((QuadratureEvaluatorConcept<FirstEvaluatorType>)&&(
-                QuadratureEvaluatorConcept<SecondEvaluatorType>))))  //
+  requires(BinaryOperationEvaluatorBaseRequirement<FirstEvaluatorType,
+                                                   SecondEvaluatorType>)  //
       struct BinaryOperationEvaluatorBase {
     //! \brief a simple alias
     using Space =

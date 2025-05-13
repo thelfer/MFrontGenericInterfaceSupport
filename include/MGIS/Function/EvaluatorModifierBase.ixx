@@ -60,7 +60,7 @@ namespace mgis::function {
   auto EvaluatorModifierBase<Child, EvaluatorType>::operator()(
       const cell_index<Space> e, const quadrature_point_index<Space> i) const
       requires((QuadratureEvaluatorConcept<EvaluatorType>)&&(
-          (!hasCellWorkspace<Space>))) {
+          !hasCellWorkspace<Space>)) {
     const auto& child = static_cast<const Child&>(*this);
     return child.apply(this->evaluator(e, i));
   }  // end of operator()

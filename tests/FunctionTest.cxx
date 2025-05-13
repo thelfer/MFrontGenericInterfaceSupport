@@ -19,6 +19,7 @@
 #include "MGIS/Function/BasicLinearSpace.hxx"
 #include "MGIS/Function/BasicLinearQuadratureSpace.hxx"
 #include "MGIS/Function/Function.hxx"
+#include "MGIS/Function/FixedSizeView.hxx"
 
 struct ImmutableFunctionTest final : public tfel::tests::TestCase {
   ImmutableFunctionTest()
@@ -362,11 +363,26 @@ struct FunctionTest final : public tfel::tests::TestCase {
       f(1)[1] = 4;
       return f;
     }();
+    TFEL_TESTS_ASSERT(std::abs(f2(0)[0] - 1) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f2(0)[1] - 2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f2(1)[0] - 3) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f2(1)[1] - 4) < eps);
     const auto f3 = view<2>(f2);
+    TFEL_TESTS_ASSERT(f3.check(ctx));
+    //     std::cout << f3(0)[0] << " " << f3(0)[1] << " " << f3(1)[0] << " "
+    //               << f3(1)[1] << std::endl;
     TFEL_TESTS_ASSERT(std::abs(f3(0)[0] - 1) < eps);
     TFEL_TESTS_ASSERT(std::abs(f3(0)[1] - 2) < eps);
     TFEL_TESTS_ASSERT(std::abs(f3(1)[0] - 3) < eps);
     TFEL_TESTS_ASSERT(std::abs(f3(1)[1] - 4) < eps);
+    f2(0)[0] = 4;
+    f2(0)[1] = 5;
+    f2(1)[0] = 6;
+    f2(1)[1] = 7;
+    TFEL_TESTS_ASSERT(std::abs(f3(0)[0] - 4) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f3(0)[1] - 5) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f3(1)[0] - 6) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f3(1)[1] - 7) < eps);
   }
   void test6() {
     // check that view<N> work with a fixed size function

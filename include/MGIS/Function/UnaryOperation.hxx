@@ -130,12 +130,11 @@ namespace mgis::function {
   inline constexpr auto negate = internals::unary_operation_modifier2(
       []<typename OperandType>(const OperandType& a)
           -> tfel::math::UnaryOperationResult<OperandType,
-                                                     tfel::math::OpNeg>  //
-      requires(
-          compile_time_size<
-              tfel::math::UnaryOperationResult<OperandType,
-                                                      tfel::math::OpNeg>> !=
-          dynamic_extent) {  //
+                                              tfel::math::OpNeg>  //
+      requires(compile_time_size<
+                   tfel::math::UnaryOperationResult<OperandType,
+                                                    tfel::math::OpNeg>> !=
+               dynamic_extent) {  //
         return -a;
       });
 
@@ -148,7 +147,7 @@ namespace mgis::function {
              dynamic_extent) {
       return a * b;
     };
-    return internals::unary_operation_modifier(c);
+    return internals::unary_operation_modifier<decltype(c)>(c);
   }
 
   inline auto divide_by_scalar(const real s) {
@@ -160,7 +159,7 @@ namespace mgis::function {
              dynamic_extent) {
       return a / b;
     };
-    return internals::unary_operation_modifier(c);
+    return internals::unary_operation_modifier<decltype(c)>(c);
   }  // end of divide_by_scalar
 
 }  // end of namespace mgis::function

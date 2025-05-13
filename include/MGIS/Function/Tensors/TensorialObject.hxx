@@ -110,27 +110,33 @@ namespace mgis::function::internals {
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //
-  struct IsTensorialObject<tfel::math::stensor<N, real>> : std::true_type {};
+      struct IsTensorialObject<tfel::math::stensor<N, real>> : std::true_type {
+  };
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //
-  struct IsTensorialObject<tfel::math::tensor<N, real>> : std::true_type {};
+      struct IsTensorialObject<tfel::math::tensor<N, real>> : std::true_type {
+  };
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //
-  struct IsTensorialObject<tfel::math::t2tot2<N, real>> : std::true_type {};
+      struct IsTensorialObject<tfel::math::t2tot2<N, real>> : std::true_type {
+  };
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //
-  struct IsTensorialObject<tfel::math::t2tost2<N, real>> : std::true_type {};
+      struct IsTensorialObject<tfel::math::t2tost2<N, real>> : std::true_type {
+  };
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //
-  struct IsTensorialObject<tfel::math::st2tot2<N, real>> : std::true_type {};
+      struct IsTensorialObject<tfel::math::st2tot2<N, real>> : std::true_type {
+  };
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //
-  struct IsTensorialObject<tfel::math::st2tost2<N, real>> : std::true_type {};
+      struct IsTensorialObject<tfel::math::st2tost2<N, real>> : std::true_type {
+  };
 
 }  // namespace mgis::function::internals
 

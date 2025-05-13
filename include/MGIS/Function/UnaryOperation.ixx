@@ -11,21 +11,30 @@
 namespace mgis::function {
 
   template <typename CallableType, EvaluatorConcept EvaluatorType>
-  UnaryOperation<CallableType, EvaluatorType>::UnaryOperation(
-      const CallableType& c, const EvaluatorType& e)
+  requires((std::is_copy_constructible_v<CallableType>)&&(
+      std::invocable<CallableType,
+                     evaluator_result<EvaluatorType>>))  //
+      UnaryOperation<CallableType, EvaluatorType>::UnaryOperation(
+          const CallableType& c, const EvaluatorType& e)
       : EvaluatorModifierBase<UnaryOperation<CallableType, EvaluatorType>,
                               EvaluatorType>(e),
         modifier(c) {}  // end of UnaryOperation
 
   template <typename CallableType, EvaluatorConcept EvaluatorType>
-  auto UnaryOperation<CallableType, EvaluatorType>::apply(
-      const evaluator_result<EvaluatorType>& values) const {
+  requires((std::is_copy_constructible_v<CallableType>)&&(
+      std::invocable<CallableType,
+                     evaluator_result<EvaluatorType>>))  //
+      auto UnaryOperation<CallableType, EvaluatorType>::apply(
+          const evaluator_result<EvaluatorType>& values) const {
     return this->modifier(values);
   }  // end of apply
 
   template <typename CallableType, EvaluatorConcept EvaluatorType>
-  auto UnaryOperation2<CallableType, EvaluatorType>::apply(
-      const evaluator_result<EvaluatorType>& values) const {
+  requires((std::is_trivially_default_constructible_v<CallableType>)&&(
+      std::invocable<CallableType,
+                     evaluator_result<EvaluatorType>>))  //
+      auto UnaryOperation2<CallableType, EvaluatorType>::apply(
+          const evaluator_result<EvaluatorType>& values) const {
     auto c = CallableType{};
     return c(values);
   }  // end of apply

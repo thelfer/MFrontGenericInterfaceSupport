@@ -19,7 +19,7 @@
 #include "MGIS/Function/BasicLinearSpace.hxx"
 #include "MGIS/Function/BasicLinearQuadratureSpace.hxx"
 #include "MGIS/Function/Function.hxx"
-#include "MGIS/Function/FixedSizeEvaluator.hxx"
+#include "MGIS/Function/FixedSizeView.hxx"
 #include "MGIS/Function/Mechanics.hxx"
 
 struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
@@ -61,7 +61,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(ok);
     TFEL_TESTS_ASSERT(std::abs(seq.getValue(0) - std::sqrt(3)) < eps);
     auto seq2 = Function<BasicLinearSpace>(space, 1);
-    const auto ok2 =  vmis(as_stensor<1>(view<3>(f))) | seq2;
+    const auto ok2 = vmis(as_stensor<1>(view<3>(f))) | seq2;
     TFEL_TESTS_ASSERT(ok2);
     TFEL_TESTS_ASSERT(std::abs(seq2.getValue(0) - std::sqrt(3)) < eps);
   }

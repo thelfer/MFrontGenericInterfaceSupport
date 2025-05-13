@@ -1,5 +1,5 @@
 /*!
- * \file   FixedSizeEvaluator.ixx
+ * \file   FixedSizeView.ixx
  * \brief
  * \author th202608
  * \date   07/05/2025
@@ -13,43 +13,43 @@
 namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N>
-  bool FixedSizeEvaluator<Space, N>::checkPreconditions(
+  requires(N > 0) bool FixedSizeView<Space, N>::checkPreconditions(
       const ImmutableFunctionView<Space, {}>& values) noexcept {
     return values.getNumberOfComponents() == N;
   }  // end of checkPreconditions
 
   template <FunctionalSpaceConcept Space, size_type N>
-  FixedSizeEvaluator<Space, N>::FixedSizeEvaluator(
+  requires(N > 0) FixedSizeView<Space, N>::FixedSizeView(
       const ImmutableFunctionView<Space, {}>& values)
       : function(values) {
     raise_if(!checkPreconditions(values),
              "FixedSizeImmutableView::FixedSizeImmutableView: "
              "unmatched size");
-  }  // end of FixedSizeEvaluator
+  }  // end of FixedSizeView
 
   template <FunctionalSpaceConcept Space, size_type N>
-  bool FixedSizeEvaluator<Space, N>::check(Context&) const noexcept {
+  requires(N > 0) bool FixedSizeView<Space, N>::check(Context&) const noexcept {
     return true;
   }
 
   template <FunctionalSpaceConcept Space, size_type N>
-  void FixedSizeEvaluator<Space, N>::allocateWorkspace() {}
+  requires(N > 0) void FixedSizeView<Space, N>::allocateWorkspace() {}
 
   template <FunctionalSpaceConcept Space, size_type N>
-  const Space& FixedSizeEvaluator<Space, N>::getSpace() const {
+  requires(N > 0) const Space& FixedSizeView<Space, N>::getSpace() const {
     return this->function.getSpace();
   }
 
   template <FunctionalSpaceConcept Space, size_type N>
-  constexpr size_type FixedSizeEvaluator<Space, N>::getNumberOfComponents()
-      const noexcept {
+  requires(N > 0) constexpr size_type
+      FixedSizeView<Space, N>::getNumberOfComponents() const noexcept {
     return N;
   }
 
   template <FunctionalSpaceConcept Space, size_type N>
-  auto FixedSizeEvaluator<Space, N>::operator()(
+  requires(N > 0) auto FixedSizeView<Space, N>::operator()(
       const element_index<Space>& i) const
-      requires(ElementSpaceConcept<Space> && (!hasElementWorkspace<Space>)) {
+      requires(ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>)) {
     if constexpr (N == 1) {
       return this->function.getValue(i);
     } else {
@@ -58,7 +58,7 @@ namespace mgis::function {
   }
 
   template <FunctionalSpaceConcept Space, size_type N>
-  auto FixedSizeEvaluator<Space, N>::operator()(
+  requires(N > 0) auto FixedSizeView<Space, N>::operator()(
       const cell_workspace<Space>&,
       const cell_index<Space> e,
       const quadrature_point_index<Space> i) const
@@ -72,13 +72,13 @@ namespace mgis::function {
 
   template <size_type N, FunctionalSpaceConcept Space>
   auto view(const ImmutableFunctionView<Space, {}>& f) requires(N > 0) {
-    return FixedSizeEvaluator<Space, N>(f);
+    return FixedSizeView<Space, N>(f);
   }  // end of view
 
   template <size_type N, FunctionalSpaceConcept Space>
   auto view(const Function<Space, dynamic_extent>& f)  //
       requires((N > 0) && (N != dynamic_extent)) {
-    return FixedSizeEvaluator<Space, N>(f.view());
+    return FixedSizeView<Space, N>(f.view());
   }  // end of view
 
 }  // end of namespace mgis::function

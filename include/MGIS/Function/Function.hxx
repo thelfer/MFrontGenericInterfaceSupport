@@ -596,6 +596,5 @@ namespace mgis::function {
 }  // namespace mgis::function
 
 #include "MGIS/Function/Function.ixx"
-#include "MGIS/Function/FixedSizeEvaluator.hxx"
 
 #endif /* LIB_MGIS_FUNCTION_FUNCTION_HXX */

@@ -1,6 +1,6 @@
 /*!
  * \file   MGIS/Function/TensorialEvaluatorModifier.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10/05/2025
  */
@@ -13,17 +13,23 @@
 namespace mgis::function::internals {
 
   template <TensorialObjectConcept TensorType, EvaluatorConcept EvaluatorType>
-  constexpr size_type
-  TensorialEvaluatorModifier<TensorType,
-                             EvaluatorType>::getNumberOfComponents() noexcept {
+  requires(
+      areTensorialEvaluatorModifierRequirementsSatisfied<TensorType,
+                                                         EvaluatorType>)  //
+      constexpr size_type TensorialEvaluatorModifier<
+          TensorType,
+          EvaluatorType>::getNumberOfComponents() noexcept {
     return compile_time_size<TensorType>;
   }
 
   template <TensorialObjectConcept TensorType, EvaluatorConcept EvaluatorType>
-  auto TensorialEvaluatorModifier<TensorType, EvaluatorType>::apply(
-      const evaluator_result<EvaluatorType>& values) const {
+  requires(
+      areTensorialEvaluatorModifierRequirementsSatisfied<TensorType,
+                                                         EvaluatorType>)  //
+      auto TensorialEvaluatorModifier<TensorType, EvaluatorType>::apply(
+          const evaluator_result<EvaluatorType>& values) const {
     return tfel::math::map<const TensorType>(values.data());
-  };  // end of apply
+  }  // end of apply
 
   template <TensorialObjectConcept TensorType>
   template <typename EvaluatorType>
