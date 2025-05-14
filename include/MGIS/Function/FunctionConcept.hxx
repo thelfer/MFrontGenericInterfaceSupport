@@ -293,6 +293,10 @@ namespace mgis::function {
   using function_result =
       typename internals::FunctionResultQuery<FunctionType>::result_type;
 
+  template <FunctionConcept FunctionType>
+  using function_const_result =
+      typename internals::FunctionResultQuery<FunctionType>::const_result_type;
+
   namespace internals {
 
     /*!
