@@ -10,7 +10,9 @@
 
 #include "MGIS/Config.hxx"
 #include "MGIS/Context.hxx"
-#include "MGIS/Function/Evaluator.hxx"
+#include "MGIS/Function/Space.hxx"
+#include "MGIS/Function/EvaluatorConcept.hxx"
+#include "MGIS/Function/FunctionConcept.hxx"
 
 namespace mgis::function {
 

@@ -20,6 +20,16 @@
 namespace mgis::function::internals {
 
   template <TensorConcept TensorType>
+  struct FunctionResultTypeTraits<TensorType&> {
+    static constexpr auto is_specialized = true;
+  };
+
+  template <TensorConcept TensorType>
+  struct FunctionResultTypeTraits<tfel::math::View<TensorType>> {
+    static constexpr auto is_specialized = true;
+  };
+
+  template <TensorConcept TensorType>
   struct tensor_modifier {
     template <FunctionalSpaceConcept Space,
               DataLayoutDescription layout,

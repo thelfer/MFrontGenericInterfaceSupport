@@ -224,6 +224,7 @@ struct FunctionTest final : public tfel::tests::TestCase {
     this->test4();
     this->test5();
     this->test6();
+    this->test7();
     return this->result;
   }
 
@@ -417,6 +418,26 @@ struct FunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(f3(0)[1] - 2) < eps);
     TFEL_TESTS_ASSERT(std::abs(f3(1)[0] - 3) < eps);
     TFEL_TESTS_ASSERT(std::abs(f3(1)[1] - 4) < eps);
+  }
+  void test7() {
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    auto space = std::make_shared<BasicLinearSpace>(2);
+    auto f = Function<BasicLinearSpace, 1>(space);
+    TFEL_TESTS_STATIC_ASSERT(FunctionConcept<decltype(f)>);
+    TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 1);
+    TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 1);
+    TFEL_TESTS_STATIC_ASSERT(number_of_components<decltype(f)> == 1);
+    TFEL_TESTS_STATIC_ASSERT((std::same_as<function_result<decltype(f)>, real&>));
+    f(0) = 12;
+    f(1) = 13;
+    const auto& values = f.getValues();
+    TFEL_TESTS_ASSERT(std::abs(values[0] - 12) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[1] - 13) < eps);
+    const auto& f2 = f;
+    TFEL_TESTS_ASSERT(std::abs(f2(0) - 12) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f2(1) - 13) < eps);
   }
 };
 

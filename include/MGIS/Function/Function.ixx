@@ -10,7 +10,6 @@
 
 #include <concepts>
 #include "MGIS/Raise.hxx"
-#include "MGIS/Function/Algorithms.hxx"
 
 namespace mgis::function {
 
@@ -397,8 +396,12 @@ namespace mgis::function {
           const size_type
               o) requires(is_mutable&& LinearElementSpaceConcept<Space> &&
                           (!hasElementWorkspace<Space>)) {
-    return ValuesView(this->values.data() + this->getDataOffset(o),
-                      this->getNumberOfComponents());
+    if constexpr (layout.data_size == 1) {
+      return *(this->values.data() + this->getDataOffset(o));
+    } else {
+      return ValuesView(this->values.data() + this->getDataOffset(o),
+                        this->getNumberOfComponents());
+    }
   }  // end of getValues
 
   template <FunctionalSpaceConcept Space,
@@ -480,8 +483,12 @@ namespace mgis::function {
       FunctionView<Space, layout, is_mutable>::getValues(
           const size_type o) const requires(LinearElementSpaceConcept<Space> &&
                                             (!hasElementWorkspace<Space>)) {
-    return ConstValuesView(this->values.data() + this->getDataOffset(o),
-                           this->getNumberOfComponents());
+    if constexpr (layout.data_size == 1) {
+      return *(this->values.data() + this->getDataOffset(o));
+    } else {
+      return ConstValuesView(this->values.data() + this->getDataOffset(o),
+                             this->getNumberOfComponents());
+    }
   }  // end of getValues
 
   template <FunctionalSpaceConcept Space,
@@ -547,8 +554,12 @@ namespace mgis::function {
       FunctionView<Space, layout, is_mutable>::operator()(const size_type o)  //
       requires(is_mutable&& LinearElementSpaceConcept<Space> &&
                (!hasElementWorkspace<Space>)) {
-    return ValuesView(this->values.data() + this->getDataOffset(o),
-                      this->getNumberOfComponents());
+    if constexpr (layout.data_size == 1) {
+      return *(this->values.data() + this->getDataOffset(o));
+    } else {
+      return ValuesView(this->values.data() + this->getDataOffset(o),
+                        this->getNumberOfComponents());
+    }
   }  // end of operator()
 
   template <FunctionalSpaceConcept Space,
@@ -573,8 +584,12 @@ namespace mgis::function {
       FunctionView<Space, layout, is_mutable>::operator()(
           const size_type o) const requires(LinearElementSpaceConcept<Space> &&
                                             (!hasElementWorkspace<Space>)) {
-    return ConstValuesView(this->values.data() + this->getDataOffset(o),
-                           this->getNumberOfComponents());
+    if constexpr (layout.data_size == 1) {
+      return *(this->values.data() + this->getDataOffset(o));
+    } else {
+      return ConstValuesView(this->values.data() + this->getDataOffset(o),
+                             this->getNumberOfComponents());
+    }
   }  // end of operator()
 
   template <FunctionalSpaceConcept Space,
@@ -741,22 +756,6 @@ namespace mgis::function {
       requires((N > 0) && (N != dynamic_extent) && (N == N2)) {
     return f.view();
   }  // end of view
-
-  /*!
-   * \brief assign an evaluator to a mutable function view
-   * \param[in] e: evaluator
-   * \param[in] f: function
-   */
-  template <EvaluatorConcept EvaluatorType,
-            FunctionalSpaceConcept Space,
-            DataLayoutDescription layout>
-  bool operator|(EvaluatorType e, FunctionView<Space, layout>& f) requires(
-      requires(const EvaluatorType& ev) {
-        { ev.getSpace() } -> internals::same_decay_type<Space>;
-      }) {
-    Context ctx;
-    return assign(ctx, f, e);
-  }  // end of operator |
 
 }  // end of namespace mgis::function
 

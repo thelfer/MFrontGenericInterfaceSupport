@@ -14,6 +14,7 @@
 #include <vector>
 #include "MGIS/Config.hxx"
 #include "MGIS/Function/Space.hxx"
+#include "MGIS/Function/FunctionConcept.hxx"
 #include "MGIS/Function/Evaluator.hxx"
 
 namespace mgis::function {
@@ -144,14 +145,19 @@ namespace mgis::function {
     using ExternalData =
         std::conditional_t<is_mutable, std::span<real>, std::span<const real>>;
     //! \brief return this of the getValues function
-    using ValuesView = std::conditional_t<layout.data_size == dynamic_extent,
-                                          std::span<real>,
-                                          std::span<real, layout.data_size>>;
+    using ValuesView = std::conditional_t<
+        layout.data_size == dynamic_extent,
+        std::span<real>,
+        std::conditional_t<layout.data_size == 1,
+                           real&,
+                           std::span<real, layout.data_size>>>;
     //! \brief return this of the getValues function (const case)
-    using ConstValuesView =
-        std::conditional_t<layout.data_size == dynamic_extent,
-                           std::span<const real>,
-                           std::span<const real, layout.data_size>>;
+    using ConstValuesView = std::conditional_t<
+        layout.data_size == dynamic_extent,
+        std::span<const real>,
+        std::conditional_t<layout.data_size == 1,
+                           const real&,
+                           std::span<const real, layout.data_size>>>;
     //
     static constexpr bool allowScalarAccessor =
         (layout.data_size == dynamic_extent) ? true : layout.data_size == 1;
@@ -577,21 +583,6 @@ namespace mgis::function {
   template <size_type N, FunctionalSpaceConcept Space, size_type N2>
   auto view(const Function<Space, N2>&)  //
       requires((N > 0) && (N != dynamic_extent) && (N == N2));
-
-  /*!
-   * \brief assign an evaluator to a mutable function view
-   * \param[in] ctx: execution context
-   * \param[in] e: evaluator
-   * \param[in] f: function
-   */
-  template <EvaluatorConcept EvaluatorType,
-            FunctionalSpaceConcept Space,
-            DataLayoutDescription layout>
-  [[nodiscard]] bool operator|(
-      EvaluatorType,
-      FunctionView<Space, layout>&) requires(requires(const EvaluatorType& ev) {
-    { ev.getSpace() } -> internals::same_decay_type<Space>;
-  });
 
 }  // namespace mgis::function
 

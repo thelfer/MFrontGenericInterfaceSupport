@@ -65,6 +65,15 @@ namespace mgis::function::internals {
     static constexpr size_type value = N;
   };
 
+  /*!
+   * \brief number of components of a type when known at compile-time,
+   * dynamic_extent otherwise
+   *
+   * This class is specialized later for evaluators and functions
+   */
+  template <typename FunctionOrEvaluatorType>
+  struct NumberOfComponents;
+
 }  // end of namespace mgis::function::internals
 
 namespace mgis::function {
@@ -77,6 +86,14 @@ namespace mgis::function {
   template <typename T>
   inline constexpr size_type compile_time_size =
       internals::CompileTimeSize<T>::value;
+
+  /*!
+   * \brief number of components of a type when known at compile-time,
+   * dynamic_extent otherwise
+   */
+  template <typename FunctionOrEvaluatorType>
+  inline constexpr size_type number_of_components =
+      internals::NumberOfComponents<FunctionOrEvaluatorType>::value;
 
 }  // namespace mgis::function
 

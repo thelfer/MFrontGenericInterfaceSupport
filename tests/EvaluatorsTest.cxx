@@ -222,6 +222,22 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(stress(0)[1] - 150e6) < K * eps);
     TFEL_TESTS_ASSERT(std::abs(stress(0)[2] - 150e6) < K * eps);
     TFEL_TESTS_ASSERT(std::abs(stress(0)[3] - 0) < K * eps);
+    //
+    auto values2 = std::vector<real>{1e-3, 2e-3, -5e-3, 4e-3};
+    auto stress_view =
+        FunctionView<BasicLinearSpace>(space, values2, 4) | as_stensor<2>;
+    const auto ok = assign(ctx, stress_view, strain | multiply_by_scalar(K));
+    TFEL_TESTS_ASSERT(ok);
+    TFEL_TESTS_ASSERT(std::abs(values2[0] - 150e6) < K * eps);
+    TFEL_TESTS_ASSERT(std::abs(values2[1] - 150e6) < K * eps);
+    TFEL_TESTS_ASSERT(std::abs(values2[2] - 150e6) < K * eps);
+    TFEL_TESTS_ASSERT(std::abs(values2[3] - 0) < K * eps);
+    const auto ok2 = strain | multiply_by_scalar(2 * K) | stress_view;
+    TFEL_TESTS_ASSERT(ok2);
+    TFEL_TESTS_ASSERT(std::abs(values2[0] - 300e6) < K * eps);
+    TFEL_TESTS_ASSERT(std::abs(values2[1] - 300e6) < K * eps);
+    TFEL_TESTS_ASSERT(std::abs(values2[2] - 300e6) < K * eps);
+    TFEL_TESTS_ASSERT(std::abs(values2[3] - 0) < K * eps);
   }
 };
 

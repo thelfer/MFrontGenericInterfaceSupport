@@ -219,7 +219,7 @@ namespace mgis::function {
       return false;
     }
     e.allocateWorkspace();
-    if (f.isScalar()) {
+    if (f.getNumberOfComponents() == 1) {
       internals::assign_scalar_impl(f, e);
     } else {
       // this if constexpr to avoid the compilation of the body
