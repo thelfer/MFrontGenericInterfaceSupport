@@ -55,6 +55,93 @@ namespace mgis::function::internals {
             areTensorModifierRequirementsSatisfied<TensorType, EvaluatorType>));
   };
 
+  struct RotateModifier {
+    //
+    using CallableType = decltype(
+        []<typename TensorType>(const TensorType& t,
+                                const tfel::math::tmatrix<3, 3, real>& R)  //
+        requires((tfel::math::TensorConcept<TensorType>) ||
+                 (tfel::math::StensorConcept<TensorType>)) {
+          return tfel::math::change_basis(t, R);
+        });
+
+    inline auto operator()(const tfel::math::tmatrix<3, 3, real>& R) const {
+      auto c = [R]<typename TensorType>(const TensorType& t)  //
+          requires((tfel::math::TensorConcept<TensorType>) ||
+                   (tfel::math::StensorConcept<TensorType>)) {
+        return tfel::math::change_basis(t, R);
+      };
+      return internals::unary_operation_modifier<decltype(c)>(c);
+    }
+
+    template <typename SecondEvaluatorType>
+    auto operator()(SecondEvaluatorType&& e2) const
+        requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>) {
+      return BinaryOperatorCurrying2<CallableType,
+                                     std::decay_t<SecondEvaluatorType>>(
+          std::forward<SecondEvaluatorType>(e2));
+    }  // end of operator()
+
+    template <typename FirstEvaluatorType, typename SecondEvaluatorType>
+    auto operator()(FirstEvaluatorType&& e1, SecondEvaluatorType&& e2) const
+        requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&   //
+                 (EvaluatorConcept<std::decay_t<SecondEvaluatorType>>)&&  //
+                 (std::invocable<
+                     CallableType,
+                     evaluator_result<std::decay_t<FirstEvaluatorType>>,
+                     evaluator_result<std::decay_t<SecondEvaluatorType>>>)) {
+      return BinaryOperationModifier2<CallableType,
+                                      std::decay_t<FirstEvaluatorType>,
+                                      std::decay_t<SecondEvaluatorType>>(
+          std::forward<FirstEvaluatorType>(e1),
+          std::forward<SecondEvaluatorType>(e2));
+    }  // end of operator()
+  };
+
+  struct RotateBackwardsModifier {
+    //
+    using CallableType = decltype(
+        []<typename TensorType>(const TensorType& t,
+                                const tfel::math::tmatrix<3, 3, real>& R)  //
+        requires((tfel::math::TensorConcept<TensorType>) ||
+                 (tfel::math::StensorConcept<TensorType>)) {
+          return tfel::math::change_basis(t, tfel::math::transpose(R));
+        });
+
+    inline auto operator()(const tfel::math::tmatrix<3, 3, real>& R) const {
+      auto c = [Rb = tfel::math::transpose(R)]<typename TensorType>(
+          const TensorType& t)  //
+          requires((tfel::math::TensorConcept<TensorType>) ||
+                   (tfel::math::StensorConcept<TensorType>)) {
+        return tfel::math::change_basis(t, Rb);
+      };
+      return internals::unary_operation_modifier<decltype(c)>(c);
+    }
+
+    template <typename SecondEvaluatorType>
+    auto operator()(SecondEvaluatorType&& e2) const
+        requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>) {
+      return BinaryOperatorCurrying2<CallableType,
+                                     std::decay_t<SecondEvaluatorType>>(
+          std::forward<SecondEvaluatorType>(e2));
+    }  // end of operator()
+
+    template <typename FirstEvaluatorType, typename SecondEvaluatorType>
+    auto operator()(FirstEvaluatorType&& e1, SecondEvaluatorType&& e2) const
+        requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&   //
+                 (EvaluatorConcept<std::decay_t<SecondEvaluatorType>>)&&  //
+                 (std::invocable<
+                     CallableType,
+                     evaluator_result<std::decay_t<FirstEvaluatorType>>,
+                     evaluator_result<std::decay_t<SecondEvaluatorType>>>)) {
+      return BinaryOperationModifier2<CallableType,
+                                      std::decay_t<FirstEvaluatorType>,
+                                      std::decay_t<SecondEvaluatorType>>(
+          std::forward<FirstEvaluatorType>(e1),
+          std::forward<SecondEvaluatorType>(e2));
+    }  // end of operator()
+  }; // end of RotateBackwardModifier
+
 }  // end of namespace mgis::function::internals
 
 namespace mgis::function {
@@ -123,22 +210,9 @@ namespace mgis::function {
         return s2.template computeEigenValues<esolver>();
       });
 
-  inline constexpr auto rotate = internals::binary_operation_modifier2(
-      []<typename TensorType>(const TensorType& pk1,
-                              const tfel::math::tmatrix<3, 3>& R)  //
-      requires((tfel::math::TensorConcept<TensorType>) ||
-               (tfel::math::StensorConcept<TensorType>)) {
-        return tfel::math::change_basis(pk1, R);
-      });
+  inline constexpr auto rotate = internals::RotateModifier{};
 
-  inline constexpr auto rotate_backwards =
-      internals::binary_operation_modifier2(
-          []<typename TensorType>(const TensorType& pk1,
-                                  const tfel::math::tmatrix<3, 3>& R)  //
-          requires((tfel::math::TensorConcept<TensorType>) ||
-                   (tfel::math::StensorConcept<TensorType>)) {
-            return tfel::math::change_basis(pk1, transpose(R));
-          });
+  inline constexpr auto rotate_backwards = internals::RotateBackwardsModifier{};
 
   template <tfel::math::stensor_common::EigenSolver esolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>

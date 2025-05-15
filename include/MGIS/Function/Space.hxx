@@ -216,7 +216,7 @@ namespace mgis::function {
       s.getQuadraturePointOffset(
           std::declval<typename SpaceType::cell_index_type>(),
           std::declval<typename SpaceType::quadrature_point_index_type>())
-      } -> std::integral;
+      } -> internals::same_decay_type<typename SpaceType::size_type>;
   };
 
   /*!
