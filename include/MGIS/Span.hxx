@@ -722,7 +722,7 @@ namespace mgis {
 #if span_HAVE(DEFAULT_FUNCTION_TEMPLATE_ARG)
                 ,
                 class = typename std::enable_if<
-                    (Extent == dynamic_extent || Extent == N) &&
+		  (Extent == dynamic_extent || static_cast<size_t>(Extent) == N) &&
                     std::is_convertible<value_type (*)[],
                                         element_type (*)[]>::value>::type
 #endif
@@ -738,7 +738,7 @@ namespace mgis {
 #if span_HAVE(DEFAULT_FUNCTION_TEMPLATE_ARG)
                 ,
                 class = typename std::enable_if<
-                    (Extent == dynamic_extent || Extent == N) &&
+                    (Extent == dynamic_extent || static_cast<size_t>(Extent) == N) &&
                     std::is_convertible<value_type (*)[],
                                         element_type (*)[]>::value>::type
 #endif
@@ -756,7 +756,7 @@ namespace mgis {
 #if span_HAVE(DEFAULT_FUNCTION_TEMPLATE_ARG)
                 ,
                 class = typename std::enable_if<
-                    (Extent == dynamic_extent || Extent == N) &&
+                    (Extent == dynamic_extent || static_cast<size_t>(Extent) == N) &&
                     std::is_convertible<value_type (*)[],
                                         element_type (*)[]>::value>::type
 #endif
