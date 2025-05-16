@@ -20,7 +20,7 @@ namespace mgis::function {
    * \brief an evaluator returning the values of an immutable
    * function view as a fixed size span or a scalar
    *
-   * \tparam Space: functional space
+   * \tparam Space: underlying space
    * \tparam TensorType: type of the tensor
    * \tparam is_mutable: boolean stating if the call operators can return
    * mutable values
@@ -66,8 +66,8 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    auto operator()(const cell_index<Space>,
-                    const quadrature_point_index<Space>) const
+    auto operator()(const cell_index<Space>&,
+                    const quadrature_point_index<Space>&) const
         requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>));
     /*!
      * \brief call operator
@@ -75,8 +75,8 @@ namespace mgis::function {
      * \param[in] i: integration point index
      */
     auto operator()(const cell_workspace<Space>&,
-                    const cell_index<Space>,
-                    const quadrature_point_index<Space>) const
+                    const cell_index<Space>&,
+                    const quadrature_point_index<Space>&) const
         requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>);
     /*!
      * \brief call operator
@@ -89,32 +89,29 @@ namespace mgis::function {
      * \brief call operator
      * \param[in] i: integration point index
      */
-    auto operator()(
-        const element_workspace<Space>&,
-        const element_index<
-            Space>&) requires(is_mutable&& ElementSpaceConcept<Space>&&
-                                  hasElementWorkspace<Space>);
+    auto operator()(const element_workspace<Space>&,
+                    const element_index<Space>&)  //
+        requires(is_mutable&& ElementSpaceConcept<Space>&&
+                     hasElementWorkspace<Space>);
     /*!
      * \brief call operator
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    auto operator()(
-        const cell_index<Space>,
-        const quadrature_point_index<
-            Space>) requires(is_mutable&& QuadratureSpaceConcept<Space> &&
-                             (!hasCellWorkspace<Space>));
+    auto operator()(const cell_index<Space>&,
+                    const quadrature_point_index<Space>&)  //
+        requires(is_mutable&& QuadratureSpaceConcept<Space> &&
+                 (!hasCellWorkspace<Space>));
     /*!
      * \brief call operator
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    auto operator()(
-        const cell_workspace<Space>&,
-        const cell_index<Space>,
-        const quadrature_point_index<
-            Space>) requires(is_mutable&& QuadratureSpaceConcept<Space>&&
-                                 hasCellWorkspace<Space>);
+    auto operator()(const cell_workspace<Space>&,
+                    const cell_index<Space>&,
+                    const quadrature_point_index<Space>&)  //
+        requires(is_mutable&& QuadratureSpaceConcept<Space>&&
+                     hasCellWorkspace<Space>);
 
    private:
     //! \brief underlying function

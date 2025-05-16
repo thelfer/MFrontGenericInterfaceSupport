@@ -20,10 +20,32 @@
 
 namespace mgis {
 
-  //! a simple alias
+  namespace attributes {
+
+    /*!
+     * \brief an attribute use to indicate that a method or a function as being
+     * unsafe without precautions
+     */
+    struct UnsafeAttribute {};
+    /*!
+     * \brief an attribute use to indicate that a method may throw or not
+     */
+    template <bool>
+    struct ThrowingAttribute {};
+
+  }  // namespace attributes
+
+  //
+  inline constexpr auto unsafe = attributes::UnsafeAttribute{};
+  //
+  inline constexpr auto throwing = attributes::ThrowingAttribute<true>{};
+  //
+  inline constexpr auto not_throwing = attributes::ThrowingAttribute<false>{};
+
+  //! \brief a simple alias to the the default indexing type used by mgis
   using size_type = mgis_size_type;
 
-  //! alias to the numeric type used
+  //! \brief alias to the numeric type used
   using real = mgis_real;
 
   //! \brief a constant whose role is similar to std::dynamic_extent

@@ -11,7 +11,7 @@
 #ifdef MGIS_HAVE_TFEL
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
-#endif MGIS_HAVE_TFEL
+#endif /* MGIS_HAVE_TFEL */
 
 #include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/CompileTimeSize.hxx"

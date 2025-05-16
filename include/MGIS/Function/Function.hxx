@@ -144,14 +144,14 @@ namespace mgis::function {
     //! \brief a simple alias to the type holding the data used by the view
     using ExternalData =
         std::conditional_t<is_mutable, std::span<real>, std::span<const real>>;
-    //! \brief return this of the getValues function
+    //! \brief type of the value returned by the call operator
     using ValuesView = std::conditional_t<
         layout.data_size == dynamic_extent,
         std::span<real>,
         std::conditional_t<layout.data_size == 1,
                            real&,
                            std::span<real, layout.data_size>>>;
-    //! \brief return this of the getValues function (const case)
+    //! \brief type of the value returned by the call operator (const case)
     using ConstValuesView = std::conditional_t<
         layout.data_size == dynamic_extent,
         std::span<const real>,
@@ -325,108 +325,35 @@ namespace mgis::function {
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
-     *
-     * \note this method is only meaningful when the quadrature function is
-     * scalar
      */
-    real& getValue(const size_type) requires(
-        allowScalarAccessor&& is_mutable&& LinearElementSpaceConcept<Space> &&
-        (!hasElementWorkspace<Space>));
-    /*!
-     * \return the data associated with an integration point
-     * \param[in] o: offset associated with the integration point
-     */
-    template <size_type N>
-    std::span<real, N> getValues(const size_type) requires(
-        (layout.data_size == dynamic_extent) && is_mutable &&
-        LinearElementSpaceConcept<Space> && (!hasElementWorkspace<Space>));
-    /*!
-     * \return the data associated with an integration point
-     * \param[in] o: offset associated with the integration point
-     */
-    ValuesView getValues(const size_type) requires(
+    real* data(mgis::attributes::UnsafeAttribute, const size_type) requires(
         is_mutable&& LinearElementSpaceConcept<Space> &&
         (!hasElementWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] e: element index
      * \param[in] i: quadrature point index
-     *
-     * \note this method is only meaningful when the quadrature function is
-     * scalar
      */
-    real& getValue(const size_type, const size_type) requires(
-        allowScalarAccessor&& is_mutable&&
-            LinearQuadratureSpaceConcept<Space> &&
-        (!hasCellWorkspace<Space>));
-    /*!
-     * \return the data associated with an integration point
-     * \param[in] e: element index
-     * \param[in] i: quadrature point index
-     */
-    template <size_type N>
-    std::span<real, N> getValues(const size_type, const size_type) requires(
-        (layout.data_size == dynamic_extent) && is_mutable &&
-        LinearQuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>));
-    /*!
-     * \return the data associated with an integration point
-     * \param[in] e: element index
-     * \param[in] i: quadrature point index
-     */
-    ValuesView getValues(const size_type, const size_type) requires(
-        is_mutable&& LinearQuadratureSpaceConcept<Space> &&
-        (!hasCellWorkspace<Space>));
-    /*!
-     * \return the data associated with an integration point
-     * \param[in] o: offset associated with the integration point
-     *
-     * \note this method is only meaningful when the quadrature function is
-     * scalar
-     */
-    const real& getValue(const size_type) const
-        requires(allowScalarAccessor&& LinearElementSpaceConcept<Space> &&
-                 (!hasElementWorkspace<Space>));
+    real* data(mgis::attributes::UnsafeAttribute,
+               const size_type,
+               const size_type)  //
+        requires(is_mutable&& LinearQuadratureSpaceConcept<Space> &&
+                 (!hasCellWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
-    template <size_type N>
-    std::span<const real, N> getValues(const size_type) const
-        requires(LinearElementSpaceConcept<Space> &&
-                 (!hasElementWorkspace<Space>));
-    /*!
-     * \return the data associated with an integration point
-     * \param[in] o: offset associated with the integration point
-     */
-    ConstValuesView getValues(const size_type) const
+    const real* data(mgis::attributes::UnsafeAttribute, const size_type) const
         requires(LinearElementSpaceConcept<Space> &&
                  (!hasElementWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] e: element index
      * \param[in] i: quadrature point index
-     *
-     * \note this method is only meaningful when the quadrature function is
-     * scalar
      */
-    const real& getValue(const size_type, const size_type) const
-        requires(allowScalarAccessor&& LinearQuadratureSpaceConcept<Space> &&
-                 (!hasCellWorkspace<Space>));
-    /*!
-     * \return the data associated with an integration point
-     * \param[in] e: element index
-     * \param[in] i: quadrature point index
-     */
-    template <size_type N>
-    std::span<const real, N> getValues(const size_type, const size_type) const
-        requires(LinearQuadratureSpaceConcept<Space> &&
-                 (!hasCellWorkspace<Space>));
-    /*!
-     * \return the data associated with an integration point
-     * \param[in] e: element index
-     * \param[in] i: quadrature point index
-     */
-    ConstValuesView getValues(const size_type, const size_type) const
+    const real* data(mgis::attributes::UnsafeAttribute,
+                     const size_type,
+                     const size_type) const
         requires(LinearQuadratureSpaceConcept<Space> &&
                  (!hasCellWorkspace<Space>));
     /*!
@@ -466,7 +393,7 @@ namespace mgis::function {
      */
     bool checkCompatibility(const FunctionView&) const;
     //! \return a view to the function values
-    std::span<const real> getValues() const;
+    std::span<const real> data() const;
     //! \brief destructor
     ~FunctionView() noexcept;
 

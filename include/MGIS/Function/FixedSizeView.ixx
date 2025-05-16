@@ -55,9 +55,9 @@ namespace mgis::function {
       const element_index<Space>& i) const
       requires(ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>)) {
     if constexpr (N == 1) {
-      return this->function.getValue(i);
+      return *(this->function.data(unsafe, i));
     } else {
-      return this->function.template getValues<N>(i);
+      return std::span<const real, N>(this->function.data(unsafe, i), N);
     }
   }
 
@@ -65,11 +65,7 @@ namespace mgis::function {
   requires(N > 0) auto FixedSizeView<Space, N, is_mutable>::operator()(
       const element_workspace<Space>&, const element_index<Space>& i) const
       requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>) {
-    if constexpr (N == 1) {
-      return this->function.getValue(i);
-    } else {
-      return this->function.template getValues<N>(i);
-    }
+    return this->operator()(i);
   }
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
@@ -77,9 +73,9 @@ namespace mgis::function {
       const cell_index<Space> e, const quadrature_point_index<Space> i) const
       requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>)) {
     if constexpr (N == 1) {
-      return this->function.getValue(e, i);
+      return *(this->function.data(unsafe, e, i));
     } else {
-      return this->function.template getValues<N>(e, i);
+      return std::span<const real, N>(this->function.data(unsafe, e, i), N);
     }
   }
 
@@ -89,11 +85,7 @@ namespace mgis::function {
       const cell_index<Space> e,
       const quadrature_point_index<Space> i) const
       requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>) {
-    if constexpr (N == 1) {
-      return this->function.getValue(e, i);
-    } else {
-      return this->function.template getValues<N>(e, i);
-    }
+    return this->operator()(e, i);
   }
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
@@ -104,9 +96,9 @@ namespace mgis::function {
       requires(is_mutable&& ElementSpaceConcept<Space> &&
                !(hasElementWorkspace<Space>)) {
     if constexpr (N == 1) {
-      return this->function.getValue(i);
+      return *(this->function.data(unsafe, i));
     } else {
-      return this->function.template getValues<N>(i);
+      return std::span<real, N>(this->function.data(unsafe, i), N);
     }
   }
 
@@ -118,11 +110,7 @@ namespace mgis::function {
           const element_index<Space>& i)  //
       requires(is_mutable&& ElementSpaceConcept<Space>&&
                    hasElementWorkspace<Space>) {
-    if constexpr (N == 1) {
-      return this->function.getValue(i);
-    } else {
-      return this->function.template getValues<N>(i);
-    }
+    return this->operator()(i);
   }
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
@@ -134,9 +122,9 @@ namespace mgis::function {
       requires(is_mutable&& QuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
     if constexpr (N == 1) {
-      return this->function.getValue(e, i);
+      return *(this->function.data(unsafe, e, i));
     } else {
-      return this->function.template getValues<N>(e, i);
+      return std::span<real, N>(this->function.data(unsafe, e, i), N);
     }
   }
 
@@ -149,11 +137,7 @@ namespace mgis::function {
           const quadrature_point_index<Space> i)  //
       requires(is_mutable&& QuadratureSpaceConcept<Space>&&
                    hasCellWorkspace<Space>) {
-    if constexpr (N == 1) {
-      return this->function.getValue(e, i);
-    } else {
-      return this->function.template getValues<N>(e, i);
-    }
+    return this->operator()(e, i);
   }
 
   template <size_type N, FunctionalSpaceConcept Space, bool is_mutable>
