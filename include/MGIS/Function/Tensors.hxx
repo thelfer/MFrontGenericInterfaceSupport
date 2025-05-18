@@ -31,28 +31,26 @@ namespace mgis::function::internals {
 
   template <TensorConcept TensorType>
   struct tensor_modifier {
-    template <FunctionalSpaceConcept Space,
-              DataLayoutDescription layout,
-              bool is_mutable>
-    auto operator()(const FunctionView<Space, layout, is_mutable>&) const
-        requires(layout.data_size == dynamic_extent
+    template <FunctionConcept FunctionType>
+    auto operator()(FunctionType&) const
+        requires(number_of_components<FunctionType> == dynamic_extent
                      ? true
-                     : compile_time_size<TensorType> == layout.data_size);
+                     : compile_time_size<TensorType> ==
+                           number_of_components<FunctionType>);
 
-    template <FunctionalSpaceConcept Space, size_type N>
-    auto operator()(const Function<Space, N>&) const
-        requires(N == dynamic_extent ? true
-                                     : compile_time_size<TensorType> == N);
-
-    template <FunctionalSpaceConcept Space, size_type N>
-    auto operator()(Function<Space, N>&) const
-        requires(N == dynamic_extent ? true
-                                     : compile_time_size<TensorType> == N);
+    template <FunctionConcept FunctionType>
+    auto operator()(const FunctionType&) const
+        requires(number_of_components<FunctionType> == dynamic_extent
+                     ? true
+                     : compile_time_size<TensorType> ==
+                           number_of_components<FunctionType>);
 
     template <typename EvaluatorType>
     auto operator()(EvaluatorType&&) const
         requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
-            areTensorModifierRequirementsSatisfied<TensorType, EvaluatorType>));
+            areTensorModifierRequirementsSatisfied<
+                TensorType,
+                std::decay_t<EvaluatorType>>));
   };
 
   struct RotateModifier {
@@ -140,31 +138,22 @@ namespace mgis::function::internals {
           std::forward<FirstEvaluatorType>(e1),
           std::forward<SecondEvaluatorType>(e2));
     }  // end of operator()
-  }; // end of RotateBackwardModifier
+  };   // end of RotateBackwardModifier
 
 }  // end of namespace mgis::function::internals
 
 namespace mgis::function {
 
-  template <FunctionalSpaceConcept Space,
-            DataLayoutDescription layout,
-            bool is_mutable,
-            TensorConcept TensorType>
-  auto operator|(const FunctionView<Space, layout, is_mutable>&,
+  template <typename FunctionType, TensorConcept TensorType>
+  auto operator|(FunctionType&&,
                  const internals::tensor_modifier<TensorType>&)  //
-      requires(layout.data_size == dynamic_extent
-                   ? true
-                   : compile_time_size<TensorType> == layout.data_size);
-
-  template <FunctionalSpaceConcept Space, size_type N, TensorConcept TensorType>
-  auto operator|(const Function<Space, N>&,
-                 const internals::tensor_modifier<TensorType>&)  //
-      requires(N == dynamic_extent ? true : compile_time_size<TensorType> == N);
-
-  template <FunctionalSpaceConcept Space, size_type N, TensorConcept TensorType>
-  auto operator|(Function<Space, N>& f,
-                 const internals::tensor_modifier<TensorType>&)  //
-      requires(N == dynamic_extent ? true : compile_time_size<TensorType> == N);
+      requires((FunctionConcept<std::decay_t<FunctionType>>)&&   //
+               (!std::is_rvalue_reference_v<FunctionType&&>)&&   //
+               (number_of_components<std::decay_t<FunctionType>> ==
+                        dynamic_extent
+                    ? true
+                    : compile_time_size<TensorType> ==
+                          number_of_components<std::decay_t<FunctionType>>));
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //

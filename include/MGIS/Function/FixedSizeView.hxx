@@ -79,8 +79,7 @@ namespace mgis::function {
      * \brief call operator
      * \param[in] i: integration point index
      */
-    mutable_value_type
-    operator()(const element_index<Space>&) requires(
+    mutable_value_type operator()(const element_index<Space>&) requires(
         is_mutable&& ElementSpaceConcept<Space> &&
         !(hasElementWorkspace<Space>));
     /*!

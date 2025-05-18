@@ -115,10 +115,10 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     const auto ok =
         ImmutableFunctionView<BasicLinearSpace,
                               {.data_size = 2}>::checkPreconditions(ctx, space,
-                                                               values, 2);
+                                                                    values, 2);
     TFEL_TESTS_ASSERT(ok);
-    auto f =
-        ImmutableFunctionView<BasicLinearSpace, {.data_size = 2}>(space, values, 2);
+    auto f = ImmutableFunctionView<BasicLinearSpace, {.data_size = 2}>(
+        space, values, 2);
     TFEL_TESTS_STATIC_ASSERT(f.getNumberOfComponents() == 2);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 2);
     TFEL_TESTS_ASSERT(std::abs(f.data(unsafe, 0)[0] - 1) < eps);
@@ -158,8 +158,9 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
             BasicLinearSpace,
             {.data_size = 2, .data_stride = 3}>::checkPreconditions(ctx, space,
                                                                     values)));
-    auto f = ImmutableFunctionView<BasicLinearSpace, {.data_size = 2, .data_stride = 3}>(
-        space, values);
+    auto f = ImmutableFunctionView<BasicLinearSpace,
+                                   {.data_size = 2, .data_stride = 3}>(space,
+                                                                       values);
     TFEL_TESTS_STATIC_ASSERT(f.getNumberOfComponents() == 2);
     TFEL_TESTS_STATIC_ASSERT(f.getDataStride() == 3);
     TFEL_TESTS_ASSERT(std::abs(f.data(unsafe, 0)[0] - 1) < eps);
@@ -416,7 +417,8 @@ struct FunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 1);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 1);
     TFEL_TESTS_STATIC_ASSERT(number_of_components<decltype(f)> == 1);
-    TFEL_TESTS_STATIC_ASSERT((std::same_as<function_result<decltype(f)>, real&>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<function_result<decltype(f)>, real&>));
     f(0) = 12;
     f(1) = 13;
     const auto& values = f.data();

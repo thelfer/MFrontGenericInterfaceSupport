@@ -21,16 +21,12 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0) FixedSizeView<Space, N, is_mutable>::FixedSizeView(
       const FunctionView<Space, {}, is_mutable>& values)
-      : function(values) {
-    raise_if(!checkPreconditions(values),
-             "FixedSizeImmutableView::FixedSizeImmutableView: "
-             "unmatched size");
-  }  // end of FixedSizeView
+      : function(values) {}  // end of FixedSizeView
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0) bool FixedSizeView<Space, N, is_mutable>::check(
       Context&) const noexcept {
-    return true;
+    return checkPreconditions(this->function);
   }
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>

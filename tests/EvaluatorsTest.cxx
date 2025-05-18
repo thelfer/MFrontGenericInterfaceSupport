@@ -1,5 +1,5 @@
 /*!
- * \file   MechancialEvaluatorsTest.cxx
+ * \file   EvaluatorsTest.cxx
  * \brief
  * \author Thomas Helfer
  * \date   02/05/2025
@@ -23,6 +23,8 @@
 #include "MGIS/Function/FixedSizeView.hxx"
 #include "MGIS/Function/Tensors.hxx"
 
+void print_type(const double) {}
+
 struct EvaluatorsTest final : public tfel::tests::TestCase {
   EvaluatorsTest()
       : tfel::tests::TestCase("MGIS/Function", "EvaluatorsTests") {
@@ -33,6 +35,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     this->test3();
     this->test4();
     this->test5();
+    this->test6();
     return this->result;
   }
 
@@ -207,9 +210,15 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     Context ctx;
     auto space = std::make_shared<BasicLinearSpace>(1);
     auto values = std::vector<real>{1e-3, 2e-3, -5e-3, 4e-3};
-    auto strain =
-        FunctionView<BasicLinearSpace>(space, values, 4) | as_stensor<2>;
+    static_assert(FunctionConcept<FunctionView<BasicLinearSpace>>);
+    FunctionView<BasicLinearSpace> f(space, values, 4);
+    auto strain = f | as_stensor<2>;
     TFEL_TESTS_ASSERT(strain.check(ctx));
+    static_assert(std::same_as<decltype(f(0)), std::span<real>>);
+
+    static_assert(std::same_as<decltype(f(0).data()), real*>);
+    auto value = f.data(unsafe, 0);
+    static_assert(std::same_as<decltype(value), real*>);
     strain(0) = 1e-3 * tfel::math::stensor<2, real>::Id();
     TFEL_TESTS_ASSERT(std::abs(values[0] - 1e-3) < eps);
     TFEL_TESTS_ASSERT(std::abs(values[1] - 1e-3) < eps);
@@ -224,8 +233,12 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(stress(0)[3] - 0) < K * eps);
     //
     auto values2 = std::vector<real>{1e-3, 2e-3, -5e-3, 4e-3};
-    auto stress_view =
-        FunctionView<BasicLinearSpace>(space, values2, 4) | as_stensor<2>;
+    FunctionView<BasicLinearSpace> f2(space, values2, 4);
+    auto stress_view = f2 | as_stensor<2>;
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<decltype(stress_view),
+                      TensorView<FunctionView<BasicLinearSpace>,
+                                 tfel::math::stensor<2, double>, true>>));
     const auto ok = assign(ctx, stress_view, strain | multiply_by_scalar(K));
     TFEL_TESTS_ASSERT(ok);
     TFEL_TESTS_ASSERT(std::abs(values2[0] - 150e6) < K * eps);
@@ -238,6 +251,25 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(values2[1] - 300e6) < K * eps);
     TFEL_TESTS_ASSERT(std::abs(values2[2] - 300e6) < K * eps);
     TFEL_TESTS_ASSERT(std::abs(values2[3] - 0) < K * eps);
+    FunctionView<BasicLinearSpace> f3(space, values, 4);
+#pragma message("this shall not compile")
+    auto strain2 = std::move(f3) | as_stensor<2>;
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<decltype(strain2),
+                      TensorView<FunctionView<BasicLinearSpace>,
+                                 tfel::math::stensor<2, double>, true>>));
+  }
+  void test6() {
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    Context ctx;
+    auto space = std::make_shared<BasicLinearSpace>(1);
+    auto values = std::vector<real>{1e-3, 2e-3, -5e-3, 4e-3};
+    static_assert(FunctionConcept<FunctionView<BasicLinearSpace>>);
+    FunctionView<BasicLinearSpace> f(space, values, 4);
+    auto strain = f | as_stensor<1>;
+    TFEL_TESTS_ASSERT(strain.check(ctx));
   }
 };
 

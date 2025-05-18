@@ -76,8 +76,8 @@ namespace mgis::function {
           Child,
           FirstEvaluatorType,
           SecondEvaluatorType>::allocateWorkspace() {
-    this->first_evaluator.allocatWorkspace();
-    this->second_evaluator.allocatWorkspace();
+    this->first_evaluator.allocateWorkspace();
+    this->second_evaluator.allocateWorkspace();
   }  // end of allocatWorkspace
 
   template <typename Child,

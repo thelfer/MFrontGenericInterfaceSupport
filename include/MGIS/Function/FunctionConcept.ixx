@@ -1,6 +1,6 @@
 /*!
  * \file   MGIS/Function/FunctionConcept.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/05/2025
  */
@@ -26,6 +26,6 @@ namespace mgis::function {
     return assign(ctx, f, e);
   }  // end of operator |
 
-} // end of namespace mgis::function
+}  // end of namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_FUNCTIONCONCEPT_IXX */

@@ -29,6 +29,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
+    this->test3();
     return this->result;
   }
 
@@ -64,6 +65,59 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     const auto ok2 = vmis(as_stensor<1>(view<3>(f))) | seq2;
     TFEL_TESTS_ASSERT(ok2);
     TFEL_TESTS_ASSERT(std::abs(seq2(0)[0] - std::sqrt(3)) < eps);
+  }
+  void test3() {
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    Context ctx;
+    auto space = std::make_shared<BasicLinearSpace>(1);
+    Function<BasicLinearSpace> pk1_function(space, 9);
+    Function<BasicLinearSpace> F_function(space, 9);
+    Function<BasicLinearSpace> sig_function(space, 6);
+    auto pk1 = pk1_function | as_tensor<3>;
+    auto F = F_function | as_tensor<3>;
+    auto sig = sig_function | as_stensor<3>;
+    TFEL_TESTS_STATIC_ASSERT(FunctionConcept<std::decay_t<decltype(pk1)>>);
+    TFEL_TESTS_STATIC_ASSERT(EvaluatorConcept<std::decay_t<decltype(pk1)>>);
+    TFEL_TESTS_STATIC_ASSERT(
+        number_of_components<std::decay_t<decltype(pk1)>> == 9);
+    TFEL_TESTS_ASSERT(pk1.check(ctx));
+    TFEL_TESTS_CHECK_EQUAL(pk1.getNumberOfComponents(), 9);
+    TFEL_TESTS_ASSERT(F.check(ctx));
+    TFEL_TESTS_CHECK_EQUAL(F.getNumberOfComponents(), 9);
+    pk1(0) = tfel::math::tensor<3u, real>::zero();
+    F(0) = tfel::math::tensor<3u, real>::Id();
+    // Cauchy stress in material frame
+    const auto cauchy = pk1 | from_pk1_to_cauchy(F);
+    TFEL_TESTS_STATIC_ASSERT(EvaluatorConcept<std::decay_t<decltype(cauchy)>>);
+    TFEL_TESTS_STATIC_ASSERT(
+        number_of_components<std::decay_t<decltype(cauchy)>> == 6);
+    TFEL_TESTS_ASSERT(cauchy.check(ctx));
+    TFEL_TESTS_CHECK_EQUAL(cauchy.getNumberOfComponents(), 6);
+    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[0] < 0) < eps);
+    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[1] < 0) < eps);
+    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[2] < 0) < eps);
+    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[3] < 0) < eps);
+    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[4] < 0) < eps);
+    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[5] < 0) < eps);
+    // evaluator of the Cauchy stress in global frame
+    const auto R = tfel::math::tmatrix<3, 3>{{0, 1, 0},  //
+                                             {0, 0, 1},
+                                             {1, 0, 0}};
+    const auto cauchy_r = pk1 | from_pk1_to_cauchy(F) | rotate(R);
+    TFEL_TESTS_STATIC_ASSERT(
+        EvaluatorConcept<std::decay_t<decltype(cauchy_r)>>);
+    TFEL_TESTS_ASSERT(cauchy_r.check(ctx));
+    // evaluation of the Cauchy stress in global frame
+    const auto ok = pk1 | from_pk1_to_cauchy(F) | rotate(R) | sig;
+    TFEL_TESTS_ASSERT(ok);
+    TFEL_TESTS_ASSERT(std::abs(sig(0)[0] < 0) < eps);
+    TFEL_TESTS_ASSERT(std::abs(sig(0)[1] < 0) < eps);
+    TFEL_TESTS_ASSERT(std::abs(sig(0)[2] < 0) < eps);
+    TFEL_TESTS_ASSERT(std::abs(sig(0)[3] < 0) < eps);
+    TFEL_TESTS_ASSERT(std::abs(sig(0)[4] < 0) < eps);
+    TFEL_TESTS_ASSERT(std::abs(sig(0)[5] < 0) < eps);
   }
 };
 

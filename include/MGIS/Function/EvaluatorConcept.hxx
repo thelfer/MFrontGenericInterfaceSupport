@@ -1,6 +1,6 @@
 /*!
  * \file   MGIS/Function/EvaluatorConcept.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/05/2025
  */
@@ -28,7 +28,8 @@ namespace mgis::function {
     struct EvaluatorResultQueryImplementation1<true, EvaluatorType> {
       using Space =
           std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
-      using type = std::invoke_result_t<const EvaluatorType, element_index<Space>>;
+      using type =
+          std::invoke_result_t<const EvaluatorType, element_index<Space>>;
     };
 
     template <bool, typename EvaluatorType>

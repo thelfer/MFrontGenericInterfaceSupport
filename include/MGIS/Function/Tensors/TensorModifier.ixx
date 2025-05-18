@@ -1,6 +1,6 @@
 /*!
  * \file   MGIS/Function/TensorModifier.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   13/05/2025
  */

@@ -1,6 +1,6 @@
 /*!
  * \file   MGIS/Function/Tensors/TensorModifier.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   13/05/2025
  */
@@ -54,7 +54,7 @@ namespace mgis::function {
     auto apply(const evaluator_result<EvaluatorType>&) const;
   };
 
-} // end of namespace mgis::function
+}  // end of namespace mgis::function
 
 #include "MGIS/Function/Tensors/TensorModifier.ixx"
 

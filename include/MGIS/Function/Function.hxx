@@ -287,33 +287,36 @@ namespace mgis::function {
      * \param[in] v: values
      * \param[in] l: data layout
      */
-    FunctionView(
-        std::shared_ptr<const Space>,
-        ExternalData,
-        const DataLayout<layout>&) requires((layout.data_size == dynamic_extent) &&
-                                            (layout.data_stride == dynamic_extent));
+    FunctionView(std::shared_ptr<const Space>,
+                 ExternalData,
+                 const DataLayout<layout>&) requires((layout.data_size ==
+                                                      dynamic_extent) &&
+                                                     (layout.data_stride ==
+                                                      dynamic_extent));
     /*!
      * \brief check that the preconditions to build the view are met
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] l: data layout
      */
-    FunctionView(
-        std::shared_ptr<const Space>,
-        ExternalData,
-        const DataLayout<layout>&) requires((layout.data_size != dynamic_extent) &&
-                                            (layout.data_stride == dynamic_extent));
+    FunctionView(std::shared_ptr<const Space>,
+                 ExternalData,
+                 const DataLayout<layout>&) requires((layout.data_size !=
+                                                      dynamic_extent) &&
+                                                     (layout.data_stride ==
+                                                      dynamic_extent));
     /*!
      * \brief check that the preconditions to build the view are met
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] l: data layout
      */
-    FunctionView(
-        std::shared_ptr<const Space>,
-        ExternalData,
-        const DataLayout<layout>&) requires((layout.data_size == dynamic_extent) &&
-                                            (layout.data_stride != dynamic_extent));
+    FunctionView(std::shared_ptr<const Space>,
+                 ExternalData,
+                 const DataLayout<layout>&) requires((layout.data_size ==
+                                                      dynamic_extent) &&
+                                                     (layout.data_stride !=
+                                                      dynamic_extent));
     //! \return the underlying quadrature space
     const Space& getSpace() const noexcept;
     //! \return the underlying quadrature space

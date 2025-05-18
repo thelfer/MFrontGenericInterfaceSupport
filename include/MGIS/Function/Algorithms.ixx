@@ -54,7 +54,7 @@ namespace mgis::function::algorithm {
 
 }  // end of namespace mgis::function::algorithm
 
-namespace mgis::function::internals{
+namespace mgis::function::internals {
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   void assign_scalar_impl(FunctionType& f, EvaluatorType e) requires(
@@ -159,7 +159,7 @@ namespace mgis::function::internals{
     }
   }  // end of assign_impl
 
-} // end of namespace mgis::function::internals
+}  // end of namespace mgis::function::internals
 
 namespace mgis::function {
 

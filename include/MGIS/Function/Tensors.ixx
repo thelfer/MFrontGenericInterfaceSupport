@@ -8,41 +8,37 @@
 #ifndef LIB_MGIS_FUNCTION_TENSORS_IXX
 #define LIB_MGIS_FUNCTION_TENSORS_IXX
 
+#include <iostream>
+
 namespace mgis::function::internals {
 
   template <TensorConcept TensorType>
-  template <FunctionalSpaceConcept Space,
-            DataLayoutDescription layout,
-            bool is_mutable>
-  auto tensor_modifier<TensorType>::operator()(
-      const FunctionView<Space, layout, is_mutable>& f) const
-      requires(layout.data_size == dynamic_extent
+  template <FunctionConcept FunctionType>
+  auto tensor_modifier<TensorType>::operator()(FunctionType& f) const
+      requires(number_of_components<FunctionType> == dynamic_extent
                    ? true
-                   : compile_time_size<TensorType> == layout.data_size) {
-    return TensorView<Space, TensorType, is_mutable>(f);
+                   : compile_time_size<TensorType> ==
+                         number_of_components<FunctionType>) {
+    return TensorView<FunctionType, TensorType, true>(f);
   }
 
   template <TensorConcept TensorType>
-  template <FunctionalSpaceConcept Space, size_type N>
-  auto tensor_modifier<TensorType>::operator()(const Function<Space, N>& f)
-      const requires(N == dynamic_extent ? true
-                                         : compile_time_size<TensorType> == N) {
-    return TensorView<Space, TensorType, false>(f.view());
-  }
-
-  template <TensorConcept TensorType>
-  template <FunctionalSpaceConcept Space, size_type N>
-  auto tensor_modifier<TensorType>::operator()(Function<Space, N>& f) const
-      requires(N == dynamic_extent ? true
-                                   : compile_time_size<TensorType> == N) {
-    return TensorView<Space, TensorType, true>(f.view());
+  template <FunctionConcept FunctionType>
+  auto tensor_modifier<TensorType>::operator()(const FunctionType& f) const
+      requires(number_of_components<FunctionType> == dynamic_extent
+                   ? true
+                   : compile_time_size<TensorType> ==
+                         number_of_components<FunctionType>) {
+    return TensorView<FunctionType, TensorType, false>(f);
   }
 
   template <TensorConcept TensorType>
   template <typename EvaluatorType>
   auto tensor_modifier<TensorType>::operator()(EvaluatorType&& e) const
       requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
-          areTensorModifierRequirementsSatisfied<TensorType, EvaluatorType>)) {
+          areTensorModifierRequirementsSatisfied<
+              TensorType,
+              std::decay_t<EvaluatorType>>)) {
     using Modifier = TensorModifier<TensorType, std::decay_t<EvaluatorType>>;
     return Modifier(std::forward<EvaluatorType>(e));
   }  // end of operator()
@@ -51,31 +47,16 @@ namespace mgis::function::internals {
 
 namespace mgis::function {
 
-  template <FunctionalSpaceConcept Space,
-            DataLayoutDescription layout,
-            bool is_mutable,
-            TensorConcept TensorType>
-  auto operator|(const FunctionView<Space, layout, is_mutable>& f,
+  template <typename FunctionType, TensorConcept TensorType>
+  auto operator|(FunctionType&& f,
                  const internals::tensor_modifier<TensorType>& m)  //
-      requires(layout.data_size == dynamic_extent
-                   ? true
-                   : compile_time_size<TensorType> == layout.data_size) {
-    return m(f);
-  }
-
-  template <FunctionalSpaceConcept Space, size_type N, TensorConcept TensorType>
-  auto operator|(const Function<Space, N>& f,
-                 const internals::tensor_modifier<TensorType>& m)  //
-      requires(N == dynamic_extent ? true
-                                   : compile_time_size<TensorType> == N) {
-    return m(f);
-  }
-
-  template <FunctionalSpaceConcept Space, size_type N, TensorConcept TensorType>
-  auto operator|(Function<Space, N>& f,
-                 const internals::tensor_modifier<TensorType>& m)  //
-      requires(N == dynamic_extent ? true
-                                   : compile_time_size<TensorType> == N) {
+      requires((FunctionConcept<std::decay_t<FunctionType>>)&&     //
+               (!std::is_rvalue_reference_v<FunctionType&&>)&&     //
+               (number_of_components<std::decay_t<FunctionType>> ==
+                        dynamic_extent
+                    ? true
+                    : compile_time_size<TensorType> ==
+                          number_of_components<std::decay_t<FunctionType>>)) {
     return m(f);
   }
 

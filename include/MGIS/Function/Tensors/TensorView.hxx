@@ -20,26 +20,38 @@ namespace mgis::function {
    * \brief an evaluator returning the values of an immutable
    * function view as a fixed size span or a scalar
    *
-   * \tparam Space: underlying space
+   * \tparam FunctionType: underlying function type
    * \tparam TensorType: type of the tensor
    * \tparam is_mutable: boolean stating if the call operators can return
    * mutable values
    */
-  template <FunctionalSpaceConcept Space,
+  template <FunctionConcept FunctionType,
             TensorConcept TensorType,
             bool is_mutable = false>
   struct TensorView {
+    //
+    static_assert(number_of_components<FunctionType> == dynamic_extent
+                      ? true
+                      : compile_time_size<TensorType> ==
+                            number_of_components<FunctionType>);
+    //
+    using Space =
+        std::decay_t<decltype(std::declval<FunctionType>().getSpace())>;
     /*!
      * \brief method checking that the precondition of the constructor are met.
      * \param[in] values: function
      */
-    static bool checkPreconditions(
-        const FunctionView<Space, {}, is_mutable>&) noexcept;
+    static bool checkPreconditions(const FunctionType&) noexcept;
     /*!
      * \brief constructor
      * \param[in] values: function
      */
-    TensorView(const FunctionView<Space, {}, is_mutable>&);
+    TensorView(FunctionType&);
+    /*!
+     * \brief constructor
+     * \param[in] values: function
+     */
+    TensorView(const FunctionType&) requires(!is_mutable);
     //! \brief perform consistency checks
     bool check(Context&) const noexcept;
     //! \brief allocate internal workspace
@@ -115,10 +127,7 @@ namespace mgis::function {
 
    private:
     //! \brief underlying function
-    std::conditional_t<is_mutable,
-                       FunctionView<Space, {}, is_mutable>,
-                       const FunctionView<Space, {}, is_mutable>>
-        function;
+    std::conditional_t<is_mutable, FunctionType&, const FunctionType&> function;
   };  // end of TensorView
 
 }  // end of namespace mgis::function

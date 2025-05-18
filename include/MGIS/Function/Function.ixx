@@ -384,7 +384,7 @@ namespace mgis::function {
           const size_type o)  //
       requires(is_mutable&& LinearElementSpaceConcept<Space> &&
                (!hasElementWorkspace<Space>)) {
-      return this->values.data() + this->getDataOffset(o);
+    return this->values.data() + this->getDataOffset(o);
   }  // end of data
 
   template <FunctionalSpaceConcept Space,
