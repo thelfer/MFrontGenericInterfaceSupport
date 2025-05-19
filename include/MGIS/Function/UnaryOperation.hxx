@@ -152,7 +152,7 @@ namespace mgis::function::customization_points {
 
   template <std::size_t N>
   requires((N > 0) && (N != std::dynamic_extent))  //
-  struct AbsoluteValue<std::array<const real, N>> {
+      struct AbsoluteValue<std::array<const real, N>> {
     static constexpr auto exe(const std::array<const real, N>& v) noexcept {
       auto r = std::array<real, N>{};
       for (std::size_t i = 0; i != N; ++i) {
@@ -214,7 +214,7 @@ namespace mgis::function::customization_points {
 
   template <std::size_t N>
   requires((N > 0) && (N != std::dynamic_extent))  //
-  struct MinimumComponent<std::span<const real, N>> {
+      struct MinimumComponent<std::span<const real, N>> {
     static constexpr real exe(const std::span<const real, N>& v) noexcept
         requires((N != 0) && (N != std::dynamic_extent)) {
       if constexpr (N == 1) {
@@ -238,7 +238,7 @@ namespace mgis::function::customization_points {
     }
   };
 
-} // end of mgis::function::customization_points
+}  // namespace mgis::function::customization_points
 
 namespace mgis::function {
 
@@ -259,7 +259,7 @@ namespace mgis::function {
             return customization_points::minimum_component(v);
           });
 
-} // end of namespace mgis::function
+}  // end of namespace mgis::function
 
 #ifdef MGIS_HAVE_TFEL
 
