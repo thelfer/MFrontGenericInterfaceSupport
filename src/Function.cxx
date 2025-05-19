@@ -10,8 +10,8 @@
 
 namespace mgis::function {
 
-  static_assert(EvaluatorConcept<ImmutableFunctionView<BasicLinearSpace>>);
-  static_assert(!FunctionConcept<ImmutableFunctionView<BasicLinearSpace>>);
+  static_assert(EvaluatorConcept<FunctionEvaluator<BasicLinearSpace>>);
+  static_assert(!FunctionConcept<FunctionEvaluator<BasicLinearSpace>>);
 
   static_assert(EvaluatorConcept<FunctionView<BasicLinearSpace>>);
   static_assert(FunctionConcept<FunctionView<BasicLinearSpace>>);

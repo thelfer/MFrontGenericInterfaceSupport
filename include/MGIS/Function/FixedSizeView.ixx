@@ -12,145 +12,243 @@
 
 namespace mgis::function {
 
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
-  requires(N > 0) bool FixedSizeView<Space, N, is_mutable>::checkPreconditions(
-      const FunctionView<Space, {}, is_mutable>& values) noexcept {
+  template <FunctionConcept FunctionType, size_type N>
+  requires(N > 0) bool FixedSizeView<FunctionType, N>::checkPreconditions(
+      const FunctionType& values) noexcept {
     return values.getNumberOfComponents() == N;
   }  // end of checkPreconditions
 
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
-  requires(N > 0) FixedSizeView<Space, N, is_mutable>::FixedSizeView(
-      const FunctionView<Space, {}, is_mutable>& values)
+  template <FunctionConcept FunctionType, size_type N>
+  requires(N > 0)
+      FixedSizeView<FunctionType, N>::FixedSizeView(FunctionType& values)
       : function(values) {}  // end of FixedSizeView
 
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
-  requires(N > 0) bool FixedSizeView<Space, N, is_mutable>::check(
+  template <FunctionConcept FunctionType, size_type N>
+  requires(N > 0) bool FixedSizeView<FunctionType, N>::check(
       Context&) const noexcept {
     return checkPreconditions(this->function);
   }
 
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
-  requires(N >
-           0) void FixedSizeView<Space, N, is_mutable>::allocateWorkspace() {}
-
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
-  requires(N > 0) const Space& FixedSizeView<Space, N, is_mutable>::getSpace()
-      const {
+  template <FunctionConcept FunctionType, size_type N>
+  requires(N > 0)                                            //
+      const typename FixedSizeView<FunctionType, N>::Space&  //
+      FixedSizeView<FunctionType, N>::getSpace() const {
     return this->function.getSpace();
   }
 
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
+  template <FunctionConcept FunctionType, size_type N>
   requires(N > 0) constexpr size_type
-      FixedSizeView<Space, N, is_mutable>::getNumberOfComponents()
-          const noexcept {
+      FixedSizeView<FunctionType, N>::getNumberOfComponents() const noexcept {
     return N;
   }
 
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
-  requires(N > 0) auto FixedSizeView<Space, N, is_mutable>::operator()(
+  template <FunctionConcept FunctionType, size_type N>
+  requires(N > 0) auto FixedSizeView<FunctionType, N>::operator()(
       const element_index<Space>& i) const
       requires(ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>)) {
+    constexpr auto has_data_method =
+        requires(const FunctionType& rf, const element_index<Space>& ri) {
+      { rf.data(unsafe, ri) } -> std::same_as<const real*>;
+    };
     if constexpr (N == 1) {
-      return *(this->function.data(unsafe, i));
+      if constexpr (has_data_method) {
+        return *(this->function.data(unsafe, i));
+      } else {
+        return *(this->function(i).data());
+      }
     } else {
-      return std::span<const real, N>(this->function.data(unsafe, i), N);
+      if constexpr (has_data_method) {
+        return std::span<const real, N>(this->function.data(unsafe, i), N);
+      } else {
+        return std::span<const real, N>(this->function(i).data(), N);
+      }
     }
   }
 
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
-  requires(N > 0) auto FixedSizeView<Space, N, is_mutable>::operator()(
-      const element_workspace<Space>&, const element_index<Space>& i) const
+  template <FunctionConcept FunctionType, size_type N>
+  requires(N > 0) auto FixedSizeView<FunctionType, N>::operator()(
+      const element_workspace<Space>& wk, const element_index<Space>& i) const
       requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>) {
-    return this->operator()(i);
+    constexpr auto has_data_method =
+        requires(const FunctionType& rf, const element_workspace<Space>& rwk,
+                 const element_index<Space>& ri) {
+      { rf.data(unsafe, rwk, ri) } -> std::same_as<const real*>;
+    };
+    if constexpr (N == 1) {
+      if constexpr (has_data_method) {
+        return *(this->function.data(unsafe, wk, i));
+      } else {
+        return *(this->function(wk, i).data());
+      }
+    } else {
+      if constexpr (has_data_method) {
+        return std::span<const real, N>(this->function.data(unsafe, wk, i), N);
+      } else {
+        return std::span<const real, N>(this->function(wk, i).data(), N);
+      }
+    }
   }
 
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
-  requires(N > 0) auto FixedSizeView<Space, N, is_mutable>::operator()(
-      const cell_index<Space> e, const quadrature_point_index<Space> i) const
+  template <FunctionConcept FunctionType, size_type N>
+  requires(N > 0) auto FixedSizeView<FunctionType, N>::operator()(
+      const cell_index<Space>& e, const quadrature_point_index<Space>& i) const
       requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>)) {
+    constexpr auto has_data_method =
+        requires(const FunctionType& rf, const cell_index<Space>& re,
+                 const quadrature_point_index<Space>& ri) {
+      { rf.data(unsafe, re, ri) } -> std::same_as<const real*>;
+    };
     if constexpr (N == 1) {
-      return *(this->function.data(unsafe, e, i));
+      if constexpr (has_data_method) {
+        return *(this->function.data(unsafe, e, i));
+      } else {
+        return *(this->function(e, i).data());
+      }
     } else {
-      return std::span<const real, N>(this->function.data(unsafe, e, i), N);
+      if constexpr (has_data_method) {
+        return std::span<const real, N>(this->function.data(unsafe, e, i), N);
+      } else {
+        return std::span<const real, N>(this->function(e, i).data(), N);
+      }
     }
   }
 
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
-  requires(N > 0) auto FixedSizeView<Space, N, is_mutable>::operator()(
-      const cell_workspace<Space>&,
-      const cell_index<Space> e,
-      const quadrature_point_index<Space> i) const
+  template <FunctionConcept FunctionType, size_type N>
+  requires(N > 0) auto FixedSizeView<FunctionType, N>::operator()(
+      const cell_workspace<Space>& wk,
+      const cell_index<Space>& e,
+      const quadrature_point_index<Space>& i) const
       requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>) {
-    return this->operator()(e, i);
-  }
-
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
-  requires(N > 0)
-      typename FixedSizeView<Space, N, is_mutable>::mutable_value_type
-      FixedSizeView<Space, N, is_mutable>::operator()(
-          const element_index<Space>& i)  //
-      requires(is_mutable&& ElementSpaceConcept<Space> &&
-               !(hasElementWorkspace<Space>)) {
+    constexpr auto has_data_method = requires(
+        const FunctionType& rf, const cell_workspace<Space>& rwk,
+        const cell_index<Space>& re, const quadrature_point_index<Space>& ri) {
+      { rf.data(unsafe, rwk, re, ri) } -> std::same_as<const real*>;
+    };
     if constexpr (N == 1) {
-      return *(this->function.data(unsafe, i));
+      if constexpr (has_data_method) {
+        return *(this->function.data(unsafe, wk, e, i));
+      } else {
+        return *(this->function(wk, e, i).data());
+      }
     } else {
-      return std::span<real, N>(this->function.data(unsafe, i), N);
+      if constexpr (has_data_method) {
+        return std::span<const real, N>(this->function.data(unsafe, wk, e, i),
+                                        N);
+      } else {
+        return std::span<const real, N>(this->function(wk, e, i).data(), N);
+      }
     }
   }
 
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
-  requires(N > 0)
-      typename FixedSizeView<Space, N, is_mutable>::mutable_value_type
-      FixedSizeView<Space, N, is_mutable>::operator()(
-          const element_workspace<Space>&,
+  template <FunctionConcept FunctionType, size_type N>
+  requires(N > 0) typename FixedSizeView<FunctionType, N>::mutable_value_type
+      FixedSizeView<FunctionType, N>::operator()(
           const element_index<Space>& i)  //
-      requires(is_mutable&& ElementSpaceConcept<Space>&&
-                   hasElementWorkspace<Space>) {
-    return this->operator()(i);
-  }
-
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
-  requires(N > 0)
-      typename FixedSizeView<Space, N, is_mutable>::mutable_value_type
-      FixedSizeView<Space, N, is_mutable>::operator()(
-          const cell_index<Space> e,
-          const quadrature_point_index<Space> i)  //
-      requires(is_mutable&& QuadratureSpaceConcept<Space> &&
-               (!hasCellWorkspace<Space>)) {
+      requires(ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>)) {
+    constexpr auto has_data_method =
+        requires(FunctionType& rf, const element_index<Space>& ri) {
+      { rf.data(unsafe, ri) } -> std::same_as<real*>;
+    };
     if constexpr (N == 1) {
-      return *(this->function.data(unsafe, e, i));
+      if constexpr (has_data_method) {
+        return *(this->function.data(unsafe, i));
+      } else {
+        return *(this->function(i).data());
+      }
     } else {
-      return std::span<real, N>(this->function.data(unsafe, e, i), N);
+      if constexpr (has_data_method) {
+        return std::span<real, N>(this->function.data(unsafe, i), N);
+      } else {
+        return std::span<real, N>(this->function(i).data(), N);
+      }
     }
   }
 
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
-  requires(N > 0)
-      typename FixedSizeView<Space, N, is_mutable>::mutable_value_type
-      FixedSizeView<Space, N, is_mutable>::operator()(
-          const cell_workspace<Space>&,
-          const cell_index<Space> e,
-          const quadrature_point_index<Space> i)  //
-      requires(is_mutable&& QuadratureSpaceConcept<Space>&&
-                   hasCellWorkspace<Space>) {
-    return this->operator()(e, i);
+  template <FunctionConcept FunctionType, size_type N>
+  requires(N > 0) typename FixedSizeView<FunctionType, N>::mutable_value_type
+      FixedSizeView<FunctionType, N>::operator()(
+          const element_workspace<Space>& wk,
+          const element_index<Space>& i)  //
+      requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>) {
+    constexpr auto has_data_method =
+        requires(FunctionType & rf, const element_workspace<Space>& rwk,
+                 const element_index<Space>& ri) {
+      { rf.data(unsafe, rwk, ri) } -> std::same_as<real*>;
+    };
+    if constexpr (N == 1) {
+      if constexpr (has_data_method) {
+        return *(this->function.data(unsafe, wk, i));
+      } else {
+        return *(this->function(wk, i).data());
+      }
+    } else {
+      if constexpr (has_data_method) {
+        return std::span<real, N>(this->function.data(unsafe, wk, i), N);
+      } else {
+        return std::span<real, N>(this->function(wk, i).data(), N);
+      }
+    }
   }
 
-  template <size_type N, FunctionalSpaceConcept Space, bool is_mutable>
-  auto view(const FunctionView<Space, {}, is_mutable>& f) requires(N > 0) {
-    return FixedSizeView<Space, N, false>(f);
-  }  // end of view
+  template <FunctionConcept FunctionType, size_type N>
+  requires(N > 0) typename FixedSizeView<FunctionType, N>::mutable_value_type
+      FixedSizeView<FunctionType, N>::operator()(
+          const cell_index<Space>& e,
+          const quadrature_point_index<Space>& i)  //
+      requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>)) {
+    constexpr auto has_data_method =
+        requires(FunctionType & rf, const cell_index<Space>& re,
+                 const quadrature_point_index<Space>& ri) {
+      { rf.data(unsafe, re, ri) } -> std::same_as<real*>;
+    };
+    if constexpr (N == 1) {
+      if constexpr (has_data_method) {
+        return *(this->function.data(unsafe, e, i));
+      } else {
+        return *(this->function(e, i).data());
+      }
+    } else {
+      if constexpr (has_data_method) {
+        return std::span<real, N>(this->function.data(unsafe, e, i), N);
+      } else {
+        return std::span<real, N>(this->function(e, i).data(), N);
+      }
+    }
+  }
 
-  template <size_type N, FunctionalSpaceConcept Space>
-  auto view(Function<Space, dynamic_extent>& f)  //
-      requires((N > 0) && (N != dynamic_extent)) {
-    return FixedSizeView<Space, N, true>(f.view());
-  }  // end of view
+  template <FunctionConcept FunctionType, size_type N>
+  requires(N > 0) typename FixedSizeView<FunctionType, N>::mutable_value_type
+      FixedSizeView<FunctionType, N>::operator()(
+          const cell_workspace<Space>& wk,
+          const cell_index<Space>& e,
+          const quadrature_point_index<Space>& i)  //
+      requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>) {
+    constexpr auto has_data_method = requires(
+        FunctionType & rf, const cell_workspace<Space>& rwk,
+        const cell_index<Space>& re, const quadrature_point_index<Space>& ri) {
+      { rf.data(unsafe, rwk, re, ri) } -> std::same_as<real*>;
+    };
+    if constexpr (N == 1) {
+      if constexpr (has_data_method) {
+        return *(this->function.data(unsafe, wk, e, i));
+      } else {
+        return *(this->function(wk, e, i).data());
+      }
+    } else {
+      if constexpr (has_data_method) {
+        return std::span<real, N>(this->function.data(unsafe, wk, e, i), N);
+      } else {
+        return std::span<real, N>(this->function(wk, e, i).data(), N);
+      }
+    }
+  }
 
-  template <size_type N, FunctionalSpaceConcept Space>
-  auto view(const Function<Space, dynamic_extent>& f)  //
-      requires((N > 0) && (N != dynamic_extent)) {
-    return FixedSizeView<Space, N, false>(f.view());
+  template <size_type N, typename FunctionType>
+  auto view(FunctionType& f) requires(
+      (N > 0) && (N != dynamic_extent) &&              //
+      (FunctionConcept<std::decay_t<FunctionType>>)&&  //
+      (!std::is_rvalue_reference_v<FunctionType>)) {
+    return FixedSizeView<std::decay_t<FunctionType>, N>(f);
   }  // end of view
 
 }  // end of namespace mgis::function

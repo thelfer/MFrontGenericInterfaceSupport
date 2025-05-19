@@ -21,6 +21,7 @@
 #include "MGIS/Function/Function.hxx"
 #include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/FixedSizeView.hxx"
+#include "MGIS/Function/FixedSizeModifier.hxx"
 #include "MGIS/Function/Tensors.hxx"
 
 void print_type(const double) {}
@@ -47,10 +48,10 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     Context ctx;
     auto space = std::make_shared<BasicLinearSpace>(3);
     auto values = std::vector<real>{1, 2, 3};
-    const auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 1);
+    const auto f = FunctionEvaluator<BasicLinearSpace>(space, values, 1);
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 1);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 1);
-    const auto e = FixedSizeView<BasicLinearSpace, 1>(f);
+    const auto e = FixedSizeModifier<FunctionEvaluator<BasicLinearSpace>, 1>(f);
     TFEL_TESTS_ASSERT(e.check(ctx));
     TFEL_TESTS_ASSERT(std::abs(e(0) - 1) < eps);
     TFEL_TESTS_ASSERT(std::abs(e(1) - 2) < eps);
@@ -70,7 +71,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(!EvaluatorConcept<double>);
     TFEL_TESTS_STATIC_ASSERT(!EvaluatorConcept<Test>);
     TFEL_TESTS_STATIC_ASSERT(
-        EvaluatorConcept<ImmutableFunctionView<BasicLinearSpace>>);
+        EvaluatorConcept<FunctionEvaluator<BasicLinearSpace>>);
   }
   void test3() {
     using namespace mgis;
@@ -79,7 +80,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     Context ctx;
     auto space = std::make_shared<BasicLinearSpace>(1);
     auto values = std::vector<real>{1, 2, 3};
-    const auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 3);
+    const auto f = FunctionEvaluator<BasicLinearSpace>(space, values, 3);
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 3);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 3);
     const auto e = view<3>(f);
@@ -101,12 +102,12 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     Context ctx;
     auto space = std::make_shared<BasicLinearSpace>(2);
     auto values = std::vector<real>{1, 2, 3, 4};
-    const auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 2) |
-                   as_tvector<2>;
+    const auto f =
+        FunctionEvaluator<BasicLinearSpace>(space, values, 2) | as_tvector<2>;
     TFEL_TESTS_ASSERT(f.check(ctx));
     auto values2 = std::vector<real>{1, -2, 3, -4};
-    const auto f2 = ImmutableFunctionView<BasicLinearSpace>(space, values2, 2) |
-                    as_tvector<2>;
+    const auto f2 =
+        FunctionEvaluator<BasicLinearSpace>(space, values2, 2) | as_tvector<2>;
     TFEL_TESTS_ASSERT(f2.check(ctx));
     //
     const auto n1 = f | negate;
@@ -262,14 +263,13 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
   void test6() {
     using namespace mgis;
     using namespace mgis::function;
-    constexpr auto eps = real{1e-14};
     Context ctx;
     auto space = std::make_shared<BasicLinearSpace>(1);
     auto values = std::vector<real>{1e-3, 2e-3, -5e-3, 4e-3};
     static_assert(FunctionConcept<FunctionView<BasicLinearSpace>>);
     FunctionView<BasicLinearSpace> f(space, values, 4);
     auto strain = f | as_stensor<1>;
-    TFEL_TESTS_ASSERT(strain.check(ctx));
+    TFEL_TESTS_ASSERT(!strain.check(ctx));
   }
 };
 

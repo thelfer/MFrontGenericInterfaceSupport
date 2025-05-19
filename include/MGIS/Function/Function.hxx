@@ -409,7 +409,7 @@ namespace mgis::function {
 
   //! \brief a simple alias
   template <FunctionalSpaceConcept Space, DataLayoutDescription layout = {}>
-  using ImmutableFunctionView = FunctionView<Space, layout, false>;
+  using FunctionEvaluator = FunctionView<Space, layout, false>;
 
   template <FunctionalSpaceConcept Space, size_type N>
   struct FunctionStorage {

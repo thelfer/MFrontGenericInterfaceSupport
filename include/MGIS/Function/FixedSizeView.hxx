@@ -21,8 +21,11 @@ namespace mgis::function {
    * \tparam Space: functional space
    * \tparam N: size of the returned value
    */
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable = false>
+  template <FunctionConcept FunctionType, size_type N>
   requires(N > 0) struct FixedSizeView {
+    //
+    using Space =
+        std::decay_t<decltype(std::declval<FunctionType>().getSpace())>;
     //! \brief value returned by non-const call operator
     using mutable_value_type =
         std::conditional_t<N == 1, real&, std::span<real, N>>;
@@ -30,17 +33,14 @@ namespace mgis::function {
      * \brief method checking that the precondition of the constructor are met.
      * \param[in] values: function
      */
-    static bool checkPreconditions(
-        const FunctionView<Space, {}, is_mutable>&) noexcept;
+    static bool checkPreconditions(const FunctionType&) noexcept;
     /*!
      * \brief constructor
      * \param[in] values: function
      */
-    FixedSizeView(const FunctionView<Space, {}, is_mutable>&);
+    FixedSizeView(FunctionType&);
     //! \brief perform consistency checks
     bool check(Context&) const noexcept;
-    //! \brief allocate internal workspace
-    void allocateWorkspace();
     //! \brief return the underlying  space
     const Space& getSpace() const;
     //! \return the number of components
@@ -63,8 +63,8 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    auto operator()(const cell_index<Space>,
-                    const quadrature_point_index<Space>) const
+    auto operator()(const cell_index<Space>&,
+                    const quadrature_point_index<Space>&) const
         requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>));
     /*!
      * \brief call operator
@@ -72,76 +72,54 @@ namespace mgis::function {
      * \param[in] i: integration point index
      */
     auto operator()(const cell_workspace<Space>&,
-                    const cell_index<Space>,
-                    const quadrature_point_index<Space>) const
+                    const cell_index<Space>&,
+                    const quadrature_point_index<Space>&) const
         requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>);
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
     mutable_value_type operator()(const element_index<Space>&) requires(
-        is_mutable&& ElementSpaceConcept<Space> &&
-        !(hasElementWorkspace<Space>));
+        ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>));
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    mutable_value_type operator()(
-        const element_workspace<Space>&,
-        const element_index<
-            Space>&) requires(is_mutable&& ElementSpaceConcept<Space>&&
-                                  hasElementWorkspace<Space>);
+    mutable_value_type operator()(const element_workspace<Space>&,
+                                  const element_index<Space>&)  //
+        requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>);
     /*!
      * \brief call operator
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    mutable_value_type operator()(
-        const cell_index<Space>,
-        const quadrature_point_index<
-            Space>) requires(is_mutable&& QuadratureSpaceConcept<Space> &&
-                             (!hasCellWorkspace<Space>));
+    mutable_value_type operator()(const cell_index<Space>&,
+                                  const quadrature_point_index<Space>&)  //
+        requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>));
     /*!
      * \brief call operator
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    mutable_value_type operator()(
-        const cell_workspace<Space>&,
-        const cell_index<Space>,
-        const quadrature_point_index<
-            Space>) requires(is_mutable&& QuadratureSpaceConcept<Space>&&
-                                 hasCellWorkspace<Space>);
+    mutable_value_type operator()(const cell_workspace<Space>&,
+                                  const cell_index<Space>&,
+                                  const quadrature_point_index<Space>&)  //
+        requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>);
 
    private:
     //! \brief underlying function
-    std::conditional_t<is_mutable,
-                       FunctionView<Space, {}, is_mutable>,
-                       const FunctionView<Space, {}, is_mutable>>
-        function;
+    FunctionType& function;
   };  // end of FixedSizeView
 
   /*!
    * \brief convert a function to a immutable view
    * \param[in] f: function
    */
-  template <size_type N, FunctionalSpaceConcept Space, bool is_mutable>
-  auto view(const FunctionView<Space, {}, is_mutable>&) requires(N > 0);
-
-  /*!
-   * \brief convert a function to a immutable view
-   * \param[in] f: function
-   */
-  template <size_type N, FunctionalSpaceConcept Space>
-  auto view(const Function<Space, dynamic_extent>&)  //
-      requires((N > 0) && (N != dynamic_extent));
-  /*!
-   * \brief convert a function to a mutable view
-   * \param[in] f: function
-   */
-  template <size_type N, FunctionalSpaceConcept Space>
-  auto view(Function<Space, dynamic_extent>&)  //
-      requires((N > 0) && (N != dynamic_extent));
+  template <size_type N, typename FunctionType>
+  auto view(FunctionType&) requires(
+      (N > 0) && (N != dynamic_extent) &&              //
+      (FunctionConcept<std::decay_t<FunctionType>>)&&  //
+      (!std::is_rvalue_reference_v<FunctionType>));
 
 }  // end of namespace mgis::function
 

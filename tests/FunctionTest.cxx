@@ -44,9 +44,9 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     auto values = std::vector<real>{};
     Context ctx;
     TFEL_TESTS_ASSERT(
-        ImmutableFunctionView<BasicLinearSpace>::checkPreconditions(
+        FunctionEvaluator<BasicLinearSpace>::checkPreconditions(
             ctx, space, values, 2, 3));
-    auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 2, 3);
+    auto f = FunctionEvaluator<BasicLinearSpace>(space, values, 2, 3);
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 2);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 3);
   }
@@ -57,10 +57,10 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     Context ctx;
     auto space = std::make_shared<BasicLinearSpace>(3);
     auto values = std::vector<real>{1, 2, 3};
-    const auto ok = ImmutableFunctionView<BasicLinearSpace>::checkPreconditions(
+    const auto ok = FunctionEvaluator<BasicLinearSpace>::checkPreconditions(
         ctx, space, values, 1);
     TFEL_TESTS_ASSERT(ok);
-    const auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 1);
+    const auto f = FunctionEvaluator<BasicLinearSpace>(space, values, 1);
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 1);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 1);
     TFEL_TESTS_ASSERT(std::abs(f.data(unsafe, 0)[0] - 1) < eps);
@@ -68,9 +68,9 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(f.data(unsafe, 2)[0] - 3) < eps);
     auto values2 = std::vector<real>{1, 2, 3, 4};
     TFEL_TESTS_ASSERT(
-        ImmutableFunctionView<BasicLinearSpace>::checkPreconditions(
+        FunctionEvaluator<BasicLinearSpace>::checkPreconditions(
             ctx, space, values2, 1));
-    const auto f2 = ImmutableFunctionView<BasicLinearSpace>(space, values2, 1);
+    const auto f2 = FunctionEvaluator<BasicLinearSpace>(space, values2, 1);
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 1);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 1);
     TFEL_TESTS_ASSERT(std::abs(f.data(unsafe, 0)[0] - 1) < eps);
@@ -79,10 +79,10 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     // precondition is not met
     auto values3 = std::vector<real>{1, 2};
     TFEL_TESTS_ASSERT(
-        !ImmutableFunctionView<BasicLinearSpace>::checkPreconditions(
+        !FunctionEvaluator<BasicLinearSpace>::checkPreconditions(
             ctx, space, values3, 1));
     TFEL_TESTS_CHECK_THROW(
-        ImmutableFunctionView<BasicLinearSpace>(space, values3, 1),
+        FunctionEvaluator<BasicLinearSpace>(space, values3, 1),
         std::runtime_error);
   }
   void test3() {
@@ -93,9 +93,9 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     auto space = std::make_shared<BasicLinearSpace>(3);
     auto values = std::vector<real>{1, 2, 3, 4, 5, 6};
     TFEL_TESTS_ASSERT(
-        ImmutableFunctionView<BasicLinearSpace>::checkPreconditions(ctx, space,
+        FunctionEvaluator<BasicLinearSpace>::checkPreconditions(ctx, space,
                                                                     values, 2));
-    auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 2);
+    auto f = FunctionEvaluator<BasicLinearSpace>(space, values, 2);
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 2);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 2);
     TFEL_TESTS_ASSERT(std::abs(f.data(unsafe, 0)[0] - 1) < eps);
@@ -113,11 +113,11 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     auto space = std::make_shared<BasicLinearSpace>(3);
     auto values = std::vector<real>{1, 2, 3, 4, 5, 6};
     const auto ok =
-        ImmutableFunctionView<BasicLinearSpace,
+        FunctionEvaluator<BasicLinearSpace,
                               {.data_size = 2}>::checkPreconditions(ctx, space,
                                                                     values, 2);
     TFEL_TESTS_ASSERT(ok);
-    auto f = ImmutableFunctionView<BasicLinearSpace, {.data_size = 2}>(
+    auto f = FunctionEvaluator<BasicLinearSpace, {.data_size = 2}>(
         space, values, 2);
     TFEL_TESTS_STATIC_ASSERT(f.getNumberOfComponents() == 2);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 2);
@@ -136,9 +136,9 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     auto space = std::make_shared<BasicLinearSpace>(2);
     auto values = std::vector<real>{1, 2, 3, 4, 5, 6};
     TFEL_TESTS_ASSERT(
-        ImmutableFunctionView<BasicLinearSpace>::checkPreconditions(
+        FunctionEvaluator<BasicLinearSpace>::checkPreconditions(
             ctx, space, values, 2, 3));
-    auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 2, 3);
+    auto f = FunctionEvaluator<BasicLinearSpace>(space, values, 2, 3);
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 2);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 3);
     TFEL_TESTS_ASSERT(std::abs(f.data(unsafe, 0)[0] - 1) < eps);
@@ -154,11 +154,11 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     auto space = std::make_shared<BasicLinearSpace>(2);
     auto values = std::vector<real>{1, 2, 3, 4, 5, 6};
     TFEL_TESTS_ASSERT(
-        (ImmutableFunctionView<
+        (FunctionEvaluator<
             BasicLinearSpace,
             {.data_size = 2, .data_stride = 3}>::checkPreconditions(ctx, space,
                                                                     values)));
-    auto f = ImmutableFunctionView<BasicLinearSpace,
+    auto f = FunctionEvaluator<BasicLinearSpace,
                                    {.data_size = 2, .data_stride = 3}>(space,
                                                                        values);
     TFEL_TESTS_STATIC_ASSERT(f.getNumberOfComponents() == 2);
@@ -180,10 +180,10 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     auto space = std::make_shared<BasicLinearQuadratureSpace<3>>(2);
     auto values = std::vector<real>{1, 2, 3, 4, 5, 6};
     TFEL_TESTS_ASSERT(
-        ImmutableFunctionView<
+        FunctionEvaluator<
             BasicLinearQuadratureSpace<3>>::checkPreconditions(ctx, space,
                                                                values, 1, 1));
-    auto f = ImmutableFunctionView<BasicLinearQuadratureSpace<3>>(space, values,
+    auto f = FunctionEvaluator<BasicLinearQuadratureSpace<3>>(space, values,
                                                                   1, 1);
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 1);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 1);

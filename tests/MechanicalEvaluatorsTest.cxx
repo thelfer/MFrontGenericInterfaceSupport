@@ -20,6 +20,7 @@
 #include "MGIS/Function/BasicLinearQuadratureSpace.hxx"
 #include "MGIS/Function/Function.hxx"
 #include "MGIS/Function/FixedSizeView.hxx"
+#include "MGIS/Function/FixedSizeModifier.hxx"
 #include "MGIS/Function/Mechanics.hxx"
 
 struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
@@ -40,7 +41,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     constexpr auto eps = real{1e-14};
     auto space = std::make_shared<BasicLinearSpace>(1);
     auto values = std::vector<real>{1, 2, 3};
-    const auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 3);
+    const auto f = FunctionEvaluator<BasicLinearSpace>(space, values, 3);
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 3);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 3);
     const auto s = view<3>(f) | as_stensor<1>;
@@ -55,7 +56,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     constexpr auto eps = real{1e-14};
     auto space = std::make_shared<BasicLinearSpace>(1);
     const auto values = std::vector<real>{1, 2, 3};
-    const auto f = ImmutableFunctionView<BasicLinearSpace>(space, values, 3);
+    const auto f = FunctionEvaluator<BasicLinearSpace>(space, values, 3);
     auto seq = Function<BasicLinearSpace>(space, 1);
     TFEL_TESTS_ASSERT(seq.isScalar());
     const auto ok = view<3>(f) | as_stensor<1> | vmis | seq;
