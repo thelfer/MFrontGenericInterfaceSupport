@@ -95,24 +95,24 @@ namespace mgis::function {
     struct EvaluatorResultQueryImplementation<true, EvaluatorType> {
       using Space =
           std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
-      static constexpr bool b1 = ((requires(const EvaluatorType & e) {
+      static constexpr bool b1 = ((requires(const EvaluatorType& e) {
                                     e(std::declval<element_index<Space>>());
                                   }) &&
                                   (ElementSpaceConcept<Space>));
       static constexpr bool b2 =
-          ((requires(const EvaluatorType & e) {
+          ((requires(const EvaluatorType& e) {
              e(std::declval<element_workspace<Space>>(),
                std::declval<element_index<Space>>());
            }) &&
            (ElementSpaceConcept<Space> && hasElementWorkspace<Space>));
       static constexpr bool b3 =
-          ((requires(const EvaluatorType & e) {
+          ((requires(const EvaluatorType& e) {
              e(std::declval<cell_workspace<Space>>(),
                std::declval<cell_index<Space>>());
            }) &&
            (QuadratureSpaceConcept<Space> && hasCellWorkspace<Space>));
       static constexpr bool b4 =
-          ((requires(const EvaluatorType & e) {
+          ((requires(const EvaluatorType& e) {
              e(std::declval<cell_workspace<Space>>(),
                std::declval<cell_index<Space>>(),
                std::declval<quadrature_point_index<Space>>());
