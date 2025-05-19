@@ -24,8 +24,6 @@
 #include "MGIS/Function/FixedSizeModifier.hxx"
 #include "MGIS/Function/Tensors.hxx"
 
-void print_type(const double) {}
-
 struct EvaluatorsTest final : public tfel::tests::TestCase {
   EvaluatorsTest()
       : tfel::tests::TestCase("MGIS/Function", "EvaluatorsTests") {
@@ -37,6 +35,9 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     this->test4();
     this->test5();
     this->test6();
+    this->test7();
+    this->test8();
+    this->test9();
     return this->result;
   }
 
@@ -270,6 +271,81 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     FunctionView<BasicLinearSpace> f(space, values, 4);
     auto strain = f | as_stensor<1>;
     TFEL_TESTS_ASSERT(!strain.check(ctx));
+  }
+  void test7() {
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    Context ctx;
+    auto space = std::make_shared<BasicLinearSpace>(1);
+    auto values = std::vector<real>{1, -2, -5, 4};
+    FunctionEvaluator<BasicLinearSpace> f(space, values, 2);
+    const auto max = view<2>(f) | maximum_component;
+    TFEL_TESTS_ASSERT(max.check(ctx));
+    TFEL_TESTS_ASSERT(max.getNumberOfComponents() == 1);
+    TFEL_TESTS_ASSERT(std::abs(max(0) - 1) < eps);
+    TFEL_TESTS_ASSERT(std::abs(max(1) - 4) < eps);
+    const auto min = view<2>(f) | minimum_component;
+    TFEL_TESTS_ASSERT(min.check(ctx));
+    TFEL_TESTS_ASSERT(min.getNumberOfComponents() == 1);
+    TFEL_TESTS_ASSERT(std::abs(min(0) + 2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(min(1) + 5) < eps);
+    const auto abs_max = view<2>(f) | absolute_value | maximum_component;
+    TFEL_TESTS_ASSERT(abs_max.check(ctx));
+    TFEL_TESTS_ASSERT(abs_max.getNumberOfComponents() == 1);
+    TFEL_TESTS_ASSERT(std::abs(abs_max(0) - 2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(abs_max(1) - 5) < eps);
+    const auto abs_min = view<2>(f) | absolute_value | minimum_component;
+    TFEL_TESTS_ASSERT(abs_min.check(ctx));
+    TFEL_TESTS_ASSERT(abs_min.getNumberOfComponents() == 1);
+    TFEL_TESTS_ASSERT(std::abs(abs_min(0) - 1) < eps);
+    TFEL_TESTS_ASSERT(std::abs(abs_min(1) - 4) < eps);
+  }
+  void test8() {
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    Context ctx;
+    auto space = std::make_shared<BasicLinearSpace>(1);
+    auto values = std::vector<real>{1, -2, -5, 4};
+    FunctionEvaluator<BasicLinearSpace> f(space, values, 4);
+    const auto max_vp = f | as_stensor<2> | eigen_values<> | maximum_component;
+    TFEL_TESTS_ASSERT(max_vp.check(ctx));
+    TFEL_TESTS_ASSERT(max_vp.getNumberOfComponents() == 1);
+    TFEL_TESTS_ASSERT(std::abs(max_vp(0) - (std::sqrt(41) - 1) / 2) < eps);
+    const auto min_vp = f | as_stensor<2> | eigen_values<> | minimum_component;
+    TFEL_TESTS_ASSERT(min_vp.check(ctx));
+    TFEL_TESTS_ASSERT(min_vp.getNumberOfComponents() == 1);
+    TFEL_TESTS_ASSERT(std::abs(min_vp(0) + 5) < eps);
+  }
+  void test9() {
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    Context ctx;
+    const auto values = std::vector<real>{1, -2, -5, 4};
+    {
+      auto space = std::make_shared<BasicLinearSpace>(4);
+      FunctionEvaluator<BasicLinearSpace> f(space, values, 1);
+      const auto abs_values = view<1>(f) | absolute_value;
+      TFEL_TESTS_ASSERT(abs_values.check(ctx));
+      TFEL_TESTS_ASSERT(abs_values.getNumberOfComponents() == 1);
+      TFEL_TESTS_ASSERT(std::abs(abs_values(0) - 1) < eps);
+      TFEL_TESTS_ASSERT(std::abs(abs_values(1) - 2) < eps);
+      TFEL_TESTS_ASSERT(std::abs(abs_values(2) - 5) < eps);
+      TFEL_TESTS_ASSERT(std::abs(abs_values(3) - 4) < eps);
+    }
+    {
+      auto space = std::make_shared<BasicLinearSpace>(2);
+      FunctionEvaluator<BasicLinearSpace> f(space, values, 2);
+      const auto abs_values = view<2>(f) | absolute_value;
+      TFEL_TESTS_ASSERT(abs_values.check(ctx));
+      TFEL_TESTS_ASSERT(abs_values.getNumberOfComponents() == 2);
+      TFEL_TESTS_ASSERT(std::abs(abs_values(0)[0] - 1) < eps);
+      TFEL_TESTS_ASSERT(std::abs(abs_values(0)[1] - 2) < eps);
+      TFEL_TESTS_ASSERT(std::abs(abs_values(1)[0] - 5) < eps);
+      TFEL_TESTS_ASSERT(std::abs(abs_values(1)[1] - 4) < eps);
+    }
   }
 };
 

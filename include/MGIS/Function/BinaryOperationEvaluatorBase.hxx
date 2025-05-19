@@ -14,6 +14,10 @@
 
 namespace mgis::function {
 
+  /*!
+   * \brief the set of requirements that must be satisfied by both operands of
+   * a binary operation on evaluators
+   */
   template <EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
   inline constexpr auto BinaryOperationEvaluatorBaseRequirement =

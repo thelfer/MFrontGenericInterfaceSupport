@@ -8,7 +8,60 @@
 #ifndef LIB_MGIS_FUNCTION_TENSORS_IXX
 #define LIB_MGIS_FUNCTION_TENSORS_IXX
 
-#include <iostream>
+namespace mgis::function::customization_points {
+
+  template <TensorConcept TensorType>
+  struct AbsoluteValue<TensorType> {
+    static constexpr auto exe(const TensorType& v) noexcept {
+      constexpr auto N = compile_time_size<TensorType>;
+      return absolue_value(std::span<const real, N>(v.data(), N));
+    }
+  };
+
+  template <TensorConcept TensorType>
+  struct AbsoluteValue<tfel::math::View<const TensorType>> {
+    static constexpr auto exe(
+        const tfel::math::View<const TensorType>& v) noexcept {
+      constexpr auto N = compile_time_size<TensorType>;
+      return absolue_value(std::span<const real, N>(v.data(), N));
+    }
+  };
+
+  template <TensorConcept TensorType>
+  struct MaximumComponent<TensorType> {
+    static constexpr real exe(const TensorType& v) noexcept {
+      constexpr auto N = compile_time_size<TensorType>;
+      return maximum_component(std::span<const real, N>(v.data(), N));
+    }
+  };
+
+  template <TensorConcept TensorType>
+  struct MaximumComponent<tfel::math::View<const TensorType>> {
+    static constexpr real exe(
+        const tfel::math::View<const TensorType>& v) noexcept {
+      constexpr auto N = compile_time_size<TensorType>;
+      return maximum_component(std::span<const real, N>(v.data(), N));
+    }
+  };
+
+  template <TensorConcept TensorType>
+  struct MinimumComponent<TensorType> {
+    static constexpr real exe(const TensorType& v) noexcept {
+      constexpr auto N = compile_time_size<TensorType>;
+      return minimum_component(std::span<const real, N>(v.data(), N));
+    }
+  };
+
+  template <TensorConcept TensorType>
+  struct MinimumComponent<tfel::math::View<const TensorType>> {
+    static constexpr real exe(
+        const tfel::math::View<const TensorType>& v) noexcept {
+      constexpr auto N = compile_time_size<TensorType>;
+      return minimum_component(std::span<const real, N>(v.data(), N));
+    }
+  };
+
+}  // end of namespace mgis::function::customization_points
 
 namespace mgis::function::internals {
 

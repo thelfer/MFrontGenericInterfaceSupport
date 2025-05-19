@@ -188,7 +188,7 @@ namespace mgis::function {
                 tfel::math::stensor_common::TFELEIGENSOLVER>
   inline constexpr auto eigen_values = internals::unary_operation_modifier2(
       [](const tfel::math::StensorConcept auto& s) {
-        auto s2 = eval(s);
+        auto s2 = tfel::math::EvaluationResult<decltype(s)>(s);
         return s2.template computeEigenValues<esolver>();
       });
 

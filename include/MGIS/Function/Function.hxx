@@ -411,6 +411,9 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, DataLayoutDescription layout = {}>
   using FunctionEvaluator = FunctionView<Space, layout, false>;
 
+  /*!
+   * \brief an helper class storing the values of a function
+   */
   template <FunctionalSpaceConcept Space, size_type N>
   struct FunctionStorage {
     FunctionStorage(const Space& s) requires(N != dynamic_extent)

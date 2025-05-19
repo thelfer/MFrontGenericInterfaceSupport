@@ -10,6 +10,7 @@
 #define LIB_MGIS_FUNCTION_UNARYOPERATION_HXX
 
 #include <span>
+#include <algorithm>
 #include <type_traits>
 
 #ifdef MGIS_HAVE_TFEL
@@ -122,6 +123,143 @@ namespace mgis::function {
 }  // end of namespace mgis::function
 
 #include "MGIS/Function/UnaryOperation.ixx"
+
+namespace mgis::function::customization_points {
+
+  template <typename T>
+  struct AbsoluteValue;
+
+  inline constexpr auto absolute_value = []<typename T>(const T& v) {
+    return AbsoluteValue<T>::exe(v);
+  };
+
+  template <>
+  struct AbsoluteValue<real> {
+    static constexpr real exe(const real& v) noexcept { return std::abs(v); }
+  };
+
+  template <std::size_t N>
+  requires((N > 0) && (N != std::dynamic_extent))  //
+      struct AbsoluteValue<std::span<const real, N>> {
+    static constexpr auto exe(const std::span<const real, N>& v) noexcept {
+      auto r = std::array<real, N>{};
+      for (std::size_t i = 0; i != N; ++i) {
+        r[i] = std::abs(v[i]);
+      }
+      return r;
+    }
+  };
+
+  template <std::size_t N>
+  requires((N > 0) && (N != std::dynamic_extent))  //
+  struct AbsoluteValue<std::array<const real, N>> {
+    static constexpr auto exe(const std::array<const real, N>& v) noexcept {
+      auto r = std::array<real, N>{};
+      for (std::size_t i = 0; i != N; ++i) {
+        r[i] = std::abs(v[i]);
+      }
+      return r;
+    }
+  };
+
+  template <typename T>
+  struct MaximumComponent;
+
+  inline constexpr auto maximum_component = []<typename T>(const T& v) {
+    return MaximumComponent<T>::exe(v);
+  };
+
+  template <>
+  struct MaximumComponent<real> {
+    static constexpr real exe(const real& v) noexcept { return v; }
+  };
+
+  template <std::size_t N>
+  requires((N > 0) && (N != std::dynamic_extent))  //
+      struct MaximumComponent<std::span<const real, N>> {
+    static constexpr real exe(const std::span<const real, N>& v) noexcept
+        requires((N != 0) && (N != std::dynamic_extent)) {
+      if constexpr (N == 1) {
+        return v[0];
+      } else if constexpr (N == 2) {
+        return std::max(v[0], v[1]);
+      } else if constexpr (N == 3) {
+        return std::max(std::max(v[0], v[1]), v[2]);
+      } else if constexpr (N == 4) {
+        return std::max(std::max(std::max(v[0], v[1]), v[2]), v[3]);
+      } else {
+        return *(std::max_element(v.begin(), v.end()));
+      }
+    }
+  };
+
+  template <std::size_t N>
+  requires(N > 0) struct MaximumComponent<std::array<real, N>> {
+    static constexpr real exe(const std::array<real, N>& v) noexcept {
+      return maximum_component(std::span<const real, N>(v.data(), N));
+    }
+  };
+
+  template <typename T>
+  struct MinimumComponent;
+
+  inline constexpr auto minimum_component = []<typename T>(const T& v) {
+    return MinimumComponent<T>::exe(v);
+  };
+
+  template <>
+  struct MinimumComponent<real> {
+    static constexpr real exe(const real& v) noexcept { return v; }
+  };
+
+  template <std::size_t N>
+  requires((N > 0) && (N != std::dynamic_extent))  //
+  struct MinimumComponent<std::span<const real, N>> {
+    static constexpr real exe(const std::span<const real, N>& v) noexcept
+        requires((N != 0) && (N != std::dynamic_extent)) {
+      if constexpr (N == 1) {
+        return v[0];
+      } else if constexpr (N == 2) {
+        return std::min(v[0], v[1]);
+      } else if constexpr (N == 3) {
+        return std::min(std::min(v[0], v[1]), v[2]);
+      } else if constexpr (N == 4) {
+        return std::min(std::min(std::min(v[0], v[1]), v[2]), v[3]);
+      } else {
+        return *(std::min_element(v.begin(), v.end()));
+      }
+    }
+  };
+
+  template <std::size_t N>
+  requires(N > 0) struct MinimumComponent<std::array<real, N>> {
+    static constexpr real exe(const std::array<real, N>& v) noexcept {
+      return minimum_component(std::span<const real, N>(v.data(), N));
+    }
+  };
+
+} // end of mgis::function::customization_points
+
+namespace mgis::function {
+
+  inline constexpr auto absolute_value = internals::unary_operation_modifier2(
+      []<typename ValueType>(const ValueType& v) {
+        return customization_points::absolute_value(v);
+      });
+
+  inline constexpr auto maximum_component =
+      internals::unary_operation_modifier2(
+          []<typename ValueType>(const ValueType& v) {
+            return customization_points::maximum_component(v);
+          });
+
+  inline constexpr auto minimum_component =
+      internals::unary_operation_modifier2(
+          []<typename ValueType>(const ValueType& v) {
+            return customization_points::minimum_component(v);
+          });
+
+} // end of namespace mgis::function
 
 #ifdef MGIS_HAVE_TFEL
 
