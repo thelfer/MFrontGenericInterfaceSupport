@@ -19,17 +19,7 @@ namespace mgis::function::internals {
                    ? true
                    : compile_time_size<TensorType> ==
                          number_of_components<FunctionType>) {
-    return TensorView<FunctionType, TensorType, true>(f);
-  }
-
-  template <TensorConcept TensorType>
-  template <FunctionConcept FunctionType>
-  auto tensor_modifier<TensorType>::operator()(const FunctionType& f) const
-      requires(number_of_components<FunctionType> == dynamic_extent
-                   ? true
-                   : compile_time_size<TensorType> ==
-                         number_of_components<FunctionType>) {
-    return TensorView<FunctionType, TensorType, false>(f);
+    return TensorView<FunctionType, TensorType>(f);
   }
 
   template <TensorConcept TensorType>

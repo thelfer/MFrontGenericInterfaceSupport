@@ -22,12 +22,9 @@ namespace mgis::function {
    *
    * \tparam FunctionType: underlying function type
    * \tparam TensorType: type of the tensor
-   * \tparam is_mutable: boolean stating if the call operators can return
-   * mutable values
    */
   template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable = false>
+            TensorConcept TensorType>
   struct TensorView {
     //
     static_assert(number_of_components<FunctionType> == dynamic_extent
@@ -47,11 +44,6 @@ namespace mgis::function {
      * \param[in] values: function
      */
     TensorView(FunctionType&);
-    /*!
-     * \brief constructor
-     * \param[in] values: function
-     */
-    TensorView(const FunctionType&) requires(!is_mutable);
     //! \brief perform consistency checks
     bool check(Context&) const noexcept;
     //! \brief allocate internal workspace
@@ -65,14 +57,14 @@ namespace mgis::function {
      * \param[in] i: integration point index
      */
     auto operator()(const element_index<Space>&) const
-        requires(ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>));
+        requires(internals::FunctionResultQuery<FunctionType>::b1);
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
     auto operator()(const element_workspace<Space>&,
                     const element_index<Space>&) const
-        requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>);
+        requires(internals::FunctionResultQuery<FunctionType>::b2);
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -80,7 +72,7 @@ namespace mgis::function {
      */
     auto operator()(const cell_index<Space>&,
                     const quadrature_point_index<Space>&) const
-        requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>));
+        requires(internals::FunctionResultQuery<FunctionType>::b3);
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -89,22 +81,20 @@ namespace mgis::function {
     auto operator()(const cell_workspace<Space>&,
                     const cell_index<Space>&,
                     const quadrature_point_index<Space>&) const
-        requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>);
+        requires(internals::FunctionResultQuery<FunctionType>::b4);
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    auto operator()(const element_index<Space>&) requires(
-        is_mutable&& ElementSpaceConcept<Space> &&
-        !(hasElementWorkspace<Space>));
+    auto operator()(const element_index<Space>&)  //
+        requires(internals::FunctionResultQuery<FunctionType>::b1);
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
     auto operator()(const element_workspace<Space>&,
                     const element_index<Space>&)  //
-        requires(is_mutable&& ElementSpaceConcept<Space>&&
-                     hasElementWorkspace<Space>);
+      requires(internals::FunctionResultQuery<FunctionType>::b2);
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -112,8 +102,7 @@ namespace mgis::function {
      */
     auto operator()(const cell_index<Space>&,
                     const quadrature_point_index<Space>&)  //
-        requires(is_mutable&& QuadratureSpaceConcept<Space> &&
-                 (!hasCellWorkspace<Space>));
+      requires(internals::FunctionResultQuery<FunctionType>::b3);
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -122,12 +111,11 @@ namespace mgis::function {
     auto operator()(const cell_workspace<Space>&,
                     const cell_index<Space>&,
                     const quadrature_point_index<Space>&)  //
-        requires(is_mutable&& QuadratureSpaceConcept<Space>&&
-                     hasCellWorkspace<Space>);
+      requires(internals::FunctionResultQuery<FunctionType>::b4);
 
    private:
     //! \brief underlying function
-    std::conditional_t<is_mutable, FunctionType&, const FunctionType&> function;
+    FunctionType& function;
   };  // end of TensorView
 
 }  // end of namespace mgis::function

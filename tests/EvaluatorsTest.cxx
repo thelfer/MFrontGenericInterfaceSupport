@@ -239,7 +239,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(
         (std::same_as<decltype(stress_view),
                       TensorView<FunctionView<BasicLinearSpace>,
-                                 tfel::math::stensor<2, double>, true>>));
+                                 tfel::math::stensor<2, double>>>));
     const auto ok = assign(ctx, stress_view, strain | multiply_by_scalar(K));
     TFEL_TESTS_ASSERT(ok);
     TFEL_TESTS_ASSERT(std::abs(values2[0] - 150e6) < K * eps);
@@ -258,7 +258,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(
         (std::same_as<decltype(strain2),
                       TensorView<FunctionView<BasicLinearSpace>,
-                                 tfel::math::stensor<2, double>, true>>));
+                                 tfel::math::stensor<2, double>>>));
   }
   void test6() {
     using namespace mgis;

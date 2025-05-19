@@ -73,14 +73,16 @@ namespace mgis::function {
      * \param[in] i: integration point index
      */
     auto operator()(const element_index<Space>&) const
-        requires(isElementEvaluator && (!hasElementWorkspace<Space>));
+        requires((internals::EvaluatorResultQuery<FirstEvaluatorType>::b1) &&
+                 (internals::EvaluatorResultQuery<SecondEvaluatorType>::b1));
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
     auto operator()(const element_workspace<Space>&,
                     const element_index<Space>&) const
-        requires(isElementEvaluator&& hasElementWorkspace<Space>);
+        requires((internals::EvaluatorResultQuery<FirstEvaluatorType>::b2) &&
+                 (internals::EvaluatorResultQuery<SecondEvaluatorType>::b2));
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -88,7 +90,8 @@ namespace mgis::function {
      */
     auto operator()(const cell_index<Space>,
                     const quadrature_point_index<Space>) const
-        requires(isQuadratureEvaluator && (!hasCellWorkspace<Space>));
+        requires((internals::EvaluatorResultQuery<FirstEvaluatorType>::b3) &&
+                 (internals::EvaluatorResultQuery<SecondEvaluatorType>::b3));
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -97,7 +100,8 @@ namespace mgis::function {
     auto operator()(const cell_workspace<Space>&,
                     const cell_index<Space>,
                     const quadrature_point_index<Space>) const
-        requires(isQuadratureEvaluator&& hasCellWorkspace<Space>);
+        requires((internals::EvaluatorResultQuery<FirstEvaluatorType>::b4) &&
+                 (internals::EvaluatorResultQuery<SecondEvaluatorType>::b4));
 
    protected:
     //! \brief evaluator of the first argument of the binary operation

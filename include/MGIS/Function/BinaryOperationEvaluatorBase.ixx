@@ -101,7 +101,8 @@ namespace mgis::function {
           Child,
           FirstEvaluatorType,
           SecondEvaluatorType>::operator()(const element_index<Space>& e) const
-      requires(isElementEvaluator && (!hasElementWorkspace<Space>)) {
+      requires((internals::EvaluatorResultQuery<FirstEvaluatorType>::b1) &&
+               (internals::EvaluatorResultQuery<SecondEvaluatorType>::b1)) {
     const auto& child = static_cast<const Child&>(*this);
     return child.apply(this->first_evaluator(e), this->second_evaluator(e));
   }  // end of operator()
@@ -116,7 +117,8 @@ namespace mgis::function {
           FirstEvaluatorType,
           SecondEvaluatorType>::operator()(const element_workspace<Space>& wk,
                                            const element_index<Space>& e) const
-      requires(isElementEvaluator&& hasElementWorkspace<Space>) {
+      requires((internals::EvaluatorResultQuery<FirstEvaluatorType>::b2) &&
+               (internals::EvaluatorResultQuery<SecondEvaluatorType>::b2)) {
     const auto& child = static_cast<const Child&>(*this);
     return child.apply(this->first_evaluator(wk, e),
                        this->second_evaluator(wk, e));
@@ -132,7 +134,8 @@ namespace mgis::function {
                                         SecondEvaluatorType>::
       operator()(const cell_index<Space> e,
                  const quadrature_point_index<Space> i) const
-      requires(isQuadratureEvaluator && (!hasCellWorkspace<Space>)) {
+      requires((internals::EvaluatorResultQuery<FirstEvaluatorType>::b3) &&
+               (internals::EvaluatorResultQuery<SecondEvaluatorType>::b3)) {
     const auto& child = static_cast<const Child&>(*this);
     return child.apply(this->first_evaluator(e, i),
                        this->second_evaluator(e, i));
@@ -149,7 +152,8 @@ namespace mgis::function {
       operator()(const cell_workspace<Space>& wk,
                  const cell_index<Space> e,
                  const quadrature_point_index<Space> i) const
-      requires(isQuadratureEvaluator&& hasCellWorkspace<Space>) {
+      requires((internals::EvaluatorResultQuery<FirstEvaluatorType>::b4) &&
+               (internals::EvaluatorResultQuery<SecondEvaluatorType>::b4)) {
     const auto& child = static_cast<const Child&>(*this);
     return child.apply(this->first_evaluator(wk, e, i),
                        this->second_evaluator(wk, e, i));

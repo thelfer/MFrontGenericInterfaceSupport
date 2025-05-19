@@ -12,64 +12,40 @@
 
 namespace mgis::function {
 
-  template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable>
-  bool TensorView<FunctionType, TensorType, is_mutable>::checkPreconditions(
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  bool TensorView<FunctionType, TensorType>::checkPreconditions(
       const FunctionType& values) noexcept {
     return values.getNumberOfComponents() == compile_time_size<TensorType>;
   }  // end of checkPreconditions
 
-  template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable>
-  TensorView<FunctionType, TensorType, is_mutable>::TensorView(
-      FunctionType& values)
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  TensorView<FunctionType, TensorType>::TensorView(FunctionType& values)
       : function(values) {}  // end of TensorView
 
-  template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable>
-  TensorView<FunctionType, TensorType, is_mutable>::TensorView(
-      const FunctionType& values) requires(!is_mutable)
-      : function(values) {}  // end of TensorView
-
-  template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable>
-  bool TensorView<FunctionType, TensorType, is_mutable>::check(
-      Context&) const noexcept {
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  bool TensorView<FunctionType, TensorType>::check(Context&) const noexcept {
     return checkPreconditions(this->function);
   }
 
-  template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable>
-  void TensorView<FunctionType, TensorType, is_mutable>::allocateWorkspace() {}
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  void TensorView<FunctionType, TensorType>::allocateWorkspace() {}
 
-  template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable>
-  const typename TensorView<FunctionType, TensorType, is_mutable>::Space&
-  TensorView<FunctionType, TensorType, is_mutable>::getSpace() const {
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  const typename TensorView<FunctionType, TensorType>::Space&
+  TensorView<FunctionType, TensorType>::getSpace() const {
     return this->function.getSpace();
   }
 
-  template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable>
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr size_type
-  TensorView<FunctionType, TensorType, is_mutable>::getNumberOfComponents()
-      const noexcept {
+  TensorView<FunctionType, TensorType>::getNumberOfComponents() const noexcept {
     return compile_time_size<TensorType>;
   }
 
-  template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable>
-  auto TensorView<FunctionType, TensorType, is_mutable>::operator()(
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  auto TensorView<FunctionType, TensorType>::operator()(
       const element_index<Space>& i) const
-      requires(ElementSpaceConcept<Space> && !(hasElementWorkspace<Space>)) {
+      requires(internals::FunctionResultQuery<FunctionType>::b1) {
     constexpr auto has_data_method =
         requires(const FunctionType& rf, const element_index<Space>& ri) {
       { rf.data(unsafe, ri) } -> std::same_as<const real*>;
@@ -85,12 +61,10 @@ namespace mgis::function {
     }
   }
 
-  template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable>
-  auto TensorView<FunctionType, TensorType, is_mutable>::operator()(
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  auto TensorView<FunctionType, TensorType>::operator()(
       const element_workspace<Space>& wk, const element_index<Space>& i) const
-      requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>) {
+      requires(internals::FunctionResultQuery<FunctionType>::b2) {
     constexpr auto has_data_method =
         requires(const FunctionType& rf, const element_workspace<Space>& rwk,
                  const element_index<Space>& ri) {
@@ -106,12 +80,10 @@ namespace mgis::function {
     }
   }
 
-  template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable>
-  auto TensorView<FunctionType, TensorType, is_mutable>::operator()(
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  auto TensorView<FunctionType, TensorType>::operator()(
       const cell_index<Space>& e, const quadrature_point_index<Space>& i) const
-      requires(QuadratureSpaceConcept<Space> && (!hasCellWorkspace<Space>)) {
+      requires(internals::FunctionResultQuery<FunctionType>::b3) {
     constexpr auto has_data_method =
         requires(const FunctionType& rf, const cell_index<Space> re,
                  const quadrature_point_index<Space> ri) {
@@ -127,14 +99,12 @@ namespace mgis::function {
     }
   }
 
-  template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable>
-  auto TensorView<FunctionType, TensorType, is_mutable>::operator()(
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  auto TensorView<FunctionType, TensorType>::operator()(
       const cell_workspace<Space>& wk,
       const cell_index<Space>& e,
       const quadrature_point_index<Space>& i) const
-      requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>) {
+      requires(internals::FunctionResultQuery<FunctionType>::b4) {
     constexpr auto has_data_method = requires(
         const FunctionType& rf, const cell_workspace<Space>& rwk,
         const cell_index<Space> re, const quadrature_point_index<Space> ri) {
@@ -150,13 +120,10 @@ namespace mgis::function {
     }
   }
 
-  template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable>
-  auto TensorView<FunctionType, TensorType, is_mutable>::operator()(
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  auto TensorView<FunctionType, TensorType>::operator()(
       const element_index<Space>& i)  //
-      requires(is_mutable&& ElementSpaceConcept<Space> &&
-               !(hasElementWorkspace<Space>)) {
+      requires(internals::FunctionResultQuery<FunctionType>::b1) {
     constexpr auto has_data_method =
         requires(FunctionType & rf, const element_index<Space>& ri) {
       { rf.data(unsafe, ri) } -> std::same_as<real*>;
@@ -169,14 +136,11 @@ namespace mgis::function {
     }
   }
 
-  template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable>
-  auto TensorView<FunctionType, TensorType, is_mutable>::operator()(
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  auto TensorView<FunctionType, TensorType>::operator()(
       const element_workspace<Space>& wk,
       const element_index<Space>& i)  //
-      requires(is_mutable&& ElementSpaceConcept<Space>&&
-                   hasElementWorkspace<Space>) {
+      requires(internals::FunctionResultQuery<FunctionType>::b2) {
     constexpr auto has_data_method =
         requires(FunctionType & rf, const element_workspace<Space>& rwk,
                  const element_index<Space>& ri) {
@@ -191,14 +155,11 @@ namespace mgis::function {
     }
   }
 
-  template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable>
-  auto TensorView<FunctionType, TensorType, is_mutable>::operator()(
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  auto TensorView<FunctionType, TensorType>::operator()(
       const cell_index<Space>& e,
       const quadrature_point_index<Space>& i)  //
-      requires(is_mutable&& QuadratureSpaceConcept<Space> &&
-               (!hasCellWorkspace<Space>)) {
+      requires(internals::FunctionResultQuery<FunctionType>::b3) {
     constexpr auto has_data_method =
         requires(FunctionType & rf, const cell_index<Space>& re,
                  const quadrature_point_index<Space>& ri) {
@@ -212,15 +173,12 @@ namespace mgis::function {
     }
   }
 
-  template <FunctionConcept FunctionType,
-            TensorConcept TensorType,
-            bool is_mutable>
-  auto TensorView<FunctionType, TensorType, is_mutable>::operator()(
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  auto TensorView<FunctionType, TensorType>::operator()(
       const cell_workspace<Space>& wk,
       const cell_index<Space>& e,
       const quadrature_point_index<Space>& i)  //
-      requires(is_mutable&& QuadratureSpaceConcept<Space>&&
-                   hasCellWorkspace<Space>) {
+      requires(internals::FunctionResultQuery<FunctionType>::b4) {
     constexpr auto has_data_method = requires(
         FunctionType & rf, const cell_workspace<Space>& rwk,
         const cell_index<Space>& re, const quadrature_point_index<Space>& ri) {

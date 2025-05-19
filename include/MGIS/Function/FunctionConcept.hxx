@@ -274,13 +274,13 @@ namespace mgis::function {
           typename internals::FunctionResultQuery<FunctionType>::result_type>::
            is_specialized);
 
-  //! concept defining evaluators working on an element space
+  //! \brief concept defining evaluators working on an element space
   template <typename FunctionType>
   concept ElementFunctionConcept = FunctionConcept<FunctionType> &&
       ((internals::FunctionResultQuery<FunctionType>::b1) ||
        (internals::FunctionResultQuery<FunctionType>::b2));
 
-  //! concept defining evaluators working on a quadrature space
+  //! \brief concept defining evaluators working on a quadrature space
   template <typename FunctionType>
   concept QuadratureFunctionConcept = FunctionConcept<FunctionType> &&
       ((internals::FunctionResultQuery<FunctionType>::b3) ||
@@ -292,7 +292,9 @@ namespace mgis::function {
   template <FunctionConcept FunctionType>
   using function_result =
       typename internals::FunctionResultQuery<FunctionType>::result_type;
-
+  /*!
+   * \brief type of the result of an function
+   */
   template <FunctionConcept FunctionType>
   using function_const_result =
       typename internals::FunctionResultQuery<FunctionType>::const_result_type;

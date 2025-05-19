@@ -38,13 +38,6 @@ namespace mgis::function::internals {
                      : compile_time_size<TensorType> ==
                            number_of_components<FunctionType>);
 
-    template <FunctionConcept FunctionType>
-    auto operator()(const FunctionType&) const
-        requires(number_of_components<FunctionType> == dynamic_extent
-                     ? true
-                     : compile_time_size<TensorType> ==
-                           number_of_components<FunctionType>);
-
     template <typename EvaluatorType>
     auto operator()(EvaluatorType&&) const
         requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
