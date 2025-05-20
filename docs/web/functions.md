@@ -24,6 +24,57 @@ associated to quadrature points (also called integration points),
 vertices (nodes), facets, cells, voxels, depending on the discretization
 method considered.
 
+# An overview of `MGIS/Function`
+
+Let us consider a function `pk1` returning the first Piola-Kirchhoff
+stress in the material frame, `MGIS/Function` allows to create an
+**evaluator** of the Cauchy stress in the global frame as follows:
+
+~~~~{.cxx}
+const auto Ft  = F | as_tensor<3>;
+const auto sig_ev = pk1 | as_tensor<3> | from_pk1_to_cauchy(Ft) | rotate_backwards(R);
+~~~~
+
+where `F` is an evaluator the deformation gradient in the material
+frame, `R` is the rotation matrix from the global frame to the material
+frame (a function returning a different rotation matrix for each element
+can also be used).
+
+This evaluator, named `sig_ev`, only describes the operations to be
+performed to calculate the Cauchy stress and does not make any
+calculation at this stage. `as_tensor<3>`, `from_pk1_to_cauchy` and the
+object returned by `rotate_backwards(R)` are called *modifiers* in
+`MGIS/Function`. The available operators are described in [this
+page](evaluators.html). The pipe operator `|` is used to chain the
+operations.
+
+Hence, the following operations are chained:
+
+- interpret the values returned by `pk1` as tridimensional tensors
+  provided by the `TFEL/Math` library,
+- compute the Cauchy stress in the material frame,
+- rotate the Cauchy stress in the global frame by using the transpose
+  of the rotation matrix `R`.
+
+`sig_ev `exposes the same space as the `pk1` function (accessible from the
+`getSpace` method) and the same call operators (`4` sig_evnatures are
+possible).
+
+For instance, if the values of `pk1` can be retrieved by using indexes
+(that are not necessarily integers) associated with the elements of the
+space, then the values of the Cauchy stress can be retrieved by the same
+indexes. Hence, if i is such an index, `pk1(i)` returns the first
+Piola-Kirchhoff stress in the material frame, and `sig_ev(i)` returns the
+Cauchy stress in the global frame.
+
+For spaces with very simple structure, `MGIS/Function` provides
+algorithms, such as the `assign` algorithm which allows to assign the
+values of an evaluator to a function. Let `sig` be a function, the
+following code assigns the values calculated by `sig_ev` 
+
+`MGIS/Function` are a set of algorithms, evaluators and modifiers used
+to operate and calculate values on functions.
+
 # Discretization spaces
 
 The description of a discretization space is dependent of the solver
