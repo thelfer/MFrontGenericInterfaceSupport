@@ -8,7 +8,7 @@
 #ifndef LIB_MGIS_FUNCTION_EVALUATORMODIFIERBASE_HXX
 #define LIB_MGIS_FUNCTION_EVALUATORMODIFIERBASE_HXX
 
-#include "MGIS/Function/Space.hxx"
+#include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/Evaluator.hxx"
 
 namespace mgis::function {

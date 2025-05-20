@@ -5,7 +5,7 @@
  * \date   02/05/2025
  */
 
-#include "MGIS/Function/Space.hxx"
+#include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/BasicLinearQuadratureSpace.hxx"
 
 namespace mgis::function {

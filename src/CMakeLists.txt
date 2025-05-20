@@ -1,4 +1,5 @@
-mgis_library(MFrontGenericInterface
+set(MFrontGenericInterface_SOURCES)
+list(APPEND MFrontGenericInterface_SOURCES
   Raise.cxx
   VerbosityLevel.cxx
   ErrorBacktrace.cxx
@@ -19,12 +20,18 @@ mgis_library(MFrontGenericInterface
   MaterialDataManager.cxx
   Integrate.cxx
   FiniteStrainSupport.cxx
-  Model.cxx
-  BasicLinearSpace.cxx
-  BasicLinearQuadratureSpace.cxx
-  Function.cxx
-  Evaluator.cxx
-  )
+  Model.cxx)
+
+if(enable-mgis-function)
+  list(APPEND MFrontGenericInterface_SOURCES
+    BasicLinearSpace.cxx
+    BasicLinearQuadratureSpace.cxx
+    Function.cxx
+    Evaluator.cxx)
+endif(enable-mgis-function)
+
+mgis_library(MFrontGenericInterface
+  ${MFrontGenericInterface_SOURCES})
 
 target_include_directories(MFrontGenericInterface
    PUBLIC 
@@ -33,6 +40,9 @@ target_include_directories(MFrontGenericInterface
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_DEBUG)
 endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+if(enable-mgis-function)
+  target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_FUNCTION_SUPPORT)
+endif(enable-mgis-function)
 
 if(enable-static)
   target_include_directories(MFrontGenericInterface-static
@@ -42,6 +52,9 @@ if(enable-static)
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_DEBUG)
   endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  if(enable-mgis-function)
+    target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_FUNCTION_SUPPORT)
+  endif(enable-mgis-function)
 endif(enable-static)
 
 if(MGIS_HAVE_TFEL)

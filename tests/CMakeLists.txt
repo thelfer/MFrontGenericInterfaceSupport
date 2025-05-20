@@ -386,6 +386,8 @@ target_link_libraries(ErrorBacktraceTest
 add_test(NAME ErrorBacktraceTest COMMAND ErrorBacktraceTest)
 add_dependencies(check ErrorBacktraceTest)
 
+if(enable-mgis-function)
+
 if(MGIS_HAVE_TFEL)
 
 add_executable(FunctionTest
@@ -413,3 +415,5 @@ add_test(NAME MechanicalEvaluatorsTest COMMAND MechanicalEvaluatorsTest)
 add_dependencies(check MechanicalEvaluatorsTest)
 
 endif(MGIS_HAVE_TFEL)
+
+endif(enable-mgis-function)

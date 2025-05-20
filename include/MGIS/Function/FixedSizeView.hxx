@@ -8,7 +8,7 @@
 #ifndef LIB_MGIS_FUNCTION_FIXEDSIZEVIEW_HXX
 #define LIB_MGIS_FUNCTION_FIXEDSIZEVIEW_HXX
 
-#include "MGIS/Function/Space.hxx"
+#include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/Function.hxx"
 

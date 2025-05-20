@@ -12,7 +12,7 @@
 #include <type_traits>
 #include "MGIS/Config.hxx"
 #include "MGIS/Function/CompileTimeSize.hxx"
-#include "MGIS/Function/Space.hxx"
+#include "MGIS/Function/SpaceConcept.hxx"
 
 namespace mgis::function {
 

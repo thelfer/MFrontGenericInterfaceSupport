@@ -9,7 +9,7 @@
 #define LIB_MGIS_FUNCTION_BASICLINEARQUADRATURESPACE_HXX
 
 #include "MGIS/Config.hxx"
-#include "MGIS/Function/Space.hxx"
+#include "MGIS/Function/SpaceConcept.hxx"
 
 namespace mgis::function {
 

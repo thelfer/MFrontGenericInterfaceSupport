@@ -14,7 +14,7 @@
 #include <type_traits>
 #include "MGIS/Config.hxx"
 #include "MGIS/Function/CompileTimeSize.hxx"
-#include "MGIS/Function/Space.hxx"
+#include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/EvaluatorConcept.hxx"
 
 namespace mgis::function {

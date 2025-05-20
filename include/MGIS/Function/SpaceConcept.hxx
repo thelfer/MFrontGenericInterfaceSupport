@@ -1,12 +1,12 @@
 /*!
- * \file   MGIS/Function/AbstractSpace.hxx
+ * \file   MGIS/Function/SpaceConcept.hxx
  * \brief
  * \author Thomas Helfer
  * \date   01/05/2025
  */
 
-#ifndef LIB_MGIS_FUNCTION_ABSTRACTSPACE_HXX
-#define LIB_MGIS_FUNCTION_ABSTRACTSPACE_HXX
+#ifndef LIB_MGIS_FUNCTION_SPACECONCEPT_HXX
+#define LIB_MGIS_FUNCTION_SPACECONCEPT_HXX
 
 #include <concepts>
 #include <type_traits>
@@ -244,4 +244,4 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#endif /* LIB_MGIS_FUNCTION_ABSTRACTSPACE_HXX */
+#endif /* LIB_MGIS_FUNCTION_SPACECONCEPT_HXX */

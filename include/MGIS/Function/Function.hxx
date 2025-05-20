@@ -13,7 +13,7 @@
 #include <memory>
 #include <vector>
 #include "MGIS/Config.hxx"
-#include "MGIS/Function/Space.hxx"
+#include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/FunctionConcept.hxx"
 #include "MGIS/Function/Evaluator.hxx"
 
