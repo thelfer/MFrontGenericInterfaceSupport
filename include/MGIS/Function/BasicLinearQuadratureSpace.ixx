@@ -63,6 +63,24 @@ namespace mgis::function {
   requires(N > 0) constexpr BasicLinearQuadratureSpace<
       N>::~BasicLinearQuadratureSpace() noexcept = default;
 
+  template <size_type N>
+  constexpr size_type getSpaceSize(
+      const BasicLinearQuadratureSpace<N>& s) noexcept {
+    return s.size();
+  }
+
+  template <size_type N>
+  constexpr size_type getNumberOfCells(
+      const BasicLinearQuadratureSpace<N>& s) noexcept{
+    return s.getNumberOfCells();
+  }  // end of getNumberOfCells
+
+  template <size_type N>
+  constexpr size_type getNumberOfQuadraturePoints(
+      const BasicLinearQuadratureSpace<N>& s, const size_type e) noexcept {
+    return s.getNumberOfQuadraturePoints(e);
+  }  // end of getNumberOfQuadraturePoints
+
 }  // end of namespace mgis::function
 
 #include "MGIS/Function/BasicLinearQuadratureSpace.ixx"

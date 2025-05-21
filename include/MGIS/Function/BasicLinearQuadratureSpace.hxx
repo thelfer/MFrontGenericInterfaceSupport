@@ -19,12 +19,6 @@ namespace mgis::function {
    */
   template <size_type N>
   requires(N > 0) struct MGIS_EXPORT BasicLinearQuadratureSpace {
-    static constexpr bool linear_element_indexing = true;
-    static constexpr bool linear_cell_indexing = true;
-    using size_type = mgis::size_type;
-    using element_index_type = mgis::size_type;
-    using cell_index_type = mgis::size_type;
-    using quadrature_point_index_type = mgis::size_type;
     //! \brief an empty element workspace
     struct DummyCellWorkspace {};
     /*!
@@ -66,6 +60,34 @@ namespace mgis::function {
     //! \brief number of elements of the the space
     size_type nelts;
   };
+
+  template <size_type N>
+  struct SpaceTraits<BasicLinearQuadratureSpace<N>> {
+    static constexpr bool linear_element_indexing = true;
+    static constexpr bool linear_cell_indexing = true;
+    using size_type = mgis::size_type;
+    using element_index_type = mgis::size_type;
+    using cell_index_type = mgis::size_type;
+    using quadrature_point_index_type = mgis::size_type;
+  };
+
+  template <size_type N>
+  constexpr size_type getSpaceSize(
+      const BasicLinearQuadratureSpace<N>&) noexcept;
+
+  template <size_type N>
+  constexpr size_type getNumberOfCells(
+      const BasicLinearQuadratureSpace<N>&) noexcept;
+
+  template <size_type N>
+  constexpr size_type getNumberOfQuadraturePoints(
+      const BasicLinearQuadratureSpace<N>&, const size_type) noexcept;
+
+  template <size_type N>
+  constexpr size_type getQuadraturePointOffset(
+      const BasicLinearQuadratureSpace<N>&,
+      const size_type,
+      const size_type) noexcept;
 
 }  // end of namespace mgis::function
 

@@ -63,7 +63,7 @@ namespace mgis::function::internals {
     using value_type = std::invoke_result_t<FunctionType, size_type>;
     using result_type = std::invoke_result_t<EvaluatorType, size_type>;
     const auto& space = f.getSpace();
-    const auto ne = space.size();
+    const auto ne = getSpaceSize(space);
     if constexpr (internals::same_decay_type<result_type, real>) {
       for (size_type i = 0; i != ne; ++i) {
         if constexpr (internals::same_decay_type<value_type, real>) {
@@ -90,7 +90,7 @@ namespace mgis::function::internals {
     using value_type = std::invoke_result_t<FunctionType, size_type>;
     using result_type = std::invoke_result_t<EvaluatorType, size_type>;
     const auto& space = f.getSpace();
-    const auto ne = space.size();
+    const auto ne = getSpaceSize(space);
     if constexpr (internals::same_decay_type<result_type, real>) {
       for (size_type i = 0; i != ne; ++i) {
         const auto& wk = space.getElementWorkspace(i);
@@ -123,7 +123,7 @@ namespace mgis::function::internals {
       v1 = v2;
     };
     const auto& space = f.getSpace();
-    const auto ne = space.size();
+    const auto ne = getSpaceSize(space);
     for (size_type i = 0; i != ne; ++i) {
       if constexpr (use_direct_assignement) {
         f(i) = e(i);
@@ -146,7 +146,7 @@ namespace mgis::function::internals {
       v1 = v2;
     };
     const auto& space = f.getSpace();
-    const auto ne = space.size();
+    const auto ne = getSpaceSize(space);
     for (size_type i = 0; i != ne; ++i) {
       const auto& wk = space.getElementWorkspace(i);
       if constexpr (use_direct_assignement) {
@@ -181,7 +181,7 @@ namespace mgis::function {
   //     e.allocateWorkspace();
   //     //
   //     const auto qspace = f.getSpace();
-  //     const auto ne = qspace.size();
+  //     const auto ne = getSpaceSize(qspace);
   //     for (size_type i = 0; i != ne; ++i) {
   //       if constexpr (N == 1) {
   //         auto& v = f.getValue(i);

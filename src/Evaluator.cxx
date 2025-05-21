@@ -17,7 +17,8 @@ namespace mgis::function {
                                           .getSpace()
                                           .size()),
                              size_type>);
-  static_assert(std::same_as<BasicLinearSpace::size_type, size_type>);
+  static_assert(
+      std::same_as<SpaceTraits<BasicLinearSpace>::size_type, size_type>);
 
   static_assert(std::same_as<
                 evaluator_result<

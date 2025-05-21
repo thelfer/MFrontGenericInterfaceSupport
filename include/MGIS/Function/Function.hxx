@@ -417,10 +417,10 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N>
   struct FunctionStorage {
     FunctionStorage(const Space& s) requires(N != dynamic_extent)
-        : storage_values(N * s.size()) {}
+        : storage_values(N * getSpaceSize(s)) {}
     FunctionStorage(const Space& s,
                     const size_type dsize) requires(N == dynamic_extent)
-        : storage_values(s.size() * dsize) {}
+        : storage_values(getSpaceSize(s) * dsize) {}
     FunctionStorage(FunctionStorage&&) = default;
     FunctionStorage(const FunctionStorage&) = default;
 

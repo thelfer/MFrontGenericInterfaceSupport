@@ -25,6 +25,10 @@ namespace mgis::function {
 
   constexpr BasicLinearSpace::~BasicLinearSpace() noexcept = default;
 
+  constexpr size_type getSpaceSize(const BasicLinearSpace& s) noexcept {
+    return s.size();
+  }
+
 }  // end of namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_BASICLINEARSPACE_IXX */

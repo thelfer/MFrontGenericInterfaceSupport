@@ -75,7 +75,7 @@ namespace mgis::function {
     if (s.get() == nullptr) {
       return ctx.registerErrorMessage("invalid space");
     }
-    const auto space_size = s->size();
+    const auto space_size = getSpaceSize(*s);
     if (space_size == 0) {
       // this may happen due to partionning in parallel
       return true;
