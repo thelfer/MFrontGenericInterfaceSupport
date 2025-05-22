@@ -642,6 +642,14 @@ namespace mgis::function {
     return f.view();
   }  // end of view
 
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  const auto& getSpace(
+      const FunctionView<Space, layout, is_mutable>& f) {
+    return f.getSpace();
+  }  // end of getSpace
+
 }  // end of namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_FUNCTION_IXX */

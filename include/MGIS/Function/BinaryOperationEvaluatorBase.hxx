@@ -22,8 +22,8 @@ namespace mgis::function {
             EvaluatorConcept SecondEvaluatorType>
   inline constexpr auto BinaryOperationEvaluatorBaseRequirement =
       (internals::same_decay_type<
-          decltype(std::declval<FirstEvaluatorType>().getSpace()),
-          decltype(std::declval<FirstEvaluatorType>().getSpace())>)&&  //
+          decltype(getSpace(std::declval<FirstEvaluatorType>())),
+          decltype(getSpace(std::declval<FirstEvaluatorType>()))>)&&  //
       (((ElementEvaluatorConcept<FirstEvaluatorType>)&&(
            ElementEvaluatorConcept<SecondEvaluatorType>)) ||
        ((QuadratureEvaluatorConcept<FirstEvaluatorType>)&&(
@@ -45,8 +45,7 @@ namespace mgis::function {
                                                    SecondEvaluatorType>)  //
       struct BinaryOperationEvaluatorBase {
     //! \brief a simple alias
-    using Space =
-        std::decay_t<decltype(std::declval<FirstEvaluatorType>().getSpace())>;
+    using Space = evaluator_space<FirstEvaluatorType>;
     // boolean stating if both evaluators matches the ElementEvaluatorConcept
     static constexpr auto isElementEvaluator =
         (ElementEvaluatorConcept<FirstEvaluatorType>)&&(
@@ -113,6 +112,14 @@ namespace mgis::function {
     //! \brief evaluator of the second argument of the binary operation
     SecondEvaluatorType second_evaluator;
   };
+
+  template <typename Child,
+            EvaluatorConcept FirstEvaluatorType,
+            EvaluatorConcept SecondEvaluatorType>
+  const auto& getSpace(
+      const BinaryOperationEvaluatorBase<Child,
+                                         FirstEvaluatorType,
+                                         SecondEvaluatorType>&);
 
 }  // end of namespace mgis::function
 

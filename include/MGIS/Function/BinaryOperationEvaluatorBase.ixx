@@ -89,7 +89,7 @@ namespace mgis::function {
                                                FirstEvaluatorType,
                                                SecondEvaluatorType>::getSpace()
           const {
-    return this->first_evaluator.getSpace();
+    return internals::disambiguateGetSpace(this->first_evaluator);
   }  // end of getSpace
 
   template <typename Child,
@@ -158,6 +158,16 @@ namespace mgis::function {
     return child.apply(this->first_evaluator(wk, e, i),
                        this->second_evaluator(wk, e, i));
   }  // end of operator()
+
+  template <typename Child,
+            EvaluatorConcept FirstEvaluatorType,
+            EvaluatorConcept SecondEvaluatorType>
+  const auto& getSpace(
+      const BinaryOperationEvaluatorBase<Child,
+                                         FirstEvaluatorType,
+                                         SecondEvaluatorType>& e) {
+    return e.getSpace();
+  }  // end of getSpace
 
 }  // end of namespace mgis::function
 

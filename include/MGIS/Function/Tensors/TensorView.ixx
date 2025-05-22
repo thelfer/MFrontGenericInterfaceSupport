@@ -33,7 +33,7 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   const typename TensorView<FunctionType, TensorType>::Space&
   TensorView<FunctionType, TensorType>::getSpace() const {
-    return this->function.getSpace();
+    return internals::disambiguateGetSpace(this->function);
   }
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
@@ -191,6 +191,12 @@ namespace mgis::function {
           std::same_as<decltype(this->function(wk, e, i).data()), real*>);
       return tfel::math::map<TensorType>(this->function(wk, e, i).data());
     }
+  }
+
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  decltype(auto) getSpace(
+      const TensorView<FunctionType, TensorType>& t){
+    return t.getSpace();
   }
 
 }  // end of namespace mgis::function

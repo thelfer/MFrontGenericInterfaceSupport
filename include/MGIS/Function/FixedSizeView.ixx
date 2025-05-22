@@ -33,7 +33,7 @@ namespace mgis::function {
   requires(N > 0)                                            //
       const typename FixedSizeView<FunctionType, N>::Space&  //
       FixedSizeView<FunctionType, N>::getSpace() const {
-    return this->function.getSpace();
+    return internals::disambiguateGetSpace(this->function);
   }
 
   template <FunctionConcept FunctionType, size_type N>
@@ -250,6 +250,11 @@ namespace mgis::function {
       (!std::is_rvalue_reference_v<FunctionType>)) {
     return FixedSizeView<std::decay_t<FunctionType>, N>(f);
   }  // end of view
+
+  template <FunctionConcept FunctionType, size_type N>
+  const auto& getSpace(FixedSizeView<FunctionType, N>& v) {
+    return v.getSpace();
+  }  // end of getSpace
 
 }  // end of namespace mgis::function
 

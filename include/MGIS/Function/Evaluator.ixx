@@ -13,8 +13,8 @@ namespace mgis::function {
   bool checkMatchingSpaces(Context& ctx,
                            const EvaluatorConcept auto& e1,
                            const EvaluatorConcept auto& e2) {
-    const auto& qspace1 = e1.getSpace();
-    const auto& qspace2 = e2.getSpace();
+    const auto& qspace1 = getSpace(e1);
+    const auto& qspace2 = getSpace(e2);
     if (&qspace1 != &qspace2) {
       return ctx.registerErrorMessage("unmatched quadrature spaces");
     }

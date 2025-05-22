@@ -31,8 +31,7 @@ namespace mgis::function {
                       : compile_time_size<TensorType> ==
                             number_of_components<FunctionType>);
     //
-    using Space =
-        std::decay_t<decltype(std::declval<FunctionType>().getSpace())>;
+    using Space = function_space<FunctionType>;
     /*!
      * \brief method checking that the precondition of the constructor are met.
      * \param[in] values: function
@@ -116,6 +115,10 @@ namespace mgis::function {
     //! \brief underlying function
     FunctionType& function;
   };  // end of TensorView
+
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  decltype(auto) getSpace(
+      const TensorView<FunctionType, TensorType>&);
 
 }  // end of namespace mgis::function
 

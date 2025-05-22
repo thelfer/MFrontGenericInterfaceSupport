@@ -35,7 +35,7 @@ namespace mgis::function {
 
   template <typename Child, EvaluatorConcept EvaluatorType>
   const auto& EvaluatorModifierBase<Child, EvaluatorType>::getSpace() const {
-    return this->evaluator.getSpace();
+    return internals::disambiguateGetSpace(this->evaluator);
   }  // end of getSpace
 
   template <typename Child, EvaluatorConcept EvaluatorType>
@@ -71,6 +71,11 @@ namespace mgis::function {
     const auto& child = static_cast<const Child&>(*this);
     return child.apply(this->evaluator(wk, e, i));
   }  // end of operator()
+
+  template <typename Child, EvaluatorConcept EvaluatorType>
+  const auto& getSpace(const EvaluatorModifierBase<Child, EvaluatorType>& e) {
+    return e.getSpace();
+  }
 
 }  // end of namespace mgis::function
 

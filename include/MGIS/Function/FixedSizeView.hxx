@@ -24,8 +24,7 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0) struct FixedSizeView {
     //
-    using Space =
-        std::decay_t<decltype(std::declval<FunctionType>().getSpace())>;
+    using Space = function_space<FunctionType>;
     //! \brief value returned by non-const call operator
     using mutable_value_type =
         std::conditional_t<N == 1, real&, std::span<real, N>>;
@@ -121,6 +120,9 @@ namespace mgis::function {
       (N > 0) && (N != dynamic_extent) &&              //
       (FunctionConcept<std::decay_t<FunctionType>>)&&  //
       (!std::is_rvalue_reference_v<FunctionType>));
+
+  template <FunctionConcept FunctionType, size_type N>
+  const auto& getSpace(FixedSizeView<FunctionType, N>&);
 
 }  // end of namespace mgis::function
 

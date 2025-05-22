@@ -26,8 +26,8 @@ namespace mgis::function {
 
     template <typename EvaluatorType>
     struct EvaluatorResultQueryImplementation1<true, EvaluatorType> {
-      using Space =
-          std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
+      using Space = std::decay_t<decltype(getSpace(
+          std::declval<EvaluatorType>()))>;
       using type =
           std::invoke_result_t<const EvaluatorType, element_index<Space>>;
     };
@@ -40,8 +40,8 @@ namespace mgis::function {
 
     template <typename EvaluatorType>
     struct EvaluatorResultQueryImplementation2<true, EvaluatorType> {
-      using Space =
-          std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
+      using Space = std::decay_t<decltype(getSpace(
+          std::declval<EvaluatorType>()))>;
       using type = std::invoke_result_t<const EvaluatorType,
                                         element_workspace<Space>,
                                         element_index<Space>>;
@@ -55,8 +55,8 @@ namespace mgis::function {
 
     template <typename EvaluatorType>
     struct EvaluatorResultQueryImplementation3<true, EvaluatorType> {
-      using Space =
-          std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
+      using Space = std::decay_t<decltype(getSpace(
+          std::declval<EvaluatorType>()))>;
       using type = std::invoke_result_t<const EvaluatorType,
                                         cell_index<Space>,
                                         quadrature_point_index<Space>>;
@@ -70,8 +70,8 @@ namespace mgis::function {
 
     template <typename EvaluatorType>
     struct EvaluatorResultQueryImplementation4<true, EvaluatorType> {
-      using Space =
-          std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
+      using Space = std::decay_t<decltype(getSpace(
+          std::declval<EvaluatorType>()))>;
       using type = std::invoke_result_t<const EvaluatorType,
                                         cell_workspace<Space>,
                                         cell_index<Space>,
@@ -93,8 +93,8 @@ namespace mgis::function {
 
     template <typename EvaluatorType>
     struct EvaluatorResultQueryImplementation<true, EvaluatorType> {
-      using Space =
-          std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
+      using Space = std::decay_t<decltype(getSpace(
+          std::declval<EvaluatorType>()))>;
       static constexpr bool b1 = ((requires(const EvaluatorType& e) {
                                     e(std::declval<element_index<Space>>());
                                   }) &&
@@ -137,7 +137,7 @@ namespace mgis::function {
     template <typename EvaluatorType>
         struct EvaluatorResultQuery
         : EvaluatorResultQueryImplementation < requires(EvaluatorType& e) {
-      e.getSpace();
+      getSpace(e);
     }, EvaluatorType > {};
 
   }  // namespace internals
@@ -147,8 +147,8 @@ namespace mgis::function {
    */
   template <typename EvaluatorType>
   concept EvaluatorConcept = std::is_move_constructible_v<EvaluatorType> &&
-      std::is_copy_constructible_v<EvaluatorType> && SpaceConcept<
-          std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>> &&
+      std::is_copy_constructible_v<EvaluatorType> && SpaceConcept<std::decay_t<
+          decltype(getSpace(std::declval<EvaluatorType>()))>> &&
       requires(EvaluatorType& e) {
     e.allocateWorkspace();
   } &&((internals::EvaluatorResultQuery<EvaluatorType>::b1) ||
@@ -192,6 +192,11 @@ namespace mgis::function {
       ((internals::EvaluatorResultQuery<EvaluatorType>::b3) ||
        (internals::EvaluatorResultQuery<EvaluatorType>::b4));
 
+  //
+  template <EvaluatorConcept EvaluatorType>
+  using evaluator_space = std::decay_t<decltype(getSpace(
+      std::declval<EvaluatorType>()))>;
+
   /*!
    * \brief type of the result of an evaluator
    */
@@ -200,6 +205,13 @@ namespace mgis::function {
       typename internals::EvaluatorResultQuery<EvaluatorType>::type;
 
   namespace internals {
+
+    /*!
+     * This helper function allows to disambiguate the call to
+     * the getSpace function
+     */
+    template <EvaluatorConcept EvaluatorType>
+    decltype(auto) disambiguateGetSpace(const EvaluatorType&);
 
     /*!
      * \brief number of components of a type when known at compile-time,
@@ -214,5 +226,7 @@ namespace mgis::function {
   }  // namespace internals
 
 }  // end of namespace mgis::function
+
+#include "MGIS/Function/EvaluatorConcept.ixx"
 
 #endif /* LIB_MGIS_FUNCTION_EVALUATORCONCEPT_HXX */

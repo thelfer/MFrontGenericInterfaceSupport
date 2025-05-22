@@ -22,8 +22,7 @@ namespace mgis::function {
   template <typename Child, EvaluatorConcept EvaluatorType>
   struct EvaluatorModifierBase {
     //! \brief a simple alias
-    using Space =
-        std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
+    using Space = evaluator_space<EvaluatorType>;
     /*!
      * \brief constructor
      * \param[in] e: modified evaluator
@@ -74,6 +73,10 @@ namespace mgis::function {
     //! \brief underlying evaluator
     EvaluatorType evaluator;
   };
+
+  template <typename Child, EvaluatorConcept EvaluatorType>
+  const auto& getSpace(
+      const EvaluatorModifierBase<Child, EvaluatorType>&);
 
 }  // namespace mgis::function
 

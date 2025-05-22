@@ -517,6 +517,12 @@ namespace mgis::function {
   auto view(const Function<Space, N2>&)  //
       requires((N > 0) && (N != dynamic_extent) && (N == N2));
 
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  const auto& getSpace(
+      const FunctionView<Space, layout, is_mutable>&);
+
 }  // namespace mgis::function
 
 #include "MGIS/Function/Function.ixx"

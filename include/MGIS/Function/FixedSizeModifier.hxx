@@ -24,8 +24,7 @@ namespace mgis::function {
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0) struct FixedSizeModifier {
     //
-    using Space =
-        std::decay_t<decltype(std::declval<EvaluatorType>().getSpace())>;
+    using Space = evaluator_space<EvaluatorType>;
     /*!
      * \brief method checking that the precondition of the constructor are met.
      * \param[in] e: evaluator
@@ -88,6 +87,9 @@ namespace mgis::function {
   auto view(const EvaluatorType&) requires(
       (N > 0) && (N != dynamic_extent) &&  //
       (EvaluatorConcept<std::decay_t<EvaluatorType>>));
+
+  template <EvaluatorConcept EvaluatorType, size_type N>
+  const auto& getSpace(const FixedSizeModifier<EvaluatorType, N>&);
 
 }  // end of namespace mgis::function
 

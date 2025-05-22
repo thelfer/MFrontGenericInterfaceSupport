@@ -30,11 +30,11 @@ namespace mgis::function {
   //       requires(
   //           (N > 0) &&
   //           ((LinearElementSpaceConcept<std::decay_t<
-  //                 decltype(std::declval<EvaluatorType>().getSpace())>>) ||
+  //                 decltype(getSpace(std::declval<EvaluatorType>()))>>) ||
   //            (LinearQuadratureSpaceConcept<std::decay_t<
-  //                 decltype(std::declval<EvaluatorType>().getSpace())>>)) &&
-  //           internals::same_decay_type<decltype(std::declval<FunctionType>().getSpace()),
-  //                                      decltype(std::declval<EvaluatorType>().getSpace())>);
+  //                 decltype(getSpace(std::declval<EvaluatorType>()))>>)) &&
+  //           internals::same_decay_type<decltype(getSpace(std::declval<FunctionType>())),
+  //                                      decltype(getSpace(std::declval<EvaluatorType>()))>);
 
   /*!
    * \brief assign the evaluator to a function
@@ -47,12 +47,12 @@ namespace mgis::function {
                             FunctionType&,
                             EvaluatorType)  //
       requires(((LinearElementSpaceConcept<std::decay_t<
-                     decltype(std::declval<EvaluatorType>().getSpace())>>) ||
+                     decltype(getSpace(std::declval<EvaluatorType>()))>>) ||
                 (LinearQuadratureSpaceConcept<std::decay_t<
-                     decltype(std::declval<EvaluatorType>().getSpace())>>)) &&
+                     decltype(getSpace(std::declval<EvaluatorType>()))>>)) &&
                internals::same_decay_type<
-                   decltype(std::declval<FunctionType>().getSpace()),
-                   decltype(std::declval<EvaluatorType>().getSpace())>);
+                   decltype(getSpace(std::declval<FunctionType>())),
+                   decltype(getSpace(std::declval<EvaluatorType>()))>);
 
 }  // end of namespace mgis::function
 
