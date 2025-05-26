@@ -66,16 +66,19 @@ namespace mgis::function {
         : modifier(c), e2(e) {}  // end of BinaryOperatorCurrying
 
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>
-    requires(std::is_copy_constructible_v<CallableType>) template <
-        typename FirstEvaluatorType>
+      requires(std::is_copy_constructible_v<CallableType>)  //
+    template <typename FirstEvaluatorType>
     auto BinaryOperatorCurrying<CallableType, SecondEvaluatorType>::operator()(
         FirstEvaluatorType&& e1) const
-        requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&(
-            std::invocable<CallableType,
-                           evaluator_result<std::decay_t<FirstEvaluatorType>>,
-                           evaluator_result<SecondEvaluatorType>>)) {
-      return BinaryOperationModifier(
-          this->modifier, std::forward<FirstEvaluatorType>(e1), this->e2);
+      requires(
+          (EvaluatorConcept<std::decay_t<FirstEvaluatorType>>) &&
+          (std::invocable<CallableType,
+                          evaluator_result<std::decay_t<FirstEvaluatorType>>,
+                          evaluator_result<SecondEvaluatorType>>))
+    {
+      return BinaryOperationModifier<
+          CallableType, std::decay_t<FirstEvaluatorType>, SecondEvaluatorType>{
+          this->modifier, std::forward<FirstEvaluatorType>(e1), this->e2};
     }  // end of operator()
 
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>

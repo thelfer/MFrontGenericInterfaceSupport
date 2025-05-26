@@ -38,12 +38,10 @@ namespace mgis::function::internals {
                      : compile_time_size<TensorType> ==
                            number_of_components<FunctionType>);
 
-    template <typename EvaluatorType>
-    auto operator()(EvaluatorType&&) const
-        requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
-            areTensorModifierRequirementsSatisfied<
-                TensorType,
-                std::decay_t<EvaluatorType>>));
+    template <EvaluatorConcept EvaluatorType>
+    auto operator()(const EvaluatorType&) const requires(
+        (areTensorModifierRequirementsSatisfied<TensorType,
+                                                std::decay_t<EvaluatorType>>));
   };
 
   struct RotateModifier {
@@ -137,16 +135,14 @@ namespace mgis::function::internals {
 
 namespace mgis::function {
 
-  template <typename FunctionType, TensorConcept TensorType>
-  auto operator|(FunctionType&&,
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  auto operator|(FunctionType&,
                  const internals::tensor_modifier<TensorType>&)  //
-      requires((FunctionConcept<std::decay_t<FunctionType>>)&&   //
-               (!std::is_rvalue_reference_v<FunctionType&&>)&&   //
-               (number_of_components<std::decay_t<FunctionType>> ==
+      requires(number_of_components<std::decay_t<FunctionType>> ==
                         dynamic_extent
                     ? true
                     : compile_time_size<TensorType> ==
-                          number_of_components<std::decay_t<FunctionType>>));
+                          number_of_components<std::decay_t<FunctionType>>);
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //

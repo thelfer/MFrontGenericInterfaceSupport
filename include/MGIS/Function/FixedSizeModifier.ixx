@@ -52,7 +52,8 @@ namespace mgis::function {
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0) auto FixedSizeModifier<EvaluatorType, N>::operator()(
       const element_index<Space>& i) const
-      requires(internals::EvaluatorResultQuery<EvaluatorType>::b1) {
+      requires((internals::EvaluatorResultQuery<EvaluatorType>::b1) &&
+               (isEvaluatorResultTypeMappable<EvaluatorType>)) {
     constexpr auto has_data_method =
         requires(const EvaluatorType& rf, const element_index<Space>& ri) {
       { rf.data(unsafe, ri) } -> std::same_as<const real*>;
@@ -75,7 +76,8 @@ namespace mgis::function {
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0) auto FixedSizeModifier<EvaluatorType, N>::operator()(
       const element_workspace<Space>& wk, const element_index<Space>& i) const
-      requires(internals::EvaluatorResultQuery<EvaluatorType>::b2) {
+      requires((internals::EvaluatorResultQuery<EvaluatorType>::b2) &&
+               (isEvaluatorResultTypeMappable<EvaluatorType>)) {
     constexpr auto has_data_method =
         requires(const EvaluatorType& rf, const element_workspace<Space>& rwk,
                  const element_index<Space>& ri) {
@@ -99,7 +101,8 @@ namespace mgis::function {
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0) auto FixedSizeModifier<EvaluatorType, N>::operator()(
       const cell_index<Space>& e, const quadrature_point_index<Space>& i) const
-      requires(internals::EvaluatorResultQuery<EvaluatorType>::b3) {
+      requires((internals::EvaluatorResultQuery<EvaluatorType>::b3) &&
+               (isEvaluatorResultTypeMappable<EvaluatorType>)) {
     constexpr auto has_data_method =
         requires(const EvaluatorType& rf, const cell_index<Space>& re,
                  const quadrature_point_index<Space>& ri) {
@@ -125,7 +128,8 @@ namespace mgis::function {
       const cell_workspace<Space>& wk,
       const cell_index<Space>& e,
       const quadrature_point_index<Space>& i) const
-      requires(internals::EvaluatorResultQuery<EvaluatorType>::b4) {
+      requires((internals::EvaluatorResultQuery<EvaluatorType>::b4) &&
+               (isEvaluatorResultTypeMappable<EvaluatorType>)) {
     constexpr auto has_data_method = requires(
         const EvaluatorType& rf, const cell_workspace<Space>& rwk,
         const cell_index<Space>& re, const quadrature_point_index<Space>& ri) {

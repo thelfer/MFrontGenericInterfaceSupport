@@ -34,9 +34,9 @@ namespace mgis::function {
    * \param[in] m: modifier
    */
   template <EvaluatorConcept EvaluatorType, typename ModifierType>
-  auto operator|(EvaluatorType, ModifierType)  //
-      requires(requires(EvaluatorType e1, ModifierType m1) {
-        { m1(e1) } -> EvaluatorConcept;
+  auto operator|(const EvaluatorType& e, ModifierType m)  //
+      requires(requires {
+        { m(e) } -> EvaluatorConcept;
       });
 
 }  // end of namespace mgis::function

@@ -55,14 +55,16 @@ namespace mgis::function {
      * \param[in] i: integration point index
      */
     auto operator()(const element_index<Space>&) const
-        requires(internals::FunctionResultQuery<FunctionType>::b1);
+        requires((internals::FunctionResultQuery<FunctionType>::b1) &&
+                 (isFunctionConstResultTypeMappable<FunctionType>));
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
     auto operator()(const element_workspace<Space>&,
                     const element_index<Space>&) const
-        requires(internals::FunctionResultQuery<FunctionType>::b2);
+        requires((internals::FunctionResultQuery<FunctionType>::b2) &&
+                 (isFunctionConstResultTypeMappable<FunctionType>));
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -70,7 +72,8 @@ namespace mgis::function {
      */
     auto operator()(const cell_index<Space>&,
                     const quadrature_point_index<Space>&) const
-        requires(internals::FunctionResultQuery<FunctionType>::b3);
+        requires((internals::FunctionResultQuery<FunctionType>::b3) &&
+                 (isFunctionConstResultTypeMappable<FunctionType>));
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -79,20 +82,23 @@ namespace mgis::function {
     auto operator()(const cell_workspace<Space>&,
                     const cell_index<Space>&,
                     const quadrature_point_index<Space>&) const
-        requires(internals::FunctionResultQuery<FunctionType>::b4);
+        requires((internals::FunctionResultQuery<FunctionType>::b4) &&
+                 (isFunctionConstResultTypeMappable<FunctionType>));
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
     auto operator()(const element_index<Space>&)  //
-        requires(internals::FunctionResultQuery<FunctionType>::b1);
+        requires((internals::FunctionResultQuery<FunctionType>::b1) &&
+                 (isFunctionResultTypeMappable<FunctionType>));
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
     auto operator()(const element_workspace<Space>&,
                     const element_index<Space>&)  //
-        requires(internals::FunctionResultQuery<FunctionType>::b2);
+        requires((internals::FunctionResultQuery<FunctionType>::b2) &&
+                 (isFunctionResultTypeMappable<FunctionType>));
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -100,7 +106,8 @@ namespace mgis::function {
      */
     auto operator()(const cell_index<Space>&,
                     const quadrature_point_index<Space>&)  //
-        requires(internals::FunctionResultQuery<FunctionType>::b3);
+        requires((internals::FunctionResultQuery<FunctionType>::b3) &&
+                 (isFunctionResultTypeMappable<FunctionType>));
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -109,7 +116,8 @@ namespace mgis::function {
     auto operator()(const cell_workspace<Space>&,
                     const cell_index<Space>&,
                     const quadrature_point_index<Space>&)  //
-        requires(internals::FunctionResultQuery<FunctionType>::b4);
+        requires((internals::FunctionResultQuery<FunctionType>::b4) &&
+                 (isFunctionResultTypeMappable<FunctionType>));
 
    private:
     //! \brief underlying function

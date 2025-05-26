@@ -45,7 +45,8 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0) auto FixedSizeView<FunctionType, N>::operator()(
       const element_index<Space>& i) const
-      requires(internals::FunctionResultQuery<FunctionType>::b1) {
+      requires((internals::FunctionResultQuery<FunctionType>::b1) &&
+               (isFunctionConstResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method =
         requires(const FunctionType& rf, const element_index<Space>& ri) {
       { rf.data(unsafe, ri) } -> std::same_as<const real*>;
@@ -68,7 +69,8 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0) auto FixedSizeView<FunctionType, N>::operator()(
       const element_workspace<Space>& wk, const element_index<Space>& i) const
-      requires(internals::FunctionResultQuery<FunctionType>::b2) {
+      requires((internals::FunctionResultQuery<FunctionType>::b2) &&
+               (isFunctionConstResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method =
         requires(const FunctionType& rf, const element_workspace<Space>& rwk,
                  const element_index<Space>& ri) {
@@ -92,7 +94,8 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0) auto FixedSizeView<FunctionType, N>::operator()(
       const cell_index<Space>& e, const quadrature_point_index<Space>& i) const
-      requires(internals::FunctionResultQuery<FunctionType>::b3) {
+      requires((internals::FunctionResultQuery<FunctionType>::b3) &&
+               (isFunctionConstResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method =
         requires(const FunctionType& rf, const cell_index<Space>& re,
                  const quadrature_point_index<Space>& ri) {
@@ -118,7 +121,8 @@ namespace mgis::function {
       const cell_workspace<Space>& wk,
       const cell_index<Space>& e,
       const quadrature_point_index<Space>& i) const
-      requires(internals::FunctionResultQuery<FunctionType>::b4) {
+      requires((internals::FunctionResultQuery<FunctionType>::b4) &&
+               (isFunctionConstResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method = requires(
         const FunctionType& rf, const cell_workspace<Space>& rwk,
         const cell_index<Space>& re, const quadrature_point_index<Space>& ri) {
@@ -144,7 +148,8 @@ namespace mgis::function {
   requires(N > 0) typename FixedSizeView<FunctionType, N>::mutable_value_type
       FixedSizeView<FunctionType, N>::operator()(
           const element_index<Space>& i)  //
-      requires(internals::FunctionResultQuery<FunctionType>::b1) {
+      requires((internals::FunctionResultQuery<FunctionType>::b1) &&
+               (isFunctionResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method =
         requires(FunctionType & rf, const element_index<Space>& ri) {
       { rf.data(unsafe, ri) } -> std::same_as<real*>;
@@ -169,7 +174,8 @@ namespace mgis::function {
       FixedSizeView<FunctionType, N>::operator()(
           const element_workspace<Space>& wk,
           const element_index<Space>& i)  //
-      requires(internals::FunctionResultQuery<FunctionType>::b2) {
+      requires((internals::FunctionResultQuery<FunctionType>::b2) &&
+               (isFunctionResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method =
         requires(FunctionType & rf, const element_workspace<Space>& rwk,
                  const element_index<Space>& ri) {
@@ -195,7 +201,8 @@ namespace mgis::function {
       FixedSizeView<FunctionType, N>::operator()(
           const cell_index<Space>& e,
           const quadrature_point_index<Space>& i)  //
-      requires(internals::FunctionResultQuery<FunctionType>::b3) {
+      requires((internals::FunctionResultQuery<FunctionType>::b3) &&
+               (isFunctionResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method =
         requires(FunctionType & rf, const cell_index<Space>& re,
                  const quadrature_point_index<Space>& ri) {
@@ -222,7 +229,8 @@ namespace mgis::function {
           const cell_workspace<Space>& wk,
           const cell_index<Space>& e,
           const quadrature_point_index<Space>& i)  //
-      requires(internals::FunctionResultQuery<FunctionType>::b4) {
+      requires((internals::FunctionResultQuery<FunctionType>::b4) &&
+               (isFunctionResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method = requires(
         FunctionType & rf, const cell_workspace<Space>& rwk,
         const cell_index<Space>& re, const quadrature_point_index<Space>& ri) {

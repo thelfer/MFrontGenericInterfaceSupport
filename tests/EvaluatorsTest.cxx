@@ -205,6 +205,15 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(a5(1)[0] - 9) < eps);
     TFEL_TESTS_ASSERT(std::abs(a5(1)[1] + 4) < eps);
   }
+  template <typename T>
+  static constexpr auto test5_shall_compile_test1 =
+      requires(T& f3) { f3 | mgis::function::as_stensor<2>; };
+  template <typename T>
+  static constexpr auto test5_shall_compile_test2 =
+      requires(const T& f3) { f3 | mgis::function::as_stensor<2>; };
+  template <typename T>
+  static constexpr auto test5_shall_not_compile_test1 =
+      !requires(T& f3) { std::move(f3) | mgis::function::as_stensor<2>; };
   void test5() {
     using namespace mgis;
     using namespace mgis::function;
@@ -253,13 +262,16 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(values2[1] - 300e6) < K * eps);
     TFEL_TESTS_ASSERT(std::abs(values2[2] - 300e6) < K * eps);
     TFEL_TESTS_ASSERT(std::abs(values2[3] - 0) < K * eps);
-    FunctionView<BasicLinearSpace> f3(space, values, 4);
-#pragma message("this shall not compile")
-    auto strain2 = std::move(f3) | as_stensor<2>;
+    //
+    TFEL_TESTS_STATIC_ASSERT(FunctionConcept<FunctionView<BasicLinearSpace>>);
+    TFEL_TESTS_STATIC_ASSERT(!FunctionConcept<const FunctionView<BasicLinearSpace>>);
+    TFEL_TESTS_STATIC_ASSERT(FunctionConcept<Function<BasicLinearSpace>>);
+    TFEL_TESTS_STATIC_ASSERT(!FunctionConcept<const Function<BasicLinearSpace>>);
+    TFEL_TESTS_STATIC_ASSERT(EvaluatorConcept<FunctionView<BasicLinearSpace>>);
+    TFEL_TESTS_STATIC_ASSERT(test5_shall_compile_test1<FunctionView<BasicLinearSpace>>);
     TFEL_TESTS_STATIC_ASSERT(
-        (std::same_as<decltype(strain2),
-                      TensorView<FunctionView<BasicLinearSpace>,
-                                 tfel::math::stensor<2, double>>>));
+        test5_shall_compile_test2<FunctionView<BasicLinearSpace>>);
+    TFEL_TESTS_STATIC_ASSERT(test5_shall_not_compile_test1<Function<BasicLinearSpace>>);
   }
   void test6() {
     using namespace mgis;

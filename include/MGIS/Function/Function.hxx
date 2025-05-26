@@ -397,8 +397,6 @@ namespace mgis::function {
     bool checkCompatibility(const FunctionView&) const;
     //! \return a view to the function values
     std::span<const real> data() const;
-    //! \brief destructor
-    ~FunctionView() noexcept;
 
    protected:
     //! \brief underlying discretization space

@@ -45,7 +45,8 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   auto TensorView<FunctionType, TensorType>::operator()(
       const element_index<Space>& i) const
-      requires(internals::FunctionResultQuery<FunctionType>::b1) {
+      requires((internals::FunctionResultQuery<FunctionType>::b1) &&
+               (isFunctionConstResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method =
         requires(const FunctionType& rf, const element_index<Space>& ri) {
       { rf.data(unsafe, ri) } -> std::same_as<const real*>;
@@ -53,10 +54,6 @@ namespace mgis::function {
     if constexpr (has_data_method) {
       return tfel::math::map<const TensorType>(this->function.data(unsafe, i));
     } else {
-      static_assert(std::same_as<decltype(static_cast<const FunctionType&>(
-                                              this->function)(i)
-                                              .data()),
-                                 const real*>);
       return tfel::math::map<const TensorType>(this->function(i).data());
     }
   }
@@ -64,7 +61,8 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   auto TensorView<FunctionType, TensorType>::operator()(
       const element_workspace<Space>& wk, const element_index<Space>& i) const
-      requires(internals::FunctionResultQuery<FunctionType>::b2) {
+      requires((internals::FunctionResultQuery<FunctionType>::b2) &&
+               (isFunctionConstResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method =
         requires(const FunctionType& rf, const element_workspace<Space>& rwk,
                  const element_index<Space>& ri) {
@@ -74,8 +72,6 @@ namespace mgis::function {
       return tfel::math::map<const TensorType>(
           this->function.data(unsafe, wk, i));
     } else {
-      static_assert(
-          std::same_as<decltype(this->function(wk, i).data()), const real*>);
       return tfel::math::map<const TensorType>(this->function(wk, i).data());
     }
   }
@@ -83,7 +79,8 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   auto TensorView<FunctionType, TensorType>::operator()(
       const cell_index<Space>& e, const quadrature_point_index<Space>& i) const
-      requires(internals::FunctionResultQuery<FunctionType>::b3) {
+      requires((internals::FunctionResultQuery<FunctionType>::b3) &&
+               (isFunctionConstResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method =
         requires(const FunctionType& rf, const cell_index<Space> re,
                  const quadrature_point_index<Space> ri) {
@@ -93,8 +90,6 @@ namespace mgis::function {
       return tfel::math::map<const TensorType>(
           this->function.data(unsafe, e, i));
     } else {
-      static_assert(
-          std::same_as<decltype(this->function(e, i).data()), const real*>);
       return tfel::math::map<const TensorType>(this->function(e, i).data());
     }
   }
@@ -104,7 +99,8 @@ namespace mgis::function {
       const cell_workspace<Space>& wk,
       const cell_index<Space>& e,
       const quadrature_point_index<Space>& i) const
-      requires(internals::FunctionResultQuery<FunctionType>::b4) {
+      requires((internals::FunctionResultQuery<FunctionType>::b4) &&
+               (isFunctionConstResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method = requires(
         const FunctionType& rf, const cell_workspace<Space>& rwk,
         const cell_index<Space> re, const quadrature_point_index<Space> ri) {
@@ -114,8 +110,6 @@ namespace mgis::function {
       return tfel::math::map<const TensorType>(
           this->function.data(unsafe, wk, e, i));
     } else {
-      static_assert(
-          std::same_as<decltype(this->function(wk, e, i).data()), const real*>);
       return tfel::math::map<const TensorType>(this->function(wk, e, i).data());
     }
   }
@@ -123,7 +117,8 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   auto TensorView<FunctionType, TensorType>::operator()(
       const element_index<Space>& i)  //
-      requires(internals::FunctionResultQuery<FunctionType>::b1) {
+      requires((internals::FunctionResultQuery<FunctionType>::b1) &&
+               (isFunctionResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method =
         requires(FunctionType & rf, const element_index<Space>& ri) {
       { rf.data(unsafe, ri) } -> std::same_as<real*>;
@@ -131,7 +126,6 @@ namespace mgis::function {
     if constexpr (has_data_method) {
       return tfel::math::map<TensorType>(this->function.data(unsafe, i));
     } else {
-      static_assert(std::same_as<decltype(this->function(i).data()), real*>);
       return tfel::math::map<TensorType>(this->function(i).data());
     }
   }
@@ -140,7 +134,8 @@ namespace mgis::function {
   auto TensorView<FunctionType, TensorType>::operator()(
       const element_workspace<Space>& wk,
       const element_index<Space>& i)  //
-      requires(internals::FunctionResultQuery<FunctionType>::b2) {
+      requires((internals::FunctionResultQuery<FunctionType>::b2) &&
+               (isFunctionResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method =
         requires(FunctionType & rf, const element_workspace<Space>& rwk,
                  const element_index<Space>& ri) {
@@ -149,8 +144,6 @@ namespace mgis::function {
     if constexpr (has_data_method) {
       return tfel::math::map<TensorType>(this->function.data(unsafe, wk, i));
     } else {
-      static_assert(
-          std::same_as<decltype(this->function(wk, i).data()), real*>);
       return tfel::math::map<TensorType>(this->function(wk, i).data());
     }
   }
@@ -159,7 +152,8 @@ namespace mgis::function {
   auto TensorView<FunctionType, TensorType>::operator()(
       const cell_index<Space>& e,
       const quadrature_point_index<Space>& i)  //
-      requires(internals::FunctionResultQuery<FunctionType>::b3) {
+      requires((internals::FunctionResultQuery<FunctionType>::b3) &&
+               (isFunctionResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method =
         requires(FunctionType & rf, const cell_index<Space>& re,
                  const quadrature_point_index<Space>& ri) {
@@ -168,7 +162,6 @@ namespace mgis::function {
     if constexpr (has_data_method) {
       return tfel::math::map<TensorType>(this->function.data(unsafe, e, i));
     } else {
-      static_assert(std::same_as<decltype(this->function(e, i).data()), real*>);
       return tfel::math::map<TensorType>(this->function(e, i).data());
     }
   }
@@ -178,7 +171,8 @@ namespace mgis::function {
       const cell_workspace<Space>& wk,
       const cell_index<Space>& e,
       const quadrature_point_index<Space>& i)  //
-      requires(internals::FunctionResultQuery<FunctionType>::b4) {
+      requires((internals::FunctionResultQuery<FunctionType>::b4) &&
+               (isFunctionResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method = requires(
         FunctionType & rf, const cell_workspace<Space>& rwk,
         const cell_index<Space>& re, const quadrature_point_index<Space>& ri) {
@@ -187,8 +181,6 @@ namespace mgis::function {
     if constexpr (has_data_method) {
       return tfel::math::map<TensorType>(this->function.data(unsafe, wk, e, i));
     } else {
-      static_assert(
-          std::same_as<decltype(this->function(wk, e, i).data()), real*>);
       return tfel::math::map<TensorType>(this->function(wk, e, i).data());
     }
   }

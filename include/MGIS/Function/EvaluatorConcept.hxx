@@ -206,6 +206,20 @@ namespace mgis::function {
 
   namespace internals {
 
+    template <typename T>
+    concept is_pointer_to_real =
+        (std::same_as<real*, T>) || (std::same_as<const real*, T>);
+
+  }  // end of   namespace internals
+
+  template <EvaluatorConcept EvaluatorType>
+  inline constexpr auto isEvaluatorResultTypeMappable =
+      requires(evaluator_result<EvaluatorType> rf) {
+    { rf.data() } -> internals::is_pointer_to_real;
+  };
+
+  namespace internals {
+
     /*!
      * This helper function allows to disambiguate the call to
      * the getSpace function

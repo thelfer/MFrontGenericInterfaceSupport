@@ -9,6 +9,7 @@
 #define LIB_MGIS_FUNCTION_FUNCTIONCONCEPT_HXX
 
 #include <span>
+#include <array>
 #include <utility>
 #include <concepts>
 #include <type_traits>
@@ -41,6 +42,15 @@ namespace mgis::function {
     struct FunctionResultTypeTraits<std::span<real, N>> {
       static constexpr auto is_specialized = true;
     };
+
+    //! \brief partial specialization for reference to a std::array
+    template <std::size_t N>
+    struct FunctionResultTypeTraits<std::array<real, N>&> {
+      static constexpr auto is_specialized = true;
+    };
+
+    template <typename T>
+    concept mutable_return_value = FunctionResultTypeTraits<T>::is_specialized;
 
     template <bool, typename FunctionType>
     struct FunctionResultQueryImplementation1 {
@@ -141,26 +151,34 @@ namespace mgis::function {
       using Space = std::decay_t<decltype(getSpace(
           std::declval<FunctionType>()))>;
       static constexpr bool b1 = ((requires(FunctionType & e) {
-                                    e(std::declval<element_index<Space>>());
+                                    {
+                                      e(std::declval<element_index<Space>>())
+                                      } -> mutable_return_value;
                                   }) &&
                                   (ElementSpaceConcept<Space>));
       static constexpr bool b2 =
           ((requires(FunctionType & e) {
-             e(std::declval<element_workspace<Space>>(),
-               std::declval<element_index<Space>>());
+             {
+               e(std::declval<element_workspace<Space>>(),
+                 std::declval<element_index<Space>>())
+               } -> mutable_return_value;
            }) &&
            (ElementSpaceConcept<Space> && hasElementWorkspace<Space>));
       static constexpr bool b3 =
           ((requires(FunctionType & e) {
-             e(std::declval<cell_workspace<Space>>(),
-               std::declval<cell_index<Space>>());
+             {
+               e(std::declval<cell_workspace<Space>>(),
+                 std::declval<cell_index<Space>>())
+               } -> mutable_return_value;
            }) &&
            (QuadratureSpaceConcept<Space> && hasCellWorkspace<Space>));
       static constexpr bool b4 =
           ((requires(FunctionType & e) {
-             e(std::declval<cell_workspace<Space>>(),
-               std::declval<cell_index<Space>>(),
-               std::declval<quadrature_point_index<Space>>());
+             {
+               e(std::declval<cell_workspace<Space>>(),
+                 std::declval<cell_index<Space>>(),
+                 std::declval<quadrature_point_index<Space>>())
+               } -> mutable_return_value;
            }) &&
            (QuadratureSpaceConcept<Space>));
       using result_type1 =
@@ -216,8 +234,8 @@ namespace mgis::function {
    */
   template <typename FunctionType>
   concept FunctionConcept =
-      SpaceConcept<std::decay_t<
-          decltype(getSpace(std::declval<FunctionType>()))>> &&
+      (SpaceConcept<std::decay_t<decltype(getSpace(
+           std::declval<FunctionType>()))>>) &&  //
       ((internals::FunctionResultQuery<FunctionType>::b1) ||
        (internals::FunctionResultQuery<FunctionType>::b2) ||
        (internals::FunctionResultQuery<FunctionType>::b3) ||
@@ -303,6 +321,18 @@ namespace mgis::function {
   template <FunctionConcept FunctionType>
   using function_const_result =
       typename internals::FunctionResultQuery<FunctionType>::const_result_type;
+
+  template <FunctionConcept FunctionType>
+  inline constexpr auto isFunctionResultTypeMappable =
+      requires(function_result<FunctionType> rf) {
+    { rf.data() } -> std::same_as<real*>;
+  };
+
+  template <FunctionConcept FunctionType>
+  inline constexpr auto isFunctionConstResultTypeMappable =
+      requires(function_const_result<FunctionType> rf) {
+    { rf.data() } -> std::same_as<const real*>;
+  };
 
   namespace internals {
 

@@ -48,14 +48,16 @@ namespace mgis::function {
      * \param[in] i: integration point index
      */
     auto operator()(const element_index<Space>&) const
-        requires(internals::EvaluatorResultQuery<EvaluatorType>::b1);
+        requires((internals::EvaluatorResultQuery<EvaluatorType>::b1) &&
+                 (isEvaluatorResultTypeMappable<EvaluatorType>));
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
     auto operator()(const element_workspace<Space>&,
                     const element_index<Space>&) const
-        requires(internals::EvaluatorResultQuery<EvaluatorType>::b2);
+        requires((internals::EvaluatorResultQuery<EvaluatorType>::b2) &&
+                 (isEvaluatorResultTypeMappable<EvaluatorType>));
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -63,7 +65,8 @@ namespace mgis::function {
      */
     auto operator()(const cell_index<Space>&,
                     const quadrature_point_index<Space>&) const
-        requires(internals::EvaluatorResultQuery<EvaluatorType>::b3);
+        requires((internals::EvaluatorResultQuery<EvaluatorType>::b3) &&
+                 (isEvaluatorResultTypeMappable<EvaluatorType>));
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -72,7 +75,8 @@ namespace mgis::function {
     auto operator()(const cell_workspace<Space>&,
                     const cell_index<Space>&,
                     const quadrature_point_index<Space>&) const
-        requires(internals::EvaluatorResultQuery<EvaluatorType>::b4);
+        requires((internals::EvaluatorResultQuery<EvaluatorType>::b4) &&
+                 (isEvaluatorResultTypeMappable<EvaluatorType>));
 
    private:
     //! \brief underlying function

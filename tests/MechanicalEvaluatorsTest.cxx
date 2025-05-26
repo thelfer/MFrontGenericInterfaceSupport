@@ -31,6 +31,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     this->test1();
     this->test2();
     this->test3();
+    this->test4();
     return this->result;
   }
 
@@ -111,7 +112,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
         EvaluatorConcept<std::decay_t<decltype(cauchy_r)>>);
     TFEL_TESTS_ASSERT(cauchy_r.check(ctx));
     // evaluation of the Cauchy stress in global frame
-    const auto ok = pk1 | from_pk1_to_cauchy(F) | rotate(R) | sig;
+    const auto ok = pk1 | from_pk1_to_cauchy(F) | rotate(R) | sig  ;
     TFEL_TESTS_ASSERT(ok);
     TFEL_TESTS_ASSERT(std::abs(sig(0)[0] - 0) < eps);
     TFEL_TESTS_ASSERT(std::abs(sig(0)[1] - 0) < eps);
@@ -119,6 +120,29 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(sig(0)[3] - 0) < eps);
     TFEL_TESTS_ASSERT(std::abs(sig(0)[4] - 0) < eps);
     TFEL_TESTS_ASSERT(std::abs(sig(0)[5] - 0) < eps);
+  }
+  void test4() {
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    Context ctx;
+    auto space = std::make_shared<BasicLinearSpace>(1);
+    const auto pk1_values = std::vector<real>{0, 0, 0, 0, 0, 0, 0, 0, 0};
+    const auto F1_values = std::vector<real>{1, 1, 1, 0, 0, 0, 0, 0, 0};
+    auto sig_values = std::vector<real>{0, 0, 0, 0, 0, 0, 0, 0, 0};
+    const FunctionView<BasicLinearSpace, {}, false> pk1_function(space,
+                                                                 pk1_values, 9);
+    const FunctionView<BasicLinearSpace, {}, false> F_function(space, F1_values,
+                                                               9);
+    FunctionView<BasicLinearSpace> sig_function(space, sig_values, 6);
+    const auto R = tfel::math::tmatrix<3, 3>{{0, 1, 0},  //
+                                             {0, 0, 1},
+                                             {1, 0, 0}};
+    auto sig = sig_function | as_stensor<3>;
+    const auto ok = pk1_function | as_tensor<3> |  //
+                    from_pk1_to_cauchy(F_function | as_tensor<3>) |
+                    rotate_backwards(R) | sig;
+    TFEL_TESTS_ASSERT(ok);
   }
 };
 

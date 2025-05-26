@@ -22,9 +22,9 @@ namespace mgis::function {
   }  // end of checkMatchingSpaces
 
   template <EvaluatorConcept EvaluatorType, typename ModifierType>
-  auto operator|(EvaluatorType e, ModifierType m)  //
-      requires(requires(EvaluatorType e1, ModifierType m1) {
-        { m1(e1) } -> EvaluatorConcept;
+  auto operator|(const EvaluatorType& e, ModifierType m)  //
+      requires(requires {
+        { m(e) } -> EvaluatorConcept;
       }) {
     return m(e);
   }

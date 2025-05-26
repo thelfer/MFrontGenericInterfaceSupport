@@ -498,14 +498,6 @@ namespace mgis::function {
       std::span<const real> FunctionView<Space, layout, is_mutable>::data()
   const { return this->values; }
 
-  template <FunctionalSpaceConcept Space,
-            DataLayoutDescription layout,
-            bool is_mutable>
-  requires(LinearElementSpaceConcept<Space> ||
-           LinearQuadratureSpaceConcept<Space>)  //
-      FunctionView<Space, layout, is_mutable>::~FunctionView() noexcept =
-          default;
-
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
