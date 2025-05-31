@@ -28,10 +28,8 @@ function(mgis_library name)
           EXPORT_LINK_INTERFACE_LIBRARIES
           NAMESPACE mgis:: FILE ${name}Targets.cmake)
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${name}Config.cmake.in)
-message("${name}Config.cmake.in found")
     set(_package_config_file ${CMAKE_CURRENT_SOURCE_DIR}/${name}Config.cmake.in)
   else()
-message("${name}Config.cmake.in not found")
     set(_package_config_file ${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake.in)
     file(WRITE ${_package_config_file}
          "@PACKAGE_INIT@\n"
