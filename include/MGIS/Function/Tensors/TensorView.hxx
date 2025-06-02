@@ -125,8 +125,7 @@ namespace mgis::function {
   };  // end of TensorView
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  decltype(auto) getSpace(
-      const TensorView<FunctionType, TensorType>&);
+  decltype(auto) getSpace(const TensorView<FunctionType, TensorType>&);
 
 }  // end of namespace mgis::function
 

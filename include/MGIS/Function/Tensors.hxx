@@ -139,10 +139,10 @@ namespace mgis::function {
   auto operator|(FunctionType&,
                  const internals::tensor_modifier<TensorType>&)  //
       requires(number_of_components<std::decay_t<FunctionType>> ==
-                        dynamic_extent
-                    ? true
-                    : compile_time_size<TensorType> ==
-                          number_of_components<std::decay_t<FunctionType>>);
+                       dynamic_extent
+                   ? true
+                   : compile_time_size<TensorType> ==
+                         number_of_components<std::decay_t<FunctionType>>);
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //

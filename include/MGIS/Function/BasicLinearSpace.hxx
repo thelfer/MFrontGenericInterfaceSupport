@@ -41,6 +41,9 @@ namespace mgis::function {
 
   constexpr size_type getSpaceSize(const BasicLinearSpace&) noexcept;
 
+  constexpr bool areEquivalent(const BasicLinearSpace&,
+                               const BasicLinearSpace&) noexcept;
+
 }  // end of namespace mgis::function
 
 #include "MGIS/Function/BasicLinearSpace.ixx"

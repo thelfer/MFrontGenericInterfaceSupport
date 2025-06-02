@@ -47,7 +47,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     using namespace mgis::function;
     constexpr auto eps = real{1e-14};
     Context ctx;
-    auto space = std::make_shared<BasicLinearSpace>(3);
+    auto space = BasicLinearSpace{3};
     auto values = std::vector<real>{1, 2, 3};
     const auto f = FunctionEvaluator<BasicLinearSpace>(space, values, 1);
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 1);
@@ -79,7 +79,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     using namespace mgis::function;
     constexpr auto eps = real{1e-14};
     Context ctx;
-    auto space = std::make_shared<BasicLinearSpace>(1);
+    auto space = BasicLinearSpace{1};
     auto values = std::vector<real>{1, 2, 3};
     const auto f = FunctionEvaluator<BasicLinearSpace>(space, values, 3);
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 3);
@@ -101,7 +101,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     using namespace mgis::function;
     constexpr auto eps = real{1e-14};
     Context ctx;
-    auto space = std::make_shared<BasicLinearSpace>(2);
+    auto space = BasicLinearSpace{2};
     auto values = std::vector<real>{1, 2, 3, 4};
     const auto f =
         FunctionEvaluator<BasicLinearSpace>(space, values, 2) | as_tvector<2>;
@@ -206,20 +206,23 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(a5(1)[1] + 4) < eps);
   }
   template <typename T>
-  static constexpr auto test5_shall_compile_test1 =
-      requires(T& f3) { f3 | mgis::function::as_stensor<2>; };
+  static constexpr auto test5_shall_compile_test1 = requires(T& f3) {
+    f3 | mgis::function::as_stensor<2>;
+  };
   template <typename T>
-  static constexpr auto test5_shall_compile_test2 =
-      requires(const T& f3) { f3 | mgis::function::as_stensor<2>; };
+  static constexpr auto test5_shall_compile_test2 = requires(const T& f3) {
+    f3 | mgis::function::as_stensor<2>;
+  };
   template <typename T>
-  static constexpr auto test5_shall_not_compile_test1 =
-      !requires(T& f3) { std::move(f3) | mgis::function::as_stensor<2>; };
+  static constexpr auto test5_shall_not_compile_test1 = !requires(T & f3) {
+    std::move(f3) | mgis::function::as_stensor<2>;
+  };
   void test5() {
     using namespace mgis;
     using namespace mgis::function;
     constexpr auto eps = real{1e-14};
     Context ctx;
-    auto space = std::make_shared<BasicLinearSpace>(1);
+    auto space = BasicLinearSpace{1};
     auto values = std::vector<real>{1e-3, 2e-3, -5e-3, 4e-3};
     static_assert(FunctionConcept<FunctionView<BasicLinearSpace>>);
     FunctionView<BasicLinearSpace> f(space, values, 4);
@@ -252,6 +255,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
                                  tfel::math::stensor<2, double>>>));
     const auto ok = assign(ctx, stress_view, strain | multiply_by_scalar(K));
     TFEL_TESTS_ASSERT(ok);
+    std::cerr << "Error message: " << ctx.getErrorMessage() << std::endl;
     TFEL_TESTS_ASSERT(std::abs(values2[0] - 150e6) < K * eps);
     TFEL_TESTS_ASSERT(std::abs(values2[1] - 150e6) < K * eps);
     TFEL_TESTS_ASSERT(std::abs(values2[2] - 150e6) < K * eps);
@@ -264,20 +268,24 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(values2[3] - 0) < K * eps);
     //
     TFEL_TESTS_STATIC_ASSERT(FunctionConcept<FunctionView<BasicLinearSpace>>);
-    TFEL_TESTS_STATIC_ASSERT(!FunctionConcept<const FunctionView<BasicLinearSpace>>);
+    TFEL_TESTS_STATIC_ASSERT(
+        !FunctionConcept<const FunctionView<BasicLinearSpace>>);
     TFEL_TESTS_STATIC_ASSERT(FunctionConcept<Function<BasicLinearSpace>>);
-    TFEL_TESTS_STATIC_ASSERT(!FunctionConcept<const Function<BasicLinearSpace>>);
+    TFEL_TESTS_STATIC_ASSERT(
+        !FunctionConcept<const Function<BasicLinearSpace>>);
     TFEL_TESTS_STATIC_ASSERT(EvaluatorConcept<FunctionView<BasicLinearSpace>>);
-    TFEL_TESTS_STATIC_ASSERT(test5_shall_compile_test1<FunctionView<BasicLinearSpace>>);
+    TFEL_TESTS_STATIC_ASSERT(
+        test5_shall_compile_test1<FunctionView<BasicLinearSpace>>);
     TFEL_TESTS_STATIC_ASSERT(
         test5_shall_compile_test2<FunctionView<BasicLinearSpace>>);
-    TFEL_TESTS_STATIC_ASSERT(test5_shall_not_compile_test1<Function<BasicLinearSpace>>);
+    TFEL_TESTS_STATIC_ASSERT(
+        test5_shall_not_compile_test1<Function<BasicLinearSpace>>);
   }
   void test6() {
     using namespace mgis;
     using namespace mgis::function;
     Context ctx;
-    auto space = std::make_shared<BasicLinearSpace>(1);
+    auto space = BasicLinearSpace{1};
     auto values = std::vector<real>{1e-3, 2e-3, -5e-3, 4e-3};
     static_assert(FunctionConcept<FunctionView<BasicLinearSpace>>);
     FunctionView<BasicLinearSpace> f(space, values, 4);
@@ -289,7 +297,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     using namespace mgis::function;
     constexpr auto eps = real{1e-14};
     Context ctx;
-    auto space = std::make_shared<BasicLinearSpace>(1);
+    auto space = BasicLinearSpace{1};
     auto values = std::vector<real>{1, -2, -5, 4};
     FunctionEvaluator<BasicLinearSpace> f(space, values, 2);
     const auto max = view<2>(f) | maximum_component;
@@ -318,7 +326,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     using namespace mgis::function;
     constexpr auto eps = real{1e-14};
     Context ctx;
-    auto space = std::make_shared<BasicLinearSpace>(1);
+    auto space = BasicLinearSpace{1};
     auto values = std::vector<real>{1, -2, -5, 4};
     FunctionEvaluator<BasicLinearSpace> f(space, values, 4);
     const auto max_vp = f | as_stensor<2> | eigen_values<> | maximum_component;
@@ -337,7 +345,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     Context ctx;
     const auto values = std::vector<real>{1, -2, -5, 4};
     {
-      auto space = std::make_shared<BasicLinearSpace>(4);
+      auto space = BasicLinearSpace{4};
       FunctionEvaluator<BasicLinearSpace> f(space, values, 1);
       const auto abs_values = view<1>(f) | absolute_value;
       TFEL_TESTS_ASSERT(abs_values.check(ctx));
@@ -348,7 +356,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(std::abs(abs_values(3) - 4) < eps);
     }
     {
-      auto space = std::make_shared<BasicLinearSpace>(2);
+      auto space = BasicLinearSpace{2};
       FunctionEvaluator<BasicLinearSpace> f(space, values, 2);
       const auto abs_values = view<2>(f) | absolute_value;
       TFEL_TESTS_ASSERT(abs_values.check(ctx));

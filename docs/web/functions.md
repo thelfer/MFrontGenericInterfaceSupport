@@ -158,10 +158,9 @@ spaces in `mgis` are defined using a set of `C++` concepts:
 
 ## Point-major or field major storage
 
-see [petscsection_2025] for a discussion.
+See [petscsection_2025] for a discussion.
 
-# The `Function` class
+## The `Function` class
 
 
-
-# The `FunctionView` class
+## The `FunctionView` class

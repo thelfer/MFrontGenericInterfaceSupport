@@ -57,8 +57,8 @@ namespace mgis::function {
     constexpr ~BasicLinearQuadratureSpace() noexcept;
 
    private:
-    //! \brief number of elements of the the space
-    size_type nelts;
+    //! \brief number of cells of the the space
+    size_type ncells;
   };
 
   template <size_type N>
@@ -88,6 +88,10 @@ namespace mgis::function {
       const BasicLinearQuadratureSpace<N>&,
       const size_type,
       const size_type) noexcept;
+
+  template <size_type N>
+  constexpr bool areEquivalent(const BasicLinearQuadratureSpace<N>&,
+                               const BasicLinearQuadratureSpace<N>&) noexcept;
 
 }  // end of namespace mgis::function
 

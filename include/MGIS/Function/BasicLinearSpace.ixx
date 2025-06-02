@@ -29,6 +29,11 @@ namespace mgis::function {
     return s.size();
   }
 
+  constexpr bool areEquivalent(const BasicLinearSpace& s,
+                               const BasicLinearSpace& s2) noexcept {
+    return s.size() == s2.size();
+  }
+
 }  // end of namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_BASICLINEARSPACE_IXX */

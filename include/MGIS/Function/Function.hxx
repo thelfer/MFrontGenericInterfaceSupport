@@ -10,7 +10,6 @@
 
 #include <span>
 #include <limits>
-#include <memory>
 #include <vector>
 #include "MGIS/Config.hxx"
 #include "MGIS/Function/SpaceConcept.hxx"
@@ -169,7 +168,7 @@ namespace mgis::function {
      */
     [[nodiscard]] static bool checkPreconditions(
         Context&,
-        std::shared_ptr<const Space>,
+        const Space&,
         ExternalData) requires((layout.data_size != dynamic_extent) &&
                                (layout.data_stride != dynamic_extent));
     /*!
@@ -181,7 +180,7 @@ namespace mgis::function {
      */
     [[nodiscard]] static bool checkPreconditions(
         Context&,
-        std::shared_ptr<const Space>,
+        const Space&,
         ExternalData,
         const size_type) requires((layout.data_size == dynamic_extent) &&
                                   (layout.data_stride != dynamic_extent));
@@ -194,7 +193,7 @@ namespace mgis::function {
      */
     [[nodiscard]] static bool checkPreconditions(
         Context&,
-        std::shared_ptr<const Space>,
+        const Space&,
         ExternalData,
         const size_type) requires((layout.data_size != dynamic_extent) &&
                                   (layout.data_stride == dynamic_extent));
@@ -207,7 +206,7 @@ namespace mgis::function {
      */
     [[nodiscard]] static bool checkPreconditions(
         Context&,
-        std::shared_ptr<const Space>,
+        const Space&,
         ExternalData,
         const size_type) requires((layout.data_size == dynamic_extent) &&
                                   (layout.data_stride == dynamic_extent));
@@ -221,7 +220,7 @@ namespace mgis::function {
      */
     [[nodiscard]] static bool checkPreconditions(
         Context&,
-        std::shared_ptr<const Space>,
+        const Space&,
         ExternalData,
         const size_type,
         const size_type) requires((layout.data_size == dynamic_extent) &&
@@ -232,7 +231,7 @@ namespace mgis::function {
      * \param[in] v: values
      * \param[in] dstride: size of the data per elements
      */
-    FunctionView(std::shared_ptr<const Space>,
+    FunctionView(const Space&,
                  ExternalData,
                  const size_type)  //
         requires((layout.data_size != dynamic_extent) &&
@@ -244,7 +243,7 @@ namespace mgis::function {
      * \param[in] dsize: size of the data per elements
      * \param[in] dstride: data stride
      */
-    FunctionView(std::shared_ptr<const Space>,
+    FunctionView(const Space&,
                  ExternalData,
                  const size_type,
                  const size_type)  //
@@ -256,7 +255,7 @@ namespace mgis::function {
      * \param[in] v: values
      * \param[in] dsize: size of the data per elements
      */
-    FunctionView(std::shared_ptr<const Space>,
+    FunctionView(const Space&,
                  ExternalData,
                  const size_type)  //
         requires((layout.data_size == dynamic_extent) &&
@@ -267,7 +266,7 @@ namespace mgis::function {
      * \param[in] v: values
      * \param[in] dsize: size of the data per elements
      */
-    FunctionView(std::shared_ptr<const Space>,
+    FunctionView(const Space&,
                  ExternalData,
                  const size_type)  //
         requires((layout.data_size == dynamic_extent) &&
@@ -277,7 +276,7 @@ namespace mgis::function {
      * \param[in] s: quadrature space.
      * \param[in] v: values
      */
-    FunctionView(std::shared_ptr<const Space>,
+    FunctionView(const Space&,
                  ExternalData)  //
         requires((layout.data_size != dynamic_extent) &&
                  (layout.data_stride != dynamic_extent));
@@ -287,7 +286,7 @@ namespace mgis::function {
      * \param[in] v: values
      * \param[in] l: data layout
      */
-    FunctionView(std::shared_ptr<const Space>,
+    FunctionView(const Space&,
                  ExternalData,
                  const DataLayout<layout>&) requires((layout.data_size ==
                                                       dynamic_extent) &&
@@ -299,7 +298,7 @@ namespace mgis::function {
      * \param[in] v: values
      * \param[in] l: data layout
      */
-    FunctionView(std::shared_ptr<const Space>,
+    FunctionView(const Space&,
                  ExternalData,
                  const DataLayout<layout>&) requires((layout.data_size !=
                                                       dynamic_extent) &&
@@ -311,7 +310,7 @@ namespace mgis::function {
      * \param[in] v: values
      * \param[in] l: data layout
      */
-    FunctionView(std::shared_ptr<const Space>,
+    FunctionView(const Space&,
                  ExternalData,
                  const DataLayout<layout>&) requires((layout.data_size ==
                                                       dynamic_extent) &&
@@ -319,8 +318,6 @@ namespace mgis::function {
                                                       dynamic_extent));
     //! \return the underlying quadrature space
     const Space& getSpace() const noexcept;
-    //! \return the underlying quadrature space
-    std::shared_ptr<const Space> getSpacePointer() const noexcept;
     //! \brief a noop function to match the EvaluatorConcept concept
     bool check(Context&) const noexcept;
     //! \brief a noop function to match the EvaluatorConcept concept
@@ -400,7 +397,7 @@ namespace mgis::function {
 
    protected:
     //! \brief underlying discretization space
-    std::shared_ptr<const Space> space;
+    const Space space;
     //! \brief underlying values
     ExternalData values;
   };  // end of FunctionView
@@ -446,33 +443,30 @@ namespace mgis::function {
      * \param[in] ctx: execution context
      * \param[in] s: space
      */
-    [[nodiscard]] static bool checkPreconditions(
-        Context&,
-        const std::shared_ptr<const Space>&)  //
+    [[nodiscard]] static bool checkPreconditions(Context&,
+                                                 const Space&)  //
         requires(N != dynamic_extent);
     /*!
      * \brief constructor from a space
      * \param[in] s: space
      */
-    Function(std::shared_ptr<const Space>) requires(N != dynamic_extent);
+    Function(const Space&) requires(N != dynamic_extent);
     /*!
      * \brief constructor from a space and a data size
      * \param[in] ctx: execution context
      * \param[in] s: space
      * \param[in] dsize: data size
      */
-    [[nodiscard]] static bool checkPreconditions(
-        Context&,
-        const std::shared_ptr<const Space>&,
-        const size_type)  //
+    [[nodiscard]] static bool checkPreconditions(Context&,
+                                                 const Space&,
+                                                 const size_type)  //
         requires(N == dynamic_extent);
     /*!
      * \brief constructor from a space and a data size
      * \param[in] s: space
      * \param[in] dsize: data size
      */
-    Function(std::shared_ptr<const Space>,
-             const size_type) requires(N == dynamic_extent);
+    Function(const Space&, const size_type) requires(N == dynamic_extent);
     //! \brief copy constructor
     Function(const Function&) requires(N == dynamic_extent);
     //! \brief assignement constructor
@@ -518,8 +512,7 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
-  const auto& getSpace(
-      const FunctionView<Space, layout, is_mutable>&);
+  const auto& getSpace(const FunctionView<Space, layout, is_mutable>&);
 
 }  // namespace mgis::function
 

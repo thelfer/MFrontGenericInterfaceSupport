@@ -13,7 +13,7 @@ namespace mgis::function {
   template <size_type N>
   requires(N > 0) constexpr BasicLinearQuadratureSpace<
       N>::BasicLinearQuadratureSpace(const size_type n) noexcept
-      : nelts(n) {}
+      : ncells(n) {}
 
   template <size_type N>
   requires(N > 0) constexpr BasicLinearQuadratureSpace<
@@ -28,13 +28,13 @@ namespace mgis::function {
   template <size_type N>
   requires(N > 0) constexpr size_type
       BasicLinearQuadratureSpace<N>::size() const noexcept {
-    return N * (this->nelts);
+    return N * (this->ncells);
   }  // end of size
 
   template <size_type N>
   requires(N > 0) constexpr size_type
       BasicLinearQuadratureSpace<N>::getNumberOfCells() const noexcept {
-    return this->nelts;
+    return this->ncells;
   }  // end of getNumberOfElements
 
   template <size_type N>
@@ -71,7 +71,7 @@ namespace mgis::function {
 
   template <size_type N>
   constexpr size_type getNumberOfCells(
-      const BasicLinearQuadratureSpace<N>& s) noexcept{
+      const BasicLinearQuadratureSpace<N>& s) noexcept {
     return s.getNumberOfCells();
   }  // end of getNumberOfCells
 
@@ -80,6 +80,21 @@ namespace mgis::function {
       const BasicLinearQuadratureSpace<N>& s, const size_type e) noexcept {
     return s.getNumberOfQuadraturePoints(e);
   }  // end of getNumberOfQuadraturePoints
+
+  template <size_type N>
+  constexpr size_type getQuadraturePointOffset(
+      const BasicLinearQuadratureSpace<N>& s,
+      const size_type e,
+      const size_type i) noexcept {
+    return s.getQuadraturePointOffset(e, i);
+  }
+
+  template <size_type N>
+  constexpr bool areEquivalent(
+      const BasicLinearQuadratureSpace<N>& s,
+      const BasicLinearQuadratureSpace<N>& s2) noexcept {
+    return s.size() == s2.size();
+  }
 
 }  // end of namespace mgis::function
 

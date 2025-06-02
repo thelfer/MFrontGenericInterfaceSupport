@@ -15,7 +15,7 @@ namespace mgis::function {
                            const EvaluatorConcept auto& e2) {
     const auto& qspace1 = getSpace(e1);
     const auto& qspace2 = getSpace(e2);
-    if (&qspace1 != &qspace2) {
+    if (!areEquivalent(qspace1, qspace2)) {
       return ctx.registerErrorMessage("unmatched quadrature spaces");
     }
     return true;

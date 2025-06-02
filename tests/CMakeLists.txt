@@ -390,6 +390,14 @@ if(enable-mgis-function)
 
 if(MGIS_HAVE_TFEL)
 
+add_executable(SharedSpaceTest
+ EXCLUDE_FROM_ALL
+ SharedSpaceTest.cxx)
+target_link_libraries(SharedSpaceTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME SharedSpaceTest COMMAND SharedSpaceTest)
+add_dependencies(check SharedSpaceTest)
+
 add_executable(FunctionTest
  EXCLUDE_FROM_ALL
  FunctionTest.cxx)

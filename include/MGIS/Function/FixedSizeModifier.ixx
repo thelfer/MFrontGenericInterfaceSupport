@@ -159,9 +159,9 @@ namespace mgis::function {
   }  // end of view
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  const auto& getSpace(const FixedSizeModifier<EvaluatorType, N>& e){
+  const auto& getSpace(const FixedSizeModifier<EvaluatorType, N>& e) {
     return e.getSpace();
-  } // end of getSpace
+  }  // end of getSpace
 
 }  // end of namespace mgis::function
 

@@ -1,6 +1,6 @@
 /*!
  * \file   MGIS/Function/EvaluatorConcept.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   21/05/2025
  */

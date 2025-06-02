@@ -40,7 +40,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     using namespace mgis;
     using namespace mgis::function;
     constexpr auto eps = real{1e-14};
-    auto space = std::make_shared<BasicLinearSpace>(1);
+    auto space = BasicLinearSpace(1);
     auto values = std::vector<real>{1, 2, 3};
     const auto f = FunctionEvaluator<BasicLinearSpace>(space, values, 3);
     TFEL_TESTS_CHECK_EQUAL(f.getNumberOfComponents(), 3);
@@ -55,7 +55,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     using namespace mgis;
     using namespace mgis::function;
     constexpr auto eps = real{1e-14};
-    auto space = std::make_shared<BasicLinearSpace>(1);
+    auto space = BasicLinearSpace(1);
     const auto values = std::vector<real>{1, 2, 3};
     const auto f = FunctionEvaluator<BasicLinearSpace>(space, values, 3);
     auto seq = Function<BasicLinearSpace>(space, 1);
@@ -73,7 +73,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     using namespace mgis::function;
     constexpr auto eps = real{1e-14};
     Context ctx;
-    auto space = std::make_shared<BasicLinearSpace>(1);
+    auto space = BasicLinearSpace(1);
     Function<BasicLinearSpace> pk1_function(space, 9);
     Function<BasicLinearSpace> F_function(space, 9);
     Function<BasicLinearSpace> sig_function(space, 6);
@@ -112,7 +112,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
         EvaluatorConcept<std::decay_t<decltype(cauchy_r)>>);
     TFEL_TESTS_ASSERT(cauchy_r.check(ctx));
     // evaluation of the Cauchy stress in global frame
-    const auto ok = pk1 | from_pk1_to_cauchy(F) | rotate(R) | sig  ;
+    const auto ok = pk1 | from_pk1_to_cauchy(F) | rotate(R) | sig;
     TFEL_TESTS_ASSERT(ok);
     TFEL_TESTS_ASSERT(std::abs(sig(0)[0] - 0) < eps);
     TFEL_TESTS_ASSERT(std::abs(sig(0)[1] - 0) < eps);
@@ -126,7 +126,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     using namespace mgis::function;
     constexpr auto eps = real{1e-14};
     Context ctx;
-    auto space = std::make_shared<BasicLinearSpace>(1);
+    auto space = BasicLinearSpace(1);
     const auto pk1_values = std::vector<real>{0, 0, 0, 0, 0, 0, 0, 0, 0};
     const auto F1_values = std::vector<real>{1, 1, 1, 0, 0, 0, 0, 0, 0};
     auto sig_values = std::vector<real>{0, 0, 0, 0, 0, 0, 0, 0, 0};

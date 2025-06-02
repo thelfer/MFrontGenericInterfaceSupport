@@ -75,8 +75,7 @@ namespace mgis::function {
   };
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  const auto& getSpace(
-      const EvaluatorModifierBase<Child, EvaluatorType>&);
+  const auto& getSpace(const EvaluatorModifierBase<Child, EvaluatorType>&);
 
 }  // namespace mgis::function
 

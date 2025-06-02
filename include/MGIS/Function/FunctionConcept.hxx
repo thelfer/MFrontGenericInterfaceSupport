@@ -61,8 +61,8 @@ namespace mgis::function {
 
     template <typename FunctionType>
     struct FunctionResultQueryImplementation1<true, FunctionType> {
-      using Space = std::decay_t<decltype(getSpace(
-          std::declval<FunctionType>()))>;
+      using Space =
+          std::decay_t<decltype(getSpace(std::declval<FunctionType>()))>;
       using result_type =
           std::invoke_result_t<FunctionType, element_index<Space>>;
       using const_result_type =
@@ -78,8 +78,8 @@ namespace mgis::function {
 
     template <typename FunctionType>
     struct FunctionResultQueryImplementation2<true, FunctionType> {
-      using Space = std::decay_t<decltype(getSpace(
-          std::declval<FunctionType>()))>;
+      using Space =
+          std::decay_t<decltype(getSpace(std::declval<FunctionType>()))>;
       using result_type = std::invoke_result_t<FunctionType,
                                                element_workspace<Space>,
                                                element_index<Space>>;
@@ -97,8 +97,8 @@ namespace mgis::function {
 
     template <typename FunctionType>
     struct FunctionResultQueryImplementation3<true, FunctionType> {
-      using Space = std::decay_t<decltype(getSpace(
-          std::declval<FunctionType>()))>;
+      using Space =
+          std::decay_t<decltype(getSpace(std::declval<FunctionType>()))>;
       using const_result_type =
           std::invoke_result_t<const FunctionType,
                                cell_index<Space>,
@@ -114,8 +114,8 @@ namespace mgis::function {
 
     template <typename FunctionType>
     struct FunctionResultQueryImplementation4<true, FunctionType> {
-      using Space = std::decay_t<decltype(getSpace(
-          std::declval<FunctionType>()))>;
+      using Space =
+          std::decay_t<decltype(getSpace(std::declval<FunctionType>()))>;
       using result_type = std::invoke_result_t<FunctionType,
                                                cell_workspace<Space>,
                                                cell_index<Space>,
@@ -148,8 +148,8 @@ namespace mgis::function {
 
     template <typename FunctionType>
     struct FunctionResultQueryImplementation<true, FunctionType> {
-      using Space = std::decay_t<decltype(getSpace(
-          std::declval<FunctionType>()))>;
+      using Space =
+          std::decay_t<decltype(getSpace(std::declval<FunctionType>()))>;
       static constexpr bool b1 = ((requires(FunctionType & e) {
                                     {
                                       e(std::declval<element_index<Space>>())
@@ -234,8 +234,8 @@ namespace mgis::function {
    */
   template <typename FunctionType>
   concept FunctionConcept =
-      (SpaceConcept<std::decay_t<decltype(getSpace(
-           std::declval<FunctionType>()))>>) &&  //
+      (SpaceConcept<
+          std::decay_t<decltype(getSpace(std::declval<FunctionType>()))>>)&&  //
       ((internals::FunctionResultQuery<FunctionType>::b1) ||
        (internals::FunctionResultQuery<FunctionType>::b2) ||
        (internals::FunctionResultQuery<FunctionType>::b3) ||
@@ -306,8 +306,8 @@ namespace mgis::function {
 
   //
   template <FunctionConcept FunctionType>
-  using function_space = std::decay_t<decltype(getSpace(
-      std::declval<FunctionType>()))>;
+  using function_space =
+      std::decay_t<decltype(getSpace(std::declval<FunctionType>()))>;
 
   /*!
    * \brief type of the result of an function

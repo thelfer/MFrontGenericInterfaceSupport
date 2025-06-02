@@ -12,10 +12,9 @@
 namespace mgis::function {
 
   static_assert(
-      std::same_as<decltype(getSpace(
-                                std::declval<FixedSizeModifier<
-                                    FunctionEvaluator<BasicLinearSpace>,
-                                    9>>())
+      std::same_as<decltype(getSpace(std::declval<FixedSizeModifier<
+                                         FunctionEvaluator<BasicLinearSpace>,
+                                         9>>())
                                 .size()),
                    size_type>);
   static_assert(

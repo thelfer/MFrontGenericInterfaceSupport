@@ -57,12 +57,9 @@ namespace mgis::function::algorithm {
 namespace mgis::function::internals {
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
-  void assign_scalar_impl(FunctionType& f, EvaluatorType e) requires((
-      LinearElementSpaceConcept<std::decay_t<decltype(getSpace(
-          f))>>)&&(!hasElementWorkspace<std::
-                                            decay_t<
-                                                decltype(getSpace(
-                                                    f))>>)) {
+  void assign_scalar_impl(FunctionType& f, EvaluatorType e) requires(
+      (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
+          !hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
     using value_type = std::invoke_result_t<FunctionType, size_type>;
     using result_type = std::invoke_result_t<EvaluatorType, size_type>;
     const auto& space = getSpace(f);
@@ -88,11 +85,8 @@ namespace mgis::function::internals {
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   void assign_scalar_impl(FunctionType& f, EvaluatorType e) requires(
-      (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(
-           f))>>)&&(hasElementWorkspace<std::
-                                            decay_t<
-                                                decltype(getSpace(
-                                                    f))>>)) {
+      (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
+          hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
     using value_type = std::invoke_result_t<FunctionType, size_type>;
     using result_type = std::invoke_result_t<EvaluatorType, size_type>;
     const auto& space = getSpace(f);
@@ -119,12 +113,9 @@ namespace mgis::function::internals {
   }  // end of assign_scalar_impl
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
-  void assign_impl(FunctionType& f, EvaluatorType e) requires((
-      LinearElementSpaceConcept<std::decay_t<decltype(getSpace(
-          f))>>)&&(!hasElementWorkspace<std::
-                                            decay_t<
-                                                decltype(getSpace(
-                                                    f))>>)) {
+  void assign_impl(FunctionType& f, EvaluatorType e) requires(
+      (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
+          !hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
     using value_type = std::invoke_result_t<FunctionType, size_type>;
     using result_type = std::invoke_result_t<EvaluatorType, size_type>;
     constexpr auto use_direct_assignement =
@@ -146,11 +137,8 @@ namespace mgis::function::internals {
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   void assign_impl(FunctionType& f, EvaluatorType e) requires(
-      (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(
-           f))>>)&&(hasElementWorkspace<std::
-                                            decay_t<
-                                                decltype(getSpace(
-                                                    f))>>)) {
+      (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
+          hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
     using value_type = std::invoke_result_t<FunctionType, size_type>;
     using result_type = std::invoke_result_t<EvaluatorType, size_type>;
     constexpr auto use_direct_assignement =
@@ -212,19 +200,15 @@ namespace mgis::function {
   bool assign(Context& ctx,
               FunctionType& f,
               EvaluatorType e)  //
-      requires(
-          ((LinearElementSpaceConcept<
-               std::decay_t<decltype(getSpace(
-                   std::declval<EvaluatorType>()))>>) ||
-           (LinearQuadratureSpaceConcept<
-               std::decay_t<decltype(getSpace(
-                   std::declval<EvaluatorType>()))>>)) &&
-          internals::same_decay_type<
-              decltype(getSpace(std::declval<FunctionType>())),
-              decltype(getSpace(
-                  std::declval<EvaluatorType>()))>) {
+      requires(((LinearElementSpaceConcept<std::decay_t<
+                     decltype(getSpace(std::declval<EvaluatorType>()))>>) ||
+                (LinearQuadratureSpaceConcept<std::decay_t<
+                     decltype(getSpace(std::declval<EvaluatorType>()))>>)) &&
+               internals::same_decay_type<
+                   decltype(getSpace(std::declval<FunctionType>())),
+                   decltype(getSpace(std::declval<EvaluatorType>()))>) {
     using result_type = std::invoke_result_t<EvaluatorType, size_type>;
-    if (&(getSpace(f)) != &(getSpace(e))) {
+    if (!areEquivalent(getSpace(f), getSpace(e))) {
       return ctx.registerErrorMessage("unmatched spaces");
     }
     if (f.getNumberOfComponents() != e.getNumberOfComponents()) {
@@ -249,4 +233,3 @@ namespace mgis::function {
 }  // namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_ALGORITHMS_IXX */
-

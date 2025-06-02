@@ -162,11 +162,15 @@ namespace mgis::function {
   template <typename SpaceType>
   concept SpaceConcept =
       ((std::integral<typename SpaceTraits<SpaceType>::size_type>)&&  //
+       (std::move_constructible<SpaceType>)&&                         //
        (requires(const SpaceType& s) {
          {
            getSpaceSize(s)
            } -> internals::same_decay_type<
                typename SpaceTraits<SpaceType>::size_type>;
+       }) &&
+       (requires(const SpaceType& s, const SpaceType& s2) {
+         { areEquivalent(s, s2) } -> std::same_as<bool>;
        }));
 
   template <typename SpaceType>
@@ -229,7 +233,7 @@ namespace mgis::function {
                std::declval<typename SpaceTraits<SpaceType>::cell_index_type>())
            } -> internals::same_decay_type<
                typename SpaceTraits<SpaceType>::quadrature_point_index_type>;
-       }) && //
+       }) &&  //
        (std::integral<
            typename SpaceTraits<SpaceType>::quadrature_point_index_type>));
 
