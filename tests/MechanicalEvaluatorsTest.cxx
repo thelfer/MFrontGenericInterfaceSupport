@@ -32,6 +32,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     this->test2();
     this->test3();
     this->test4();
+    this->test5();
     return this->result;
   }
 
@@ -143,6 +144,20 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
                     from_pk1_to_cauchy(F_function | as_tensor<3>) |
                     rotate_backwards(R) | sig;
     TFEL_TESTS_ASSERT(ok);
+  }
+  void test5() {
+#ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    constexpr auto size = []() constexpr {
+      auto space = BasicLinearSpace{2};
+      auto f = Function<BasicLinearSpace>{space, 3};
+      auto v = f | as_tvector<3>;
+      return v.getNumberOfComponents();
+    }();
+    TFEL_TESTS_STATIC_ASSERT(size == 3);
+#endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }
 };
 

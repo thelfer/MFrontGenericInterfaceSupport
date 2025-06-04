@@ -35,32 +35,34 @@ namespace mgis::function {
      * \param[in] eh: error handler
      * \param[in] values: function
      */
-    static bool checkPreconditions(AbstractErrorHandler&,
-                                   const FunctionType&) noexcept;
+    static constexpr bool checkPreconditions(AbstractErrorHandler&,
+                                             const FunctionType&) noexcept;
     /*!
      * \brief constructor
      * \param[in] values: function
      */
-    FixedSizeView(FunctionType&);
+    constexpr FixedSizeView(FunctionType&);
     /*!
      * \brief constructor
      * \param[in] pcheck: object stating if preconditions must be checked
      * \param[in] values: function
      */
     template <bool doPreconditionsCheck>
-    FixedSizeView(const PreconditionsCheck<doPreconditionsCheck>&,
-                  FunctionType&);
+    constexpr FixedSizeView(const PreconditionsCheck<doPreconditionsCheck>&,
+                            FunctionType&);
     //! \brief perform consistency checks
     bool check(Context&) const noexcept;
+    //! \brief dummy method to satisfy the EvaluatorConcept
+    constexpr void allocateWorkspace() noexcept;
     //! \brief return the underlying  space
-    const Space& getSpace() const;
+    constexpr decltype(auto) getSpace() const;
     //! \return the number of components
     constexpr size_type getNumberOfComponents() const noexcept;
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    auto operator()(const element_index<Space>&) const
+    constexpr auto operator()(const element_index<Space>&) const
         requires((internals::FunctionResultQuery<FunctionType>::b1) &&
                  (isFunctionConstResultTypeMappable<FunctionType>));
     /*!
@@ -68,8 +70,8 @@ namespace mgis::function {
      * \param[in] wk: element workspace
      * \param[in] i: integration point index
      */
-    auto operator()(const element_workspace<Space>&,
-                    const element_index<Space>&) const
+    constexpr auto operator()(const element_workspace<Space>&,
+                              const element_index<Space>&) const
         requires((internals::FunctionResultQuery<FunctionType>::b2) &&
                  (isFunctionConstResultTypeMappable<FunctionType>));
     /*!
@@ -77,8 +79,8 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    auto operator()(const cell_index<Space>&,
-                    const quadrature_point_index<Space>&) const
+    constexpr auto operator()(const cell_index<Space>&,
+                              const quadrature_point_index<Space>&) const
         requires((internals::FunctionResultQuery<FunctionType>::b3) &&
                  (isFunctionConstResultTypeMappable<FunctionType>));
     /*!
@@ -86,24 +88,24 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    auto operator()(const cell_workspace<Space>&,
-                    const cell_index<Space>&,
-                    const quadrature_point_index<Space>&) const
+    constexpr auto operator()(const cell_workspace<Space>&,
+                              const cell_index<Space>&,
+                              const quadrature_point_index<Space>&) const
         requires((internals::FunctionResultQuery<FunctionType>::b4) &&
                  (isFunctionConstResultTypeMappable<FunctionType>));
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    mutable_value_type operator()(const element_index<Space>&)  //
+    constexpr mutable_value_type operator()(const element_index<Space>&)  //
         requires((internals::FunctionResultQuery<FunctionType>::b1) &&
                  (isFunctionResultTypeMappable<FunctionType>));
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    mutable_value_type operator()(const element_workspace<Space>&,
-                                  const element_index<Space>&)  //
+    constexpr mutable_value_type operator()(const element_workspace<Space>&,
+                                            const element_index<Space>&)  //
         requires((internals::FunctionResultQuery<FunctionType>::b2) &&
                  (isFunctionResultTypeMappable<FunctionType>));
     /*!
@@ -111,8 +113,9 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    mutable_value_type operator()(const cell_index<Space>&,
-                                  const quadrature_point_index<Space>&)  //
+    constexpr mutable_value_type operator()(
+        const cell_index<Space>&,
+        const quadrature_point_index<Space>&)  //
         requires((internals::FunctionResultQuery<FunctionType>::b3) &&
                  (isFunctionResultTypeMappable<FunctionType>));
     /*!
@@ -120,9 +123,10 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    mutable_value_type operator()(const cell_workspace<Space>&,
-                                  const cell_index<Space>&,
-                                  const quadrature_point_index<Space>&)  //
+    constexpr mutable_value_type operator()(
+        const cell_workspace<Space>&,
+        const cell_index<Space>&,
+        const quadrature_point_index<Space>&)  //
         requires((internals::FunctionResultQuery<FunctionType>::b4) &&
                  (isFunctionResultTypeMappable<FunctionType>));
 
@@ -136,13 +140,13 @@ namespace mgis::function {
    * \param[in] f: function
    */
   template <size_type N, typename FunctionType>
-  auto view(FunctionType&) requires(
+  constexpr auto view(FunctionType&) requires(
       (N > 0) && (N != dynamic_extent) &&              //
       (FunctionConcept<std::decay_t<FunctionType>>)&&  //
       (!std::is_rvalue_reference_v<FunctionType>));
 
   template <FunctionConcept FunctionType, size_type N>
-  const auto& getSpace(FixedSizeView<FunctionType, N>&);
+  constexpr decltype(auto) getSpace(const FixedSizeView<FunctionType, N>&);
 
 }  // end of namespace mgis::function
 

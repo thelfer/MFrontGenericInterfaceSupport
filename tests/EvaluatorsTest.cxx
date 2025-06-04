@@ -38,6 +38,8 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     this->test7();
     this->test8();
     this->test9();
+    this->test10();
+    this->test11();
     return this->result;
   }
 
@@ -255,7 +257,6 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
                                  tfel::math::stensor<2, double>>>));
     const auto ok = assign(ctx, stress_view, strain | multiply_by_scalar(K));
     TFEL_TESTS_ASSERT(ok);
-    std::cerr << "Error message: " << ctx.getErrorMessage() << std::endl;
     TFEL_TESTS_ASSERT(std::abs(values2[0] - 150e6) < K * eps);
     TFEL_TESTS_ASSERT(std::abs(values2[1] - 150e6) < K * eps);
     TFEL_TESTS_ASSERT(std::abs(values2[2] - 150e6) < K * eps);
@@ -289,8 +290,9 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     auto values = std::vector<real>{1e-3, 2e-3, -5e-3, 4e-3};
     static_assert(FunctionConcept<FunctionView<BasicLinearSpace>>);
     FunctionView<BasicLinearSpace> f(space, values, 4);
-    auto strain = f | as_stensor<1>;
-    TFEL_TESTS_ASSERT(!strain.check(ctx));
+    TFEL_TESTS_ASSERT(
+        !(TensorView<FunctionView<BasicLinearSpace>,
+                     tfel::math::stensor<1>>::checkPreconditions(ctx, f)));
   }
   void test7() {
     using namespace mgis;
@@ -366,6 +368,75 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(std::abs(abs_values(1)[0] - 5) < eps);
       TFEL_TESTS_ASSERT(std::abs(abs_values(1)[1] - 4) < eps);
     }
+  }
+  void test10() {
+     using namespace mgis;
+     using namespace mgis::function;
+     constexpr auto eps = real{1e-14};
+     TFEL_TESTS_STATIC_ASSERT((
+         EvaluatorConcept<FixedSizeView<Function<BasicLinearSpace>, 1>>));
+     Function<BasicLinearSpace> f(BasicLinearSpace{4}, 1);
+     f(0)[0] = 1;
+     f(1)[0] = -2;
+     f(2)[0] = -5;
+     f(3)[0] = 4;
+     const auto f_1 = view<1>(f);
+     const auto abs_values =  f_1 | absolute_value;
+     TFEL_TESTS_ASSERT(std::abs(abs_values(0) - 1) < eps);
+     TFEL_TESTS_ASSERT(std::abs(abs_values(1) - 2) < eps);
+     TFEL_TESTS_ASSERT(std::abs(abs_values(2) - 5) < eps);
+     TFEL_TESTS_ASSERT(std::abs(abs_values(3) - 4) < eps);
+  }
+  void test11() {
+#ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
+    using namespace mgis;
+    using namespace mgis::function;
+    auto check_value = [](const real& a, const real b) constexpr->bool {
+      constexpr auto eps = real{1e-12};
+      auto local_abs = [](const real r) { return r > 0 ? r : -r; };
+      return local_abs(a - b) < eps;
+    };
+    constexpr auto values = []() constexpr {
+      Function f(BasicLinearSpace{4}, 1);
+      Function f2(BasicLinearSpace{1}, 4);
+      Function f3(BasicLinearSpace{1}, 4);
+      tfel::math::map<tfel::math::tvector<4, real>>(&f(0)[0]) = {1, -2, -5, 4};
+      (f2 | as_stensor<2>)(0) = {1, -2, -5, 4};
+      (f3 | as_stensor<2>)(0) = {-4, 5, -3, -2};
+      const auto abs_values = view<1>(f) | absolute_value;
+      const auto trace_values = f2 | as_stensor<2> | trace;
+      const auto trace_values2 = f2 | as_stensor<2> | trace | negate;
+      const auto trace_values3 = f2 | as_stensor<2> | trace | negate |
+                                 multiply_by_scalar(2) | divide_by_scalar(3);
+      const auto min_values = view<4>(f2) | minimum_component;
+      const auto max_values = view<4>(f2) | maximum_component;
+      const auto transform_values =
+          view<1>(f) | transform([](const real& x) { return x * x / 2; });
+      const auto add_values = add(f2 | as_stensor<2>, f3 | as_stensor<2>);
+      return std::array<real, 14>{abs_values(0),    abs_values(1),     //
+                                  abs_values(2),    abs_values(3),     //
+                                  trace_values(0),  trace_values2(0),  //
+                                  trace_values3(0), min_values(0),     //
+                                  max_values(0),    transform_values(3),
+                                  add_values(0)[0], add_values(0)[1],
+                                  add_values(0)[2], add_values(0)[3]};
+    }
+    ();
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[0], 1));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[1], 2));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[2], 5));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[3], 4));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[4], -6));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[5], 6));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[6], 4));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[7], -5));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[8], 4));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[9], 8));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[10], -3));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[11], 3));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[12], -8));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[13], 2));
+#endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }
 };
 

@@ -67,7 +67,7 @@ namespace mgis::function::internals {
 
   template <TensorConcept TensorType>
   template <FunctionConcept FunctionType>
-  auto tensor_modifier<TensorType>::operator()(FunctionType& f) const
+  constexpr  auto tensor_modifier<TensorType>::operator()(FunctionType& f) const
       requires(number_of_components<FunctionType> == dynamic_extent
                    ? true
                    : compile_time_size<TensorType> ==
@@ -77,7 +77,7 @@ namespace mgis::function::internals {
 
   template <TensorConcept TensorType>
   template <EvaluatorConcept EvaluatorType>
-  auto tensor_modifier<TensorType>::operator()(const EvaluatorType& e) const
+  constexpr  auto tensor_modifier<TensorType>::operator()(const EvaluatorType& e) const
       requires((areTensorModifierRequirementsSatisfied<
                 TensorType,
                 std::decay_t<EvaluatorType>>)) {
@@ -90,8 +90,8 @@ namespace mgis::function::internals {
 namespace mgis::function {
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  auto operator|(FunctionType& f,
-                 const internals::tensor_modifier<TensorType>& m)  //
+  constexpr auto operator|(FunctionType& f,
+                           const internals::tensor_modifier<TensorType>& m)  //
       requires(number_of_components<std::decay_t<FunctionType>> ==
                        dynamic_extent
                    ? true

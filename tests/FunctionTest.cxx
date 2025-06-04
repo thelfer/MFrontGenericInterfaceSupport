@@ -222,6 +222,7 @@ struct FunctionTest final : public tfel::tests::TestCase {
     this->test6();
     this->test7();
     this->test8();
+    this->test9();
     return this->result;
   }
 
@@ -441,11 +442,74 @@ struct FunctionTest final : public tfel::tests::TestCase {
   void test8() {
     using namespace mgis;
     using namespace mgis::function;
+    auto check_value = [](const real& a, const real b) constexpr->bool {
+      constexpr auto eps = real{1e-12};
+      auto local_abs = [](const real r) { return r > 0 ? r : -r; };
+      return local_abs(a - b) < eps;
+    };
     static constexpr auto space = BasicLinearSpace{2};
-    static constexpr auto values = std::array<real, 4>{};
+    static constexpr auto values = std::array<real, 4>{4, 2, 3, 1};
     constexpr auto f = FunctionEvaluator<BasicLinearSpace>{space, values, 2};
     TFEL_TESTS_STATIC_ASSERT(f.getNumberOfComponents() == 2);
     TFEL_TESTS_STATIC_ASSERT(f.getDataStride() == 2);
+    TFEL_TESTS_STATIC_ASSERT(check_value(f(0)[0], 4));
+    TFEL_TESTS_STATIC_ASSERT(check_value(f(0)[1], 2));
+    TFEL_TESTS_STATIC_ASSERT(check_value(f(1)[0], 3));
+    TFEL_TESTS_STATIC_ASSERT(check_value(f(1)[1], 1));
+  }
+  void test9() {
+#ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
+    using namespace mgis;
+    using namespace mgis::function;
+    auto check_value = [](const real& a, const real b) constexpr->bool {
+      constexpr auto eps = real{1e-12};
+      auto local_abs = [](const real r) { return r > 0 ? r : -r; };
+      return local_abs(a - b) < eps;
+    };
+    constexpr auto sizes = []() constexpr {
+      auto space = BasicLinearSpace{2};
+      auto f = Function<BasicLinearSpace>{space, 3};
+      return std::array<size_type, 2>{f.getNumberOfComponents(),
+                                      f.getDataStride()};
+    }
+    ();
+    TFEL_TESTS_STATIC_ASSERT(sizes[0] == 3);
+    TFEL_TESTS_STATIC_ASSERT(sizes[1] == 3);
+    constexpr auto values = []() constexpr->std::array<real, 4> {
+      auto space = BasicLinearSpace{2};
+      auto f = Function<BasicLinearSpace>{space, 2};
+      f(0)[0] = 5;
+      f(0)[1] = 12;
+      f(1)[0] = -2;
+      f(1)[1] = 3;
+      const auto data = f.data();
+      std::array<real, 4> fvalues;
+      std::copy(data.begin(), data.end(), fvalues.begin());
+      return fvalues;
+    }
+    ();
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[0], 5));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[1], 12));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[2], -2));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[3], 3));
+    constexpr auto values2 = []() constexpr->std::array<real, 4> {
+      auto space = BasicLinearSpace{2};
+      auto f = Function<BasicLinearSpace>{space, 2};
+      f.data(unsafe, 0)[0] = 5;
+      f.data(unsafe, 0)[1] = -6;
+      f.data(unsafe, 1)[0] = -2;
+      f.data(unsafe, 1)[1] = 3;
+      const auto data = f.data();
+      std::array<real, 4> fvalues;
+      std::copy(data.begin(), data.end(), fvalues.begin());
+      return fvalues;
+    }
+    ();
+    TFEL_TESTS_STATIC_ASSERT(check_value(values2[0], 5));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values2[1], -6));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values2[2], -2));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values2[3], 3));
+#endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }
 };
 

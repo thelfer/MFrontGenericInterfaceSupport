@@ -59,31 +59,31 @@ namespace mgis::function {
      * \param[in] e1: first evaluator
      * \param[in] e2: second evaluator
      */
-    BinaryOperationEvaluatorBase(const FirstEvaluatorType&,
-                                 const SecondEvaluatorType&);
+    constexpr BinaryOperationEvaluatorBase(const FirstEvaluatorType&,
+                                           const SecondEvaluatorType&);
     //! \brief copy constructor
-    BinaryOperationEvaluatorBase(const BinaryOperationEvaluatorBase&);
+    constexpr BinaryOperationEvaluatorBase(const BinaryOperationEvaluatorBase&);
     //! \brief move constructor
-    BinaryOperationEvaluatorBase(BinaryOperationEvaluatorBase&&);
+    constexpr BinaryOperationEvaluatorBase(BinaryOperationEvaluatorBase&&);
     //! \brief perform consistency checks
     bool check(Context&) const;
     //! \brief allocate internal workspace
-    void allocateWorkspace();
+    constexpr void allocateWorkspace();
     //! \brief return the underlying space
-    const auto& getSpace() const;
+    constexpr decltype(auto) getSpace() const;
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    auto operator()(const element_index<Space>&) const
+    constexpr auto operator()(const element_index<Space>&) const
         requires((internals::EvaluatorResultQuery<FirstEvaluatorType>::b1) &&
                  (internals::EvaluatorResultQuery<SecondEvaluatorType>::b1));
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    auto operator()(const element_workspace<Space>&,
-                    const element_index<Space>&) const
+    constexpr auto operator()(const element_workspace<Space>&,
+                              const element_index<Space>&) const
         requires((internals::EvaluatorResultQuery<FirstEvaluatorType>::b2) &&
                  (internals::EvaluatorResultQuery<SecondEvaluatorType>::b2));
     /*!
@@ -91,8 +91,8 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    auto operator()(const cell_index<Space>,
-                    const quadrature_point_index<Space>) const
+    constexpr auto operator()(const cell_index<Space>,
+                              const quadrature_point_index<Space>) const
         requires((internals::EvaluatorResultQuery<FirstEvaluatorType>::b3) &&
                  (internals::EvaluatorResultQuery<SecondEvaluatorType>::b3));
     /*!
@@ -100,9 +100,9 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    auto operator()(const cell_workspace<Space>&,
-                    const cell_index<Space>,
-                    const quadrature_point_index<Space>) const
+    constexpr auto operator()(const cell_workspace<Space>&,
+                              const cell_index<Space>,
+                              const quadrature_point_index<Space>) const
         requires((internals::EvaluatorResultQuery<FirstEvaluatorType>::b4) &&
                  (internals::EvaluatorResultQuery<SecondEvaluatorType>::b4));
 
@@ -116,7 +116,7 @@ namespace mgis::function {
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
-  const auto& getSpace(
+  constexpr decltype(auto) getSpace(
       const BinaryOperationEvaluatorBase<Child,
                                          FirstEvaluatorType,
                                          SecondEvaluatorType>&);

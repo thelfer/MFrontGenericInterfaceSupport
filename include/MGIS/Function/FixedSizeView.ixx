@@ -13,8 +13,9 @@
 namespace mgis::function {
 
   template <FunctionConcept FunctionType, size_type N>
-  requires(N > 0) bool FixedSizeView<FunctionType, N>::checkPreconditions(
-      AbstractErrorHandler& eh, const FunctionType& values) noexcept {
+  requires(N > 0)  //
+      constexpr bool FixedSizeView<FunctionType, N>::checkPreconditions(
+          AbstractErrorHandler& eh, const FunctionType& values) noexcept {
     if (values.getNumberOfComponents() != N) {
       return eh.registerErrorMessage("invalid number of components");
     }
@@ -22,41 +23,50 @@ namespace mgis::function {
   }  // end of checkPreconditions
 
   template <FunctionConcept FunctionType, size_type N>
-  requires(N > 0)
-      FixedSizeView<FunctionType, N>::FixedSizeView(FunctionType& values)
+  requires(N > 0)  //
+      constexpr FixedSizeView<FunctionType, N>::FixedSizeView(
+          FunctionType& values)
       : FixedSizeView(preconditions_check, values) {}  // end of FixedSizeView
 
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0)  //
       template <bool doPreconditionsCheck>
-      FixedSizeView<FunctionType, N>::FixedSizeView(
+      constexpr FixedSizeView<FunctionType, N>::FixedSizeView(
           const PreconditionsCheck<doPreconditionsCheck>& pcheck,
           FunctionType& values)
       : PreconditionsChecker<FixedSizeView>(pcheck, values),
         function(values) {}  // end of FixedSizeView
 
   template <FunctionConcept FunctionType, size_type N>
-  requires(N > 0) bool FixedSizeView<FunctionType, N>::check(
-      Context& ctx) const noexcept {
+  requires(N > 0)  //
+      bool FixedSizeView<FunctionType, N>::check(Context& ctx) const noexcept {
     return checkPreconditions(ctx, this->function);
   }
 
   template <FunctionConcept FunctionType, size_type N>
-  requires(N > 0)                                            //
-      const typename FixedSizeView<FunctionType, N>::Space&  //
-      FixedSizeView<FunctionType, N>::getSpace() const {
+  requires(N > 0)  //
+      constexpr void FixedSizeView<FunctionType,
+                                   N>::allocateWorkspace() noexcept {
+  }  // end of allocateWorkspace
+
+  template <FunctionConcept FunctionType, size_type N>
+  requires(N > 0)  //
+      constexpr decltype(auto)
+          FixedSizeView<FunctionType, N>::getSpace() const {
     return internals::disambiguateGetSpace(this->function);
   }
 
   template <FunctionConcept FunctionType, size_type N>
-  requires(N > 0) constexpr size_type
+  requires(N > 0)  //
+      constexpr size_type
       FixedSizeView<FunctionType, N>::getNumberOfComponents() const noexcept {
     return N;
   }
 
   template <FunctionConcept FunctionType, size_type N>
-  requires(N > 0) auto FixedSizeView<FunctionType, N>::operator()(
-      const element_index<Space>& i) const
+  requires(N > 0)  //
+      constexpr auto FixedSizeView<FunctionType, N>::operator()(
+          const element_index<Space>& i) const
       requires((internals::FunctionResultQuery<FunctionType>::b1) &&
                (isFunctionConstResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method =
@@ -79,8 +89,10 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, size_type N>
-  requires(N > 0) auto FixedSizeView<FunctionType, N>::operator()(
-      const element_workspace<Space>& wk, const element_index<Space>& i) const
+  requires(N > 0)  //
+      constexpr auto FixedSizeView<FunctionType, N>::operator()(
+          const element_workspace<Space>& wk,
+          const element_index<Space>& i) const
       requires((internals::FunctionResultQuery<FunctionType>::b2) &&
                (isFunctionConstResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method =
@@ -104,8 +116,10 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, size_type N>
-  requires(N > 0) auto FixedSizeView<FunctionType, N>::operator()(
-      const cell_index<Space>& e, const quadrature_point_index<Space>& i) const
+  requires(N > 0)  //
+      constexpr auto FixedSizeView<FunctionType, N>::operator()(
+          const cell_index<Space>& e,
+          const quadrature_point_index<Space>& i) const
       requires((internals::FunctionResultQuery<FunctionType>::b3) &&
                (isFunctionConstResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method =
@@ -129,10 +143,11 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, size_type N>
-  requires(N > 0) auto FixedSizeView<FunctionType, N>::operator()(
-      const cell_workspace<Space>& wk,
-      const cell_index<Space>& e,
-      const quadrature_point_index<Space>& i) const
+  requires(N > 0)  //
+      constexpr auto FixedSizeView<FunctionType, N>::operator()(
+          const cell_workspace<Space>& wk,
+          const cell_index<Space>& e,
+          const quadrature_point_index<Space>& i) const
       requires((internals::FunctionResultQuery<FunctionType>::b4) &&
                (isFunctionConstResultTypeMappable<FunctionType>)) {
     constexpr auto has_data_method = requires(
@@ -157,7 +172,8 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, size_type N>
-  requires(N > 0) typename FixedSizeView<FunctionType, N>::mutable_value_type
+  requires(N > 0)  //
+      constexpr typename FixedSizeView<FunctionType, N>::mutable_value_type
       FixedSizeView<FunctionType, N>::operator()(
           const element_index<Space>& i)  //
       requires((internals::FunctionResultQuery<FunctionType>::b1) &&
@@ -182,7 +198,8 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, size_type N>
-  requires(N > 0) typename FixedSizeView<FunctionType, N>::mutable_value_type
+  requires(N > 0)  //
+      constexpr typename FixedSizeView<FunctionType, N>::mutable_value_type
       FixedSizeView<FunctionType, N>::operator()(
           const element_workspace<Space>& wk,
           const element_index<Space>& i)  //
@@ -209,7 +226,8 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, size_type N>
-  requires(N > 0) typename FixedSizeView<FunctionType, N>::mutable_value_type
+  requires(N > 0)  //
+      constexpr typename FixedSizeView<FunctionType, N>::mutable_value_type
       FixedSizeView<FunctionType, N>::operator()(
           const cell_index<Space>& e,
           const quadrature_point_index<Space>& i)  //
@@ -236,7 +254,8 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, size_type N>
-  requires(N > 0) typename FixedSizeView<FunctionType, N>::mutable_value_type
+  requires(N > 0)  //
+      constexpr typename FixedSizeView<FunctionType, N>::mutable_value_type
       FixedSizeView<FunctionType, N>::operator()(
           const cell_workspace<Space>& wk,
           const cell_index<Space>& e,
@@ -264,7 +283,7 @@ namespace mgis::function {
   }
 
   template <size_type N, typename FunctionType>
-  auto view(FunctionType& f) requires(
+  constexpr auto view(FunctionType& f) requires(
       (N > 0) && (N != dynamic_extent) &&              //
       (FunctionConcept<std::decay_t<FunctionType>>)&&  //
       (!std::is_rvalue_reference_v<FunctionType>)) {
@@ -272,7 +291,7 @@ namespace mgis::function {
   }  // end of view
 
   template <FunctionConcept FunctionType, size_type N>
-  const auto& getSpace(FixedSizeView<FunctionType, N>& v) {
+  constexpr decltype(auto) getSpace(const FixedSizeView<FunctionType, N>& v) {
     return v.getSpace();
   }  // end of getSpace
 

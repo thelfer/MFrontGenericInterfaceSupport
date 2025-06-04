@@ -13,8 +13,9 @@
 namespace mgis::function {
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  requires(N > 0) bool FixedSizeModifier<EvaluatorType, N>::checkPreconditions(
-      AbstractErrorHandler& eh, const EvaluatorType& values) noexcept {
+  requires(N > 0)  //
+      constexpr bool FixedSizeModifier<EvaluatorType, N>::checkPreconditions(
+          AbstractErrorHandler& eh, const EvaluatorType& values) noexcept {
     if (values.getNumberOfComponents() != N) {
       return eh.registerErrorMessage("invalid number of components");
     }
@@ -22,48 +23,52 @@ namespace mgis::function {
   }  // end of checkPreconditions
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  requires(N > 0) FixedSizeModifier<EvaluatorType, N>::FixedSizeModifier(
-      const EvaluatorType& e)
-      : FixedSizeModifier(preconditions_check, e) {}  // end of FixedSizeModifier
+  requires(N > 0)  //
+      constexpr FixedSizeModifier<EvaluatorType, N>::FixedSizeModifier(
+          const EvaluatorType& e)
+      : FixedSizeModifier(preconditions_check, e) {
+  }  // end of FixedSizeModifier
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0)  //
       template <bool doPreconditionsCheck>
-      FixedSizeModifier<EvaluatorType, N>::FixedSizeModifier(
+      constexpr FixedSizeModifier<EvaluatorType, N>::FixedSizeModifier(
           const PreconditionsCheck<doPreconditionsCheck>& pcheck,
           const EvaluatorType& e)
       : PreconditionsChecker<FixedSizeModifier>(pcheck, e),
         evaluator(e) {}  // end of FixedSizeModifier
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  requires(N > 0) bool FixedSizeModifier<EvaluatorType, N>::check(
-      Context& ctx) const noexcept {
+  requires(N > 0)  //
+      bool FixedSizeModifier<EvaluatorType, N>::check(
+          Context& ctx) const noexcept {
     return checkPreconditions(ctx, this->evaluator);
   }
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0)  //
-      void FixedSizeModifier<EvaluatorType, N>::allocateWorkspace() {
+      constexpr void FixedSizeModifier<EvaluatorType, N>::allocateWorkspace() {
     return this->evaluator.allocateWorkspace();
   }
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  requires(N > 0)                                                 //
-      const typename FixedSizeModifier<EvaluatorType, N>::Space&  //
-      FixedSizeModifier<EvaluatorType, N>::getSpace() const {
+  requires(N > 0)  //
+      decltype(auto) FixedSizeModifier<EvaluatorType, N>::getSpace() const {
     return internals::disambiguateGetSpace(this->evaluator);
   }
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  requires(N > 0) constexpr size_type
+  requires(N > 0)  //
+      constexpr size_type
       FixedSizeModifier<EvaluatorType, N>::getNumberOfComponents()
           const noexcept {
     return N;
   }
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  requires(N > 0) auto FixedSizeModifier<EvaluatorType, N>::operator()(
-      const element_index<Space>& i) const
+  requires(N > 0)  //
+      constexpr auto FixedSizeModifier<EvaluatorType, N>::operator()(
+          const element_index<Space>& i) const
       requires((internals::EvaluatorResultQuery<EvaluatorType>::b1) &&
                (isEvaluatorResultTypeMappable<EvaluatorType>)) {
     constexpr auto has_data_method =
@@ -86,8 +91,10 @@ namespace mgis::function {
   }
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  requires(N > 0) auto FixedSizeModifier<EvaluatorType, N>::operator()(
-      const element_workspace<Space>& wk, const element_index<Space>& i) const
+  requires(N > 0)  //
+      constexpr auto FixedSizeModifier<EvaluatorType, N>::operator()(
+          const element_workspace<Space>& wk,
+          const element_index<Space>& i) const
       requires((internals::EvaluatorResultQuery<EvaluatorType>::b2) &&
                (isEvaluatorResultTypeMappable<EvaluatorType>)) {
     constexpr auto has_data_method =
@@ -111,8 +118,10 @@ namespace mgis::function {
   }
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  requires(N > 0) auto FixedSizeModifier<EvaluatorType, N>::operator()(
-      const cell_index<Space>& e, const quadrature_point_index<Space>& i) const
+  requires(N > 0)  //
+      constexpr auto FixedSizeModifier<EvaluatorType, N>::operator()(
+          const cell_index<Space>& e,
+          const quadrature_point_index<Space>& i) const
       requires((internals::EvaluatorResultQuery<EvaluatorType>::b3) &&
                (isEvaluatorResultTypeMappable<EvaluatorType>)) {
     constexpr auto has_data_method =
@@ -136,10 +145,11 @@ namespace mgis::function {
   }
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  requires(N > 0) auto FixedSizeModifier<EvaluatorType, N>::operator()(
-      const cell_workspace<Space>& wk,
-      const cell_index<Space>& e,
-      const quadrature_point_index<Space>& i) const
+  requires(N > 0)  //
+      constexpr auto FixedSizeModifier<EvaluatorType, N>::operator()(
+          const cell_workspace<Space>& wk,
+          const cell_index<Space>& e,
+          const quadrature_point_index<Space>& i) const
       requires((internals::EvaluatorResultQuery<EvaluatorType>::b4) &&
                (isEvaluatorResultTypeMappable<EvaluatorType>)) {
     constexpr auto has_data_method = requires(
@@ -164,14 +174,14 @@ namespace mgis::function {
   }
 
   template <size_type N, typename EvaluatorType>
-  auto view(const EvaluatorType& f) requires(
+  constexpr auto view(const EvaluatorType& f) requires(
       (N > 0) && (N != dynamic_extent) &&  //
       (EvaluatorConcept<std::decay_t<EvaluatorType>>)) {
     return FixedSizeModifier<std::decay_t<EvaluatorType>, N>(f);
   }  // end of view
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  const auto& getSpace(const FixedSizeModifier<EvaluatorType, N>& e) {
+  decltype(auto) getSpace(const FixedSizeModifier<EvaluatorType, N>& e) {
     return e.getSpace();
   }  // end of getSpace
 

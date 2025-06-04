@@ -32,14 +32,14 @@ namespace mgis::function::internals {
   template <TensorConcept TensorType>
   struct tensor_modifier {
     template <FunctionConcept FunctionType>
-    auto operator()(FunctionType&) const
+    constexpr auto operator()(FunctionType&) const
         requires(number_of_components<FunctionType> == dynamic_extent
                      ? true
                      : compile_time_size<TensorType> ==
                            number_of_components<FunctionType>);
 
     template <EvaluatorConcept EvaluatorType>
-    auto operator()(const EvaluatorType&) const requires(
+    constexpr auto operator()(const EvaluatorType&) const requires(
         (areTensorModifierRequirementsSatisfied<TensorType,
                                                 std::decay_t<EvaluatorType>>));
   };
@@ -54,7 +54,7 @@ namespace mgis::function::internals {
           return tfel::math::change_basis(t, R);
         });
 
-    inline auto operator()(const tfel::math::tmatrix<3, 3, real>& R) const {
+    constexpr auto operator()(const tfel::math::tmatrix<3, 3, real>& R) const {
       auto c = [R]<typename TensorType>(const TensorType& t)  //
           requires((tfel::math::TensorConcept<TensorType>) ||
                    (tfel::math::StensorConcept<TensorType>)) {
@@ -64,7 +64,7 @@ namespace mgis::function::internals {
     }
 
     template <typename SecondEvaluatorType>
-    auto operator()(SecondEvaluatorType&& e2) const
+    constexpr auto operator()(SecondEvaluatorType&& e2) const
         requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>) {
       return BinaryOperatorCurrying2<CallableType,
                                      std::decay_t<SecondEvaluatorType>>(
@@ -72,7 +72,8 @@ namespace mgis::function::internals {
     }  // end of operator()
 
     template <typename FirstEvaluatorType, typename SecondEvaluatorType>
-    auto operator()(FirstEvaluatorType&& e1, SecondEvaluatorType&& e2) const
+    constexpr auto operator()(FirstEvaluatorType&& e1,
+                              SecondEvaluatorType&& e2) const
         requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&   //
                  (EvaluatorConcept<std::decay_t<SecondEvaluatorType>>)&&  //
                  (std::invocable<
@@ -97,7 +98,7 @@ namespace mgis::function::internals {
           return tfel::math::change_basis(t, tfel::math::transpose(R));
         });
 
-    inline auto operator()(const tfel::math::tmatrix<3, 3, real>& R) const {
+    constexpr auto operator()(const tfel::math::tmatrix<3, 3, real>& R) const {
       auto c = [Rb = tfel::math::transpose(R)]<typename TensorType>(
           const TensorType& t)  //
           requires((tfel::math::TensorConcept<TensorType>) ||
@@ -108,7 +109,7 @@ namespace mgis::function::internals {
     }
 
     template <typename SecondEvaluatorType>
-    auto operator()(SecondEvaluatorType&& e2) const
+    constexpr auto operator()(SecondEvaluatorType&& e2) const
         requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>) {
       return BinaryOperatorCurrying2<CallableType,
                                      std::decay_t<SecondEvaluatorType>>(
@@ -116,7 +117,8 @@ namespace mgis::function::internals {
     }  // end of operator()
 
     template <typename FirstEvaluatorType, typename SecondEvaluatorType>
-    auto operator()(FirstEvaluatorType&& e1, SecondEvaluatorType&& e2) const
+    constexpr auto operator()(FirstEvaluatorType&& e1,
+                              SecondEvaluatorType&& e2) const
         requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&   //
                  (EvaluatorConcept<std::decay_t<SecondEvaluatorType>>)&&  //
                  (std::invocable<
@@ -136,8 +138,8 @@ namespace mgis::function::internals {
 namespace mgis::function {
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  auto operator|(FunctionType&,
-                 const internals::tensor_modifier<TensorType>&)  //
+  constexpr auto operator|(FunctionType&,
+                           const internals::tensor_modifier<TensorType>&)  //
       requires(number_of_components<std::decay_t<FunctionType>> ==
                        dynamic_extent
                    ? true

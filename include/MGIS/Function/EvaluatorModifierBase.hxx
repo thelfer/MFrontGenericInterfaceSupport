@@ -27,46 +27,46 @@ namespace mgis::function {
      * \brief constructor
      * \param[in] e: modified evaluator
      */
-    EvaluatorModifierBase(const EvaluatorType&);
+    constexpr EvaluatorModifierBase(const EvaluatorType&);
     //! \brief copy constructor
-    EvaluatorModifierBase(const EvaluatorModifierBase&);
+    constexpr EvaluatorModifierBase(const EvaluatorModifierBase&);
     //! \brief move constructor
-    EvaluatorModifierBase(EvaluatorModifierBase&&);
+    constexpr EvaluatorModifierBase(EvaluatorModifierBase&&);
     //! \brief perform consistency checks
     bool check(Context&) const;
     //! \brief allocate internal workspace
-    void allocateWorkspace();
+    constexpr void allocateWorkspace();
     //! \brief return the underlying space
-    const auto& getSpace() const;
+    constexpr decltype(auto) getSpace() const;
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    auto operator()(const element_index<Space>&) const
+    constexpr auto operator()(const element_index<Space>&) const
         requires(internals::EvaluatorResultQuery<EvaluatorType>::b1);
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    auto operator()(const element_workspace<Space>&,
-                    const element_index<Space>&) const
+    constexpr auto operator()(const element_workspace<Space>&,
+                              const element_index<Space>&) const
         requires(internals::EvaluatorResultQuery<EvaluatorType>::b2);
     /*!
      * \brief call operator
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    auto operator()(const cell_index<Space>&,
-                    const quadrature_point_index<Space>&) const
+    constexpr auto operator()(const cell_index<Space>&,
+                              const quadrature_point_index<Space>&) const
         requires(internals::EvaluatorResultQuery<EvaluatorType>::b3);
     /*!
      * \brief call operator
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    auto operator()(const cell_workspace<Space>&,
-                    const cell_index<Space>&,
-                    const quadrature_point_index<Space>&) const
+    constexpr auto operator()(const cell_workspace<Space>&,
+                              const cell_index<Space>&,
+                              const quadrature_point_index<Space>&) const
         requires(internals::EvaluatorResultQuery<EvaluatorType>::b4);
 
    protected:
@@ -75,7 +75,8 @@ namespace mgis::function {
   };
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  const auto& getSpace(const EvaluatorModifierBase<Child, EvaluatorType>&);
+  constexpr decltype(auto) getSpace(
+      const EvaluatorModifierBase<Child, EvaluatorType>&);
 
 }  // namespace mgis::function
 

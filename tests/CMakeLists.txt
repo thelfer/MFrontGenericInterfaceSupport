@@ -405,6 +405,12 @@ target_link_libraries(FunctionTest
   PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME FunctionTest COMMAND FunctionTest)
 add_dependencies(check FunctionTest)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+    target_compile_definitions(FunctionTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
 add_executable(EvaluatorsTest
  EXCLUDE_FROM_ALL
@@ -413,6 +419,12 @@ target_link_libraries(EvaluatorsTest
   PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME EvaluatorsTest COMMAND EvaluatorsTest)
 add_dependencies(check EvaluatorsTest)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+    target_compile_definitions(EvaluatorsTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
 add_executable(MechanicalEvaluatorsTest
  EXCLUDE_FROM_ALL
@@ -421,6 +433,12 @@ target_link_libraries(MechanicalEvaluatorsTest
   PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME MechanicalEvaluatorsTest COMMAND MechanicalEvaluatorsTest)
 add_dependencies(check MechanicalEvaluatorsTest)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+    target_compile_definitions(MechanicalEvaluatorsTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
 endif(MGIS_HAVE_TFEL)
 

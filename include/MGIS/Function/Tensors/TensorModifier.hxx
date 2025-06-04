@@ -49,7 +49,7 @@ namespace mgis::function {
      * \brief apply the modifier
      * \param[in] values: values to be modified
      */
-    auto apply(const evaluator_result<EvaluatorType>&) const;
+    constexpr auto apply(const evaluator_result<EvaluatorType>&) const;
   };
 
 }  // end of namespace mgis::function

@@ -55,9 +55,9 @@ namespace mgis::function {
      * \param[in] c: callable type
      * \param[in] e: modified evaluator
      */
-    UnaryOperation(const CallableType&, const EvaluatorType&);
+    constexpr UnaryOperation(const CallableType&, const EvaluatorType&);
     //! \brief apply the modifier
-    auto apply(const evaluator_result<EvaluatorType>&) const;
+    constexpr auto apply(const evaluator_result<EvaluatorType>&) const;
 
    private:
     CallableType modifier;
@@ -80,7 +80,7 @@ namespace mgis::function {
     using EvaluatorModifierBase<UnaryOperation2,
                                 EvaluatorType>::EvaluatorModifierBase;
     //! \brief apply the modifier
-    auto apply(const evaluator_result<EvaluatorType>&) const;
+    constexpr auto apply(const evaluator_result<EvaluatorType>&) const;
   };
 
   namespace internals {
@@ -88,10 +88,10 @@ namespace mgis::function {
     template <typename CallableType>
     struct unary_operation_modifier {
       //
-      unary_operation_modifier(const CallableType&);
+      constexpr unary_operation_modifier(const CallableType&);
       //
       template <typename EvaluatorType>
-      auto operator()(EvaluatorType&&) const
+      constexpr auto operator()(EvaluatorType&&) const
           requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
               std::invocable<CallableType,
                              evaluator_result<std::decay_t<EvaluatorType>>>));
@@ -103,7 +103,7 @@ namespace mgis::function {
     template <typename CallableType>
     struct unary_operation_modifier2_impl {
       template <typename EvaluatorType>
-      auto operator()(EvaluatorType&&) const
+      constexpr auto operator()(EvaluatorType&&) const
           requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
               std::invocable<CallableType,
                              evaluator_result<std::decay_t<EvaluatorType>>>));
@@ -115,10 +115,10 @@ namespace mgis::function {
   }  // namespace internals
 
   template <typename CallableType>
-  auto unary_operation(CallableType&&);
+  constexpr auto unary_operation(CallableType&&);
 
   template <typename CallableType>
-  auto transform(CallableType&&);
+  constexpr auto transform(CallableType&&);
 
 }  // end of namespace mgis::function
 
@@ -243,19 +243,19 @@ namespace mgis::function::customization_points {
 namespace mgis::function {
 
   inline constexpr auto absolute_value = internals::unary_operation_modifier2(
-      []<typename ValueType>(const ValueType& v) {
+      []<typename ValueType>(const ValueType& v) constexpr {
         return customization_points::absolute_value(v);
       });
 
   inline constexpr auto maximum_component =
       internals::unary_operation_modifier2(
-          []<typename ValueType>(const ValueType& v) {
+          []<typename ValueType>(const ValueType& v) constexpr {
             return customization_points::maximum_component(v);
           });
 
   inline constexpr auto minimum_component =
       internals::unary_operation_modifier2(
-          []<typename ValueType>(const ValueType& v) {
+          []<typename ValueType>(const ValueType& v) constexpr {
             return customization_points::minimum_component(v);
           });
 
@@ -266,9 +266,9 @@ namespace mgis::function {
 namespace mgis::function {
 
   inline constexpr auto negate = internals::unary_operation_modifier2(
-      []<typename OperandType>(const OperandType& a)
-          -> tfel::math::UnaryOperationResult<OperandType,
-                                              tfel::math::OpNeg>  //
+      []<typename OperandType>(const OperandType& a) constexpr
+          ->tfel::math::UnaryOperationResult<OperandType,
+                                             tfel::math::OpNeg>  //
       requires(compile_time_size<
                    tfel::math::UnaryOperationResult<OperandType,
                                                     tfel::math::OpNeg>> !=
@@ -276,7 +276,7 @@ namespace mgis::function {
         return -a;
       });
 
-  inline auto multiply_by_scalar(const real s) {
+  constexpr auto multiply_by_scalar(const real s) {
     auto c = [b = s]<typename FirstOperandType>(const FirstOperandType& a)
         -> tfel::math::BinaryOperationResult<FirstOperandType, real,
                                              tfel::math::OpMult>  //
@@ -288,7 +288,7 @@ namespace mgis::function {
     return internals::unary_operation_modifier<decltype(c)>(c);
   }
 
-  inline auto divide_by_scalar(const real s) {
+  constexpr auto divide_by_scalar(const real s) {
     auto c = [b = s]<typename FirstOperandType>(const FirstOperandType& a)
         -> tfel::math::BinaryOperationResult<FirstOperandType, real,
                                              tfel::math::OpDiv>  //

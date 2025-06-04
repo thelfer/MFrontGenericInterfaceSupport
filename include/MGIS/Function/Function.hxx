@@ -347,6 +347,9 @@ namespace mgis::function {
                            const DataLayout<layout>&)  //
         requires((layout.data_size == dynamic_extent) &&
                  (layout.data_stride != dynamic_extent));
+    //
+    constexpr FunctionView(FunctionView&&) = default;
+    constexpr FunctionView(const FunctionView&) = default;
     //! \return the underlying quadrature space
     constexpr const Space& getSpace() const noexcept;
     //! \brief a noop function to match the EvaluatorConcept concept
@@ -427,6 +430,8 @@ namespace mgis::function {
     constexpr bool checkCompatibility(const FunctionView&) const;
     //! \return a view to the function values
     constexpr std::span<const real> data() const;
+    //! \brief destructor
+    constexpr ~FunctionView() = default;
 
    protected:
     //! \brief underlying discretization space
@@ -444,13 +449,15 @@ namespace mgis::function {
    */
   template <FunctionalSpaceConcept Space, size_type N>
   struct FunctionStorage {
-    FunctionStorage(const Space& s) requires(N != dynamic_extent)
-        : storage_values(N * getSpaceSize(s)) {}
-    FunctionStorage(const Space& s,
-                    const size_type dsize) requires(N == dynamic_extent)
-        : storage_values(getSpaceSize(s) * dsize) {}
-    FunctionStorage(FunctionStorage&&) = default;
-    FunctionStorage(const FunctionStorage&) = default;
+    constexpr FunctionStorage(const Space& s) requires(N != dynamic_extent)
+        : storage_values(N * getSpaceSize(s), real{}) {}
+    constexpr FunctionStorage(const Space& s,
+                              const size_type dsize) requires(N ==
+                                                              dynamic_extent)
+        : storage_values(getSpaceSize(s) * dsize, real{}) {}
+    constexpr FunctionStorage(FunctionStorage&&) = default;
+    constexpr FunctionStorage(const FunctionStorage&) = default;
+    constexpr ~FunctionStorage() = default;
 
    protected:
     //! \brief values
@@ -473,27 +480,34 @@ namespace mgis::function {
         public FunctionStorage<Space, N>,
         public FunctionView<Space, {.data_size = N, .data_stride = N}, true> {
     /*!
-     * \brief constructor meant that always actives precondition checks
-     * \param[in] args: arguments passed to the constructor
+     * \brief constructor from a space
+     * \param[in] s: space
      */
-    template <typename... Args>
-    constexpr Function(Args&&... args)  //
-        requires(is_check_preconditions_callable<Function, Args...>);
+    constexpr Function(const Space&)  //
+        requires(N != dynamic_extent);
+    /*!
+     * \brief constructor from a space and a data size
+     * \param[in] s: space
+     * \param[in] dsize: number of components (data size)
+     */
+    constexpr Function(const Space&,
+                       const size_type) requires(N == dynamic_extent);
     /*!
      * \brief constructor from a space and a data size
      * \param[in] eh: error handler
      * \param[in] s: space
      */
-    [[nodiscard]] static bool checkPreconditions(AbstractErrorHandler&,
-                                                 const Space&)  //
+    [[nodiscard]] static constexpr bool checkPreconditions(
+        AbstractErrorHandler&,
+        const Space&)  //
         requires(N != dynamic_extent);
     /*!
      * \brief constructor from a space
      * \param[in] s: space
      */
     template <bool doPreconditionsCheck>
-    Function(const PreconditionsCheck<doPreconditionsCheck>&,
-             const Space&)  //
+    constexpr Function(const PreconditionsCheck<doPreconditionsCheck>&,
+                       const Space&)  //
         requires(N != dynamic_extent);
     /*!
      * \brief constructor from a space and a data size
@@ -501,9 +515,10 @@ namespace mgis::function {
      * \param[in] s: space
      * \param[in] dsize: data size
      */
-    [[nodiscard]] static bool checkPreconditions(AbstractErrorHandler&,
-                                                 const Space&,
-                                                 const size_type)  //
+    [[nodiscard]] static constexpr bool checkPreconditions(
+        AbstractErrorHandler&,
+        const Space&,
+        const size_type)  //
         requires(N == dynamic_extent);
     /*!
      * \brief constructor from a space and a data size
@@ -511,21 +526,25 @@ namespace mgis::function {
      * \param[in] dsize: data size
      */
     template <bool doPreconditionsCheck>
-    Function(const PreconditionsCheck<doPreconditionsCheck>&,
-             const Space&,
-             const size_type) requires(N == dynamic_extent);
+    constexpr Function(const PreconditionsCheck<doPreconditionsCheck>&,
+                       const Space&,
+                       const size_type) requires(N == dynamic_extent);
     //! \brief copy constructor
-    Function(const Function&) requires(N == dynamic_extent);
+    constexpr Function(const Function&) requires(N == dynamic_extent);
     //! \brief assignement constructor
-    Function(Function&&) requires(N == dynamic_extent);
+    constexpr Function(Function&&) requires(N == dynamic_extent);
     //! \brief copy constructor
-    Function(const Function&) requires(N != dynamic_extent);
+    constexpr Function(const Function&) requires(N != dynamic_extent);
     //! \brief assignement constructor
-    Function(Function&&) requires(N != dynamic_extent);
+    constexpr Function(Function&&) requires(N != dynamic_extent);
     //! \brief return a view of the function
-    FunctionView<Space, {.data_size = N, .data_stride = N}, true> view();
+    constexpr FunctionView<Space, {.data_size = N, .data_stride = N}, true>
+    view();
     //! \brief return a view of the function
-    FunctionView<Space, {.data_size = N, .data_stride = N}, false> view() const;
+    constexpr FunctionView<Space, {.data_size = N, .data_stride = N}, false>
+    view() const;
+    //! \brief destructor
+    constexpr ~Function();
 
    protected:
     /*
@@ -541,25 +560,31 @@ namespace mgis::function {
         allocateWorkspace;
   };
 
+  // class template deduction guide
+  template <FunctionalSpaceConcept SpaceType>
+  Function(const SpaceType&, const size_type)
+      -> Function<SpaceType, dynamic_extent>;
+
   /*!
    * \brief convert a function to a immutable view
    * \param[in] f: function
    */
   template <FunctionalSpaceConcept Space, size_type N>
-  auto view(const Function<Space, N>&);
+  constexpr auto view(const Function<Space, N>&);
 
   /*!
    * \brief convert a function to a immutable view
    * \param[in] f: function
    */
   template <size_type N, FunctionalSpaceConcept Space, size_type N2>
-  auto view(const Function<Space, N2>&)  //
+  constexpr auto view(const Function<Space, N2>&)  //
       requires((N > 0) && (N != dynamic_extent) && (N == N2));
 
   template <FunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
-  const auto& getSpace(const FunctionView<Space, layout, is_mutable>&);
+  constexpr const auto& getSpace(
+      const FunctionView<Space, layout, is_mutable>&);
 
 }  // namespace mgis::function
 

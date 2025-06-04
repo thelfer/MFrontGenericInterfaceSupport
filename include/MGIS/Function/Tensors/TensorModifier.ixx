@@ -22,7 +22,7 @@ namespace mgis::function {
   template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
   requires(areTensorModifierRequirementsSatisfied<TensorType,
                                                   EvaluatorType>)  //
-      auto TensorModifier<TensorType, EvaluatorType>::apply(
+      constexpr auto TensorModifier<TensorType, EvaluatorType>::apply(
           const evaluator_result<EvaluatorType>& values) const {
     return tfel::math::map<const TensorType>(values.data());
   }  // end of apply

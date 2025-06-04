@@ -15,9 +15,9 @@ namespace mgis::function {
             EvaluatorConcept SecondEvaluatorType>
   requires(BinaryOperationEvaluatorBaseRequirement<FirstEvaluatorType,
                                                    SecondEvaluatorType>)  //
-      BinaryOperationEvaluatorBase<Child,
-                                   FirstEvaluatorType,
-                                   SecondEvaluatorType>::
+      constexpr BinaryOperationEvaluatorBase<Child,
+                                             FirstEvaluatorType,
+                                             SecondEvaluatorType>::
           BinaryOperationEvaluatorBase(const FirstEvaluatorType& e1,
                                        const SecondEvaluatorType& e2)
       : first_evaluator(e1),
@@ -28,22 +28,22 @@ namespace mgis::function {
             EvaluatorConcept SecondEvaluatorType>
   requires(BinaryOperationEvaluatorBaseRequirement<FirstEvaluatorType,
                                                    SecondEvaluatorType>)  //
-      BinaryOperationEvaluatorBase<Child,
-                                   FirstEvaluatorType,
-                                   SecondEvaluatorType>::
-          BinaryOperationEvaluatorBase(const BinaryOperationEvaluatorBase&)
-  = default;
+      constexpr BinaryOperationEvaluatorBase<Child,
+                                             FirstEvaluatorType,
+                                             SecondEvaluatorType>::
+          BinaryOperationEvaluatorBase(const BinaryOperationEvaluatorBase&) =
+              default;
 
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
   requires(BinaryOperationEvaluatorBaseRequirement<FirstEvaluatorType,
                                                    SecondEvaluatorType>)  //
-      BinaryOperationEvaluatorBase<Child,
-                                   FirstEvaluatorType,
-                                   SecondEvaluatorType>::
-          BinaryOperationEvaluatorBase(BinaryOperationEvaluatorBase&&)
-  = default;
+      constexpr BinaryOperationEvaluatorBase<Child,
+                                             FirstEvaluatorType,
+                                             SecondEvaluatorType>::
+          BinaryOperationEvaluatorBase(BinaryOperationEvaluatorBase&&) =
+              default;
 
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
@@ -72,7 +72,7 @@ namespace mgis::function {
             EvaluatorConcept SecondEvaluatorType>
   requires(BinaryOperationEvaluatorBaseRequirement<FirstEvaluatorType,
                                                    SecondEvaluatorType>)  //
-      void BinaryOperationEvaluatorBase<
+      constexpr void BinaryOperationEvaluatorBase<
           Child,
           FirstEvaluatorType,
           SecondEvaluatorType>::allocateWorkspace() {
@@ -85,10 +85,10 @@ namespace mgis::function {
             EvaluatorConcept SecondEvaluatorType>
   requires(BinaryOperationEvaluatorBaseRequirement<FirstEvaluatorType,
                                                    SecondEvaluatorType>)  //
-      const auto& BinaryOperationEvaluatorBase<Child,
-                                               FirstEvaluatorType,
-                                               SecondEvaluatorType>::getSpace()
-          const {
+      constexpr decltype(auto)
+          BinaryOperationEvaluatorBase<Child,
+                                       FirstEvaluatorType,
+                                       SecondEvaluatorType>::getSpace() const {
     return internals::disambiguateGetSpace(this->first_evaluator);
   }  // end of getSpace
 
@@ -97,7 +97,7 @@ namespace mgis::function {
             EvaluatorConcept SecondEvaluatorType>
   requires(BinaryOperationEvaluatorBaseRequirement<FirstEvaluatorType,
                                                    SecondEvaluatorType>)  //
-      auto BinaryOperationEvaluatorBase<
+      constexpr auto BinaryOperationEvaluatorBase<
           Child,
           FirstEvaluatorType,
           SecondEvaluatorType>::operator()(const element_index<Space>& e) const
@@ -112,7 +112,7 @@ namespace mgis::function {
             EvaluatorConcept SecondEvaluatorType>
   requires(BinaryOperationEvaluatorBaseRequirement<FirstEvaluatorType,
                                                    SecondEvaluatorType>)  //
-      auto BinaryOperationEvaluatorBase<
+      constexpr auto BinaryOperationEvaluatorBase<
           Child,
           FirstEvaluatorType,
           SecondEvaluatorType>::operator()(const element_workspace<Space>& wk,
@@ -129,9 +129,9 @@ namespace mgis::function {
             EvaluatorConcept SecondEvaluatorType>
   requires(BinaryOperationEvaluatorBaseRequirement<FirstEvaluatorType,
                                                    SecondEvaluatorType>)  //
-      auto BinaryOperationEvaluatorBase<Child,
-                                        FirstEvaluatorType,
-                                        SecondEvaluatorType>::
+      constexpr auto BinaryOperationEvaluatorBase<Child,
+                                                  FirstEvaluatorType,
+                                                  SecondEvaluatorType>::
       operator()(const cell_index<Space> e,
                  const quadrature_point_index<Space> i) const
       requires((internals::EvaluatorResultQuery<FirstEvaluatorType>::b3) &&
@@ -146,9 +146,9 @@ namespace mgis::function {
             EvaluatorConcept SecondEvaluatorType>
   requires(BinaryOperationEvaluatorBaseRequirement<FirstEvaluatorType,
                                                    SecondEvaluatorType>)  //
-      auto BinaryOperationEvaluatorBase<Child,
-                                        FirstEvaluatorType,
-                                        SecondEvaluatorType>::
+      constexpr auto BinaryOperationEvaluatorBase<Child,
+                                                  FirstEvaluatorType,
+                                                  SecondEvaluatorType>::
       operator()(const cell_workspace<Space>& wk,
                  const cell_index<Space> e,
                  const quadrature_point_index<Space> i) const
@@ -162,7 +162,7 @@ namespace mgis::function {
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
-  const auto& getSpace(
+  constexpr decltype(auto) getSpace(
       const BinaryOperationEvaluatorBase<Child,
                                          FirstEvaluatorType,
                                          SecondEvaluatorType>& e) {

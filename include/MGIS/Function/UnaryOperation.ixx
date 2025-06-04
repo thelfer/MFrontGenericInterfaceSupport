@@ -14,7 +14,7 @@ namespace mgis::function {
   requires((std::is_copy_constructible_v<CallableType>)&&(
       std::invocable<CallableType,
                      evaluator_result<EvaluatorType>>))  //
-      UnaryOperation<CallableType, EvaluatorType>::UnaryOperation(
+    constexpr      UnaryOperation<CallableType, EvaluatorType>::UnaryOperation(
           const CallableType& c, const EvaluatorType& e)
       : EvaluatorModifierBase<UnaryOperation<CallableType, EvaluatorType>,
                               EvaluatorType>(e),
@@ -24,7 +24,7 @@ namespace mgis::function {
   requires((std::is_copy_constructible_v<CallableType>)&&(
       std::invocable<CallableType,
                      evaluator_result<EvaluatorType>>))  //
-      auto UnaryOperation<CallableType, EvaluatorType>::apply(
+    constexpr      auto UnaryOperation<CallableType, EvaluatorType>::apply(
           const evaluator_result<EvaluatorType>& values) const {
     return this->modifier(values);
   }  // end of apply
@@ -33,7 +33,7 @@ namespace mgis::function {
   requires((std::is_trivially_default_constructible_v<CallableType>)&&(
       std::invocable<CallableType,
                      evaluator_result<EvaluatorType>>))  //
-      auto UnaryOperation2<CallableType, EvaluatorType>::apply(
+    constexpr      auto UnaryOperation2<CallableType, EvaluatorType>::apply(
           const evaluator_result<EvaluatorType>& values) const {
     auto c = CallableType{};
     return c(values);
@@ -42,13 +42,13 @@ namespace mgis::function {
   namespace internals {
 
     template <typename CallableType>
-    unary_operation_modifier<CallableType>::unary_operation_modifier(
+    constexpr    unary_operation_modifier<CallableType>::unary_operation_modifier(
         const CallableType& c)
         : modifier(c) {}
 
     template <typename CallableType>
     template <typename EvaluatorType>
-    auto unary_operation_modifier<CallableType>::operator()(EvaluatorType&& e)
+    constexpr    auto unary_operation_modifier<CallableType>::operator()(EvaluatorType&& e)
         const requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
             std::invocable<CallableType,
                            evaluator_result<std::decay_t<EvaluatorType>>>)) {
@@ -58,7 +58,7 @@ namespace mgis::function {
 
     template <typename CallableType>
     template <typename EvaluatorType>
-    auto unary_operation_modifier2_impl<CallableType>::operator()(
+    constexpr    auto unary_operation_modifier2_impl<CallableType>::operator()(
         EvaluatorType&& e) const
         requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
             std::invocable<CallableType,
@@ -75,13 +75,13 @@ namespace mgis::function {
   }  // namespace internals
 
   template <typename CallableType>
-  auto unary_operation(CallableType&& c) {
+  constexpr  auto unary_operation(CallableType&& c) {
     return internals::unary_operation_modifier<std::decay_t<CallableType>>(
         std::forward<CallableType>(c));
   }  // end of unary_operation
 
   template <typename CallableType>
-  auto transform(CallableType&& c) {
+  constexpr  auto transform(CallableType&& c) {
     return internals::unary_operation_modifier<std::decay_t<CallableType>>(
         std::forward<CallableType>(c));
   }  // end of transform

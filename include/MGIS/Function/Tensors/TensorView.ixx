@@ -13,25 +13,37 @@
 namespace mgis::function {
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  bool TensorView<FunctionType, TensorType>::checkPreconditions(
-      const FunctionType& values) noexcept {
-    return values.getNumberOfComponents() == compile_time_size<TensorType>;
+  constexpr bool TensorView<FunctionType, TensorType>::checkPreconditions(
+      AbstractErrorHandler& eh, const FunctionType& values) noexcept {
+    if (values.getNumberOfComponents() != compile_time_size<TensorType>) {
+      return eh.registerErrorMessage("invalid number of components");
+    }
+    return true;
   }  // end of checkPreconditions
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  TensorView<FunctionType, TensorType>::TensorView(FunctionType& values)
-      : function(values) {}  // end of TensorView
+  constexpr TensorView<FunctionType, TensorType>::TensorView(
+      FunctionType& values)
+      : TensorView(preconditions_check, values) {}  // end of TensorView
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  bool TensorView<FunctionType, TensorType>::check(Context&) const noexcept {
-    return checkPreconditions(this->function);
+  template <bool doPreconditionsCheck>
+  constexpr TensorView<FunctionType, TensorType>::TensorView(
+      const PreconditionsCheck<doPreconditionsCheck>& pcheck,
+      FunctionType& values)
+      : PreconditionsChecker<TensorView>(pcheck, values),
+        function(values) {}  // end of TensorView
+
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  bool TensorView<FunctionType, TensorType>::check(Context& ctx) const noexcept {
+    return checkPreconditions(ctx, this->function);
   }
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  void TensorView<FunctionType, TensorType>::allocateWorkspace() {}
+  constexpr void TensorView<FunctionType, TensorType>::allocateWorkspace() {}
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  const typename TensorView<FunctionType, TensorType>::Space&
+  constexpr const typename TensorView<FunctionType, TensorType>::Space&
   TensorView<FunctionType, TensorType>::getSpace() const {
     return internals::disambiguateGetSpace(this->function);
   }
@@ -43,7 +55,7 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  auto TensorView<FunctionType, TensorType>::operator()(
+  constexpr auto TensorView<FunctionType, TensorType>::operator()(
       const element_index<Space>& i) const
       requires((internals::FunctionResultQuery<FunctionType>::b1) &&
                (isFunctionConstResultTypeMappable<FunctionType>)) {
@@ -59,7 +71,7 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  auto TensorView<FunctionType, TensorType>::operator()(
+  constexpr auto TensorView<FunctionType, TensorType>::operator()(
       const element_workspace<Space>& wk, const element_index<Space>& i) const
       requires((internals::FunctionResultQuery<FunctionType>::b2) &&
                (isFunctionConstResultTypeMappable<FunctionType>)) {
@@ -77,7 +89,7 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  auto TensorView<FunctionType, TensorType>::operator()(
+  constexpr auto TensorView<FunctionType, TensorType>::operator()(
       const cell_index<Space>& e, const quadrature_point_index<Space>& i) const
       requires((internals::FunctionResultQuery<FunctionType>::b3) &&
                (isFunctionConstResultTypeMappable<FunctionType>)) {
@@ -95,7 +107,7 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  auto TensorView<FunctionType, TensorType>::operator()(
+  constexpr auto TensorView<FunctionType, TensorType>::operator()(
       const cell_workspace<Space>& wk,
       const cell_index<Space>& e,
       const quadrature_point_index<Space>& i) const
@@ -115,7 +127,7 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  auto TensorView<FunctionType, TensorType>::operator()(
+  constexpr auto TensorView<FunctionType, TensorType>::operator()(
       const element_index<Space>& i)  //
       requires((internals::FunctionResultQuery<FunctionType>::b1) &&
                (isFunctionResultTypeMappable<FunctionType>)) {
@@ -131,7 +143,7 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  auto TensorView<FunctionType, TensorType>::operator()(
+  constexpr auto TensorView<FunctionType, TensorType>::operator()(
       const element_workspace<Space>& wk,
       const element_index<Space>& i)  //
       requires((internals::FunctionResultQuery<FunctionType>::b2) &&
@@ -149,7 +161,7 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  auto TensorView<FunctionType, TensorType>::operator()(
+  constexpr auto TensorView<FunctionType, TensorType>::operator()(
       const cell_index<Space>& e,
       const quadrature_point_index<Space>& i)  //
       requires((internals::FunctionResultQuery<FunctionType>::b3) &&
@@ -167,7 +179,7 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  auto TensorView<FunctionType, TensorType>::operator()(
+  constexpr auto TensorView<FunctionType, TensorType>::operator()(
       const cell_workspace<Space>& wk,
       const cell_index<Space>& e,
       const quadrature_point_index<Space>& i)  //
@@ -186,7 +198,8 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  decltype(auto) getSpace(const TensorView<FunctionType, TensorType>& t) {
+  constexpr decltype(auto) getSpace(
+      const TensorView<FunctionType, TensorType>& t) {
     return t.getSpace();
   }
 

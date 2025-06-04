@@ -507,16 +507,21 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
-      template <typename... Args>
-      constexpr Function<Space, N>::Function(Args&&... args)  //
-      requires(is_check_preconditions_callable<Function, Args...>)
-      : Function(preconditions_check, std::forward<Args>(args)...) {
-  }  // end of Function
+      constexpr Function<Space, N>::Function(const Space& s) requires(
+          N != dynamic_extent)
+      : Function(preconditions_check, s) {}  // end of Function
 
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
-      bool Function<Space, N>::checkPreconditions(
+      constexpr Function<Space, N>::Function(
+          const Space& s, const size_type dsize) requires(N == dynamic_extent)
+      : Function(preconditions_check, s, dsize) {}  // end of Function
+
+  template <FunctionalSpaceConcept Space, size_type N>
+  requires((N > 0) && (LinearElementSpaceConcept<Space> ||
+                       LinearQuadratureSpaceConcept<Space>))  //
+      constexpr bool Function<Space, N>::checkPreconditions(
           AbstractErrorHandler&, const Space&) requires(N != dynamic_extent) {
     return true;
   }
@@ -525,24 +530,19 @@ namespace mgis::function {
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
       template <bool doPreconditionsCheck>
-      Function<Space, N>::Function(
+      constexpr Function<Space, N>::Function(
           const PreconditionsCheck<doPreconditionsCheck>& pcheck,
           const Space& s)  //
       requires(N != dynamic_extent)
       : PreconditionsChecker<Function>(pcheck, s),
         FunctionStorage<Space, N>(s),
         FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
-            pcheck, s, this->storage_values) {
-    Context ctx;
-    if (!checkPreconditions(ctx, s)) {
-      raise(ctx.getErrorMessage());
-    }
-  }
+            pcheck, s, this->storage_values) {}
 
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
-      bool Function<Space, N>::checkPreconditions(
+      constexpr bool Function<Space, N>::checkPreconditions(
           AbstractErrorHandler& eh,
           const Space&,
           const size_type dsize) requires(N == dynamic_extent) {
@@ -556,7 +556,7 @@ namespace mgis::function {
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
       template <bool doPreconditionsCheck>
-      Function<Space, N>::Function(
+      constexpr Function<Space, N>::Function(
           const PreconditionsCheck<doPreconditionsCheck>& pcheck,
           const Space& s,
           const size_type dsize)  //
@@ -564,18 +564,13 @@ namespace mgis::function {
       : PreconditionsChecker<Function>(pcheck, s, dsize),
         FunctionStorage<Space, N>(s, dsize),
         FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
-            pcheck, s, this->storage_values, dsize, dsize) {
-    Context ctx;
-    if (!checkPreconditions(ctx, s, dsize)) {
-      raise(ctx.getErrorMessage());
-    }
-  }
+            pcheck, s, this->storage_values, dsize, dsize) {}
 
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
-      Function<Space, N>::Function(const Function& f)
-  requires(N == dynamic_extent)
+      constexpr Function<Space, N>::Function(const Function& f) requires(
+          N == dynamic_extent)
       : PreconditionsChecker<Function>(f),
         FunctionStorage<Space, N>(f),
         FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
@@ -587,8 +582,8 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
-      Function<Space, N>::Function(Function&& f)
-  requires(N == dynamic_extent)
+      constexpr Function<Space, N>::Function(Function&& f) requires(
+          N == dynamic_extent)
       : PreconditionsChecker<Function>(f),
         FunctionStorage<Space, N>(std::forward<FunctionStorage<Space, N>>(f)),
         FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
@@ -600,8 +595,8 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
-      Function<Space, N>::Function(const Function& f)
-  requires(N != dynamic_extent)
+      constexpr Function<Space, N>::Function(const Function& f) requires(
+          N != dynamic_extent)
       : PreconditionsChecker<Function>(f),
         FunctionStorage<Space, N>(f),
         FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
@@ -611,8 +606,8 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
-      Function<Space, N>::Function(Function&& f)
-  requires(N != dynamic_extent)
+      constexpr Function<Space, N>::Function(Function&& f) requires(
+          N != dynamic_extent)
       : PreconditionsChecker<Function>(f),
         FunctionStorage<Space, N>(std::forward<FunctionStorage<Space, N>>(f)),
         FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
@@ -622,19 +617,20 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
-      FunctionView<Space,
-                   {.data_size = N, .data_stride = N},
-                   true> Function<Space, N>::view() {
+      constexpr FunctionView<Space,
+                             {.data_size = N, .data_stride = N},
+                             true>  //
+      Function<Space, N>::view() {
     return *this;
   }  // end of view
 
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
-      FunctionView<Space,
-                   {.data_size = N, .data_stride = N},
-                   false> Function<Space, N>::view()
-  const {
+      constexpr FunctionView<Space,
+                             {.data_size = N, .data_stride = N},
+                             false>  //
+      Function<Space, N>::view() const {
     if constexpr (N == dynamic_extent) {
       return FunctionView<Space, {.data_size = N, .data_stride = N}, false>(
           this->getSpace(), this->storage_values, this->getNumberOfComponents(),
@@ -646,12 +642,17 @@ namespace mgis::function {
   }  // end of view
 
   template <FunctionalSpaceConcept Space, size_type N>
-  auto view(const Function<Space, N>& f) {
+  requires((N > 0) && (LinearElementSpaceConcept<Space> ||
+                       LinearQuadratureSpaceConcept<Space>))  //
+      constexpr Function<Space, N>::~Function() = default;
+
+  template <FunctionalSpaceConcept Space, size_type N>
+  constexpr auto view(const Function<Space, N>& f) {
     return f.view();
   }  // end of view
 
   template <size_type N, FunctionalSpaceConcept Space, size_type N2>
-  auto view(const Function<Space, N2>& f)  //
+  constexpr auto view(const Function<Space, N2>& f)  //
       requires((N > 0) && (N != dynamic_extent) && (N == N2)) {
     return f.view();
   }  // end of view
@@ -659,7 +660,8 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space,
             DataLayoutDescription layout,
             bool is_mutable>
-  const auto& getSpace(const FunctionView<Space, layout, is_mutable>& f) {
+  constexpr const auto& getSpace(
+      const FunctionView<Space, layout, is_mutable>& f) {
     return f.getSpace();
   }  // end of getSpace
 

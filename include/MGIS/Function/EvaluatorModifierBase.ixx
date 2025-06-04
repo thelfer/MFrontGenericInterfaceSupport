@@ -11,16 +11,16 @@
 namespace mgis::function {
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  EvaluatorModifierBase<Child, EvaluatorType>::EvaluatorModifierBase(
+  constexpr EvaluatorModifierBase<Child, EvaluatorType>::EvaluatorModifierBase(
       const EvaluatorType& e)
       : evaluator(e) {}  // end of EvaluatorModifierBase
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  EvaluatorModifierBase<Child, EvaluatorType>::EvaluatorModifierBase(
+  constexpr EvaluatorModifierBase<Child, EvaluatorType>::EvaluatorModifierBase(
       const EvaluatorModifierBase&) = default;
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  EvaluatorModifierBase<Child, EvaluatorType>::EvaluatorModifierBase(
+  constexpr EvaluatorModifierBase<Child, EvaluatorType>::EvaluatorModifierBase(
       EvaluatorModifierBase&&) = default;
 
   template <typename Child, EvaluatorConcept EvaluatorType>
@@ -29,17 +29,19 @@ namespace mgis::function {
   }  // end of check
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  void EvaluatorModifierBase<Child, EvaluatorType>::allocateWorkspace() {
+  constexpr void
+  EvaluatorModifierBase<Child, EvaluatorType>::allocateWorkspace() {
     this->evaluator.allocateWorkspace();
   }  // end of allocatWorkspace
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  const auto& EvaluatorModifierBase<Child, EvaluatorType>::getSpace() const {
+  constexpr decltype(auto)
+  EvaluatorModifierBase<Child, EvaluatorType>::getSpace() const {
     return internals::disambiguateGetSpace(this->evaluator);
   }  // end of getSpace
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  auto EvaluatorModifierBase<Child, EvaluatorType>::operator()(
+  constexpr auto EvaluatorModifierBase<Child, EvaluatorType>::operator()(
       const element_index<Space>& e) const
       requires(internals::EvaluatorResultQuery<EvaluatorType>::b1) {
     const auto& child = static_cast<const Child&>(*this);
@@ -47,7 +49,7 @@ namespace mgis::function {
   }  // end of operator()
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  auto EvaluatorModifierBase<Child, EvaluatorType>::operator()(
+  constexpr auto EvaluatorModifierBase<Child, EvaluatorType>::operator()(
       const element_workspace<Space>& wk, const element_index<Space>& e) const
       requires(internals::EvaluatorResultQuery<EvaluatorType>::b2) {
     const auto& child = static_cast<const Child&>(*this);
@@ -55,7 +57,7 @@ namespace mgis::function {
   }  // end of operator()
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  auto EvaluatorModifierBase<Child, EvaluatorType>::operator()(
+  constexpr auto EvaluatorModifierBase<Child, EvaluatorType>::operator()(
       const cell_index<Space>& e, const quadrature_point_index<Space>& i) const
       requires(internals::EvaluatorResultQuery<EvaluatorType>::b3) {
     const auto& child = static_cast<const Child&>(*this);
@@ -63,7 +65,7 @@ namespace mgis::function {
   }  // end of operator()
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  auto EvaluatorModifierBase<Child, EvaluatorType>::operator()(
+  constexpr auto EvaluatorModifierBase<Child, EvaluatorType>::operator()(
       const cell_workspace<Space>& wk,
       const cell_index<Space>& e,
       const quadrature_point_index<Space>& i) const
@@ -73,7 +75,8 @@ namespace mgis::function {
   }  // end of operator()
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  const auto& getSpace(const EvaluatorModifierBase<Child, EvaluatorType>& e) {
+  constexpr decltype(auto) getSpace(
+      const EvaluatorModifierBase<Child, EvaluatorType>& e) {
     return e.getSpace();
   }
 
