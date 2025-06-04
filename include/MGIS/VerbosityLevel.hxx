@@ -15,7 +15,7 @@
 namespace mgis {
 
   // forward declaration
-  class Context;
+  struct Context;
 
   /*!
    * \brief list the possible values for the logging facilities

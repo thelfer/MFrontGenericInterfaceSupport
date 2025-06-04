@@ -18,22 +18,84 @@
 #include <limits>
 #include "MGIS/Config-c.h"
 
+namespace mgis::config {
+
+  /*!
+   * \brief policy used in case of contract violation
+   */
+  enum struct ContractViolationPolicy { ABORT, RAISE };
+
+  /*!
+   * \brief boolean variable stating which policy is usd for
+   * reporting a contract violation
+   *
+   * By default, `std::abort` is called.
+   *
+   * If `MGIS_USE_EXCEPTIONS_FOR_CONTRACT_VIOLATION` is defined
+   * `mgis::raise` is called.
+   */
+  inline constexpr auto contract_violation_policy =
+#ifdef MGIS_USE_EXCEPTIONS_FOR_CONTRACT_VIOLATION
+      ContractViolationPolicy::RAISE;
+#else
+      ContractViolationPolicy::ABORT;
+#endif
+
+  /*!
+   * \brief  error reporting policy used by default when a Context is
+   * available.
+   */
+  enum struct ErrorReportPolicy { INVALIDRESULT, RAISE, ABORT };
+
+  /*!
+   * \brief boolean variable stating which policy is usd for
+   * reporting a runtime error
+   *
+   * By default, error are reported by returning an invalid result and
+   * registring an error message in a context
+   *
+   * If MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING is defined, registring
+   * an error message in a context, `mgis::raise` is called
+   *
+   * If MGIS_USE_ABORT_FOR_ERROR_REPORTING is defined, registring
+   * an error message in a context, the error message is printed
+   * an the standard error stream and `std::abort` is called.
+   */
+  inline constexpr auto error_report_policy =
+#ifdef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
+#ifdef MGIS_USE_ABORT_FOR_ERROR_REPORTING
+#error \
+    "MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING and " \
+        "MGIS_USE_ABORT_FOR_ERROR_REPORTING " \
+        "are mutually exclusive"
+#endif /* MGIS_USE_ABORT_FOR_ERROR_REPORTING */
+      ErrorReportPolicy::RAISE;
+#else /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
+#ifdef MGIS_USE_ABORT_FOR_ERROR_REPORTING
+      ErrorReportPolicy::ABORT;
+#else
+      ErrorReportPolicy::INVALIDRESULT;
+#endif
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
+
+}  // end of namespace mgis::config
+
+namespace mgis::attributes {
+
+  /*!
+   * \brief an attribute use to indicate that a method or a function as being
+   * unsafe without precautions
+   */
+  struct UnsafeAttribute {};
+  /*!
+   * \brief an attribute use to indicate that a method may throw or not
+   */
+  template <bool>
+  struct ThrowingAttribute {};
+
+}  // namespace mgis::attributes
+
 namespace mgis {
-
-  namespace attributes {
-
-    /*!
-     * \brief an attribute use to indicate that a method or a function as being
-     * unsafe without precautions
-     */
-    struct UnsafeAttribute {};
-    /*!
-     * \brief an attribute use to indicate that a method may throw or not
-     */
-    template <bool>
-    struct ThrowingAttribute {};
-
-  }  // namespace attributes
 
   //
   inline constexpr auto unsafe = attributes::UnsafeAttribute{};

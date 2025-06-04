@@ -15,22 +15,7 @@
 #include <type_traits>
 #include "MGIS/Config.hxx"
 #include "MGIS/InvalidResult.hxx"
-
-// source_location  seems badly supported by the current compilers (2022):
-// - with some compilers, this header is missing
-// - with clang this header exists, but std::source_location is undefined
-// The following tests tries to handle all those corner cases. In the
-// future, this shall be removed...
-#ifdef MGIS_DEBUG
-#if __has_include(<source_location>)
-#ifndef __clang__
-#include <source_location>
-#include <cstdint>
-#define MGIS_USE_SOURCE_LOCATION_INFORMATION
-#endif /* __clang */
-#else
-#endif /* __has_include(<source_location>) */
-#endif /* MGIS_DEBUG */
+#include "MGIS/AbstractErrorHandler.hxx"
 
 namespace mgis {
 
@@ -40,8 +25,7 @@ namespace mgis {
    * The design of this class is inspired by the many solutions offered
    * by the standard library (exceptions, `std::error_code`, etc...)
    */
-  class MGIS_EXPORT ErrorBacktrace {
-   public:
+  struct MGIS_EXPORT ErrorBacktrace : AbstractErrorHandler {
     //! brief a simple alias
     using ErrorReportFunction = std::string (*)(const int);
     /*!
@@ -64,6 +48,10 @@ namespace mgis {
     //! \brief specify if error reporting shall be fatal
     static void unsetErrorReportingAsFatal() noexcept;
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
+    InvalidResult registerErrorMessage(
+        const char *const,
+        const std::source_location & =
+            std::source_location::current()) override final;
     /*!
      * \brief register a new error message
      * \param[in] e: error code
@@ -75,6 +63,7 @@ namespace mgis {
         const std::source_location & =
             std::source_location::current()) noexcept;
 #else
+    InvalidResult registerErrorMessage(const char *const) override final;
     /*!
      * \brief register a new error message
      * \param[in] e: error code
@@ -105,7 +94,7 @@ namespace mgis {
     //! \return if the list registered error messages is empty
     bool empty() const noexcept;
     //! \brief destructor
-    ~ErrorBacktrace() noexcept;
+    ~ErrorBacktrace() noexcept override;
 
    private:
     //! structure describing an error message

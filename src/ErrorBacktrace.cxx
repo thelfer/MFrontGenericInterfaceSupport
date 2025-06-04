@@ -6,6 +6,7 @@
 
 #include <sstream>
 #include <iostream>
+#include "MGIS/Raise.hxx"
 #include "MGIS/ErrorBacktrace.hxx"
 
 namespace mgis::internal {
@@ -39,6 +40,12 @@ namespace mgis {
   }  // end of setIfErrorReportingIsFatal
 
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
+
+  InvalidResult ErrorBacktrace::registerErrorMessage(
+      const char *msg, const std::source_location &l) {
+    return this->registerErrorMessage(ErrorReport{msg}, l);
+  }  // end of registerErrorMessage
+
   InvalidResult ErrorBacktrace::registerErrorMessage(
       const ErrorReport e, const std::source_location &l) noexcept {
     try {
@@ -49,11 +56,18 @@ namespace mgis {
     this->treatFatalCase_();
     return {};
   }  // end of registerErrorMessage
+
 #else
+
+  InvalidResult ErrorBacktrace::registerErrorMessage(const char *msg) {
+    return this->registerErrorMessage(ErrorReport{msg});
+  }  // end of registerErrorMessage
+
   InvalidResult ErrorBacktrace::registerErrorMessage(
       const ErrorReport e) noexcept {
     return this->registerErrorMessageWithoutSourceLocation(e);
   }  // end of registerErrorMessage
+
 #endif
 
   InvalidResult ErrorBacktrace::registerErrorMessageWithoutSourceLocation(
@@ -173,6 +187,14 @@ namespace mgis {
     if (::mgis::internal::getErrorReportingPolicy()) {
       std::cerr << this->getErrorMessage_() << std::endl;
       std::exit(-1);
+    }
+    if constexpr (config::error_report_policy ==
+                  config::ErrorReportPolicy::RAISE) {
+      raise(this->getErrorMessage_());
+    } else if constexpr (config::error_report_policy ==
+                         config::ErrorReportPolicy::ABORT) {
+      std::cerr << this->getErrorMessage_() << std::endl;
+      std::abort();
     }
   }  // end of treatFatalCase_
 

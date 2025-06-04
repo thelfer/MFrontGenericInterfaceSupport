@@ -12,6 +12,7 @@
 #include <limits>
 #include <vector>
 #include "MGIS/Config.hxx"
+#include "MGIS/Contract.hxx"
 #include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/FunctionConcept.hxx"
 #include "MGIS/Function/Evaluator.hxx"
@@ -34,9 +35,9 @@ namespace mgis::function {
   template <>
   struct FunctionDataSize<dynamic_extent> {
     //! \return the number of components
-    bool isScalar() const noexcept;
+    constexpr bool isScalar() const noexcept;
     //! \return the number of components
-    size_type getNumberOfComponents() const noexcept;
+    constexpr size_type getNumberOfComponents() const noexcept;
 
    protected:
     //! \brief data size
@@ -63,7 +64,7 @@ namespace mgis::function {
      * \return the stride of data, i.e. the distance between the values of two
      * successive integration points.
      */
-    size_type getDataStride() const noexcept;
+    constexpr size_type getDataStride() const noexcept;
 
    protected:
     //! \brief data size
@@ -105,7 +106,7 @@ namespace mgis::function {
      * \return the data offset associated with the given integration point.
      * \param[in] i: integration point
      */
-    size_type getDataOffset(const size_type) const noexcept;
+    constexpr size_type getDataOffset(const size_type) const noexcept;
   };  // end of struct DataLayout
 
   /*!
@@ -139,7 +140,9 @@ namespace mgis::function {
             bool is_mutable = true>
   requires(LinearElementSpaceConcept<Space> ||
            LinearQuadratureSpaceConcept<Space>)  //
-      struct FunctionView : DataLayout<layout> {
+      struct FunctionView
+      : private PreconditionsChecker<FunctionView<Space, layout, is_mutable>>,
+        public DataLayout<layout> {
     //! \brief a simple alias to the type holding the data used by the view
     using ExternalData =
         std::conditional_t<is_mutable, std::span<real>, std::span<const real>>;
@@ -161,65 +164,72 @@ namespace mgis::function {
     static constexpr bool allowScalarAccessor =
         (layout.data_size == dynamic_extent) ? true : layout.data_size == 1;
     /*!
+     * \brief constructor meant that always actives precondition checks
+     * \param[in] args: arguments passed to the constructor
+     */
+    template <typename... Args>
+    constexpr FunctionView(Args&&... args)  //
+        requires(is_check_preconditions_callable<FunctionView, Args...>);
+    /*!
      * \brief check that the preconditions to build the view are met
-     * \param[in] ctx: execution context.
+     * \param[in] eh: error handler.
      * \param[in] s: quadrature space.
      * \param[in] v: values
      */
-    [[nodiscard]] static bool checkPreconditions(
-        Context&,
+    [[nodiscard]] static constexpr bool checkPreconditions(
+        AbstractErrorHandler&,
         const Space&,
         ExternalData) requires((layout.data_size != dynamic_extent) &&
                                (layout.data_stride != dynamic_extent));
     /*!
      * \brief check that the preconditions to build the view are met
-     * \param[in] ctx: execution context.
+     * \param[in] eh: error handler.
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] dsize: size of the data per elements
      */
-    [[nodiscard]] static bool checkPreconditions(
-        Context&,
+    [[nodiscard]] static constexpr bool checkPreconditions(
+        AbstractErrorHandler&,
         const Space&,
         ExternalData,
         const size_type) requires((layout.data_size == dynamic_extent) &&
                                   (layout.data_stride != dynamic_extent));
     /*!
      * \brief check that the preconditions to build the view are met
-     * \param[in] ctx: execution context.
+     * \param[in] eh: error handler.
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] dstride: data stride
      */
-    [[nodiscard]] static bool checkPreconditions(
-        Context&,
+    [[nodiscard]] static constexpr bool checkPreconditions(
+        AbstractErrorHandler&,
         const Space&,
         ExternalData,
         const size_type) requires((layout.data_size != dynamic_extent) &&
                                   (layout.data_stride == dynamic_extent));
     /*!
      * \brief check that the preconditions to build the view are met
-     * \param[in] ctx: execution context.
+     * \param[in] eh: error handler.
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] dsize: size of the data per elements
      */
-    [[nodiscard]] static bool checkPreconditions(
-        Context&,
+    [[nodiscard]] static constexpr bool checkPreconditions(
+        AbstractErrorHandler&,
         const Space&,
         ExternalData,
         const size_type) requires((layout.data_size == dynamic_extent) &&
                                   (layout.data_stride == dynamic_extent));
     /*!
      * \brief check that the preconditions to build the view are met
-     * \param[in] ctx: execution context.
+     * \param[in] eh: error handler.
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] dsize: size of the data per elements
      * \param[in] dstride: data stride
      */
-    [[nodiscard]] static bool checkPreconditions(
-        Context&,
+    [[nodiscard]] static constexpr bool checkPreconditions(
+        AbstractErrorHandler&,
         const Space&,
         ExternalData,
         const size_type,
@@ -227,106 +237,128 @@ namespace mgis::function {
                                   (layout.data_stride == dynamic_extent));
     /*!
      * \brief constructor
+     * \param[in] pcheck: do preconditions checks
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] dstride: size of the data per elements
      */
-    FunctionView(const Space&,
-                 ExternalData,
-                 const size_type)  //
+    template <bool doPreconditionsCheck>
+    constexpr FunctionView(const PreconditionsCheck<doPreconditionsCheck>&,
+                           const Space&,
+                           ExternalData,
+                           const size_type)  //
         requires((layout.data_size != dynamic_extent) &&
                  (layout.data_stride == dynamic_extent));
     /*!
      * \brief constructor
+     * \param[in] pcheck: do preconditions checks
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] dsize: size of the data per elements
      * \param[in] dstride: data stride
      */
-    FunctionView(const Space&,
-                 ExternalData,
-                 const size_type,
-                 const size_type)  //
+    template <bool doPreconditionsCheck>
+    constexpr FunctionView(const PreconditionsCheck<doPreconditionsCheck>&,
+                           const Space&,
+                           ExternalData,
+                           const size_type,
+                           const size_type)  //
         requires((layout.data_size == dynamic_extent) &&
                  (layout.data_stride == dynamic_extent));
     /*!
      * \brief constructor
+     * \param[in] pcheck: do preconditions checks
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] dsize: size of the data per elements
      */
-    FunctionView(const Space&,
-                 ExternalData,
-                 const size_type)  //
+    template <bool doPreconditionsCheck>
+    constexpr FunctionView(const PreconditionsCheck<doPreconditionsCheck>&,
+                           const Space&,
+                           ExternalData,
+                           const size_type)  //
         requires((layout.data_size == dynamic_extent) &&
                  (layout.data_stride == dynamic_extent));
     /*!
      * \brief constructor
+     * \param[in] pcheck: do preconditions checks
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] dsize: size of the data per elements
      */
-    FunctionView(const Space&,
-                 ExternalData,
-                 const size_type)  //
+    template <bool doPreconditionsCheck>
+    constexpr FunctionView(const PreconditionsCheck<doPreconditionsCheck>&,
+                           const Space&,
+                           ExternalData,
+                           const size_type)  //
         requires((layout.data_size == dynamic_extent) &&
                  (layout.data_stride != dynamic_extent));
     /*!
      * \brief constructor
+     * \param[in] pcheck: do preconditions checks
      * \param[in] s: quadrature space.
      * \param[in] v: values
      */
-    FunctionView(const Space&,
-                 ExternalData)  //
+    template <bool doPreconditionsCheck>
+    constexpr FunctionView(const PreconditionsCheck<doPreconditionsCheck>&,
+                           const Space&,
+                           ExternalData)  //
         requires((layout.data_size != dynamic_extent) &&
                  (layout.data_stride != dynamic_extent));
     /*!
      * \brief check that the preconditions to build the view are met
+     * \param[in] pcheck: do preconditions checks
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] l: data layout
      */
-    FunctionView(const Space&,
-                 ExternalData,
-                 const DataLayout<layout>&) requires((layout.data_size ==
-                                                      dynamic_extent) &&
-                                                     (layout.data_stride ==
-                                                      dynamic_extent));
+    template <bool doPreconditionsCheck>
+    constexpr FunctionView(const PreconditionsCheck<doPreconditionsCheck>&,
+                           const Space&,
+                           ExternalData,
+                           const DataLayout<layout>&)  //
+        requires((layout.data_size == dynamic_extent) &&
+                 (layout.data_stride == dynamic_extent));
     /*!
      * \brief check that the preconditions to build the view are met
+     * \param[in] pcheck: do preconditions checks
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] l: data layout
      */
-    FunctionView(const Space&,
-                 ExternalData,
-                 const DataLayout<layout>&) requires((layout.data_size !=
-                                                      dynamic_extent) &&
-                                                     (layout.data_stride ==
-                                                      dynamic_extent));
+    template <bool doPreconditionsCheck>
+    constexpr FunctionView(const PreconditionsCheck<doPreconditionsCheck>&,
+                           const Space&,
+                           ExternalData,
+                           const DataLayout<layout>&)  //
+        requires((layout.data_size != dynamic_extent) &&
+                 (layout.data_stride == dynamic_extent));
     /*!
      * \brief check that the preconditions to build the view are met
+     * \param[in] pcheck: do preconditions checks
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] l: data layout
      */
-    FunctionView(const Space&,
-                 ExternalData,
-                 const DataLayout<layout>&) requires((layout.data_size ==
-                                                      dynamic_extent) &&
-                                                     (layout.data_stride !=
-                                                      dynamic_extent));
+    template <bool doPreconditionsCheck>
+    constexpr FunctionView(const PreconditionsCheck<doPreconditionsCheck>&,
+                           const Space&,
+                           ExternalData,
+                           const DataLayout<layout>&)  //
+        requires((layout.data_size == dynamic_extent) &&
+                 (layout.data_stride != dynamic_extent));
     //! \return the underlying quadrature space
-    const Space& getSpace() const noexcept;
+    constexpr const Space& getSpace() const noexcept;
     //! \brief a noop function to match the EvaluatorConcept concept
     bool check(Context&) const noexcept;
     //! \brief a noop function to match the EvaluatorConcept concept
-    void allocateWorkspace() noexcept;
+    constexpr void allocateWorkspace() noexcept;
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
-    real* data(mgis::attributes::UnsafeAttribute, const size_type) requires(
+    constexpr real*
+    data(mgis::attributes::UnsafeAttribute, const size_type) requires(
         is_mutable&& LinearElementSpaceConcept<Space> &&
         (!hasElementWorkspace<Space>));
     /*!
@@ -334,16 +366,17 @@ namespace mgis::function {
      * \param[in] e: element index
      * \param[in] i: quadrature point index
      */
-    real* data(mgis::attributes::UnsafeAttribute,
-               const size_type,
-               const size_type)  //
+    constexpr real* data(mgis::attributes::UnsafeAttribute,
+                         const size_type,
+                         const size_type)  //
         requires(is_mutable&& LinearQuadratureSpaceConcept<Space> &&
                  (!hasCellWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
-    const real* data(mgis::attributes::UnsafeAttribute, const size_type) const
+    constexpr const real* data(mgis::attributes::UnsafeAttribute,
+                               const size_type) const
         requires(LinearElementSpaceConcept<Space> &&
                  (!hasElementWorkspace<Space>));
     /*!
@@ -351,16 +384,16 @@ namespace mgis::function {
      * \param[in] e: element index
      * \param[in] i: quadrature point index
      */
-    const real* data(mgis::attributes::UnsafeAttribute,
-                     const size_type,
-                     const size_type) const
+    constexpr const real* data(mgis::attributes::UnsafeAttribute,
+                               const size_type,
+                               const size_type) const
         requires(LinearQuadratureSpaceConcept<Space> &&
                  (!hasCellWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
-    ValuesView operator()(const size_type) requires(
+    constexpr ValuesView operator()(const size_type) requires(
         is_mutable&& LinearElementSpaceConcept<Space> &&
         (!hasElementWorkspace<Space>));
     /*!
@@ -368,14 +401,14 @@ namespace mgis::function {
      * \param[in] e: element index
      * \param[in] i: quadrature point index
      */
-    ValuesView operator()(const size_type, const size_type) requires(
+    constexpr ValuesView operator()(const size_type, const size_type) requires(
         is_mutable&& LinearQuadratureSpaceConcept<Space> &&
         (!hasCellWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
-    ConstValuesView operator()(const size_type) const
+    constexpr ConstValuesView operator()(const size_type) const
         requires(LinearElementSpaceConcept<Space> &&
                  (!hasElementWorkspace<Space>));
     /*!
@@ -383,7 +416,7 @@ namespace mgis::function {
      * \param[in] e: element index
      * \param[in] i: quadrature point index
      */
-    ConstValuesView operator()(const size_type, const size_type) const
+    constexpr ConstValuesView operator()(const size_type, const size_type) const
         requires(LinearQuadratureSpaceConcept<Space> &&
                  (!hasCellWorkspace<Space>));
     /*!
@@ -391,9 +424,9 @@ namespace mgis::function {
      * same number of components than the given view
      * \param[in] v: view
      */
-    bool checkCompatibility(const FunctionView&) const;
+    constexpr bool checkCompatibility(const FunctionView&) const;
     //! \return a view to the function values
-    std::span<const real> data() const;
+    constexpr std::span<const real> data() const;
 
    protected:
     //! \brief underlying discretization space
@@ -436,28 +469,39 @@ namespace mgis::function {
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
       struct Function
-      : public FunctionStorage<Space, N>,
+      : private PreconditionsChecker<Function<Space, N>>,
+        public FunctionStorage<Space, N>,
         public FunctionView<Space, {.data_size = N, .data_stride = N}, true> {
     /*!
+     * \brief constructor meant that always actives precondition checks
+     * \param[in] args: arguments passed to the constructor
+     */
+    template <typename... Args>
+    constexpr Function(Args&&... args)  //
+        requires(is_check_preconditions_callable<Function, Args...>);
+    /*!
      * \brief constructor from a space and a data size
-     * \param[in] ctx: execution context
+     * \param[in] eh: error handler
      * \param[in] s: space
      */
-    [[nodiscard]] static bool checkPreconditions(Context&,
+    [[nodiscard]] static bool checkPreconditions(AbstractErrorHandler&,
                                                  const Space&)  //
         requires(N != dynamic_extent);
     /*!
      * \brief constructor from a space
      * \param[in] s: space
      */
-    Function(const Space&) requires(N != dynamic_extent);
+    template <bool doPreconditionsCheck>
+    Function(const PreconditionsCheck<doPreconditionsCheck>&,
+             const Space&)  //
+        requires(N != dynamic_extent);
     /*!
      * \brief constructor from a space and a data size
-     * \param[in] ctx: execution context
+     * \param[in] eh: error handler
      * \param[in] s: space
      * \param[in] dsize: data size
      */
-    [[nodiscard]] static bool checkPreconditions(Context&,
+    [[nodiscard]] static bool checkPreconditions(AbstractErrorHandler&,
                                                  const Space&,
                                                  const size_type)  //
         requires(N == dynamic_extent);
@@ -466,7 +510,10 @@ namespace mgis::function {
      * \param[in] s: space
      * \param[in] dsize: data size
      */
-    Function(const Space&, const size_type) requires(N == dynamic_extent);
+    template <bool doPreconditionsCheck>
+    Function(const PreconditionsCheck<doPreconditionsCheck>&,
+             const Space&,
+             const size_type) requires(N == dynamic_extent);
     //! \brief copy constructor
     Function(const Function&) requires(N == dynamic_extent);
     //! \brief assignement constructor

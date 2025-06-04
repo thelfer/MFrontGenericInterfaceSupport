@@ -26,8 +26,7 @@ namespace mgis {
    * The default logging stream is the one returned by the
    * `mgis::getLogStream` free function.
    */
-  class MGIS_EXPORT Context : public ErrorBacktrace {
-   public:
+  struct MGIS_EXPORT Context final : public ErrorBacktrace {
     //! \brief default constructor
     Context() noexcept;
     //! \return the verbosity level
@@ -38,7 +37,7 @@ namespace mgis {
      */
     void setVerbosityLevel(const VerbosityLevel) noexcept;
     //! \brief destructor
-    ~Context() noexcept;
+    ~Context() noexcept override;
 
    private:
     //

@@ -31,6 +31,8 @@ option(enable-portable-build "produce binary that can be shared between various 
 
 # enable mgis-function
 option(enable-mgis-function "enable mgis function" ON)
+# enable exceptions usage
+option(enable-exceptions "use exceptions to report contract violation and error reporting" OFF)
 
 # C-bindings (placed before compiler detection)
 option(enable-c-bindings "enable c bindings support")

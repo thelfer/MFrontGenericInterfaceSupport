@@ -1,5 +1,8 @@
 mgis_header(MGIS Config-c.h)
 mgis_header(MGIS Config.hxx)
+mgis_header(MGIS AbstractErrorHandler.hxx)
+mgis_header(MGIS Contract.hxx)
+mgis_header(MGIS Contract.ixx)
 mgis_header(MGIS Context.hxx)
 mgis_header(MGIS ErrorBacktrace.hxx)
 mgis_header(MGIS InvalidResult.hxx)

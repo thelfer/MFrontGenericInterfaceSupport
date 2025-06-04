@@ -4,6 +4,7 @@ list(APPEND MFrontGenericInterface_SOURCES
   VerbosityLevel.cxx
   ErrorBacktrace.cxx
   Context.cxx
+  Contract.cxx
   ThreadPool.cxx
   ThreadedTaskResult.cxx
   LibrariesManager.cxx
@@ -43,6 +44,10 @@ endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 if(enable-mgis-function)
   target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_FUNCTION_SUPPORT)
 endif(enable-mgis-function)
+if(enable-exceptions)
+  target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_USE_EXCEPTIONS_FOR_CONTRACT_VIOLATION)
+  target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING)
+endif(enable-exceptions)
 
 if(enable-static)
   target_include_directories(MFrontGenericInterface-static

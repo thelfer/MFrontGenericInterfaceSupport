@@ -86,9 +86,11 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(
         !FunctionEvaluator<SharedSpace<BasicLinearSpace>>::checkPreconditions(
             ctx, space, values3, 1));
+#ifdef MGIS_USE_EXCEPTIONS_FOR_CONTRACT_VIOLATION
     TFEL_TESTS_CHECK_THROW(
         FunctionEvaluator<SharedSpace<BasicLinearSpace>>(space, values3, 1),
         std::runtime_error);
+#endif /* MGIS_USE_EXCEPTIONS_FOR_CONTRACT_VIOLATION */
   }
   void test3() {
     using namespace mgis;
@@ -219,6 +221,7 @@ struct FunctionTest final : public tfel::tests::TestCase {
     this->test5();
     this->test6();
     this->test7();
+    this->test8();
     return this->result;
   }
 
@@ -434,6 +437,15 @@ struct FunctionTest final : public tfel::tests::TestCase {
     const auto& f2 = f;
     TFEL_TESTS_ASSERT(std::abs(f2(0) - 12) < eps);
     TFEL_TESTS_ASSERT(std::abs(f2(1) - 13) < eps);
+  }
+  void test8() {
+    using namespace mgis;
+    using namespace mgis::function;
+    static constexpr auto space = BasicLinearSpace{2};
+    static constexpr auto values = std::array<real, 4>{};
+    constexpr auto f = FunctionEvaluator<BasicLinearSpace>{space, values, 2};
+    TFEL_TESTS_STATIC_ASSERT(f.getNumberOfComponents() == 2);
+    TFEL_TESTS_STATIC_ASSERT(f.getDataStride() == 2);
   }
 };
 

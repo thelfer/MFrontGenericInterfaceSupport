@@ -4,11 +4,13 @@
 
 namespace mgis::internal {
 
-  void processNext(){};
+  static void processNext(){};
 
-  bool f3(ErrorBacktrace &e) { return e.registerErrorMessage("invalid call"); }
+  static bool f3(ErrorBacktrace &e) {
+    return e.registerErrorMessage("invalid call");
+  }
 
-  bool f2(ErrorBacktrace &e) {
+  static bool f2(ErrorBacktrace &e) {
     if (!f3(e)) {
       // f2 fails, but we don't have any more information
       // to add, so we just return
@@ -18,7 +20,7 @@ namespace mgis::internal {
     return true;
   }
 
-  bool f1(ErrorBacktrace &e) {
+  static bool f1(ErrorBacktrace &e) {
     if (!f2(e)) {
       return e.registerErrorMessage("invalid call to f2");
     }
