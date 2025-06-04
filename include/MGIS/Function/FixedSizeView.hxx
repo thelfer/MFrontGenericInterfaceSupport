@@ -8,6 +8,7 @@
 #ifndef LIB_MGIS_FUNCTION_FIXEDSIZEVIEW_HXX
 #define LIB_MGIS_FUNCTION_FIXEDSIZEVIEW_HXX
 
+#include "MGIS/Contract.hxx"
 #include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/Function.hxx"
@@ -22,7 +23,8 @@ namespace mgis::function {
    * \tparam N: size of the returned value
    */
   template <FunctionConcept FunctionType, size_type N>
-  requires(N > 0) struct FixedSizeView {
+  requires(N > 0) struct FixedSizeView
+      : private PreconditionsChecker<FixedSizeView<FunctionType, N>> {
     //
     using Space = function_space<FunctionType>;
     //! \brief value returned by non-const call operator
@@ -30,14 +32,24 @@ namespace mgis::function {
         std::conditional_t<N == 1, real&, std::span<real, N>>;
     /*!
      * \brief method checking that the precondition of the constructor are met.
+     * \param[in] eh: error handler
      * \param[in] values: function
      */
-    static bool checkPreconditions(const FunctionType&) noexcept;
+    static bool checkPreconditions(AbstractErrorHandler&,
+                                   const FunctionType&) noexcept;
     /*!
      * \brief constructor
      * \param[in] values: function
      */
     FixedSizeView(FunctionType&);
+    /*!
+     * \brief constructor
+     * \param[in] pcheck: object stating if preconditions must be checked
+     * \param[in] values: function
+     */
+    template <bool doPreconditionsCheck>
+    FixedSizeView(const PreconditionsCheck<doPreconditionsCheck>&,
+                  FunctionType&);
     //! \brief perform consistency checks
     bool check(Context&) const noexcept;
     //! \brief return the underlying  space

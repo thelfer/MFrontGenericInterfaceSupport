@@ -14,19 +14,31 @@ namespace mgis::function {
 
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0) bool FixedSizeView<FunctionType, N>::checkPreconditions(
-      const FunctionType& values) noexcept {
-    return values.getNumberOfComponents() == N;
+      AbstractErrorHandler& eh, const FunctionType& values) noexcept {
+    if (values.getNumberOfComponents() != N) {
+      return eh.registerErrorMessage("invalid number of components");
+    }
+    return true;
   }  // end of checkPreconditions
 
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0)
       FixedSizeView<FunctionType, N>::FixedSizeView(FunctionType& values)
-      : function(values) {}  // end of FixedSizeView
+      : FixedSizeView(preconditions_check, values) {}  // end of FixedSizeView
+
+  template <FunctionConcept FunctionType, size_type N>
+  requires(N > 0)  //
+      template <bool doPreconditionsCheck>
+      FixedSizeView<FunctionType, N>::FixedSizeView(
+          const PreconditionsCheck<doPreconditionsCheck>& pcheck,
+          FunctionType& values)
+      : PreconditionsChecker<FixedSizeView>(pcheck, values),
+        function(values) {}  // end of FixedSizeView
 
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0) bool FixedSizeView<FunctionType, N>::check(
-      Context&) const noexcept {
-    return checkPreconditions(this->function);
+      Context& ctx) const noexcept {
+    return checkPreconditions(ctx, this->function);
   }
 
   template <FunctionConcept FunctionType, size_type N>

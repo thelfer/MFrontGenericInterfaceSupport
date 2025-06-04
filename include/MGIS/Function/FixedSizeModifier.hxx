@@ -8,6 +8,7 @@
 #ifndef LIB_MGIS_FUNCTION_FIXEDSIZEMODIFIER_HXX
 #define LIB_MGIS_FUNCTION_FIXEDSIZEMODIFIER_HXX
 
+#include "MGIS/Contract.hxx"
 #include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/Function.hxx"
@@ -22,19 +23,30 @@ namespace mgis::function {
    * \tparam N: size of the returned value
    */
   template <EvaluatorConcept EvaluatorType, size_type N>
-  requires(N > 0) struct FixedSizeModifier {
+  requires(N > 0) struct FixedSizeModifier
+      : private PreconditionsChecker<FixedSizeModifier<EvaluatorType, N>> {
     //
     using Space = evaluator_space<EvaluatorType>;
     /*!
      * \brief method checking that the precondition of the constructor are met.
+     * \param[in] eh: error handler
      * \param[in] e: evaluator
      */
-    static bool checkPreconditions(const EvaluatorType&) noexcept;
+    static bool checkPreconditions(AbstractErrorHandler&,
+                                   const EvaluatorType&) noexcept;
     /*!
      * \brief constructor
      * \param[in] values: function
      */
     FixedSizeModifier(const EvaluatorType&);
+    /*!
+     * \brief constructor
+     * \param[in] pcheck: object stating if preconditions must be checked
+     * \param[in] values: function
+     */
+    template <bool doPreconditionsCheck>
+    FixedSizeModifier(const PreconditionsCheck<doPreconditionsCheck>&,
+                      const EvaluatorType&);
     //! \brief perform consistency checks
     bool check(Context&) const noexcept;
     //! \brief allocate internal workspace

@@ -14,19 +14,31 @@ namespace mgis::function {
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0) bool FixedSizeModifier<EvaluatorType, N>::checkPreconditions(
-      const EvaluatorType& values) noexcept {
-    return values.getNumberOfComponents() == N;
+      AbstractErrorHandler& eh, const EvaluatorType& values) noexcept {
+    if (values.getNumberOfComponents() != N) {
+      return eh.registerErrorMessage("invalid number of components");
+    }
+    return true;
   }  // end of checkPreconditions
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0) FixedSizeModifier<EvaluatorType, N>::FixedSizeModifier(
       const EvaluatorType& e)
-      : evaluator(e) {}  // end of FixedSizeModifier
+      : FixedSizeModifier(preconditions_check, e) {}  // end of FixedSizeModifier
+
+  template <EvaluatorConcept EvaluatorType, size_type N>
+  requires(N > 0)  //
+      template <bool doPreconditionsCheck>
+      FixedSizeModifier<EvaluatorType, N>::FixedSizeModifier(
+          const PreconditionsCheck<doPreconditionsCheck>& pcheck,
+          const EvaluatorType& e)
+      : PreconditionsChecker<FixedSizeModifier>(pcheck, e),
+        evaluator(e) {}  // end of FixedSizeModifier
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0) bool FixedSizeModifier<EvaluatorType, N>::check(
-      Context&) const noexcept {
-    return checkPreconditions(this->evaluator);
+      Context& ctx) const noexcept {
+    return checkPreconditions(ctx, this->evaluator);
   }
 
   template <EvaluatorConcept EvaluatorType, size_type N>

@@ -10,6 +10,7 @@
 
 #include <memory>
 #include "MGIS/Raise.hxx"
+#include "MGIS/Contract.hxx"
 #include "MGIS/Function/SpaceConcept.hxx"
 
 namespace mgis::function::internals {
@@ -74,17 +75,26 @@ namespace mgis::function::internals {
 namespace mgis::function {
 
   template <SpaceConcept SpaceType>
-  struct SharedSpace {
+  struct SharedSpace : private PreconditionsChecker<SharedSpace<SpaceType>> {
+    /*!
+     * \param[in] eh: error handler
+     */
     [[nodiscard]] static bool checkPreconditions(
-        const std::shared_ptr<const SpaceType>& s) {
-      return s.get() != nullptr;
+        AbstractErrorHandler& eh, const std::shared_ptr<const SpaceType>& s) {
+      if (s.get() == nullptr) {
+        return eh.registerErrorMessage("invalid space");
+      }
+      return true;
     }  // end of checkPreconditions
 
-    SharedSpace(const std::shared_ptr<const SpaceType>& s) : space(s) {
-      if (!checkPreconditions(s)) {
-        raise("invalid space");
-      }
-    }  // end of SharedSpace
+    SharedSpace(const std::shared_ptr<const SpaceType>& s)
+        : SharedSpace(preconditions_check, s){}
+
+    template <bool doPreconditionChecks>
+    SharedSpace(const PreconditionsCheck<doPreconditionChecks>& pcheck,
+                const std::shared_ptr<const SpaceType>& s)
+        : PreconditionsChecker<SharedSpace>(pcheck, s),
+          space(s) {}  // end of SharedSpace
 
     SharedSpace(SharedSpace&&) = default;
     SharedSpace(const SharedSpace&) = default;
