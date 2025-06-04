@@ -30,7 +30,9 @@
 namespace mgis {
 
   /*!
-   *
+   * \brief base class for error handlers
+   * This class shall be used as arguments to
+   * `checkPreconditions` methods
    */
   struct MGIS_EXPORT AbstractErrorHandler {
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
@@ -38,20 +40,21 @@ namespace mgis {
      * \brief register a new error message
      * \param[in] e: error message
      * \param[in] l: description of the call site
-     * \note for convenience, this method always return `false`
+     * \note for convenience, this method always return an invalid object
      */
     virtual InvalidResult registerErrorMessage(
         const char *const,
         const std::source_location & =
-            std::source_location::current()) noexcept;
+            std::source_location::current()) = 0;
 #else
     /*!
      * \brief register a new error message
      * \param[in] e: error message
-     * \note for convenience, this method always return `InvalidResult`
+     * \note for convenience, this method always return an invalid object
      */
     virtual InvalidResult registerErrorMessage(const char *const) = 0;
 #endif
+    //! \brief destructor
     virtual constexpr ~AbstractErrorHandler() = default;
   };
 

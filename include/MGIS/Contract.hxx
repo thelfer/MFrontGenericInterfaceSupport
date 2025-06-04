@@ -15,16 +15,38 @@
 
 namespace mgis {
 
+  /*!
+   * \brief a class used to report a contract violation
+   *
+   * The behaviour of this class is determined by the
+   * `contract_violation_policy` variable.
+   *
+   * This class can be used in a `constexpr` context,
+   * if no contrat violation is detected. If a
+   * contract violation is detected, a compile-time
+   * error is generated since `registerErrorMessage`
+   * is not `constexpr`.
+   */
   struct MGIS_EXPORT ContractViolationHandler final : AbstractErrorHandler {
+    //! \brief destructor
     constexpr ContractViolationHandler() = default;
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
+    /*!
+     * \brief register a new error message
+     * \param[in] e: error messgage
+     */
     [[noreturn]] InvalidResult registerErrorMessage(
         const char *const,
         const std::source_location & =
             std::source_location::current()) override;
 #else
+    /*!
+     * \brief register a new error message
+     * \param[in] e: error message
+     */
     [[noreturn]] InvalidResult registerErrorMessage(const char *const) override;
 #endif
+    //! \brief destructor
     constexpr ~ContractViolationHandler() override;
 
    protected:

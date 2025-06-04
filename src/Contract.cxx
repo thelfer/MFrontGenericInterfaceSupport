@@ -14,12 +14,18 @@ namespace mgis {
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
 
   [[noreturn]] InvalidResult ContractViolationHandler::registerErrorMessage(
-      const char *const msg, const std::source_location &) {
+      const char *const msg, const std::source_location &l) {
+    auto emsg = std::string{};
+    emsg += l.file_name();
+    emsg += ":" + std::to_string(l.line()) + ": in function '";
+    emsg += l.function_name();
+    emsg += "': ";
+    emsg += msg;
     if constexpr (config::contract_violation_policy ==
                   config::ContractViolationPolicy::RAISE) {
-      raise(msg);
+      raise(emsg);
     } else {
-      ContractViolationHandler::abort(msg);
+      ContractViolationHandler::abort(emsg.c_str());
     }
   }  // end of registerErrorMessage
 

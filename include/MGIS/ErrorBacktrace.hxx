@@ -56,7 +56,7 @@ namespace mgis {
      * \brief register a new error message
      * \param[in] e: error code
      * \param[in] l: description of the call site
-     * \note for convenience, this method always return `false`
+     * \note for convenience, this method always return an invalid object
      */
     InvalidResult registerErrorMessage(
         const ErrorReport,
@@ -67,7 +67,7 @@ namespace mgis {
     /*!
      * \brief register a new error message
      * \param[in] e: error code
-     * \note for convenience, this method always return `InvalidResult`
+     * \note for convenience, this method always return an invalid results
      */
     InvalidResult registerErrorMessage(const ErrorReport) noexcept;
 #endif
