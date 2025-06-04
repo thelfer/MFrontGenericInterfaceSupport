@@ -74,6 +74,16 @@ namespace mgis::function::internals {
 
 namespace mgis::function {
 
+  /*!
+   * \brief this class provides a way to encapsulate a space
+   * into a sharable object.
+   *
+   * This objet behaves exactly as the the underlying space
+   * (satifies the same concepts)
+   * except for the `areEquivalent` function which
+   * only enforces that the two shared spaces are equivalent only if
+   * they point to the same object.
+   */
   template <SpaceConcept SpaceType>
   struct SharedSpace : private PreconditionsChecker<SharedSpace<SpaceType>> {
     /*!
@@ -88,7 +98,7 @@ namespace mgis::function {
     }  // end of checkPreconditions
 
     SharedSpace(const std::shared_ptr<const SpaceType>& s)
-        : SharedSpace(preconditions_check, s){}
+        : SharedSpace(preconditions_check, s) {}
 
     template <bool doPreconditionChecks>
     SharedSpace(const PreconditionsCheck<doPreconditionChecks>& pcheck,
@@ -106,6 +116,8 @@ namespace mgis::function {
     std::shared_ptr<const SpaceType> space;
   };
 
+  // template deduction guide lines
+
   template <SpaceConcept SpaceType>
   SharedSpace(const std::shared_ptr<const SpaceType>&)
       -> SharedSpace<SpaceType>;
@@ -113,6 +125,10 @@ namespace mgis::function {
   template <SpaceConcept SpaceType>
   SharedSpace(const std::shared_ptr<SpaceType>&) -> SharedSpace<SpaceType>;
 
+  /*!
+   * \brief specialization of the `SpaceTraits` class
+   * for a shared space.
+   */
   template <SpaceConcept SpaceType>
   struct SpaceTraits<SharedSpace<SpaceType>>
       : internals::SharedElementSpaceTraits<SpaceType>,
