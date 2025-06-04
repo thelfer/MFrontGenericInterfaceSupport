@@ -13,31 +13,31 @@ namespace mgis {
 
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
 
-  [[noreturn]] InvalidResult ContractChecker::registerErrorMessage(
+  [[noreturn]] InvalidResult ContractViolationHandler::registerErrorMessage(
       const char *const msg, const std::source_location &) {
     if constexpr (config::contract_violation_policy ==
                   config::ContractViolationPolicy::RAISE) {
       raise(msg);
     } else {
-      ContractChecker::abort(msg);
+      ContractViolationHandler::abort(msg);
     }
   }  // end of registerErrorMessage
 
 #else
 
-  [[noreturn]] InvalidResult ContractChecker::registerErrorMessage(
+  [[noreturn]] InvalidResult ContractViolationHandler::registerErrorMessage(
       const char* const msg) {
     if constexpr (config::contract_violation_policy ==
                   config::ContractViolationPolicy::RAISE) {
       raise(msg);
     } else {
-      ContractChecker::abort(msg);
+      ContractViolationHandler::abort(msg);
     }
   }  // end of registerErrorMessage
 
 #endif
 
-  void ContractChecker::abort(const char *const msg) noexcept {
+  void ContractViolationHandler::abort(const char *const msg) noexcept {
     std::cerr << msg << '\n';
     std::abort();
   }  // end of abort

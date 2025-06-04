@@ -15,8 +15,8 @@
 
 namespace mgis {
 
-  struct MGIS_EXPORT ContractViolationReporter final : AbstractErrorHandler {
-    constexpr ContractViolationReporter() = default;
+  struct MGIS_EXPORT ContractViolationHandler final : AbstractErrorHandler {
+    constexpr ContractViolationHandler() = default;
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
     [[noreturn]] InvalidResult registerErrorMessage(
         const char *const,
@@ -25,7 +25,7 @@ namespace mgis {
 #else
     [[noreturn]] InvalidResult registerErrorMessage(const char *const) override;
 #endif
-    constexpr ~ContractViolationReporter() override;
+    constexpr ~ContractViolationHandler() override;
 
    protected:
     [[noreturn]] static void abort(const char *const) noexcept;
@@ -33,14 +33,14 @@ namespace mgis {
 
   template <typename Type, typename... Args>
   inline constexpr auto is_check_preconditions_callable =
-      requires(ContractViolationReporter e, Args... rargs) {
+      requires(ContractViolationHandler e, Args... rargs) {
     { Type::checkPreconditions(e, rargs...) } -> std::same_as<bool>;
   };
 
   template <typename Type, typename... Args>
   constexpr void check_preconditions(Args &&...args) requires(
       is_check_preconditions_callable<Type, Args...>) {
-    auto c = ContractViolationReporter{};
+    auto c = ContractViolationHandler{};
     static_cast<void>(Type::checkPreconditions(c, std::forward<Args>(args)...));
   }  // end of check_preconditions
 
