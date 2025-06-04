@@ -186,7 +186,7 @@ namespace mgis {
   void ErrorBacktrace::treatFatalCase_() const noexcept {
     if (::mgis::internal::getErrorReportingPolicy()) {
       std::cerr << this->getErrorMessage_() << std::endl;
-      std::exit(-1);
+      std::abort();
     }
     if constexpr (config::error_report_policy ==
                   config::ErrorReportPolicy::RAISE) {

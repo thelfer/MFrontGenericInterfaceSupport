@@ -48,8 +48,8 @@ namespace mgis::config {
   enum struct ErrorReportPolicy { INVALIDRESULT, RAISE, ABORT };
 
   /*!
-   * \brief boolean variable stating which policy is usd for
-   * reporting a runtime error
+   * \brief boolean variable stating which policy is used for
+   * reporting a runtime error by default when using a context.
    *
    * By default, error are reported by returning an invalid result and
    * registring an error message in a context
@@ -60,6 +60,10 @@ namespace mgis::config {
    * If MGIS_USE_ABORT_FOR_ERROR_REPORTING is defined, registring
    * an error message in a context, the error message is printed
    * an the standard error stream and `std::abort` is called.
+   *
+   * \note if `setErrorReportingAsFatal` is called, this policy
+   * is ignored as any error will lead to display the error message
+   * on the standard error stream and call `std::abort`.
    */
   inline constexpr auto error_report_policy =
 #ifdef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
