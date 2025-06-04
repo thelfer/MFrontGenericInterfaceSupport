@@ -595,7 +595,7 @@ namespace mgis::behaviour {
     }
     auto res = MultiThreadedBehaviourIntegrationResult{};
     for (auto& t : tasks) {
-      const auto& ri = *(t.get());
+      const auto ri = *(t.get());
       res.exit_status = std::min(res.exit_status, ri.exit_status);
       res.results.push_back(ri);
     }
@@ -642,7 +642,7 @@ namespace mgis::behaviour {
     }
     auto res = MultiThreadedBehaviourIntegrationResult{};
     for (auto& t : tasks) {
-      const auto& ri = *(t.get());
+      const auto ri = *(t.get());
       res.exit_status = std::min(res.exit_status, ri.exit_status);
       res.results.push_back(ri);
     }
@@ -695,7 +695,7 @@ namespace mgis::behaviour {
     }
     auto res = MultiThreadedBehaviourIntegrationResult{};
     for (auto& t : tasks) {
-      const auto& ri = *(t.get());
+      const auto ri = *(t.get());
       res.exit_status = std::min(res.exit_status, ri.exit_status);
       res.results.push_back(ri);
     }
@@ -810,7 +810,7 @@ namespace mgis::behaviour {
     }
     auto res = MultiThreadedBehaviourIntegrationResult{};
     for (auto& t : tasks) {
-      const auto& ri = *(t.get());
+      const auto ri = *(t.get());
       res.exit_status = std::min(res.exit_status, ri.exit_status);
       res.results.push_back(ri);
     }
