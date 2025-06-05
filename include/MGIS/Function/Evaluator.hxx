@@ -14,7 +14,7 @@
 #include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/CompileTimeSize.hxx"
 #include "MGIS/Function/EvaluatorConcept.hxx"
-#include "MGIS/Function/ModifierConcept.hxx"
+#include "MGIS/Function/EvaluatorModifierConcept.hxx"
 
 namespace mgis::function {
 

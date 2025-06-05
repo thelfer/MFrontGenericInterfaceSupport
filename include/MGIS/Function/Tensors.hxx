@@ -31,13 +31,19 @@ namespace mgis::function::internals {
 
   template <TensorConcept TensorType>
   struct tensor_modifier {
+    //! \brief this alias allows to match the Evaluator Modifier concept
+    using Tag = ::mgis::function::EvaluatorModifierTag;
+
     template <FunctionConcept FunctionType>
     constexpr auto operator()(FunctionType&) const
         requires(number_of_components<FunctionType> == dynamic_extent
                      ? true
                      : compile_time_size<TensorType> ==
                            number_of_components<FunctionType>);
-
+    /*!
+     * \brief create a new modifier
+     * \param[in] e: evaluator type
+     */
     template <EvaluatorConcept EvaluatorType>
     constexpr auto operator()(const EvaluatorType&) const requires(
         (areTensorModifierRequirementsSatisfied<TensorType,

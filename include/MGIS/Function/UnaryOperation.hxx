@@ -87,6 +87,8 @@ namespace mgis::function {
 
     template <typename CallableType>
     struct unary_operation_modifier {
+      //! \brief this alias allows to match the Evaluator Modifier concept
+      using Tag = ::mgis::function::EvaluatorModifierTag;
       //
       constexpr unary_operation_modifier(const CallableType&);
       //
@@ -102,6 +104,9 @@ namespace mgis::function {
 
     template <typename CallableType>
     struct unary_operation_modifier2_impl {
+      //! \brief this alias allows to match the Evaluator Modifier concept
+      using Tag = ::mgis::function::EvaluatorModifierTag;
+      //
       template <typename EvaluatorType>
       constexpr auto operator()(EvaluatorType&&) const
           requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(

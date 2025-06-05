@@ -40,6 +40,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     this->test9();
     this->test10();
     this->test11();
+    this->test12();
     return this->result;
   }
 
@@ -370,22 +371,22 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     }
   }
   void test10() {
-     using namespace mgis;
-     using namespace mgis::function;
-     constexpr auto eps = real{1e-14};
-     TFEL_TESTS_STATIC_ASSERT((
-         EvaluatorConcept<FixedSizeView<Function<BasicLinearSpace>, 1>>));
-     Function<BasicLinearSpace> f(BasicLinearSpace{4}, 1);
-     f(0)[0] = 1;
-     f(1)[0] = -2;
-     f(2)[0] = -5;
-     f(3)[0] = 4;
-     const auto f_1 = view<1>(f);
-     const auto abs_values =  f_1 | absolute_value;
-     TFEL_TESTS_ASSERT(std::abs(abs_values(0) - 1) < eps);
-     TFEL_TESTS_ASSERT(std::abs(abs_values(1) - 2) < eps);
-     TFEL_TESTS_ASSERT(std::abs(abs_values(2) - 5) < eps);
-     TFEL_TESTS_ASSERT(std::abs(abs_values(3) - 4) < eps);
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    TFEL_TESTS_STATIC_ASSERT(
+        (EvaluatorConcept<FixedSizeView<Function<BasicLinearSpace>, 1>>));
+    Function<BasicLinearSpace> f(BasicLinearSpace{4}, 1);
+    f(0)[0] = 1;
+    f(1)[0] = -2;
+    f(2)[0] = -5;
+    f(3)[0] = 4;
+    const auto f_1 = view<1>(f);
+    const auto abs_values = f_1 | absolute_value;
+    TFEL_TESTS_ASSERT(std::abs(abs_values(0) - 1) < eps);
+    TFEL_TESTS_ASSERT(std::abs(abs_values(1) - 2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(abs_values(2) - 5) < eps);
+    TFEL_TESTS_ASSERT(std::abs(abs_values(3) - 4) < eps);
   }
   void test11() {
 #ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
@@ -436,6 +437,26 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(check_value(values[11], 3));
     TFEL_TESTS_STATIC_ASSERT(check_value(values[12], -8));
     TFEL_TESTS_STATIC_ASSERT(check_value(values[13], 2));
+#endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
+  }
+  void test12() {
+#ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
+    using namespace mgis;
+    using namespace mgis::function;
+    auto check_value = [](const real& a, const real b) constexpr->bool {
+      constexpr auto eps = real{1e-12};
+      auto local_abs = [](const real r) { return r > 0 ? r : -r; };
+      return local_abs(a - b) < eps;
+    };
+    constexpr auto value = []() constexpr {
+      Function f(BasicLinearSpace{1}, 4);
+      (f | as_stensor<2>)(0) = {1, -2, -5, 4};
+      const auto op = as_stensor<2> | trace | negate | multiply_by_scalar(2) |
+                      divide_by_scalar(3);
+      return (f.view() | op)(0);
+    }
+    ();
+    TFEL_TESTS_STATIC_ASSERT(check_value(value, 4));
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }
 };

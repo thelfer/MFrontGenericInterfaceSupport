@@ -120,6 +120,8 @@ namespace mgis::function {
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>
     requires(std::is_copy_constructible_v<
              CallableType>) struct BinaryOperatorCurrying {
+      //! \brief this alias allows to match the Evaluator Modifier concept
+      using Tag = ::mgis::function::EvaluatorModifierTag;
       //
       constexpr BinaryOperatorCurrying(const CallableType&,
                                        const SecondEvaluatorType&);
@@ -139,6 +141,8 @@ namespace mgis::function {
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>
     requires(std::is_trivially_default_constructible_v<
              CallableType>) struct BinaryOperatorCurrying2 {
+      //! \brief this alias allows to match the Evaluator Modifier concept
+      using Tag = ::mgis::function::EvaluatorModifierTag;
       //
       constexpr BinaryOperatorCurrying2(const SecondEvaluatorType&);
       //

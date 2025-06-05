@@ -155,7 +155,8 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
       auto f = Function<BasicLinearSpace>{space, 3};
       auto v = f | as_tvector<3>;
       return v.getNumberOfComponents();
-    }();
+    }
+    ();
     TFEL_TESTS_STATIC_ASSERT(size == 3);
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }

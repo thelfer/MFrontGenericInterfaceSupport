@@ -44,8 +44,7 @@ namespace mgis {
      */
     virtual InvalidResult registerErrorMessage(
         const char *const,
-        const std::source_location & =
-            std::source_location::current()) = 0;
+        const std::source_location & = std::source_location::current()) = 0;
 #else
     /*!
      * \brief register a new error message
