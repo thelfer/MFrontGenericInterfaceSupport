@@ -49,7 +49,7 @@ namespace mgis {
   InvalidResult ErrorBacktrace::registerErrorMessage(
       const ErrorReport e, const std::source_location &l) noexcept {
     try {
-      this->errorMessages_.push_back(
+      this->error_messages.push_back(
           {l.file_name(), l.function_name(), l.line(), e});
     } catch (...) {
     }
@@ -75,7 +75,7 @@ namespace mgis {
     try {
       auto em = ErrorMessage{};
       em.e = e;
-      this->errorMessages_.push_back(em);
+      this->error_messages.push_back(em);
     } catch (...) {
     }
     this->treatFatalCase_();
@@ -118,8 +118,8 @@ namespace mgis {
     auto msg = std::string{};
     auto prefix = std::string{};
     try {
-      auto p = this->errorMessages_.rbegin();
-      const auto pe = this->errorMessages_.rend();
+      auto p = this->error_messages.rbegin();
+      const auto pe = this->error_messages.rend();
       for (; p != pe; ++p) {
         auto firstLine = true;
         for (const auto &l : split(ErrorBacktrace::getErrorMessage(p->e))) {
@@ -155,8 +155,8 @@ namespace mgis {
     auto msg = std::string{};
     auto prefix = std::string{};
     try {
-      auto p = this->errorMessages_.rbegin();
-      const auto pe = this->errorMessages_.rend();
+      auto p = this->error_messages.rbegin();
+      const auto pe = this->error_messages.rend();
       for (; p != pe; ++p) {
         for (const auto &l : split(ErrorBacktrace::getErrorMessage(p->e))) {
           if (!msg.empty()) {
@@ -176,11 +176,11 @@ namespace mgis {
   }  // end of getRawErrorMessage_
 
   bool ErrorBacktrace::empty() const noexcept {
-    return this->errorMessages_.empty();
+    return this->error_messages.empty();
   }  // end of empty
 
   void ErrorBacktrace::clearErrorMessages() noexcept {
-    return this->errorMessages_.clear();
+    return this->error_messages.clear();
   }  // end of clearErrorMessages
 
   void ErrorBacktrace::treatFatalCase_() const noexcept {

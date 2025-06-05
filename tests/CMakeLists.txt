@@ -440,6 +440,14 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
 endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
+add_executable(ReduceTest
+ EXCLUDE_FROM_ALL
+ ReduceTest.cxx)
+target_link_libraries(ReduceTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME ReduceTest COMMAND ReduceTest)
+add_dependencies(check ReduceTest)
+
 endif(MGIS_HAVE_TFEL)
 
 endif(enable-mgis-function)

@@ -9,15 +9,18 @@
 namespace mgis {
 
   Context::Context() noexcept
-      : verbosity_(mgis::getDefaultVerbosityLevel()) {  //
-  }                                                     // end of Context
+      : verbosity(mgis::getDefaultVerbosityLevel()) {  //
+  }                                                    // end of Context
+
+  Context::Context(const ContextInitializer &i) noexcept
+      : verbosity(i.verbosity) {}  // end of Context
 
   const VerbosityLevel &Context::getVerbosityLevel() const noexcept {
-    return this->verbosity_;
+    return this->verbosity;
   }  // end of getVerbosityLevel
 
   void Context::setVerbosityLevel(const VerbosityLevel l) noexcept {
-    this->verbosity_ = l;
+    this->verbosity = l;
   }  // end of setVerbosityLevel
 
   Context::~Context() noexcept = default;

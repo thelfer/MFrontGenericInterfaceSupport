@@ -123,7 +123,7 @@ namespace mgis {
     //! \brief treat the case when error reporting is fatal
     void treatFatalCase_() const noexcept;
     //! \brief list of registered error message
-    std::vector<ErrorMessage> errorMessages_;
+    std::vector<ErrorMessage> error_messages;
   };  // end of ErrorBacktrace
 
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION

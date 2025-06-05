@@ -60,12 +60,13 @@ namespace mgis::function::internals {
   void assign_scalar_impl(FunctionType& f, EvaluatorType e) requires(
       (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
           !hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
+    using Space = std::decay_t<decltype(getSpace(f))>;
     using value_type = std::invoke_result_t<FunctionType, size_type>;
     using result_type = std::invoke_result_t<EvaluatorType, size_type>;
     const auto& space = getSpace(f);
     const auto ne = getSpaceSize(space);
     if constexpr (internals::same_decay_type<result_type, real>) {
-      for (size_type i = 0; i != ne; ++i) {
+      for (typename SpaceTraits<Space>::size_type i = 0; i != ne; ++i) {
         if constexpr (internals::same_decay_type<value_type, real>) {
           f(i) = e(i);
         } else {
@@ -73,7 +74,7 @@ namespace mgis::function::internals {
         }
       }
     } else {
-      for (size_type i = 0; i != ne; ++i) {
+      for (typename SpaceTraits<Space>::size_type i = 0; i != ne; ++i) {
         if constexpr (internals::same_decay_type<value_type, real>) {
           f(i) = e(i)[0];
         } else {
@@ -87,13 +88,14 @@ namespace mgis::function::internals {
   void assign_scalar_impl(FunctionType& f, EvaluatorType e) requires(
       (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
           hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
+    using Space = std::decay_t<decltype(getSpace(f))>;
     using value_type = std::invoke_result_t<FunctionType, size_type>;
     using result_type = std::invoke_result_t<EvaluatorType, size_type>;
     const auto& space = getSpace(f);
     const auto ne = getSpaceSize(space);
     if constexpr (internals::same_decay_type<result_type, real>) {
-      for (size_type i = 0; i != ne; ++i) {
-        const auto& wk = space.getElementWorkspace(i);
+      for (typename SpaceTraits<Space>::size_type i = 0; i != ne; ++i) {
+        const auto& wk = getElementWorkspace(space, i);
         if constexpr (internals::same_decay_type<value_type, real>) {
           f(wk, i) = e(wk, i);
         } else {
@@ -101,8 +103,8 @@ namespace mgis::function::internals {
         }
       }
     } else {
-      for (size_type i = 0; i != ne; ++i) {
-        const auto& wk = space.getElementWorkspace(i);
+      for (typename SpaceTraits<Space>::size_type i = 0; i != ne; ++i) {
+        const auto& wk = getElementWorkspace(space, i);
         if constexpr (internals::same_decay_type<value_type, real>) {
           f(wk, i) = e(wk, i)[0];
         } else {
@@ -116,6 +118,7 @@ namespace mgis::function::internals {
   void assign_impl(FunctionType& f, EvaluatorType e) requires(
       (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
           !hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
+    using Space = std::decay_t<decltype(getSpace(f))>;
     using value_type = std::invoke_result_t<FunctionType, size_type>;
     using result_type = std::invoke_result_t<EvaluatorType, size_type>;
     constexpr auto use_direct_assignement =
@@ -124,7 +127,7 @@ namespace mgis::function::internals {
     };
     const auto& space = getSpace(f);
     const auto ne = getSpaceSize(space);
-    for (size_type i = 0; i != ne; ++i) {
+    for (typename SpaceTraits<Space>::size_type i = 0; i != ne; ++i) {
       if constexpr (use_direct_assignement) {
         f(i) = e(i);
       } else {
@@ -139,6 +142,7 @@ namespace mgis::function::internals {
   void assign_impl(FunctionType& f, EvaluatorType e) requires(
       (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
           hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
+    using Space = std::decay_t<decltype(getSpace(f))>;
     using value_type = std::invoke_result_t<FunctionType, size_type>;
     using result_type = std::invoke_result_t<EvaluatorType, size_type>;
     constexpr auto use_direct_assignement =
@@ -147,8 +151,8 @@ namespace mgis::function::internals {
     };
     const auto& space = getSpace(f);
     const auto ne = getSpaceSize(space);
-    for (size_type i = 0; i != ne; ++i) {
-      const auto& wk = space.getElementWorkspace(i);
+    for (typename SpaceTraits<Space>::size_type i = 0; i != ne; ++i) {
+      const auto& wk = getElementWorkspace(space, i);
       if constexpr (use_direct_assignement) {
         f(wk, i) = e(wk, i);
       } else {
@@ -162,39 +166,6 @@ namespace mgis::function::internals {
 }  // end of namespace mgis::function::internals
 
 namespace mgis::function {
-
-  //   template <size_type N, FunctionEvalutorConcept EvaluatorType>
-  //   bool assign(Context& ctx, Function& f, EvaluatorType e) requires(N > 0) {
-  //     checkMatchingSpaces(f, e);
-  //     if (f.getNumberOfComponents() != N) {
-  //       return ctx.registerErrorMessage(
-  //           "assign: invalid number of components for the left hand size");
-  //     }
-  //     if (e.getNumberOfComponents() != N) {
-  //       return ctx.registerErrorMessage(
-  //           "assign: invalid number of components for the right hand size");
-  //     }
-  //     //
-  //     if (!e.check(ctx)) {
-  //       return false;
-  //     }
-  //     e.allocateWorkspace();
-  //     //
-  //     const auto qspace = getSpace(f);
-  //     const auto ne = getSpaceSize(qspace);
-  //     for (size_type i = 0; i != ne; ++i) {
-  //       if constexpr (N == 1) {
-  //         auto& v = f.getValue(i);
-  //         v = e(i);
-  //       } else {
-  //         auto lhs_values = f.template getValues<N>(i);
-  //         const auto& rhs_values = e(i);
-  //         algorithm::copy<N>(rhs_values.begin(), rhs_values.end(),
-  //                            lhs_values.begin());
-  //       }
-  //     }
-  //     return true;
-  //   }  // end of assign
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   bool assign(Context& ctx,
@@ -222,13 +193,56 @@ namespace mgis::function {
     if (f.getNumberOfComponents() == 1) {
       internals::assign_scalar_impl(f, e);
     } else {
-      // this if constexpr to avoid the compilation of the body
+      // this "if constexpr" is used to avoid the compilation of the body
       if constexpr (!internals::same_decay_type<result_type, real>) {
         internals::assign_impl(f, e);
       }
     }
     return true;
   }  // end of assign
+
+  template <EvaluatorConcept EvaluatorType, typename OperatorType>
+  [[nodiscard]] std::optional<real> scalar_reduce(Context& ctx,
+                                                  EvaluatorType e,
+                                                  const OperatorType op,
+                                                  const real initial_value)  //
+      requires(LinearElementSpaceConcept<std::decay_t<
+                   decltype(getSpace(std::declval<EvaluatorType>()))>>) {
+    using Space = std::decay_t<decltype(getSpace(e))>;
+    if (e.getNumberOfComponents() != 1) {
+      return ctx.registerErrorMessage("non scalar evaluator");
+    }
+    //
+    if (!e.check(ctx)) {
+      return false;
+    }
+    e.allocateWorkspace();
+    const auto& space = getSpace(e);
+    const auto ne = getSpaceSize(space);
+    auto r = initial_value;
+    if constexpr (hasElementWorkspace<Space>) {
+      for (typename SpaceTraits<Space>::size_type i = 0; i != ne; ++i) {
+        if constexpr (internals::same_decay_type<
+                          evaluator_result<EvaluatorType>, real>) {
+          const auto& wk = getElementWorkspace(space, i);
+          r = op(r, e(wk, i));
+        } else {
+          const auto& wk = getElementWorkspace(space, i);
+          r = op(r, e(wk, i)[0]);
+        }
+      }
+    } else {
+      for (typename SpaceTraits<Space>::size_type i = 0; i != ne; ++i) {
+        if constexpr (internals::same_decay_type<
+                          evaluator_result<EvaluatorType>, real>) {
+          r = op(r, e(i));
+        } else {
+          r = op(r, e(i)[0]);
+        }
+      }
+    }
+    return r;
+  }  // end of scalar_reduce
 
 }  // namespace mgis::function
 
