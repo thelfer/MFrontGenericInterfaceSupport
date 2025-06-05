@@ -14,6 +14,7 @@
 #include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/CompileTimeSize.hxx"
 #include "MGIS/Function/EvaluatorConcept.hxx"
+#include "MGIS/Function/ModifierConcept.hxx"
 
 namespace mgis::function {
 
@@ -27,17 +28,6 @@ namespace mgis::function {
   bool checkMatchingSpaces(Context&,
                            const EvaluatorConcept auto&,
                            const EvaluatorConcept auto&);
-
-  /*!
-   * \return the evaluator resulting from appling the modifier to the evaluator
-   * \param[in] e: evaluator
-   * \param[in] m: modifier
-   */
-  template <EvaluatorConcept EvaluatorType, typename ModifierType>
-  constexpr auto operator|(const EvaluatorType& e, ModifierType m)  //
-      requires(requires {
-        { m(e) } -> EvaluatorConcept;
-      });
 
 }  // end of namespace mgis::function
 
