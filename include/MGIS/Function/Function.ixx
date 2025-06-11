@@ -66,18 +66,6 @@ namespace mgis::function {
             bool is_mutable>
   requires(LinearElementSpaceConcept<Space> ||
            LinearQuadratureSpaceConcept<Space>)  //
-      template <typename... Args>
-      constexpr FunctionView<Space, layout, is_mutable>::FunctionView(
-          Args&&... args)  //
-      requires(is_check_preconditions_callable<FunctionView, Args...>)
-      : FunctionView(preconditions_check, std::forward<Args>(args)...) {
-  }  // end of FunctionView
-
-  template <FunctionalSpaceConcept Space,
-            DataLayoutDescription layout,
-            bool is_mutable>
-  requires(LinearElementSpaceConcept<Space> ||
-           LinearQuadratureSpaceConcept<Space>)  //
       constexpr bool FunctionView<Space, layout, is_mutable>::
           checkPreconditions(AbstractErrorHandler& eh,
                              const Space& s,
@@ -94,6 +82,18 @@ namespace mgis::function {
     }
     return v.size() >= layout.data_stride * (space_size - 1) + layout.data_size;
   }
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  requires(LinearElementSpaceConcept<Space> ||
+           LinearQuadratureSpaceConcept<Space>)  //
+      constexpr FunctionView<Space, layout, is_mutable>::FunctionView(
+          const Space& s,
+          typename FunctionView::ExternalData v)  //
+      requires((layout.data_size != dynamic_extent) &&
+               (layout.data_stride != dynamic_extent))
+      : FunctionView(preconditions_check,s, v){}
 
   template <FunctionalSpaceConcept Space,
             DataLayoutDescription layout,
@@ -135,6 +135,19 @@ namespace mgis::function {
     const auto min_size = (layout.data_stride) * (space_size - 1) + dsize;
     return v.size() >= min_size;
   }  // end of FunctionView
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  requires(LinearElementSpaceConcept<Space> ||
+           LinearQuadratureSpaceConcept<Space>)  //
+      constexpr FunctionView<Space, layout, is_mutable>::FunctionView(
+          const Space& s,
+          FunctionView::ExternalData v,
+          const size_type dsize)  //
+      requires((layout.data_size == dynamic_extent) &&
+               (layout.data_stride != dynamic_extent))
+      : FunctionView(preconditions_check, s, v, dsize) {}
 
   template <FunctionalSpaceConcept Space,
             DataLayoutDescription layout,
@@ -190,15 +203,27 @@ namespace mgis::function {
             bool is_mutable>
   requires(LinearElementSpaceConcept<Space> ||
            LinearQuadratureSpaceConcept<Space>)  //
+      constexpr FunctionView<Space, layout, is_mutable>::FunctionView(
+          const Space& s,
+          FunctionView::ExternalData v,
+          const size_type dstride)  //
+      requires((layout.data_size != dynamic_extent) &&
+               (layout.data_stride == dynamic_extent))
+      : FunctionView(preconditions_check, s, v, dstride) {}
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  requires(LinearElementSpaceConcept<Space> ||
+           LinearQuadratureSpaceConcept<Space>)  //
       template <bool doPreconditionsCheck>
       constexpr FunctionView<Space, layout, is_mutable>::FunctionView(
           const PreconditionsCheck<doPreconditionsCheck>& pcheck,
           const Space& s,
           FunctionView::ExternalData v,
-          const size_type dstride) requires((layout.data_size !=
-                                             dynamic_extent) &&
-                                            (layout.data_stride ==
-                                             dynamic_extent))
+          const size_type dstride)  //
+      requires((layout.data_size != dynamic_extent) &&
+               (layout.data_stride == dynamic_extent))
       : PreconditionsChecker<FunctionView>(pcheck, s, v, dstride),
         space(s),
         values(v) {
@@ -260,6 +285,20 @@ namespace mgis::function {
             bool is_mutable>
   requires(LinearElementSpaceConcept<Space> ||
            LinearQuadratureSpaceConcept<Space>)  //
+      constexpr FunctionView<Space, layout, is_mutable>::FunctionView(
+          const Space& s,
+          FunctionView::ExternalData v,
+          const size_type dsize,
+          const size_type dstride)  //
+      requires((layout.data_size == dynamic_extent) &&
+               (layout.data_stride == dynamic_extent))
+      : FunctionView(preconditions_check, s, v, dsize, dstride) {}
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  requires(LinearElementSpaceConcept<Space> ||
+           LinearQuadratureSpaceConcept<Space>)  //
       template <bool doPreconditionsCheck>
       constexpr FunctionView<Space, layout, is_mutable>::FunctionView(
           const PreconditionsCheck<doPreconditionsCheck>& pcheck,
@@ -281,6 +320,19 @@ namespace mgis::function {
             bool is_mutable>
   requires(LinearElementSpaceConcept<Space> ||
            LinearQuadratureSpaceConcept<Space>)  //
+      constexpr FunctionView<Space, layout, is_mutable>::FunctionView(
+          const Space& s,
+          FunctionView::ExternalData v,
+          const size_type dsize)  //
+      requires((layout.data_size == dynamic_extent) &&
+               (layout.data_stride == dynamic_extent))
+      : FunctionView(preconditions_check, s, v, dsize, dsize) {}  // end of FunctionView
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  requires(LinearElementSpaceConcept<Space> ||
+           LinearQuadratureSpaceConcept<Space>)  //
       template <bool doPreconditionsCheck>
       constexpr FunctionView<Space, layout, is_mutable>::FunctionView(
           const PreconditionsCheck<doPreconditionsCheck>& pcheck,
@@ -290,6 +342,20 @@ namespace mgis::function {
       requires((layout.data_size == dynamic_extent) &&
                (layout.data_stride == dynamic_extent))
       : FunctionView(pcheck, s, v, dsize, dsize) {}  // end of FunctionView
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  requires(LinearElementSpaceConcept<Space> ||
+           LinearQuadratureSpaceConcept<Space>)  //
+      constexpr FunctionView<Space, layout, is_mutable>::FunctionView(
+          const Space& s,
+          FunctionView::ExternalData v,
+          const DataLayout<layout>& l)  //
+      requires((layout.data_size == dynamic_extent) &&
+               (layout.data_stride == dynamic_extent))
+      : FunctionView(preconditions_check, s, v, l.size, l.stride) {
+  }  // end of FunctionView
 
   template <FunctionalSpaceConcept Space,
             DataLayoutDescription layout,
@@ -311,6 +377,19 @@ namespace mgis::function {
             bool is_mutable>
   requires(LinearElementSpaceConcept<Space> ||
            LinearQuadratureSpaceConcept<Space>)  //
+      constexpr FunctionView<Space, layout, is_mutable>::FunctionView(
+          const Space& s,
+          FunctionView::ExternalData v,
+          const DataLayout<layout>& l)  //
+      requires((layout.data_size != dynamic_extent) &&
+               (layout.data_stride == dynamic_extent))
+      : FunctionView(preconditions_check, s, v, l.stride) {}
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  requires(LinearElementSpaceConcept<Space> ||
+           LinearQuadratureSpaceConcept<Space>)  //
       template <bool doPreconditionsCheck>
       constexpr FunctionView<Space, layout, is_mutable>::FunctionView(
           const PreconditionsCheck<doPreconditionsCheck>& pcheck,
@@ -320,6 +399,19 @@ namespace mgis::function {
       requires((layout.data_size != dynamic_extent) &&
                (layout.data_stride == dynamic_extent))
       : FunctionView(pcheck, s, v, l.stride) {}
+
+  template <FunctionalSpaceConcept Space,
+            DataLayoutDescription layout,
+            bool is_mutable>
+  requires(LinearElementSpaceConcept<Space> ||
+           LinearQuadratureSpaceConcept<Space>)  //
+      constexpr FunctionView<Space, layout, is_mutable>::FunctionView(
+          const Space& s,
+          FunctionView::ExternalData v,
+          const DataLayout<layout>& l)  //
+      requires((layout.data_size == dynamic_extent) &&
+               (layout.data_stride != dynamic_extent))
+      : FunctionView(preconditions_check, s, v, l.size) {}  // end of FunctionView
 
   template <FunctionalSpaceConcept Space,
             DataLayoutDescription layout,

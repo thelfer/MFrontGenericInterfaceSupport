@@ -164,13 +164,6 @@ namespace mgis::function {
     static constexpr bool allowScalarAccessor =
         (layout.data_size == dynamic_extent) ? true : layout.data_size == 1;
     /*!
-     * \brief constructor meant that always actives precondition checks
-     * \param[in] args: arguments passed to the constructor
-     */
-    template <typename... Args>
-    constexpr FunctionView(Args&&... args)  //
-        requires(is_check_preconditions_callable<FunctionView, Args...>);
-    /*!
      * \brief check that the preconditions to build the view are met
      * \param[in] eh: error handler.
      * \param[in] s: quadrature space.
@@ -237,6 +230,17 @@ namespace mgis::function {
                                   (layout.data_stride == dynamic_extent));
     /*!
      * \brief constructor
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] dstride: size of the data per elements
+     */
+    constexpr FunctionView(const Space&,
+                           ExternalData,
+                           const size_type)  //
+        requires((layout.data_size != dynamic_extent) &&
+                 (layout.data_stride == dynamic_extent));
+    /*!
+     * \brief constructor
      * \param[in] pcheck: do preconditions checks
      * \param[in] s: quadrature space.
      * \param[in] v: values
@@ -248,6 +252,19 @@ namespace mgis::function {
                            ExternalData,
                            const size_type)  //
         requires((layout.data_size != dynamic_extent) &&
+                 (layout.data_stride == dynamic_extent));
+    /*!
+     * \brief constructor
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] dsize: size of the data per elements
+     * \param[in] dstride: data stride
+     */
+    constexpr FunctionView(const Space&,
+                           ExternalData,
+                           const size_type,
+                           const size_type)  //
+        requires((layout.data_size == dynamic_extent) &&
                  (layout.data_stride == dynamic_extent));
     /*!
      * \brief constructor
@@ -267,14 +284,11 @@ namespace mgis::function {
                  (layout.data_stride == dynamic_extent));
     /*!
      * \brief constructor
-     * \param[in] pcheck: do preconditions checks
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] dsize: size of the data per elements
      */
-    template <bool doPreconditionsCheck>
-    constexpr FunctionView(const PreconditionsCheck<doPreconditionsCheck>&,
-                           const Space&,
+    constexpr FunctionView(const Space&,
                            ExternalData,
                            const size_type)  //
         requires((layout.data_size == dynamic_extent) &&
@@ -292,6 +306,40 @@ namespace mgis::function {
                            ExternalData,
                            const size_type)  //
         requires((layout.data_size == dynamic_extent) &&
+                 (layout.data_stride == dynamic_extent));
+    /*!
+     * \brief constructor
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] dsize: size of the data per elements
+     */
+    constexpr FunctionView(const Space&,
+                           ExternalData,
+                           const size_type)  //
+        requires((layout.data_size == dynamic_extent) &&
+                 (layout.data_stride != dynamic_extent));
+    /*!
+     * \brief constructor
+     * \param[in] pcheck: do preconditions checks
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] dsize: size of the data per elements
+     */
+    template <bool doPreconditionsCheck>
+    constexpr FunctionView(const PreconditionsCheck<doPreconditionsCheck>&,
+                           const Space&,
+                           ExternalData,
+                           const size_type)  //
+        requires((layout.data_size == dynamic_extent) &&
+                 (layout.data_stride != dynamic_extent));
+    /*!
+     * \brief constructor
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     */
+    constexpr FunctionView(const Space&,
+                           ExternalData)  //
+        requires((layout.data_size != dynamic_extent) &&
                  (layout.data_stride != dynamic_extent));
     /*!
      * \brief constructor
@@ -307,14 +355,11 @@ namespace mgis::function {
                  (layout.data_stride != dynamic_extent));
     /*!
      * \brief check that the preconditions to build the view are met
-     * \param[in] pcheck: do preconditions checks
      * \param[in] s: quadrature space.
      * \param[in] v: values
      * \param[in] l: data layout
      */
-    template <bool doPreconditionsCheck>
-    constexpr FunctionView(const PreconditionsCheck<doPreconditionsCheck>&,
-                           const Space&,
+    constexpr FunctionView(const Space&,
                            ExternalData,
                            const DataLayout<layout>&)  //
         requires((layout.data_size == dynamic_extent) &&
@@ -331,8 +376,44 @@ namespace mgis::function {
                            const Space&,
                            ExternalData,
                            const DataLayout<layout>&)  //
+        requires((layout.data_size == dynamic_extent) &&
+                 (layout.data_stride == dynamic_extent));
+    /*!
+     * \brief check that the preconditions to build the view are met
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] l: data layout
+     */
+    constexpr FunctionView(const Space&,
+                           ExternalData,
+                           const DataLayout<layout>&)  //
         requires((layout.data_size != dynamic_extent) &&
                  (layout.data_stride == dynamic_extent));
+    /*!
+     * \brief check that the preconditions to build the view are met
+     * \param[in] pcheck: do preconditions checks
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] l: data layout
+     */
+    template <bool doPreconditionsCheck>
+    constexpr FunctionView(const PreconditionsCheck<doPreconditionsCheck>&,
+                           const Space&,
+                           ExternalData,
+                           const DataLayout<layout>&)  //
+        requires((layout.data_size != dynamic_extent) &&
+                 (layout.data_stride == dynamic_extent));
+    /*!
+     * \brief check that the preconditions to build the view are met
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] l: data layout
+     */
+    constexpr FunctionView(const Space&,
+                           ExternalData,
+                           const DataLayout<layout>&)  //
+        requires((layout.data_size == dynamic_extent) &&
+                 (layout.data_stride != dynamic_extent));
     /*!
      * \brief check that the preconditions to build the view are met
      * \param[in] pcheck: do preconditions checks
