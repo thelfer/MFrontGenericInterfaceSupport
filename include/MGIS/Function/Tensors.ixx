@@ -92,11 +92,10 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr auto operator|(FunctionType& f,
                            const internals::tensor_modifier<TensorType>& m)  //
-      requires(number_of_components<std::decay_t<FunctionType>> ==
-                       dynamic_extent
+      requires(number_of_components<FunctionType> == dynamic_extent
                    ? true
                    : compile_time_size<TensorType> ==
-                         number_of_components<std::decay_t<FunctionType>>) {
+                         number_of_components<FunctionType>) {
     return m(f);
   }
 

@@ -1,3 +1,4 @@
+
 /*!
  * \file   MGIS/Function/Tensors.hxx
  * \brief
@@ -8,8 +9,8 @@
 #ifndef LIB_MGIS_FUNCTION_TENSORS_HXX
 #define LIB_MGIS_FUNCTION_TENSORS_HXX
 
-#include "MGIS/Function/Function.hxx"
-#include "MGIS/Function/Evaluator.hxx"
+#include "MGIS/Function/FunctionConcept.hxx"
+#include "MGIS/Function/EvaluatorConcept.hxx"
 
 #ifdef MGIS_HAVE_TFEL
 
@@ -146,11 +147,10 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr auto operator|(FunctionType&,
                            const internals::tensor_modifier<TensorType>&)  //
-      requires(number_of_components<std::decay_t<FunctionType>> ==
-                       dynamic_extent
+      requires(number_of_components<FunctionType> == dynamic_extent
                    ? true
                    : compile_time_size<TensorType> ==
-                         number_of_components<std::decay_t<FunctionType>>);
+                         number_of_components<FunctionType>);
 
   template <unsigned short N>
   requires((N == 1) || (N == 2) || (N == 3))  //

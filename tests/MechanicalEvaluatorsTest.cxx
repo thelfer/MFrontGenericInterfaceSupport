@@ -61,7 +61,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     const auto f = FunctionEvaluator<BasicLinearSpace>(space, values, 3);
     auto seq = Function<BasicLinearSpace>(space, 1);
     TFEL_TESTS_ASSERT(seq.isScalar());
-    const auto ok = view<3>(f) | as_stensor<1> | vmis | seq;
+    const auto ok = f | as_stensor<1> | vmis | seq;
     TFEL_TESTS_ASSERT(ok);
     TFEL_TESTS_ASSERT(std::abs(seq(0)[0] - std::sqrt(3)) < eps);
     auto seq2 = Function<BasicLinearSpace>(space, 1);

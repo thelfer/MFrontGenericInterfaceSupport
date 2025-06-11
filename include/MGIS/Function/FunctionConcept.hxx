@@ -229,9 +229,7 @@ namespace mgis::function {
 
   }  // namespace internals
 
-  /*!
-   * \brief a concept that must satisfy an evaluator
-   */
+  //! \brief a concept that must satisfy a function
   template <typename FunctionType>
   concept FunctionConcept =
       (SpaceConcept<
@@ -373,5 +371,56 @@ namespace mgis::function {
 }  // end of namespace mgis::function
 
 #include "MGIS/Function/FunctionConcept.ixx"
+#include "MGIS/Function/FixedSizeView.hxx"
+#include "MGIS/Function/FixedSizeModifier.hxx"
+
+namespace mgis::function::internals {
+
+  template <size_type N>
+  requires((N > 0) && (N != dynamic_extent))  //
+      struct fixed_size_modifier {
+    //! \brief this alias allows to match the Evaluator Modifier concept
+    using Tag = ::mgis::function::EvaluatorModifierTag;
+
+    template <FunctionConcept FunctionType>
+    constexpr auto operator()(FunctionType& f) const
+        requires(number_of_components<FunctionType> == dynamic_extent
+                     ? true
+                     : N == number_of_components<FunctionType>) {
+      return FixedSizeView<FunctionType, N>(f);
+    }
+    /*!
+     * \brief create a new modifier
+     * \param[in] e: evaluator type
+     */
+    template <EvaluatorConcept EvaluatorType>
+    constexpr auto operator()(const EvaluatorType& e) const
+        requires(number_of_components<EvaluatorType> == dynamic_extent
+                     ? true
+                     : N == number_of_components<EvaluatorType>) {
+      return FixedSizeModifier<EvaluatorType, N>(e);
+    }
+  };
+
+}  // end of namespace mgis::function::internals
+
+namespace mgis::function {
+
+  template <FunctionConcept FunctionType, size_type N>
+  constexpr auto operator|(FunctionType& f,
+                           const internals::fixed_size_modifier<N>& m)  //
+      requires(number_of_components<FunctionType> == dynamic_extent
+                   ? true
+                   : N == number_of_components<FunctionType>) {
+    return m(f);
+  }
+
+  template <size_type N>
+  requires((N > 0) && (N != dynamic_extent))  //
+      inline constexpr auto as_array = internals::fixed_size_modifier<N>{};
+
+  inline constexpr auto as_scalar = internals::fixed_size_modifier<1>{};
+
+}  // end of namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_FUNCTIONCONCEPT_HXX */

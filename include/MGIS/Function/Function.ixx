@@ -93,7 +93,7 @@ namespace mgis::function {
           typename FunctionView::ExternalData v)  //
       requires((layout.data_size != dynamic_extent) &&
                (layout.data_stride != dynamic_extent))
-      : FunctionView(preconditions_check,s, v){}
+      : FunctionView(preconditions_check, s, v) {}
 
   template <FunctionalSpaceConcept Space,
             DataLayoutDescription layout,
@@ -326,7 +326,8 @@ namespace mgis::function {
           const size_type dsize)  //
       requires((layout.data_size == dynamic_extent) &&
                (layout.data_stride == dynamic_extent))
-      : FunctionView(preconditions_check, s, v, dsize, dsize) {}  // end of FunctionView
+      : FunctionView(preconditions_check, s, v, dsize, dsize) {
+  }  // end of FunctionView
 
   template <FunctionalSpaceConcept Space,
             DataLayoutDescription layout,
@@ -411,7 +412,8 @@ namespace mgis::function {
           const DataLayout<layout>& l)  //
       requires((layout.data_size == dynamic_extent) &&
                (layout.data_stride != dynamic_extent))
-      : FunctionView(preconditions_check, s, v, l.size) {}  // end of FunctionView
+      : FunctionView(preconditions_check, s, v, l.size) {
+  }  // end of FunctionView
 
   template <FunctionalSpaceConcept Space,
             DataLayoutDescription layout,

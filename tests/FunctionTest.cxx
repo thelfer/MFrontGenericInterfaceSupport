@@ -396,6 +396,16 @@ struct FunctionTest final : public tfel::tests::TestCase {
     f5(1) = 5;
     TFEL_TESTS_ASSERT(std::abs(f4(0)[0] - 4) < eps);
     TFEL_TESTS_ASSERT(std::abs(f4(1)[0] - 5) < eps);
+    //
+    auto f6 = f4 | as_scalar;
+    TFEL_TESTS_ASSERT(f6.check(ctx));
+    TFEL_TESTS_ASSERT(std::abs(f6(0) - 4) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f6(1) - 5) < eps);
+    // changing f4 value using the view
+    f6(0) = 2;
+    f6(1) = -3;
+    TFEL_TESTS_ASSERT(std::abs(f4(0)[0] - 2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(f4(1)[0] + 3) < eps);
   }
   void test6() {
     // check that view<N> work with a fixed size function
