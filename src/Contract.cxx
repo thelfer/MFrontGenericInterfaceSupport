@@ -5,6 +5,7 @@
  * \date   03/06/2025
  */
 
+#include <iostream>
 #include <cstdlib>
 #include <iostream>
 #include "MGIS/Contract.hxx"

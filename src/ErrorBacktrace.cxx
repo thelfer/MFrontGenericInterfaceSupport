@@ -13,10 +13,10 @@ namespace mgis::internal {
 
   //! \return a flag stating if registring an error is fatal, i.e. exits by
   //! calling `std::exit`.
-  static bool &getErrorReportingPolicy() {
+  static bool &isErrorReportingFatal() {
     static bool isErrorReportingFatal = false;
     return isErrorReportingFatal;
-  }  // end of getErrorReportingPolicy
+  }  // end of isErrorReportingFatal
 
 }  // end of namespace mgis::internal
 
@@ -32,11 +32,11 @@ namespace mgis {
   }  // end of split
 
   void ErrorBacktrace::setErrorReportingAsFatal() noexcept {
-    ::mgis::internal::getErrorReportingPolicy() = true;
+    ::mgis::internal::isErrorReportingFatal() = true;
   }  // end of setIfErrorReportingIsFatal
 
   void ErrorBacktrace::unsetErrorReportingAsFatal() noexcept {
-    ::mgis::internal::getErrorReportingPolicy() = false;
+    ::mgis::internal::isErrorReportingFatal() = false;
   }  // end of setIfErrorReportingIsFatal
 
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
@@ -184,14 +184,14 @@ namespace mgis {
   }  // end of clearErrorMessages
 
   void ErrorBacktrace::treatFatalCase_() const noexcept {
-    if (::mgis::internal::getErrorReportingPolicy()) {
+    if (::mgis::internal::isErrorReportingFatal()) {
       std::cerr << this->getErrorMessage_() << std::endl;
       std::abort();
     }
-    if constexpr (config::error_report_policy ==
+    if constexpr (config::default_error_report_policy ==
                   config::ErrorReportPolicy::RAISE) {
       raise(this->getErrorMessage_());
-    } else if constexpr (config::error_report_policy ==
+    } else if constexpr (config::default_error_report_policy ==
                          config::ErrorReportPolicy::ABORT) {
       std::cerr << this->getErrorMessage_() << std::endl;
       std::abort();

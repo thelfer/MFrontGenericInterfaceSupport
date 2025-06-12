@@ -83,9 +83,11 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(f.data(unsafe, 2)[0] - 3) < eps);
     // precondition is not met
     auto values3 = std::vector<real>{1, 2};
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     TFEL_TESTS_ASSERT(
         !FunctionEvaluator<SharedSpace<BasicLinearSpace>>::checkPreconditions(
             ctx, space, values3, 1));
+#endif MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
 #ifdef MGIS_USE_EXCEPTIONS_FOR_CONTRACT_VIOLATION
     TFEL_TESTS_CHECK_THROW(
         FunctionEvaluator<SharedSpace<BasicLinearSpace>>(space, values3, 1),
@@ -223,6 +225,8 @@ struct FunctionTest final : public tfel::tests::TestCase {
     this->test7();
     this->test8();
     this->test9();
+    this->test10();
+    this->test11();
     return this->result;
   }
 
@@ -520,6 +524,194 @@ struct FunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(check_value(values2[2], -2));
     TFEL_TESTS_STATIC_ASSERT(check_value(values2[3], 3));
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
+  }
+  void test10() {
+    using namespace mgis;
+    using namespace mgis::function;
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
+    const auto s = BasicLinearSpace{2};
+    auto values = std::vector<real>(5);
+    auto check = [this, &s, &values](const size_type dsize, const auto dstride,
+                                     std::string_view emsg) {
+      auto ctx = Context{};
+      const auto b = FunctionView<BasicLinearSpace>::checkPreconditions(
+          ctx, s, values, dsize, dstride);
+      TFEL_TESTS_ASSERT(!b);
+      TFEL_TESTS_ASSERT(ctx.getRawErrorMessage() == emsg);
+    };
+    check(0, 2, "invalid number of components");
+    check(2, 0, "invalid stride");
+    check(3, 2, "the number of components is greater than the stride");
+    check(3, 3, "insufficient external data size");
+    auto check2 = [this, &s, &values](const size_type dsize,
+                                      std::string_view emsg) {
+      constexpr auto layout = FunctionDataLayoutDescription{
+          .data_size = dynamic_extent, .data_stride = 3};
+      auto ctx = Context{};
+      const auto b = FunctionView<BasicLinearSpace, layout>::checkPreconditions(
+          ctx, s, values, dsize);
+      TFEL_TESTS_ASSERT(!b);
+      TFEL_TESTS_ASSERT(ctx.getRawErrorMessage() == emsg);
+    };
+    check2(0, "invalid number of components");
+    check2(4, "the number of components is greater than the stride");
+    check2(3, "insufficient external data size");
+    auto check3 = [this, &s, &values](const size_type dstride,
+                                      std::string_view emsg) {
+      constexpr auto layout = FunctionDataLayoutDescription{
+          .data_size = 3, .data_stride = dynamic_extent};
+      auto ctx = Context{};
+      const auto b = FunctionView<BasicLinearSpace, layout>::checkPreconditions(
+          ctx, s, values, dstride);
+      TFEL_TESTS_ASSERT(!b);
+      TFEL_TESTS_ASSERT(ctx.getRawErrorMessage() == emsg);
+    };
+    check3(0, "invalid stride");
+    check3(2, "the number of components is greater than the stride");
+    check3(3, "insufficient external data size");
+    auto check4 = [this, &s, &values](std::string_view emsg) {
+      constexpr auto layout =
+          FunctionDataLayoutDescription{.data_size = 2, .data_stride = 4};
+      auto ctx = Context{};
+      const auto b = FunctionView<BasicLinearSpace, layout>::checkPreconditions(
+          ctx, s, values);
+      TFEL_TESTS_ASSERT(!b);
+      TFEL_TESTS_ASSERT(ctx.getRawErrorMessage() == emsg);
+    };
+    check4("insufficient external data size");
+    auto check5 = [this, &s, &values](const size_type dsize,
+                                      std::string_view emsg) {
+      auto ctx = Context{};
+      const auto b =
+          Function<BasicLinearSpace>::checkPreconditions(ctx, s, dsize);
+      TFEL_TESTS_ASSERT(!b);
+      TFEL_TESTS_ASSERT(ctx.getRawErrorMessage() == emsg);
+    };
+    check5(0, "invalid number of components");
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
+  }
+  void test11() {
+    using namespace mgis;
+    using namespace mgis::function;
+#ifdef MGIS_USE_EXCEPTIONS_FOR_CONTRACT_VIOLATION
+    const auto s = BasicLinearSpace{2};
+    auto values = std::vector<real>(5);
+    auto check = [this, &s, &values](const size_type dsize, const auto dstride,
+                                     std::string_view emsg) {
+      auto exception_thrown = false;
+      try {
+        check_preconditions<FunctionView<BasicLinearSpace>>(s, values, dsize,
+                                                            dstride);
+      } catch (std::exception& e) {
+        TFEL_TESTS_ASSERT(e.what() == emsg);
+        exception_thrown = true;
+      }
+      TFEL_TESTS_ASSERT(exception_thrown);
+      exception_thrown = false;
+      try {
+        FunctionView<BasicLinearSpace> f(s, values, dsize, dstride);
+      } catch (std::exception& e) {
+        TFEL_TESTS_ASSERT(e.what() == emsg);
+        exception_thrown = true;
+      }
+      TFEL_TESTS_ASSERT(exception_thrown);
+    };
+    check(0, 2, "invalid number of components");
+    check(2, 0, "invalid stride");
+    check(3, 2, "the number of components is greater than the stride");
+    check(3, 3, "insufficient external data size");
+    auto check2 = [this, &s, &values](const size_type dsize,
+                                      std::string_view emsg) {
+      constexpr auto layout = FunctionDataLayoutDescription{
+          .data_size = dynamic_extent, .data_stride = 3};
+      auto exception_thrown = false;
+      try {
+        check_preconditions<FunctionView<BasicLinearSpace, layout>>(s, values,
+                                                                    dsize);
+      } catch (std::exception& e) {
+        TFEL_TESTS_ASSERT(e.what() == emsg);
+        exception_thrown = true;
+      }
+      TFEL_TESTS_ASSERT(exception_thrown);
+      exception_thrown = false;
+      try {
+        FunctionView<BasicLinearSpace, layout> f(s, values, dsize);
+      } catch (std::exception& e) {
+        TFEL_TESTS_ASSERT(e.what() == emsg);
+        exception_thrown = true;
+      }
+      TFEL_TESTS_ASSERT(exception_thrown);
+    };
+    check2(0, "invalid number of components");
+    check2(4, "the number of components is greater than the stride");
+    check2(3, "insufficient external data size");
+    auto check3 = [this, &s, &values](const size_type dstride,
+                                      std::string_view emsg) {
+      constexpr auto layout = FunctionDataLayoutDescription{
+          .data_size = 3, .data_stride = dynamic_extent};
+      auto exception_thrown = false;
+      try {
+        check_preconditions<FunctionView<BasicLinearSpace, layout>>(s, values,
+                                                                    dstride);
+      } catch (std::exception& e) {
+        TFEL_TESTS_ASSERT(e.what() == emsg);
+        exception_thrown = true;
+      }
+      TFEL_TESTS_ASSERT(exception_thrown);
+      exception_thrown = false;
+      try {
+        FunctionView<BasicLinearSpace, layout> f(s, values, dstride);
+      } catch (std::exception& e) {
+        TFEL_TESTS_ASSERT(e.what() == emsg);
+        exception_thrown = true;
+      }
+      TFEL_TESTS_ASSERT(exception_thrown);
+    };
+    check3(0, "invalid stride");
+    check3(2, "the number of components is greater than the stride");
+    check3(3, "insufficient external data size");
+    auto check4 = [this, &s, &values](std::string_view emsg) {
+      constexpr auto layout =
+          FunctionDataLayoutDescription{.data_size = 2, .data_stride = 4};
+      auto exception_thrown = false;
+      try {
+        check_preconditions<FunctionView<BasicLinearSpace, layout>>(s, values);
+      } catch (std::exception& e) {
+        TFEL_TESTS_ASSERT(e.what() == emsg);
+        exception_thrown = true;
+      }
+      TFEL_TESTS_ASSERT(exception_thrown);
+      exception_thrown = false;
+      try {
+        FunctionView<BasicLinearSpace, layout> f(s, values);
+      } catch (std::exception& e) {
+        TFEL_TESTS_ASSERT(e.what() == emsg);
+        exception_thrown = true;
+      }
+      TFEL_TESTS_ASSERT(exception_thrown);
+    };
+    check4("insufficient external data size");
+    auto check5 = [this, &s, &values](const size_type dsize,
+                                      std::string_view emsg) {
+      auto exception_thrown = false;
+      try {
+        check_preconditions<Function<BasicLinearSpace>>(s, dsize);
+      } catch (std::exception& e) {
+        TFEL_TESTS_ASSERT(e.what() == emsg);
+        exception_thrown = true;
+      }
+      TFEL_TESTS_ASSERT(exception_thrown);
+      exception_thrown = false;
+      try {
+        Function<BasicLinearSpace> f(s, dsize);
+      } catch (std::exception& e) {
+        TFEL_TESTS_ASSERT(e.what() == emsg);
+        exception_thrown = true;
+      }
+      TFEL_TESTS_ASSERT(exception_thrown);
+    };
+    check5(0, "invalid number of components");
+#endif /* MGIS_USE_EXCEPTIONS_FOR_CONTRACT_VIOLATION */
   }
 };
 

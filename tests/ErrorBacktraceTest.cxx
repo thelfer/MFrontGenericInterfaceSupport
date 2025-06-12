@@ -2,6 +2,8 @@
 #include "MGIS/Raise.hxx"
 #include "MGIS/ErrorBacktrace.hxx"
 
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
+
 namespace mgis::internal {
 
   static void processNext(){};
@@ -29,8 +31,11 @@ namespace mgis::internal {
 
 }  // end of namespace mgis::internal
 
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
+
 int main() {
   using namespace mgis;
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
   auto expect_true = [](const bool b) {
     if (!b) {
       std::exit(-1);
@@ -64,6 +69,7 @@ int main() {
               "parent error message\n"
               "* first error message\n"
               "* with details on multiple lines");
-  }  // end of ConstructTest
+  }    // end of ConstructTest
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
   return EXIT_SUCCESS;
 }

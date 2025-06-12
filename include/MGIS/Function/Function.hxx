@@ -71,35 +71,35 @@ namespace mgis::function {
     size_type data_stride = size_type{};
   };  // end of FunctionDataStride<dynamic_extent>
 
-  struct DataLayoutDescription {
+  struct FunctionDataLayoutDescription {
     size_type data_size = dynamic_extent;
     size_type data_stride = dynamic_extent;
   };
 
   //! \brief a simple helper function
-  constexpr bool has_dynamic_properties(const DataLayoutDescription&);
+  constexpr bool has_dynamic_properties(const FunctionDataLayoutDescription&);
 
   /*!
    * \brief a simple data structure describing how the data of a
    * function is mapped in memory
    */
-  template <DataLayoutDescription layout>
+  template <FunctionDataLayoutDescription layout>
   requires((layout.data_size > 0) &&
-           (layout.data_stride > 0)) struct MGIS_EXPORT DataLayout
+           (layout.data_stride > 0)) struct MGIS_EXPORT FunctionDataLayout
       : public FunctionDataSize<layout.data_size>,
         public FunctionDataStride<layout.data_stride> {
     // \brief default constructor
-    DataLayout() = default;
+    FunctionDataLayout() = default;
     // \brief move constructor
-    DataLayout(DataLayout&&) = default;
+    FunctionDataLayout(FunctionDataLayout&&) = default;
     // \brief copy constructor
-    DataLayout(const DataLayout&) = default;
+    FunctionDataLayout(const FunctionDataLayout&) = default;
     // \brief move assignement
-    DataLayout& operator=(DataLayout&&) = default;
+    FunctionDataLayout& operator=(FunctionDataLayout&&) = default;
     // \brief standard assignement
-    DataLayout& operator=(const DataLayout&) = default;
+    FunctionDataLayout& operator=(const FunctionDataLayout&) = default;
     //! \brief destructor
-    ~DataLayout() = default;
+    ~FunctionDataLayout() = default;
 
    protected:
     /*!
@@ -107,7 +107,7 @@ namespace mgis::function {
      * \param[in] i: integration point
      */
     constexpr size_type getDataOffset(const size_type) const noexcept;
-  };  // end of struct DataLayout
+  };  // end of struct FunctionDataLayout
 
   /*!
    * \brief function defined on a space.
@@ -136,13 +136,13 @@ namespace mgis::function {
    * number of components of the function is given by `data_size`.
    */
   template <FunctionalSpaceConcept Space,
-            DataLayoutDescription layout = {},
+            FunctionDataLayoutDescription layout = {},
             bool is_mutable = true>
   requires(LinearElementSpaceConcept<Space> ||
            LinearQuadratureSpaceConcept<Space>)  //
       struct FunctionView
       : private PreconditionsChecker<FunctionView<Space, layout, is_mutable>>,
-        public DataLayout<layout> {
+        public FunctionDataLayout<layout> {
     //! \brief a simple alias to the type holding the data used by the view
     using ExternalData =
         std::conditional_t<is_mutable, std::span<real>, std::span<const real>>;
@@ -361,7 +361,7 @@ namespace mgis::function {
      */
     constexpr FunctionView(const Space&,
                            ExternalData,
-                           const DataLayout<layout>&)  //
+                           const FunctionDataLayout<layout>&)  //
         requires((layout.data_size == dynamic_extent) &&
                  (layout.data_stride == dynamic_extent));
     /*!
@@ -375,7 +375,7 @@ namespace mgis::function {
     constexpr FunctionView(const PreconditionsCheck<doPreconditionsCheck>&,
                            const Space&,
                            ExternalData,
-                           const DataLayout<layout>&)  //
+                           const FunctionDataLayout<layout>&)  //
         requires((layout.data_size == dynamic_extent) &&
                  (layout.data_stride == dynamic_extent));
     /*!
@@ -386,7 +386,7 @@ namespace mgis::function {
      */
     constexpr FunctionView(const Space&,
                            ExternalData,
-                           const DataLayout<layout>&)  //
+                           const FunctionDataLayout<layout>&)  //
         requires((layout.data_size != dynamic_extent) &&
                  (layout.data_stride == dynamic_extent));
     /*!
@@ -400,7 +400,7 @@ namespace mgis::function {
     constexpr FunctionView(const PreconditionsCheck<doPreconditionsCheck>&,
                            const Space&,
                            ExternalData,
-                           const DataLayout<layout>&)  //
+                           const FunctionDataLayout<layout>&)  //
         requires((layout.data_size != dynamic_extent) &&
                  (layout.data_stride == dynamic_extent));
     /*!
@@ -411,7 +411,7 @@ namespace mgis::function {
      */
     constexpr FunctionView(const Space&,
                            ExternalData,
-                           const DataLayout<layout>&)  //
+                           const FunctionDataLayout<layout>&)  //
         requires((layout.data_size == dynamic_extent) &&
                  (layout.data_stride != dynamic_extent));
     /*!
@@ -425,7 +425,7 @@ namespace mgis::function {
     constexpr FunctionView(const PreconditionsCheck<doPreconditionsCheck>&,
                            const Space&,
                            ExternalData,
-                           const DataLayout<layout>&)  //
+                           const FunctionDataLayout<layout>&)  //
         requires((layout.data_size == dynamic_extent) &&
                  (layout.data_stride != dynamic_extent));
     //
@@ -522,7 +522,8 @@ namespace mgis::function {
   };  // end of FunctionView
 
   //! \brief a simple alias
-  template <FunctionalSpaceConcept Space, DataLayoutDescription layout = {}>
+  template <FunctionalSpaceConcept Space,
+            FunctionDataLayoutDescription layout = {}>
   using FunctionEvaluator = FunctionView<Space, layout, false>;
 
   /*!
@@ -662,7 +663,7 @@ namespace mgis::function {
       requires((N > 0) && (N != dynamic_extent) && (N == N2));
 
   template <FunctionalSpaceConcept Space,
-            DataLayoutDescription layout,
+            FunctionDataLayoutDescription layout,
             bool is_mutable>
   constexpr const auto& getSpace(
       const FunctionView<Space, layout, is_mutable>&);

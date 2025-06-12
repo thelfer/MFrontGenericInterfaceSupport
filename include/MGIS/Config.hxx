@@ -26,7 +26,7 @@ namespace mgis::config {
   enum struct ContractViolationPolicy { ABORT, RAISE };
 
   /*!
-   * \brief boolean variable stating which policy is usd for
+   * \brief variable stating which policy is used for
    * reporting a contract violation
    *
    * By default, `std::abort` is called.
@@ -48,8 +48,8 @@ namespace mgis::config {
   enum struct ErrorReportPolicy { INVALIDRESULT, RAISE, ABORT };
 
   /*!
-   * \brief boolean variable stating which policy is used for
-   * reporting a runtime error by default when using a context.
+   * \brief variable stating which policy is used by default  for
+   * reporting a runtime error when using a context.
    *
    * By default, error are reported by returning an invalid result and
    * registring an error message in a context
@@ -65,7 +65,7 @@ namespace mgis::config {
    * is ignored as any error will lead to display the error message
    * on the standard error stream and call `std::abort`.
    */
-  inline constexpr auto error_report_policy =
+  inline constexpr auto default_error_report_policy =
 #ifdef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
 #ifdef MGIS_USE_ABORT_FOR_ERROR_REPORTING
 #error \

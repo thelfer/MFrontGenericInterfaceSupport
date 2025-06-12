@@ -55,7 +55,7 @@ namespace mgis {
 
   template <typename Type, typename... Args>
   inline constexpr auto is_check_preconditions_callable =
-      requires(ContractViolationHandler e, Args... rargs) {
+      requires(ContractViolationHandler &e, Args... rargs) {
     { Type::checkPreconditions(e, rargs...) } -> std::same_as<bool>;
   };
 

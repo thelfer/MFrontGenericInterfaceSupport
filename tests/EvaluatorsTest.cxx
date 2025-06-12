@@ -286,6 +286,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
   void test6() {
     using namespace mgis;
     using namespace mgis::function;
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     Context ctx;
     auto space = BasicLinearSpace{1};
     auto values = std::vector<real>{1e-3, 2e-3, -5e-3, 4e-3};
@@ -294,6 +295,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(
         !(TensorView<FunctionView<BasicLinearSpace>,
                      tfel::math::stensor<1>>::checkPreconditions(ctx, f)));
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
   }
   void test7() {
     using namespace mgis;
