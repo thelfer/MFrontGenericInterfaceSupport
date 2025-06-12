@@ -66,7 +66,7 @@ namespace mgis {
     static_cast<void>(Type::checkPreconditions(c, std::forward<Args>(args)...));
   }  // end of check_preconditions
 
-  template <bool b>
+  template <bool>
   struct PreconditionsCheck {};
 
   inline constexpr auto no_precondition_check = PreconditionsCheck<false>{};
