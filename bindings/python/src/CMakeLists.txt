@@ -24,6 +24,10 @@ function(mgis_python_module fullname name)
   set_target_properties(py_${fullname} PROPERTIES
     CXX_VISIBILITY_PRESET "hidden"
     CUDA_VISIBILITY_PRESET "hidden")
+  # installation
+  install(TARGETS py_${fullname}
+    DESTINATION ${MGIS_PYTHON_MODULES_INSTALL_DIRECTORY}
+    COMPONENT python_bindings)
 endfunction(mgis_python_module)
 
 mgis_python_module(mgis _mgis
