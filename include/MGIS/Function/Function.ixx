@@ -72,9 +72,6 @@ namespace mgis::function {
                              typename FunctionView::ExternalData v)  //
       requires((layout.data_size != dynamic_extent) &&
                (layout.data_stride != dynamic_extent)) {
-    if (s.get() == nullptr) {
-      return eh.registerErrorMessage("invalid space");
-    }
     const auto space_size = getSpaceSize(*s);
     if (space_size == 0) {
       // this may happen due to partionning in parallel
@@ -121,9 +118,6 @@ namespace mgis::function {
                              const size_type dsize)  //
       requires((layout.data_size == dynamic_extent) &&
                (layout.data_stride != dynamic_extent)) {
-    if (s.get() == nullptr) {
-      return eh.registerErrorMessage("invalid space");
-    }
     if (dsize <= 0) {
       return eh.registerErrorMessage("invalid number of components");
     }
@@ -180,9 +174,6 @@ namespace mgis::function {
                              const size_type dstride)  //
       requires((layout.data_size != dynamic_extent) &&
                (layout.data_stride == dynamic_extent)) {
-    if (s.get() == nullptr) {
-      return eh.registerErrorMessage("invalid space");
-    }
     if (dstride <= 0) {
       return eh.registerErrorMessage("invalid stride");
     }
