@@ -34,7 +34,7 @@ now formulated with Hencky strain measures
 instead of the linearized strain
 ($\boldsymbol{\varepsilon}=\boldsymbol{\varepsilon}^\text{e}+\boldsymbol{\varepsilon}^\text{p}$).
 The small-strain elastoplastic component is the same as in the companion
-[small-strain demo](mgis_small_strain.ipynb).
+[small-strain demo](bindings-python-small_strain.html).
 
 The following implementation shows:
 
@@ -208,11 +208,11 @@ for specific variants of the tangent operators such as:
 - `DCAUCHY_DF`/`DSIG_DF`: \(\dfrac{\partial\boldsymbol{\sigma}}{\partial \boldsymbol{F}}\),
 - `DPK1_DF`: \(\dfrac{\partial\boldsymbol{P}}{\partial \boldsymbol{F}}\),
 - `DS_DEGL`: \(\dfrac{\partial\boldsymbol{S}}{\partial \boldsymbol{E}^\text{GL}}\),
-- `DTAU_DDF`: \(\dfrac{\partial\boldsymbol{\tau}}{\partial \boldsymbol{D}}\).
+- `DTAU_DDF`: \(\dfrac{\partial\boldsymbol{\tau}}{\partial \Delta\,\boldsymbol{F}}\).
 
 where $\boldsymbol{E}^\text{GL}$ is the Green-Lagrange strain,
-$\boldsymbol{\tau}$ the Kirchhoff stress and \(\boldsymbol{D}\) the
-deformation rate gradient.
+$\boldsymbol{\tau}$ the Kirchhoff stress and \(\Delta\,\boldsymbol{F}\) is given by
+\(\left.\boldsymbol{F}\right|_{t+dt}\,\cdot\,\left.\boldsymbol{F}\right|_{t}^{-1}\).
 
 
 ```python
