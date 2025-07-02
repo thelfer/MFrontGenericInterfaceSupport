@@ -57,8 +57,8 @@ Hence, the following operations are chained:
   of the rotation matrix `R`.
 
 `sig_ev `exposes the same space as the `pk1` function (accessible from the
-`getSpace` method) and the same call operators (`4` sig_evnatures are
-possible).
+`getSpace` method) and the same call operators (`4` signatures are
+possible, as described below).
 
 For instance, if the values of `pk1` can be retrieved by using indexes
 (that are not necessarily integers) associated with the elements of the
@@ -72,8 +72,10 @@ algorithms, such as the `assign` algorithm which allows to assign the
 values of an evaluator to a function. Let `sig` be a function, the
 following code assigns the values calculated by `sig_ev` 
 
-`MGIS/Function` are a set of algorithms, evaluators and modifiers used
-to operate and calculate values on functions.
+Those concepts now being defined, `MGIS/Function` can now be defined as
+set of algorithms, evaluators and modifiers used to operate and
+calculate values on functions. `MGIS/Function` also provides basic
+implementations of functions.
 
 # Discretization spaces
 
@@ -158,7 +160,19 @@ spaces in `mgis` are defined using a set of `C++` concepts:
 
 ## Point-major or field major storage
 
-See [petscsection_2025] for a discussion.
+The documentation of the `PETsC` library discusses various patterns used
+in the litterature to store the values of a function
+[@petscsection_2025]. This discussion distinguishes so-called
+"point-major" or "field-major" storages. In `MGIS/Function`, we will use
+the terms "element-major" and "function-major" for consistency.
+
+In a field-major pattern, values are stored as follows:
+
++---------+
+| Point 1 |
++---------+
+
+
 
 ## The `Function` class
 

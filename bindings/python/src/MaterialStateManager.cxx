@@ -172,6 +172,8 @@ void declareMaterialStateManager(pybind11::module_& m) {
                              &MaterialStateManager_getThermodynamicForces)
       .def_readonly("thermodynamic_forces_stride",
                     &MaterialStateManager::thermodynamic_forces_stride)
+      .def_readonly("internal_state_variables_stride",
+                    &MaterialStateManager::internal_state_variables_stride)
       .def_property_readonly("stored_energies",
                              &MaterialStateManager_getStoredEnergies)
       .def_property_readonly("dissipated_energies",

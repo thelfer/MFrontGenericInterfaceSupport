@@ -19,6 +19,7 @@ list(APPEND MFrontGenericInterface_SOURCES
   BehaviourData.cxx
   MaterialStateManager.cxx
   MaterialDataManager.cxx
+  MaterialFunctionManager.cxx
   Integrate.cxx
   FiniteStrainSupport.cxx
   Model.cxx)
