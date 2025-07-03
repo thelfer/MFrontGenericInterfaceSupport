@@ -19,7 +19,6 @@ list(APPEND MFrontGenericInterface_SOURCES
   BehaviourData.cxx
   MaterialStateManager.cxx
   MaterialDataManager.cxx
-  MaterialFunctionManager.cxx
   Integrate.cxx
   FiniteStrainSupport.cxx
   Model.cxx)
@@ -29,7 +28,8 @@ if(enable-mgis-function)
     BasicLinearSpace.cxx
     BasicLinearQuadratureSpace.cxx
     Function.cxx
-    Evaluator.cxx)
+    Evaluator.cxx
+    MaterialFunctionManager.cxx)
 endif(enable-mgis-function)
 
 mgis_library(MFrontGenericInterface
