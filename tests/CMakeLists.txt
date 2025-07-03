@@ -448,6 +448,23 @@ target_link_libraries(ReduceTest
 add_test(NAME ReduceTest COMMAND ReduceTest)
 add_dependencies(check ReduceTest)
 
+add_executable(MaterialFunctionManagerTest
+  EXCLUDE_FROM_ALL MaterialFunctionManagerTest.cxx)
+target_link_libraries(MaterialFunctionManagerTest
+	PRIVATE MFrontGenericInterface tfel::TFELTests)
+
+add_test(NAME MaterialFunctionManagerTest
+ COMMAND MaterialFunctionManagerTest "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(check MaterialFunctionManagerTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST MaterialFunctionManagerTest
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST MaterialFunctionManagerTest
+    PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
 endif(MGIS_HAVE_TFEL)
 
 endif(enable-mgis-function)
