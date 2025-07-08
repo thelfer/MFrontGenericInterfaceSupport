@@ -68,8 +68,8 @@ namespace mgis::behaviour {
       const std::shared_ptr<const SpaceType>& s,
       const std::shared_ptr<const Behaviour>& behaviour)
       : PreconditionsChecker<MaterialFunctionManager>(pcheck, s, behaviour),
-        MaterialDataManager(static_cast<size_type>(getSpaceSize(s)),
-                            *(behaviour)),
+        MaterialDataManager(*(behaviour),
+			    static_cast<size_type>(getSpaceSize(*s))),
         qspace(s),
         behaviour_ptr(behaviour) {}  // end of MaterialFunctionManager
 
