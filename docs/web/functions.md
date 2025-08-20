@@ -75,7 +75,7 @@ following code assigns the values calculated by `sig_ev`
 Those concepts now being defined, `MGIS/Function` can now be defined as
 set of algorithms, evaluators and modifiers used to operate and
 calculate values on functions. `MGIS/Function` also provides basic
-implementations of functions.
+implementations of spaces and functions.
 
 # Discretization spaces
 
@@ -166,13 +166,22 @@ in the litterature to store the values of a function
 "point-major" or "field-major" storages. In `MGIS/Function`, we will use
 the terms "element-major" and "function-major" for consistency.
 
-In a field-major pattern, values are stored as follows:
+In a field-major pattern, the values a single-valuated field are usually
+stored as follows:
 
-+---------+
-| Point 1 |
-+---------+
++---------++---------++---------++---------+
+| Point 1 || Point 2 || ....... || Point N |
++---------++---------++---------++---------+
 
+Multi-component values can be stored in an interleaved or
+non-interleaved manner.
 
+In a point-major pattern, values usually are stored as follows:
+
+| <--------------- Point 1 --------------> | .... | <--------------- Point N --------------> |
++---------++---------++---------++---------+      +---------++---------++---------++---------+
+| Field 1 || Field 2 || ....... || Field F | .... | Field 1 || Field 2 || ....... || Field F |
++---------++---------++---------++---------+      +---------++---------++---------++---------+
 
 ## The `Function` class
 
