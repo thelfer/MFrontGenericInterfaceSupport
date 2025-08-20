@@ -513,7 +513,7 @@ namespace mgis {
       if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DSIG_DF) {
         return "dsig_dF";
       } else if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DS_DEGL) {
-        return "dPK2_degl";
+        return "dPK2_dEGL";
       } else if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DTAU_DDF) {
         return "dtau_ddF";
       } else if (t != mgis::behaviour::FiniteStrainBehaviourOptions::DPK1_DF) {
@@ -547,7 +547,7 @@ namespace mgis {
       if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DSIG_DF) {
         return "dsig_dF";
       } else if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DS_DEGL) {
-        return "dPK2_degl";
+        return "dPK2_dEGL";
       } else if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DTAU_DDF) {
         return "dtau_ddF";
       } else if (t != mgis::behaviour::FiniteStrainBehaviourOptions::DPK1_DF) {
