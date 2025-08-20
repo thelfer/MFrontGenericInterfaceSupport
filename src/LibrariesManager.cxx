@@ -361,7 +361,7 @@ namespace mgis {
       if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DSIG_DF) {
         return "dsig_dF";
       } else if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DS_DEGL) {
-        return "dPK2_degl";
+        return "dPK2_dEGL";
       } else if (t != mgis::behaviour::FiniteStrainBehaviourOptions::DPK1_DF) {
         mgis::raise(
             "LibrariesManager::getRotateBehaviourTangentOperatorBlocksFunction:"
@@ -393,7 +393,7 @@ namespace mgis {
       if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DSIG_DF) {
         return "dsig_dF";
       } else if (t == mgis::behaviour::FiniteStrainBehaviourOptions::DS_DEGL) {
-        return "dPK2_degl";
+        return "dPK2_dEGL";
       } else if (t != mgis::behaviour::FiniteStrainBehaviourOptions::DPK1_DF) {
         mgis::raise(
             "LibrariesManager::"
