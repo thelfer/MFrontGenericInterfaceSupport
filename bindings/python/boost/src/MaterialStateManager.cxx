@@ -184,6 +184,8 @@ void declareMaterialStateManager() {
                     &MaterialStateManager_getDissipatedEnergies)
       .add_property("internal_state_variables",
                     &MaterialStateManager_getInternalStateVariables)
+      .def_readonly("internal_state_variables_stride",
+                    &MaterialStateManager::internal_state_variables_stride)
       .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty)
       .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty2)
       .def("setMassDensity", &MaterialStateManager_setMassDensity)
