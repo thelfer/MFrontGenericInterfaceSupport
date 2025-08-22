@@ -11,10 +11,13 @@ mgis_library(MFrontGenericInterface
 	  BehaviourDescription.cxx
 	  Behaviour.cxx
 	  State.cxx
+	  StateView.cxx
 	  BehaviourData.cxx
+	  BehaviourDataView.cxx
 	  MaterialStateManager.cxx
 	  MaterialDataManager.cxx
 	  Integrate.cxx
+	BehaviourIntegrationFailureAnalyser.cxx
 	  FiniteStrainSupport.cxx
       Model.cxx)
 target_include_directories(MFrontGenericInterface

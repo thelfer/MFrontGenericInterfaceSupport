@@ -30,10 +30,22 @@ namespace mgis {
 
 namespace mgis::behaviour {
 
-  // forward declaration
+  // forward declarations
   struct Behaviour;
-  // forward declaration
   struct MaterialDataManager;
+
+  namespace debug {
+
+    // forward declaration
+    struct BehaviourIntegrationFailureAnalyser;
+
+#ifndef LIB_MGIS_BEHAVIOUR_BEHAVIOURINTEGRATIONFAILUREANALYSER_HXX
+    // forward declaration
+    MGIS_EXPORT const debug::BehaviourIntegrationFailureAnalyser&
+    getDefaultBehaviourIntegrationFailureAnalyser();
+#endif
+
+  }  // end of namespace debug
 
   /*!
    * \brief type of integration to be performed
@@ -74,7 +86,7 @@ namespace mgis::behaviour {
     BehaviourIntegrationResult();
     //! \brief move constructor
     BehaviourIntegrationResult(BehaviourIntegrationResult&&);
-    //! \brief copye constructor
+    //! \brief copy constructor
     BehaviourIntegrationResult(const BehaviourIntegrationResult&);
     //! \brief move assignement
     BehaviourIntegrationResult& operator=(BehaviourIntegrationResult&&);
@@ -240,7 +252,6 @@ namespace mgis::behaviour {
    * \param[in,out] d: behaviour data
    * \param[in,out] b: behaviour
    *
-
    * \note: the type of integration to be performed, must be
    * explicitely set in d.K[0], as follows (see the `IntegrationType` enum).
    *
@@ -274,6 +285,23 @@ namespace mgis::behaviour {
    *   must be computed.
    */
   int integrate(BehaviourDataView&, const Behaviour&);
+  /*!
+   * \brief integrate the behaviour. In case of non convergence, an
+   * mtest file is generated.
+   *
+   * The returned value has the following meaning:
+   * - -1: integration failed
+   * -  0: integration succeeded but results are unreliable
+   * -  1: integration succeeded and results are reliable
+   *
+   * \param[in,out] d: behaviour data
+   * \param[in,out] b: behaviour
+   */
+  MGIS_EXPORT int integrate_debug(
+      BehaviourDataView&,
+      const Behaviour&,
+      const debug::BehaviourIntegrationFailureAnalyser& =
+          debug::getDefaultBehaviourIntegrationFailureAnalyser());
   /*!
    * \brief integrate the behaviour for a range of integration points.
    * \return the result of the behaviour integration.

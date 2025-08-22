@@ -17,9 +17,11 @@
 #include <memory>
 #include <cstdlib>
 #include <cinttypes>
+#include <algorithm>
 #include "MGIS/Raise.hxx"
 #include "MGIS/ThreadPool.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
+#include "MGIS/Behaviour/BehaviourIntegrationFailureAnalyser.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
 
 namespace mgis::behaviour::internals {
@@ -722,6 +724,76 @@ namespace mgis::behaviour {
     const auto r = integrate(m, opts, dt, b, e);
     return r.exit_status;
   }  // end of integrate
+
+  static void copy(State& s, const auto& src) {
+    if (src.stored_energy != nullptr) {
+      s.stored_energy = *(src.stored_energy);
+    } else {
+      s.stored_energy = real{};
+    }
+    if (src.dissipated_energy != nullptr) {
+    s.dissipated_energy = *(src.dissipated_energy);
+    } else {
+      s.dissipated_energy = real{};
+    }
+    if (src.mass_density != nullptr) {
+      s.mass_density = *(src.mass_density);
+    } else {
+      s.mass_density = real{};
+    }
+    std::copy(src.gradients, src.gradients + s.gradients.size(),
+              s.gradients.begin());
+    std::copy(src.thermodynamic_forces,
+              src.thermodynamic_forces + s.thermodynamic_forces.size(),
+              s.thermodynamic_forces.begin());
+    std::copy(src.material_properties,
+              src.material_properties + s.material_properties.size(),
+              s.material_properties.begin());
+    std::copy(src.internal_state_variables,
+              src.internal_state_variables + s.internal_state_variables.size(),
+              s.internal_state_variables.begin());
+    std::copy(src.external_state_variables,
+              src.external_state_variables + s.external_state_variables.size(),
+              s.external_state_variables.begin());
+  } // end of copy
+
+  int integrate_debug(
+      BehaviourDataView& d,
+      const Behaviour& b,
+      const debug::BehaviourIntegrationFailureAnalyser& analyser) {
+    using namespace ::mgis::behaviour::debug;
+    if (analyser.shallCopyBehaviourDataBeforeIntegration()) {
+      // save the inputs in a dedicated structure.
+      // Here we use a Behaviour Data to allocate the memory properly
+      auto d_safe = BehaviourData(b);
+      d_safe.dt = d.dt;
+      if (d.rdt != nullptr) {
+        d_safe.rdt = *(d.rdt);
+      } else {
+        d_safe.rdt = real{1};
+      }
+      if (d.speed_of_sound != nullptr) {
+        d_safe.speed_of_sound = *(d.speed_of_sound);
+      } else {
+        d_safe.speed_of_sound = real{};
+      }
+      copy(d_safe.s0, d.s0);
+      copy(d_safe.s1, d.s1);
+      // integrate the behaviour as usual
+      const auto r = integrate(d, b);
+      if ((r != 0) && (r != 1)) {
+        analyser.analyse(b, d_safe);
+      }
+      return r;
+    } else {
+      // integrate the behaviour as usual
+      const auto r = integrate(d, b);
+      if ((r != 0) && (r != 1)) {
+        analyser.analyse(b, d);
+      }
+      return r;
+    }
+  }  // end of integrate debug
 
   static const BehaviourPostProcessing& getBehaviourPostProcessing(
       const Behaviour& b, const std::string_view n) {
