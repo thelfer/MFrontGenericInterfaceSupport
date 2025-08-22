@@ -15,6 +15,8 @@
 #include <pybind11/pybind11.h>
 #include "MGIS/ThreadPool.hxx"
 
+void declareThreadPool(pybind11::module_&);
+
 void declareThreadPool(pybind11::module_& m) {
   pybind11::class_<mgis::ThreadPool>(m, "ThreadPool")
       .def(pybind11::init<mgis::size_type>());
