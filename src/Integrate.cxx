@@ -401,6 +401,56 @@ namespace mgis::behaviour::internals {
   }  // end of integrate
 
   /*!
+   * \brief perform the integration of the behaviour over a range of integration
+   * points.
+   */
+  static BehaviourIntegrationResult integrate_debug(
+      MaterialDataManager& m,
+      const BehaviourIntegrationOptions& opts,
+      const real dt,
+      const size_type b,
+      const size_type e,
+      const debug::BehaviourIntegrationFailureAnalyser& analyser) {
+    // workspace
+    auto& ws = m.getBehaviourIntegrationWorkSpace();
+    auto v = internals::initializeBehaviourDataView(ws);
+    auto behaviour_evaluators = internals::buildBehaviourEvaluators(ws, m);
+    // loop over integration points
+    auto r = BehaviourIntegrationResult{};
+    auto rdt0 = r.time_step_increase_factor;
+    const real Ke = encodeBehaviourIntegrationOptions(opts);
+    real bopts[Behaviour::nopts + 1];  // option passed to the behaviour
+    for (auto i = b; i != e; ++i) {
+      internals::evaluate(ws, behaviour_evaluators, i);
+      internals::updateView(v, m, i);
+      auto rdt = rdt0;
+      v.error_message[0] = '\0';
+      v.rdt = &rdt;
+      v.dt = dt;
+      if ((opts.integration_type !=
+           IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR) &&
+          (m.K_stride != 0)) {
+        v.K = m.K.data() + m.K_stride * i;
+      } else {
+        v.K = &bopts[0];
+      }
+      v.K[0] = Ke;
+      const auto ri = integrate_debug(v, m.b, analyser);
+      r.exit_status = std::min(ri, r.exit_status);
+      r.time_step_increase_factor = std::min(rdt, r.time_step_increase_factor);
+      if (ri == 0) {
+        r.n = i;
+      } else if (ri == -1) {
+        r.n = i;
+        v.error_message[511] = '\0';
+        r.error_message = std::string(v.error_message);
+        return r;
+      }
+    }
+    return r;
+  }  // end of integrate_debug
+
+  /*!
    * \brief execute the given post-processing over a range of integration
    * points.
    */
@@ -658,6 +708,23 @@ namespace mgis::behaviour {
     return internals::integrate(m, opts, dt, 0, m.n);
   }  // end of integrate
 
+  BehaviourIntegrationResult integrate_debug(
+      MaterialDataManager& m,
+      const BehaviourIntegrationOptions& opts,
+      const real dt) {
+    const auto& a = debug::getDefaultBehaviourIntegrationFailureAnalyser();
+    return integrate_debug(m, opts, dt, a);
+} // end of integrate_debug
+
+  BehaviourIntegrationResult integrate_debug(
+      MaterialDataManager& m,
+      const BehaviourIntegrationOptions& opts,
+      const real dt,
+      const debug::BehaviourIntegrationFailureAnalyser& analyser) {
+    internals::allocate(m, opts);
+    return internals::integrate_debug(m, opts, dt, 0, m.n, analyser);
+  }  // end of integrate
+
   BehaviourIntegrationResult integrate(MaterialDataManager& m,
                                        const BehaviourIntegrationOptions& opts,
                                        const real dt,
@@ -666,6 +733,28 @@ namespace mgis::behaviour {
     internals::allocate(m, opts);
     internals::checkIntegrationPointsRange(m, b, e);
     return internals::integrate(m, opts, dt, b, e);
+  }  // end of integrate
+
+  BehaviourIntegrationResult integrate_debug(
+      MaterialDataManager& m,
+      const BehaviourIntegrationOptions& opts,
+      const real dt,
+      const size_type b,
+      const size_type e) {
+    const auto& a = debug::getDefaultBehaviourIntegrationFailureAnalyser();
+    return integrate_debug(m, opts, dt, b, e, a);
+  } // end of integrate_debug
+
+  BehaviourIntegrationResult integrate_debug(
+      MaterialDataManager& m,
+      const BehaviourIntegrationOptions& opts,
+      const real dt,
+      const size_type b,
+      const size_type e,
+      const debug::BehaviourIntegrationFailureAnalyser& analyser) {
+    internals::allocate(m, opts);
+    internals::checkIntegrationPointsRange(m, b, e);
+    return internals::integrate_debug(m, opts, dt, b, e, analyser);
   }  // end of integrate
 
   MultiThreadedBehaviourIntegrationResult integrate(
@@ -704,6 +793,52 @@ namespace mgis::behaviour {
     return res;
   }  // end of integrate
 
+  MultiThreadedBehaviourIntegrationResult integrate_debug(
+      mgis::ThreadPool& p,
+      MaterialDataManager& m,
+      const BehaviourIntegrationOptions& opts,
+      const real dt) {
+    const auto& a = debug::getDefaultBehaviourIntegrationFailureAnalyser();
+    return integrate_debug(p, m, opts, dt, a);
+  }  // end if integrate_debug
+
+  MultiThreadedBehaviourIntegrationResult integrate_debug(
+      mgis::ThreadPool& p,
+      MaterialDataManager& m,
+      const BehaviourIntegrationOptions& opts,
+      const real dt,
+      const debug::BehaviourIntegrationFailureAnalyser& analyser) {
+    m.setThreadSafe(true);
+    internals::allocate(m, opts);
+    // get number of threads
+    const auto nth = p.getNumberOfThreads();
+    const auto d = m.n / nth;
+    const auto r = m.n % nth;
+    size_type b = 0;
+    std::vector<std::future<ThreadedTaskResult<BehaviourIntegrationResult>>>
+        tasks;
+    tasks.reserve(nth);
+    for (size_type i = 0; i != r; ++i) {
+      tasks.push_back(p.addTask([&m, &opts, dt, b, d, &analyser] {
+        return internals::integrate_debug(m, opts, dt, b, b + d + 1, analyser);
+      }));
+      b += d + 1;
+    }
+    for (size_type i = r; i != nth; ++i) {
+      tasks.push_back(p.addTask([&m, &opts, dt, b, d, &analyser] {
+        return internals::integrate_debug(m, opts, dt, b, b + d, analyser);
+      }));
+      b += d;
+    }
+    auto res = MultiThreadedBehaviourIntegrationResult{};
+    for (auto& t : tasks) {
+      const auto& ri = *(t.get());
+      res.exit_status = std::min(res.exit_status, ri.exit_status);
+      res.results.push_back(ri);
+    }
+    return res;
+  }  // end of integrate_debug
+
   int integrate(mgis::ThreadPool& p,
                 MaterialDataManager& m,
                 const IntegrationType it,
@@ -714,6 +849,26 @@ namespace mgis::behaviour {
     return r.exit_status;
   }  // end of integrate
 
+  int integrate_debug(mgis::ThreadPool& p,
+                      MaterialDataManager& m,
+                      const IntegrationType it,
+                      const real dt) {
+    const auto& a = debug::getDefaultBehaviourIntegrationFailureAnalyser();
+    return integrate_debug(p, m, it, dt, a);
+  }
+
+  int integrate_debug(
+      mgis::ThreadPool& p,
+      MaterialDataManager& m,
+      const IntegrationType it,
+      const real dt,
+      const debug::BehaviourIntegrationFailureAnalyser& analyser) {
+    BehaviourIntegrationOptions opts;
+    opts.integration_type = it;
+    const auto r = integrate_debug(p, m, opts, dt, analyser);
+    return r.exit_status;
+  }  // end of integrate_debug
+
   int integrate(MaterialDataManager& m,
                 const IntegrationType it,
                 const real dt,
@@ -722,6 +877,28 @@ namespace mgis::behaviour {
     BehaviourIntegrationOptions opts;
     opts.integration_type = it;
     const auto r = integrate(m, opts, dt, b, e);
+    return r.exit_status;
+  }  // end of integrate
+
+  int integrate_debug(MaterialDataManager& m,
+                const IntegrationType it,
+                const real dt,
+                const size_type b,
+                const size_type e) {
+    const auto& a = debug::getDefaultBehaviourIntegrationFailureAnalyser();
+    return integrate_debug(m, it, dt, b, e, a);
+  }  // end of integrate
+
+  int integrate_debug(
+      MaterialDataManager& m,
+      const IntegrationType it,
+      const real dt,
+      const size_type b,
+      const size_type e,
+      const debug::BehaviourIntegrationFailureAnalyser& analyser) {
+    BehaviourIntegrationOptions opts;
+    opts.integration_type = it;
+    const auto r = integrate_debug(m, opts, dt, b, e, analyser);
     return r.exit_status;
   }  // end of integrate
 
@@ -756,6 +933,11 @@ namespace mgis::behaviour {
               src.external_state_variables + s.external_state_variables.size(),
               s.external_state_variables.begin());
   } // end of copy
+
+  int integrate_debug(BehaviourDataView& d, const Behaviour& b) {
+    const auto& a = debug::getDefaultBehaviourIntegrationFailureAnalyser();
+    return integrate_debug(d, b, a);
+  }  // end of integrate_debug
 
   int integrate_debug(
       BehaviourDataView& d,
