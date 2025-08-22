@@ -416,6 +416,8 @@ namespace mgis::behaviour {
     if (!b.esvs.empty()) {
       os << mgis::utilities::get_heading_signs(l + 1)
          << " External state variables\n\n";
+      print_variables(os, b, b.esvs, s.external_state_variables);
+      os << '\n';
     }
   }  // end of print_markdown
 

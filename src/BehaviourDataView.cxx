@@ -20,10 +20,10 @@ namespace mgis::behaviour {
        << " Behaviour description\n\n";
     print_markdown(os, b, l + 1);
     os << mgis::utilities::get_heading_signs(l + 1)
-       << " State at the beginning of the time step\n";
+       << " State at the beginning of the time step\n\n";
     print_markdown(os, b, d.s0, l + 1);
     os << mgis::utilities::get_heading_signs(l + 1)
-       << " State at the end of the time step\n";
+       << " State at the end of the time step\n\n";
     print_markdown(os, b, d.s1, l + 1);
   }  // end of print_markdown
 

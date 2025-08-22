@@ -70,6 +70,7 @@ namespace mgis::behaviour {
     if (!b.esvs.empty()) {
       os << mgis::utilities::get_heading_signs(l + 1)
          << " External state variables\n\n";
+      os << "(" << b.esvs.size() << ")\n";
       print_variables(os, b, b.esvs, s.external_state_variables);
       os << '\n';
     }
