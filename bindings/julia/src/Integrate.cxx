@@ -24,7 +24,14 @@ static int integrateBehaviourData1(mgis::behaviour::BehaviourData& d,
   auto v = mgis::behaviour::make_view(d);
   const auto s = mgis::behaviour::integrate(v, b);
   return s;
-}  // end of integrateBehaviourData
+}  // end of integrateBehaviourData1
+
+static int integrateDebugBehaviourData1(mgis::behaviour::BehaviourData& d,
+					const mgis::behaviour::Behaviour& b) {
+  auto v = mgis::behaviour::make_view(d);
+  const auto s = mgis::behaviour::integrate_debug(v, b);
+  return s;
+}  // end of integrateDebugBehaviourData
 
 void declareIntegrate(jlcxx::Module& m) {
   using mgis::behaviour::IntegrationType;
@@ -65,6 +72,9 @@ void declareIntegrate(jlcxx::Module& m) {
   int (*integrate_ptr1)(mgis::behaviour::BehaviourDataView&,
                         const mgis::behaviour::Behaviour&) =
       mgis::behaviour::integrate;
+  int (*integrate_debug_ptr1)(mgis::behaviour::BehaviourDataView&,
+			      const mgis::behaviour::Behaviour&) =
+      mgis::behaviour::integrate_debug;
   //   int (*integrate_ptr2)(mgis::behaviour::MaterialDataManager&,
   //                         const IntegrationType, const mgis::real,
   //                         const mgis::size_type, const mgis::size_type) =
@@ -76,6 +86,8 @@ void declareIntegrate(jlcxx::Module& m) {
 
   m.method("integrate", &integrateBehaviourData1);
   m.method("integrate", integrate_ptr1);
+  m.method("integrate_debug", &integrateDebugBehaviourData1);
+  m.method("integrate_debug", integrate_debug_ptr1);
   //   boost::python::def("integrate", integrate_ptr2);
   //   boost::python::def("integrate", integrate_ptr3);
 }  // end of declareIntegrate
