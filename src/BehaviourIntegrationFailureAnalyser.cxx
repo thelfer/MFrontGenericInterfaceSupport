@@ -22,7 +22,7 @@ namespace mgis::behaviour::debug {
   BehaviourIntegrationFailureAnalyser::
       ~BehaviourIntegrationFailureAnalyser() noexcept = default;
 
-  std::function<
+  static std::function<
       std::string(std::string_view, std::string_view, std::string_view)>&
   getBehaviourIntegrationFailureAnalysisFileNameGenerator() {
     static std::function<std::string(std::string_view, std::string_view,
@@ -59,7 +59,7 @@ namespace mgis::behaviour::debug {
       if (f) {
         print_markdown(f, b, d, 0);
       }
-    };
+    }
     void analyse(const Behaviour& b,
                  const BehaviourDataView& d) const noexcept override {
       // write inputs to output file
@@ -69,7 +69,7 @@ namespace mgis::behaviour::debug {
       if (f) {
         print_markdown(f, b, d, 0);
       }
-    };
+    }
     bool shallCopyBehaviourDataBeforeIntegration() const noexcept override {
       return true;
     }

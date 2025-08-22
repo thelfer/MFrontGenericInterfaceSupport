@@ -9,6 +9,7 @@ tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-documentation-unknown-comm
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-exit-time-destructors")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-global-constructors")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-missing-braces")
+tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-unsafe-buffer-usage")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wrange-loop-analysis")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wmove")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Winfinite-recursion")

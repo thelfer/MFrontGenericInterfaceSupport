@@ -267,7 +267,7 @@ namespace mgis::behaviour {
         break;
       default:
         raise("unsupported behaviour type");
-    };
+    }
     // behaviour symmetry
     d.symmetry = lm.getBehaviourSymmetry(l, b) == 0
                      ? BehaviourDescription::ISOTROPIC
