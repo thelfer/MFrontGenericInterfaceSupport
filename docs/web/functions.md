@@ -24,7 +24,7 @@ associated to quadrature points (also called integration points),
 vertices (nodes), facets, cells, voxels, depending on the discretization
 method considered.
 
-# An overview of `MGIS/Function`
+# An overview of `MGIS/Function` {#sec:mgis:function:overview}
 
 Let us consider a function `pk1` returning the first Piola-Kirchhoff
 stress in the material frame, `MGIS/Function` allows to create an
@@ -158,7 +158,7 @@ In order to adapt to the structures used by as many solvers as possible,
 spaces in `mgis` are defined using a set of `C++` concepts:
 `FunctionConcept`, `ElementFunctionConcept`, `QuadratureFunctionConcept`.
 
-## Point-major or field major storage
+## Element-major or function-major storage {#sec:mgis:functions:storage_policy}
 
 The documentation of the `PETsC` library discusses various patterns used
 in the litterature to store the values of a function
@@ -169,21 +169,108 @@ the terms "element-major" and "function-major" for consistency.
 In a field-major pattern, the values a single-valuated field are usually
 stored as follows:
 
+~~~~
 +---------++---------++---------++---------+
-| Point 1 || Point 2 || ....... || Point N |
+| Element 1 || Element 2 || ....... || Element N |
 +---------++---------++---------++---------+
+~~~~
 
-Multi-component values can be stored in an interleaved or
-non-interleaved manner.
+Multi-component values can be stored:
 
-In a point-major pattern, values usually are stored as follows:
+- in an interleaved manner (all the components associated with one
+  element are stored contiguously):
 
-| <--------------- Point 1 --------------> | .... | <--------------- Point N --------------> |
-+---------++---------++---------++---------+      +---------++---------++---------++---------+
-| Field 1 || Field 2 || ....... || Field F | .... | Field 1 || Field 2 || ....... || Field F |
-+---------++---------++---------++---------+      +---------++---------++---------++---------+
+  ~~~~
+  | <------------- Element 1 ------------> | .... | <------------- Element N ------------> |
+  +-------------++---------++--------------+------+-------------++---------++--------------+
+  | Component 1 || ....... || Component Nc | .... | Component 1 || ....... || Component Nc |
+  +-------------++---------++--------------+------+-------------++---------++--------------+
+  ~~~~
+
+- in a non-interleaved manner (all the values associated with a given
+  component of the function are stored continuously):
+
+  ~~~~
+  | <------------------ Component 1 -------------> | .... | <------------- Component Nc -----------------> |
+  +-----------++-----------++---------++-----------+------+-----------++-----------++---------++-----------+
+  | Element 1 || Element 2 || ....... || Element N |......| Element 1 || Element 2 || ....... || Element N |
+  +-----------++-----------++---------++-----------+------+-----------++-----------++---------++-----------+
+  ~~~~
+
+In a element-major pattern, values usually are stored as follows:
+
+~~~~
+| <------------------ Element 1 ------------------> | .... | <------------------- Element N -----------------> |
++------------++------------++---------++------------+      +------------++------------++---------++------------+
+| Function 1 || Function 2 || ....... || Function F | .... | Function 1 || Function 2 || ....... || Function F |
++------------++------------++---------++------------+      +------------++------------++---------++------------+
+~~~~
+
+This element major pattern is used by the `MaterialStateManager` class
+to store gradients, thermodynamic forces and internal state variables.
 
 ## The `Function` class
 
+The `Function` class is an implementation of the field-major function
+based on a linear functional space. Multiple components are stored in an
+interleaved manner. The `Function` class has two template parameters:
+
+- the functional space,
+- the number of components which defaults to `mgis::dynamic_extent`,
+  meaning that the number of components can be choosen at runtime.
 
 ## The `FunctionView` class
+
+The `FunctionView` is a lightweight class that allows to make a view on
+top of a contiguous memory which acts as a function over a given linear
+functional space as follows:
+
+~~~~
+|--------------------------------------------------------------------------------------------------------------------------|
+<-                         Raw data                                                                                       ->
+|--------------------------------------------------------------------------------------------------------------------------|
+<- Data of the first element          --><- Data of the second element        -->....<- Data of the Nth element          -->                    
+|---------------|xxxxxxxxxxxxxxxxxxxxxxx||---------------|xxxxxxxxxxxxxxxxxxxxxx|....|---------------|xxxxxxxxxxxxxxxxxxxxx|
+<-function data->                        <-function data->                           <-function data->                      
+^               ^                       ^                ^                      ^                    ^                     ^
+|               |                       |                |                      |                    |                     |
+            data_size                   |            data_size                  |                data_size                 |
+                                    data_stride                              data_stride                               data_stride
+~~~~
+
+This figure shows that:
+
+- The components of the function are interleaved, i.e. stored
+  contiguously. The number of components is called the data size on the
+  figure.
+- The values of the function are not contiguous in memory, i.e. the
+  values associated with the first component of two consecutive elements
+  are separated by a constant stride, named `data_stride`. The data
+  between `data_size` and `data_stride`, marked by an `x` in the figure,
+  are not accessible by the view.
+
+By definition of a view, a function view does not handle the lifetime of
+the memory on which it is built. The user is responsible for:
+
+- ensuring that the function view is destroyed before the underlying
+  memory (or a least not used after this memory is released),
+- releasing the underlying memory.
+
+This data structure is very close to an element-major storage (see
+Section @sec:mgis:functions:storage_policy), as the one used by the
+`MaterialStateManager` class. Indeed, the primary intent of the
+`FunctionView` class is to manipulate as each gradient, thermodynamic
+force or internal state variable as if it were stored in an interleaved
+element-major function.
+
+The `FunctionView` class has two template parameters:
+
+- the functional space,
+- a data layout containing both the number of components (data size) and
+  the data stride. If the data size or the date stride is equal
+  `mgis::dynamic_extent`, which is the default, its value must be given
+  at runtime.
+
+The `FunctionView` class matches the `FunctionEvaluator` concept (See
+Section @sec:mgis:function:overview and [this page](evaluators.html) for
+details).
