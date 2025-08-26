@@ -174,6 +174,26 @@ namespace mgis::function {
   inline constexpr auto as_tmatrix =
       internals::tensor_modifier<tfel::math::tmatrix<N, M, real>>{};
 
+  template <unsigned short N>
+  requires((N == 1) || (N == 2) || (N == 3))  //
+      inline constexpr auto as_st2tost2 =
+          internals::tensor_modifier<tfel::math::st2tost2<N, real>>{};
+
+  template <unsigned short N>
+  requires((N == 1) || (N == 2) || (N == 3))  //
+      inline constexpr auto as_t2tost2 =
+          internals::tensor_modifier<tfel::math::t2tost2<N, real>>{};
+
+  template <unsigned short N>
+  requires((N == 1) || (N == 2) || (N == 3))  //
+      inline constexpr auto as_st2tot2 =
+          internals::tensor_modifier<tfel::math::st2tot2<N, real>>{};
+
+  template <unsigned short N>
+  requires((N == 1) || (N == 2) || (N == 3))  //
+      inline constexpr auto as_t2tot2 =
+          internals::tensor_modifier<tfel::math::t2tot2<N, real>>{};
+
   inline constexpr auto trace = internals::unary_operation_modifier2(
       []<typename TensorType>(const TensorType& t) requires(
           (tfel::math::TensorConcept<TensorType>) ||
