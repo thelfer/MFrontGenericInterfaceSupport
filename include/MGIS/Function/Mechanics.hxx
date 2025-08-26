@@ -8,6 +8,10 @@
 #ifndef LIB_MGIS_FUNCTION_MECHANICS_HXX
 #define LIB_MGIS_FUNCTION_MECHANICS_HXX
 
+#ifdef MGIS_HAVE_TFEL
+#include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
+#endif /* MGIS_HAVE_TFEL */
+
 #include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/Tensors.hxx"
 
@@ -37,6 +41,8 @@ namespace mgis::function {
             return tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress(
                 pk1, F);
           });
+
+
 
 }  // end of namespace mgis::function
 

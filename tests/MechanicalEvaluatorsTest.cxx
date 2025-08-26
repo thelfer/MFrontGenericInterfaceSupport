@@ -125,7 +125,6 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
   void test4() {
     using namespace mgis;
     using namespace mgis::function;
-    constexpr auto eps = real{1e-14};
     Context ctx;
     auto space = BasicLinearSpace(1);
     const auto pk1_values = std::vector<real>{0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -149,7 +148,6 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
 #ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
     using namespace mgis;
     using namespace mgis::function;
-    constexpr auto eps = real{1e-14};
     constexpr auto size = []() constexpr {
       auto space = BasicLinearSpace{2};
       auto f = Function<BasicLinearSpace>{space, 3};
