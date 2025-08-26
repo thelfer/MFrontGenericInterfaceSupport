@@ -9,6 +9,7 @@
 #define LIB_MGIS_FUNCTION_FUNCTION_IXX
 
 #include <concepts>
+#include <algorithm>
 #include "MGIS/Raise.hxx"
 
 namespace mgis::function {
@@ -740,6 +741,40 @@ namespace mgis::function {
           this->getSpace(), this->storage_values);
     }
   }  // end of view
+
+  template <FunctionalSpaceConcept Space, size_type N>
+  requires((N > 0) && (LinearElementSpaceConcept<Space> ||
+                       LinearQuadratureSpaceConcept<Space>))  //
+      constexpr std::span<real> Function<Space, N>::data() {
+    return this->values;
+  }  // end of data
+
+  template <FunctionalSpaceConcept Space, size_type N>
+  requires((N > 0) && (LinearElementSpaceConcept<Space> ||
+                       LinearQuadratureSpaceConcept<Space>))  //
+      constexpr bool Function<Space, N>::fill(
+          AbstractErrorHandler& eh, std::span<const real> values) noexcept {
+    auto dest = this->data();
+    if (dest.size() != values.size()) {
+      return eh.registerErrorMessage("unmatched size");
+    }
+    std::copy(values.begin(), values.end(), dest.begin());
+    return true;
+  } // end of fill
+
+  template <FunctionalSpaceConcept Space, size_type N>
+  requires((N > 0) && (LinearElementSpaceConcept<Space> ||
+                       LinearQuadratureSpaceConcept<Space>))  //
+      constexpr bool Function<Space, N>::fill(
+          AbstractErrorHandler& eh,
+          std::initializer_list<real> values) noexcept {
+    auto dest = this->data();
+    if (dest.size() != values.size()) {
+      return eh.registerErrorMessage("unmatched size");
+    }
+    std::copy(values.begin(), values.end(), dest.begin());
+    return true;
+  }  // end of fill
 
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||

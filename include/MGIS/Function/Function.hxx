@@ -625,6 +625,25 @@ namespace mgis::function {
     //! \brief return a view of the function
     constexpr FunctionView<Space, {.data_size = N, .data_stride = N}, false>
     view() const;
+    //
+    using FunctionView<Space, {.data_size = N, .data_stride = N}, true>::data;
+    //! \return a view to the function values
+    constexpr std::span<real> data();
+    /*!
+     * \brief fill the structure using raw data
+     *
+     * \param[in] eh: error handler
+     * \param[in] values: raw data
+     */
+    constexpr bool fill(AbstractErrorHandler&, std::span<const real>) noexcept;
+    /*!
+     * \brief fill the structure using raw data
+     *
+     * \param[in] eh: error handler
+     * \param[in] values: raw data
+     */
+    constexpr bool fill(AbstractErrorHandler&,
+                        std::initializer_list<real>) noexcept;
     //! \brief destructor
     constexpr ~Function();
 
