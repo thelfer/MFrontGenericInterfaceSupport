@@ -144,6 +144,137 @@ namespace mgis::function::internals {
 
 namespace mgis::function {
 
+  template <typename EvaluatorType>
+  concept Stensor1DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::stensor<1u, real>>);
+
+  template <typename EvaluatorType>
+  concept Stensor2DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::stensor<2u, real>>);
+
+  template <typename EvaluatorType>
+  concept Stensor3DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::stensor<3u, real>>);
+
+  template <typename EvaluatorType>
+  concept StensorEvaluatorConcept =
+      (Stensor1DEvaluatorConcept<EvaluatorType>) ||
+      (Stensor2DEvaluatorConcept<EvaluatorType>) ||
+      (Stensor3DEvaluatorConcept<EvaluatorType>);
+
+  template <typename EvaluatorType>
+  concept Tensor1DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::tensor<1u, real>>);
+
+  template <typename EvaluatorType>
+  concept Tensor2DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::tensor<2u, real>>);
+
+  template <typename EvaluatorType>
+  concept Tensor3DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::tensor<3u, real>>);
+
+  template <typename EvaluatorType>
+  concept TensorEvaluatorConcept = (Tensor1DEvaluatorConcept<EvaluatorType>) ||
+                                   (Tensor2DEvaluatorConcept<EvaluatorType>) ||
+                                   (Tensor3DEvaluatorConcept<EvaluatorType>);
+
+  template <typename EvaluatorType>
+  concept ST2toST21DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::st2tost2<1u, real>>);
+
+  template <typename EvaluatorType>
+  concept ST2toST22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::st2tost2<2u, real>>);
+
+  template <typename EvaluatorType>
+  concept ST2toST23DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::st2tost2<3u, real>>);
+
+  template <typename EvaluatorType>
+  concept ST2toST2EvaluatorConcept = (ST2toST21DEvaluatorConcept<EvaluatorType>) ||
+                                   (ST2toST22DEvaluatorConcept<EvaluatorType>) ||
+                                   (ST2toST23DEvaluatorConcept<EvaluatorType>);
+
+  template <typename EvaluatorType>
+  concept ST2toT21DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::st2tot2<1u, real>>);
+
+  template <typename EvaluatorType>
+  concept ST2toT22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::st2tot2<2u, real>>);
+
+  template <typename EvaluatorType>
+  concept ST2toT23DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::st2tot2<3u, real>>);
+
+  template <typename EvaluatorType>
+  concept ST2toT2EvaluatorConcept =
+      (ST2toT21DEvaluatorConcept<EvaluatorType>) ||
+      (ST2toT22DEvaluatorConcept<EvaluatorType>) ||
+      (ST2toT23DEvaluatorConcept<EvaluatorType>);
+
+  template <typename EvaluatorType>
+  concept T2toST21DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::t2tost2<1u, real>>);
+
+  template <typename EvaluatorType>
+  concept T2toST22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::t2tost2<2u, real>>);
+
+  template <typename EvaluatorType>
+  concept T2toST23DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::t2tost2<3u, real>>);
+
+  template <typename EvaluatorType>
+  concept T2toST2EvaluatorConcept =
+      (T2toST21DEvaluatorConcept<EvaluatorType>) ||
+      (T2toST22DEvaluatorConcept<EvaluatorType>) ||
+      (T2toST23DEvaluatorConcept<EvaluatorType>);
+
+  template <typename EvaluatorType>
+  concept T2toT21DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::t2tot2<1u, real>>);
+
+  template <typename EvaluatorType>
+  concept T2toT22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::t2tot2<2u, real>>);
+
+  template <typename EvaluatorType>
+  concept T2toT23DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
+      std::is_convertible_v<evaluator_result<EvaluatorType>,
+                            tfel::math::t2tot2<3u, real>>);
+
+  template <typename EvaluatorType>
+  concept T2toT2EvaluatorConcept =
+      (T2toT21DEvaluatorConcept<EvaluatorType>) ||
+      (T2toT22DEvaluatorConcept<EvaluatorType>) ||
+      (T2toT23DEvaluatorConcept<EvaluatorType>);
+
+  template <typename EvaluatorType>
+  concept FourthOrderTensorEvaluatorConcept =
+      ST2toST2EvaluatorConcept<EvaluatorType> ||
+      T2toST2EvaluatorConcept<EvaluatorType> ||
+      ST2toT2EvaluatorConcept<EvaluatorType> ||
+      T2toT2EvaluatorConcept<EvaluatorType>;
+
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr auto operator|(FunctionType&,
                            const internals::tensor_modifier<TensorType>&)  //

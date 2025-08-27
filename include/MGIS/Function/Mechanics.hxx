@@ -8,6 +8,7 @@
 #ifndef LIB_MGIS_FUNCTION_MECHANICS_HXX
 #define LIB_MGIS_FUNCTION_MECHANICS_HXX
 
+#include <type_traits>
 #ifdef MGIS_HAVE_TFEL
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #endif /* MGIS_HAVE_TFEL */
@@ -42,10 +43,24 @@ namespace mgis::function {
                 pk1, F);
           });
 
+  // convertion of finite strain tangent operators
+  using FiniteStrainStiffnessKind =
+      tfel::material::FiniteStrainBehaviourTangentOperatorBase::Flag;
 
+  template <FiniteStrainStiffnessKind ResultFlag,
+            FiniteStrainStiffnessKind SourceFlag,
+            TensorEvaluatorConcept DeformationGradientEvaluatorType0,
+            TensorEvaluatorConcept DeformationGradientEvaluatorType1,
+            StensorEvaluatorConcept CauchyStressEvaluatorType>
+  constexpr auto convert_finite_strain_stiffness(
+      const DeformationGradientEvaluatorType0&,
+      const DeformationGradientEvaluatorType1&,
+      const CauchyStressEvaluatorType&);
 
 }  // end of namespace mgis::function
 
 #endif MGIS_HAVE_TFEL
+
+#include "MGIS/Function/Mechanics.ixx"
 
 #endif /* LIB_MGIS_FUNCTION_MECHANICS_HXX */

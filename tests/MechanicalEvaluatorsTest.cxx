@@ -33,6 +33,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     this->test3();
     this->test4();
     this->test5();
+    this->test6();
     return this->result;
   }
 
@@ -158,6 +159,25 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(size == 3);
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }
+  void test6() {
+    using namespace mgis;
+    using namespace mgis::function;
+    auto ctx = Context{};
+    auto space = BasicLinearSpace{2};
+    auto dS_dEGL = Function<BasicLinearSpace>{space, 36};
+    auto K = Function<BasicLinearSpace>{space, 36};
+    auto F0 = Function<BasicLinearSpace>{space, 9};
+    auto F1 = Function<BasicLinearSpace>{space, 9};
+    auto s = Function<BasicLinearSpace>{space, 6};
+    const auto op =
+        convert_finite_strain_stiffness<FiniteStrainStiffnessKind::DS_DC,
+                                        FiniteStrainStiffnessKind::DS_DEGL>(
+            F0 | as_tensor<3>, F1 | as_tensor<3>, s | as_stensor<3>);
+    static_cast<void>(op);
+    //    auto Kv = K | as_st2tost2<3>;
+    //    const auto ok = assign(ctx, Kv, dS_dEGL | as_st2tost2<3> | op);
+    //    TFEL_TESTS_ASSERT(ok);
+  }  // end of test6
 };
 
 TFEL_TESTS_GENERATE_PROXY(MechanicalEvaluatorsTest, "MechanicalEvaluatorsTest");
