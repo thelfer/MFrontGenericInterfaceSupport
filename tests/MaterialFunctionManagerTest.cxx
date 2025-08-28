@@ -28,7 +28,7 @@
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/MaterialFunctionManager.hxx"
 
-const char* library = nullptr;
+static const char* library = nullptr;
 
 struct MaterialFunctionManagerTest final : public tfel::tests::TestCase {
   MaterialFunctionManagerTest()
@@ -82,7 +82,7 @@ private:
      }
      const auto& isvs = m.s1.internal_state_variables;
      for (size_type i = 0; i != getSpaceSize(*qspace); ++i) {
-       TFEL_TESTS_ASSERT(std::abs(isvs[i * 7 + 6] < value(i)) < eps);
+       TFEL_TESTS_ASSERT(std::abs(isvs[i * 7 + 6] - value(i)) < eps);
      }
    }
    // inexistant internal state variabe variable 
@@ -101,7 +101,7 @@ private:
      }
      const auto& isvs = m.s1.internal_state_variables;
      for (size_type i = 0; i != getSpaceSize(*qspace); ++i) {
-       TFEL_TESTS_ASSERT(std::abs(isvs[i * 7 + 6] < value(i)) < eps);
+       TFEL_TESTS_ASSERT(std::abs(isvs[i * 7 + 6] - value(i)) < eps);
      }
    }
    // invalid size
