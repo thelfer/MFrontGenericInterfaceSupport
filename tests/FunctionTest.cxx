@@ -579,8 +579,7 @@ struct FunctionTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(ctx.getRawErrorMessage() == emsg);
     };
     check4("insufficient external data size");
-    auto check5 = [this, &s, &values](const size_type dsize,
-                                      std::string_view emsg) {
+    auto check5 = [this, &s](const size_type dsize, std::string_view emsg) {
       auto ctx = Context{};
       const auto b =
           Function<BasicLinearSpace>::checkPreconditions(ctx, s, dsize);
