@@ -56,31 +56,117 @@ namespace mgis::function::algorithm {
 
 namespace mgis::function::internals {
 
+  inline void assign_value(auto& lhs, const auto& rhs) {
+    std::copy(rhs.begin(), rhs.end(), lhs.begin());
+  }
+
+  inline void assign_value(std::span<real> lhs, const auto& rhs) {
+    std::copy(rhs.begin(), rhs.end(), lhs.begin());
+  }
+
+  inline void assign_value(std::span<real> lhs,
+                           const std::span<const real> rhs) {
+    std::copy(rhs.begin(), rhs.end(), lhs.begin());
+  }
+
+  inline void assign_value(std::span<real> lhs, const std::span<real> rhs) {
+    std::copy(rhs.begin(), rhs.end(), lhs.begin());
+  }
+
+  inline void assign_value(real& lhs, const std::span<real>& rhs) {
+    lhs = rhs[0];
+  }
+
+  inline void assign_value(real& lhs, const std::span<const real>& rhs) {
+    lhs = rhs[0];
+  }
+
+  inline void assign_value(real& lhs, const std::span<real, 1u>& rhs) {
+    lhs = rhs[0];
+  }
+
+  inline void assign_value(real& lhs, const std::span<const real, 1u>& rhs) {
+    lhs = rhs[0];
+  }
+
+  inline void assign_value(real& lhs, const std::array<real, 1u>& rhs) {
+    lhs = rhs[0];
+  }
+
+  inline void assign_value(std::array<real, 1u>& lhs, const real rhs) {
+    lhs[0] = rhs;
+  }
+
+  inline void assign_value(std::array<real, 1u>& lhs,
+                           const std::array<real, 1u> rhs) {
+    lhs[0] = rhs[0];
+  }
+
+  inline void assign_value(std::array<real, 1u>& lhs, const std::span<real> rhs) {
+    lhs[0] = rhs[0];
+  }
+
+  inline void assign_value(std::array<real, 1u>& lhs, const std::span<const real> rhs) {
+    lhs[0] = rhs[0];
+  }
+
+  inline void assign_value(std::array<real, 1u>& lhs, const std::span<real, 1u> rhs) {
+    lhs[0] = rhs[0];
+  }
+
+  inline void assign_value(std::array<real, 1u>& lhs, const std::span<const real, 1u> rhs) {
+    lhs[0] = rhs[0];
+  }
+
+  inline void assign_value(std::span<real, 1u> lhs, const real rhs) {
+    lhs[0] = rhs;
+  }
+
+  inline void assign_value(std::span<real> lhs, const real rhs) {
+    lhs[0] = rhs;
+  }
+
+  inline void assign_value(std::span<real> lhs, const std::span<real, 1u> rhs) {
+    lhs[0] = rhs[0];
+  }
+
+  inline void assign_value(std::span<real> lhs,
+                           const std::span<const real, 1u> rhs) {
+    lhs[0] = rhs[0];
+  }
+
+  inline void assign_value(std::span<real, 1u> lhs, const std::span<real> rhs) {
+    lhs[0] = rhs[0];
+  }
+
+  inline void assign_value(std::span<real, 1u> lhs,
+                           const std::span<const real> rhs) {
+    lhs[0] = rhs[0];
+  }
+
+  inline void assign_value(std::span<real, 1u> lhs,
+                           const std::span<real, 1u> rhs) {
+    lhs[0] = rhs[0];
+  }
+
+  inline void assign_value(std::span<real, 1u> lhs,
+                           const std::span<const real, 1u> rhs) {
+    lhs[0] = rhs[0];
+  }
+
+  inline void assign_value(std::span<real, 1u> lhs, const std::array<real, 1u>& rhs) {
+    lhs[0] = rhs[0];
+  }
+
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   void assign_scalar_impl(FunctionType& f, EvaluatorType e) requires(
       (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
           !hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
     using Space = std::decay_t<decltype(getSpace(f))>;
-    using value_type = std::invoke_result_t<FunctionType, size_type>;
-    using result_type = std::invoke_result_t<EvaluatorType, size_type>;
     const auto& space = getSpace(f);
     const auto ne = getSpaceSize(space);
-    if constexpr (internals::same_decay_type<result_type, real>) {
-      for (typename SpaceTraits<Space>::size_type i = 0; i != ne; ++i) {
-        if constexpr (internals::same_decay_type<value_type, real>) {
-          f(i) = e(i);
-        } else {
-          f(i)[0] = e(i);
-        }
-      }
-    } else {
-      for (typename SpaceTraits<Space>::size_type i = 0; i != ne; ++i) {
-        if constexpr (internals::same_decay_type<value_type, real>) {
-          f(i) = e(i)[0];
-        } else {
-          f(i)[0] = e(i)[0];
-        }
-      }
+    for (typename SpaceTraits<Space>::size_type i = 0; i != ne; ++i) {
+      f(i) = e(i);
     }
   }  // end of assign_scalar_impl
 
@@ -89,28 +175,11 @@ namespace mgis::function::internals {
       (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
           hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
     using Space = std::decay_t<decltype(getSpace(f))>;
-    using value_type = std::invoke_result_t<FunctionType, size_type>;
-    using result_type = std::invoke_result_t<EvaluatorType, size_type>;
     const auto& space = getSpace(f);
     const auto ne = getSpaceSize(space);
-    if constexpr (internals::same_decay_type<result_type, real>) {
-      for (typename SpaceTraits<Space>::size_type i = 0; i != ne; ++i) {
-        const auto& wk = getElementWorkspace(space, i);
-        if constexpr (internals::same_decay_type<value_type, real>) {
-          f(wk, i) = e(wk, i);
-        } else {
-          f(wk, i)[0] = e(wk, i);
-        }
-      }
-    } else {
-      for (typename SpaceTraits<Space>::size_type i = 0; i != ne; ++i) {
-        const auto& wk = getElementWorkspace(space, i);
-        if constexpr (internals::same_decay_type<value_type, real>) {
-          f(wk, i) = e(wk, i)[0];
-        } else {
-          f(wk, i)[0] = e(wk, i)[0];
-        }
-      }
+    for (typename SpaceTraits<Space>::size_type i = 0; i != ne; ++i) {
+      const auto& wk = getElementWorkspace(space, i);
+      f(wk, i) = e(wk, i);
     }
   }  // end of assign_scalar_impl
 
@@ -131,9 +200,7 @@ namespace mgis::function::internals {
       if constexpr (use_direct_assignement) {
         f(i) = e(i);
       } else {
-        auto lhs_values = f(i);
-        const auto& rhs_values = e(i);
-        std::copy(rhs_values.begin(), rhs_values.end(), lhs_values.begin());
+        assign_value(f(i), e(i));
       }
     }
   }  // end of assign_impl
@@ -156,9 +223,7 @@ namespace mgis::function::internals {
       if constexpr (use_direct_assignement) {
         f(wk, i) = e(wk, i);
       } else {
-        auto lhs_values = f(wk, i);
-        const auto& rhs_values = e(wk, i);
-        std::copy(rhs_values.begin(), rhs_values.end(), lhs_values.begin());
+        assign_value(f(wk, i), e(wk, i));
       }
     }
   }  // end of assign_impl
@@ -178,7 +243,8 @@ namespace mgis::function {
                internals::same_decay_type<
                    decltype(getSpace(std::declval<FunctionType>())),
                    decltype(getSpace(std::declval<EvaluatorType>()))>) {
-    using result_type = std::invoke_result_t<EvaluatorType, size_type>;
+    using function_result_type = function_result<FunctionType>;
+    using evaluator_result_type = evaluator_result<EvaluatorType>;
     if (!areEquivalent(getSpace(f), getSpace(e))) {
       return ctx.registerErrorMessage("unmatched spaces");
     }
@@ -190,13 +256,11 @@ namespace mgis::function {
       return false;
     }
     e.allocateWorkspace();
-    if (f.getNumberOfComponents() == 1) {
+    if constexpr ((internals::same_decay_type<function_result_type, real>)&&  //
+                  (internals::same_decay_type<evaluator_result_type, real>)) {
       internals::assign_scalar_impl(f, e);
     } else {
-      // this "if constexpr" is used to avoid the compilation of the body
-      if constexpr (!internals::same_decay_type<result_type, real>) {
-        internals::assign_impl(f, e);
-      }
+      internals::assign_impl(f, e);
     }
     return true;
   }  // end of assign

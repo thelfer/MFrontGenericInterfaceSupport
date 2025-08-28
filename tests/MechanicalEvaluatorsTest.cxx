@@ -173,10 +173,10 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
         convert_finite_strain_stiffness<FiniteStrainStiffnessKind::DS_DC,
                                         FiniteStrainStiffnessKind::DS_DEGL>(
             F0 | as_tensor<3>, F1 | as_tensor<3>, s | as_stensor<3>);
-    static_cast<void>(op);
-    //    auto Kv = K | as_st2tost2<3>;
-    //    const auto ok = assign(ctx, Kv, dS_dEGL | as_st2tost2<3> | op);
-    //    TFEL_TESTS_ASSERT(ok);
+
+    auto Kv = K | as_st2tost2<3>;
+    const auto ok = assign(ctx, Kv, dS_dEGL | as_st2tost2<3> | op);
+    TFEL_TESTS_ASSERT(ok);
   }  // end of test6
 };
 
