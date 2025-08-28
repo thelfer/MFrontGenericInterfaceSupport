@@ -48,7 +48,7 @@ namespace mgis::function {
     constexpr FixedSizeModifier(const PreconditionsCheck<doPreconditionsCheck>&,
                                 const EvaluatorType&);
     //! \brief perform consistency checks
-    bool check(Context&) const noexcept;
+    constexpr bool check(AbstractErrorHandler&) const noexcept;
     //! \brief allocate internal workspace
     constexpr void allocateWorkspace();
     //! \brief return the underlying  space

@@ -50,10 +50,10 @@ namespace mgis::function {
             EvaluatorConcept SecondEvaluatorType>
   requires(BinaryOperationEvaluatorBaseRequirement<FirstEvaluatorType,
                                                    SecondEvaluatorType>)  //
-      bool BinaryOperationEvaluatorBase<
+      constexpr bool BinaryOperationEvaluatorBase<
           Child,
           FirstEvaluatorType,
-          SecondEvaluatorType>::check(Context& ctx) const {
+          SecondEvaluatorType>::check(AbstractErrorHandler& ctx) const {
     if (!checkMatchingSpaces(ctx, this->first_evaluator,
                              this->second_evaluator)) {
       return false;

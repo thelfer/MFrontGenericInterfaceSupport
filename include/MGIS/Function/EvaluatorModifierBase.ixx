@@ -24,7 +24,8 @@ namespace mgis::function {
       EvaluatorModifierBase&&) = default;
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  bool EvaluatorModifierBase<Child, EvaluatorType>::check(Context& ctx) const {
+  constexpr bool EvaluatorModifierBase<Child, EvaluatorType>::check(
+      AbstractErrorHandler& ctx) const {
     return this->evaluator.check(ctx);
   }  // end of check
 

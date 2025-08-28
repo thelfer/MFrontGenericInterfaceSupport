@@ -23,9 +23,9 @@ namespace mgis::function::algorithm {
    * \param[in] po: iterator to the output values
    */
   template <size_type N, typename InputIterator, typename OutputIterator>
-  void copy(const InputIterator p,
-            const InputIterator pe,
-            OutputIterator po) requires(N > 0) {
+  constexpr void copy(const InputIterator p,
+                      const InputIterator pe,
+                      OutputIterator po) requires(N > 0) {
     if constexpr ((std::random_access_iterator<InputIterator>)&&  //
                   (std::random_access_iterator<OutputIterator>)) {
       if constexpr (N > 9) {
@@ -56,110 +56,117 @@ namespace mgis::function::algorithm {
 
 namespace mgis::function::internals {
 
-  inline void assign_value(auto& lhs, const auto& rhs) {
+  constexpr void assign_value(auto& lhs, const auto& rhs) {
     std::copy(rhs.begin(), rhs.end(), lhs.begin());
   }
 
-  inline void assign_value(std::span<real> lhs, const auto& rhs) {
+  constexpr void assign_value(std::span<real> lhs, const auto& rhs) {
     std::copy(rhs.begin(), rhs.end(), lhs.begin());
   }
 
-  inline void assign_value(std::span<real> lhs,
-                           const std::span<const real> rhs) {
+  constexpr void assign_value(std::span<real> lhs,
+                              const std::span<const real> rhs) {
     std::copy(rhs.begin(), rhs.end(), lhs.begin());
   }
 
-  inline void assign_value(std::span<real> lhs, const std::span<real> rhs) {
+  constexpr void assign_value(std::span<real> lhs, const std::span<real> rhs) {
     std::copy(rhs.begin(), rhs.end(), lhs.begin());
   }
 
-  inline void assign_value(real& lhs, const std::span<real>& rhs) {
+  constexpr void assign_value(real& lhs, const std::span<real>& rhs) {
     lhs = rhs[0];
   }
 
-  inline void assign_value(real& lhs, const std::span<const real>& rhs) {
+  constexpr void assign_value(real& lhs, const std::span<const real>& rhs) {
     lhs = rhs[0];
   }
 
-  inline void assign_value(real& lhs, const std::span<real, 1u>& rhs) {
+  constexpr void assign_value(real& lhs, const std::span<real, 1u>& rhs) {
     lhs = rhs[0];
   }
 
-  inline void assign_value(real& lhs, const std::span<const real, 1u>& rhs) {
+  constexpr void assign_value(real& lhs, const std::span<const real, 1u>& rhs) {
     lhs = rhs[0];
   }
 
-  inline void assign_value(real& lhs, const std::array<real, 1u>& rhs) {
+  constexpr void assign_value(real& lhs, const std::array<real, 1u>& rhs) {
     lhs = rhs[0];
   }
 
-  inline void assign_value(std::array<real, 1u>& lhs, const real rhs) {
+  constexpr void assign_value(std::array<real, 1u>& lhs, const real rhs) {
     lhs[0] = rhs;
   }
 
-  inline void assign_value(std::array<real, 1u>& lhs,
-                           const std::array<real, 1u> rhs) {
+  constexpr void assign_value(std::array<real, 1u>& lhs,
+                              const std::array<real, 1u> rhs) {
     lhs[0] = rhs[0];
   }
 
-  inline void assign_value(std::array<real, 1u>& lhs, const std::span<real> rhs) {
+  constexpr void assign_value(std::array<real, 1u>& lhs,
+                              const std::span<real> rhs) {
     lhs[0] = rhs[0];
   }
 
-  inline void assign_value(std::array<real, 1u>& lhs, const std::span<const real> rhs) {
+  constexpr void assign_value(std::array<real, 1u>& lhs,
+                              const std::span<const real> rhs) {
     lhs[0] = rhs[0];
   }
 
-  inline void assign_value(std::array<real, 1u>& lhs, const std::span<real, 1u> rhs) {
+  constexpr void assign_value(std::array<real, 1u>& lhs,
+                              const std::span<real, 1u> rhs) {
     lhs[0] = rhs[0];
   }
 
-  inline void assign_value(std::array<real, 1u>& lhs, const std::span<const real, 1u> rhs) {
+  constexpr void assign_value(std::array<real, 1u>& lhs,
+                              const std::span<const real, 1u> rhs) {
     lhs[0] = rhs[0];
   }
 
-  inline void assign_value(std::span<real, 1u> lhs, const real rhs) {
+  constexpr void assign_value(std::span<real, 1u> lhs, const real rhs) {
     lhs[0] = rhs;
   }
 
-  inline void assign_value(std::span<real> lhs, const real rhs) {
+  constexpr void assign_value(std::span<real> lhs, const real rhs) {
     lhs[0] = rhs;
   }
 
-  inline void assign_value(std::span<real> lhs, const std::span<real, 1u> rhs) {
+  constexpr void assign_value(std::span<real> lhs,
+                              const std::span<real, 1u> rhs) {
     lhs[0] = rhs[0];
   }
 
-  inline void assign_value(std::span<real> lhs,
-                           const std::span<const real, 1u> rhs) {
+  constexpr void assign_value(std::span<real> lhs,
+                              const std::span<const real, 1u> rhs) {
     lhs[0] = rhs[0];
   }
 
-  inline void assign_value(std::span<real, 1u> lhs, const std::span<real> rhs) {
+  constexpr void assign_value(std::span<real, 1u> lhs,
+                              const std::span<real> rhs) {
     lhs[0] = rhs[0];
   }
 
-  inline void assign_value(std::span<real, 1u> lhs,
-                           const std::span<const real> rhs) {
+  constexpr void assign_value(std::span<real, 1u> lhs,
+                              const std::span<const real> rhs) {
     lhs[0] = rhs[0];
   }
 
-  inline void assign_value(std::span<real, 1u> lhs,
-                           const std::span<real, 1u> rhs) {
+  constexpr void assign_value(std::span<real, 1u> lhs,
+                              const std::span<real, 1u> rhs) {
     lhs[0] = rhs[0];
   }
 
-  inline void assign_value(std::span<real, 1u> lhs,
-                           const std::span<const real, 1u> rhs) {
+  constexpr void assign_value(std::span<real, 1u> lhs,
+                              const std::span<const real, 1u> rhs) {
     lhs[0] = rhs[0];
   }
 
-  inline void assign_value(std::span<real, 1u> lhs, const std::array<real, 1u>& rhs) {
+  constexpr void assign_value(std::span<real, 1u> lhs,
+                              const std::array<real, 1u>& rhs) {
     lhs[0] = rhs[0];
   }
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
-  void assign_scalar_impl(FunctionType& f, EvaluatorType e) requires(
+  constexpr void assign_scalar_impl(FunctionType& f, EvaluatorType e) requires(
       (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
           !hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
     using Space = std::decay_t<decltype(getSpace(f))>;
@@ -171,7 +178,7 @@ namespace mgis::function::internals {
   }  // end of assign_scalar_impl
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
-  void assign_scalar_impl(FunctionType& f, EvaluatorType e) requires(
+  constexpr void assign_scalar_impl(FunctionType& f, EvaluatorType e) requires(
       (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
           hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
     using Space = std::decay_t<decltype(getSpace(f))>;
@@ -184,7 +191,7 @@ namespace mgis::function::internals {
   }  // end of assign_scalar_impl
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
-  void assign_impl(FunctionType& f, EvaluatorType e) requires(
+  constexpr void assign_impl(FunctionType& f, EvaluatorType e) requires(
       (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
           !hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
     using Space = std::decay_t<decltype(getSpace(f))>;
@@ -206,7 +213,7 @@ namespace mgis::function::internals {
   }  // end of assign_impl
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
-  void assign_impl(FunctionType& f, EvaluatorType e) requires(
+  constexpr void assign_impl(FunctionType& f, EvaluatorType e) requires(
       (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
           hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
     using Space = std::decay_t<decltype(getSpace(f))>;
@@ -233,9 +240,9 @@ namespace mgis::function::internals {
 namespace mgis::function {
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
-  bool assign(Context& ctx,
-              FunctionType& f,
-              EvaluatorType e)  //
+  constexpr bool assign(AbstractErrorHandler& ctx,
+                        FunctionType& f,
+                        EvaluatorType e)  //
       requires(((LinearElementSpaceConcept<std::decay_t<
                      decltype(getSpace(std::declval<EvaluatorType>()))>>) ||
                 (LinearQuadratureSpaceConcept<std::decay_t<
@@ -266,7 +273,7 @@ namespace mgis::function {
   }  // end of assign
 
   template <EvaluatorConcept EvaluatorType, typename OperatorType>
-  [[nodiscard]] std::optional<real> scalar_reduce(Context& ctx,
+  [[nodiscard]] std::optional<real> scalar_reduce(AbstractErrorHandler& ctx,
                                                   EvaluatorType e,
                                                   const OperatorType op,
                                                   const real initial_value)  //

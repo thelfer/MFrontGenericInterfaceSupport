@@ -465,8 +465,8 @@ namespace mgis::function {
             bool is_mutable>
   requires(LinearElementSpaceConcept<Space> ||
            LinearQuadratureSpaceConcept<Space>)  //
-      bool FunctionView<Space, layout, is_mutable>::check(
-          Context&) const noexcept {
+      constexpr bool FunctionView<Space, layout, is_mutable>::check(
+          AbstractErrorHandler&) const noexcept {
     return true;
   }  // end of allocateWorkspace
 

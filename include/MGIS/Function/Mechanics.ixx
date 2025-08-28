@@ -46,7 +46,7 @@ namespace mgis::function::internals {
     constexpr ConvertFiniteStrainStiffnessEvaluator(
         ConvertFiniteStrainStiffnessEvaluator&&) = default;
     //! \brief perform consistency checks
-    bool check(Context& ctx) const {
+    constexpr bool check(AbstractErrorHandler& ctx) const {
       return ((checkMatchingSpaces(ctx, this->K, this->F0)) &&
               (checkMatchingSpaces(ctx, this->K, this->F1)) &&
               (checkMatchingSpaces(ctx, this->K, this->s)) &&

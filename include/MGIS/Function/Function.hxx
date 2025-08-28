@@ -434,7 +434,7 @@ namespace mgis::function {
     //! \return the underlying quadrature space
     constexpr const Space& getSpace() const noexcept;
     //! \brief a noop function to match the EvaluatorConcept concept
-    bool check(Context&) const noexcept;
+    constexpr bool check(AbstractErrorHandler&) const noexcept;
     //! \brief a noop function to match the EvaluatorConcept concept
     constexpr void allocateWorkspace() noexcept;
     /*!

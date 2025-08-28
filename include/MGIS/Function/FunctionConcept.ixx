@@ -8,6 +8,7 @@
 #ifndef LIB_MGIS_FUNCTION_FUNCTIONCONCEPT_IXX
 #define LIB_MGIS_FUNCTION_FUNCTIONCONCEPT_IXX
 
+#include "MGIS/Context.hxx"
 #include "MGIS/Function/Algorithms.hxx"
 
 namespace mgis::function::internals {

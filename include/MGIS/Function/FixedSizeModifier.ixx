@@ -40,8 +40,8 @@ namespace mgis::function {
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0)  //
-      bool FixedSizeModifier<EvaluatorType, N>::check(
-          Context& ctx) const noexcept {
+      constexpr bool FixedSizeModifier<EvaluatorType, N>::check(
+          AbstractErrorHandler& ctx) const noexcept {
     return checkPreconditions(ctx, this->evaluator);
   }
 

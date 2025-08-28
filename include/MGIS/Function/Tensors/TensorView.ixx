@@ -35,8 +35,8 @@ namespace mgis::function {
         function(values) {}  // end of TensorView
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  bool TensorView<FunctionType, TensorType>::check(
-      Context& ctx) const noexcept {
+  constexpr bool TensorView<FunctionType, TensorType>::check(
+      AbstractErrorHandler& ctx) const noexcept {
     return checkPreconditions(ctx, this->function);
   }
 

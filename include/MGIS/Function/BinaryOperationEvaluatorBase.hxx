@@ -8,7 +8,7 @@
 #ifndef LIB_MGIS_FUNCTION_BINARYOPERATIONEVALUATORBASE_HXX
 #define LIB_MGIS_FUNCTION_BINARYOPERATIONEVALUATORBASE_HXX
 
-#include "MGIS/Context.hxx"
+#include "MGIS/AbstractErrorHandler.hxx"
 #include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/Evaluator.hxx"
 
@@ -66,7 +66,7 @@ namespace mgis::function {
     //! \brief move constructor
     constexpr BinaryOperationEvaluatorBase(BinaryOperationEvaluatorBase&&);
     //! \brief perform consistency checks
-    bool check(Context&) const;
+    constexpr bool check(AbstractErrorHandler&) const;
     //! \brief allocate internal workspace
     constexpr void allocateWorkspace();
     //! \brief return the underlying space

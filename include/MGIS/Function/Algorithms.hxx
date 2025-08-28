@@ -10,7 +10,7 @@
 
 #include <optional>
 #include "MGIS/Config.hxx"
-#include "MGIS/Context.hxx"
+#include "MGIS/AbstractErrorHandler.hxx"
 #include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/EvaluatorConcept.hxx"
 #include "MGIS/Function/FunctionConcept.hxx"
@@ -24,9 +24,9 @@ namespace mgis::function {
    * \param[in] e: right hand side
    */
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
-  [[nodiscard]] bool assign(Context&,
-                            FunctionType&,
-                            EvaluatorType)  //
+  [[nodiscard]] constexpr bool assign(AbstractErrorHandler&,
+                                      FunctionType&,
+                                      EvaluatorType)  //
       requires(((LinearElementSpaceConcept<std::decay_t<
                      decltype(getSpace(std::declval<EvaluatorType>()))>>) ||
                 (LinearQuadratureSpaceConcept<std::decay_t<
@@ -44,7 +44,7 @@ namespace mgis::function {
    */
   template <EvaluatorConcept EvaluatorType, typename OperatorType>
   [[nodiscard]] std::optional<real>
-  scalar_reduce(Context&, EvaluatorType, const OperatorType, const real) requires(
+  scalar_reduce(AbstractErrorHandler&, EvaluatorType, const OperatorType, const real) requires(
       LinearElementSpaceConcept<
           std::decay_t<decltype(getSpace(std::declval<EvaluatorType>()))>>);
 

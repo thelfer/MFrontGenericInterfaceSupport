@@ -39,7 +39,8 @@ namespace mgis::function {
 
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0)  //
-      bool FixedSizeView<FunctionType, N>::check(Context& ctx) const noexcept {
+      constexpr bool FixedSizeView<FunctionType, N>::check(
+          AbstractErrorHandler& ctx) const noexcept {
     return checkPreconditions(ctx, this->function);
   }
 

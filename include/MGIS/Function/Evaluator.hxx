@@ -10,7 +10,7 @@
 
 #include <type_traits>
 #include "MGIS/Config.hxx"
-#include "MGIS/Context.hxx"
+#include "MGIS/AbstractErrorHandler.hxx"
 #include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/CompileTimeSize.hxx"
 #include "MGIS/Function/EvaluatorConcept.hxx"
@@ -25,9 +25,9 @@ namespace mgis::function {
    * \param[in] e1: first evaluator
    * \param[in] e2: second evaluator
    */
-  bool checkMatchingSpaces(Context&,
-                           const EvaluatorConcept auto&,
-                           const EvaluatorConcept auto&);
+  constexpr bool checkMatchingSpaces(AbstractErrorHandler&,
+                                     const EvaluatorConcept auto&,
+                                     const EvaluatorConcept auto&);
 
 }  // end of namespace mgis::function
 

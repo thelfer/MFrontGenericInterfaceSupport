@@ -51,7 +51,7 @@ namespace mgis::function {
     constexpr FixedSizeView(const PreconditionsCheck<doPreconditionsCheck>&,
                             FunctionType&);
     //! \brief perform consistency checks
-    bool check(Context&) const noexcept;
+    constexpr bool check(AbstractErrorHandler&) const noexcept;
     //! \brief dummy method to satisfy the EvaluatorConcept
     constexpr void allocateWorkspace() noexcept;
     //! \brief return the underlying  space
