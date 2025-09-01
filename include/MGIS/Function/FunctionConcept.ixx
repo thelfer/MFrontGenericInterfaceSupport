@@ -17,7 +17,7 @@ namespace mgis::function::internals {
   constexpr decltype(auto) disambiguateGetSpace(const FunctionType& f)  //
       requires(!EvaluatorConcept<FunctionType>) {
     return getSpace(f);
-  } // end of disambiguateGetSpace
+  }  // end of disambiguateGetSpace
 
   template <FunctionConcept FunctionType>
   constexpr mgis::size_type disambiguateGetNumberOfComponents(

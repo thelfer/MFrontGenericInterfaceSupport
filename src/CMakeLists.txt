@@ -30,6 +30,7 @@ if(enable-mgis-function)
     Function.cxx
     Evaluator.cxx
     TensorView.cxx
+    TensorModifier.cxx
     MaterialFunctionManager.cxx)
 endif(enable-mgis-function)
 

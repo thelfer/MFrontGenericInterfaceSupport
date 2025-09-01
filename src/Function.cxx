@@ -26,10 +26,11 @@ namespace mgis::function {
           function_result<FunctionView<BasicLinearSpace, {.data_size = 1}>>,
           real&>);
 
+  static_assert(FunctionConcept<Function<BasicLinearSpace>>);
   // This shall not work as Function is not a lightweight obect
   static_assert(!EvaluatorConcept<Function<BasicLinearSpace>>);
 
-  // This shall not work as Function is not a lightweight obect
-  static_assert(FunctionConcept<Function<BasicLinearSpace>>);
+  static_assert(EvaluatorConcept<FixedSizeView<Function<BasicLinearSpace>, 9>>);
+  static_assert(FunctionConcept<FixedSizeView<Function<BasicLinearSpace>, 9>>);
 
 }  // end of namespace mgis::function
