@@ -11,7 +11,7 @@
 namespace mgis::function::internals {
 
   template <EvaluatorConcept EvaluatorType>
-  decltype(auto) disambiguateGetSpace(const EvaluatorType& e) {
+  constexpr decltype(auto) disambiguateGetSpace(const EvaluatorType& e) {
     return getSpace(e);
   }
 

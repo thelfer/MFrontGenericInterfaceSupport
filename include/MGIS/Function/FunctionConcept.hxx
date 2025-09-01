@@ -339,7 +339,7 @@ namespace mgis::function {
      * the getSpace function
      */
     template <FunctionConcept FunctionType>
-    decltype(auto) disambiguateGetSpace(const FunctionType&)  //
+    constexpr decltype(auto) disambiguateGetSpace(const FunctionType&)  //
         requires(!EvaluatorConcept<FunctionType>);
 
     /*!

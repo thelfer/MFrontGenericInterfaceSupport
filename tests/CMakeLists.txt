@@ -440,6 +440,20 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
 endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
+add_executable(TensorialFunctionTest
+ EXCLUDE_FROM_ALL
+ TensorialFunctionTest.cxx)
+target_link_libraries(TensorialFunctionTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME TensorialFunctionTest COMMAND TensorialFunctionTest)
+add_dependencies(check TensorialFunctionTest)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+    target_compile_definitions(TensorialFunctionTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
 add_executable(ReduceTest
  EXCLUDE_FROM_ALL
  ReduceTest.cxx)

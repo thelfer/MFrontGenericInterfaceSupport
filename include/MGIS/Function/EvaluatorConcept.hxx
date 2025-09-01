@@ -225,7 +225,7 @@ namespace mgis::function {
      * the getSpace function
      */
     template <EvaluatorConcept EvaluatorType>
-    decltype(auto) disambiguateGetSpace(const EvaluatorType&);
+    constexpr decltype(auto) disambiguateGetSpace(const EvaluatorType&);
 
     /*!
      * \brief number of components of a type when known at compile-time,
