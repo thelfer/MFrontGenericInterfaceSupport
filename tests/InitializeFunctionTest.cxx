@@ -21,9 +21,9 @@
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
 
-bool success = true;
+static bool success = true;
 
-bool check(const bool b, const std::string_view msg) {
+static bool check(const bool b, const std::string_view msg) {
   if (!b) {
     success = false;
     std::cerr << msg << '\n';
@@ -31,8 +31,8 @@ bool check(const bool b, const std::string_view msg) {
   return b;
 }
 
-void check_behaviour(const mgis::behaviour::Behaviour& b,
-                     const mgis::behaviour::Hypothesis h) {
+static void check_behaviour(const mgis::behaviour::Behaviour& b,
+			    const mgis::behaviour::Hypothesis h) {
   using namespace mgis::behaviour;
   check(b.behaviour == "InitializeFunctionTest", "invalid behaviour name");
   check(b.hypothesis == h, "invalid hypothesis");
@@ -67,7 +67,7 @@ void check_behaviour(const mgis::behaviour::Behaviour& b,
         "'ElasticStrainFromInitialStress' initialize function");
 }  // end of check_behaviour
 
-void call_initialize_function(const mgis::behaviour::Behaviour& b) {
+static void call_initialize_function(const mgis::behaviour::Behaviour& b) {
   using namespace mgis::behaviour;
   constexpr auto pr = mgis::real{-1.2e5};
   constexpr auto eps = -10 * pr * std::numeric_limits<mgis::real>::epsilon();
@@ -104,7 +104,7 @@ void call_initialize_function(const mgis::behaviour::Behaviour& b) {
   }
 }  // end of call_initialize_function
 
-void call_initialize_function2(const mgis::behaviour::Behaviour& b) {
+static void call_initialize_function2(const mgis::behaviour::Behaviour& b) {
   using namespace mgis::behaviour;
   constexpr auto E = mgis::real{200e9};
   constexpr auto nu = mgis::real{0.3};

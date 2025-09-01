@@ -106,14 +106,6 @@ namespace mgis::function {
                               tfel::math::getUnderlyingArrayMinimalSize<
                                   typename TensorType::indexing_policy>()>,
                      TensorType>::check;
-    /*
-     * This function is made protected to avoid Function from being treated as
-     * an evaluator
-     */
-    using TensorView<Function<Space,
-                              tfel::math::getUnderlyingArrayMinimalSize<
-                                  typename TensorType::indexing_policy>()>,
-                     TensorType>::allocateWorkspace;
   };
 
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>
@@ -150,6 +142,15 @@ namespace mgis::function {
   //   template <FunctionalSpaceConcept SpaceType>
   //   TensorialFunction(const SpaceType&, const size_type)
   //       -> Function<SpaceType, dynamic_extent>;
+
+  //! \brief allocate internal workspace
+  template <FunctionalSpaceConcept Space, TensorConcept TensorType>
+  constexpr void allocateWorkspace(
+      const TensorialFunction<Space, TensorType>&) = delete;
+  //! \return the number of components
+  template <FunctionalSpaceConcept Space, TensorConcept TensorType>
+  constexpr mgis::size_type getNumberOfComponents(
+      const TensorialFunction<Space, TensorType>&) noexcept;
 
 }  // end of namespace mgis::function
 

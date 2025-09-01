@@ -76,8 +76,8 @@ namespace mgis::function {
           Child,
           FirstEvaluatorType,
           SecondEvaluatorType>::allocateWorkspace() {
-    this->first_evaluator.allocateWorkspace();
-    this->second_evaluator.allocateWorkspace();
+    internals::disambiguateAllocateWorkspace(this->first_evaluator);
+    internals::disambiguateAllocateWorkspace(this->second_evaluator);
   }  // end of allocatWorkspace
 
   template <typename Child,
@@ -168,6 +168,16 @@ namespace mgis::function {
                                          SecondEvaluatorType>& e) {
     return e.getSpace();
   }  // end of getSpace
+
+  template <typename Child,
+            EvaluatorConcept FirstEvaluatorType,
+            EvaluatorConcept SecondEvaluatorType>
+  constexpr void allocateWorkspace(
+      BinaryOperationEvaluatorBase<Child,
+                                   FirstEvaluatorType,
+                                   SecondEvaluatorType>& e){
+    return e.allocateWorkspace();
+  } // end of allocateWorkspace
 
 }  // end of namespace mgis::function
 

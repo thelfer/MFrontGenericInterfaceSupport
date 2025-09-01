@@ -28,9 +28,9 @@ namespace mgis::function {
     template <typename CallableType, EvaluatorConcept EvaluatorType>
     struct UnaryOperationBase {
       static constexpr size_type getNumberOfComponents() noexcept {
-        using BinaryOperationResult =
+        using UnaryOperationResult =
             std::invoke_result_t<CallableType, evaluator_result<EvaluatorType>>;
-        return compile_time_size<BinaryOperationResult>;
+        return compile_time_size<UnaryOperationResult>;
       }
       static_assert(getNumberOfComponents() != dynamic_extent);
     };
@@ -56,6 +56,9 @@ namespace mgis::function {
      * \param[in] e: modified evaluator
      */
     constexpr UnaryOperation(const CallableType&, const EvaluatorType&);
+    //
+    using internals::UnaryOperationBase<CallableType,
+                                        EvaluatorType>::getNumberOfComponents;
     //! \brief apply the modifier
     constexpr auto apply(const evaluator_result<EvaluatorType>&) const;
 
@@ -79,9 +82,21 @@ namespace mgis::function {
     // inheriting constructor
     using EvaluatorModifierBase<UnaryOperation2,
                                 EvaluatorType>::EvaluatorModifierBase;
+    //
+    using internals::UnaryOperationBase<CallableType,
+                                        EvaluatorType>::getNumberOfComponents;
     //! \brief apply the modifier
     constexpr auto apply(const evaluator_result<EvaluatorType>&) const;
   };
+
+  //! \return the number of components
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
+  constexpr mgis::size_type getNumberOfComponents(
+      const UnaryOperation<CallableType, EvaluatorType>&) noexcept;
+  //! \return the number of components
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
+  constexpr mgis::size_type getNumberOfComponents(
+      const UnaryOperation2<CallableType, EvaluatorType>&) noexcept;
 
   namespace internals {
 

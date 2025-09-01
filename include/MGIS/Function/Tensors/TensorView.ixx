@@ -14,8 +14,9 @@ namespace mgis::function {
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr bool TensorView<FunctionType, TensorType>::checkPreconditions(
-      AbstractErrorHandler& eh, const FunctionType& values) noexcept {
-    if (values.getNumberOfComponents() != compile_time_size<TensorType>) {
+      AbstractErrorHandler& eh, const FunctionType& values) {
+    const auto nc = values.getNumberOfComponents();
+    if (nc != compile_time_size<TensorType>) {
       return eh.registerErrorMessage("invalid number of components");
     }
     return true;
@@ -36,12 +37,9 @@ namespace mgis::function {
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr bool TensorView<FunctionType, TensorType>::check(
-      AbstractErrorHandler& ctx) const noexcept {
+      AbstractErrorHandler& ctx) const {
     return checkPreconditions(ctx, this->function);
   }
-
-  template <FunctionConcept FunctionType, TensorConcept TensorType>
-  constexpr void TensorView<FunctionType, TensorType>::allocateWorkspace() {}
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr const typename TensorView<FunctionType, TensorType>::Space&
@@ -203,6 +201,17 @@ namespace mgis::function {
       const TensorView<FunctionType, TensorType>& t) {
     return t.getSpace();
   }
+
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  constexpr void allocateWorkspace(
+      TensorView<FunctionType, TensorType>&) noexcept {
+  }  // end of allocateWorkspace
+
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  constexpr size_type getNumberOfComponents(
+      const TensorView<FunctionType, TensorType>& v) noexcept {
+    return v.getNumberOfComponents();
+  }  // end of getNumberOfComponents
 
 }  // end of namespace mgis::function
 

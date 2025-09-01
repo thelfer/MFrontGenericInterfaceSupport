@@ -34,4 +34,9 @@ namespace mgis::function {
       number_of_components<
           FixedSizeModifier<FunctionEvaluator<BasicLinearSpace>, 9>> == 9);
 
+  static_assert(EvaluatorConcept<
+                FixedSizeModifier<FunctionEvaluator<BasicLinearSpace>, 9>>);
+  static_assert(!FunctionConcept<
+                FixedSizeModifier<FunctionEvaluator<BasicLinearSpace>, 9>>);
+
 }  // end of namespace mgis::function

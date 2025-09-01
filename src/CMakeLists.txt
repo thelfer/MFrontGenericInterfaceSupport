@@ -29,6 +29,7 @@ if(enable-mgis-function)
     BasicLinearQuadratureSpace.cxx
     Function.cxx
     Evaluator.cxx
+    TensorView.cxx
     MaterialFunctionManager.cxx)
 endif(enable-mgis-function)
 

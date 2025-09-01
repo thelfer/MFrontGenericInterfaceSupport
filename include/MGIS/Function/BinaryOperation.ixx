@@ -56,6 +56,26 @@ namespace mgis::function {
     return c(v1, v2);
   }  // end of apply
 
+  template <typename CallableType,
+            EvaluatorConcept FirstEvaluatorType,
+            EvaluatorConcept SecondEvaluatorType>
+  constexpr mgis::size_type getNumberOfComponents(
+      const BinaryOperationModifier<CallableType,
+                                    FirstEvaluatorType,
+                                    SecondEvaluatorType>& e) {
+    return e.getNumberOfComponents();
+  }  // end of getNumberOfComponents
+
+  template <typename CallableType,
+            EvaluatorConcept FirstEvaluatorType,
+            EvaluatorConcept SecondEvaluatorType>
+  constexpr mgis::size_type getNumberOfComponents(
+      const BinaryOperationModifier2<CallableType,
+                                     FirstEvaluatorType,
+                                     SecondEvaluatorType>& e) {
+    return e.getNumberOfComponents();
+  }  // end of getNumberOfComponents
+
   namespace internals {
 
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>

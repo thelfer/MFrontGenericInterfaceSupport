@@ -54,18 +54,12 @@ namespace mgis::function::internals {
               (this->F1.check(ctx)) && (this->s.check(ctx)));
     }
 
-    constexpr auto getNumberOfComponents() const {
-      const auto value =
-          tfel::material::tangent_operator<SourceFlag, N, ::mgis::real>{};
-      return value.size();
-    }  // end of getNumberOfComments
-
     //! \brief allocate internal workspace
     constexpr void allocateWorkspace() {
-      this->K.allocateWorkspace();
-      this->F0.allocateWorkspace();
-      this->F1.allocateWorkspace();
-      this->s.allocateWorkspace();
+      internals::disambiguateAllocateWorkspace(this->K);
+      internals::disambiguateAllocateWorkspace(this->F0);
+      internals::disambiguateAllocateWorkspace(this->F1);
+      internals::disambiguateAllocateWorkspace(this->s);
     }
     //! \brief return the underlying space
     constexpr decltype(auto) getSpace() const {
@@ -148,6 +142,45 @@ namespace mgis::function::internals {
     DeformationGradientEvaluatorType1 F1;
     CauchyStressEvaluatorType s;
   };
+
+  template <unsigned short N,
+            FiniteStrainStiffnessKind ResultFlag,
+            FiniteStrainStiffnessKind SourceFlag,
+            FourthOrderTensorEvaluatorConcept StiffnessEvaluator,
+            TensorEvaluatorConcept DeformationGradientEvaluatorType0,
+            TensorEvaluatorConcept DeformationGradientEvaluatorType1,
+            StensorEvaluatorConcept CauchyStressEvaluatorType>
+  constexpr void allocateWorkspace(ConvertFiniteStrainStiffnessEvaluator<
+      N,
+      ResultFlag,
+      SourceFlag,
+      StiffnessEvaluator,
+      DeformationGradientEvaluatorType0,
+      DeformationGradientEvaluatorType1,
+      CauchyStressEvaluatorType>& e){
+    return e.allocateWorkspace();
+  }  // end of allocateWorkspace
+
+  template <unsigned short N,
+            FiniteStrainStiffnessKind ResultFlag,
+            FiniteStrainStiffnessKind SourceFlag,
+            FourthOrderTensorEvaluatorConcept StiffnessEvaluator,
+            TensorEvaluatorConcept DeformationGradientEvaluatorType0,
+            TensorEvaluatorConcept DeformationGradientEvaluatorType1,
+            StensorEvaluatorConcept CauchyStressEvaluatorType>
+  constexpr mgis::size_type getNumberOfComponents(
+      const ConvertFiniteStrainStiffnessEvaluator<
+          N,
+          ResultFlag,
+          SourceFlag,
+          StiffnessEvaluator,
+          DeformationGradientEvaluatorType0,
+          DeformationGradientEvaluatorType1,
+          CauchyStressEvaluatorType>&) noexcept {
+    const auto value =
+        tfel::material::tangent_operator<SourceFlag, N, ::mgis::real>{};
+    return value.size();
+  }  // end of getNumberOfComments
 
   template <unsigned short N,
             FiniteStrainStiffnessKind ResultFlag,

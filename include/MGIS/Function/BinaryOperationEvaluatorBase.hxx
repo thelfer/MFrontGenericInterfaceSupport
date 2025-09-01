@@ -120,6 +120,14 @@ namespace mgis::function {
       const BinaryOperationEvaluatorBase<Child,
                                          FirstEvaluatorType,
                                          SecondEvaluatorType>&);
+    //! \brief allocate internal workspace
+  template <typename Child,
+            EvaluatorConcept FirstEvaluatorType,
+            EvaluatorConcept SecondEvaluatorType>
+  constexpr void allocateWorkspace(
+      BinaryOperationEvaluatorBase<Child,
+                                   FirstEvaluatorType,
+                                   SecondEvaluatorType>&);
 
 }  // end of namespace mgis::function
 

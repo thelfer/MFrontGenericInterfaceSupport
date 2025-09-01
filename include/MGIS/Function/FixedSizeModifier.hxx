@@ -33,7 +33,7 @@ namespace mgis::function {
      * \param[in] e: evaluator
      */
     static constexpr bool checkPreconditions(AbstractErrorHandler&,
-                                             const EvaluatorType&) noexcept;
+                                             const EvaluatorType&);
     /*!
      * \brief constructor
      * \param[in] values: function
@@ -48,13 +48,13 @@ namespace mgis::function {
     constexpr FixedSizeModifier(const PreconditionsCheck<doPreconditionsCheck>&,
                                 const EvaluatorType&);
     //! \brief perform consistency checks
-    constexpr bool check(AbstractErrorHandler&) const noexcept;
+    constexpr bool check(AbstractErrorHandler&) const;
     //! \brief allocate internal workspace
     constexpr void allocateWorkspace();
     //! \brief return the underlying  space
     decltype(auto) getSpace() const;
     //! \return the number of components
-    constexpr size_type getNumberOfComponents() const noexcept;
+    constexpr size_type getNumberOfComponents() const;
     /*!
      * \brief call operator
      * \param[in] i: integration point index
@@ -106,6 +106,14 @@ namespace mgis::function {
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   decltype(auto) getSpace(const FixedSizeModifier<EvaluatorType, N>&);
+
+    //! \brief allocate internal workspace
+  template <EvaluatorConcept EvaluatorType, size_type N>
+  constexpr void allocateWorkspace(FixedSizeModifier<EvaluatorType, N>&);
+  //! \return the number of components
+  template <EvaluatorConcept EvaluatorType, size_type N>
+  constexpr size_type getNumberOfComponents(
+      const FixedSizeModifier<EvaluatorType, N>&);
 
 }  // end of namespace mgis::function
 

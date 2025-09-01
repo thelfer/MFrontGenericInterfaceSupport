@@ -27,6 +27,12 @@ namespace mgis::function {
     return tfel::math::map<const TensorType>(values.data());
   }  // end of apply
 
+  template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
+  constexpr mgis::size_type getNumberOfComponents(
+      const TensorModifier<TensorType, EvaluatorType>& e) noexcept{
+    return e.getNumberOfComponents();
+  }
+
 }  // end of namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_TENSORMODIFIER_IXX */

@@ -114,7 +114,8 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
         EvaluatorConcept<std::decay_t<decltype(cauchy_r)>>);
     TFEL_TESTS_ASSERT(cauchy_r.check(ctx));
     // evaluation of the Cauchy stress in global frame
-    const auto ok = pk1 | from_pk1_to_cauchy(F) | rotate(R) | sig;
+    const auto ok =
+      pk1 | from_pk1_to_cauchy(F) | rotate(R) | sig;
     TFEL_TESTS_ASSERT(ok);
     TFEL_TESTS_ASSERT(std::abs(sig(0)[0] - 0) < eps);
     TFEL_TESTS_ASSERT(std::abs(sig(0)[1] - 0) < eps);

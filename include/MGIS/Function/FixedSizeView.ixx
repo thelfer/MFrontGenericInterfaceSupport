@@ -15,7 +15,7 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0)  //
       constexpr bool FixedSizeView<FunctionType, N>::checkPreconditions(
-          AbstractErrorHandler& eh, const FunctionType& values) noexcept {
+          AbstractErrorHandler& eh, const FunctionType& values) {
     if (values.getNumberOfComponents() != N) {
       return eh.registerErrorMessage("invalid number of components");
     }
@@ -40,15 +40,9 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0)  //
       constexpr bool FixedSizeView<FunctionType, N>::check(
-          AbstractErrorHandler& ctx) const noexcept {
+          AbstractErrorHandler& ctx) const {
     return checkPreconditions(ctx, this->function);
   }
-
-  template <FunctionConcept FunctionType, size_type N>
-  requires(N > 0)  //
-      constexpr void FixedSizeView<FunctionType,
-                                   N>::allocateWorkspace() noexcept {
-  }  // end of allocateWorkspace
 
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0)  //
@@ -295,6 +289,16 @@ namespace mgis::function {
   constexpr decltype(auto) getSpace(const FixedSizeView<FunctionType, N>& v) {
     return v.getSpace();
   }  // end of getSpace
+
+  template <FunctionConcept FunctionType, size_type N>
+  constexpr void allocateWorkspace(FixedSizeView<FunctionType, N>&) noexcept {
+  }  // end of allocateWorkspace
+
+  template <FunctionConcept FunctionType, size_type N>
+  constexpr mgis::size_type getNumberOfComponents(
+      const FixedSizeView<FunctionType, N>& v) noexcept {
+    return v.getNumberOfComponents();
+  }  // end of getNumberOfComponents
 
 }  // end of namespace mgis::function
 

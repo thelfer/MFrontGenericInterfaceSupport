@@ -466,17 +466,9 @@ namespace mgis::function {
   requires(LinearElementSpaceConcept<Space> ||
            LinearQuadratureSpaceConcept<Space>)  //
       constexpr bool FunctionView<Space, layout, is_mutable>::check(
-          AbstractErrorHandler&) const noexcept {
+          AbstractErrorHandler&) const {
     return true;
   }  // end of allocateWorkspace
-
-  template <FunctionalSpaceConcept Space,
-            FunctionDataLayoutDescription layout,
-            bool is_mutable>
-  requires(LinearElementSpaceConcept<Space> ||
-           LinearQuadratureSpaceConcept<Space>)  //
-      constexpr void FunctionView<Space, layout, is_mutable>::
-          allocateWorkspace() noexcept {}  // end of allocateWorkspace
 
   template <FunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
@@ -604,6 +596,20 @@ namespace mgis::function {
       FunctionView<Space, layout, is_mutable>::data() const {
     return this->values;
   }
+
+  template <FunctionalSpaceConcept Space,
+            FunctionDataLayoutDescription layout,
+            bool is_mutable>
+  constexpr void allocateWorkspace(
+      FunctionView<Space, layout, is_mutable>&) noexcept {
+  }  // end of allocateWorkspace
+
+  template <FunctionalSpaceConcept Space, FunctionDataLayoutDescription layout,
+            bool is_mutable>
+  constexpr mgis::size_type getNumberOfComponents(
+      const FunctionView<Space, layout, is_mutable>& e) noexcept{
+    return e.getNumberOfComponents();
+  } // end of  getNumberOfComponents
 
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||

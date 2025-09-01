@@ -36,7 +36,7 @@ namespace mgis::function {
      * \param[in] values: function
      */
     static constexpr bool checkPreconditions(AbstractErrorHandler&,
-                                             const FunctionType&) noexcept;
+                                             const FunctionType&);
     /*!
      * \brief constructor
      * \param[in] values: function
@@ -51,9 +51,7 @@ namespace mgis::function {
     constexpr FixedSizeView(const PreconditionsCheck<doPreconditionsCheck>&,
                             FunctionType&);
     //! \brief perform consistency checks
-    constexpr bool check(AbstractErrorHandler&) const noexcept;
-    //! \brief dummy method to satisfy the EvaluatorConcept
-    constexpr void allocateWorkspace() noexcept;
+    constexpr bool check(AbstractErrorHandler&) const;
     //! \brief return the underlying  space
     constexpr decltype(auto) getSpace() const;
     //! \return the number of components
@@ -147,6 +145,14 @@ namespace mgis::function {
 
   template <FunctionConcept FunctionType, size_type N>
   constexpr decltype(auto) getSpace(const FixedSizeView<FunctionType, N>&);
+
+    //! \brief allocate internal workspace
+  template <FunctionConcept FunctionType, size_type N>
+  constexpr void allocateWorkspace(FixedSizeView<FunctionType, N>&) noexcept;
+  //! \return the number of components
+  template <FunctionConcept FunctionType, size_type N>
+  constexpr size_type getNumberOfComponents(
+      const FixedSizeView<FunctionType, N>&) noexcept;
 
 }  // end of namespace mgis::function
 

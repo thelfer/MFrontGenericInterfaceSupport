@@ -434,9 +434,7 @@ namespace mgis::function {
     //! \return the underlying quadrature space
     constexpr const Space& getSpace() const noexcept;
     //! \brief a noop function to match the EvaluatorConcept concept
-    constexpr bool check(AbstractErrorHandler&) const noexcept;
-    //! \brief a noop function to match the EvaluatorConcept concept
-    constexpr void allocateWorkspace() noexcept;
+    constexpr bool check(AbstractErrorHandler&) const;
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
@@ -525,6 +523,25 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout = {}>
   using FunctionEvaluator = FunctionView<Space, layout, false>;
+
+  /*!
+   * \brief do nothing function to match the Evaluator concept
+   * \param[in] v: view
+   */
+  template <FunctionalSpaceConcept Space,
+            FunctionDataLayoutDescription layout,
+            bool is_mutable>
+  constexpr void allocateWorkspace(
+      FunctionView<Space, layout, is_mutable>&) noexcept;
+  /*!
+   * \return the number of components of a view
+   * \param[in] v: view
+   */
+  template <FunctionalSpaceConcept Space,
+            FunctionDataLayoutDescription layout,
+            bool is_mutable>
+  constexpr mgis::size_type getNumberOfComponents(
+      const FunctionView<Space, layout, is_mutable>&) noexcept;
 
   /*!
    * \brief an helper class storing the values of a function
@@ -653,12 +670,6 @@ namespace mgis::function {
      * as an evaluator
      */
     using FunctionView<Space, {.data_size = N, .data_stride = N}, true>::check;
-    /*
-     * This function is made protected to avoid Function from being treated as
-     * an evaluator
-     */
-    using FunctionView<Space, {.data_size = N, .data_stride = N}, true>::
-        allocateWorkspace;
   };
 
   // class template deduction guide
@@ -686,6 +697,10 @@ namespace mgis::function {
             bool is_mutable>
   constexpr const auto& getSpace(
       const FunctionView<Space, layout, is_mutable>&);
+
+  //! \brief deleted function so that Function does not match the EvaluatorConcept
+  template <FunctionalSpaceConcept Space, size_type N>
+  constexpr void allocateWorkspace(const Function<Space, N>&) noexcept = delete;
 
 }  // namespace mgis::function
 

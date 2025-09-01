@@ -44,13 +44,17 @@ namespace mgis::function {
     using EvaluatorModifierBase<TensorModifier,
                                 EvaluatorType>::EvaluatorModifierBase;
     //! \return the size of the tensorial object to be exposed
-    static constexpr size_type getNumberOfComponents() noexcept;
+    constexpr size_type getNumberOfComponents() noexcept;
     /*!
      * \brief apply the modifier
      * \param[in] values: values to be modified
      */
     constexpr auto apply(const evaluator_result<EvaluatorType>&) const;
   };
+
+  template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
+  constexpr mgis::size_type getNumberOfComponents(
+      const TensorModifier<TensorType, EvaluatorType>&) noexcept;
 
 }  // end of namespace mgis::function
 

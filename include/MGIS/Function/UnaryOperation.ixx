@@ -39,6 +39,19 @@ namespace mgis::function {
     return c(values);
   }  // end of apply
 
+  //! \return the number of components
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
+  constexpr mgis::size_type getNumberOfComponents(
+      const UnaryOperation<CallableType, EvaluatorType>& e) noexcept {
+    return e.getNumberOfComponents();
+  }
+
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
+  constexpr mgis::size_type getNumberOfComponents(
+      const UnaryOperation2<CallableType, EvaluatorType>& e) noexcept {
+    return e.getNumberOfComponents();
+  }
+
   namespace internals {
 
     template <typename CallableType>

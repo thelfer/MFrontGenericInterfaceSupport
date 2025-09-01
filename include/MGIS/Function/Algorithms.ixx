@@ -255,14 +255,14 @@ namespace mgis::function {
     if (!areEquivalent(getSpace(f), getSpace(e))) {
       return ctx.registerErrorMessage("unmatched spaces");
     }
-    if (f.getNumberOfComponents() != e.getNumberOfComponents()) {
+    if (getNumberOfComponents(f) != getNumberOfComponents(e)) {
       return ctx.registerErrorMessage("unmatched number of components");
     }
     //
     if (!e.check(ctx)) {
       return false;
     }
-    e.allocateWorkspace();
+    allocateWorkspace(e);
     if constexpr ((internals::same_decay_type<function_result_type, real>)&&  //
                   (internals::same_decay_type<evaluator_result_type, real>)) {
       internals::assign_scalar_impl(f, e);
@@ -280,14 +280,14 @@ namespace mgis::function {
       requires(LinearElementSpaceConcept<std::decay_t<
                    decltype(getSpace(std::declval<EvaluatorType>()))>>) {
     using Space = std::decay_t<decltype(getSpace(e))>;
-    if (e.getNumberOfComponents() != 1) {
+    if (getNumberOfComponents(e) != 1) {
       return ctx.registerErrorMessage("non scalar evaluator");
     }
     //
     if (!e.check(ctx)) {
       return false;
     }
-    e.allocateWorkspace();
+    allocateWorkspace(e);
     const auto& space = getSpace(e);
     const auto ne = getSpaceSize(space);
     auto r = initial_value;

@@ -367,7 +367,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
       FunctionEvaluator<BasicLinearSpace> f(space, values, 2);
       const auto abs_values = view<2>(f) | absolute_value;
       TFEL_TESTS_ASSERT(abs_values.check(ctx));
-      TFEL_TESTS_ASSERT(abs_values.getNumberOfComponents() == 2);
+      TFEL_TESTS_ASSERT(getNumberOfComponents(abs_values) == 2);
       TFEL_TESTS_ASSERT(std::abs(abs_values(0)[0] - 1) < eps);
       TFEL_TESTS_ASSERT(std::abs(abs_values(0)[1] - 2) < eps);
       TFEL_TESTS_ASSERT(std::abs(abs_values(1)[0] - 5) < eps);

@@ -90,6 +90,12 @@ namespace mgis::function {
     return f.view();
   } // end of view
 
+  template <FunctionalSpaceConcept Space, TensorConcept TensorType>
+  constexpr mgis::size_type getNumberOfComponents(
+      const TensorialFunction<Space, TensorType>& f) noexcept {
+    return f.getNumberOfComponents();
+  }  // end of getNumberOfComponents
+
 }  // end of namespace mgis::function
 
 #endif /* MGIS_HAVE_TFEL */

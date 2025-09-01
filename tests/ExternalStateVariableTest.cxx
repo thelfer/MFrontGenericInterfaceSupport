@@ -21,9 +21,9 @@
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
 
-bool success = true;
+static bool success = true;
 
-bool check(const bool b, const std::string_view msg) {
+static bool check(const bool b, const std::string_view msg) {
   if (!b) {
     success = false;
     std::cerr << msg << '\n';
@@ -31,8 +31,8 @@ bool check(const bool b, const std::string_view msg) {
   return b;
 }
 
-void check_behaviour(const mgis::behaviour::Behaviour& b,
-                     const mgis::behaviour::Hypothesis h) {
+static void check_behaviour(const mgis::behaviour::Behaviour& b,
+			    const mgis::behaviour::Hypothesis h) {
   using namespace mgis::behaviour;
   check(b.behaviour == "TensorialExternalStateVariableTest",
         "invalid behaviour name");
@@ -62,7 +62,7 @@ void check_behaviour(const mgis::behaviour::Behaviour& b,
         "invalid array size for the external state variables");
 }  // end of check_behaviour
 
-void check_behaviour_data(const mgis::behaviour::Behaviour& b) {
+static void check_behaviour_data(const mgis::behaviour::Behaviour& b) {
   using namespace mgis::behaviour;
   constexpr const auto eps = 1.e-14;
   BehaviourData d{b};
@@ -84,7 +84,7 @@ void check_behaviour_data(const mgis::behaviour::Behaviour& b) {
   }
 }  // end of check_behaviour_data
 
-void check_material_data_manager(const mgis::behaviour::Behaviour& b) {
+static void check_material_data_manager(const mgis::behaviour::Behaviour& b) {
   using namespace mgis::behaviour;
   constexpr const auto eps = 1.e-14;
   constexpr const auto dt = 0.1;

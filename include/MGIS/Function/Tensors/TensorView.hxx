@@ -39,7 +39,7 @@ namespace mgis::function {
      * \param[in] values: function
      */
     static constexpr bool checkPreconditions(AbstractErrorHandler&,
-                                             const FunctionType&) noexcept;
+                                             const FunctionType&);
     /*!
      * \brief constructor
      * \param[in] values: function
@@ -54,9 +54,7 @@ namespace mgis::function {
     constexpr TensorView(const PreconditionsCheck<doPreconditionsCheck>&,
                          FunctionType&);
     //! \brief perform consistency checks
-    constexpr bool check(AbstractErrorHandler&) const noexcept;
-    //! \brief allocate internal workspace
-    constexpr void allocateWorkspace();
+    constexpr bool check(AbstractErrorHandler&) const;
     //! \brief return the underlying  space
     constexpr const Space& getSpace() const;
     //! \return the number of components
@@ -138,6 +136,14 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr decltype(auto) getSpace(
       const TensorView<FunctionType, TensorType>&);
+    //! \brief allocate internal workspace
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  constexpr void allocateWorkspace(
+      TensorView<FunctionType, TensorType>&) noexcept;
+  //! \return the number of components
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  constexpr size_type getNumberOfComponents(
+      const TensorView<FunctionType, TensorType>&) noexcept;
 
 }  // end of namespace mgis::function
 

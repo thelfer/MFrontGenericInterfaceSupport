@@ -72,6 +72,11 @@ namespace mgis::function {
     constexpr BinaryOperationModifier(const CallableType&,
                                       const FirstEvaluatorType&,
                                       const SecondEvaluatorType&);
+    //
+    using internals::BinaryOperationModifierBase<
+        CallableType,
+        FirstEvaluatorType,
+        SecondEvaluatorType>::getNumberOfComponents;
     //! \brief apply the modifier
     constexpr auto apply(const evaluator_result<FirstEvaluatorType>&,
                          const evaluator_result<SecondEvaluatorType>&) const;
@@ -79,6 +84,15 @@ namespace mgis::function {
    private:
     CallableType modifier;
   };
+
+  //! \return the number of components
+  template <typename CallableType,
+            EvaluatorConcept FirstEvaluatorType,
+            EvaluatorConcept SecondEvaluatorType>
+  constexpr mgis::size_type getNumberOfComponents(
+      const BinaryOperationModifier<CallableType,
+                                    FirstEvaluatorType,
+                                    SecondEvaluatorType>&);
 
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
@@ -110,10 +124,24 @@ namespace mgis::function {
         BinaryOperationModifier2,
         FirstEvaluatorType,
         SecondEvaluatorType>::BinaryOperationEvaluatorBase;
+    //
+    using internals::BinaryOperationModifierBase<
+        CallableType,
+        FirstEvaluatorType,
+        SecondEvaluatorType>::getNumberOfComponents;
     //! \brief apply the modifier
     constexpr auto apply(const evaluator_result<FirstEvaluatorType>&,
                          const evaluator_result<SecondEvaluatorType>&) const;
   };
+
+  //! \return the number of components
+  template <typename CallableType,
+            EvaluatorConcept FirstEvaluatorType,
+            EvaluatorConcept SecondEvaluatorType>
+  constexpr mgis::size_type getNumberOfComponents(
+      const BinaryOperationModifier2<CallableType,
+                                     FirstEvaluatorType,
+                                     SecondEvaluatorType>&);
 
   namespace internals {
 

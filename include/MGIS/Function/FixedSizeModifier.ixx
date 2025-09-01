@@ -15,7 +15,7 @@ namespace mgis::function {
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0)  //
       constexpr bool FixedSizeModifier<EvaluatorType, N>::checkPreconditions(
-          AbstractErrorHandler& eh, const EvaluatorType& values) noexcept {
+          AbstractErrorHandler& eh, const EvaluatorType& values) {
     if (values.getNumberOfComponents() != N) {
       return eh.registerErrorMessage("invalid number of components");
     }
@@ -41,14 +41,14 @@ namespace mgis::function {
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0)  //
       constexpr bool FixedSizeModifier<EvaluatorType, N>::check(
-          AbstractErrorHandler& ctx) const noexcept {
+          AbstractErrorHandler& ctx) const {
     return checkPreconditions(ctx, this->evaluator);
   }
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0)  //
       constexpr void FixedSizeModifier<EvaluatorType, N>::allocateWorkspace() {
-    return this->evaluator.allocateWorkspace();
+    return internals::disambiguateAllocateWorkspace(this->evaluator);
   }
 
   template <EvaluatorConcept EvaluatorType, size_type N>
@@ -60,8 +60,7 @@ namespace mgis::function {
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0)  //
       constexpr size_type
-      FixedSizeModifier<EvaluatorType, N>::getNumberOfComponents()
-          const noexcept {
+      FixedSizeModifier<EvaluatorType, N>::getNumberOfComponents() const {
     return N;
   }
 
@@ -184,6 +183,17 @@ namespace mgis::function {
   decltype(auto) getSpace(const FixedSizeModifier<EvaluatorType, N>& e) {
     return e.getSpace();
   }  // end of getSpace
+
+  template <EvaluatorConcept EvaluatorType, size_type N>
+  constexpr void allocateWorkspace(FixedSizeModifier<EvaluatorType, N>& e){
+    return e.allocateWorkspace();
+  }  // end of allocateWorkspace
+
+  template <EvaluatorConcept EvaluatorType, size_type N>
+  constexpr size_type getNumberOfComponents(
+      const FixedSizeModifier<EvaluatorType, N>& e) {
+    return e.getNumberOfComponents();
+  }  // end of getNumberOfComponents
 
 }  // end of namespace mgis::function
 
