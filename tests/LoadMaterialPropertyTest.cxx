@@ -20,7 +20,7 @@
 #include "MGIS/Raise.hxx"
 #include "MGIS/MaterialProperty/MaterialProperty.hxx"
 
-bool success = true;
+static bool success = true;
 
 static bool check(const bool b, const std::string_view msg) {
   if (!b) {
