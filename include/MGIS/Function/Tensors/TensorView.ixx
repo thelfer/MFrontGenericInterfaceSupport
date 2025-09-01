@@ -15,7 +15,7 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr bool TensorView<FunctionType, TensorType>::checkPreconditions(
       AbstractErrorHandler& eh, const FunctionType& values) {
-    const auto nc = values.getNumberOfComponents();
+    const auto nc = internals::disambiguateGetNumberOfComponents(values);
     if (nc != compile_time_size<TensorType>) {
       return eh.registerErrorMessage("invalid number of components");
     }

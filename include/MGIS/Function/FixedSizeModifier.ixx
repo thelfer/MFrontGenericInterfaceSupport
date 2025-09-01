@@ -16,7 +16,7 @@ namespace mgis::function {
   requires(N > 0)  //
       constexpr bool FixedSizeModifier<EvaluatorType, N>::checkPreconditions(
           AbstractErrorHandler& eh, const EvaluatorType& values) {
-    if (values.getNumberOfComponents() != N) {
+    if (internals::disambiguateGetNumberOfComponents(values) != N) {
       return eh.registerErrorMessage("invalid number of components");
     }
     return true;

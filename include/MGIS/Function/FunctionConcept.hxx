@@ -234,6 +234,9 @@ namespace mgis::function {
   concept FunctionConcept =
       (SpaceConcept<
           std::decay_t<decltype(getSpace(std::declval<FunctionType>()))>>)&&  //
+      (requires(const FunctionType& e) {
+        { getNumberOfComponents(e) } -> std::same_as<mgis::size_type>;
+      }) &&
       ((internals::FunctionResultQuery<FunctionType>::b1) ||
        (internals::FunctionResultQuery<FunctionType>::b2) ||
        (internals::FunctionResultQuery<FunctionType>::b3) ||
@@ -340,6 +343,14 @@ namespace mgis::function {
      */
     template <FunctionConcept FunctionType>
     constexpr decltype(auto) disambiguateGetSpace(const FunctionType&)  //
+        requires(!EvaluatorConcept<FunctionType>);
+    /*!
+     * This helper function allows to disambiguate the call to
+     * the getNumberOfComponents function
+     */
+    template <FunctionConcept FunctionType>
+    constexpr mgis::size_type disambiguateGetNumberOfComponents(
+        const FunctionType&)  //
         requires(!EvaluatorConcept<FunctionType>);
 
     /*!
