@@ -195,7 +195,7 @@ namespace mgis::behaviour {
       registerExceptionInErrorBacktrace(ctx);
     }
     return {};
-  } // end of load
+  }  // end of load
 
   std::optional<Behaviour> load(Context &ctx,
                                 const FiniteStrainBehaviourOptions &o,

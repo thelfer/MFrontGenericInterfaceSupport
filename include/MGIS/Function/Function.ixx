@@ -604,12 +604,13 @@ namespace mgis::function {
       FunctionView<Space, layout, is_mutable>&) noexcept {
   }  // end of allocateWorkspace
 
-  template <FunctionalSpaceConcept Space, FunctionDataLayoutDescription layout,
+  template <FunctionalSpaceConcept Space,
+            FunctionDataLayoutDescription layout,
             bool is_mutable>
   constexpr mgis::size_type getNumberOfComponents(
-      const FunctionView<Space, layout, is_mutable>& e) noexcept{
+      const FunctionView<Space, layout, is_mutable>& e) noexcept {
     return e.getNumberOfComponents();
-  } // end of  getNumberOfComponents
+  }  // end of  getNumberOfComponents
 
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
@@ -766,7 +767,7 @@ namespace mgis::function {
     }
     std::copy(values.begin(), values.end(), dest.begin());
     return true;
-  } // end of fill
+  }  // end of fill
 
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||

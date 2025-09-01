@@ -43,10 +43,14 @@ namespace mgis::function {
    * \param[in] initial_value: initial value.
    */
   template <EvaluatorConcept EvaluatorType, typename OperatorType>
-  [[nodiscard]] std::optional<real>
-  scalar_reduce(AbstractErrorHandler&, EvaluatorType, const OperatorType, const real) requires(
-      LinearElementSpaceConcept<
-          std::decay_t<decltype(getSpace(std::declval<EvaluatorType>()))>>);
+  [[nodiscard]] std::optional<real> scalar_reduce(
+      AbstractErrorHandler&,
+      EvaluatorType,
+      const OperatorType,
+      const real) requires(LinearElementSpaceConcept<std::
+                                                         decay_t<decltype(getSpace(
+                                                             std::declval<
+                                                                 EvaluatorType>()))>>);
 
 }  // end of namespace mgis::function
 

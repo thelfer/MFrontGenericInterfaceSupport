@@ -698,7 +698,8 @@ namespace mgis::function {
   constexpr const auto& getSpace(
       const FunctionView<Space, layout, is_mutable>&);
 
-  //! \brief deleted function so that Function does not match the EvaluatorConcept
+  //! \brief deleted function so that Function does not match the
+  //! EvaluatorConcept
   template <FunctionalSpaceConcept Space, size_type N>
   constexpr void allocateWorkspace(const Function<Space, N>&) noexcept = delete;
 

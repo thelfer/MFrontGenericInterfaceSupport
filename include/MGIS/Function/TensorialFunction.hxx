@@ -1,6 +1,6 @@
 /*!
  * \file   MGIS/Function/TensorialFunction.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   28/08/2025
  */
@@ -74,8 +74,8 @@ namespace mgis::function {
     //! \brief return a view of the function
     constexpr const UnderlyingTensorView& view() const noexcept;
     //
-    using UnderlyingFunctionType::getSpace;
     using UnderlyingFunctionType::getNumberOfComponents;
+    using UnderlyingFunctionType::getSpace;
     using UnderlyingTensorView::operator();
     using UnderlyingFunctionType::data;
     //     /*!
@@ -109,8 +109,8 @@ namespace mgis::function {
   };
 
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>
-  constexpr decltype(auto)
-      getSpace(const TensorialFunction<Space, TensorType>&);
+  constexpr decltype(auto) getSpace(
+      const TensorialFunction<Space, TensorType>&);
 
   template <FunctionalSpaceConcept Space, unsigned short N>
   using StensorFunction =
@@ -127,9 +127,7 @@ namespace mgis::function {
   using ST2toT2Function =
       TensorialFunction<Space, tfel::math::st2tot2<N, real>>;
   template <FunctionalSpaceConcept Space, unsigned short N>
-  using T2toT2Function =
-      TensorialFunction<Space, tfel::math::t2tot2<N, real>>;
-
+  using T2toT2Function = TensorialFunction<Space, tfel::math::t2tot2<N, real>>;
 
   /*!
    * \brief convert a tensorial function to a immutable view

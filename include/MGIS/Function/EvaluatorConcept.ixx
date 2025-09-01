@@ -24,7 +24,7 @@ namespace mgis::function::internals {
   constexpr mgis::size_type disambiguateGetNumberOfComponents(
       const EvaluatorType& e) {
     return getNumberOfComponents(e);
-  } // end of disambiguateGetNumberOfComponents
+  }  // end of disambiguateGetNumberOfComponents
 
 }  // end of namespace mgis::function::internals
 

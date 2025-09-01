@@ -175,9 +175,9 @@ namespace mgis::function {
   constexpr void allocateWorkspace(
       BinaryOperationEvaluatorBase<Child,
                                    FirstEvaluatorType,
-                                   SecondEvaluatorType>& e){
+                                   SecondEvaluatorType>& e) {
     return e.allocateWorkspace();
-  } // end of allocateWorkspace
+  }  // end of allocateWorkspace
 
 }  // end of namespace mgis::function
 

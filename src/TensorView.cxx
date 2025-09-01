@@ -1,6 +1,6 @@
 /*!
  * \file   TensorView.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   01/09/2025
  */
@@ -10,7 +10,7 @@
 #include "MGIS/Function/Tensors.hxx"
 #include "MGIS/Function/Tensors/TensorView.hxx"
 
-namespace mgis::function{
+namespace mgis::function {
 
 #ifdef MGIS_HAVE_TFEL
 
@@ -28,4 +28,4 @@ namespace mgis::function{
 
 #endif /* MGIS_HAVE_TFEL */
 
-} // end of namespace mgis::function
+}  // end of namespace mgis::function

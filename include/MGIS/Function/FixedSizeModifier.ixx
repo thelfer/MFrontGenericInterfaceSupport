@@ -185,7 +185,7 @@ namespace mgis::function {
   }  // end of getSpace
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  constexpr void allocateWorkspace(FixedSizeModifier<EvaluatorType, N>& e){
+  constexpr void allocateWorkspace(FixedSizeModifier<EvaluatorType, N>& e) {
     return e.allocateWorkspace();
   }  // end of allocateWorkspace
 

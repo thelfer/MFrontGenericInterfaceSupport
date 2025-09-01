@@ -32,7 +32,7 @@ static bool check(const bool b, const std::string_view msg) {
 }
 
 static void check_behaviour(const mgis::behaviour::Behaviour& b,
-			    const mgis::behaviour::Hypothesis h) {
+                            const mgis::behaviour::Hypothesis h) {
   using namespace mgis::behaviour;
   check(b.behaviour == "InitializeFunctionTest", "invalid behaviour name");
   check(b.hypothesis == h, "invalid hypothesis");

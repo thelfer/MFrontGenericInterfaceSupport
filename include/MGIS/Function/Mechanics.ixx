@@ -150,14 +150,14 @@ namespace mgis::function::internals {
             TensorEvaluatorConcept DeformationGradientEvaluatorType0,
             TensorEvaluatorConcept DeformationGradientEvaluatorType1,
             StensorEvaluatorConcept CauchyStressEvaluatorType>
-  constexpr void allocateWorkspace(ConvertFiniteStrainStiffnessEvaluator<
-      N,
-      ResultFlag,
-      SourceFlag,
-      StiffnessEvaluator,
-      DeformationGradientEvaluatorType0,
-      DeformationGradientEvaluatorType1,
-      CauchyStressEvaluatorType>& e){
+  constexpr void allocateWorkspace(
+      ConvertFiniteStrainStiffnessEvaluator<N,
+                                            ResultFlag,
+                                            SourceFlag,
+                                            StiffnessEvaluator,
+                                            DeformationGradientEvaluatorType0,
+                                            DeformationGradientEvaluatorType1,
+                                            CauchyStressEvaluatorType>& e) {
     return e.allocateWorkspace();
   }  // end of allocateWorkspace
 
@@ -208,7 +208,7 @@ namespace mgis::function::internals {
           N, ResultFlag, SourceFlag, StiffnessEvaluator,
           DeformationGradientEvaluatorType0, DeformationGradientEvaluatorType1,
           CauchyStressEvaluatorType>(K, F0, F1, s);
-    } // end of operator()
+    }  // end of operator()
 
    private:
     const DeformationGradientEvaluatorType0 F0;

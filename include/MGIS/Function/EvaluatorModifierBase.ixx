@@ -83,7 +83,7 @@ namespace mgis::function {
 
   template <typename Child, EvaluatorConcept EvaluatorType>
   constexpr void allocateWorkspace(
-      EvaluatorModifierBase<Child, EvaluatorType>& e){
+      EvaluatorModifierBase<Child, EvaluatorType>& e) {
     return e.allocateWorkspace();
   }  // end of allocateWorkspace
 

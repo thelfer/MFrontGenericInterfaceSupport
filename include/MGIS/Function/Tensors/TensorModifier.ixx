@@ -29,7 +29,7 @@ namespace mgis::function {
 
   template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
   constexpr mgis::size_type getNumberOfComponents(
-      const TensorModifier<TensorType, EvaluatorType>& e) noexcept{
+      const TensorModifier<TensorType, EvaluatorType>& e) noexcept {
     return e.getNumberOfComponents();
   }
 

@@ -1,6 +1,6 @@
 /*!
  * \file   MGIS/Function/TensorialFunction.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   28/08/2025
  */
@@ -80,15 +80,15 @@ namespace mgis::function {
           default;
 
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>
-  constexpr decltype(auto)
-      getSpace(const TensorialFunction<Space, TensorType>& f) {
+  constexpr decltype(auto) getSpace(
+      const TensorialFunction<Space, TensorType>& f) {
     return f.getSpace();
   }
 
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>
-  constexpr auto view(const TensorialFunction<Space, TensorType>& f){
+  constexpr auto view(const TensorialFunction<Space, TensorType>& f) {
     return f.view();
-  } // end of view
+  }  // end of view
 
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>
   constexpr mgis::size_type getNumberOfComponents(

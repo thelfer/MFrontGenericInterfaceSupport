@@ -494,11 +494,12 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
       f2.fill(eh, {1, -3});
       const auto a = add(view(f1), view(f2));
       return std::array{a(0), a(1)};
-    }();
+    }
+    ();
     TFEL_TESTS_STATIC_ASSERT(check_value(values[0], 13));
     TFEL_TESTS_STATIC_ASSERT(check_value(values[1], 10));
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
-    }
+  }
 };
 
 TFEL_TESTS_GENERATE_PROXY(EvaluatorsTest, "EvaluatorsTest");

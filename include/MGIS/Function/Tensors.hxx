@@ -201,9 +201,10 @@ namespace mgis::function {
                             tfel::math::st2tost2<3u, real>>);
 
   template <typename EvaluatorType>
-  concept ST2toST2EvaluatorConcept = (ST2toST21DEvaluatorConcept<EvaluatorType>) ||
-                                   (ST2toST22DEvaluatorConcept<EvaluatorType>) ||
-                                   (ST2toST23DEvaluatorConcept<EvaluatorType>);
+  concept ST2toST2EvaluatorConcept =
+      (ST2toST21DEvaluatorConcept<EvaluatorType>) ||
+      (ST2toST22DEvaluatorConcept<EvaluatorType>) ||
+      (ST2toST23DEvaluatorConcept<EvaluatorType>);
 
   template <typename EvaluatorType>
   concept ST2toT21DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
@@ -263,10 +264,9 @@ namespace mgis::function {
                             tfel::math::t2tot2<3u, real>>);
 
   template <typename EvaluatorType>
-  concept T2toT2EvaluatorConcept =
-      (T2toT21DEvaluatorConcept<EvaluatorType>) ||
-      (T2toT22DEvaluatorConcept<EvaluatorType>) ||
-      (T2toT23DEvaluatorConcept<EvaluatorType>);
+  concept T2toT2EvaluatorConcept = (T2toT21DEvaluatorConcept<EvaluatorType>) ||
+                                   (T2toT22DEvaluatorConcept<EvaluatorType>) ||
+                                   (T2toT23DEvaluatorConcept<EvaluatorType>);
 
   template <typename EvaluatorType>
   concept FourthOrderTensorEvaluatorConcept =

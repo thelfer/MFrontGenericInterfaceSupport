@@ -107,7 +107,7 @@ namespace mgis::function {
   template <EvaluatorConcept EvaluatorType, size_type N>
   decltype(auto) getSpace(const FixedSizeModifier<EvaluatorType, N>&);
 
-    //! \brief allocate internal workspace
+  //! \brief allocate internal workspace
   template <EvaluatorConcept EvaluatorType, size_type N>
   constexpr void allocateWorkspace(FixedSizeModifier<EvaluatorType, N>&);
   //! \return the number of components

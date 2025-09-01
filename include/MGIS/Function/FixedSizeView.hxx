@@ -146,7 +146,7 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, size_type N>
   constexpr decltype(auto) getSpace(const FixedSizeView<FunctionType, N>&);
 
-    //! \brief allocate internal workspace
+  //! \brief allocate internal workspace
   template <FunctionConcept FunctionType, size_type N>
   constexpr void allocateWorkspace(FixedSizeView<FunctionType, N>&) noexcept;
   //! \return the number of components

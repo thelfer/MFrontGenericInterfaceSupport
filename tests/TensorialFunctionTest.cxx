@@ -1,6 +1,6 @@
 /*!
  * \file   TensorialFunctionTest.cxx
- * \brief    
+ * \brief
  * \author th202608
  * \date   28/08/2025
  */
@@ -31,7 +31,8 @@ struct TensorialFunctionsTest final : public tfel::tests::TestCase {
   TensorialFunctionsTest()
       : tfel::tests::TestCase("MGIS/Function", "TensorialFunctionsTests") {
   }  // end of TensorialFunctionsTest
-  tfel::tests::TestResult execute() override { this->test1();
+  tfel::tests::TestResult execute() override {
+    this->test1();
     this->test1();
     this->test2();
     this->test3();
@@ -46,7 +47,7 @@ struct TensorialFunctionsTest final : public tfel::tests::TestCase {
     auto local_abs = [](const mgis::real r) { return r > 0 ? r : -r; };
     return local_abs(a - b) < eps;
   }  // end of check_value
-  void test1(){
+  void test1() {
 #ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
     using namespace mgis;
     using namespace mgis::function;
@@ -71,7 +72,7 @@ struct TensorialFunctionsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(check_value((*values)[3], 8));
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }
-  void test2(){
+  void test2() {
 #ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
     using namespace mgis;
     using namespace mgis::function;
@@ -94,7 +95,7 @@ struct TensorialFunctionsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(check_value(values[5], -1));
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }
-  void test3(){
+  void test3() {
 #ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
     using namespace mgis;
     using namespace mgis::function;
@@ -122,7 +123,7 @@ struct TensorialFunctionsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(check_value((*values)[5], -1));
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }
-  void test4(){
+  void test4() {
 #ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
     using namespace mgis;
     using namespace mgis::function;
@@ -152,5 +153,3 @@ int main() {
   m.addXMLTestOutput("TensorialFunctionsTest.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-
-
