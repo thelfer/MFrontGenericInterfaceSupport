@@ -37,7 +37,7 @@ jobs:
               -Denable-python-bindings=OFF                         \
               -Denable-portable-build=ON                           \
               -Denable-julia-bindings=OFF                          \
-	      -DTFEL_DIR=`spack location -i tfel`/share/tfel/cmake
+              -DTFEL_DIR=`spack location -i tfel`/share/tfel/cmake
     - name: make
       shell: spack-sh {0}
       run: |
