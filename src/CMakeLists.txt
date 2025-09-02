@@ -31,7 +31,8 @@ if(enable-mgis-function)
     Evaluator.cxx
     TensorView.cxx
     TensorModifier.cxx
-    MaterialFunctionManager.cxx)
+    MaterialFunctionManager.cxx
+    MechanicalPostprocessings.cxx)
 endif(enable-mgis-function)
 
 mgis_library(MFrontGenericInterface
