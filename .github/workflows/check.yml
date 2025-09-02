@@ -30,6 +30,7 @@ jobs:
       shell: spack-sh {0}
       run: |
         # spack load python py-numpy py-pybind11
+        # loading TFEL
         spack load tfel
         cmake -DCMAKE_BUILD_TYPE=Release .                         \
               -Denable-c-bindings=ON                               \
