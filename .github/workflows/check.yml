@@ -31,12 +31,13 @@ jobs:
       run: |
         # spack load python py-numpy py-pybind11
         spack load tfel
-        cmake -DCMAKE_BUILD_TYPE=Release .  \
-              -Denable-c-bindings=ON        \
-              -Denable-fortran-bindings=ON  \
-              -Denable-python-bindings=OFF  \
-              -Denable-portable-build=ON    \
-              -Denable-julia-bindings=OFF
+        cmake -DCMAKE_BUILD_TYPE=Release .                         \
+              -Denable-c-bindings=ON                               \
+              -Denable-fortran-bindings=ON                         \
+              -Denable-python-bindings=OFF                         \
+              -Denable-portable-build=ON                           \
+              -Denable-julia-bindings=OFF                          \
+	      -DTFEL_DIR=`spack location -i tfel`/share/tfel/cmake
     - name: make
       shell: spack-sh {0}
       run: |

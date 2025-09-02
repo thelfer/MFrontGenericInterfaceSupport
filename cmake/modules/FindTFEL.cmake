@@ -11,8 +11,12 @@
 #   - TFEL_CXX_STANDARD
 #   - TFEL_VERSION
 
-if(DEFINED ENV{TFELHOME})
-    set(TFELHOME $ENV{TFELHOME})
+if(DEFINED TFEL_DIR)
+     set(TFELHOME "${TFEL_DIR}")
+else()
+  if(DEFINED ENV{TFELHOME})
+     set(TFELHOME "$ENV{TFELHOME}")
+  endif()
 endif()
 message(STATUS "tfelhome: ${TFELHOME}")
 
