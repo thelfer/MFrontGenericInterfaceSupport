@@ -70,7 +70,7 @@ The following functions were removed from the `mgis_behaviour` module:
 
 # New features
 
-## Support for extended types {#sec:mgis:2.1:exented_types}
+## Support for extended types {#sec:mgis:2.1:extended_types}
 
 In previous versions, only four types of variables were supported
 (scalars, vectors, symmetric tensors and unsymmetric tensors). The size

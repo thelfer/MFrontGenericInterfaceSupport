@@ -83,7 +83,7 @@ int main(const int argc, const char* const* argv) {
   long double lowerBound;
   check_status(
       mgis_bv_behaviour_get_lower_bound(&lowerBound, b, "YoungModulus"));
-  check(fabs(lowerBound - yg_min) < eps * yg_min,
+  check(fabsl(lowerBound - yg_min) < eps * yg_min,
         "invalid lower bound for 'YoungModulus'");
   int hasUpperBound;
   check_status(mgis_bv_behaviour_has_upper_bound(&hasUpperBound, b, "YoungModulus"));
@@ -91,7 +91,7 @@ int main(const int argc, const char* const* argv) {
   long double upperBound;
   check_status(
       mgis_bv_behaviour_get_upper_bound(&upperBound, b, "YoungModulus"));
-  check(fabs(upperBound - yg_max) < eps * yg_max,
+  check(fabsl(upperBound - yg_max) < eps * yg_max,
         "invalid upper bound for 'YoungModulus'");
   // physical bounds
   int hasPhysicalBounds;
@@ -103,7 +103,7 @@ int main(const int argc, const char* const* argv) {
   long double lowerPhysicalBound;
   check_status(mgis_bv_behaviour_get_lower_physical_bound(&lowerPhysicalBound,
                                                           b, "YoungModulus"));
-  check(fabs(lowerPhysicalBound) < eps * yg_min,
+  check(fabsl(lowerPhysicalBound) < eps * yg_min,
         "invalid physical lower bound for 'YoungModulus'");
   int hasUpperPhysicalBound;
   check_status(mgis_bv_behaviour_has_upper_physical_bound(&hasUpperPhysicalBound, b, "YoungModulus"));

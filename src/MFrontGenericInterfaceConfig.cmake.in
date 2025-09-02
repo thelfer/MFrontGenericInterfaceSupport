@@ -1,0 +1,29 @@
+@PACKAGE_INIT@
+
+set(MGIS_FUNCTION_SUPPORT @enable-mgis-function@)
+set(MGIS_HAVE_TFEL @MGIS_HAVE_TFEL@)
+
+if(MGIS_HAVE_TFEL)
+
+   if(TFEL_DIR)
+     set(TFEL_MODULE_PATH ${TFEL_DIR})
+   else(TFEL_DIR)
+     if(TFELHOME)
+       set(TFEL_MODULE_PATH ${TFELHOME})
+     else(TFELHOME)
+       if(DEFINED ENV{${VERSIONED_TFEL_HOME}})
+          set(TFEL_MODULE_PATH "$ENV{${VERSIONED_TFEL_HOME}}")
+       else(DEFINED ENV{${VERSIONED_TFEL_HOME}})
+         if(DEFINED ENV{TFELHOME})
+            set(TFEL_MODULE_PATH "$ENV{TFELHOME}")      
+         endif(DEFINED ENV{TFELHOME})
+       endif(DEFINED ENV{${VERSIONED_TFEL_HOME}})
+     endif(TFELHOME)
+   endif(TFEL_DIR)
+
+  find_package(TFELMath REQUIRED
+    HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+
+endif(MGIS_HAVE_TFEL)
+
+include("${CMAKE_CURRENT_LIST_DIR}/MFrontGenericInterfaceTargets.cmake")

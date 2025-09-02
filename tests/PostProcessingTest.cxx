@@ -22,9 +22,9 @@
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
 
-bool success = true;
+static bool success = true;
 
-bool check(const bool b, const std::string_view msg) {
+static bool check(const bool b, const std::string_view msg) {
   if (!b) {
     success = false;
     std::cerr << msg << '\n';
@@ -32,8 +32,8 @@ bool check(const bool b, const std::string_view msg) {
   return b;
 }
 
-void check_behaviour(const mgis::behaviour::Behaviour& b,
-                     const mgis::behaviour::Hypothesis h) {
+static void check_behaviour(const mgis::behaviour::Behaviour& b,
+                            const mgis::behaviour::Hypothesis h) {
   using namespace mgis::behaviour;
   check(b.behaviour == "PostProcessingTest", "invalid behaviour name");
   check(b.hypothesis == h, "invalid hypothesis");
@@ -52,7 +52,7 @@ void check_behaviour(const mgis::behaviour::Behaviour& b,
   check(getVariableSize(o, h) == 3, "invalid post-processing output size");
 }  // end of check_behaviour
 
-void call_postprocessing(const mgis::behaviour::Behaviour& b) {
+static void call_postprocessing(const mgis::behaviour::Behaviour& b) {
   using namespace mgis::behaviour;
   constexpr auto e =
       std::array<mgis::real, 6u>{1.3e-2, 1.2e-2, 1.4e-2, 0., 0., 0.};
@@ -79,7 +79,7 @@ void call_postprocessing(const mgis::behaviour::Behaviour& b) {
   }
 }  // end of call_postprocessing
 
-void call_postprocessing2(const mgis::behaviour::Behaviour& b) {
+static void call_postprocessing2(const mgis::behaviour::Behaviour& b) {
   using namespace mgis::behaviour;
   constexpr auto e =
       std::array<mgis::real, 6u>{1.3e-2, 1.2e-2, 1.4e-2, 0., 0., 0.};

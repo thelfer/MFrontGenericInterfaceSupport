@@ -19,6 +19,7 @@
 #include <span>
 #include <iosfwd>
 #include <vector>
+#include <optional>
 #include "MGIS/Config.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
 #include "MGIS/Behaviour/Variable.hxx"
@@ -26,6 +27,13 @@
 #include "MGIS/Behaviour/FiniteStrainBehaviourOptions.hxx"
 #include "MGIS/Behaviour/BehaviourFctPtr.hxx"
 #include "MGIS/Behaviour/BehaviourDescription.hxx"
+
+namespace mgis {
+
+  // forward declaration
+  struct Context;
+
+}  // end of namespace mgis
 
 namespace mgis::behaviour {
 
@@ -152,6 +160,42 @@ namespace mgis::behaviour {
     std::vector<mgis::real> options;
   };  // end of struct Behaviour
 
+  /*!
+   * \brief load the description of a behaviour from a library
+   *
+   * \param[in] ctx: execution context
+   * \param[in] l: library name
+   * \param[in] b: behaviour name
+   * \param[in] h: modelling hypothesis
+   * \return the behaviour description
+   */
+  MGIS_EXPORT std::optional<Behaviour> load(Context &,
+                                            const std::string &,
+                                            const std::string &,
+                                            const Hypothesis) noexcept;
+  /*!
+   * \brief load the description of a finite strain behaviour from a library
+   *
+   * \note This method can also be used to load a finite strain behaviour.
+   * In this case, the default options are used (the stress measure is Cauchy,
+   * the tangent operator is the derivative of the Cauchy stress with respect
+   * to the deformation gradient).
+   *
+   * \param[in] ctx: execution context
+   * \param[in] o: options
+   * \param[in] l: library name
+   * \param[in] b: behaviour name
+   * \param[in] h: modelling hypothesis
+   * \return the behaviour description
+   * \note: use of `std::string` rather than `mgis::string_view` is
+   * meaningfull here
+   */
+  MGIS_EXPORT std::optional<Behaviour> load(
+      Context &,
+      const FiniteStrainBehaviourOptions &,
+      const std::string &,
+      const std::string &,
+      const Hypothesis) noexcept;
   /*!
    * \brief load the description of a behaviour from a library
    *
