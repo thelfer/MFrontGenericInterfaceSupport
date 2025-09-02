@@ -31,6 +31,8 @@ namespace mgis::function {
         return tfel::math::sigmaeq(s);
       });
 
+  inline constexpr auto von_mises_stress = vmis;
+
   template <tfel::math::stensor_common::EigenSolver esolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
   inline constexpr auto principal_stress = eigen_values<esolver>;

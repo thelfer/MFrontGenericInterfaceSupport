@@ -112,7 +112,7 @@ namespace mgis::function {
   /*!
    * \brief function defined on a space.
    *
-   * The `FunctionView ` defines a function using an external memory region.
+   * The `FunctionView` defines a function using an external memory region.
    *
    * This memory region may contain more data than the one associated with the
    * function as illustrated by the following figure:
@@ -130,7 +130,7 @@ namespace mgis::function {
    *
    * The size of the all data (including the one not related to the function)
    * associated with one element of the space is called the `data_stride` in
-   * the `FunctionView ` class.
+   * the `FunctionView` class.
    *
    * The size of the data hold by the function per element of the space, i.e. th
    * number of components of the function is given by `data_size`.
@@ -228,6 +228,21 @@ namespace mgis::function {
         const size_type,
         const size_type) requires((layout.data_size == dynamic_extent) &&
                                   (layout.data_stride == dynamic_extent));
+    /*!
+     * \brief check that the preconditions to build the view are met
+     * \param[in] eh: error handler.
+     * \param[in] s: quadrature space.
+     * \param[in] v: values
+     * \param[in] dsize: size of the data per elements
+     * \param[in] dstride: data stride
+     */
+    [[nodiscard]] static constexpr bool checkPreconditions(
+        AbstractErrorHandler&,
+        const Space&,
+        ExternalData,
+        const FunctionDataLayout<layout>&)  //
+        requires((layout.data_size == dynamic_extent) &&
+                 (layout.data_stride == dynamic_extent));
     /*!
      * \brief constructor
      * \param[in] s: quadrature space.
