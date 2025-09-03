@@ -12,12 +12,14 @@
 #   - TFEL_VERSION
 
 if(DEFINED TFEL_DIR)
-     set(TFELHOME "${TFEL_DIR}")
-else()
-  if(DEFINED ENV{TFELHOME})
-     set(TFELHOME "$ENV{TFELHOME}")
-  endif()
+  list(APPEND CMAKE_PREFIX_PATH "${TFEL_DIR}")
+ endif()
+
+if(DEFINED ENV{TFELHOME})
+  set(TFELHOME "$ENV{TFELHOME}")
+  list(APPEND CMAKE_PREFIX_PATH "$ENV{TFELHOME}/share/tfel/cmake")
 endif()
+
 message(STATUS "tfelhome: ${TFELHOME}")
 
 foreach(tool mfront tfel-check tfel-config mfront-query)
@@ -86,7 +88,7 @@ IF(TFEL_CONFIG AND MFRONT AND MFRONT_QUERY)
   endif()
   
   foreach(lib ${tfel_libs})
-      find_package(${lib} REQUIRED HINTS "${TFELHOME}/share/tfel/cmake")
+      find_package(${lib} REQUIRED)
       find_library(${lib}_LIBRARY ${lib} HINTS ${TFELHOME} PATH_SUFFIXES lib)
       list(APPEND TFEL_LIBRARIES ${${lib}_LIBRARY})
   endforeach(lib)
