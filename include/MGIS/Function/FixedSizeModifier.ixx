@@ -185,6 +185,12 @@ namespace mgis::function {
   }  // end of getSpace
 
   template <EvaluatorConcept EvaluatorType, size_type N>
+  constexpr bool check(AbstractErrorHandler& eh,
+                       const FixedSizeModifier<EvaluatorType, N>& e){
+    return e.check(eh);
+  } // end of check
+
+  template <EvaluatorConcept EvaluatorType, size_type N>
   constexpr void allocateWorkspace(FixedSizeModifier<EvaluatorType, N>& e) {
     return e.allocateWorkspace();
   }  // end of allocateWorkspace

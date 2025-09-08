@@ -58,10 +58,10 @@ namespace mgis::function {
                              this->second_evaluator)) {
       return false;
     }
-    if (!this->first_evaluator.check(ctx)) {
+    if (!internals::disambiguateCheck(ctx, this->first_evaluator)) {
       return false;
     }
-    if (!this->second_evaluator.check(ctx)) {
+    if (!internals::disambiguateCheck(ctx, this->second_evaluator)) {
       return false;
     }
     return true;
@@ -168,6 +168,17 @@ namespace mgis::function {
                                          SecondEvaluatorType>& e) {
     return e.getSpace();
   }  // end of getSpace
+
+  template <typename Child,
+            EvaluatorConcept FirstEvaluatorType,
+            EvaluatorConcept SecondEvaluatorType>
+  constexpr bool check(
+      AbstractErrorHandler& eh,
+      const BinaryOperationEvaluatorBase<Child,
+                                         FirstEvaluatorType,
+                                         SecondEvaluatorType>& e) {
+    return e.check(eh);
+  }  // end of check
 
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,

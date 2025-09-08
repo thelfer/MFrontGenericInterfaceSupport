@@ -203,6 +203,12 @@ namespace mgis::function {
   }
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
+  constexpr bool check(AbstractErrorHandler& eh,
+                       const TensorView<FunctionType, TensorType>& v) {
+    return v.check(eh);
+  }  // end of check
+
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr void allocateWorkspace(
       TensorView<FunctionType, TensorType>&) noexcept {
   }  // end of allocateWorkspace

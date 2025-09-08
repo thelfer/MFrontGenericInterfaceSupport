@@ -136,6 +136,10 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr decltype(auto) getSpace(
       const TensorView<FunctionType, TensorType>&);
+    //! \brief perform consistency checks
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  constexpr bool check(AbstractErrorHandler&,
+                       const TensorView<FunctionType, TensorType>&);
   //! \brief allocate internal workspace
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr void allocateWorkspace(

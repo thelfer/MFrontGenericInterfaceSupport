@@ -259,7 +259,7 @@ namespace mgis::function {
       return ctx.registerErrorMessage("unmatched number of components");
     }
     //
-    if (!e.check(ctx)) {
+    if (!check(ctx, e)) {
       return false;
     }
     allocateWorkspace(e);
@@ -284,7 +284,7 @@ namespace mgis::function {
       return ctx.registerErrorMessage("non scalar evaluator");
     }
     //
-    if (!e.check(ctx)) {
+    if (!check(ctx, e)) {
       return false;
     }
     allocateWorkspace(e);

@@ -153,6 +153,8 @@ namespace mgis::function {
     allocateWorkspace(e);
   } && requires(const EvaluatorType& e) {
     { getNumberOfComponents(e) } -> std::same_as<mgis::size_type>;
+  } && requires(const EvaluatorType& e, AbstractErrorHandler& eh) {
+    { check(eh, e) } -> std::same_as<bool>;
   } &&((internals::EvaluatorResultQuery<EvaluatorType>::b1) ||
        (internals::EvaluatorResultQuery<EvaluatorType>::b2) ||
        (internals::EvaluatorResultQuery<EvaluatorType>::b3) ||
@@ -228,6 +230,12 @@ namespace mgis::function {
      */
     template <EvaluatorConcept EvaluatorType>
     constexpr decltype(auto) disambiguateGetSpace(const EvaluatorType&);
+    /*!
+     * This helper function allows to disambiguate the call to
+     * the allocateWorkspace function
+     */
+    template <EvaluatorConcept EvaluatorType>
+    constexpr bool disambiguateCheck(AbstractErrorHandler&, const EvaluatorType&);
     /*!
      * This helper function allows to disambiguate the call to
      * the allocateWorkspace function
