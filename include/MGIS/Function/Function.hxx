@@ -26,18 +26,18 @@ namespace mgis::function {
   template <size_type data_size>
   requires(data_size > 0) struct FunctionDataSize {
     //! \return the number of components
-    constexpr bool isScalar() const noexcept;
+    [[nodiscard]] constexpr bool isScalar() const noexcept;
     //! \return the number of components
-    constexpr size_type getNumberOfComponents() const noexcept;
+    [[nodiscard]] constexpr size_type getNumberOfComponents() const noexcept;
   };
 
   //! \brief partial specialisation in the dynamic_extent case
   template <>
   struct FunctionDataSize<dynamic_extent> {
     //! \return the number of components
-    constexpr bool isScalar() const noexcept;
+    [[nodiscard]] constexpr bool isScalar() const noexcept;
     //! \return the number of components
-    constexpr size_type getNumberOfComponents() const noexcept;
+    [[nodiscard]] constexpr size_type getNumberOfComponents() const noexcept;
 
    protected:
     //! \brief data size
@@ -54,7 +54,7 @@ namespace mgis::function {
      * \return the stride of data, i.e. the distance between the values of two
      * successive integration points.
      */
-    constexpr size_type getDataStride() const noexcept;
+    [[nodiscard]] constexpr size_type getDataStride() const noexcept;
   };
 
   //! \brief partial specialisation in the dynamic_extent case
@@ -64,7 +64,7 @@ namespace mgis::function {
      * \return the stride of data, i.e. the distance between the values of two
      * successive integration points.
      */
-    constexpr size_type getDataStride() const noexcept;
+    [[nodiscard]] constexpr size_type getDataStride() const noexcept;
 
    protected:
     //! \brief data size
@@ -447,12 +447,12 @@ namespace mgis::function {
     constexpr FunctionView(FunctionView&&) = default;
     constexpr FunctionView(const FunctionView&) = default;
     //! \return the underlying quadrature space
-    constexpr const Space& getSpace() const noexcept;
+    [[nodiscard]] constexpr const Space& getSpace() const noexcept;
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
-    constexpr real*
+    [[nodiscard]] constexpr real*
     data(mgis::attributes::UnsafeAttribute, const size_type) requires(
         is_mutable&& LinearElementSpaceConcept<Space> &&
         (!hasElementWorkspace<Space>));
@@ -461,17 +461,17 @@ namespace mgis::function {
      * \param[in] e: element index
      * \param[in] i: quadrature point index
      */
-    constexpr real* data(mgis::attributes::UnsafeAttribute,
-                         const size_type,
-                         const size_type)  //
+    [[nodiscard]] constexpr real* data(mgis::attributes::UnsafeAttribute,
+                                       const size_type,
+                                       const size_type)  //
         requires(is_mutable&& LinearQuadratureSpaceConcept<Space> &&
                  (!hasCellWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
-    constexpr const real* data(mgis::attributes::UnsafeAttribute,
-                               const size_type) const
+    [[nodiscard]] constexpr const real* data(mgis::attributes::UnsafeAttribute,
+                                             const size_type) const
         requires(LinearElementSpaceConcept<Space> &&
                  (!hasElementWorkspace<Space>));
     /*!
@@ -479,16 +479,16 @@ namespace mgis::function {
      * \param[in] e: element index
      * \param[in] i: quadrature point index
      */
-    constexpr const real* data(mgis::attributes::UnsafeAttribute,
-                               const size_type,
-                               const size_type) const
+    [[nodiscard]] constexpr const real* data(mgis::attributes::UnsafeAttribute,
+                                             const size_type,
+                                             const size_type) const
         requires(LinearQuadratureSpaceConcept<Space> &&
                  (!hasCellWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
-    constexpr ValuesView operator()(const size_type) requires(
+    [[nodiscard]] constexpr ValuesView operator()(const size_type) requires(
         is_mutable&& LinearElementSpaceConcept<Space> &&
         (!hasElementWorkspace<Space>));
     /*!
@@ -496,14 +496,15 @@ namespace mgis::function {
      * \param[in] e: element index
      * \param[in] i: quadrature point index
      */
-    constexpr ValuesView operator()(const size_type, const size_type) requires(
+    [[nodiscard]] constexpr ValuesView
+    operator()(const size_type, const size_type) requires(
         is_mutable&& LinearQuadratureSpaceConcept<Space> &&
         (!hasCellWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
-    constexpr ConstValuesView operator()(const size_type) const
+    [[nodiscard]] constexpr ConstValuesView operator()(const size_type) const
         requires(LinearElementSpaceConcept<Space> &&
                  (!hasElementWorkspace<Space>));
     /*!
@@ -511,7 +512,8 @@ namespace mgis::function {
      * \param[in] e: element index
      * \param[in] i: quadrature point index
      */
-    constexpr ConstValuesView operator()(const size_type, const size_type) const
+    [[nodiscard]] constexpr ConstValuesView operator()(const size_type,
+                                                       const size_type) const
         requires(LinearQuadratureSpaceConcept<Space> &&
                  (!hasCellWorkspace<Space>));
     /*!
@@ -519,9 +521,9 @@ namespace mgis::function {
      * same number of components than the given view
      * \param[in] v: view
      */
-    constexpr bool checkCompatibility(const FunctionView&) const;
+    [[nodiscard]] constexpr bool checkCompatibility(const FunctionView&) const;
     //! \return a view to the function values
-    constexpr std::span<const real> data() const;
+    [[nodiscard]] constexpr std::span<const real> data() const;
     //! \brief destructor
     constexpr ~FunctionView() = default;
 
@@ -537,6 +539,13 @@ namespace mgis::function {
             FunctionDataLayoutDescription layout = {}>
   using FunctionEvaluator = FunctionView<Space, layout, false>;
 
+  //! \brief a noop function to match the EvaluatorConcept concept
+  template <FunctionalSpaceConcept Space,
+            FunctionDataLayoutDescription layout,
+            bool is_mutable>
+  [[nodiscard]] constexpr bool check(
+      AbstractErrorHandler&,
+      const FunctionView<Space, layout, is_mutable>&) noexcept;
   /*!
    * \brief do nothing function to match the Evaluator concept
    * \param[in] v: view
@@ -546,14 +555,6 @@ namespace mgis::function {
             bool is_mutable>
   constexpr void allocateWorkspace(
       FunctionView<Space, layout, is_mutable>&) noexcept;
-
-  //! \brief a noop function to match the EvaluatorConcept concept
-  template <FunctionalSpaceConcept Space,
-            FunctionDataLayoutDescription layout,
-            bool is_mutable>
-  constexpr bool check(AbstractErrorHandler&,
-                       const FunctionView<Space, layout, is_mutable>&) noexcept;
-
   /*!
    * \return the number of components of a view
    * \param[in] v: view
@@ -561,7 +562,7 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
             bool is_mutable>
-  constexpr mgis::size_type getNumberOfComponents(
+  [[nodiscard]] constexpr mgis::size_type getNumberOfComponents(
       const FunctionView<Space, layout, is_mutable>&) noexcept;
 
   /*!
@@ -658,30 +659,35 @@ namespace mgis::function {
     //! \brief assignement constructor
     constexpr Function(Function&&) requires(N != dynamic_extent);
     //! \brief return a view of the function
-    constexpr FunctionView<Space, {.data_size = N, .data_stride = N}, true>
+    [[nodiscard]] constexpr FunctionView<Space,
+                                         {.data_size = N, .data_stride = N},
+                                         true>
     view();
     //! \brief return a view of the function
-    constexpr FunctionView<Space, {.data_size = N, .data_stride = N}, false>
+    [[nodiscard]] constexpr FunctionView<Space,
+                                         {.data_size = N, .data_stride = N},
+                                         false>
     view() const;
     //
     using FunctionView<Space, {.data_size = N, .data_stride = N}, true>::data;
     //! \return a view to the function values
-    constexpr std::span<real> data();
+    [[nodiscard]] constexpr std::span<real> data();
     /*!
      * \brief fill the structure using raw data
      *
      * \param[in] eh: error handler
      * \param[in] values: raw data
      */
-    constexpr bool fill(AbstractErrorHandler&, std::span<const real>) noexcept;
+    [[nodiscard]] constexpr bool fill(AbstractErrorHandler&,
+                                      std::span<const real>) noexcept;
     /*!
      * \brief fill the structure using raw data
      *
      * \param[in] eh: error handler
      * \param[in] values: raw data
      */
-    constexpr bool fill(AbstractErrorHandler&,
-                        std::initializer_list<real>) noexcept;
+    [[nodiscard]] constexpr bool fill(AbstractErrorHandler&,
+                                      std::initializer_list<real>) noexcept;
     //! \brief destructor
     constexpr ~Function();
   };
@@ -696,26 +702,26 @@ namespace mgis::function {
    * \param[in] f: function
    */
   template <FunctionalSpaceConcept Space, size_type N>
-  constexpr auto view(const Function<Space, N>&);
+  [[nodiscard]] constexpr auto view(const Function<Space, N>&);
 
   /*!
    * \brief convert a function to a immutable view
    * \param[in] f: function
    */
   template <size_type N, FunctionalSpaceConcept Space, size_type N2>
-  constexpr auto view(const Function<Space, N2>&)  //
+  [[nodiscard]] constexpr auto view(const Function<Space, N2>&)  //
       requires((N > 0) && (N != dynamic_extent) && (N == N2));
 
   template <FunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
             bool is_mutable>
-  constexpr const auto& getSpace(
+  [[nodiscard]] constexpr const auto& getSpace(
       const FunctionView<Space, layout, is_mutable>&);
 
   //! \brief deleted function so that Function does not match the
   //! EvaluatorConcept
   template <FunctionalSpaceConcept Space, size_type N>
-   void check(AbstractErrorHandler&, const Function<Space, N>&) = delete;
+  bool check(AbstractErrorHandler&, const Function<Space, N>&) = delete;
   //! \brief deleted function so that Function does not match the
   //! EvaluatorConcept
   template <FunctionalSpaceConcept Space, size_type N>
