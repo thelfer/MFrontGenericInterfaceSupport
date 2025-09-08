@@ -14,6 +14,13 @@
 #include "MGIS/Function/CompileTimeSize.hxx"
 #include "MGIS/Function/SpaceConcept.hxx"
 
+namespace mgis {
+
+  // forward declaration
+  struct AbstractErrorHandler;
+
+} // end of namespace mgis
+
 namespace mgis::function {
 
   namespace internals {
