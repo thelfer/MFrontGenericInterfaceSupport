@@ -50,8 +50,10 @@ namespace mgis::function::internals {
       return ((checkMatchingSpaces(ctx, this->K, this->F0)) &&
               (checkMatchingSpaces(ctx, this->K, this->F1)) &&
               (checkMatchingSpaces(ctx, this->K, this->s)) &&
-              (this->K.check(ctx)) && (this->F0.check(ctx)) &&
-              (this->F1.check(ctx)) && (this->s.check(ctx)));
+              (internals::disambiguateCheck(ctx, this->K)) &&
+	      (internals::disambiguateCheck(ctx, this->F0)) &&
+	      (internals::disambiguateCheck(ctx, this->F1)) &&
+	      (internals::disambiguateCheck(ctx, this->s)));
     }
 
     //! \brief allocate internal workspace
@@ -142,6 +144,25 @@ namespace mgis::function::internals {
     DeformationGradientEvaluatorType1 F1;
     CauchyStressEvaluatorType s;
   };
+
+  template <unsigned short N,
+            FiniteStrainStiffnessKind ResultFlag,
+            FiniteStrainStiffnessKind SourceFlag,
+            FourthOrderTensorEvaluatorConcept StiffnessEvaluator,
+            TensorEvaluatorConcept DeformationGradientEvaluatorType0,
+            TensorEvaluatorConcept DeformationGradientEvaluatorType1,
+            StensorEvaluatorConcept CauchyStressEvaluatorType>
+  constexpr bool check(
+      AbstractErrorHandler& eh,
+      const ConvertFiniteStrainStiffnessEvaluator<N,
+                                                  ResultFlag,
+                                                  SourceFlag,
+                                                  StiffnessEvaluator,
+                                                  DeformationGradientEvaluatorType0,
+                                                  DeformationGradientEvaluatorType1,
+                                                  CauchyStressEvaluatorType>& e) {
+    return e.check(eh);
+  }  // end of check
 
   template <unsigned short N,
             FiniteStrainStiffnessKind ResultFlag,

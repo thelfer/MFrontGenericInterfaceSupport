@@ -448,8 +448,6 @@ namespace mgis::function {
     constexpr FunctionView(const FunctionView&) = default;
     //! \return the underlying quadrature space
     constexpr const Space& getSpace() const noexcept;
-    //! \brief a noop function to match the EvaluatorConcept concept
-    constexpr bool check(AbstractErrorHandler&) const;
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
@@ -548,6 +546,14 @@ namespace mgis::function {
             bool is_mutable>
   constexpr void allocateWorkspace(
       FunctionView<Space, layout, is_mutable>&) noexcept;
+
+  //! \brief a noop function to match the EvaluatorConcept concept
+  template <FunctionalSpaceConcept Space,
+            FunctionDataLayoutDescription layout,
+            bool is_mutable>
+  constexpr bool check(AbstractErrorHandler&,
+                       const FunctionView<Space, layout, is_mutable>&) noexcept;
+
   /*!
    * \return the number of components of a view
    * \param[in] v: view
@@ -678,13 +684,6 @@ namespace mgis::function {
                         std::initializer_list<real>) noexcept;
     //! \brief destructor
     constexpr ~Function();
-
-   protected:
-    /*
-     * This function is made protected to avoid Function from being treated
-     * as an evaluator
-     */
-    using FunctionView<Space, {.data_size = N, .data_stride = N}, true>::check;
   };
 
   // class template deduction guide
@@ -716,7 +715,11 @@ namespace mgis::function {
   //! \brief deleted function so that Function does not match the
   //! EvaluatorConcept
   template <FunctionalSpaceConcept Space, size_type N>
-  constexpr void allocateWorkspace(const Function<Space, N>&) noexcept = delete;
+   void check(AbstractErrorHandler&, const Function<Space, N>&) = delete;
+  //! \brief deleted function so that Function does not match the
+  //! EvaluatorConcept
+  template <FunctionalSpaceConcept Space, size_type N>
+  void allocateWorkspace(const Function<Space, N>&) = delete;
 
 }  // namespace mgis::function
 

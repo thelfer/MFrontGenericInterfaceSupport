@@ -120,6 +120,15 @@ namespace mgis::function {
       const BinaryOperationEvaluatorBase<Child,
                                          FirstEvaluatorType,
                                          SecondEvaluatorType>&);
+  //! \brief perform consistency checks
+  template <typename Child,
+            EvaluatorConcept FirstEvaluatorType,
+            EvaluatorConcept SecondEvaluatorType>
+  constexpr bool check(
+      AbstractErrorHandler&,
+      const BinaryOperationEvaluatorBase<Child,
+                                         FirstEvaluatorType,
+                                         SecondEvaluatorType>&);
   //! \brief allocate internal workspace
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,

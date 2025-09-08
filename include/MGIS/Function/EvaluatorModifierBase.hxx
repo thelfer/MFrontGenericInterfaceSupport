@@ -77,6 +77,10 @@ namespace mgis::function {
   template <typename Child, EvaluatorConcept EvaluatorType>
   constexpr decltype(auto) getSpace(
       const EvaluatorModifierBase<Child, EvaluatorType>&);
+  //! \brief perform consistency checks
+  template <typename Child, EvaluatorConcept EvaluatorType>
+  constexpr bool check(AbstractErrorHandler&,
+                       const EvaluatorModifierBase<Child, EvaluatorType>&);
   //! \brief allocate internal workspace
   template <typename Child, EvaluatorConcept EvaluatorType>
   constexpr void allocateWorkspace(

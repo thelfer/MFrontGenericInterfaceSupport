@@ -106,7 +106,10 @@ namespace mgis::function {
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   decltype(auto) getSpace(const FixedSizeModifier<EvaluatorType, N>&);
-
+  //! \brief perform consistency checks
+  template <EvaluatorConcept EvaluatorType, size_type N>
+  constexpr bool check(AbstractErrorHandler&,
+                       const FixedSizeModifier<EvaluatorType, N>&);
   //! \brief allocate internal workspace
   template <EvaluatorConcept EvaluatorType, size_type N>
   constexpr void allocateWorkspace(FixedSizeModifier<EvaluatorType, N>&);

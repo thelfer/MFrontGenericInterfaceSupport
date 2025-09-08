@@ -291,6 +291,12 @@ namespace mgis::function {
   }  // end of getSpace
 
   template <FunctionConcept FunctionType, size_type N>
+  constexpr bool check(AbstractErrorHandler& eh,
+                       const FixedSizeView<FunctionType, N>& v) {
+    return v.check(eh);
+  }  // end of check
+
+  template <FunctionConcept FunctionType, size_type N>
   constexpr void allocateWorkspace(FixedSizeView<FunctionType, N>&) noexcept {
   }  // end of allocateWorkspace
 
