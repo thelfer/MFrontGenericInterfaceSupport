@@ -26,4 +26,3 @@ message(STATUS "MTestFileGenerator    : ${MTestFileGenerator_LIBRARY}")
 set(TFEL_MFRONT_LIBRARIES
     ${TFEL_LIBRARIES}
     CACHE INTERNAL "")
-set(MGIS_HAVE_TFEL ON)

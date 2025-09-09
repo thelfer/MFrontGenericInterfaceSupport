@@ -29,9 +29,12 @@ if(enable-mgis-function)
     BasicLinearQuadratureSpace.cxx
     Function.cxx
     Evaluator.cxx
-    TensorView.cxx
-    TensorModifier.cxx
     MaterialFunctionManager.cxx)
+  if(MGIS_HAVE_TFEL)
+    list(APPEND MFrontGenericInterface_SOURCES
+         TensorView.cxx
+         TensorModifier.cxx)
+  endif(MGIS_HAVE_TFEL)
 endif(enable-mgis-function)
 
 mgis_library(MFrontGenericInterface
