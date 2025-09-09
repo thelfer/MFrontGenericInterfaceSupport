@@ -55,6 +55,9 @@ Options
 - `enable-static`: compiles static libraries
 - `enable-doxygen-doc`: enable the generation of the API documentation
   using with `Doxygen`.
+- `disable-tfel`: by default, `MGIS` tries to add support for `TFEL`,
+  notably if `tfel-config` is found in the `PATH`. This option disables
+  this behaviour.
 
 `cmake` usefull variables
 =======================
@@ -67,6 +70,7 @@ Options
   			         version of python shall be passed, not
   			         the revision version or the detection
   			         fails.
+- `TFEL_DIR`                   : specify the directory where to find TFEL
 
 `cmake` typical usage
 =====================

@@ -1,6 +1,8 @@
 STRING(REPLACE "\\;" ";" MGIS_PATH_STRING "$ENV{PATH}")
 STRING(REPLACE ";" "\\;" MGIS_PATH_STRING "${MGIS_PATH_STRING}")
 
+if(MGIS_HAVE_MFRONT_SUPPORT)
+
 mfront_material_properties_check_library(MaterialPropertyTest
   MaterialPropertyBoundCheck
   MaterialPropertyBoundCheck2
@@ -370,6 +372,8 @@ else((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
+endif(MGIS_HAVE_MFRONT_SUPPORT)
+
 add_executable(InvalidResultTest
  EXCLUDE_FROM_ALL
  InvalidResultTest.cxx)
@@ -467,6 +471,8 @@ add_executable(MaterialFunctionManagerTest
 target_link_libraries(MaterialFunctionManagerTest
 	PRIVATE MFrontGenericInterface tfel::TFELTests)
 
+if(MGIS_HAVE_MFRONT_SUPPORT)
+
 add_test(NAME MaterialFunctionManagerTest
  COMMAND MaterialFunctionManagerTest "$<TARGET_FILE:BehaviourTest>")
 add_dependencies(check MaterialFunctionManagerTest)
@@ -478,6 +484,8 @@ else((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST MaterialFunctionManagerTest
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+endif(MGIS_HAVE_MFRONT_SUPPORT)
 
 endif(MGIS_HAVE_TFEL)
 

@@ -26,7 +26,7 @@ namespace mgis::function {
   template <typename Child, EvaluatorConcept EvaluatorType>
   constexpr bool EvaluatorModifierBase<Child, EvaluatorType>::check(
       AbstractErrorHandler& ctx) const {
-    return this->evaluator.check(ctx);
+    return internals::disambiguateCheck(ctx, this->evaluator);
   }  // end of check
 
   template <typename Child, EvaluatorConcept EvaluatorType>
@@ -80,6 +80,12 @@ namespace mgis::function {
       const EvaluatorModifierBase<Child, EvaluatorType>& e) {
     return e.getSpace();
   }
+
+  template <typename Child, EvaluatorConcept EvaluatorType>
+  constexpr bool check(AbstractErrorHandler& eh,
+                       const EvaluatorModifierBase<Child, EvaluatorType>& e) {
+    return e.check(eh);
+  }  // end of check
 
   template <typename Child, EvaluatorConcept EvaluatorType>
   constexpr void allocateWorkspace(

@@ -134,15 +134,19 @@ namespace mgis::function {
   };  // end of TensorView
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  constexpr decltype(auto) getSpace(
+  [[nodiscard]] constexpr decltype(auto) getSpace(
       const TensorView<FunctionType, TensorType>&);
+  //! \brief perform consistency checks
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  [[nodiscard]] constexpr bool check(
+      AbstractErrorHandler&, const TensorView<FunctionType, TensorType>&);
   //! \brief allocate internal workspace
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr void allocateWorkspace(
       TensorView<FunctionType, TensorType>&) noexcept;
   //! \return the number of components
   template <FunctionConcept FunctionType, TensorConcept TensorType>
-  constexpr size_type getNumberOfComponents(
+  [[nodiscard]] constexpr size_type getNumberOfComponents(
       const TensorView<FunctionType, TensorType>&) noexcept;
 
 }  // end of namespace mgis::function

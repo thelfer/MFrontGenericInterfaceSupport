@@ -48,26 +48,26 @@ namespace mgis::function {
     constexpr FixedSizeModifier(const PreconditionsCheck<doPreconditionsCheck>&,
                                 const EvaluatorType&);
     //! \brief perform consistency checks
-    constexpr bool check(AbstractErrorHandler&) const;
+    [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
     //! \brief allocate internal workspace
     constexpr void allocateWorkspace();
     //! \brief return the underlying  space
-    decltype(auto) getSpace() const;
+    [[nodiscard]] decltype(auto) getSpace() const;
     //! \return the number of components
-    constexpr size_type getNumberOfComponents() const;
+    [[nodiscard]] constexpr size_type getNumberOfComponents() const;
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    constexpr auto operator()(const element_index<Space>&) const
+    [[nodiscard]] constexpr auto operator()(const element_index<Space>&) const
         requires((internals::EvaluatorResultQuery<EvaluatorType>::b1) &&
                  (isEvaluatorResultTypeMappable<EvaluatorType>));
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    constexpr auto operator()(const element_workspace<Space>&,
-                              const element_index<Space>&) const
+    [[nodiscard]] constexpr auto operator()(const element_workspace<Space>&,
+                                            const element_index<Space>&) const
         requires((internals::EvaluatorResultQuery<EvaluatorType>::b2) &&
                  (isEvaluatorResultTypeMappable<EvaluatorType>));
     /*!
@@ -75,8 +75,8 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    constexpr auto operator()(const cell_index<Space>&,
-                              const quadrature_point_index<Space>&) const
+    [[nodiscard]] constexpr auto operator()(
+        const cell_index<Space>&, const quadrature_point_index<Space>&) const
         requires((internals::EvaluatorResultQuery<EvaluatorType>::b3) &&
                  (isEvaluatorResultTypeMappable<EvaluatorType>));
     /*!
@@ -84,9 +84,10 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    constexpr auto operator()(const cell_workspace<Space>&,
-                              const cell_index<Space>&,
-                              const quadrature_point_index<Space>&) const
+    [[nodiscard]] constexpr auto operator()(
+        const cell_workspace<Space>&,
+        const cell_index<Space>&,
+        const quadrature_point_index<Space>&) const
         requires((internals::EvaluatorResultQuery<EvaluatorType>::b4) &&
                  (isEvaluatorResultTypeMappable<EvaluatorType>));
 
@@ -100,19 +101,23 @@ namespace mgis::function {
    * \param[in] f: function
    */
   template <size_type N, typename EvaluatorType>
-  constexpr auto view(const EvaluatorType&) requires(
+  [[nodiscard]] constexpr auto view(const EvaluatorType&) requires(
       (N > 0) && (N != dynamic_extent) &&  //
       (EvaluatorConcept<std::decay_t<EvaluatorType>>));
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  decltype(auto) getSpace(const FixedSizeModifier<EvaluatorType, N>&);
-
+  [[nodiscard]] decltype(auto) getSpace(
+      const FixedSizeModifier<EvaluatorType, N>&);
+  //! \brief perform consistency checks
+  template <EvaluatorConcept EvaluatorType, size_type N>
+  [[nodiscard]] constexpr bool check(
+      AbstractErrorHandler&, const FixedSizeModifier<EvaluatorType, N>&);
   //! \brief allocate internal workspace
   template <EvaluatorConcept EvaluatorType, size_type N>
   constexpr void allocateWorkspace(FixedSizeModifier<EvaluatorType, N>&);
   //! \return the number of components
   template <EvaluatorConcept EvaluatorType, size_type N>
-  constexpr size_type getNumberOfComponents(
+  [[nodiscard]] constexpr size_type getNumberOfComponents(
       const FixedSizeModifier<EvaluatorType, N>&);
 
 }  // end of namespace mgis::function

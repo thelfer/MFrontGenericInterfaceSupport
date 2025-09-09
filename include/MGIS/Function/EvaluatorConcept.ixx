@@ -16,6 +16,11 @@ namespace mgis::function::internals {
   }
 
   template <EvaluatorConcept EvaluatorType>
+  constexpr bool disambiguateCheck(AbstractErrorHandler& ctx, const EvaluatorType& e){
+    return check(ctx, e);
+  }
+  
+  template <EvaluatorConcept EvaluatorType>
   constexpr void disambiguateAllocateWorkspace(EvaluatorType& e) {
     allocateWorkspace(e);
   }  // end of disambiguateAllocateWorkspace

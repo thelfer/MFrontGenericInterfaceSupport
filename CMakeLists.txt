@@ -148,13 +148,16 @@ if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 
 #detecting TFEL and MFront
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
-find_package(TFEL)
-if(TFEL_FOUND)
-  include(tfel)
-  include(material-properties)
-  include(behaviours)
-endif(TFEL_FOUND)
+option(disable-tfel "explicitly disable TFEL support. By default, MGIS tries to use TFEL for tests and MGIS/Function" OFF)
+if(NOT disable-tfel)
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
+  find_package(TFEL)
+  if(TFEL_FOUND)
+    include(tfel)
+    include(material-properties)
+    include(behaviours)
+  endif(TFEL_FOUND)
+endif(NOT disable-tfel)
 
 #documentations
 option(enable-doxygen-doc "enable generation of the Doxygen documentation" OFF)
@@ -229,9 +232,7 @@ endif(CMAKE_CONFIGURATION_TYPES)
 
 add_subdirectory(include)
 add_subdirectory(src)
-if(MGIS_HAVE_TFEL)
-  add_subdirectory(tests)
-endif(MGIS_HAVE_TFEL)
+add_subdirectory(tests)
 add_subdirectory(bindings)
 
 # Packaging

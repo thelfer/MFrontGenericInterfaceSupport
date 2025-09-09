@@ -32,41 +32,42 @@ namespace mgis::function {
     constexpr EvaluatorModifierBase(const EvaluatorModifierBase&);
     //! \brief move constructor
     constexpr EvaluatorModifierBase(EvaluatorModifierBase&&);
+    //! \brief return the underlying space
+    [[nodiscard]] constexpr decltype(auto) getSpace() const;
     //! \brief perform consistency checks
-    constexpr bool check(AbstractErrorHandler&) const;
+    [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
     //! \brief allocate internal workspace
     constexpr void allocateWorkspace();
-    //! \brief return the underlying space
-    constexpr decltype(auto) getSpace() const;
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    constexpr auto operator()(const element_index<Space>&) const
+    [[nodiscard]] constexpr auto operator()(const element_index<Space>&) const
         requires(internals::EvaluatorResultQuery<EvaluatorType>::b1);
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    constexpr auto operator()(const element_workspace<Space>&,
-                              const element_index<Space>&) const
+    [[nodiscard]] constexpr auto operator()(const element_workspace<Space>&,
+                                            const element_index<Space>&) const
         requires(internals::EvaluatorResultQuery<EvaluatorType>::b2);
     /*!
      * \brief call operator
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    constexpr auto operator()(const cell_index<Space>&,
-                              const quadrature_point_index<Space>&) const
+    [[nodiscard]] constexpr auto operator()(
+        const cell_index<Space>&, const quadrature_point_index<Space>&) const
         requires(internals::EvaluatorResultQuery<EvaluatorType>::b3);
     /*!
      * \brief call operator
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    constexpr auto operator()(const cell_workspace<Space>&,
-                              const cell_index<Space>&,
-                              const quadrature_point_index<Space>&) const
+    [[nodiscard]] constexpr auto operator()(
+        const cell_workspace<Space>&,
+        const cell_index<Space>&,
+        const quadrature_point_index<Space>&) const
         requires(internals::EvaluatorResultQuery<EvaluatorType>::b4);
 
    protected:
@@ -75,7 +76,12 @@ namespace mgis::function {
   };
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  constexpr decltype(auto) getSpace(
+  [[nodiscard]] constexpr decltype(auto) getSpace(
+      const EvaluatorModifierBase<Child, EvaluatorType>&);
+  //! \brief perform consistency checks
+  template <typename Child, EvaluatorConcept EvaluatorType>
+  [[nodiscard]] constexpr bool check(
+      AbstractErrorHandler&,
       const EvaluatorModifierBase<Child, EvaluatorType>&);
   //! \brief allocate internal workspace
   template <typename Child, EvaluatorConcept EvaluatorType>

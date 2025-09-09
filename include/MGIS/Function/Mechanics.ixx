@@ -46,12 +46,14 @@ namespace mgis::function::internals {
     constexpr ConvertFiniteStrainStiffnessEvaluator(
         ConvertFiniteStrainStiffnessEvaluator&&) = default;
     //! \brief perform consistency checks
-    constexpr bool check(AbstractErrorHandler& ctx) const {
+    [[nodiscard]] constexpr bool check(AbstractErrorHandler& ctx) const {
       return ((checkMatchingSpaces(ctx, this->K, this->F0)) &&
               (checkMatchingSpaces(ctx, this->K, this->F1)) &&
               (checkMatchingSpaces(ctx, this->K, this->s)) &&
-              (this->K.check(ctx)) && (this->F0.check(ctx)) &&
-              (this->F1.check(ctx)) && (this->s.check(ctx)));
+              (internals::disambiguateCheck(ctx, this->K)) &&
+	      (internals::disambiguateCheck(ctx, this->F0)) &&
+	      (internals::disambiguateCheck(ctx, this->F1)) &&
+	      (internals::disambiguateCheck(ctx, this->s)));
     }
 
     //! \brief allocate internal workspace
@@ -62,20 +64,21 @@ namespace mgis::function::internals {
       internals::disambiguateAllocateWorkspace(this->s);
     }
     //! \brief return the underlying space
-    constexpr decltype(auto) getSpace() const {
+    [[nodiscard]] constexpr decltype(auto) getSpace() const {
       return internals::disambiguateGetSpace(this->K);
     }
     /*!
      * \brief call operator
      * \param[in] i: element index
      */
-    constexpr auto operator()(const element_index<Space>& i) const requires(
-        (internals::EvaluatorResultQuery<StiffnessEvaluator>::b1) &&
-        (internals::EvaluatorResultQuery<
-            DeformationGradientEvaluatorType0>::b1) &&
-        (internals::EvaluatorResultQuery<
-            DeformationGradientEvaluatorType1>::b1) &&
-        (internals::EvaluatorResultQuery<CauchyStressEvaluatorType>::b1)) {
+    [[nodiscard]] constexpr auto operator()(const element_index<Space>& i) const
+        requires(
+            (internals::EvaluatorResultQuery<StiffnessEvaluator>::b1) &&
+            (internals::EvaluatorResultQuery<
+                DeformationGradientEvaluatorType0>::b1) &&
+            (internals::EvaluatorResultQuery<
+                DeformationGradientEvaluatorType1>::b1) &&
+            (internals::EvaluatorResultQuery<CauchyStressEvaluatorType>::b1)) {
       return tfel::material::convert<ResultFlag, SourceFlag, N>(
           this->K(i), tfel::math::tensor<N, ::mgis::real>(this->F0(i)),
           tfel::math::tensor<N, ::mgis::real>(this->F1(i)),
@@ -86,8 +89,8 @@ namespace mgis::function::internals {
      * \param[in] wk: element index
      * \param[in] i: element index
      */
-    constexpr auto operator()(const element_workspace<Space>& wk,
-                              const element_index<Space>& i) const
+    [[nodiscard]] constexpr auto operator()(const element_workspace<Space>& wk,
+                                            const element_index<Space>& i) const
         requires(
             (internals::EvaluatorResultQuery<StiffnessEvaluator>::b2) &&
             (internals::EvaluatorResultQuery<
@@ -103,8 +106,9 @@ namespace mgis::function::internals {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    constexpr auto operator()(const cell_index<Space>& e,
-                              const quadrature_point_index<Space>& i) const
+    [[nodiscard]] constexpr auto operator()(
+        const cell_index<Space>& e,
+        const quadrature_point_index<Space>& i) const
         requires(
             (internals::EvaluatorResultQuery<StiffnessEvaluator>::b3) &&
             (internals::EvaluatorResultQuery<
@@ -121,9 +125,10 @@ namespace mgis::function::internals {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    constexpr auto operator()(const cell_workspace<Space>& wk,
-                              const cell_index<Space>& e,
-                              const quadrature_point_index<Space>& i) const
+    [[nodiscard]] constexpr auto operator()(
+        const cell_workspace<Space>& wk,
+        const cell_index<Space>& e,
+        const quadrature_point_index<Space>& i) const
         requires(
             (internals::EvaluatorResultQuery<StiffnessEvaluator>::b4) &&
             (internals::EvaluatorResultQuery<
@@ -150,6 +155,26 @@ namespace mgis::function::internals {
             TensorEvaluatorConcept DeformationGradientEvaluatorType0,
             TensorEvaluatorConcept DeformationGradientEvaluatorType1,
             StensorEvaluatorConcept CauchyStressEvaluatorType>
+  [[nodiscard]] constexpr bool check(
+      AbstractErrorHandler& eh,
+      const ConvertFiniteStrainStiffnessEvaluator<
+          N,
+          ResultFlag,
+          SourceFlag,
+          StiffnessEvaluator,
+          DeformationGradientEvaluatorType0,
+          DeformationGradientEvaluatorType1,
+          CauchyStressEvaluatorType>& e) {
+    return e.check(eh);
+  }  // end of check
+
+  template <unsigned short N,
+            FiniteStrainStiffnessKind ResultFlag,
+            FiniteStrainStiffnessKind SourceFlag,
+            FourthOrderTensorEvaluatorConcept StiffnessEvaluator,
+            TensorEvaluatorConcept DeformationGradientEvaluatorType0,
+            TensorEvaluatorConcept DeformationGradientEvaluatorType1,
+            StensorEvaluatorConcept CauchyStressEvaluatorType>
   constexpr void allocateWorkspace(
       ConvertFiniteStrainStiffnessEvaluator<N,
                                             ResultFlag,
@@ -168,7 +193,7 @@ namespace mgis::function::internals {
             TensorEvaluatorConcept DeformationGradientEvaluatorType0,
             TensorEvaluatorConcept DeformationGradientEvaluatorType1,
             StensorEvaluatorConcept CauchyStressEvaluatorType>
-  constexpr mgis::size_type getNumberOfComponents(
+  [[nodiscard]] constexpr mgis::size_type getNumberOfComponents(
       const ConvertFiniteStrainStiffnessEvaluator<
           N,
           ResultFlag,
@@ -200,7 +225,8 @@ namespace mgis::function::internals {
     using Tag = ::mgis::function::EvaluatorModifierTag;
 
     template <FourthOrderTensorEvaluatorConcept StiffnessEvaluator>
-    constexpr auto operator()(const StiffnessEvaluator& K) const requires(
+    [[nodiscard]] constexpr auto
+    operator()(const StiffnessEvaluator& K) const requires(
         std::is_convertible_v<
             evaluator_result<StiffnessEvaluator>,
             tfel::material::tangent_operator<ResultFlag, N, ::mgis::real>>) {
@@ -223,15 +249,15 @@ namespace mgis::function::internals {
             TensorEvaluatorConcept DeformationGradientEvaluatorType0,
             TensorEvaluatorConcept DeformationGradientEvaluatorType1,
             StensorEvaluatorConcept CauchyStressEvaluatorType>
-
-  decltype(auto) getSpace(const ConvertFiniteStrainStiffnessEvaluator<
-                          N,
-                          ResultFlag,
-                          SourceFlag,
-                          StiffnessEvaluator,
-                          DeformationGradientEvaluatorType0,
-                          DeformationGradientEvaluatorType1,
-                          CauchyStressEvaluatorType>& e) {
+  [[nodiscard]] decltype(auto) getSpace(
+      const ConvertFiniteStrainStiffnessEvaluator<
+          N,
+          ResultFlag,
+          SourceFlag,
+          StiffnessEvaluator,
+          DeformationGradientEvaluatorType0,
+          DeformationGradientEvaluatorType1,
+          CauchyStressEvaluatorType>& e) {
     return e.getSpace();
   }  // end of getSpace
 

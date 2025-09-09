@@ -51,16 +51,16 @@ namespace mgis::function {
     constexpr FixedSizeView(const PreconditionsCheck<doPreconditionsCheck>&,
                             FunctionType&);
     //! \brief perform consistency checks
-    constexpr bool check(AbstractErrorHandler&) const;
+    [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
     //! \brief return the underlying  space
-    constexpr decltype(auto) getSpace() const;
+    [[nodiscard]] constexpr decltype(auto) getSpace() const;
     //! \return the number of components
-    constexpr size_type getNumberOfComponents() const noexcept;
+    [[nodiscard]] constexpr size_type getNumberOfComponents() const noexcept;
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    constexpr auto operator()(const element_index<Space>&) const
+    [[nodiscard]] constexpr auto operator()(const element_index<Space>&) const
         requires((internals::FunctionResultQuery<FunctionType>::b1) &&
                  (isFunctionConstResultTypeMappable<FunctionType>));
     /*!
@@ -68,8 +68,8 @@ namespace mgis::function {
      * \param[in] wk: element workspace
      * \param[in] i: integration point index
      */
-    constexpr auto operator()(const element_workspace<Space>&,
-                              const element_index<Space>&) const
+    [[nodiscard]] constexpr auto operator()(const element_workspace<Space>&,
+                                            const element_index<Space>&) const
         requires((internals::FunctionResultQuery<FunctionType>::b2) &&
                  (isFunctionConstResultTypeMappable<FunctionType>));
     /*!
@@ -77,8 +77,8 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    constexpr auto operator()(const cell_index<Space>&,
-                              const quadrature_point_index<Space>&) const
+    [[nodiscard]] constexpr auto operator()(
+        const cell_index<Space>&, const quadrature_point_index<Space>&) const
         requires((internals::FunctionResultQuery<FunctionType>::b3) &&
                  (isFunctionConstResultTypeMappable<FunctionType>));
     /*!
@@ -86,24 +86,27 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    constexpr auto operator()(const cell_workspace<Space>&,
-                              const cell_index<Space>&,
-                              const quadrature_point_index<Space>&) const
+    [[nodiscard]] constexpr auto operator()(
+        const cell_workspace<Space>&,
+        const cell_index<Space>&,
+        const quadrature_point_index<Space>&) const
         requires((internals::FunctionResultQuery<FunctionType>::b4) &&
                  (isFunctionConstResultTypeMappable<FunctionType>));
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    constexpr mutable_value_type operator()(const element_index<Space>&)  //
+    [[nodiscard]] constexpr mutable_value_type operator()(
+        const element_index<Space>&)  //
         requires((internals::FunctionResultQuery<FunctionType>::b1) &&
                  (isFunctionResultTypeMappable<FunctionType>));
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    constexpr mutable_value_type operator()(const element_workspace<Space>&,
-                                            const element_index<Space>&)  //
+    [[nodiscard]] constexpr mutable_value_type operator()(
+        const element_workspace<Space>&,
+        const element_index<Space>&)  //
         requires((internals::FunctionResultQuery<FunctionType>::b2) &&
                  (isFunctionResultTypeMappable<FunctionType>));
     /*!
@@ -111,7 +114,7 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    constexpr mutable_value_type operator()(
+    [[nodiscard]] constexpr mutable_value_type operator()(
         const cell_index<Space>&,
         const quadrature_point_index<Space>&)  //
         requires((internals::FunctionResultQuery<FunctionType>::b3) &&
@@ -121,7 +124,7 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    constexpr mutable_value_type operator()(
+    [[nodiscard]] constexpr mutable_value_type operator()(
         const cell_workspace<Space>&,
         const cell_index<Space>&,
         const quadrature_point_index<Space>&)  //
@@ -138,20 +141,24 @@ namespace mgis::function {
    * \param[in] f: function
    */
   template <size_type N, typename FunctionType>
-  constexpr auto view(FunctionType&) requires(
+  [[nodiscard]] constexpr auto view(FunctionType&) requires(
       (N > 0) && (N != dynamic_extent) &&              //
       (FunctionConcept<std::decay_t<FunctionType>>)&&  //
       (!std::is_rvalue_reference_v<FunctionType>));
 
   template <FunctionConcept FunctionType, size_type N>
-  constexpr decltype(auto) getSpace(const FixedSizeView<FunctionType, N>&);
-
+  [[nodiscard]] constexpr decltype(auto) getSpace(
+      const FixedSizeView<FunctionType, N>&);
+  //! \brief perform consistency checks
+  template <FunctionConcept FunctionType, size_type N>
+  [[nodiscard]] constexpr bool check(AbstractErrorHandler&,
+                                     const FixedSizeView<FunctionType, N>&);
   //! \brief allocate internal workspace
   template <FunctionConcept FunctionType, size_type N>
   constexpr void allocateWorkspace(FixedSizeView<FunctionType, N>&) noexcept;
   //! \return the number of components
   template <FunctionConcept FunctionType, size_type N>
-  constexpr size_type getNumberOfComponents(
+  [[nodiscard]] constexpr size_type getNumberOfComponents(
       const FixedSizeView<FunctionType, N>&) noexcept;
 
 }  // end of namespace mgis::function

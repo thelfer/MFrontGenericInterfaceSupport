@@ -5,6 +5,8 @@
  * \date   01/09/2025
  */
 
+#ifdef MGIS_HAVE_TFEL
+
 #include "MGIS/Function/BasicLinearSpace.hxx"
 #include "MGIS/Function/Function.hxx"
 #include "MGIS/Function/Tensors.hxx"
@@ -12,7 +14,6 @@
 
 namespace mgis::function {
 
-#ifdef MGIS_HAVE_TFEL
 
   static_assert(
       EvaluatorConcept<TensorModifier<tfel::math::stensor<3u, mgis::real>,
@@ -26,6 +27,6 @@ namespace mgis::function {
                                           FunctionView<BasicLinearSpace>>> ==
       6);
 
-#endif /* MGIS_HAVE_TFEL */
-
 }  // end of namespace mgis::function
+
+#endif /* MGIS_HAVE_TFEL */
