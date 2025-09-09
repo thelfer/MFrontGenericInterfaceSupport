@@ -16,12 +16,15 @@ list(APPEND MFrontGenericInterface_SOURCES
   BehaviourDescription.cxx
   Behaviour.cxx
   State.cxx
+  StateView.cxx
   BehaviourData.cxx
+  BehaviourDataView.cxx
   MaterialStateManager.cxx
   MaterialDataManager.cxx
   Integrate.cxx
   FiniteStrainSupport.cxx
-  Model.cxx)
+  Model.cxx
+  BehaviourIntegrationFailureAnalyser.cxx)
 
 if(enable-mgis-function)
   list(APPEND MFrontGenericInterface_SOURCES
