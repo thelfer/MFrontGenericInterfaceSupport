@@ -1,6 +1,8 @@
 STRING(REPLACE "\\;" ";" MGIS_PATH_STRING "$ENV{PATH}")
 STRING(REPLACE ";" "\\;" MGIS_PATH_STRING "${MGIS_PATH_STRING}")
 
+if(MGIS_HAVE_MFRONT_SUPPORT)
+
 mfront_material_properties_check_library(MaterialPropertyTest
   MaterialPropertyBoundCheck
   MaterialPropertyBoundCheck2
@@ -403,3 +405,122 @@ else((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ComputeSpeedOfSoundTest2
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+endif(MGIS_HAVE_MFRONT_SUPPORT)
+
+add_executable(InvalidResultTest
+ EXCLUDE_FROM_ALL
+ InvalidResultTest.cxx)
+target_link_libraries(InvalidResultTest
+  PRIVATE MFrontGenericInterface)
+add_test(NAME InvalidResultTest COMMAND InvalidResultTest)
+add_dependencies(check InvalidResultTest)
+
+add_executable(ErrorBacktraceTest
+ EXCLUDE_FROM_ALL
+ ErrorBacktraceTest.cxx)
+target_link_libraries(ErrorBacktraceTest
+  PRIVATE MFrontGenericInterface)
+add_test(NAME ErrorBacktraceTest COMMAND ErrorBacktraceTest)
+add_dependencies(check ErrorBacktraceTest)
+
+if(enable-mgis-function)
+
+if(MGIS_HAVE_TFEL)
+
+add_executable(SharedSpaceTest
+ EXCLUDE_FROM_ALL
+ SharedSpaceTest.cxx)
+target_link_libraries(SharedSpaceTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME SharedSpaceTest COMMAND SharedSpaceTest)
+add_dependencies(check SharedSpaceTest)
+
+add_executable(FunctionTest
+ EXCLUDE_FROM_ALL
+ FunctionTest.cxx)
+target_link_libraries(FunctionTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME FunctionTest COMMAND FunctionTest)
+add_dependencies(check FunctionTest)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+    target_compile_definitions(FunctionTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
+add_executable(EvaluatorsTest
+ EXCLUDE_FROM_ALL
+ EvaluatorsTest.cxx)
+target_link_libraries(EvaluatorsTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME EvaluatorsTest COMMAND EvaluatorsTest)
+add_dependencies(check EvaluatorsTest)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+    target_compile_definitions(EvaluatorsTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
+add_executable(MechanicalEvaluatorsTest
+ EXCLUDE_FROM_ALL
+ MechanicalEvaluatorsTest.cxx)
+target_link_libraries(MechanicalEvaluatorsTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME MechanicalEvaluatorsTest COMMAND MechanicalEvaluatorsTest)
+add_dependencies(check MechanicalEvaluatorsTest)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+    target_compile_definitions(MechanicalEvaluatorsTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
+add_executable(TensorialFunctionTest
+ EXCLUDE_FROM_ALL
+ TensorialFunctionTest.cxx)
+target_link_libraries(TensorialFunctionTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME TensorialFunctionTest COMMAND TensorialFunctionTest)
+add_dependencies(check TensorialFunctionTest)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+    target_compile_definitions(TensorialFunctionTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
+add_executable(ReduceTest
+ EXCLUDE_FROM_ALL
+ ReduceTest.cxx)
+target_link_libraries(ReduceTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME ReduceTest COMMAND ReduceTest)
+add_dependencies(check ReduceTest)
+
+add_executable(MaterialFunctionManagerTest
+  EXCLUDE_FROM_ALL MaterialFunctionManagerTest.cxx)
+target_link_libraries(MaterialFunctionManagerTest
+	PRIVATE MFrontGenericInterface tfel::TFELTests)
+
+if(MGIS_HAVE_MFRONT_SUPPORT)
+
+add_test(NAME MaterialFunctionManagerTest
+ COMMAND MaterialFunctionManagerTest "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(check MaterialFunctionManagerTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST MaterialFunctionManagerTest
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST MaterialFunctionManagerTest
+    PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+endif(MGIS_HAVE_MFRONT_SUPPORT)
+
+endif(MGIS_HAVE_TFEL)
+
+endif(enable-mgis-function)

@@ -14,8 +14,8 @@
 
 #include <cstdlib>
 #include <iterator>
-
 #include "MGIS/Raise.hxx"
+#include "MGIS/Context.hxx"
 #include "MGIS/LibrariesManager.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
 #include "MGIS/Behaviour/Behaviour.hxx"
@@ -184,6 +184,31 @@ namespace mgis::behaviour {
     }
     return d;
   }  // end of load
+
+  std::optional<Behaviour> load(Context &ctx,
+                                const std::string &l,
+                                const std::string &f,
+                                const Hypothesis h) noexcept {
+    try {
+      return load(l, f, h);
+    } catch (...) {
+      registerExceptionInErrorBacktrace(ctx);
+    }
+    return {};
+  }  // end of load
+
+  std::optional<Behaviour> load(Context &ctx,
+                                const FiniteStrainBehaviourOptions &o,
+                                const std::string &l,
+                                const std::string &f,
+                                const Hypothesis h) noexcept {
+    try {
+      return load(o, l, f, h);
+    } catch (...) {
+      registerExceptionInErrorBacktrace(ctx);
+    }
+    return {};
+  }
 
   void rotateGradients(std::span<real> g,
                        const Behaviour &b,

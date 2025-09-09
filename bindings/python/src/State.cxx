@@ -28,8 +28,7 @@ static pybind11::object State_getThermodynamicForces(
   return mgis::python::wrapInNumPyArray(s.thermodynamic_forces);
 }  // end of State_getThermodynamicForces
 
-static pybind11::object State_getMaterialProperties(
-    mgis::behaviour::State& s) {
+static pybind11::object State_getMaterialProperties(mgis::behaviour::State& s) {
   return mgis::python::wrapInNumPyArray(s.material_properties);
 }  // end of State_getMaterialProperties
 

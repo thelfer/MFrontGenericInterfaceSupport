@@ -18,8 +18,8 @@
 #include "MGIS/Julia/JuliaUtilities.hxx"
 
 void declareBehaviour(jlcxx::Module &m) {
-  using mgis::behaviour::BehaviourDescription;
   using mgis::behaviour::Behaviour;
+  using mgis::behaviour::BehaviourDescription;
   using mgis::behaviour::FiniteStrainBehaviourOptions;
   using mgis::behaviour::Hypothesis;
   //
@@ -32,9 +32,11 @@ void declareBehaviour(jlcxx::Module &m) {
       &mgis::behaviour::setParameter;
   void (*setParameter2)(const Behaviour &, const std::string &, const int) =
       &mgis::behaviour::setParameter;
-  double (*getParameterDefaultValue1)(const BehaviourDescription &, const std::string &) =
+  double (*getParameterDefaultValue1)(const BehaviourDescription &,
+                                      const std::string &) =
       &mgis::behaviour::getParameterDefaultValue<double>;
-  int (*getParameterDefaultValue2)(const BehaviourDescription &, const std::string &) =
+  int (*getParameterDefaultValue2)(const BehaviourDescription &,
+                                   const std::string &) =
       &mgis::behaviour::getParameterDefaultValue<int>;
   unsigned short (*getParameterDefaultValue3)(const BehaviourDescription &,
                                               const std::string &) =
@@ -45,19 +47,25 @@ void declareBehaviour(jlcxx::Module &m) {
       mgis::behaviour::hasLowerBound;
   bool (*hasUpperBound)(const BehaviourDescription &, const std::string &) =
       mgis::behaviour::hasUpperBound;
-  long double (*getLowerBound)(const BehaviourDescription &, const std::string &) =
+  long double (*getLowerBound)(const BehaviourDescription &,
+                               const std::string &) =
       mgis::behaviour::getLowerBound;
-  long double (*getUpperBound)(const BehaviourDescription &, const std::string &) =
+  long double (*getUpperBound)(const BehaviourDescription &,
+                               const std::string &) =
       mgis::behaviour::getUpperBound;
   bool (*hasPhysicalBounds)(const BehaviourDescription &, const std::string &) =
       mgis::behaviour::hasPhysicalBounds;
-  bool (*hasLowerPhysicalBound)(const BehaviourDescription &, const std::string &) =
+  bool (*hasLowerPhysicalBound)(const BehaviourDescription &,
+                                const std::string &) =
       mgis::behaviour::hasLowerPhysicalBound;
-  bool (*hasUpperPhysicalBound)(const BehaviourDescription &, const std::string &) =
+  bool (*hasUpperPhysicalBound)(const BehaviourDescription &,
+                                const std::string &) =
       mgis::behaviour::hasUpperPhysicalBound;
-  long double (*getLowerPhysicalBound)(const BehaviourDescription &, const std::string &) =
+  long double (*getLowerPhysicalBound)(const BehaviourDescription &,
+                                       const std::string &) =
       mgis::behaviour::getLowerPhysicalBound;
-  long double (*getUpperPhysicalBound)(const BehaviourDescription &, const std::string &) =
+  long double (*getUpperPhysicalBound)(const BehaviourDescription &,
+                                       const std::string &) =
       mgis::behaviour::getUpperPhysicalBound;
   //!
   m.add_bits<FiniteStrainBehaviourOptions::StressMeasure>(
@@ -89,20 +97,22 @@ void declareBehaviour(jlcxx::Module &m) {
               [](const FiniteStrainBehaviourOptions &o) noexcept {
                 return o.stress_measure;
               })
-      .method("set_stress_measure!",
-              [](FiniteStrainBehaviourOptions &o,
-                 const FiniteStrainBehaviourOptions::StressMeasure &s) noexcept {
-                o.stress_measure = s;
-              })
+      .method(
+          "set_stress_measure!",
+          [](FiniteStrainBehaviourOptions &o,
+             const FiniteStrainBehaviourOptions::StressMeasure &s) noexcept {
+            o.stress_measure = s;
+          })
       .method("get_tangent_operator",
               [](const FiniteStrainBehaviourOptions &o) noexcept {
                 return o.tangent_operator;
               })
-      .method("set_tangent_operator!",
-              [](FiniteStrainBehaviourOptions &o,
-                 const FiniteStrainBehaviourOptions::TangentOperator &to) noexcept {
-                o.tangent_operator = to;
-              });
+      .method(
+          "set_tangent_operator!",
+          [](FiniteStrainBehaviourOptions &o,
+             const FiniteStrainBehaviourOptions::TangentOperator &to) noexcept {
+            o.tangent_operator = to;
+          });
   //
   m.add_bits<Behaviour::BehaviourType>("BehaviourType");
   m.set_const("GENERALBEHAVIOUR", Behaviour::GENERALBEHAVIOUR);
@@ -135,16 +145,24 @@ void declareBehaviour(jlcxx::Module &m) {
               Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY);
   //
   m.add_type<Behaviour>("Behaviour")
-      .method("get_library", [](const Behaviour &b) noexcept { return b.library; })
-      .method("get_behaviour", [](const Behaviour &b) noexcept { return b.behaviour; })
-      .method("get_hypothesis", [](const Behaviour &b) noexcept { return b.hypothesis; })
-      .method("get_function", [](const Behaviour &b) noexcept { return b.function; })
-      .method("get_source", [](const Behaviour &b) noexcept { return b.source; })
+      .method("get_library",
+              [](const Behaviour &b) noexcept { return b.library; })
+      .method("get_behaviour",
+              [](const Behaviour &b) noexcept { return b.behaviour; })
+      .method("get_hypothesis",
+              [](const Behaviour &b) noexcept { return b.hypothesis; })
+      .method("get_function",
+              [](const Behaviour &b) noexcept { return b.function; })
+      .method("get_source",
+              [](const Behaviour &b) noexcept { return b.source; })
       .method("get_tfel_version",
               [](const Behaviour &b) noexcept { return b.tfel_version; })
-      .method("get_behaviour_type", [](const Behaviour &b) noexcept { return b.btype; })
-      .method("get_symmetry", [](const Behaviour &b) noexcept { return b.symmetry; })
-      .method("get_kinematic", [](const Behaviour &b) noexcept { return b.kinematic; })
+      .method("get_behaviour_type",
+              [](const Behaviour &b) noexcept { return b.btype; })
+      .method("get_symmetry",
+              [](const Behaviour &b) noexcept { return b.symmetry; })
+      .method("get_kinematic",
+              [](const Behaviour &b) noexcept { return b.kinematic; })
       .method("get_material_properties",
               [](const Behaviour &b) { return b.mps; })
       .method("get_internal_state_variables",

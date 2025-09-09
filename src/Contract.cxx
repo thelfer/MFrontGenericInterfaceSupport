@@ -1,0 +1,52 @@
+/*!
+ * \file   Contract.cxx
+ * \brief
+ * \author Thomas Helfer
+ * \date   03/06/2025
+ */
+
+#include <iostream>
+#include <cstdlib>
+#include <iostream>
+#include "MGIS/Contract.hxx"
+
+namespace mgis {
+
+#ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
+
+  [[noreturn]] InvalidResult ContractViolationHandler::registerErrorMessage(
+      const char *const msg, const std::source_location &l) {
+    auto emsg = std::string{};
+    emsg += l.file_name();
+    emsg += ":" + std::to_string(l.line()) + ": in function '";
+    emsg += l.function_name();
+    emsg += "': ";
+    emsg += msg;
+    if constexpr (config::contract_violation_policy ==
+                  config::ContractViolationPolicy::RAISE) {
+      raise(emsg);
+    } else {
+      ContractViolationHandler::abort(emsg.c_str());
+    }
+  }  // end of registerErrorMessage
+
+#else
+
+  [[noreturn]] InvalidResult ContractViolationHandler::registerErrorMessage(
+      const char* const msg) {
+    if constexpr (config::contract_violation_policy ==
+                  config::ContractViolationPolicy::RAISE) {
+      raise(msg);
+    } else {
+      ContractViolationHandler::abort(msg);
+    }
+  }  // end of registerErrorMessage
+
+#endif
+
+  void ContractViolationHandler::abort(const char *const msg) noexcept {
+    std::cerr << msg << '\n';
+    std::abort();
+  }  // end of abort
+
+}  // namespace mgis

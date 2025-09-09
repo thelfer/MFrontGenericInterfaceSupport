@@ -20,8 +20,7 @@
 
 void declareBehaviourData(pybind11::module_& m);
 
-static pybind11::object BehaviourData_getK(
-    mgis::behaviour::BehaviourData& d) {
+static pybind11::object BehaviourData_getK(mgis::behaviour::BehaviourData& d) {
   if (d.s0.b.to_blocks.size() == 1u) {
     const auto s =
         getVariableSize(d.s0.b.to_blocks.front().first, d.s0.b.hypothesis);

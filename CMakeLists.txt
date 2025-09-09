@@ -11,6 +11,13 @@ project("mfront-generic-interface"
         DESCRIPTION  "${MFrontGenericInterfaceSupportDescription}"
         HOMEPAGE_URL "https://thelfer.github.io/mgis/web/index.html")
 
+write_basic_package_version_file(
+  "${PROJECT_BINARY_DIR}/mgis-config-version.cmake"
+  VERSION "${VERSION}"
+  COMPATIBILITY SameMinorVersion)
+install(FILES "${PROJECT_BINARY_DIR}/mgis-config-version.cmake"
+  DESTINATION "${mgis_export_install_path}")
+
 set(CMAKE_CXX_STANDARD 20)
 set(CXX_STANDARD_REQUIRED ON)
 
@@ -21,6 +28,11 @@ option(enable-portable-build "produce binary that can be shared between various 
 # if(enable-eigen-bindings)
 #   find_package (Eigen3 REQUIRED)
 # endif (enable-eigen-bindings)
+
+# enable mgis-function
+option(enable-mgis-function "enable mgis function" ON)
+# enable exceptions usage
+option(enable-exceptions "use exceptions to report contract violation and error reporting" OFF)
 
 # C-bindings (placed before compiler detection)
 option(enable-c-bindings "enable c bindings support")
@@ -136,13 +148,16 @@ if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 
 #detecting TFEL and MFront
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
-find_package(TFEL)
-if(TFEL_FOUND)
-  include(tfel)
-  include(material-properties)
-  include(behaviours)
-endif(TFEL_FOUND)
+option(disable-tfel "explicitly disable TFEL support. By default, MGIS tries to use TFEL for tests and MGIS/Function" OFF)
+if(NOT disable-tfel)
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
+  find_package(TFEL)
+  if(TFEL_FOUND)
+    include(tfel)
+    include(material-properties)
+    include(behaviours)
+  endif(TFEL_FOUND)
+endif(NOT disable-tfel)
 
 #documentations
 option(enable-doxygen-doc "enable generation of the Doxygen documentation" OFF)
@@ -217,9 +232,7 @@ endif(CMAKE_CONFIGURATION_TYPES)
 
 add_subdirectory(include)
 add_subdirectory(src)
-if(MGIS_HAVE_TFEL)
-  add_subdirectory(tests)
-endif(MGIS_HAVE_TFEL)
+add_subdirectory(tests)
 add_subdirectory(bindings)
 
 # Packaging

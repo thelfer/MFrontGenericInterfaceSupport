@@ -4,17 +4,38 @@
 # set(TFELHOME ${CONAN_TFEL_ROOT})
 # find_package(TFEL REQUIRED)
 #
-# Once found, declares these variables:
-#   - TFEL_FOUND
+# If a suitable environment is found to compile MFront behaviours,
+# the following variables are declared:
+#   - MGIS_HAVE_MFRONT_SUPPORT
 #   - TFEL_INCLUDE_PATH
 #   - TFEL_LIBRARIES
 #   - TFEL_CXX_STANDARD
 #   - TFEL_VERSION
+#
+# If TFEL libraries are found, the following variable is declared:
+#   - MGIS_HAVE_TFEL
+
+set(tfel_libs
+    TFELTests
+    TFELException
+    TFELUtilities
+    TFELMaterial
+    TFELMath
+    MTestFileGenerator
+)
+
+if(DEFINED TFEL_DIR)
+  list(APPEND CMAKE_PREFIX_PATH "${TFEL_DIR}")
+ endif()
 
 if(DEFINED ENV{TFELHOME})
-    set(TFELHOME $ENV{TFELHOME})
+  set(TFELHOME "$ENV{TFELHOME}")
+  if(NOT DEFINED TFEL_DIR)
+    set(TFEL_DIR "${TFELHOME}/share/tfel/cmake")
+    list(APPEND CMAKE_PREFIX_PATH "${TFEL_DIR}")
+  endif(NOT DEFINED TFEL_DIR)
+  message(STATUS "tfelhome: ${TFELHOME}")
 endif()
-message(STATUS "tfelhome: ${TFELHOME}")
 
 foreach(tool mfront tfel-check tfel-config mfront-query)
     string(TOUPPER ${tool} toolVar)
@@ -24,15 +45,27 @@ endforeach()
 
 IF(TFEL_CONFIG AND MFRONT AND MFRONT_QUERY)
 
+  if ((NOT DEFINED TFEL_DIR) AND (NOT DEFINED ENV{TFELHOME}))
+    # Trying to figure out TFEL_DIR
+    execute_process(COMMAND ${TFEL_CONFIG} "--include-path"
+      OUTPUT_VARIABLE TFEL_INCLUDE_PATH
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+     file(TO_CMAKE_PATH "${TFEL_INCLUDE_PATH}" TFEL_INCLUDE_PATH)
+     cmake_path(GET TFEL_INCLUDE_PATH PARENT_PATH TFELHOME)
+     set(TFEL_DIR "${TFELHOME}/share/tfel/cmake")
+     list(APPEND CMAKE_PREFIX_PATH "${TFEL_DIR}")
+  endif ((NOT DEFINED TFEL_DIR) AND (NOT DEFINED ENV{TFELHOME}))
+
   execute_process(COMMAND ${TFEL_CONFIG} "--cxx-standard"
       RESULT_VARIABLE TFEL_CXX_STANDARD_AVAILABLE
       OUTPUT_VARIABLE TFEL_CXX_STANDARD
       OUTPUT_STRIP_TRAILING_WHITESPACE
   )
   if(NOT TFEL_CXX_STANDARD_AVAILABLE EQUAL 0)
-      set(TFEL_CXX_STANDARD 11)
+      message(FATAL_ERROR "tfel-config does not support --cxx-standard")
   endif()
-  
+
   execute_process(COMMAND ${TFEL_CONFIG} "--version"
       OUTPUT_VARIABLE TFEL_VERSION_FULL
       OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -61,6 +94,11 @@ IF(TFEL_CONFIG AND MFRONT AND MFRONT_QUERY)
   if(NOT TFEL_INCLUDE_PATH_RESULT EQUAL 0)
       message(FATAL_ERROR "call to tfel-config failed")
   endif()
+
+  foreach(lib ${tfel_libs})
+     find_library(${lib}_LIBRARY ${lib} HINTS ${TFELHOME} PATH_SUFFIXES lib)
+     list(APPEND TFEL_LIBRARIES ${${lib}_LIBRARY})
+  endforeach(lib)
    
   # find_path(TFEL_CONFIG_INCLUDE_PATH TFELConfig.hxx
   #     HINTS ${TFELHOME}/include/TFEL/Config
@@ -68,24 +106,7 @@ IF(TFEL_CONFIG AND MFRONT AND MFRONT_QUERY)
   # get_filename_component(TFEL_INCLUDE_PATH
   #     ${TFEL_CONFIG_INCLUDE_PATH}/../.. ABSOLUTE CACHE
   # )
-  
-  set(tfel_libs
-      TFELTests
-      TFELException
-      TFELUtilities
-      TFELMaterial
-      TFELMath
-      MTestFileGenerator
-  )
-  if(${TFEL_CXX_STANDARD} LESS 17)
-      list(APPEND tfel_libs TFELPhysicalConstants)
-  endif()
-  
-  foreach(lib ${tfel_libs})
-      find_library(${lib}_LIBRARY ${lib} HINTS ${TFELHOME} PATH_SUFFIXES lib)
-      list(APPEND TFEL_LIBRARIES ${${lib}_LIBRARY})
-  endforeach(lib)
-  
+      
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(TFEL DEFAULT_MSG
       TFEL_VERSION
@@ -94,10 +115,17 @@ IF(TFEL_CONFIG AND MFRONT AND MFRONT_QUERY)
       TFEL_CXX_STANDARD
   )
 
-  set(TFEL_FOUND ON)
+  set(MGIS_HAVE_MFRONT_SUPPORT ON)
 
 else(TFEL_CONFIG AND MFRONT AND MFRONT_QUERY)
 
-  set(TFEL_FOUND OFF)
+  set(MGIS_HAVE_MFRONT_SUPPORT OFF)
   
 endif(TFEL_CONFIG AND MFRONT AND MFRONT_QUERY)
+
+if(DEFINED TFEL_DIR)
+  foreach(lib ${tfel_libs})
+    find_package(${lib} REQUIRED)
+  endforeach(lib)
+  set(MGIS_HAVE_TFEL ON)
+endif(DEFINED TFEL_DIR)

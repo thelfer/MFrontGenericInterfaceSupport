@@ -24,6 +24,7 @@
 #include <string_view>
 #include "MGIS/Config.hxx"
 #include "MGIS/StorageMode.hxx"
+#include "MGIS/Function/Function.hxx"
 
 namespace mgis::behaviour {
 

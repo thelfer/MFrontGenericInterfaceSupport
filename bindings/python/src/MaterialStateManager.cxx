@@ -20,32 +20,27 @@
 #include "MGIS/Behaviour/MaterialStateManager.hxx"
 
 static void MaterialStateManagerInitializer_bindGradients(
-    mgis::behaviour::MaterialStateManagerInitializer& i,
-    pybind11::object K) {
+    mgis::behaviour::MaterialStateManagerInitializer& i, pybind11::object K) {
   i.gradients = mgis::python::mgis_convert_to_span(K);
 }  // end of MaterialStateManagerInitializer_bindGradients
 
 static void MaterialStateManagerInitializer_bindThermodynamicForces(
-    mgis::behaviour::MaterialStateManagerInitializer& i,
-    pybind11::object K) {
+    mgis::behaviour::MaterialStateManagerInitializer& i, pybind11::object K) {
   i.thermodynamic_forces = mgis::python::mgis_convert_to_span(K);
 }  // end of MaterialStateManagerInitializer_bindThermodynamicForces
 
 static void MaterialStateManagerInitializer_bindInternalStateVariables(
-    mgis::behaviour::MaterialStateManagerInitializer& i,
-    pybind11::object K) {
+    mgis::behaviour::MaterialStateManagerInitializer& i, pybind11::object K) {
   i.internal_state_variables = mgis::python::mgis_convert_to_span(K);
 }  // end of MaterialStateManagerInitializer_bindInternalStateVariables
 
 static void MaterialStateManagerInitializer_bindStoredEnergies(
-    mgis::behaviour::MaterialStateManagerInitializer& i,
-    pybind11::object K) {
+    mgis::behaviour::MaterialStateManagerInitializer& i, pybind11::object K) {
   i.stored_energies = mgis::python::mgis_convert_to_span(K);
 }  // end of MaterialStateManagerInitializer_bindStoredEnergies
 
 static void MaterialStateManagerInitializer_bindDissipatedEnergies(
-    mgis::behaviour::MaterialStateManagerInitializer& i,
-    pybind11::object K) {
+    mgis::behaviour::MaterialStateManagerInitializer& i, pybind11::object K) {
   i.dissipated_energies = mgis::python::mgis_convert_to_span(K);
 }  // end of MaterialStateManagerInitializer_bindDissipatedEnergies
 

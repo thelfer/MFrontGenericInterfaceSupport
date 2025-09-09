@@ -16,6 +16,4 @@
 
 void declareThreadPool(pybind11::module_&);
 
-PYBIND11_MODULE(_mgis, m) {
-  declareThreadPool(m);
-}  // end of module behaviour
+PYBIND11_MODULE(_mgis, m) { declareThreadPool(m); }  // end of module behaviour
