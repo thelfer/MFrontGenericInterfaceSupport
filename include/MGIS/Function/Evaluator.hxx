@@ -25,9 +25,10 @@ namespace mgis::function {
    * \param[in] e1: first evaluator
    * \param[in] e2: second evaluator
    */
-  constexpr bool checkMatchingSpaces(AbstractErrorHandler&,
-                                     const EvaluatorConcept auto&,
-                                     const EvaluatorConcept auto&);
+  [[nodiscard]] constexpr bool checkMatchingSpaces(
+      AbstractErrorHandler&,
+      const EvaluatorConcept auto&,
+      const EvaluatorConcept auto&);
 
 }  // end of namespace mgis::function
 

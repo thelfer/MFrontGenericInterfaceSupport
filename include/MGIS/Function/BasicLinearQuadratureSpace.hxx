@@ -90,8 +90,9 @@ namespace mgis::function {
       const size_type) noexcept;
 
   template <size_type N>
-  constexpr bool areEquivalent(const BasicLinearQuadratureSpace<N>&,
-                               const BasicLinearQuadratureSpace<N>&) noexcept;
+  [[nodiscard]] constexpr bool areEquivalent(
+      const BasicLinearQuadratureSpace<N>&,
+      const BasicLinearQuadratureSpace<N>&) noexcept;
 
 }  // end of namespace mgis::function
 

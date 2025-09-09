@@ -242,7 +242,8 @@ namespace mgis::function {
      * the allocateWorkspace function
      */
     template <EvaluatorConcept EvaluatorType>
-    constexpr bool disambiguateCheck(AbstractErrorHandler&, const EvaluatorType&);
+    [[nodiscard]] constexpr bool disambiguateCheck(AbstractErrorHandler&,
+                                                   const EvaluatorType&);
     /*!
      * This helper function allows to disambiguate the call to
      * the allocateWorkspace function
@@ -254,7 +255,8 @@ namespace mgis::function {
      * the getNumberOfComponents function
      */
     template <EvaluatorConcept EvaluatorType>
-    constexpr mgis::size_type disambiguateGetNumberOfComponents(EvaluatorType&);
+    [[nodiscard]] constexpr mgis::size_type disambiguateGetNumberOfComponents(
+        EvaluatorType&);
 
     /*!
      * \brief number of components of a type when known at compile-time,
