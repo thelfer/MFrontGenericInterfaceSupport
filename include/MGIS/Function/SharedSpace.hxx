@@ -139,31 +139,32 @@ namespace mgis::function {
   };
 
   template <SpaceConcept SpaceType>
-  bool areEquivalent(const SharedSpace<SpaceType>& s,
-                     const SharedSpace<SpaceType>& s2) noexcept {
+  [[nodiscard]] bool areEquivalent(const SharedSpace<SpaceType>& s,
+                                   const SharedSpace<SpaceType>& s2) noexcept {
     return s.get() == s2.get();
   }
 
   template <SpaceConcept SpaceType>
-  auto getSpaceSize(const SharedSpace<SpaceType>& s) {
+  [[nodiscard]] auto getSpaceSize(const SharedSpace<SpaceType>& s) {
     return getSpaceSize(*s);
   }
 
   template <QuadratureSpaceConcept SpaceType>
-  auto getNumberOfCells(const SharedSpace<SpaceType>& s) {
+  [[nodiscard]] auto getNumberOfCells(const SharedSpace<SpaceType>& s) {
     return getNumberOfCells(*s);
   }
 
   template <QuadratureSpaceConcept SpaceType>
-  auto getNumberOfQuadraturePoints(const SharedSpace<SpaceType>& s,
-                                   const cell_index<SpaceType>& e) {
+  [[nodiscard]] auto getNumberOfQuadraturePoints(
+      const SharedSpace<SpaceType>& s, const cell_index<SpaceType>& e) {
     return getNumberOfQuadraturePoints(*s, e);
   }
 
   template <LinearQuadratureSpaceConcept SpaceType>
-  auto getQuadraturePointOffset(const SharedSpace<SpaceType>& s,
-                                const cell_index<SpaceType>& e,
-                                const quadrature_point_index<SpaceType>& i) {
+  [[nodiscard]] auto getQuadraturePointOffset(
+      const SharedSpace<SpaceType>& s,
+      const cell_index<SpaceType>& e,
+      const quadrature_point_index<SpaceType>& i) {
     return getQuadraturePointOffset(*s, e, i);
   }
 

@@ -77,7 +77,8 @@ namespace mgis::function {
   };
 
   //! \brief a simple helper function
-  constexpr bool has_dynamic_properties(const FunctionDataLayoutDescription&);
+  [[nodiscard]] constexpr bool has_dynamic_properties(
+      const FunctionDataLayoutDescription&);
 
   /*!
    * \brief a simple data structure describing how the data of a
