@@ -77,7 +77,7 @@ add_executable(IntegrateTest4-c
 if(MSVC)
   target_link_libraries(IntegrateTest4-c
     PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
-elseif(MSVC)
+else(MSVC)
   target_link_libraries(IntegrateTest4-c
     PRIVATE MFrontGenericInterface-c MFrontGenericInterface m)
 endif(MSVC)
@@ -87,7 +87,7 @@ add_executable(IntegrateTest5-c
 if(MSVC)
   target_link_libraries(IntegrateTest5-c
     PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
-elseif(MSVC)
+else(MSVC)
   target_link_libraries(IntegrateTest5-c
     PRIVATE MFrontGenericInterface-c MFrontGenericInterface m)
 endif(MSVC)
