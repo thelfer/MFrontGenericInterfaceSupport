@@ -586,12 +586,16 @@ namespace mgis::function {
     std::vector<real> storage_values;
   };
 
+  // this variable is a workaround Visual Studio 2022 limitation
+  // on defining default value for non-type template argument
   template <size_type N>
-  inline constexpr auto simple_layout =
+  inline constexpr auto simple_data_layout_description =
       FunctionDataLayoutDescription{.data_size = N, .data_stride = N};
 
+  //! \brief a simple alias to simplify the implementation of the Function class
   template <FunctionalSpaceConcept Space, size_type N>
-  using FunctionViewAlias = FunctionView<Space, simple_layout<N>, true>;
+  using FunctionViewAlias =
+      FunctionView<Space, simple_data_layout_description<N>, true>;
 
   /*!
    * \brief default implementation of a function
@@ -666,12 +670,17 @@ namespace mgis::function {
     //! \brief assignement constructor
     constexpr Function(Function&&) requires(N != dynamic_extent);
     //! \brief return a view of the function
-    [[nodiscard]] constexpr FunctionView<Space, simple_layout<N>, true> view();
+    [[nodiscard]] constexpr FunctionView<Space,
+                                         simple_data_layout_description<N>,
+                                         true>
+    view();
     //! \brief return a view of the function
-    [[nodiscard]] constexpr FunctionView<Space, simple_layout<N>, false> view()
-        const;
+    [[nodiscard]] constexpr FunctionView<Space,
+                                         simple_data_layout_description<N>,
+                                         false>
+    view() const;
     //
-    using FunctionView<Space, simple_layout<N>, true>::data;
+    using FunctionView<Space, simple_data_layout_description<N>, true>::data;
     //! \return a view to the function values
     [[nodiscard]] constexpr std::span<real> data();
     /*!
