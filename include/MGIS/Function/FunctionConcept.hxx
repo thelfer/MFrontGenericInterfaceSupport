@@ -367,7 +367,7 @@ namespace mgis::function {
 
   }  // namespace internals
 
-  #ifndef _MSC_VER
+#ifndef _MSC_VER
   /*!
    * \brief assign an evaluator to a mutable function view
    * \param[in] ctx: execution context

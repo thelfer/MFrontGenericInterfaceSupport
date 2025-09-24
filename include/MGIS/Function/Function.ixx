@@ -54,7 +54,7 @@ namespace mgis::function {
 
   template <FunctionDataLayoutDescription layout>
   requires((layout.data_size > 0) && (layout.data_stride > 0))  //
-    constexpr size_type FunctionDataLayout<layout>::getDataOffset(
+      constexpr size_type FunctionDataLayout<layout>::getDataOffset(
           const size_type i) const noexcept {
     if constexpr (layout.data_stride != dynamic_extent) {
       return i * layout.data_stride;
@@ -699,11 +699,11 @@ namespace mgis::function {
           N == dynamic_extent)
       : PreconditionsChecker<Function>(f),
         FunctionStorage<Space, N>(f),
-        FunctionView<Space, simple_layout<N>, true>(
-            f.getSpace(),
-            this->storage_values,
-            f.getNumberOfComponents(),
-            f.getNumberOfComponents()) {}  // end of Function
+        FunctionView<Space, simple_layout<N>, true>(f.getSpace(),
+                                                    this->storage_values,
+                                                    f.getNumberOfComponents(),
+                                                    f.getNumberOfComponents()) {
+  }  // end of Function
 
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
@@ -712,11 +712,11 @@ namespace mgis::function {
           N == dynamic_extent)
       : PreconditionsChecker<Function>(f),
         FunctionStorage<Space, N>(std::forward<FunctionStorage<Space, N>>(f)),
-        FunctionView<Space, simple_layout<N>, true>(
-            f.getSpace(),
-            this->storage_values,
-            f.getNumberOfComponents(),
-            f.getNumberOfComponents()) {}  // end of Function
+        FunctionView<Space, simple_layout<N>, true>(f.getSpace(),
+                                                    this->storage_values,
+                                                    f.getNumberOfComponents(),
+                                                    f.getNumberOfComponents()) {
+  }  // end of Function
 
   template <FunctionalSpaceConcept Space, size_type N>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
@@ -762,8 +762,8 @@ namespace mgis::function {
           this->getSpace(), this->storage_values, this->getNumberOfComponents(),
           this->getNumberOfComponents());
     } else {
-      return FunctionView<Space, simple_layout<N>, false>(
-          this->getSpace(), this->storage_values);
+      return FunctionView<Space, simple_layout<N>, false>(this->getSpace(),
+                                                          this->storage_values);
     }
   }  // end of view
 

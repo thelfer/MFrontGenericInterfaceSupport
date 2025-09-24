@@ -239,7 +239,7 @@ namespace mgis::function::internals {
 
 namespace mgis::function {
 
-   template <typename FunctionType, EvaluatorConcept EvaluatorType>
+  template <typename FunctionType, EvaluatorConcept EvaluatorType>
   [[nodiscard]] constexpr bool assign(AbstractErrorHandler& ctx,
                                       FunctionType& f,
                                       EvaluatorType e)  //
@@ -249,7 +249,7 @@ namespace mgis::function {
                      decltype(getSpace(std::declval<EvaluatorType>()))>>)) &&
                internals::same_decay_type<
                    decltype(getSpace(std::declval<FunctionType>())),
-                   decltype(getSpace(std::declval<EvaluatorType>()))>){
+                   decltype(getSpace(std::declval<EvaluatorType>()))>) {
     using function_result_type = function_result<FunctionType>;
     using evaluator_result_type = evaluator_result<EvaluatorType>;
     if (!areEquivalent(getSpace(f), getSpace(e))) {

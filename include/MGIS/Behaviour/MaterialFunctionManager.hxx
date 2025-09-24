@@ -103,9 +103,10 @@ namespace mgis::behaviour {
   inline constexpr auto bts = TimeStepStage::BEGINNING_OF_TIME_STEP;
   inline constexpr auto ets = TimeStepStage::END_OF_TIME_STEP;
 
-
   template <size_type N>
-  inline constexpr auto not_simple_layout = ::mgis::function::FunctionDataLayoutDescription{.data_size = N, .data_stride = dynamic_extent};
+  inline constexpr auto not_simple_layout =
+      ::mgis::function::FunctionDataLayoutDescription{
+          .data_size = N, .data_stride = dynamic_extent};
 
   /*!
    * \brief return the gradient associated with the given name
@@ -144,9 +145,9 @@ namespace mgis::behaviour {
    * \param[in] ts: time step stage
    */
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<mgis::function::FunctionView<
-      mgis::function::SharedSpace<SpaceType>,
-      not_simple_layout<N>>>
+  std::optional<
+      mgis::function::FunctionView<mgis::function::SharedSpace<SpaceType>,
+                                   not_simple_layout<N>>>
   getGradient(AbstractErrorHandler&,
               MaterialFunctionManager<SpaceType>&,
               std::string_view,
@@ -159,10 +160,10 @@ namespace mgis::behaviour {
    * \param[in] ts: time step stage
    */
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<mgis::function::FunctionView<
-      mgis::function::SharedSpace<SpaceType>,
-      not_simple_layout<N>,
-      false>>
+  std::optional<
+      mgis::function::FunctionView<mgis::function::SharedSpace<SpaceType>,
+                                   not_simple_layout<N>,
+                                   false>>
   getGradient(AbstractErrorHandler&,
               const MaterialFunctionManager<SpaceType>&,
               std::string_view,
@@ -205,9 +206,9 @@ namespace mgis::behaviour {
    * \param[in] ts: time step stage
    */
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<mgis::function::FunctionView<
-      mgis::function::SharedSpace<SpaceType>,
-      not_simple_layout<N>>>
+  std::optional<
+      mgis::function::FunctionView<mgis::function::SharedSpace<SpaceType>,
+                                   not_simple_layout<N>>>
   getThermodynamicForce(AbstractErrorHandler&,
                         MaterialFunctionManager<SpaceType>&,
                         std::string_view,
@@ -220,10 +221,10 @@ namespace mgis::behaviour {
    * \param[in] ts: time step stage
    */
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<mgis::function::FunctionView<
-      mgis::function::SharedSpace<SpaceType>,
-      not_simple_layout<N>,
-      false>>
+  std::optional<
+      mgis::function::FunctionView<mgis::function::SharedSpace<SpaceType>,
+                                   not_simple_layout<N>,
+                                   false>>
   getThermodynamicForce(AbstractErrorHandler&,
                         const MaterialFunctionManager<SpaceType>&,
                         std::string_view,
@@ -266,9 +267,9 @@ namespace mgis::behaviour {
    * \param[in] ts: time step stage
    */
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<mgis::function::FunctionView<
-      mgis::function::SharedSpace<SpaceType>,
-      not_simple_layout<N>>>
+  std::optional<
+      mgis::function::FunctionView<mgis::function::SharedSpace<SpaceType>,
+                                   not_simple_layout<N>>>
   getInternalStateVariable(AbstractErrorHandler&,
                            MaterialFunctionManager<SpaceType>&,
                            std::string_view,
@@ -281,10 +282,10 @@ namespace mgis::behaviour {
    * \param[in] ts: time step stage
    */
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<mgis::function::FunctionView<
-      mgis::function::SharedSpace<SpaceType>,
-      not_simple_layout<N>,
-      false>>
+  std::optional<
+      mgis::function::FunctionView<mgis::function::SharedSpace<SpaceType>,
+                                   not_simple_layout<N>,
+                                   false>>
   getInternalStateVariable(AbstractErrorHandler&,
                            const MaterialFunctionManager<SpaceType>&,
                            std::string_view,

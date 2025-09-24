@@ -148,7 +148,7 @@ namespace mgis::behaviour {
       } else {
         return FunctionView<mgis::function::SharedSpace<SpaceType>,
                             not_simple_layout<N>>(qspace, values.subspan(vo),
-                                              stride);
+                                                  stride);
       }
     }  // end of makeFunctionView
 
@@ -196,8 +196,8 @@ namespace mgis::behaviour {
             qspace, values.subspan(vo), vs, stride);
       } else {
         return FunctionView<mgis::function::SharedSpace<SpaceType>,
-                            not_simple_layout<N>, false>(qspace, values.subspan(vo),
-                                                     stride);
+                            not_simple_layout<N>, false>(
+            qspace, values.subspan(vo), stride);
       }
     }  // end of makeFunctionView
 
@@ -225,9 +225,9 @@ namespace mgis::behaviour {
   }  // end of getGradient
 
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<mgis::function::FunctionView<
-      mgis::function::SharedSpace<SpaceType>,
-      not_simple_layout<N>>>
+  std::optional<
+      mgis::function::FunctionView<mgis::function::SharedSpace<SpaceType>,
+                                   not_simple_layout<N>>>
   getGradient(AbstractErrorHandler& eh,
               MaterialFunctionManager<SpaceType>& m,
               std::string_view n,
@@ -240,10 +240,10 @@ namespace mgis::behaviour {
   }  // end of getGradient
 
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<mgis::function::FunctionView<
-      mgis::function::SharedSpace<SpaceType>,
-      not_simple_layout<N>,
-      false>>
+  std::optional<
+      mgis::function::FunctionView<mgis::function::SharedSpace<SpaceType>,
+                                   not_simple_layout<N>,
+                                   false>>
   getGradient(AbstractErrorHandler& eh,
               const MaterialFunctionManager<SpaceType>& m,
               std::string_view n,
@@ -277,9 +277,9 @@ namespace mgis::behaviour {
   }  // end of getThermodynamicForce
 
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<mgis::function::FunctionView<
-      mgis::function::SharedSpace<SpaceType>,
-      not_simple_layout<N>>>
+  std::optional<
+      mgis::function::FunctionView<mgis::function::SharedSpace<SpaceType>,
+                                   not_simple_layout<N>>>
   getThermodynamicForce(AbstractErrorHandler& eh,
                         MaterialFunctionManager<SpaceType>& m,
                         std::string_view n,
@@ -293,10 +293,10 @@ namespace mgis::behaviour {
   }  // end of getThermodynamicForce
 
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<mgis::function::FunctionView<
-      mgis::function::SharedSpace<SpaceType>,
-      not_simple_layout<N>,
-      false>>
+  std::optional<
+      mgis::function::FunctionView<mgis::function::SharedSpace<SpaceType>,
+                                   not_simple_layout<N>,
+                                   false>>
   getThermodynamicForce(AbstractErrorHandler& eh,
                         const MaterialFunctionManager<SpaceType>& m,
                         std::string_view n,
@@ -331,9 +331,9 @@ namespace mgis::behaviour {
   }  // end of getInternalStateVariable
 
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<mgis::function::FunctionView<
-      mgis::function::SharedSpace<SpaceType>,
-      not_simple_layout<N>>>
+  std::optional<
+      mgis::function::FunctionView<mgis::function::SharedSpace<SpaceType>,
+                                   not_simple_layout<N>>>
   getInternalStateVariable(AbstractErrorHandler& eh,
                            MaterialFunctionManager<SpaceType>& m,
                            std::string_view n,
@@ -347,10 +347,10 @@ namespace mgis::behaviour {
   }  // end of getInternalStateVariable
 
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<mgis::function::FunctionView<
-      mgis::function::SharedSpace<SpaceType>,
-      not_simple_layout<N>,
-      false>>
+  std::optional<
+      mgis::function::FunctionView<mgis::function::SharedSpace<SpaceType>,
+                                   not_simple_layout<N>,
+                                   false>>
   getInternalStateVariable(AbstractErrorHandler& eh,
                            const MaterialFunctionManager<SpaceType>& m,
                            std::string_view n,

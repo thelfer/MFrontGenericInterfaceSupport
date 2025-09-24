@@ -587,11 +587,11 @@ namespace mgis::function {
   };
 
   template <size_type N>
-  inline constexpr auto simple_layout = FunctionDataLayoutDescription{.data_size = N, .data_stride = N};
-  
+  inline constexpr auto simple_layout =
+      FunctionDataLayoutDescription{.data_size = N, .data_stride = N};
+
   template <FunctionalSpaceConcept Space, size_type N>
-  using FunctionViewAlias = 
-    FunctionView<Space, simple_layout<N>, true>;
+  using FunctionViewAlias = FunctionView<Space, simple_layout<N>, true>;
 
   /*!
    * \brief default implementation of a function
@@ -604,10 +604,9 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N = dynamic_extent>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
-      struct Function
-      : private PreconditionsChecker<Function<Space, N>>,
-        public FunctionStorage<Space, N>,
-        public FunctionViewAlias<Space, N> {
+      struct Function : private PreconditionsChecker<Function<Space, N>>,
+                        public FunctionStorage<Space, N>,
+                        public FunctionViewAlias<Space, N> {
     /*!
      * \brief constructor from a space
      * \param[in] s: space
@@ -667,15 +666,10 @@ namespace mgis::function {
     //! \brief assignement constructor
     constexpr Function(Function&&) requires(N != dynamic_extent);
     //! \brief return a view of the function
-    [[nodiscard]] constexpr FunctionView<Space,
-                                         simple_layout<N>,
-                                         true>
-    view();
+    [[nodiscard]] constexpr FunctionView<Space, simple_layout<N>, true> view();
     //! \brief return a view of the function
-    [[nodiscard]] constexpr FunctionView<Space,
-                                         simple_layout<N>,
-                                         false>
-    view() const;
+    [[nodiscard]] constexpr FunctionView<Space, simple_layout<N>, false> view()
+        const;
     //
     using FunctionView<Space, simple_layout<N>, true>::data;
     //! \return a view to the function values

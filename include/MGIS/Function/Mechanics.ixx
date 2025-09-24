@@ -51,9 +51,9 @@ namespace mgis::function::internals {
               (checkMatchingSpaces(ctx, this->K, this->F1)) &&
               (checkMatchingSpaces(ctx, this->K, this->s)) &&
               (internals::disambiguateCheck(ctx, this->K)) &&
-	      (internals::disambiguateCheck(ctx, this->F0)) &&
-	      (internals::disambiguateCheck(ctx, this->F1)) &&
-	      (internals::disambiguateCheck(ctx, this->s)));
+              (internals::disambiguateCheck(ctx, this->F0)) &&
+              (internals::disambiguateCheck(ctx, this->F1)) &&
+              (internals::disambiguateCheck(ctx, this->s)));
     }
 
     //! \brief allocate internal workspace

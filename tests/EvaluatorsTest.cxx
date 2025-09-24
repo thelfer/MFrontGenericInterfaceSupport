@@ -490,12 +490,12 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
       auto eh = ContractViolationHandler{};
       auto space = BasicLinearSpace{2};
       Function<BasicLinearSpace, 1> f1(space);
-      if(!f1.fill(eh, {12, 13})){
-	throw(std::runtime_error("fill failed"));
+      if (!f1.fill(eh, {12, 13})) {
+        throw(std::runtime_error("fill failed"));
       }
       Function<BasicLinearSpace, 1> f2(space);
-      if(!f2.fill(eh, {1, -3})){
-	throw(std::runtime_error("fill failed"));
+      if (!f2.fill(eh, {1, -3})) {
+        throw(std::runtime_error("fill failed"));
       }
       const auto a = add(view(f1), view(f2));
       return std::array{a(0), a(1)};
