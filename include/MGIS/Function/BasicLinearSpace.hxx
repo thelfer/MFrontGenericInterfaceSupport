@@ -14,7 +14,7 @@
 namespace mgis::function {
 
   //! \brief the simpliest implementation of a linear space
-  struct MGIS_EXPORT BasicLinearSpace {
+  struct BasicLinearSpace {
     /*!
      * \brief constructor
      * \param[in] s: size of the space

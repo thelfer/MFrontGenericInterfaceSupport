@@ -54,7 +54,7 @@ namespace mgis::function {
 
   template <FunctionDataLayoutDescription layout>
   requires((layout.data_size > 0) && (layout.data_stride > 0))  //
-      constexpr size_type FunctionDataLayout<layout>::getDataOffset(
+    constexpr size_type FunctionDataLayout<layout>::getDataOffset(
           const size_type i) const noexcept {
     if constexpr (layout.data_stride != dynamic_extent) {
       return i * layout.data_stride;
@@ -662,7 +662,7 @@ namespace mgis::function {
       requires(N != dynamic_extent)
       : PreconditionsChecker<Function>(pcheck, s),
         FunctionStorage<Space, N>(s),
-        FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
+        FunctionView<Space, simple_layout<N>, true>(
             pcheck, s, this->storage_values) {}
 
   template <FunctionalSpaceConcept Space, size_type N>
@@ -689,7 +689,7 @@ namespace mgis::function {
       requires(N == dynamic_extent)
       : PreconditionsChecker<Function>(pcheck, s, dsize),
         FunctionStorage<Space, N>(s, dsize),
-        FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
+        FunctionView<Space, simple_layout<N>, true>(
             pcheck, s, this->storage_values, dsize, dsize) {}
 
   template <FunctionalSpaceConcept Space, size_type N>
@@ -699,7 +699,7 @@ namespace mgis::function {
           N == dynamic_extent)
       : PreconditionsChecker<Function>(f),
         FunctionStorage<Space, N>(f),
-        FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
+        FunctionView<Space, simple_layout<N>, true>(
             f.getSpace(),
             this->storage_values,
             f.getNumberOfComponents(),
@@ -712,7 +712,7 @@ namespace mgis::function {
           N == dynamic_extent)
       : PreconditionsChecker<Function>(f),
         FunctionStorage<Space, N>(std::forward<FunctionStorage<Space, N>>(f)),
-        FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
+        FunctionView<Space, simple_layout<N>, true>(
             f.getSpace(),
             this->storage_values,
             f.getNumberOfComponents(),
@@ -725,7 +725,7 @@ namespace mgis::function {
           N != dynamic_extent)
       : PreconditionsChecker<Function>(f),
         FunctionStorage<Space, N>(f),
-        FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
+        FunctionView<Space, simple_layout<N>, true>(
             no_precondition_check, f.getSpace(), this->storage_values) {
   }  // end of Function
 
@@ -736,7 +736,7 @@ namespace mgis::function {
           N != dynamic_extent)
       : PreconditionsChecker<Function>(f),
         FunctionStorage<Space, N>(std::forward<FunctionStorage<Space, N>>(f)),
-        FunctionView<Space, {.data_size = N, .data_stride = N}, true>(
+        FunctionView<Space, simple_layout<N>, true>(
             no_precondition_check, f.getSpace(), this->storage_values) {
   }  // end of Function
 
@@ -744,7 +744,7 @@ namespace mgis::function {
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
       constexpr FunctionView<Space,
-                             {.data_size = N, .data_stride = N},
+                             simple_layout<N>,
                              true>  //
       Function<Space, N>::view() {
     return *this;
@@ -754,15 +754,15 @@ namespace mgis::function {
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
       constexpr FunctionView<Space,
-                             {.data_size = N, .data_stride = N},
+                             simple_layout<N>,
                              false>  //
       Function<Space, N>::view() const {
     if constexpr (N == dynamic_extent) {
-      return FunctionView<Space, {.data_size = N, .data_stride = N}, false>(
+      return FunctionView<Space, simple_layout<N>, false>(
           this->getSpace(), this->storage_values, this->getNumberOfComponents(),
           this->getNumberOfComponents());
     } else {
-      return FunctionView<Space, {.data_size = N, .data_stride = N}, false>(
+      return FunctionView<Space, simple_layout<N>, false>(
           this->getSpace(), this->storage_values);
     }
   }  // end of view

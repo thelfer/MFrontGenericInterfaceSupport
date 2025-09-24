@@ -17,6 +17,8 @@
 
 namespace mgis::function {
 
+#ifndef _MSC_VER
+
   /*!
    * \brief assign the evaluator to a function
    * \param[in] ctx: execution context
@@ -51,6 +53,8 @@ namespace mgis::function {
                                                          decay_t<decltype(getSpace(
                                                              std::declval<
                                                                  EvaluatorType>()))>>);
+
+#endif
 
 }  // end of namespace mgis::function
 

@@ -367,6 +367,7 @@ namespace mgis::function {
 
   }  // namespace internals
 
+  #ifndef _MSC_VER
   /*!
    * \brief assign an evaluator to a mutable function view
    * \param[in] ctx: execution context
@@ -378,6 +379,7 @@ namespace mgis::function {
       internals::same_decay_type<
           decltype(getSpace(std::declval<EvaluatorType>())),
           decltype(getSpace(std::declval<FunctionType>()))>);
+#endif
 
 }  // end of namespace mgis::function
 

@@ -155,7 +155,7 @@ namespace mgis::function::customization_points {
 
   template <>
   struct AbsoluteValue<real> {
-    static constexpr real exe(const real& v) noexcept { return std::abs(v); }
+    static constexpr real exe(const real& v) noexcept { return v < 0 ? -v : v; }
   };
 
   template <std::size_t N>

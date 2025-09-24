@@ -86,7 +86,7 @@ namespace mgis::function {
    */
   template <FunctionDataLayoutDescription layout>
   requires((layout.data_size > 0) &&
-           (layout.data_stride > 0)) struct MGIS_EXPORT FunctionDataLayout
+           (layout.data_stride > 0)) struct FunctionDataLayout
       : public FunctionDataSize<layout.data_size>,
         public FunctionDataStride<layout.data_stride> {
     // \brief default constructor
@@ -586,6 +586,13 @@ namespace mgis::function {
     std::vector<real> storage_values;
   };
 
+  template <size_type N>
+  inline constexpr auto simple_layout = FunctionDataLayoutDescription{.data_size = N, .data_stride = N};
+  
+  template <FunctionalSpaceConcept Space, size_type N>
+  using FunctionViewAlias = 
+    FunctionView<Space, simple_layout<N>, true>;
+
   /*!
    * \brief default implementation of a function
    *
@@ -600,7 +607,7 @@ namespace mgis::function {
       struct Function
       : private PreconditionsChecker<Function<Space, N>>,
         public FunctionStorage<Space, N>,
-        public FunctionView<Space, {.data_size = N, .data_stride = N}, true> {
+        public FunctionViewAlias<Space, N> {
     /*!
      * \brief constructor from a space
      * \param[in] s: space
@@ -661,16 +668,16 @@ namespace mgis::function {
     constexpr Function(Function&&) requires(N != dynamic_extent);
     //! \brief return a view of the function
     [[nodiscard]] constexpr FunctionView<Space,
-                                         {.data_size = N, .data_stride = N},
+                                         simple_layout<N>,
                                          true>
     view();
     //! \brief return a view of the function
     [[nodiscard]] constexpr FunctionView<Space,
-                                         {.data_size = N, .data_stride = N},
+                                         simple_layout<N>,
                                          false>
     view() const;
     //
-    using FunctionView<Space, {.data_size = N, .data_stride = N}, true>::data;
+    using FunctionView<Space, simple_layout<N>, true>::data;
     //! \return a view to the function values
     [[nodiscard]] constexpr std::span<real> data();
     /*!
