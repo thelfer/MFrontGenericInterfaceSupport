@@ -86,7 +86,7 @@ namespace mgis::function {
    */
   template <FunctionDataLayoutDescription layout>
   requires((layout.data_size > 0) &&
-           (layout.data_stride > 0)) struct MGIS_EXPORT FunctionDataLayout
+           (layout.data_stride > 0)) struct FunctionDataLayout
       : public FunctionDataSize<layout.data_size>,
         public FunctionDataStride<layout.data_stride> {
     // \brief default constructor
@@ -586,6 +586,17 @@ namespace mgis::function {
     std::vector<real> storage_values;
   };
 
+  // this variable is a workaround Visual Studio 2022 limitation
+  // on defining default value for non-type template argument
+  template <size_type N>
+  inline constexpr auto simple_data_layout_description =
+      FunctionDataLayoutDescription{.data_size = N, .data_stride = N};
+
+  //! \brief a simple alias to simplify the implementation of the Function class
+  template <FunctionalSpaceConcept Space, size_type N>
+  using FunctionViewAlias =
+      FunctionView<Space, simple_data_layout_description<N>, true>;
+
   /*!
    * \brief default implementation of a function
    *
@@ -597,10 +608,9 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N = dynamic_extent>
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
-      struct Function
-      : private PreconditionsChecker<Function<Space, N>>,
-        public FunctionStorage<Space, N>,
-        public FunctionView<Space, {.data_size = N, .data_stride = N}, true> {
+      struct Function : private PreconditionsChecker<Function<Space, N>>,
+                        public FunctionStorage<Space, N>,
+                        public FunctionViewAlias<Space, N> {
     /*!
      * \brief constructor from a space
      * \param[in] s: space
@@ -661,16 +671,16 @@ namespace mgis::function {
     constexpr Function(Function&&) requires(N != dynamic_extent);
     //! \brief return a view of the function
     [[nodiscard]] constexpr FunctionView<Space,
-                                         {.data_size = N, .data_stride = N},
+                                         simple_data_layout_description<N>,
                                          true>
     view();
     //! \brief return a view of the function
     [[nodiscard]] constexpr FunctionView<Space,
-                                         {.data_size = N, .data_stride = N},
+                                         simple_data_layout_description<N>,
                                          false>
     view() const;
     //
-    using FunctionView<Space, {.data_size = N, .data_stride = N}, true>::data;
+    using FunctionView<Space, simple_data_layout_description<N>, true>::data;
     //! \return a view to the function values
     [[nodiscard]] constexpr std::span<real> data();
     /*!

@@ -240,9 +240,9 @@ namespace mgis::function::internals {
 namespace mgis::function {
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
-  constexpr bool assign(AbstractErrorHandler& ctx,
-                        FunctionType& f,
-                        EvaluatorType e)  //
+  [[nodiscard]] constexpr bool assign(AbstractErrorHandler& ctx,
+                                      FunctionType& f,
+                                      EvaluatorType e)  //
       requires(((LinearElementSpaceConcept<std::decay_t<
                      decltype(getSpace(std::declval<EvaluatorType>()))>>) ||
                 (LinearQuadratureSpaceConcept<std::decay_t<

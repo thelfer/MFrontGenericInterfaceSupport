@@ -18,7 +18,7 @@ namespace mgis::function {
    * \param N: number of integration points per cells
    */
   template <size_type N>
-  requires(N > 0) struct MGIS_EXPORT BasicLinearQuadratureSpace {
+  requires(N > 0) struct BasicLinearQuadratureSpace {
     //! \brief an empty element workspace
     struct DummyCellWorkspace {};
     /*!

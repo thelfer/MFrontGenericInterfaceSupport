@@ -1,3 +1,4 @@
+#include <string>
 #include <cstdlib>
 #include "MGIS/Config.hxx"
 #include "MGIS/InvalidResult.hxx"

@@ -19,7 +19,7 @@ namespace mgis {
   // forward declaration
   struct AbstractErrorHandler;
 
-} // end of namespace mgis
+}  // end of namespace mgis
 
 namespace mgis::function {
 
