@@ -132,9 +132,10 @@ namespace mgis::behaviour {
    * \param[in] ts: time step stage
    */
   template <mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<
-      mgis::function::
-          FunctionView<mgis::function::SharedSpace<SpaceType>, {}, false>>
+  std::optional<mgis::function::FunctionView<
+      mgis::function::SharedSpace<SpaceType>,
+      mgis::function::FunctionDataLayoutDescription{},
+      false>>
   getGradient(AbstractErrorHandler&,
               const MaterialFunctionManager<SpaceType>&,
               std::string_view,
@@ -193,9 +194,10 @@ namespace mgis::behaviour {
    * \param[in] ts: time step stage
    */
   template <mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<
-      mgis::function::
-          FunctionView<mgis::function::SharedSpace<SpaceType>, {}, false>>
+  std::optional<mgis::function::FunctionView<
+      mgis::function::SharedSpace<SpaceType>,
+      mgis::function::FunctionDataLayoutDescription{},
+      false>>
   getThermodynamicForce(AbstractErrorHandler&,
                         const MaterialFunctionManager<SpaceType>&,
                         std::string_view,
@@ -254,9 +256,10 @@ namespace mgis::behaviour {
    * \param[in] ts: time step stage
    */
   template <mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<
-      mgis::function::
-          FunctionView<mgis::function::SharedSpace<SpaceType>, {}, false>>
+  std::optional<mgis::function::FunctionView<
+      mgis::function::SharedSpace<SpaceType>,
+      mgis::function::FunctionDataLayoutDescription{},
+      false>>
   getInternalStateVariable(AbstractErrorHandler&,
                            const MaterialFunctionManager<SpaceType>&,
                            std::string_view,

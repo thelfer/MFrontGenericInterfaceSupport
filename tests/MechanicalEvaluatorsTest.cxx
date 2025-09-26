@@ -131,10 +131,10 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     const auto pk1_values = std::vector<real>{0, 0, 0, 0, 0, 0, 0, 0, 0};
     const auto F1_values = std::vector<real>{1, 1, 1, 0, 0, 0, 0, 0, 0};
     auto sig_values = std::vector<real>{0, 0, 0, 0, 0, 0, 0, 0, 0};
-    const FunctionView<BasicLinearSpace, {}, false> pk1_function(space,
-                                                                 pk1_values, 9);
-    const FunctionView<BasicLinearSpace, {}, false> F_function(space, F1_values,
-                                                               9);
+    const FunctionView<BasicLinearSpace, FunctionDataLayoutDescription{}, false>
+        pk1_function(space, pk1_values, 9);
+    const FunctionView<BasicLinearSpace, FunctionDataLayoutDescription{}, false>
+        F_function(space, F1_values, 9);
     FunctionView<BasicLinearSpace> sig_function(space, sig_values, 6);
     const auto R = tfel::math::tmatrix<3, 3>{{0, 1, 0},  //
                                              {0, 0, 1},

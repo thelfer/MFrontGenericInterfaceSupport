@@ -304,6 +304,6 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#endif MGIS_HAVE_TFEL
+#endif /* MGIS_HAVE_TFEL */
 
 #endif /* LIB_MGIS_FUNCTION_MECHANICS_IXX */

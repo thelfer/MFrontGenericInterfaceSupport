@@ -187,7 +187,8 @@ namespace mgis::behaviour {
       }
       if (getSpaceSize(qspace) == 0) {
         if constexpr (N == dynamic_extent) {
-          return FunctionView<mgis::function::SharedSpace<SpaceType>, {},
+          return FunctionView<mgis::function::SharedSpace<SpaceType>,
+                              mgis::function::FunctionDataLayoutDescription{},
                               false>(qspace, {}, vs, stride);
         } else {
           return FunctionView<
@@ -197,8 +198,9 @@ namespace mgis::behaviour {
         }
       }
       if constexpr (N == dynamic_extent) {
-        return FunctionView<mgis::function::SharedSpace<SpaceType>, {}, false>(
-            qspace, values.subspan(vo), vs, stride);
+        return FunctionView<mgis::function::SharedSpace<SpaceType>,
+                            mgis::function::FunctionDataLayoutDescription{},
+                            false>(qspace, values.subspan(vo), vs, stride);
       } else {
         return FunctionView<
             mgis::function::SharedSpace<SpaceType>,
@@ -220,9 +222,10 @@ namespace mgis::behaviour {
   }  // end of getGradient
 
   template <mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<
-      mgis::function::
-          FunctionView<mgis::function::SharedSpace<SpaceType>, {}, false>>
+  std::optional<mgis::function::FunctionView<
+      mgis::function::SharedSpace<SpaceType>,
+      mgis::function::FunctionDataLayoutDescription{},
+      false>>
   getGradient(AbstractErrorHandler& eh,
               const MaterialFunctionManager<SpaceType>& m,
               std::string_view n,
@@ -272,9 +275,10 @@ namespace mgis::behaviour {
   }  // end of getThermodynamicForce
 
   template <mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<
-      mgis::function::
-          FunctionView<mgis::function::SharedSpace<SpaceType>, {}, false>>
+  std::optional<mgis::function::FunctionView<
+      mgis::function::SharedSpace<SpaceType>,
+      mgis::function::FunctionDataLayoutDescription{},
+      false>>
   getThermodynamicForce(AbstractErrorHandler& eh,
                         const MaterialFunctionManager<SpaceType>& m,
                         std::string_view n,
@@ -326,9 +330,10 @@ namespace mgis::behaviour {
   }  // end of getInternalStateVariable
 
   template <mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<
-      mgis::function::
-          FunctionView<mgis::function::SharedSpace<SpaceType>, {}, false>>
+  std::optional<mgis::function::FunctionView<
+      mgis::function::SharedSpace<SpaceType>,
+      mgis::function::FunctionDataLayoutDescription{},
+      false>>
   getInternalStateVariable(AbstractErrorHandler& eh,
                            const MaterialFunctionManager<SpaceType>& m,
                            std::string_view n,

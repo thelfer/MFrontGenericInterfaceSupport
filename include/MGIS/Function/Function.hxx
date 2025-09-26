@@ -137,7 +137,8 @@ namespace mgis::function {
    * number of components of the function is given by `data_size`.
    */
   template <FunctionalSpaceConcept Space,
-            FunctionDataLayoutDescription layout = {},
+            FunctionDataLayoutDescription layout =
+                FunctionDataLayoutDescription{},
             bool is_mutable = true>
   requires(LinearElementSpaceConcept<Space> ||
            LinearQuadratureSpaceConcept<Space>)  //
@@ -537,7 +538,8 @@ namespace mgis::function {
 
   //! \brief a simple alias
   template <FunctionalSpaceConcept Space,
-            FunctionDataLayoutDescription layout = {}>
+            FunctionDataLayoutDescription layout =
+                FunctionDataLayoutDescription{}>
   using FunctionEvaluator = FunctionView<Space, layout, false>;
 
   //! \brief a noop function to match the EvaluatorConcept concept

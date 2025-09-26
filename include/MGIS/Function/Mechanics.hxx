@@ -61,7 +61,7 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#endif MGIS_HAVE_TFEL
+#endif /* MGIS_HAVE_TFEL */
 
 #include "MGIS/Function/Mechanics.ixx"
 
