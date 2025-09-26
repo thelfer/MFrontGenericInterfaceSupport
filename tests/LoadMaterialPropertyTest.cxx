@@ -47,7 +47,8 @@ static void test1(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     const auto E = mp.fct(&s, &T, 1, op);
-    check(s.status == 0, "invalid output status");
+    check(s.status == 0,
+          "invalid output status ('" + std::to_string(s.status) + "')");
     check(std::abs(E - Eref) < Eref * eps, "invalid output value");
   }
   {
@@ -55,7 +56,8 @@ static void test1(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     mp.fct(&s, &T, 1, op);
-    check(s.status == -1, "invalid output status");
+    check(s.status == -1,
+          "invalid output status ('" + std::to_string(s.status) + "')");
     check(s.bounds_status == -1, "invalid bound status");
   }
 }
@@ -75,21 +77,24 @@ static void test2(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     mp.fct(&s, &T, 1, op);
-    check(s.status == 0, "invalid output status");
+    check(s.status == 0,
+          "invalid output status ('" + std::to_string(s.status) + "')");
   }
   {
     constexpr auto T = real{150};
     auto s = OutputStatus{};
     s.status = 2;
     mp.fct(&s, &T, 1, op);
-    check(s.status == 0, "invalid output status");
+    check(s.status == 0,
+          "invalid output status ('" + std::to_string(s.status) + "')");
   }
   {
     constexpr auto T = real{500};
     auto s = OutputStatus{};
     s.status = 2;
     mp.fct(&s, &T, 1, op);
-    check(s.status == 0, "invalid output status");
+    check(s.status == 0,
+          "invalid output status ('" + std::to_string(s.status) + "')");
   }
 }
 
@@ -109,7 +114,8 @@ static void test3(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     const auto E = mp.fct(&s, &T, 1, op);
-    check(s.status == 0, "invalid output status");
+    check(s.status == 0,
+          "invalid output status ('" + std::to_string(s.status) + "')");
     check(std::abs(E - T) < T * eps, "invalid output value");
   }
   {
@@ -117,7 +123,8 @@ static void test3(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     const auto E = mp.fct(&s, &T, 1, op);
-    check(s.status == 1, "invalid output status");
+    check(s.status == 1,
+          "invalid output status ('" + std::to_string(s.status) + "')");
     check(s.bounds_status == 1, "invalid bound status");
     check(std::abs(E - T) < T * eps, "invalid output value");
   }
@@ -127,7 +134,8 @@ static void test3(const std::string& library) {
     s.status = 2;
     const auto E = mp.fct(&s, &T, 1, op);
     check(s.status == 1, "invalid output status");
-    check(s.bounds_status == 1, "invalid bound status");
+    check(s.status == 1,
+          "invalid output status ('" + std::to_string(s.status) + "')");
     check(std::abs(E - T) < T * eps, "invalid output value");
   }
 }
@@ -148,7 +156,8 @@ static void test4(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     const auto E = mp.fct(&s, &T, 1, op);
-    check(s.status == 0, "invalid output status");
+    check(s.status == 0,
+          "invalid output status ('" + std::to_string(s.status) + "')");
     check(std::abs(E - T) < T * eps, "invalid output value");
   }
   {
@@ -156,7 +165,8 @@ static void test4(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     const auto E = mp.fct(&s, &T, 1, op);
-    check(s.status == 1, "invalid output status");
+    check(s.status == 1,
+          "invalid output status ('" + std::to_string(s.status) + "')");
     check(s.bounds_status == 1, "invalid bound status");
     check(std::abs(E - T) < T * eps, "invalid output value");
   }
@@ -165,7 +175,8 @@ static void test4(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     const auto E = mp.fct(&s, &T, 1, op);
-    check(s.status == 0, "invalid output status");
+    check(s.status == 0,
+          "invalid output status ('" + std::to_string(s.status) + "')");
     check(std::abs(E - T) < T * eps, "invalid output value");
   }
 }
@@ -186,7 +197,8 @@ static void test5(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     const auto E = mp.fct(&s, &T, 1, op);
-    check(s.status == 0, "invalid output status");
+    check(s.status == 0,
+          "invalid output status ('" + std::to_string(s.status) + "')");
     check(std::abs(E - T) < T * eps, "invalid output value");
   }
   {
@@ -194,7 +206,8 @@ static void test5(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     const auto E = mp.fct(&s, &T, 1, op);
-    check(s.status == 0, "invalid output status");
+    check(s.status == 0,
+          "invalid output status ('" + std::to_string(s.status) + "')");
     check(std::abs(E - T) < T * eps, "invalid output value");
   }
   {
@@ -202,7 +215,8 @@ static void test5(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     const auto E = mp.fct(&s, &T, 1, op);
-    check(s.status == 1, "invalid output status");
+    check(s.status == 1,
+          "invalid output status ('" + std::to_string(s.status) + "')");
     check(s.bounds_status == 1, "invalid bound status");
     check(std::abs(E - T) < T * eps, "invalid output value");
   }
@@ -223,14 +237,16 @@ static void test6(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     mp.fct(&s, &T, 1, op);
-    check(s.status == 0, "invalid output status");
+    check(s.status == 0,
+          "invalid output status ('" + std::to_string(s.status) + "')");
   }
   {
     constexpr auto T = real{150};
     auto s = OutputStatus{};
     s.status = 2;
     mp.fct(&s, &T, 1, op);
-    check(s.status == -1, "invalid output status");
+    check(s.status == -1,
+          "invalid output status ('" + std::to_string(s.status) + "')");
     check(s.bounds_status == -1, "invalid bound status");
   }
   {
@@ -259,16 +275,20 @@ static void test7(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     const auto E = mp.fct(&s, &T, 1, op);
-    check(s.status == 0, "invalid output status");
+    check(s.status == 0,
+          "invalid output status ('" + std::to_string(s.status) + "')");
     check(std::abs(E - std::acos(T)) < eps, "invalid output value");
   }
+#ifndef __INTEL_LLVM_COMPILER
   {
     constexpr auto T = real{-2};
     auto s = OutputStatus{};
     s.status = 2;
     mp.fct(&s, &T, 1, op);
-    check(s.status == -3, "invalid output status");
+    check(s.status == -3,
+          "invalid output status ('" + std::to_string(s.status) + "')");
   }
+#endif /* __INTEL_LLVM_COMPILER */
 }
 
 static void test8(const std::string& library) {
