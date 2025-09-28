@@ -378,7 +378,7 @@ namespace mgis::function::internals {
           return ev(wk, i)[0];
         }
       } else {
-	static_cast<void>(space);
+        static_cast<void>(space);
         if constexpr (internals::same_decay_type<
                           evaluator_result<EvaluatorType>, real>) {
           return ev(i);
@@ -416,7 +416,7 @@ namespace mgis::function::internals {
           return ev(wk, i)[0];
         }
       } else {
-	static_cast<void>(space);
+        static_cast<void>(space);
         if constexpr (internals::same_decay_type<
                           evaluator_result<EvaluatorType>, real>) {
           return ev(i);

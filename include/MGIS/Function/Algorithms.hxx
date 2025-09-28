@@ -25,9 +25,10 @@ namespace mgis::function {
   template <typename ExecutionPolicy>
   concept ExecutionPolicyConceptConcept =
       std::same_as<ExecutionPolicy, std::execution::sequenced_policy> ||
-      std::same_as<ExecutionPolicy, std::execution::unsequenced_policy>||
+      std::same_as<ExecutionPolicy, std::execution::unsequenced_policy> ||
       std::same_as<ExecutionPolicy, std::execution::parallel_policy> ||
-      std::same_as<ExecutionPolicy, std::execution::parallel_unsequenced_policy>;
+      std::same_as<ExecutionPolicy,
+                   std::execution::parallel_unsequenced_policy>;
 
 #ifndef _MSC_VER
 
