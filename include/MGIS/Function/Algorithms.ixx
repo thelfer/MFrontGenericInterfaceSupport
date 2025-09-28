@@ -378,6 +378,7 @@ namespace mgis::function::internals {
           return ev(wk, i)[0];
         }
       } else {
+	static_cast<void>(space);
         if constexpr (internals::same_decay_type<
                           evaluator_result<EvaluatorType>, real>) {
           return ev(i);
@@ -404,7 +405,7 @@ namespace mgis::function::internals {
     const auto& space = getSpace(ev);
     const auto iranges =
         std::views::iota(space_size_type{}, getSpaceSize(space));
-    auto get_value = [ev](const space_size_type i) {
+    auto get_value = [&space, ev](const space_size_type i) {
       if constexpr (hasElementWorkspace<Space>) {
         if constexpr (internals::same_decay_type<
                           evaluator_result<EvaluatorType>, real>) {
@@ -415,6 +416,7 @@ namespace mgis::function::internals {
           return ev(wk, i)[0];
         }
       } else {
+	static_cast<void>(space);
         if constexpr (internals::same_decay_type<
                           evaluator_result<EvaluatorType>, real>) {
           return ev(i);
