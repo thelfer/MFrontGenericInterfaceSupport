@@ -45,17 +45,20 @@ endforeach()
 
 IF(TFEL_CONFIG AND MFRONT AND MFRONT_QUERY)
 
-  if ((NOT DEFINED TFEL_DIR) AND (NOT DEFINED ENV{TFELHOME}))
-    # Trying to figure out TFEL_DIR
+  if(NOT DEFINED TFELHOME)
     execute_process(COMMAND ${TFEL_CONFIG} "--include-path"
       OUTPUT_VARIABLE TFEL_INCLUDE_PATH
       OUTPUT_STRIP_TRAILING_WHITESPACE
       )
      file(TO_CMAKE_PATH "${TFEL_INCLUDE_PATH}" TFEL_INCLUDE_PATH)
      cmake_path(GET TFEL_INCLUDE_PATH PARENT_PATH TFELHOME)
+  endif()
+
+  if (NOT DEFINED TFEL_DIR)
+    # Trying to figure out TFEL_DIR
      set(TFEL_DIR "${TFELHOME}/share/tfel/cmake")
      list(APPEND CMAKE_PREFIX_PATH "${TFEL_DIR}")
-  endif ((NOT DEFINED TFEL_DIR) AND (NOT DEFINED ENV{TFELHOME}))
+  endif (NOT DEFINED TFEL_DIR)
 
   execute_process(COMMAND ${TFEL_CONFIG} "--cxx-standard"
       RESULT_VARIABLE TFEL_CXX_STANDARD_AVAILABLE
@@ -96,7 +99,8 @@ IF(TFEL_CONFIG AND MFRONT AND MFRONT_QUERY)
   endif()
 
   foreach(lib ${tfel_libs})
-     find_library(${lib}_LIBRARY ${lib} HINTS ${TFELHOME} PATH_SUFFIXES lib)
+     find_library(${lib}_LIBRARY ${lib} REQUIRED
+                  HINTS ${TFELHOME} PATH_SUFFIXES bin lib)
      list(APPEND TFEL_LIBRARIES ${${lib}_LIBRARY})
   endforeach(lib)
    

@@ -14,7 +14,6 @@
 
 namespace mgis::function {
 
-
   static_assert(
       EvaluatorConcept<TensorModifier<tfel::math::stensor<3u, mgis::real>,
                                       FunctionView<BasicLinearSpace>>>);

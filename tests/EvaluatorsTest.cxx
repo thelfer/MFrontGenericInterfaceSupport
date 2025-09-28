@@ -11,6 +11,7 @@
 
 #include <cmath>
 #include <memory>
+#include <limits>
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
@@ -44,6 +45,8 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     this->test12();
     this->test13();
     this->test14();
+    this->test15();
+    this->test16();
     return this->result;
   }
 
@@ -490,12 +493,12 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
       auto eh = ContractViolationHandler{};
       auto space = BasicLinearSpace{2};
       Function<BasicLinearSpace, 1> f1(space);
-      if(!f1.fill(eh, {12, 13})){
-	throw(std::runtime_error("fill failed"));
+      if (!f1.fill(eh, {12, 13})) {
+        throw(std::runtime_error("fill failed"));
       }
       Function<BasicLinearSpace, 1> f2(space);
-      if(!f2.fill(eh, {1, -3})){
-	throw(std::runtime_error("fill failed"));
+      if (!f2.fill(eh, {1, -3})) {
+        throw(std::runtime_error("fill failed"));
       }
       const auto a = add(view(f1), view(f2));
       return std::array{a(0), a(1)};
@@ -504,6 +507,42 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(check_value(values[0], 13));
     TFEL_TESTS_STATIC_ASSERT(check_value(values[1], 10));
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
+  }
+  void test15() {
+    using namespace mgis;
+    using namespace mgis::function;
+    auto ctx = Context{};
+    const auto space = BasicLinearSpace{200};
+    Function<BasicLinearSpace, 1> f1(space);
+    Function<BasicLinearSpace, 1> f2(space);
+    for (size_type i = 0; i != space.size(); ++i) {
+      f1(i) = 2 * i;
+    }
+    const auto e = view(f1) | multiply_by_scalar(0.5);
+    const auto ok = assign(ctx, f2, std::execution::par, e);
+    TFEL_TESTS_ASSERT(ok);
+    for (size_type i = 0; i != space.size(); ++i) {
+      TFEL_TESTS_ASSERT(std::abs(f2(i) - i) < 1e-12);
+    }
+  }
+  void test16() {
+    using namespace mgis;
+    using namespace mgis::function;
+    auto ctx = Context{};
+    const auto space = BasicLinearSpace{200};
+    Function<BasicLinearSpace, 1> f(space);
+    for (size_type i = 0; i != space.size(); ++i) {
+      const auto v = static_cast<real>(i);
+      f(i) = 14 - 2 * (v - 12) * (v - 12);
+    }
+    const auto ov = scalar_reduce(
+        ctx, std::execution::par, view(f),
+        [](const real a, const real b) { return std::max(a, b); },
+        std::numeric_limits<real>::min());
+    TFEL_TESTS_ASSERT(isValid(ov));
+    if (isValid(ov)) {
+      TFEL_TESTS_ASSERT(std::abs(*ov - 14) < 1e-13);
+    }
   }
 };
 

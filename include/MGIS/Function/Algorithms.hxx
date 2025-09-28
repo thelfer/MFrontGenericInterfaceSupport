@@ -8,7 +8,9 @@
 #ifndef LIB_MGIS_FUNCTION_ALGORITHMS_HXX
 #define LIB_MGIS_FUNCTION_ALGORITHMS_HXX
 
+#include <concepts>
 #include <optional>
+#include <execution>
 #include "MGIS/Config.hxx"
 #include "MGIS/AbstractErrorHandler.hxx"
 #include "MGIS/Function/SpaceConcept.hxx"
@@ -18,6 +20,60 @@
 namespace mgis::function {
 
   /*!
+   * \brief concept matching one of the supported execution policies
+   */
+  template <typename ExecutionPolicy>
+  concept ExecutionPolicyConceptConcept =
+      std::same_as<ExecutionPolicy, std::execution::sequenced_policy> ||
+      std::same_as<ExecutionPolicy, std::execution::unsequenced_policy> ||
+      std::same_as<ExecutionPolicy, std::execution::parallel_policy> ||
+      std::same_as<ExecutionPolicy,
+                   std::execution::parallel_unsequenced_policy>;
+
+#ifndef _MSC_VER
+
+  /*!
+   * \brief assign the evaluator to a function
+   * \param[in] ctx: execution context
+   * \param[in] policy: execution policy
+   * \param[in] lhs: left hand side
+   * \param[in] e: right hand side
+   */
+  template <ExecutionPolicyConceptConcept ExecutionPolicy,
+            typename FunctionType,
+            EvaluatorConcept EvaluatorType>
+  [[nodiscard]] constexpr bool assign(AbstractErrorHandler&,
+                                      FunctionType&,
+                                      const ExecutionPolicy,
+                                      const EvaluatorType)  //
+      requires(((LinearElementSpaceConcept<std::decay_t<
+                     decltype(getSpace(std::declval<EvaluatorType>()))>>) ||
+                (LinearQuadratureSpaceConcept<std::decay_t<
+                     decltype(getSpace(std::declval<EvaluatorType>()))>>)) &&
+               internals::same_decay_type<
+                   decltype(getSpace(std::declval<FunctionType>())),
+                   decltype(getSpace(std::declval<EvaluatorType>()))>);
+  /*!
+   * \brief assign the evaluator to a function
+   * \param[in] ctx: execution context
+   * \param[in] policy: execution policy
+   * \param[in] e: evaluator reduced.
+   * \param[in] op: reduction operator.
+   * \param[in] initial_value: initial value.
+   */
+  template <ExecutionPolicyConceptConcept ExecutionPolicy,
+            EvaluatorConcept EvaluatorType,
+            typename OperatorType>
+  [[nodiscard]] constexpr std::optional<real> scalar_reduce(
+      AbstractErrorHandler&,
+      const ExecutionPolicy,
+      const EvaluatorType,
+      const OperatorType,
+      const real) requires(LinearElementSpaceConcept<std::
+                                                         decay_t<decltype(getSpace(
+                                                             std::declval<
+                                                                 EvaluatorType>()))>>);
+  /*!
    * \brief assign the evaluator to a function
    * \param[in] ctx: execution context
    * \param[in] lhs: left hand side
@@ -26,7 +82,7 @@ namespace mgis::function {
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   [[nodiscard]] constexpr bool assign(AbstractErrorHandler&,
                                       FunctionType&,
-                                      EvaluatorType)  //
+                                      const EvaluatorType)  //
       requires(((LinearElementSpaceConcept<std::decay_t<
                      decltype(getSpace(std::declval<EvaluatorType>()))>>) ||
                 (LinearQuadratureSpaceConcept<std::decay_t<
@@ -34,7 +90,6 @@ namespace mgis::function {
                internals::same_decay_type<
                    decltype(getSpace(std::declval<FunctionType>())),
                    decltype(getSpace(std::declval<EvaluatorType>()))>);
-
   /*!
    * \brief assign the evaluator to a function
    * \param[in] ctx: execution context
@@ -43,14 +98,16 @@ namespace mgis::function {
    * \param[in] initial_value: initial value.
    */
   template <EvaluatorConcept EvaluatorType, typename OperatorType>
-  [[nodiscard]] std::optional<real> scalar_reduce(
+  [[nodiscard]] constexpr std::optional<real> scalar_reduce(
       AbstractErrorHandler&,
-      EvaluatorType,
+      const EvaluatorType,
       const OperatorType,
       const real) requires(LinearElementSpaceConcept<std::
                                                          decay_t<decltype(getSpace(
                                                              std::declval<
                                                                  EvaluatorType>()))>>);
+
+#endif
 
 }  // end of namespace mgis::function
 

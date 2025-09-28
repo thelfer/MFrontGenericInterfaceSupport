@@ -3,6 +3,10 @@
 
 @Includes{
 #include "TFEL/Math/General/IEEE754.hxx"
+#ifdef __NVCOMPILER
+#include <cfenv>
+#include "TFEL/Math/General/floating_point_exceptions.hxx"
+#endif /* __NVCOMPILER */
 }
 
 @Output E;
@@ -13,6 +17,9 @@ T.setGlossaryName("Temperature");
 
 @Function
 {
+#ifdef __NVCOMPILER
+  fedisableexcept(FE_INVALID);
+#endif /* __NVCOMPILER */
   E = acos(T);
   if (tfel::math::ieee754::isnan(E)) {
     E = 0;
