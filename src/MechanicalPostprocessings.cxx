@@ -21,7 +21,7 @@ namespace mgis::function {
   namespace internals {
 
     template <EvaluatorConcept EvaluatorType>
-    std::optional<Function<BasicLinearSpace>> evaluate(
+    static std::optional<Function<BasicLinearSpace>> evaluate(
         AbstractErrorHandler& ctx, const EvaluatorType& e) {
       const auto& s = getSpace(e);
       const auto nc = getNumberOfComponents(e);
@@ -36,10 +36,10 @@ namespace mgis::function {
     }  // end of evaluate
 
     template <EvaluatorModifierConcept ModifierType>
-    std::optional<Function<BasicLinearSpace>>
+    static std::optional<Function<BasicLinearSpace>>
     evaluateUnaryOperationOnSymmetricTensor(
         AbstractErrorHandler& ctx,
-        const FunctionView<BasicLinearSpace, {}, false>& f,
+        const FunctionView<BasicLinearSpace, FunctionDataLayoutDescription{}, false>& f,
         const ModifierType& op) {
       if (getNumberOfComponents(f) == 3) {
         return internals::evaluate(ctx, f | as_stensor<1> | op);
@@ -53,21 +53,21 @@ namespace mgis::function {
 
   }  // end of namespace internals
 
-  std::optional<Function<BasicLinearSpace>> computeTrace(
+  static std::optional<Function<BasicLinearSpace>> computeTrace(
       AbstractErrorHandler& ctx,
-      const FunctionView<BasicLinearSpace, {}, false>& f) {
+      const FunctionView<BasicLinearSpace, FunctionDataLayoutDescription{}, false>& f) {
     return internals::evaluateUnaryOperationOnSymmetricTensor(ctx, f, trace);
   }  // end of computeTrace
 
-  std::optional<Function<BasicLinearSpace>> computeMisesStress(
+  static  std::optional<Function<BasicLinearSpace>> computeMisesStress(
       AbstractErrorHandler& ctx,
-      const FunctionView<BasicLinearSpace, {}, false>& f) {
+      const FunctionView<BasicLinearSpace, FunctionDataLayoutDescription{}, false>& f) {
     return internals::evaluateUnaryOperationOnSymmetricTensor(ctx, f, vmis);
   }  // end of computeMisesStress
 
-  std::optional<Function<BasicLinearSpace>> computeHydrostraticPressure(
+  static std::optional<Function<BasicLinearSpace>> computeHydrostraticPressure(
       AbstractErrorHandler& ctx,
-      const FunctionView<BasicLinearSpace, {}, false>& f) {
+      const FunctionView<BasicLinearSpace, FunctionDataLayoutDescription{}, false>& f) {
     return internals::evaluateUnaryOperationOnSymmetricTensor(
         ctx, f, hydrostatic_stress);
   }  // end of computeHydrostraticPressure
