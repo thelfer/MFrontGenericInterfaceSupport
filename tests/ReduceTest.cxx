@@ -46,6 +46,7 @@ struct ReduceTest final : public tfel::tests::TestCase {
     };
     const auto oresult = scalar_reduce(ctx, f, max_value, 0);
     TFEL_TESTS_ASSERT(isValid(oresult));
+    std::cout << "value: " << *oresult << '\n';
     TFEL_TESTS_ASSERT(std::abs(*oresult - 2) < 1e-14);
   }
 };
