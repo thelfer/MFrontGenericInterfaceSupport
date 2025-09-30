@@ -1,4 +1,4 @@
-tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wall")
+mgis_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wall")
 # 383 : value copied to temporary, reference to temporary used
 # 981 : operands are evaluated in unspecified order
 # 810 : conversion from "long double" to "double" may lose significant bits
@@ -13,11 +13,11 @@ else(${DIAG_DISABLE_FLAG_AVAILABLE})
   message(STATUS "flag '-diag-disable' disabled")
 endif(${DIAG_DISABLE_FLAG_AVAILABLE})
 
-tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS_MARCH "xHost")
-tfel_enable_cxx_compiler_flag(CMAKE_CXX_FLAGS    "ipo")
+mgis_enable_cxx_compiler_flag(OPTIMISATION_FLAGS_MARCH "xHost")
+mgis_enable_cxx_compiler_flag(CMAKE_CXX_FLAGS    "ipo")
 
-tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility=hidden")
-tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility-inlines-hidden")
+mgis_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility=hidden")
+mgis_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility-inlines-hidden")
 set(COMPILER_DEFAULT_VISIBILITY_FLAG "-fvisibility=default")
 
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")

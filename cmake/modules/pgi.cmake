@@ -1,6 +1,6 @@
-tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS_MARCH "fast")
+mgis_enable_cxx_compiler_flag(OPTIMISATION_FLAGS_MARCH "fast")
 if(NOT enable-fast-math)
-  tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS  "Kieee")
+  mgis_enable_cxx_compiler_flag(OPTIMISATION_FLAGS  "Kieee")
 endif(NOT enable-fast-math)
 
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")

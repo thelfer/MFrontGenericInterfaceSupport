@@ -9,6 +9,7 @@
 #define LIB_MGIS_FUNCTION_ALGORITHMS_IXX
 
 #include <ranges>
+#include <numeric>
 #include <iterator>
 #include <algorithm>
 
