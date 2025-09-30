@@ -19,6 +19,8 @@
 
 namespace mgis::function {
 
+#ifdef __cpp_lib_parallel_algorithm
+
   /*!
    * \brief concept matching one of the supported execution policies
    */
@@ -30,8 +32,11 @@ namespace mgis::function {
       std::same_as<ExecutionPolicy,
                    std::execution::parallel_unsequenced_policy>;
 
+#endif
+
 #ifndef _MSC_VER
 
+#ifdef __cpp_lib_parallel_algorithm
   /*!
    * \brief assign the evaluator to a function
    * \param[in] ctx: execution context
@@ -73,6 +78,8 @@ namespace mgis::function {
                                                          decay_t<decltype(getSpace(
                                                              std::declval<
                                                                  EvaluatorType>()))>>);
+#endif /* __cpp_lib_parallel_algorithm */
+
   /*!
    * \brief assign the evaluator to a function
    * \param[in] ctx: execution context
@@ -107,7 +114,7 @@ namespace mgis::function {
                                                              std::declval<
                                                                  EvaluatorType>()))>>);
 
-#endif
+#endif /* MSC_VER */
 
 }  // end of namespace mgis::function
 
