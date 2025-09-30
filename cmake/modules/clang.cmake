@@ -79,6 +79,17 @@ if(enable-libcxx)
   mgis_enable_cxx_compiler_flag(COMPILER_CXXFLAGS "stdlib=libc++")
 endif(enable-libcxx)
 
+if(enable-parallel-stl-algorithms)
+ # This is a poor test to check of libstc++ is used
+ if(UNIX AND NOT APPLE)
+   if(NOT enable-libcxx)
+     find_package(TBB REQUIRED)
+     list(APPEND MGIS_ADDITIONAL_LIBRARIES "TBB::tbb")
+   endif(NOT enable-libcxx)
+ endif(UNIX AND NOT APPLE)
+endif(enable-parallel-stl-algorithms)
+
+
 option(enable-sanitize-options "enable various clang sanitize options (undefined, address,...)" OFF)
 
 if(enable-sanitize-options)

@@ -126,6 +126,7 @@ ENDMACRO(mgis_enable_cxx_compiler_flag)
 set(VISIBILITY_FLAGS   "")
 set(OPTIMISATION_FLAGS "")
 set(COMPILER_WARNINGS  "")
+set(MGIS_ADDITIONAL_LIBRARIES "")
 set(MGIS_ADDITIONAL_LINK_FLAGS "")
 
 option(enable-gpu-offloading "enable offloading on GPUS. Support of offloading depends on compiler support" OFF)

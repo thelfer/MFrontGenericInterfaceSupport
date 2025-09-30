@@ -17,9 +17,15 @@
 #include "MGIS/Function/EvaluatorConcept.hxx"
 #include "MGIS/Function/FunctionConcept.hxx"
 
+#ifdef MGIS_USE_STL_PARALLEL_ALGORITHMS
+#ifdef __cpp_lib_parallel_algorithm
+#define MGIS_HAS_STL_PARALLEL_ALGORITHMS
+#endif /* __cpp_lib_parallel_algorithm */
+#endif /* MGIS_USE_STL_PARALLEL_ALGORITHMS */
+
 namespace mgis::function {
 
-#ifdef __cpp_lib_parallel_algorithm
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   /*!
    * \brief concept matching one of the supported execution policies
@@ -36,7 +42,7 @@ namespace mgis::function {
 
 #ifndef _MSC_VER
 
-#ifdef __cpp_lib_parallel_algorithm
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
   /*!
    * \brief assign the evaluator to a function
    * \param[in] ctx: execution context
@@ -78,7 +84,7 @@ namespace mgis::function {
                                                          decay_t<decltype(getSpace(
                                                              std::declval<
                                                                  EvaluatorType>()))>>);
-#endif /* __cpp_lib_parallel_algorithm */
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
   /*!
    * \brief assign the evaluator to a function

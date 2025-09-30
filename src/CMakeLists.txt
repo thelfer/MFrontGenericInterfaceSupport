@@ -54,6 +54,9 @@ if(enable-exceptions)
   target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_USE_EXCEPTIONS_FOR_CONTRACT_VIOLATION)
   target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING)
 endif(enable-exceptions)
+if(enable-parallel-stl-algorithms)
+  target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_USE_STL_PARALLEL_ALGORITHMS)
+endif(enable-parallel-stl-algorithms)
 
 if(enable-static)
   target_include_directories(MFrontGenericInterface-static
@@ -66,6 +69,9 @@ if(enable-static)
   if(enable-mgis-function)
     target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_FUNCTION_SUPPORT)
   endif(enable-mgis-function)
+  if(enable-parallel-stl-algorithms)
+    target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_USE_STL_PARALLEL_ALGORITHMS)
+  endif(enable-parallel-stl-algorithms)
 endif(enable-static)
 
 if(MGIS_HAVE_TFEL)
@@ -73,13 +79,23 @@ if(MGIS_HAVE_TFEL)
   target_link_libraries(MFrontGenericInterface PUBLIC tfel::TFELMath)
 endif(MGIS_HAVE_TFEL)
 
+if(enable-openmp)
+  target_link_libraries(MFrontGenericInterface PUBLIC OpenMP::OpenMP_CXX)
+endif(enable-openmp)
+
+if(MGIS_ADDITIONAL_LIBRARIES)
+  target_link_libraries(MFrontGenericInterface PUBLIC ${MGIS_ADDITIONAL_LIBRARIES})
+endif(MGIS_ADDITIONAL_LIBRARIES)
+
 if(UNIX)
   if(Threads_FOUND)
     target_link_libraries(MFrontGenericInterface
-      PRIVATE ${MGIS_DL_LIBRARY} Threads::Threads)
+      PUBLIC  Threads::Threads
+      PRIVATE ${MGIS_DL_LIBRARY})
     if(enable-static)
       target_link_libraries(MFrontGenericInterface-static
-        PRIVATE ${MGIS_DL_LIBRARY} Threads::Threads)
+        PUBLIC  Threads::Threads
+        PRIVATE ${MGIS_DL_LIBRARY})
     endif(enable-static)
   else(Threads_FOUND)
     target_link_libraries(MFrontGenericInterface
@@ -92,10 +108,10 @@ if(UNIX)
 else(UNIX)
   if(Threads_FOUND)
     target_link_libraries(MFrontGenericInterface
-      PRIVATE Threads::Threads)
+      PUBLIC Threads::Threads)
     if(enable-static)
       target_link_libraries(MFrontGenericInterface-static
-        PRIVATE Threads::Threads)
+        PUBLIC Threads::Threads)
     endif(enable-static)
   endif(Threads_FOUND)
 endif(UNIX)

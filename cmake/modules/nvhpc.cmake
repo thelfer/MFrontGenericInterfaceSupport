@@ -17,5 +17,5 @@ endif(enable-fast-math)
 
 if(enable-gpu-offloading)
   add_compile_options(-stdpar)
-  set(MGIS_ADDITIONAL_LINK_FLAGS "-stdpar")
+  list(APPEND MGIS_ADDITIONAL_LINK_FLAGS "-stdpar")
 endif(enable-gpu-offloading)

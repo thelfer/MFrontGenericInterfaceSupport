@@ -181,7 +181,7 @@ namespace mgis::function::internals {
                   [&f, e](const space_size_type i) { f(i) = e(i); });
   }  // end of assign_sequential_scalar_impl
 
-#ifdef __cpp_lib_parallel_algorithm
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
@@ -190,7 +190,7 @@ namespace mgis::function::internals {
   assign_scalar_impl(const ExecutionPolicy policy, FunctionType& f, const EvaluatorType& e) requires(
       (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
           !hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
-    // this test is made for assign_impl be constexpr for non-parallel
+    // this test is made for assign_scalar_impl be constexpr for non-parallel
     // evaluation
     if constexpr (std::same_as<ExecutionPolicy,
                                std::execution::sequenced_policy>) {
@@ -206,7 +206,7 @@ namespace mgis::function::internals {
     }
   }  // end of assign_scalar_impl
 
-#endif /* __cpp_lib_parallel_algorithm */
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   constexpr void
@@ -223,9 +223,9 @@ namespace mgis::function::internals {
                     const auto& wk = getElementWorkspace(space, i);
                     f(wk, i) = e(wk, i);
                   });
-  }  // end of assign_scalar_impl
+  }  // end of assign_sequential_scalar_impl
 
-#ifdef __cpp_lib_parallel_algorithm
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
@@ -253,7 +253,7 @@ namespace mgis::function::internals {
     }
   }  // end of assign_scalar_impl
 
-#endif /* __cpp_lib_parallel_algorithm */
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   constexpr void
@@ -281,7 +281,7 @@ namespace mgis::function::internals {
                   });
   }  // end of assign_sequential_impl
 
-#ifdef __cpp_lib_parallel_algorithm
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
@@ -318,7 +318,7 @@ namespace mgis::function::internals {
     }
   }  // end of assign_impl
 
-#endif /* __cpp_lib_parallel_algorithm */
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
   template <typename FunctionType,
             EvaluatorConcept EvaluatorType>
@@ -348,7 +348,7 @@ namespace mgis::function::internals {
                   });
   }  // end of assign_sequential_impl
 
-#ifdef __cpp_lib_parallel_algorithm
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
@@ -386,7 +386,7 @@ namespace mgis::function::internals {
     }
   }  // end of assign_impl
 
-#endif /* __cpp_lib_parallel_algorithm */
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   constexpr void assign_sequential(FunctionType& f,
@@ -410,7 +410,7 @@ namespace mgis::function::internals {
     }
   }  // end of assign_sequential
 
-#ifdef __cpp_lib_parallel_algorithm
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
@@ -438,7 +438,7 @@ namespace mgis::function::internals {
     }
   }  // end of assign_parallel
 
-#endif /* __cpp_lib_parallel_algorithm */
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
   template <EvaluatorConcept EvaluatorType, typename OperatorType>
   constexpr real sequential_scalar_reduce(const EvaluatorType e,
@@ -475,7 +475,7 @@ namespace mgis::function::internals {
                                  op, get_value);
   }  // end of sequential_scalar_reduce
 
-#ifdef __cpp_lib_parallel_algorithm
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             EvaluatorConcept EvaluatorType,
@@ -527,13 +527,13 @@ namespace mgis::function::internals {
     return scalar_reduce_parallel_2(policy, ev, op, initial_value);
   }  // end of scalar_reduce_parallel
 
-#endif /* __cpp_lib_parallel_algorithm */
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
 }  // end of namespace mgis::function::internals
 
 namespace mgis::function {
 
-#ifdef __cpp_lib_parallel_algorithm
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
@@ -568,7 +568,7 @@ namespace mgis::function {
     return true;
   }  // end of assign
 
-#endif /* __cpp_lib_parallel_algorithm */
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   constexpr bool assign(AbstractErrorHandler& ctx,
@@ -595,7 +595,7 @@ namespace mgis::function {
     return true;
   }  // end of assign
 
-#ifdef __cpp_lib_parallel_algorithm
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             EvaluatorConcept EvaluatorType,
@@ -622,7 +622,7 @@ namespace mgis::function {
     }
   }  // end of scalar_reduce
 
-#endif /* __cpp_lib_parallel_algorithm */
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
   template <EvaluatorConcept EvaluatorType, typename OperatorType>
   constexpr std::optional<real> scalar_reduce(AbstractErrorHandler& ctx,

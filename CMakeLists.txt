@@ -24,15 +24,19 @@ set(CXX_STANDARD_REQUIRED ON)
 # portable-build
 option(enable-portable-build "produce binary that can be shared between various machine (same architecture, same gcc version, different processors" OFF)
 
-# option(enable-eigen-bindings "enable eigen bindings support" OFF)
-# if(enable-eigen-bindings)
-#   find_package (Eigen3 REQUIRED)
-# endif (enable-eigen-bindings)
+# OpenMP
+option(enable-openmp "enable openmp" OFF)
+if(enable-openmp)
+find_package(OpenMP REQUIRED)
+endif(enable-openmp)
 
 # enable mgis-function
 option(enable-mgis-function "enable mgis function" ON)
 # enable exceptions usage
 option(enable-exceptions "use exceptions to report contract violation and error reporting" OFF)
+
+# support for STL parallel algorithms
+option(enable-parallel-stl-algorithms "enable STL parallel algorithms" ON)
 
 # C-bindings (placed before compiler detection)
 option(enable-c-bindings "enable c bindings support")
