@@ -99,3 +99,7 @@ else(UNIX)
     endif(enable-static)
   endif(Threads_FOUND)
 endif(UNIX)
+
+if(MGIS_ADDITIONAL_LINK_FLAGS)
+  target_link_options(MFrontGenericInterface PUBLIC "${MGIS_ADDITIONAL_LINK_FLAGS}")
+endif(MGIS_ADDITIONAL_LINK_FLAGS)
