@@ -33,14 +33,15 @@ jobs:
         # loading TFEL
         spack load tfel
         which python3
-        cmake -DCMAKE_BUILD_TYPE=Release .                         \
-              -Denable-c-bindings=ON                               \
-              -Denable-fortran-bindings=ON                         \
-              -Denable-python-bindings=ON                          \
-              -Denable-portable-build=ON                           \
-              -Denable-julia-bindings=OFF                          \
-              -DTFEL_DIR=`spack location -i tfel`/share/tfel/cmake \
-              -Denable-parallel-stl-algorithms=OFF
+        cmake -DCMAKE_BUILD_TYPE=Release .                             \
+              -Denable-c-bindings=ON                                   \
+              -Denable-fortran-bindings=ON                             \
+              -Denable-python-bindings=ON                              \
+              -Denable-portable-build=ON                               \
+              -Denable-julia-bindings=OFF                              \
+              -DTFEL_DIR=`spack location -i tfel`/share/tfel/cmake     \
+              -Denable-parallel-stl-algorithms=OFF                     \
+              -DPython_EXECUTABLE=`spack location -i tfel`/bin/python3
     - name: make
       shell: spack-sh {0}
       run: |
