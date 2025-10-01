@@ -32,6 +32,7 @@ jobs:
         spack load python py-numpy py-pybind11
         # loading TFEL
         spack load tfel
+	which python3
         cmake -DCMAKE_BUILD_TYPE=Release .                         \
               -Denable-c-bindings=ON                               \
               -Denable-fortran-bindings=ON                         \
