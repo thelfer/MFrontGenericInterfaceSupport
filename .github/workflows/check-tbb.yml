@@ -41,7 +41,7 @@ jobs:
               -Denable-portable-build=ON                           \
               -Denable-julia-bindings=OFF                          \
               -DTFEL_DIR=`spack location -i tfel`/share/tfel/cmake \
-              -Denable-parallel-stl-algorithm=ON
+              -Denable-parallel-stl-algorithms=ON
     - name: make
       shell: spack-sh {0}
       run: |
