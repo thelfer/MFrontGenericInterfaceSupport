@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Spack
+      uses: spack/setup-spack@v2
+      with:
+        ref: develop      # Spack version (examples: develop, releases/v0.21)
+        buildcache: true  # Configure oci://ghcr.io/spack/github-actions-buildcache
+        color: true       # Force color output (SPACK_COLOR=always)
+        path: ${{github.workspace}}/spack       # Where to clone Spack
+
+    - name: Install TFEL
+      shell: spack-sh {0}
+      run: |
+        # spack install python py-numpy py-pybind11
+        spack install tbb
+        spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
+    - name: cmake
+      shell: spack-sh {0}
+      run: |
+        # spack load python py-numpy py-pybind11
+        # loading TFEL
+        spack load tfel
+        spack load intel-tbb
+        cmake -DCMAKE_BUILD_TYPE=Release .                         \
+              -Denable-c-bindings=ON                               \
+              -Denable-fortran-bindings=ON                         \
+              -Denable-python-bindings=OFF                         \
+              -Denable-portable-build=ON                           \
+              -Denable-julia-bindings=OFF                          \
+              -DTFEL_DIR=`spack location -i tfel`/share/tfel/cmake \
+              -Denable-parallel-stl-algorithm=ON
+    - name: make
+      shell: spack-sh {0}
+      run: |
+        # spack load python py-numpy py-pybind11
+        spack load tfel
+        spack load intel-tbb
+        make
+    - name: make check
+      shell: spack-sh {0}
+      run: |
+        # spack load python py-numpy py-pybind11 tfel
+        spack load tfel
+        spack load intel-tbb
+        make check
