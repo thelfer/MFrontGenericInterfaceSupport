@@ -112,6 +112,7 @@ set(COMPILER_C_WARNINGS "-Wall -W -pedantic")
 
 if(enable-parallel-stl-algorithms)
   find_package(TBB REQUIRED)
+  list(APPEND MGIS_REQUIRED_ADDITIONAL_PACKAGES "TBB")
   list(APPEND MGIS_ADDITIONAL_LIBRARIES "TBB::tbb")
 endif(enable-parallel-stl-algorithms)
 
