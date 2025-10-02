@@ -136,15 +136,6 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>
   constexpr auto view(const TensorialFunction<Space, TensorType>&);
 
-  //   // class template deduction guide
-  //   template <FunctionalSpaceConcept SpaceType>
-  //   TensorialFunction(const SpaceType&, const size_type)
-  //       -> Function<SpaceType, dynamic_extent>;
-
-  //! \brief allocate internal workspace
-  template <FunctionalSpaceConcept Space, TensorConcept TensorType>
-  constexpr void allocateWorkspace(
-      const TensorialFunction<Space, TensorType>&) = delete;
   //! \return the number of components
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>
   constexpr mgis::size_type getNumberOfComponents(

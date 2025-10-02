@@ -27,6 +27,7 @@ if(enable-mgis-function)
   list(APPEND MFrontGenericInterface_SOURCES
     BasicLinearSpace.cxx
     BasicLinearQuadratureSpace.cxx
+    FixedSizeView.cxx
     Function.cxx
     Evaluator.cxx
     MaterialFunctionManager.cxx)

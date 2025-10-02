@@ -229,6 +229,12 @@ namespace mgis::function {
 
   }  // namespace internals
 
+  template <typename FunctionType>
+  struct LightweightViewTraits : std::false_type {};
+
+  template <typename FunctionType>
+  concept LightweightViewConcept = LightweightViewTraits<FunctionType>::value;
+
   //! \brief a concept that must satisfy a function
   template <typename FunctionType>
   concept FunctionConcept =
@@ -291,7 +297,45 @@ namespace mgis::function {
            : true) &&
       (internals::FunctionResultTypeTraits<
           typename internals::FunctionResultQuery<FunctionType>::result_type>::
-           is_specialized);
+           is_specialized) &&
+      ((LightweightViewConcept<FunctionType>) || (requires(FunctionType & f) {
+         { view(f) } -> LightweightViewConcept;
+       }));
+
+  namespace internals {
+
+    template <bool, FunctionConcept FunctionType>
+    struct ViewResultType {
+      using type = void;
+    };
+
+    template <FunctionConcept FunctionType>
+    struct ViewResultType<false, FunctionType> {
+      using type = decltype(view(std::declval<FunctionType&>()));
+    };
+
+  }  // namespace internals
+
+  /*!
+   * \brief an alias which returns a view corresponding to the given function
+   * type
+   */
+  template <FunctionConcept FunctionType>
+  using function_view = std::conditional_t<
+      LightweightViewConcept<FunctionType>,
+      FunctionType,
+      typename internals::ViewResultType<LightweightViewConcept<FunctionType>,
+                                         FunctionType>::type>;
+
+  //! \brief an helper function to create a view when required
+  template <FunctionConcept FunctionType>
+  constexpr function_view<FunctionType> make_view(FunctionType& f) {
+    if constexpr (LightweightViewConcept<FunctionType>) {
+      return f;
+    } else {
+      return view(f);
+    }
+  }  // end of make_view
 
   //! \brief concept defining evaluators working on an element space
   template <typename FunctionType>
@@ -376,9 +420,8 @@ namespace mgis::function {
    */
   template <EvaluatorConcept EvaluatorType, FunctionConcept FunctionType>
   [[nodiscard]] bool operator|(EvaluatorType, FunctionType&) requires(
-      internals::same_decay_type<
-          decltype(getSpace(std::declval<EvaluatorType>())),
-          decltype(getSpace(std::declval<FunctionType>()))>);
+      std::same_as<evaluator_space<EvaluatorType>,
+                   function_space<FunctionType>>);
 #endif
 
 }  // end of namespace mgis::function

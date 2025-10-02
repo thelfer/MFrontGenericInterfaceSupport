@@ -36,8 +36,6 @@ namespace mgis::function {
     [[nodiscard]] constexpr decltype(auto) getSpace() const;
     //! \brief perform consistency checks
     [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
-    //! \brief allocate internal workspace
-    constexpr void allocateWorkspace();
     /*!
      * \brief call operator
      * \param[in] i: integration point index
@@ -83,10 +81,6 @@ namespace mgis::function {
   [[nodiscard]] constexpr bool check(
       AbstractErrorHandler&,
       const EvaluatorModifierBase<Child, EvaluatorType>&);
-  //! \brief allocate internal workspace
-  template <typename Child, EvaluatorConcept EvaluatorType>
-  constexpr void allocateWorkspace(
-      EvaluatorModifierBase<Child, EvaluatorType>&);
 
 }  // namespace mgis::function
 

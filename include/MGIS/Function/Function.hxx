@@ -536,6 +536,13 @@ namespace mgis::function {
     ExternalData values;
   };  // end of FunctionView
 
+  //! \brief partial specialisation
+  template <FunctionalSpaceConcept Space,
+            FunctionDataLayoutDescription layout,
+            bool is_mutable>
+  struct LightweightViewTraits<FunctionView<Space, layout, is_mutable>>
+      : std::true_type {};
+
   //! \brief a simple alias
   template <FunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout =
@@ -549,15 +556,6 @@ namespace mgis::function {
   [[nodiscard]] constexpr bool check(
       AbstractErrorHandler&,
       const FunctionView<Space, layout, is_mutable>&) noexcept;
-  /*!
-   * \brief do nothing function to match the Evaluator concept
-   * \param[in] v: view
-   */
-  template <FunctionalSpaceConcept Space,
-            FunctionDataLayoutDescription layout,
-            bool is_mutable>
-  constexpr void allocateWorkspace(
-      FunctionView<Space, layout, is_mutable>&) noexcept;
   /*!
    * \return the number of components of a view
    * \param[in] v: view
@@ -711,6 +709,21 @@ namespace mgis::function {
       -> Function<SpaceType, dynamic_extent>;
 
   /*!
+   * \brief convert a function to a mutable view
+   * \param[in] f: function
+   */
+  template <FunctionalSpaceConcept Space, size_type N>
+  [[nodiscard]] constexpr auto view(Function<Space, N>&);
+
+  /*!
+   * \brief convert a function to a mutable view
+   * \param[in] f: function
+   */
+  template <size_type N, FunctionalSpaceConcept Space, size_type N2>
+  [[nodiscard]] constexpr auto view(Function<Space, N2>&)  //
+      requires((N > 0) && (N != dynamic_extent) && (N == N2));
+
+  /*!
    * \brief convert a function to a immutable view
    * \param[in] f: function
    */
@@ -735,10 +748,6 @@ namespace mgis::function {
   //! EvaluatorConcept
   template <FunctionalSpaceConcept Space, size_type N>
   bool check(AbstractErrorHandler&, const Function<Space, N>&) = delete;
-  //! \brief deleted function so that Function does not match the
-  //! EvaluatorConcept
-  template <FunctionalSpaceConcept Space, size_type N>
-  void allocateWorkspace(const Function<Space, N>&) = delete;
 
 }  // namespace mgis::function
 

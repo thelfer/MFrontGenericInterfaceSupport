@@ -156,9 +156,7 @@ namespace mgis::function {
   concept EvaluatorConcept = std::is_move_constructible_v<EvaluatorType> &&
       std::is_copy_constructible_v<EvaluatorType> && SpaceConcept<
           std::decay_t<decltype(getSpace(std::declval<EvaluatorType>()))>> &&
-      requires(EvaluatorType& e) {
-    allocateWorkspace(e);
-  } && requires(const EvaluatorType& e) {
+      requires(const EvaluatorType& e) {
     { getNumberOfComponents(e) } -> std::same_as<mgis::size_type>;
   } && requires(const EvaluatorType& e, AbstractErrorHandler& eh) {
     { check(eh, e) } -> std::same_as<bool>;
@@ -239,17 +237,11 @@ namespace mgis::function {
     constexpr decltype(auto) disambiguateGetSpace(const EvaluatorType&);
     /*!
      * This helper function allows to disambiguate the call to
-     * the allocateWorkspace function
+     * the check function
      */
     template <EvaluatorConcept EvaluatorType>
     [[nodiscard]] constexpr bool disambiguateCheck(AbstractErrorHandler&,
                                                    const EvaluatorType&);
-    /*!
-     * This helper function allows to disambiguate the call to
-     * the allocateWorkspace function
-     */
-    template <EvaluatorConcept EvaluatorType>
-    constexpr void disambiguateAllocateWorkspace(const EvaluatorType&);
     /*!
      * This helper function allows to disambiguate the call to
      * the getNumberOfComponents function

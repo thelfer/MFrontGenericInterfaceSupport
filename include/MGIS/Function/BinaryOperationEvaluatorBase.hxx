@@ -21,9 +21,8 @@ namespace mgis::function {
   template <EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
   inline constexpr auto BinaryOperationEvaluatorBaseRequirement =
-      (internals::same_decay_type<
-          decltype(getSpace(std::declval<FirstEvaluatorType>())),
-          decltype(getSpace(std::declval<FirstEvaluatorType>()))>)&&  //
+      (std::same_as<evaluator_space<FirstEvaluatorType>,
+                    evaluator_space<SecondEvaluatorType>>)&&  //
       (((ElementEvaluatorConcept<FirstEvaluatorType>)&&(
            ElementEvaluatorConcept<SecondEvaluatorType>)) ||
        ((QuadratureEvaluatorConcept<FirstEvaluatorType>)&&(
@@ -69,8 +68,6 @@ namespace mgis::function {
     [[nodiscard]] constexpr decltype(auto) getSpace() const;
     //! \brief perform consistency checks
     [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
-    //! \brief allocate internal workspace
-    constexpr void allocateWorkspace();
     /*!
      * \brief call operator
      * \param[in] i: integration point index
@@ -130,14 +127,6 @@ namespace mgis::function {
       const BinaryOperationEvaluatorBase<Child,
                                          FirstEvaluatorType,
                                          SecondEvaluatorType>&);
-  //! \brief allocate internal workspace
-  template <typename Child,
-            EvaluatorConcept FirstEvaluatorType,
-            EvaluatorConcept SecondEvaluatorType>
-  constexpr void allocateWorkspace(
-      BinaryOperationEvaluatorBase<Child,
-                                   FirstEvaluatorType,
-                                   SecondEvaluatorType>&);
 
 }  // end of namespace mgis::function
 

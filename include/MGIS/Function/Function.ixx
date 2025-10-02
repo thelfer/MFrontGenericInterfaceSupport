@@ -618,13 +618,6 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
             bool is_mutable>
-  constexpr void allocateWorkspace(
-      FunctionView<Space, layout, is_mutable>&) noexcept {
-  }  // end of allocateWorkspace
-
-  template <FunctionalSpaceConcept Space,
-            FunctionDataLayoutDescription layout,
-            bool is_mutable>
   constexpr mgis::size_type getNumberOfComponents(
       const FunctionView<Space, layout, is_mutable>& e) noexcept {
     return e.getNumberOfComponents();
@@ -805,6 +798,17 @@ namespace mgis::function {
   requires((N > 0) && (LinearElementSpaceConcept<Space> ||
                        LinearQuadratureSpaceConcept<Space>))  //
       constexpr Function<Space, N>::~Function() = default;
+
+  template <FunctionalSpaceConcept Space, size_type N>
+  constexpr auto view(Function<Space, N>& f) {
+    return f.view();
+  }  // end of view
+
+  template <size_type N, FunctionalSpaceConcept Space, size_type N2>
+  constexpr auto view(Function<Space, N2>& f)  //
+      requires((N > 0) && (N != dynamic_extent) && (N == N2)) {
+    return f.view();
+  }  // end of view
 
   template <FunctionalSpaceConcept Space, size_type N>
   constexpr auto view(const Function<Space, N>& f) {

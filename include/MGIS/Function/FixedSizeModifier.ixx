@@ -47,12 +47,6 @@ namespace mgis::function {
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0)  //
-      constexpr void FixedSizeModifier<EvaluatorType, N>::allocateWorkspace() {
-    return internals::disambiguateAllocateWorkspace(this->evaluator);
-  }
-
-  template <EvaluatorConcept EvaluatorType, size_type N>
-  requires(N > 0)  //
       decltype(auto) FixedSizeModifier<EvaluatorType, N>::getSpace() const {
     return internals::disambiguateGetSpace(this->evaluator);
   }
@@ -189,11 +183,6 @@ namespace mgis::function {
                        const FixedSizeModifier<EvaluatorType, N>& e) {
     return e.check(eh);
   }  // end of check
-
-  template <EvaluatorConcept EvaluatorType, size_type N>
-  constexpr void allocateWorkspace(FixedSizeModifier<EvaluatorType, N>& e) {
-    return e.allocateWorkspace();
-  }  // end of allocateWorkspace
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   constexpr size_type getNumberOfComponents(
