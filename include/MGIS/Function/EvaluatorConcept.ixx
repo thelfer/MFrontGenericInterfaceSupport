@@ -22,11 +22,6 @@ namespace mgis::function::internals {
   }
 
   template <EvaluatorConcept EvaluatorType>
-  constexpr void disambiguateAllocateWorkspace(EvaluatorType& e) {
-    allocateWorkspace(e);
-  }  // end of disambiguateAllocateWorkspace
-
-  template <EvaluatorConcept EvaluatorType>
   constexpr mgis::size_type disambiguateGetNumberOfComponents(
       const EvaluatorType& e) {
     return getNumberOfComponents(e);

@@ -32,9 +32,8 @@ namespace mgis::function {
 
   template <EvaluatorConcept EvaluatorType, FunctionConcept FunctionType>
   bool operator|(EvaluatorType e, FunctionType& f) requires(
-      internals::same_decay_type<
-          decltype(getSpace(std::declval<EvaluatorType>())),
-          decltype(getSpace(std::declval<FunctionType>()))>) {
+      std::same_as<evaluator_space<EvaluatorType>,
+                   function_space<FunctionType>>) {
     Context ctx;
     return assign(ctx, f, e);
   }  // end of operator |

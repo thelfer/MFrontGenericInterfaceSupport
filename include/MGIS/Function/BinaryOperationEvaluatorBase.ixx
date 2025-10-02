@@ -72,19 +72,6 @@ namespace mgis::function {
             EvaluatorConcept SecondEvaluatorType>
   requires(BinaryOperationEvaluatorBaseRequirement<FirstEvaluatorType,
                                                    SecondEvaluatorType>)  //
-      constexpr void BinaryOperationEvaluatorBase<
-          Child,
-          FirstEvaluatorType,
-          SecondEvaluatorType>::allocateWorkspace() {
-    internals::disambiguateAllocateWorkspace(this->first_evaluator);
-    internals::disambiguateAllocateWorkspace(this->second_evaluator);
-  }  // end of allocatWorkspace
-
-  template <typename Child,
-            EvaluatorConcept FirstEvaluatorType,
-            EvaluatorConcept SecondEvaluatorType>
-  requires(BinaryOperationEvaluatorBaseRequirement<FirstEvaluatorType,
-                                                   SecondEvaluatorType>)  //
       constexpr decltype(auto)
           BinaryOperationEvaluatorBase<Child,
                                        FirstEvaluatorType,

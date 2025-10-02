@@ -30,12 +30,6 @@ namespace mgis::function {
   }  // end of check
 
   template <typename Child, EvaluatorConcept EvaluatorType>
-  constexpr void
-  EvaluatorModifierBase<Child, EvaluatorType>::allocateWorkspace() {
-    internals::disambiguateAllocateWorkspace(this->evaluator);
-  }  // end of allocatWorkspace
-
-  template <typename Child, EvaluatorConcept EvaluatorType>
   constexpr decltype(auto)
   EvaluatorModifierBase<Child, EvaluatorType>::getSpace() const {
     return internals::disambiguateGetSpace(this->evaluator);
@@ -86,12 +80,6 @@ namespace mgis::function {
                        const EvaluatorModifierBase<Child, EvaluatorType>& e) {
     return e.check(eh);
   }  // end of check
-
-  template <typename Child, EvaluatorConcept EvaluatorType>
-  constexpr void allocateWorkspace(
-      EvaluatorModifierBase<Child, EvaluatorType>& e) {
-    return e.allocateWorkspace();
-  }  // end of allocateWorkspace
 
 }  // end of namespace mgis::function
 

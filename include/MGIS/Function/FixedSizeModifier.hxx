@@ -49,8 +49,6 @@ namespace mgis::function {
                                 const EvaluatorType&);
     //! \brief perform consistency checks
     [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
-    //! \brief allocate internal workspace
-    constexpr void allocateWorkspace();
     //! \brief return the underlying  space
     [[nodiscard]] decltype(auto) getSpace() const;
     //! \return the number of components
@@ -112,9 +110,6 @@ namespace mgis::function {
   template <EvaluatorConcept EvaluatorType, size_type N>
   [[nodiscard]] constexpr bool check(
       AbstractErrorHandler&, const FixedSizeModifier<EvaluatorType, N>&);
-  //! \brief allocate internal workspace
-  template <EvaluatorConcept EvaluatorType, size_type N>
-  constexpr void allocateWorkspace(FixedSizeModifier<EvaluatorType, N>&);
   //! \return the number of components
   template <EvaluatorConcept EvaluatorType, size_type N>
   [[nodiscard]] constexpr size_type getNumberOfComponents(

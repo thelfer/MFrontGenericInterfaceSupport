@@ -132,9 +132,14 @@ namespace mgis::function {
                  (isFunctionResultTypeMappable<FunctionType>));
 
    private:
-    //! \brief underlying function
-    FunctionType& function;
+    //! \brief underlying view
+    function_view<FunctionType> function;
   };  // end of FixedSizeView
+
+  //! \brief partial specialisation
+  template <FunctionConcept FunctionType, size_type N>
+  struct LightweightViewTraits<FixedSizeView<FunctionType, N>>
+      : std::true_type {};
 
   /*!
    * \brief convert a function to a immutable view
@@ -153,9 +158,6 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, size_type N>
   [[nodiscard]] constexpr bool check(AbstractErrorHandler&,
                                      const FixedSizeView<FunctionType, N>&);
-  //! \brief allocate internal workspace
-  template <FunctionConcept FunctionType, size_type N>
-  constexpr void allocateWorkspace(FixedSizeView<FunctionType, N>&) noexcept;
   //! \return the number of components
   template <FunctionConcept FunctionType, size_type N>
   [[nodiscard]] constexpr size_type getNumberOfComponents(

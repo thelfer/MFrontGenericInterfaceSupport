@@ -11,6 +11,7 @@
 #  MGIS_CMAKE_REQUIRED_INCLUDES = list of include directories
 #  MGIS_CMAKE_REQUIRED_LIBRARIES = list of libraries to link
 #  MGIS_ADDITIONAL_LINK_FLAGS = additional flags for the MFrontGenericInterface library
+#  MGIS_REQUIRED_ADDITIONAL_PACKAGES = additional required packages for the MFrontGenericInterface library
 #
 # This macro is a copy of CheckCXXSourceCompiles.cmake
 # Copyright 2005-2009 Kitware, Inc.
@@ -128,6 +129,7 @@ set(OPTIMISATION_FLAGS "")
 set(COMPILER_WARNINGS  "")
 set(MGIS_ADDITIONAL_LIBRARIES "")
 set(MGIS_ADDITIONAL_LINK_FLAGS "")
+set(MGIS_REQUIRED_ADDITIONAL_PACKAGES "")
 
 option(enable-gpu-offloading "enable offloading on GPUS. Support of offloading depends on compiler support" OFF)
 option(enable-fast-math "enable -ffast-math compiler flag" OFF)
