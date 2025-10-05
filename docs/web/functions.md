@@ -170,9 +170,9 @@ In a field-major pattern, the values a single-valuated field are usually
 stored as follows:
 
 ~~~~
-+---------++---------++---------++---------+
++-----------++-----------++---------++-----------+
 | Element 1 || Element 2 || ....... || Element N |
-+---------++---------++---------++---------+
++-----------++-----------++---------++-----------+
 ~~~~
 
 Multi-component values can be stored:

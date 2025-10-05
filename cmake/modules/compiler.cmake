@@ -151,6 +151,13 @@ elseif(((CMAKE_CXX_COMPILER_ID STREQUAL "Clang") OR
         (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")) AND
        (NOT PATHSCALE_COMPILER))
   include(cmake/modules/clang.cmake)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+    option(enable-intel-llvm-sycl-support "enable sycl support" OFF)
+    if(enable-intel-llvm-sycl-support)
+      add_compile_options("-fsycl")
+      list(APPEND MGIS_ADDITIONAL_LINK_FLAGS "-fsycl")
+    endif(enable-intel-llvm-sycl-support)
+  endif(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
   include(cmake/modules/nvhpc.cmake)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")

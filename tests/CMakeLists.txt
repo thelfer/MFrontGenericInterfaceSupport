@@ -48,7 +48,7 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY DEPENDS MaterialPropertyTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
 else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST LoadMaterialPropertyTestMFrontGenericBehaviourInterfaceTest
+  set_property(TEST LoadMaterialPropertyTest
     PROPERTY DEPENDS MaterialPropertyTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
