@@ -30,6 +30,7 @@ if(enable-mgis-function)
     FixedSizeView.cxx
     Function.cxx
     Evaluator.cxx
+    UniformEvaluator.cxx
     MaterialFunctionManager.cxx)
   if(MGIS_HAVE_TFEL)
     list(APPEND MFrontGenericInterface_SOURCES

@@ -466,6 +466,27 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
+add_executable(UniformEvaluatorsTest
+ EXCLUDE_FROM_ALL
+ UniformEvaluatorsTest.cxx)
+target_link_libraries(UniformEvaluatorsTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME UniformEvaluatorsTest COMMAND UniformEvaluatorsTest)
+add_dependencies(check UniformEvaluatorsTest)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+    target_compile_definitions(UniformEvaluatorsTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
+    target_compile_definitions(UniformEvaluatorsTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+endif()
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST UniformEvaluatorsTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_executable(MechanicalEvaluatorsTest
  EXCLUDE_FROM_ALL

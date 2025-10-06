@@ -167,11 +167,11 @@ namespace mgis::function {
       static constexpr bool b3 =
           ((requires(FunctionType & e) {
              {
-               e(std::declval<cell_workspace<Space>>(),
-                 std::declval<cell_index<Space>>())
+               e(std::declval<cell_index<Space>>(),
+                 std::declval<quadrature_point_index<Space>>())
                } -> mutable_return_value;
            }) &&
-           (QuadratureSpaceConcept<Space> && hasCellWorkspace<Space>));
+           (QuadratureSpaceConcept<Space>));
       static constexpr bool b4 =
           ((requires(FunctionType & e) {
              {
@@ -180,7 +180,7 @@ namespace mgis::function {
                  std::declval<quadrature_point_index<Space>>())
                } -> mutable_return_value;
            }) &&
-           (QuadratureSpaceConcept<Space>));
+           (QuadratureSpaceConcept<Space> && hasCellWorkspace<Space>));
       using result_type1 =
           typename FunctionResultQueryImplementation1<b1, FunctionType>::
               result_type;

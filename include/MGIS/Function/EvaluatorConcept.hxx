@@ -114,17 +114,17 @@ namespace mgis::function {
            (ElementSpaceConcept<Space> && hasElementWorkspace<Space>));
       static constexpr bool b3 =
           ((requires(const EvaluatorType& e) {
-             e(std::declval<cell_workspace<Space>>(),
-               std::declval<cell_index<Space>>());
+             e(std::declval<cell_index<Space>>(),
+               std::declval<quadrature_point_index<Space>>());
            }) &&
-           (QuadratureSpaceConcept<Space> && hasCellWorkspace<Space>));
+           (QuadratureSpaceConcept<Space>));
       static constexpr bool b4 =
           ((requires(const EvaluatorType& e) {
              e(std::declval<cell_workspace<Space>>(),
                std::declval<cell_index<Space>>(),
                std::declval<quadrature_point_index<Space>>());
            }) &&
-           (QuadratureSpaceConcept<Space>));
+           (QuadratureSpaceConcept<Space> && hasCellWorkspace<Space>));
       using ResultType1 =
           typename EvaluatorResultQueryImplementation1<b1, EvaluatorType>::type;
       using ResultType2 =
