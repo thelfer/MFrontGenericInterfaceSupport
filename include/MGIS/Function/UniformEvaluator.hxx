@@ -93,17 +93,19 @@ namespace mgis::function {
   template <SpaceConcept SpaceType, std::size_t N>
   UniformEvaluator(const SpaceType&, const real (&)[N])
       ->UniformEvaluator<SpaceType, N>
-  requires(N > 1);
+      /* requires(N > 1) */;  // most compilers (nvhpc, clang, intel) don't
+                              // support require clause on class template
+                              // deduction guide in 2025
 
   template <SpaceConcept SpaceType, std::size_t N>
   UniformEvaluator(const SpaceType&, std::array<real, N>)
       ->UniformEvaluator<SpaceType, N>
-  requires(N > 1);
+      /* requires(N > 1) */;
 
   template <SpaceConcept SpaceType, std::size_t N>
   UniformEvaluator(const SpaceType&, std::span<real, N>)
       ->UniformEvaluator<SpaceType, N>
-  requires(N > 1);
+      /* requires(N > 1) */;
 
   template <SpaceConcept Space, std::size_t N>
   constexpr bool check(AbstractErrorHandler&,

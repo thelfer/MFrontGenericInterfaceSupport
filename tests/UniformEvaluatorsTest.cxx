@@ -20,6 +20,7 @@
 #include "TFEL/Tests/TestManager.hxx"
 #include "MGIS/Function/BasicLinearSpace.hxx"
 #include "MGIS/Function/UniformEvaluator.hxx"
+#include "MGIS/Function/Tensors.hxx"
 
 struct UniformEvaluatorsTest final : public tfel::tests::TestCase {
   UniformEvaluatorsTest()
@@ -27,6 +28,7 @@ struct UniformEvaluatorsTest final : public tfel::tests::TestCase {
   }  // end of UniformEvaluatorsTest
   tfel::tests::TestResult execute() override {
     this->test1();
+    this->test2();
     return this->result;
   }
 
@@ -46,6 +48,23 @@ struct UniformEvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(local_abs(e2(1)[0] - 12) < eps);
     TFEL_TESTS_STATIC_ASSERT(local_abs(e2(1)[1] + 2) < eps);
     TFEL_TESTS_STATIC_ASSERT(local_abs(e2(1)[2] - 6) < eps);
+  }
+  void test2() {
+    using namespace mgis;
+    using namespace mgis::function;
+    auto local_abs = [](const mgis::real r) constexpr {
+      return r > 0 ? r : -r;
+    };
+    constexpr auto eps = real{1e-14};
+    constexpr auto space = BasicLinearSpace{3};
+    constexpr real values[6] = {1, 1, 1, 0, 0, 0};
+    constexpr auto id = UniformEvaluator(space, values) | as_stensor<3>;
+    TFEL_TESTS_STATIC_ASSERT(local_abs(id(1)[0] - 1) < eps);
+    TFEL_TESTS_STATIC_ASSERT(local_abs(id(1)[1] - 1) < eps);
+    TFEL_TESTS_STATIC_ASSERT(local_abs(id(1)[2] - 1) < eps);
+    TFEL_TESTS_STATIC_ASSERT(local_abs(id(1)[3]) < eps);
+    TFEL_TESTS_STATIC_ASSERT(local_abs(id(1)[4]) < eps);
+    TFEL_TESTS_STATIC_ASSERT(local_abs(id(1)[5]) < eps);
   }
 };
 
