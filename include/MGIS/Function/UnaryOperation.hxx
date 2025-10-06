@@ -137,8 +137,14 @@ namespace mgis::function {
   template <typename CallableType>
   constexpr auto unary_operation(CallableType&&);
 
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
+  constexpr auto unary_operation(CallableType&&, const EvaluatorType&);
+
   template <typename CallableType>
   constexpr auto transform(CallableType&&);
+
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
+  constexpr auto transform(CallableType&&, const EvaluatorType&);
 
 }  // end of namespace mgis::function
 

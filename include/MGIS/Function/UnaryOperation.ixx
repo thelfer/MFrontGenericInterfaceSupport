@@ -94,10 +94,20 @@ namespace mgis::function {
         std::forward<CallableType>(c));
   }  // end of unary_operation
 
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
+  constexpr auto unary_operation(CallableType&& c, const EvaluatorType& e) {
+    return e | unary_operation(c);
+  }  // end of unary_operation
+
   template <typename CallableType>
   constexpr auto transform(CallableType&& c) {
     return internals::unary_operation_modifier<std::decay_t<CallableType>>(
         std::forward<CallableType>(c));
+  }  // end of transform
+
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
+  constexpr auto transform(CallableType&& c, const EvaluatorType& e) {
+    return e | transform(c);
   }  // end of transform
 
 }  // end of namespace mgis::function
