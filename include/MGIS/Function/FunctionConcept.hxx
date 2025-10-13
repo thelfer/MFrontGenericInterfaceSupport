@@ -99,6 +99,8 @@ namespace mgis::function {
     struct FunctionResultQueryImplementation3<true, FunctionType> {
       using Space =
           std::decay_t<decltype(getSpace(std::declval<FunctionType>()))>;
+      using result_type = std::invoke_result_t<FunctionType, cell_index<Space>,
+                                               quadrature_point_index<Space>>;
       using const_result_type =
           std::invoke_result_t<const FunctionType,
                                cell_index<Space>,
