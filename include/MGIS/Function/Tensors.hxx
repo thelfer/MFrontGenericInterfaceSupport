@@ -24,6 +24,7 @@
 #include "MGIS/Function/Tensors/TensorConcept.hxx"
 #include "MGIS/Function/Tensors/TensorView.hxx"
 #include "MGIS/Function/Tensors/TensorModifier.hxx"
+#include "MGIS/Function/Tensors/CoalescedMemoryAccessTensorView.hxx"
 
 namespace mgis::function::internals {
 

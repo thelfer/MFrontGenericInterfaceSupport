@@ -147,7 +147,6 @@ namespace mgis::function {
             FunctionDataLayoutDescription layout =
                 FunctionDataLayoutDescription{},
             bool is_mutable = true>
-  //
   struct FunctionView
       : private PreconditionsChecker<FunctionView<Space, layout, is_mutable>>,
         public FunctionDataLayout<layout> {
