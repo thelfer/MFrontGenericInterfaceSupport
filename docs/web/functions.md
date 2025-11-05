@@ -197,6 +197,9 @@ Multi-component values can be stored:
   +-----------++-----------++---------++-----------+------+-----------++-----------++---------++-----------+
   ~~~~
 
+Non interleaved storage allows coalescent memory accesses, which may be
+beneficial on some architectures, including GPUs.
+
 In a element-major pattern, values usually are stored as follows:
 
 ~~~~
@@ -274,3 +277,39 @@ The `FunctionView` class has two template parameters:
 The `FunctionView` class matches the `FunctionEvaluator` concept (See
 Section @sec:mgis:function:overview and [this page](evaluators.html) for
 details).
+
+## Tensorial functions
+
+### The `TensorView` class
+
+The `TensorView` class allows to make views which returns tensorial
+objects from functions returning data in contiguous memory.
+
+A `TensorView` is generally created by combining a `FunctionView` which
+a modifier such as `as_stensor` (See [this page](evaluators.html) for
+details).
+
+### The `CoalescedMemoryAccessTensorView` class
+
+Coalescent memory access refers to an access pattern where each
+components of a function is accessed through its dedicated memory
+location (see the non-interleaved storage pattern described previously).
+
+The `CoalescedMemoryAccessTensorView` class allows to make a tensorial
+function view from scalar function view on each components, as follows:
+
+~~~~{.cxx}
+real values[8] = {1, 10,  // components XX
+                  2, 20,  // components YY
+                  3, 30,  // components ZZ
+                  4, 40}; // components XY
+const auto ne = size_type { 2 };
+auto space = BasicLinearSpace{ne};
+auto c_xx = ScalarFunctionView{space, std::span{values, ne}};
+auto c_yy = ScalarFunctionView{space, std::span{values + ne, ne}};
+auto c_zz = ScalarFunctionView{space, std::span{values + 2 * ne, ne}};
+auto c_xy = ScalarFunctionView{space, std::span{values + 3 * ne, ne}};
+auto f = CoalescedMemoryAccessTensorView<BasicLinearSpace,
+                                         tfel::math::stensor<2, real>>{
+            std::array{c_xx, c_yy, c_zz, c_xy}};
+~~~~

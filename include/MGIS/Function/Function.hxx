@@ -3,6 +3,13 @@
  * \brief
  * \author Thomas Helfer
  * \date   11/06/2020
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_FUNCTION_FUNCTION_HXX
@@ -136,13 +143,11 @@ namespace mgis::function {
    * The size of the data hold by the function per element of the space, i.e. th
    * number of components of the function is given by `data_size`.
    */
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout =
                 FunctionDataLayoutDescription{},
             bool is_mutable = true>
-  requires(LinearElementSpaceConcept<Space> ||
-           LinearQuadratureSpaceConcept<Space>)  //
-      struct FunctionView
+  struct FunctionView
       : private PreconditionsChecker<FunctionView<Space, layout, is_mutable>>,
         public FunctionDataLayout<layout> {
     //! \brief a simple alias to the type holding the data used by the view
@@ -537,20 +542,20 @@ namespace mgis::function {
   };  // end of FunctionView
 
   //! \brief partial specialisation
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
             bool is_mutable>
   struct LightweightViewTraits<FunctionView<Space, layout, is_mutable>>
       : std::true_type {};
 
   //! \brief a simple alias
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout =
                 FunctionDataLayoutDescription{}>
   using FunctionEvaluator = FunctionView<Space, layout, false>;
 
   //! \brief a noop function to match the EvaluatorConcept concept
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
             bool is_mutable>
   [[nodiscard]] constexpr bool check(
@@ -560,7 +565,7 @@ namespace mgis::function {
    * \return the number of components of a view
    * \param[in] v: view
    */
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
             bool is_mutable>
   [[nodiscard]] constexpr mgis::size_type getNumberOfComponents(
@@ -569,7 +574,7 @@ namespace mgis::function {
   /*!
    * \brief an helper class storing the values of a function
    */
-  template <FunctionalSpaceConcept Space, size_type N>
+  template <LinearFunctionalSpaceConcept Space, size_type N>
   struct FunctionStorage {
     constexpr FunctionStorage(const Space& s) requires(N != dynamic_extent)
         : storage_values(N * getSpaceSize(s), real{}) {}
@@ -593,7 +598,7 @@ namespace mgis::function {
       FunctionDataLayoutDescription{.data_size = N, .data_stride = N};
 
   //! \brief a simple alias to simplify the implementation of the Function class
-  template <FunctionalSpaceConcept Space, size_type N>
+  template <LinearFunctionalSpaceConcept Space, size_type N>
   using FunctionViewAlias =
       FunctionView<Space, simple_data_layout_description<N>, true>;
 
@@ -605,12 +610,11 @@ namespace mgis::function {
    *
    * \note the data stride is equal to the data size
    */
-  template <FunctionalSpaceConcept Space, size_type N = dynamic_extent>
-  requires((N > 0) && (LinearElementSpaceConcept<Space> ||
-                       LinearQuadratureSpaceConcept<Space>))  //
-      struct Function : private PreconditionsChecker<Function<Space, N>>,
-                        public FunctionStorage<Space, N>,
-                        public FunctionViewAlias<Space, N> {
+  template <LinearFunctionalSpaceConcept Space, size_type N = dynamic_extent>
+  requires(N > 0) struct Function
+      : private PreconditionsChecker<Function<Space, N>>,
+        public FunctionStorage<Space, N>,
+        public FunctionViewAlias<Space, N> {
     /*!
      * \brief constructor from a space
      * \param[in] s: space
@@ -704,7 +708,7 @@ namespace mgis::function {
   };
 
   // class template deduction guide
-  template <FunctionalSpaceConcept SpaceType>
+  template <LinearFunctionalSpaceConcept SpaceType>
   Function(const SpaceType&, const size_type)
       -> Function<SpaceType, dynamic_extent>;
 
@@ -712,14 +716,14 @@ namespace mgis::function {
    * \brief convert a function to a mutable view
    * \param[in] f: function
    */
-  template <FunctionalSpaceConcept Space, size_type N>
+  template <LinearFunctionalSpaceConcept Space, size_type N>
   [[nodiscard]] constexpr auto view(Function<Space, N>&);
 
   /*!
    * \brief convert a function to a mutable view
    * \param[in] f: function
    */
-  template <size_type N, FunctionalSpaceConcept Space, size_type N2>
+  template <size_type N, LinearFunctionalSpaceConcept Space, size_type N2>
   [[nodiscard]] constexpr auto view(Function<Space, N2>&)  //
       requires((N > 0) && (N != dynamic_extent) && (N == N2));
 
@@ -727,18 +731,18 @@ namespace mgis::function {
    * \brief convert a function to a immutable view
    * \param[in] f: function
    */
-  template <FunctionalSpaceConcept Space, size_type N>
+  template <LinearFunctionalSpaceConcept Space, size_type N>
   [[nodiscard]] constexpr auto view(const Function<Space, N>&);
 
   /*!
    * \brief convert a function to a immutable view
    * \param[in] f: function
    */
-  template <size_type N, FunctionalSpaceConcept Space, size_type N2>
+  template <size_type N, LinearFunctionalSpaceConcept Space, size_type N2>
   [[nodiscard]] constexpr auto view(const Function<Space, N2>&)  //
       requires((N > 0) && (N != dynamic_extent) && (N == N2));
 
-  template <FunctionalSpaceConcept Space,
+  template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
             bool is_mutable>
   [[nodiscard]] constexpr const auto& getSpace(
@@ -746,7 +750,7 @@ namespace mgis::function {
 
   //! \brief deleted function so that Function does not match the
   //! EvaluatorConcept
-  template <FunctionalSpaceConcept Space, size_type N>
+  template <LinearFunctionalSpaceConcept Space, size_type N>
   bool check(AbstractErrorHandler&, const Function<Space, N>&) = delete;
 
 }  // namespace mgis::function
