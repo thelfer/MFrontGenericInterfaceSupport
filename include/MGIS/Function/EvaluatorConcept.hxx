@@ -3,6 +3,13 @@
  * \brief
  * \author Thomas Helfer
  * \date   14/05/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_FUNCTION_EVALUATORCONCEPT_HXX
@@ -19,7 +26,7 @@ namespace mgis {
   // forward declaration
   struct AbstractErrorHandler;
 
-} // end of namespace mgis
+}  // end of namespace mgis
 
 namespace mgis::function {
 
@@ -114,17 +121,17 @@ namespace mgis::function {
            (ElementSpaceConcept<Space> && hasElementWorkspace<Space>));
       static constexpr bool b3 =
           ((requires(const EvaluatorType& e) {
-             e(std::declval<cell_workspace<Space>>(),
-               std::declval<cell_index<Space>>());
+             e(std::declval<cell_index<Space>>(),
+               std::declval<quadrature_point_index<Space>>());
            }) &&
-           (QuadratureSpaceConcept<Space> && hasCellWorkspace<Space>));
+           (QuadratureSpaceConcept<Space>));
       static constexpr bool b4 =
           ((requires(const EvaluatorType& e) {
              e(std::declval<cell_workspace<Space>>(),
                std::declval<cell_index<Space>>(),
                std::declval<quadrature_point_index<Space>>());
            }) &&
-           (QuadratureSpaceConcept<Space>));
+           (QuadratureSpaceConcept<Space> && hasCellWorkspace<Space>));
       using ResultType1 =
           typename EvaluatorResultQueryImplementation1<b1, EvaluatorType>::type;
       using ResultType2 =
@@ -156,9 +163,7 @@ namespace mgis::function {
   concept EvaluatorConcept = std::is_move_constructible_v<EvaluatorType> &&
       std::is_copy_constructible_v<EvaluatorType> && SpaceConcept<
           std::decay_t<decltype(getSpace(std::declval<EvaluatorType>()))>> &&
-      requires(EvaluatorType& e) {
-    allocateWorkspace(e);
-  } && requires(const EvaluatorType& e) {
+      requires(const EvaluatorType& e) {
     { getNumberOfComponents(e) } -> std::same_as<mgis::size_type>;
   } && requires(const EvaluatorType& e, AbstractErrorHandler& eh) {
     { check(eh, e) } -> std::same_as<bool>;
@@ -239,22 +244,18 @@ namespace mgis::function {
     constexpr decltype(auto) disambiguateGetSpace(const EvaluatorType&);
     /*!
      * This helper function allows to disambiguate the call to
-     * the allocateWorkspace function
+     * the check function
      */
     template <EvaluatorConcept EvaluatorType>
-    constexpr bool disambiguateCheck(AbstractErrorHandler&, const EvaluatorType&);
-    /*!
-     * This helper function allows to disambiguate the call to
-     * the allocateWorkspace function
-     */
-    template <EvaluatorConcept EvaluatorType>
-    constexpr void disambiguateAllocateWorkspace(const EvaluatorType&);
+    [[nodiscard]] constexpr bool disambiguateCheck(AbstractErrorHandler&,
+                                                   const EvaluatorType&);
     /*!
      * This helper function allows to disambiguate the call to
      * the getNumberOfComponents function
      */
     template <EvaluatorConcept EvaluatorType>
-    constexpr mgis::size_type disambiguateGetNumberOfComponents(EvaluatorType&);
+    [[nodiscard]] constexpr mgis::size_type disambiguateGetNumberOfComponents(
+        EvaluatorType&);
 
     /*!
      * \brief number of components of a type when known at compile-time,

@@ -87,7 +87,7 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(
         !FunctionEvaluator<SharedSpace<BasicLinearSpace>>::checkPreconditions(
             ctx, space, values3, 1));
-#endif MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
 #ifdef MGIS_USE_EXCEPTIONS_FOR_CONTRACT_VIOLATION
     TFEL_TESTS_CHECK_THROW(
         FunctionEvaluator<SharedSpace<BasicLinearSpace>>(space, values3, 1),
@@ -123,10 +123,12 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     auto values = std::vector<real>{1, 2, 3, 4, 5, 6};
     const auto ok =
         FunctionEvaluator<SharedSpace<BasicLinearSpace>,
-                          {.data_size = 2}>::checkPreconditions(ctx, space,
-                                                                values, 2);
+                          FunctionDataLayoutDescription{
+                              .data_size = 2}>::checkPreconditions(ctx, space,
+                                                                   values, 2);
     TFEL_TESTS_ASSERT(ok);
-    auto f = FunctionEvaluator<SharedSpace<BasicLinearSpace>, {.data_size = 2}>(
+    auto f = FunctionEvaluator<SharedSpace<BasicLinearSpace>,
+                               FunctionDataLayoutDescription{.data_size = 2}>(
         space, values, 2);
     TFEL_TESTS_STATIC_ASSERT(f.getNumberOfComponents() == 2);
     TFEL_TESTS_CHECK_EQUAL(f.getDataStride(), 2);
@@ -163,14 +165,16 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     Context ctx;
     auto space = SharedSpace{std::make_shared<BasicLinearSpace>(2)};
     auto values = std::vector<real>{1, 2, 3, 4, 5, 6};
-    TFEL_TESTS_ASSERT(
-        (FunctionEvaluator<SharedSpace<BasicLinearSpace>,
-                           {.data_size = 2,
-                            .data_stride = 3}>::checkPreconditions(ctx, space,
-                                                                   values)));
+    TFEL_TESTS_ASSERT((
+        FunctionEvaluator<SharedSpace<BasicLinearSpace>,
+                          FunctionDataLayoutDescription{
+                              .data_size = 2,
+                              .data_stride = 3}>::checkPreconditions(ctx, space,
+                                                                     values)));
     auto f =
         FunctionEvaluator<SharedSpace<BasicLinearSpace>,
-                          {.data_size = 2, .data_stride = 3}>(space, values);
+                          FunctionDataLayoutDescription{
+                              .data_size = 2, .data_stride = 3}>(space, values);
     TFEL_TESTS_STATIC_ASSERT(f.getNumberOfComponents() == 2);
     TFEL_TESTS_STATIC_ASSERT(f.getDataStride() == 3);
     TFEL_TESTS_ASSERT(std::abs(f.data(unsafe, 0)[0] - 1) < eps);
@@ -337,7 +341,8 @@ struct FunctionTest final : public tfel::tests::TestCase {
     auto f3 = Function<SharedSpace<BasicLinearSpace>>(space, 2);
     static_assert(
         std::same_as<decltype(view(f2)),
-                     FunctionView<SharedSpace<BasicLinearSpace>, {}, false>>);
+                     FunctionView<SharedSpace<BasicLinearSpace>,
+                                  FunctionDataLayoutDescription{}, true>>);
     const auto ok = assign(ctx, f3, view(f2));
     TFEL_TESTS_ASSERT(ok);
     const auto values3 = f3.data();

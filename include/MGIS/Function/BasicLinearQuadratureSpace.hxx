@@ -3,6 +3,13 @@
  * \brief
  * \author Thomas Helfer
  * \date   01/05/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_FUNCTION_BASICLINEARQUADRATURESPACE_HXX
@@ -18,7 +25,7 @@ namespace mgis::function {
    * \param N: number of integration points per cells
    */
   template <size_type N>
-  requires(N > 0) struct MGIS_EXPORT BasicLinearQuadratureSpace {
+  requires(N > 0) struct BasicLinearQuadratureSpace {
     //! \brief an empty element workspace
     struct DummyCellWorkspace {};
     /*!
@@ -90,8 +97,9 @@ namespace mgis::function {
       const size_type) noexcept;
 
   template <size_type N>
-  constexpr bool areEquivalent(const BasicLinearQuadratureSpace<N>&,
-                               const BasicLinearQuadratureSpace<N>&) noexcept;
+  [[nodiscard]] constexpr bool areEquivalent(
+      const BasicLinearQuadratureSpace<N>&,
+      const BasicLinearQuadratureSpace<N>&) noexcept;
 
 }  // end of namespace mgis::function
 

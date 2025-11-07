@@ -4,6 +4,13 @@
  * transform function
  * \author Thomas Helfer
  * \date   09/05/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_FUNCTION_UNARYOPERATION_HXX
@@ -137,8 +144,14 @@ namespace mgis::function {
   template <typename CallableType>
   constexpr auto unary_operation(CallableType&&);
 
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
+  constexpr auto unary_operation(CallableType&&, const EvaluatorType&);
+
   template <typename CallableType>
   constexpr auto transform(CallableType&&);
+
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
+  constexpr auto transform(CallableType&&, const EvaluatorType&);
 
 }  // end of namespace mgis::function
 
@@ -155,7 +168,7 @@ namespace mgis::function::customization_points {
 
   template <>
   struct AbsoluteValue<real> {
-    static constexpr real exe(const real& v) noexcept { return std::abs(v); }
+    static constexpr real exe(const real& v) noexcept { return v < 0 ? -v : v; }
   };
 
   template <std::size_t N>

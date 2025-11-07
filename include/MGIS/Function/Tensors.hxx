@@ -4,6 +4,13 @@
  * \brief
  * \author Thomas Helfer
  * \date   11/05/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_FUNCTION_TENSORS_HXX
@@ -17,6 +24,7 @@
 #include "MGIS/Function/Tensors/TensorConcept.hxx"
 #include "MGIS/Function/Tensors/TensorView.hxx"
 #include "MGIS/Function/Tensors/TensorModifier.hxx"
+#include "MGIS/Function/Tensors/CoalescedMemoryAccessTensorView.hxx"
 
 namespace mgis::function::internals {
 
@@ -367,7 +375,7 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#endif MGIS_HAVE_TFEL
+#endif /* MGIS_HAVE_TFEL */
 
 #include "MGIS/Function/Tensors.ixx"
 

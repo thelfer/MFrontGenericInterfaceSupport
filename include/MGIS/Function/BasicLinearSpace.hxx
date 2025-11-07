@@ -14,7 +14,7 @@
 namespace mgis::function {
 
   //! \brief the simpliest implementation of a linear space
-  struct MGIS_EXPORT BasicLinearSpace {
+  struct BasicLinearSpace {
     /*!
      * \brief constructor
      * \param[in] s: size of the space
@@ -41,8 +41,8 @@ namespace mgis::function {
 
   constexpr size_type getSpaceSize(const BasicLinearSpace&) noexcept;
 
-  constexpr bool areEquivalent(const BasicLinearSpace&,
-                               const BasicLinearSpace&) noexcept;
+  [[nodiscard]] constexpr bool areEquivalent(const BasicLinearSpace&,
+                                             const BasicLinearSpace&) noexcept;
 
 }  // end of namespace mgis::function
 

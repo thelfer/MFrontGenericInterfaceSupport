@@ -74,13 +74,23 @@ target_link_libraries(IntegrateTest3-c
 add_executable(IntegrateTest4-c
   EXCLUDE_FROM_ALL
   IntegrateTest4-c.c)
-target_link_libraries(IntegrateTest4-c
-  PRIVATE MFrontGenericInterface-c MFrontGenericInterface m)
+if(MSVC)
+  target_link_libraries(IntegrateTest4-c
+    PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
+else(MSVC)
+  target_link_libraries(IntegrateTest4-c
+    PRIVATE MFrontGenericInterface-c MFrontGenericInterface m)
+endif(MSVC)
 add_executable(IntegrateTest5-c
   EXCLUDE_FROM_ALL
   IntegrateTest5-c.c)
-target_link_libraries(IntegrateTest5-c
-  PRIVATE MFrontGenericInterface-c MFrontGenericInterface m)
+if(MSVC)
+  target_link_libraries(IntegrateTest5-c
+    PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
+else(MSVC)
+  target_link_libraries(IntegrateTest5-c
+    PRIVATE MFrontGenericInterface-c MFrontGenericInterface m)
+endif(MSVC)
 
 add_test(NAME MFrontGenericBehaviourInterfaceTest-c
  COMMAND MFrontGenericBehaviourInterfaceTest-c

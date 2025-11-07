@@ -15,6 +15,7 @@
 #include "MGIS/Contract.hxx"
 #include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/SharedSpace.hxx"
+#include "MGIS/Function/Function.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 
 namespace mgis::behaviour {
@@ -102,6 +103,13 @@ namespace mgis::behaviour {
   inline constexpr auto bts = TimeStepStage::BEGINNING_OF_TIME_STEP;
   inline constexpr auto ets = TimeStepStage::END_OF_TIME_STEP;
 
+  // this variable is a workaround Visual Studio 2022 limitation
+  // on defining default value for non-type template argument
+  template <size_type N>
+  inline constexpr auto fixed_size_dynamic_stride_data_layout_description =
+      ::mgis::function::FunctionDataLayoutDescription{
+          .data_size = N, .data_stride = dynamic_extent};
+
   /*!
    * \brief return the gradient associated with the given name
    * \param[in] eh: error handler
@@ -124,9 +132,10 @@ namespace mgis::behaviour {
    * \param[in] ts: time step stage
    */
   template <mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<
-      mgis::function::
-          FunctionView<mgis::function::SharedSpace<SpaceType>, {}, false>>
+  std::optional<mgis::function::FunctionView<
+      mgis::function::SharedSpace<SpaceType>,
+      mgis::function::FunctionDataLayoutDescription{},
+      false>>
   getGradient(AbstractErrorHandler&,
               const MaterialFunctionManager<SpaceType>&,
               std::string_view,
@@ -141,7 +150,7 @@ namespace mgis::behaviour {
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
   std::optional<mgis::function::FunctionView<
       mgis::function::SharedSpace<SpaceType>,
-      {.data_size = N, .data_stride = dynamic_extent}>>
+      fixed_size_dynamic_stride_data_layout_description<N>>>
   getGradient(AbstractErrorHandler&,
               MaterialFunctionManager<SpaceType>&,
               std::string_view,
@@ -156,7 +165,7 @@ namespace mgis::behaviour {
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
   std::optional<mgis::function::FunctionView<
       mgis::function::SharedSpace<SpaceType>,
-      {.data_size = N, .data_stride = dynamic_extent},
+      fixed_size_dynamic_stride_data_layout_description<N>,
       false>>
   getGradient(AbstractErrorHandler&,
               const MaterialFunctionManager<SpaceType>&,
@@ -185,9 +194,10 @@ namespace mgis::behaviour {
    * \param[in] ts: time step stage
    */
   template <mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<
-      mgis::function::
-          FunctionView<mgis::function::SharedSpace<SpaceType>, {}, false>>
+  std::optional<mgis::function::FunctionView<
+      mgis::function::SharedSpace<SpaceType>,
+      mgis::function::FunctionDataLayoutDescription{},
+      false>>
   getThermodynamicForce(AbstractErrorHandler&,
                         const MaterialFunctionManager<SpaceType>&,
                         std::string_view,
@@ -202,7 +212,7 @@ namespace mgis::behaviour {
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
   std::optional<mgis::function::FunctionView<
       mgis::function::SharedSpace<SpaceType>,
-      {.data_size = N, .data_stride = dynamic_extent}>>
+      fixed_size_dynamic_stride_data_layout_description<N>>>
   getThermodynamicForce(AbstractErrorHandler&,
                         MaterialFunctionManager<SpaceType>&,
                         std::string_view,
@@ -217,7 +227,7 @@ namespace mgis::behaviour {
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
   std::optional<mgis::function::FunctionView<
       mgis::function::SharedSpace<SpaceType>,
-      {.data_size = N, .data_stride = dynamic_extent},
+      fixed_size_dynamic_stride_data_layout_description<N>,
       false>>
   getThermodynamicForce(AbstractErrorHandler&,
                         const MaterialFunctionManager<SpaceType>&,
@@ -246,9 +256,10 @@ namespace mgis::behaviour {
    * \param[in] ts: time step stage
    */
   template <mgis::function::LinearElementSpaceConcept SpaceType>
-  std::optional<
-      mgis::function::
-          FunctionView<mgis::function::SharedSpace<SpaceType>, {}, false>>
+  std::optional<mgis::function::FunctionView<
+      mgis::function::SharedSpace<SpaceType>,
+      mgis::function::FunctionDataLayoutDescription{},
+      false>>
   getInternalStateVariable(AbstractErrorHandler&,
                            const MaterialFunctionManager<SpaceType>&,
                            std::string_view,
@@ -263,7 +274,7 @@ namespace mgis::behaviour {
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
   std::optional<mgis::function::FunctionView<
       mgis::function::SharedSpace<SpaceType>,
-      {.data_size = N, .data_stride = dynamic_extent}>>
+      fixed_size_dynamic_stride_data_layout_description<N>>>
   getInternalStateVariable(AbstractErrorHandler&,
                            MaterialFunctionManager<SpaceType>&,
                            std::string_view,
@@ -278,7 +289,7 @@ namespace mgis::behaviour {
   template <size_type N, mgis::function::LinearElementSpaceConcept SpaceType>
   std::optional<mgis::function::FunctionView<
       mgis::function::SharedSpace<SpaceType>,
-      {.data_size = N, .data_stride = dynamic_extent},
+      fixed_size_dynamic_stride_data_layout_description<N>,
       false>>
   getInternalStateVariable(AbstractErrorHandler&,
                            const MaterialFunctionManager<SpaceType>&,

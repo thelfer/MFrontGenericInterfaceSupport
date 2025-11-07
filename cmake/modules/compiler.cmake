@@ -1,19 +1,21 @@
 # - Check if the given C++ source code compiles.
-# TFEL_CHECK_CXX_SOURCE_COMPILES(<code> <var> [FAIL_REGEX <fail-regex>])
+# MGIS_CHECK_CXX_SOURCE_COMPILES(<code> <var> [FAIL_REGEX <fail-regex>])
 #  <code>       - source code to try to compile
 #  <var>        - variable to store whether the source code compiled
 #  <fail-regex> - fail if test output matches this regex
 # The following variables may be set before calling this macro to
 # modify the way the check is run:
 #
-#  TFEL_CMAKE_REQUIRED_FLAGS = string of compile command line flags
-#  TFEL_CMAKE_REQUIRED_DEFINITIONS = list of macros to define (-DFOO=bar)
-#  TFEL_CMAKE_REQUIRED_INCLUDES = list of include directories
-#  TFEL_CMAKE_REQUIRED_LIBRARIES = list of libraries to link
+#  MGIS_CMAKE_REQUIRED_FLAGS = string of compile command line flags
+#  MGIS_CMAKE_REQUIRED_DEFINITIONS = list of macros to define (-DFOO=bar)
+#  MGIS_CMAKE_REQUIRED_INCLUDES = list of include directories
+#  MGIS_CMAKE_REQUIRED_LIBRARIES = list of libraries to link
+#  MGIS_ADDITIONAL_LINK_FLAGS = additional flags for the MFrontGenericInterface library
+#  MGIS_REQUIRED_ADDITIONAL_PACKAGES = additional required packages for the MFrontGenericInterface library
 #
 # This macro is a copy of CheckCXXSourceCompiles.cmake
 # Copyright 2005-2009 Kitware, Inc.
-MACRO(TFEL_CHECK_CXX_SOURCE_COMPILES SOURCE VAR)
+MACRO(MGIS_CHECK_CXX_SOURCE_COMPILES SOURCE VAR)
     SET(_FAIL_REGEX)
     SET(_key)
     FOREACH(arg ${ARGN})
@@ -27,26 +29,26 @@ MACRO(TFEL_CHECK_CXX_SOURCE_COMPILES SOURCE VAR)
     ENDFOREACH()
 
     SET(MACRO_CHECK_FUNCTION_DEFINITIONS
-      "-D${VAR} ${TFEL_CMAKE_REQUIRED_FLAGS}")
-    IF(TFEL_CMAKE_REQUIRED_LIBRARIES)
+      "-D${VAR} ${MGIS_CMAKE_REQUIRED_FLAGS}")
+    IF(MGIS_CMAKE_REQUIRED_LIBRARIES)
       SET(CHECK_CXX_SOURCE_COMPILES_ADD_LIBRARIES
-        "-DLINK_LIBRARIES:STRING=${TFEL_CMAKE_REQUIRED_LIBRARIES}")
-    ELSE(TFEL_CMAKE_REQUIRED_LIBRARIES)
+        "-DLINK_LIBRARIES:STRING=${MGIS_CMAKE_REQUIRED_LIBRARIES}")
+    ELSE(MGIS_CMAKE_REQUIRED_LIBRARIES)
       SET(CHECK_CXX_SOURCE_COMPILES_ADD_LIBRARIES)
-    ENDIF(TFEL_CMAKE_REQUIRED_LIBRARIES)
-    IF(TFEL_CMAKE_REQUIRED_INCLUDES)
+    ENDIF(MGIS_CMAKE_REQUIRED_LIBRARIES)
+    IF(MGIS_CMAKE_REQUIRED_INCLUDES)
       SET(CHECK_CXX_SOURCE_COMPILES_ADD_INCLUDES
-        "-DINCLUDE_DIRECTORIES:STRING=${TFEL_CMAKE_REQUIRED_INCLUDES}")
-    ELSE(TFEL_CMAKE_REQUIRED_INCLUDES)
+        "-DINCLUDE_DIRECTORIES:STRING=${MGIS_CMAKE_REQUIRED_INCLUDES}")
+    ELSE(MGIS_CMAKE_REQUIRED_INCLUDES)
       SET(CHECK_CXX_SOURCE_COMPILES_ADD_INCLUDES)
-    ENDIF(TFEL_CMAKE_REQUIRED_INCLUDES)
+    ENDIF(MGIS_CMAKE_REQUIRED_INCLUDES)
     FILE(WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx"
       "${SOURCE}\n")
 
     TRY_COMPILE(${VAR}
       ${CMAKE_BINARY_DIR}
       ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx
-      COMPILE_DEFINITIONS ${TFEL_CMAKE_REQUIRED_DEFINITIONS}
+      COMPILE_DEFINITIONS ${MGIS_CMAKE_REQUIRED_DEFINITIONS}
       CMAKE_FLAGS -DCOMPILE_DEFINITIONS:STRING=${MACRO_CHECK_FUNCTION_DEFINITIONS}
       "${CHECK_CXX_SOURCE_COMPILES_ADD_LIBRARIES}"
       "${CHECK_CXX_SOURCE_COMPILES_ADD_INCLUDES}"
@@ -71,12 +73,12 @@ MACRO(TFEL_CHECK_CXX_SOURCE_COMPILES SOURCE VAR)
         "${OUTPUT}\n"
         "Source file was:\n${SOURCE}\n")
     ENDIF(${VAR})
-ENDMACRO(TFEL_CHECK_CXX_SOURCE_COMPILES)
+ENDMACRO(MGIS_CHECK_CXX_SOURCE_COMPILES)
 
-MACRO (TFEL_CHECK_CXX_COMPILER_FLAG _FLAG _RESULT)
-   SET(SAFE_TFEL_CMAKE_REQUIRED_DEFINITIONS "${TFEL_CMAKE_REQUIRED_DEFINITIONS}")
-   SET(TFEL_CMAKE_REQUIRED_DEFINITIONS "${_FLAG}")
-   TFEL_CHECK_CXX_SOURCE_COMPILES("int main() { return 0;}" ${_RESULT}
+MACRO (MGIS_CHECK_CXX_COMPILER_FLAG _FLAG _RESULT)
+   SET(SAFE_MGIS_CMAKE_REQUIRED_DEFINITIONS "${MGIS_CMAKE_REQUIRED_DEFINITIONS}")
+   SET(MGIS_CMAKE_REQUIRED_DEFINITIONS "${_FLAG}")
+   MGIS_CHECK_CXX_SOURCE_COMPILES("int main() { return 0;}" ${_RESULT}
      # Some compilers do not fail with a bad flag
      FAIL_REGEX "unrecognized .*option"                     # GNU
      FAIL_REGEX "unknown warning option"                    # CLANG
@@ -86,16 +88,16 @@ MACRO (TFEL_CHECK_CXX_COMPILER_FLAG _FLAG _RESULT)
      FAIL_REGEX "[Ww]arning: [Oo]ption"                     # SunPro
      FAIL_REGEX "command option .* is not recognized"       # XL
      )
-   SET (TFEL_CMAKE_REQUIRED_DEFINITIONS "${SAFE_TFEL_CMAKE_REQUIRED_DEFINITIONS}")
-ENDMACRO (TFEL_CHECK_CXX_COMPILER_FLAG)
+   SET (MGIS_CMAKE_REQUIRED_DEFINITIONS "${SAFE_MGIS_CMAKE_REQUIRED_DEFINITIONS}")
+ENDMACRO (MGIS_CHECK_CXX_COMPILER_FLAG)
 
-MACRO(tfel_enable_cxx_compiler_flag2 out flag var)
+MACRO(mgis_enable_cxx_compiler_flag2 out flag var)
   get_property(_cached CACHE "${var}" PROPERTY TYPE SET)
   if (NOT ${_cached})
     if(MSVC)
-  	TFEL_CHECK_CXX_COMPILER_FLAG("/${flag}" ${var})
+  	MGIS_CHECK_CXX_COMPILER_FLAG("/${flag}" ${var})
     else(MSVC)
-  	TFEL_CHECK_CXX_COMPILER_FLAG("-${flag}" ${var})
+  	MGIS_CHECK_CXX_COMPILER_FLAG("-${flag}" ${var})
     endif(MSVC)
     IF(${var})
       MESSAGE(STATUS "enabling flag '${flag}'")
@@ -110,22 +112,26 @@ MACRO(tfel_enable_cxx_compiler_flag2 out flag var)
       SET(${out} "-${flag} ${${out}}")
     endif(MSVC)
   endif()
-ENDMACRO(tfel_enable_cxx_compiler_flag2)
+ENDMACRO(mgis_enable_cxx_compiler_flag2)
 
-MACRO(tfel_enable_cxx_compiler_flag out)
+MACRO(mgis_enable_cxx_compiler_flag out)
   IF(${ARGC} LESS 1)
     MESSAGE(FATAL_ERROR "enable_compiler_flag : no flag specified")
   ENDIF(${ARGC} LESS 1)
   FOREACH(f ${ARGN})
-    tfel_enable_cxx_compiler_flag2(${out} "${f}" ${f}_AVAILABLE)
+    mgis_enable_cxx_compiler_flag2(${out} "${f}" ${f}_AVAILABLE)
   ENDFOREACH(f)
-ENDMACRO(tfel_enable_cxx_compiler_flag)
+ENDMACRO(mgis_enable_cxx_compiler_flag)
 
 #compiler specific options
 set(VISIBILITY_FLAGS   "")
 set(OPTIMISATION_FLAGS "")
 set(COMPILER_WARNINGS  "")
+set(MGIS_ADDITIONAL_LIBRARIES "")
+set(MGIS_ADDITIONAL_LINK_FLAGS "")
+set(MGIS_REQUIRED_ADDITIONAL_PACKAGES "")
 
+option(enable-gpu-offloading "enable offloading on GPUS. Support of offloading depends on compiler support" OFF)
 option(enable-fast-math "enable -ffast-math compiler flag" OFF)
 option(PATHSCALE_COMPILER "set true if using the PathScale compiler" OFF)
 
@@ -145,6 +151,13 @@ elseif(((CMAKE_CXX_COMPILER_ID STREQUAL "Clang") OR
         (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")) AND
        (NOT PATHSCALE_COMPILER))
   include(cmake/modules/clang.cmake)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+    option(enable-intel-llvm-sycl-support "enable sycl support" OFF)
+    if(enable-intel-llvm-sycl-support)
+      add_compile_options("-fsycl")
+      list(APPEND MGIS_ADDITIONAL_LINK_FLAGS "-fsycl")
+    endif(enable-intel-llvm-sycl-support)
+  endif(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
   include(cmake/modules/nvhpc.cmake)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")

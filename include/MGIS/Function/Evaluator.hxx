@@ -3,6 +3,13 @@
  * \brief
  * \author Thomas Helfer
  * \date   29/04/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_FUNCTION_EVALUATOR_HXX
@@ -25,9 +32,10 @@ namespace mgis::function {
    * \param[in] e1: first evaluator
    * \param[in] e2: second evaluator
    */
-  constexpr bool checkMatchingSpaces(AbstractErrorHandler&,
-                                     const EvaluatorConcept auto&,
-                                     const EvaluatorConcept auto&);
+  [[nodiscard]] constexpr bool checkMatchingSpaces(
+      AbstractErrorHandler&,
+      const EvaluatorConcept auto&,
+      const EvaluatorConcept auto&);
 
 }  // end of namespace mgis::function
 

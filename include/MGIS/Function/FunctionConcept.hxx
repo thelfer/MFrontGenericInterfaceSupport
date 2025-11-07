@@ -3,6 +3,13 @@
  * \brief
  * \author Thomas Helfer
  * \date   14/05/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_FUNCTION_FUNCTIONCONCEPT_HXX
@@ -99,6 +106,9 @@ namespace mgis::function {
     struct FunctionResultQueryImplementation3<true, FunctionType> {
       using Space =
           std::decay_t<decltype(getSpace(std::declval<FunctionType>()))>;
+      using result_type = std::invoke_result_t<FunctionType,
+                                               cell_index<Space>,
+                                               quadrature_point_index<Space>>;
       using const_result_type =
           std::invoke_result_t<const FunctionType,
                                cell_index<Space>,
@@ -167,11 +177,11 @@ namespace mgis::function {
       static constexpr bool b3 =
           ((requires(FunctionType & e) {
              {
-               e(std::declval<cell_workspace<Space>>(),
-                 std::declval<cell_index<Space>>())
+               e(std::declval<cell_index<Space>>(),
+                 std::declval<quadrature_point_index<Space>>())
                } -> mutable_return_value;
            }) &&
-           (QuadratureSpaceConcept<Space> && hasCellWorkspace<Space>));
+           (QuadratureSpaceConcept<Space>));
       static constexpr bool b4 =
           ((requires(FunctionType & e) {
              {
@@ -180,7 +190,7 @@ namespace mgis::function {
                  std::declval<quadrature_point_index<Space>>())
                } -> mutable_return_value;
            }) &&
-           (QuadratureSpaceConcept<Space>));
+           (QuadratureSpaceConcept<Space> && hasCellWorkspace<Space>));
       using result_type1 =
           typename FunctionResultQueryImplementation1<b1, FunctionType>::
               result_type;
@@ -228,6 +238,12 @@ namespace mgis::function {
     }, FunctionType > {};
 
   }  // namespace internals
+
+  template <typename FunctionType>
+  struct LightweightViewTraits : std::false_type {};
+
+  template <typename FunctionType>
+  concept LightweightViewConcept = LightweightViewTraits<FunctionType>::value;
 
   //! \brief a concept that must satisfy a function
   template <typename FunctionType>
@@ -291,7 +307,45 @@ namespace mgis::function {
            : true) &&
       (internals::FunctionResultTypeTraits<
           typename internals::FunctionResultQuery<FunctionType>::result_type>::
-           is_specialized);
+           is_specialized) &&
+      ((LightweightViewConcept<FunctionType>) || (requires(FunctionType & f) {
+         { view(f) } -> LightweightViewConcept;
+       }));
+
+  namespace internals {
+
+    template <bool, FunctionConcept FunctionType>
+    struct ViewResultType {
+      using type = void;
+    };
+
+    template <FunctionConcept FunctionType>
+    struct ViewResultType<false, FunctionType> {
+      using type = decltype(view(std::declval<FunctionType&>()));
+    };
+
+  }  // namespace internals
+
+  /*!
+   * \brief an alias which returns a view corresponding to the given function
+   * type
+   */
+  template <FunctionConcept FunctionType>
+  using function_view = std::conditional_t<
+      LightweightViewConcept<FunctionType>,
+      FunctionType,
+      typename internals::ViewResultType<LightweightViewConcept<FunctionType>,
+                                         FunctionType>::type>;
+
+  //! \brief an helper function to create a view when required
+  template <FunctionConcept FunctionType>
+  constexpr function_view<FunctionType> make_view(FunctionType& f) {
+    if constexpr (LightweightViewConcept<FunctionType>) {
+      return f;
+    } else {
+      return view(f);
+    }
+  }  // end of make_view
 
   //! \brief concept defining evaluators working on an element space
   template <typename FunctionType>
@@ -367,6 +421,7 @@ namespace mgis::function {
 
   }  // namespace internals
 
+#ifndef _MSC_VER
   /*!
    * \brief assign an evaluator to a mutable function view
    * \param[in] ctx: execution context
@@ -375,9 +430,9 @@ namespace mgis::function {
    */
   template <EvaluatorConcept EvaluatorType, FunctionConcept FunctionType>
   [[nodiscard]] bool operator|(EvaluatorType, FunctionType&) requires(
-      internals::same_decay_type<
-          decltype(getSpace(std::declval<EvaluatorType>())),
-          decltype(getSpace(std::declval<FunctionType>()))>);
+      std::same_as<evaluator_space<EvaluatorType>,
+                   function_space<FunctionType>>);
+#endif
 
 }  // end of namespace mgis::function
 

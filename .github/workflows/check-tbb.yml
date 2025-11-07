@@ -25,6 +25,7 @@ jobs:
       shell: spack-sh {0}
       run: |
         # spack install python py-numpy py-pybind11
+        spack install tbb
         spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
     - name: cmake
       shell: spack-sh {0}
@@ -32,6 +33,7 @@ jobs:
         # spack load python py-numpy py-pybind11
         # loading TFEL
         spack load tfel
+        spack load intel-tbb
         cmake -DCMAKE_BUILD_TYPE=Release .                         \
               -Denable-c-bindings=ON                               \
               -Denable-fortran-bindings=ON                         \
@@ -39,16 +41,18 @@ jobs:
               -Denable-portable-build=ON                           \
               -Denable-julia-bindings=OFF                          \
               -DTFEL_DIR=`spack location -i tfel`/share/tfel/cmake \
-              -Denable-parallel-stl-algorithms=OFF
+              -Denable-parallel-stl-algorithms=ON
     - name: make
       shell: spack-sh {0}
       run: |
         # spack load python py-numpy py-pybind11
         spack load tfel
+        spack load intel-tbb
         make
     - name: make check
       shell: spack-sh {0}
       run: |
         # spack load python py-numpy py-pybind11 tfel
         spack load tfel
+        spack load intel-tbb
         make check

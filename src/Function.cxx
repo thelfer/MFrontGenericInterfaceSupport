@@ -18,13 +18,15 @@ namespace mgis::function {
   static_assert(std::same_as<function_result<FunctionView<BasicLinearSpace>>,
                              std::span<real>>);
   static_assert(
-      std::same_as<
-          function_result<FunctionView<BasicLinearSpace, {.data_size = 2}>>,
-          std::span<real, 2>>);
+      std::same_as<function_result<FunctionView<BasicLinearSpace,
+                                                FunctionDataLayoutDescription{
+                                                    .data_size = 2}>>,
+                   std::span<real, 2>>);
   static_assert(
-      std::same_as<
-          function_result<FunctionView<BasicLinearSpace, {.data_size = 1}>>,
-          real&>);
+      std::same_as<function_result<FunctionView<BasicLinearSpace,
+                                                FunctionDataLayoutDescription{
+                                                    .data_size = 1}>>,
+                   real&>);
 
   static_assert(FunctionConcept<Function<BasicLinearSpace>>);
   // This shall not work as Function is not a lightweight obect
