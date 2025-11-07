@@ -368,7 +368,7 @@ namespace mgis {
         check_size(from.size(), to.size());
         std::copy(from.begin(), from.end(), to.begin());
       };  // end update_span
-      auto update_field_holder = [&check_size](
+      auto update_field_holder = [&o, &check_size](
           MaterialStateManager::FieldHolder& to,
           const MaterialStateManager::FieldHolder& from) {
         if (mgis::holds_alternative<mgis::real>(from)) {
@@ -383,6 +383,11 @@ namespace mgis {
           } else if(mgis::holds_alternative<std::vector<mgis::real>>(to)) {
             // reuse existing memory
             auto& to_v = mgis::get<std::vector<mgis::real>>(to);
+            if (to_v.size() != from_v.size()) {
+              if (to_v.size() * o.n == from_v.size()) {
+                to_v.resize(from_v.size());
+              }
+            }
             check_size(from_v.size(), to_v.size());
             std::copy(from_v.begin(), from_v.end(), to_v.begin());
           } else {
@@ -399,7 +404,12 @@ namespace mgis {
                       to_v.begin());
           } else if (mgis::holds_alternative<std::vector<mgis::real>>(to)) {
             // reuse existing memory
-            auto to_v = mgis::get<std::vector<mgis::real>>(to);
+            auto& to_v = mgis::get<std::vector<mgis::real>>(to);
+            if (to_v.size() != from_v.size()) {
+              if (to_v.size() * o.n == from_v.size()) {
+                to_v.resize(from_v.size());
+              }
+            }
             check_size(from_v.size(), to_v.size());
             std::copy(from_v.begin(), from_v.end(),
                       to_v.begin());
