@@ -18,6 +18,7 @@
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
+#include "TFEL/Material/Lame.hxx"
 #include "MGIS/Function/BasicLinearSpace.hxx"
 #include "MGIS/Function/BasicLinearQuadratureSpace.hxx"
 #include "MGIS/Function/Function.hxx"
@@ -37,13 +38,15 @@ struct TensorialFunctionsTest final : public tfel::tests::TestCase {
     this->test2();
     this->test3();
     this->test4();
+    this->test5();
     return this->result;
   }
 
  private:
   static constexpr bool check_value(const mgis::real a,
-                                    const mgis::real b) noexcept {
-    constexpr auto eps = mgis::real{1e-12};
+                                    const mgis::real b,
+                                    const mgis::real eps = mgis::real{
+                                        1e-12}) noexcept {
     auto local_abs = [](const mgis::real r) { return r > 0 ? r : -r; };
     return local_abs(a - b) < eps;
   }  // end of check_value
@@ -140,6 +143,47 @@ struct TensorialFunctionsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(check_value((*values)[0], 1));
     TFEL_TESTS_STATIC_ASSERT(check_value((*values)[1], 1));
     TFEL_TESTS_STATIC_ASSERT(check_value((*values)[2], 1));
+#endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
+  }
+  void test5() {
+#ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
+    using namespace tfel::math;
+    using namespace tfel::material;
+    using namespace mgis;
+    using namespace mgis::function;
+    using mgis::real;
+    constexpr auto E = real{150e9};
+    constexpr auto nu = 0.3;
+    constexpr auto l = computeLambda(E, nu);
+    constexpr auto m = computeMu(E, nu);
+    constexpr auto k = l + (2 * m) / 3;
+    constexpr auto eps = E * real{1e-14};
+    constexpr auto values = [&]() -> std::optional<std::array<real, 16>> {
+      using Stensor4 = st2tost2<2u, real>;
+      auto space = BasicLinearSpace{1};
+      auto D = ST2toST2Function<BasicLinearSpace, 2u>{space};
+      D(0) = k * Stensor4::IxI() + 2 * m * Stensor4::K();
+      auto D_values = std::array<real, 16>{};
+      std::copy(D.data().begin(), D.data().end(), D_values.begin());
+      return D_values;
+    }();
+    TFEL_TESTS_STATIC_ASSERT(values.has_value());
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[0], l + 2 * m, eps));
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[1], l, eps));
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[2], l, eps));
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[3], 0, eps));
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[4], l, eps));
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[5], l + 2 * m, eps));
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[6], l, eps));
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[7], 0, eps));
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[8], l, eps));
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[9], l, eps));
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[10], l + 2 * m, eps));
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[11], 0, eps));
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[12], 0, eps));
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[13], 0, eps));
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[14], 0, eps));
+    TFEL_TESTS_STATIC_ASSERT(check_value((*values)[15], 2 * m, eps));
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }
 };
