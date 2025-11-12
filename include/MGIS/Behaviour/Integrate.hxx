@@ -30,10 +30,22 @@ namespace mgis {
 
 namespace mgis::behaviour {
 
-  // forward declaration
+  // forward declarations
   struct Behaviour;
-  // forward declaration
   struct MaterialDataManager;
+
+  namespace debug {
+
+    // forward declaration
+    struct BehaviourIntegrationFailureAnalyser;
+
+#ifndef LIB_MGIS_BEHAVIOUR_BEHAVIOURINTEGRATIONFAILUREANALYSER_HXX
+    // forward declaration
+    MGIS_EXPORT const debug::BehaviourIntegrationFailureAnalyser&
+    getDefaultBehaviourIntegrationFailureAnalyser();
+#endif
+
+  }  // end of namespace debug
 
   /*!
    * \brief type of integration to be performed
@@ -74,7 +86,7 @@ namespace mgis::behaviour {
     BehaviourIntegrationResult();
     //! \brief move constructor
     BehaviourIntegrationResult(BehaviourIntegrationResult&&);
-    //! \brief copye constructor
+    //! \brief copy constructor
     BehaviourIntegrationResult(const BehaviourIntegrationResult&);
     //! \brief move assignement
     BehaviourIntegrationResult& operator=(BehaviourIntegrationResult&&);
@@ -274,6 +286,35 @@ namespace mgis::behaviour {
    */
   int integrate(BehaviourDataView&, const Behaviour&);
   /*!
+   * \brief integrate the behaviour. In case of non convergence, an
+   * mtest file is generated.
+   *
+   * The returned value has the following meaning:
+   * - -1: integration failed
+   * -  0: integration succeeded but results are unreliable
+   * -  1: integration succeeded and results are reliable
+   *
+   * \param[in,out] d: behaviour data
+   * \param[in,out] b: behaviour
+   */
+  MGIS_EXPORT int integrate_debug(BehaviourDataView&, const Behaviour&);
+  /*!
+   * \brief integrate the behaviour. In case of non convergence, an
+   * mtest file is generated.
+   *
+   * The returned value has the following meaning:
+   * - -1: integration failed
+   * -  0: integration succeeded but results are unreliable
+   * -  1: integration succeeded and results are reliable
+   *
+   * \param[in,out] d: behaviour data
+   * \param[in,out] b: behaviour
+   */
+  MGIS_EXPORT int integrate_debug(
+      BehaviourDataView&,
+      const Behaviour&,
+      const debug::BehaviourIntegrationFailureAnalyser&);
+  /*!
    * \brief integrate the behaviour for a range of integration points.
    * \return the result of the behaviour integration.
    * \param[in,out] m: material data manager
@@ -285,6 +326,15 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT BehaviourIntegrationResult integrate(
       MaterialDataManager&, const BehaviourIntegrationOptions&, const real);
+  //! \brief debugging version
+  MGIS_EXPORT BehaviourIntegrationResult integrate_debug(
+      MaterialDataManager&, const BehaviourIntegrationOptions&, const real);
+  //! \brief debugging version
+  MGIS_EXPORT BehaviourIntegrationResult
+  integrate_debug(MaterialDataManager&,
+                  const BehaviourIntegrationOptions&,
+                  const real,
+                  const debug::BehaviourIntegrationFailureAnalyser&);
   /*!
    * \brief integrate the behaviour for a range of integration points.
    * \return the result of the behaviour integration.
@@ -303,6 +353,21 @@ namespace mgis::behaviour {
             const real,
             const size_type,
             const size_type);
+  //! \brief debugging version
+  MGIS_EXPORT BehaviourIntegrationResult
+  integrate_debug(MaterialDataManager&,
+                  const BehaviourIntegrationOptions&,
+                  const real,
+                  const size_type,
+                  const size_type);
+  //! \brief debugging version
+  MGIS_EXPORT BehaviourIntegrationResult
+  integrate_debug(MaterialDataManager&,
+                  const BehaviourIntegrationOptions&,
+                  const real,
+                  const size_type,
+                  const size_type,
+                  const debug::BehaviourIntegrationFailureAnalyser&);
   /*!
    * \brief integrate the behaviour over all integration points using a thread
    * pool to parallelize the integration.
@@ -320,6 +385,19 @@ namespace mgis::behaviour {
             MaterialDataManager&,
             const BehaviourIntegrationOptions&,
             const real);
+  //! \brief debugging version
+  MGIS_EXPORT MultiThreadedBehaviourIntegrationResult
+  integrate_debug(mgis::ThreadPool&,
+                  MaterialDataManager&,
+                  const BehaviourIntegrationOptions&,
+                  const real);
+  //! \brief debugging version
+  MGIS_EXPORT MultiThreadedBehaviourIntegrationResult
+  integrate_debug(mgis::ThreadPool&,
+                  MaterialDataManager&,
+                  const BehaviourIntegrationOptions&,
+                  const real,
+                  const debug::BehaviourIntegrationFailureAnalyser&);
   /*!
    * \brief integrate the behaviour for a range of integration points.
    * \return an exit status. The returned value has the following meaning:
@@ -339,6 +417,18 @@ namespace mgis::behaviour {
                             MaterialDataManager&,
                             const IntegrationType it,
                             const real);
+  //! \brief debugging version
+  MGIS_EXPORT int integrate_debug(mgis::ThreadPool&,
+                                  MaterialDataManager&,
+                                  const IntegrationType it,
+                                  const real);
+  //! \brief debugging version
+  MGIS_EXPORT int integrate_debug(
+      mgis::ThreadPool&,
+      MaterialDataManager&,
+      const IntegrationType it,
+      const real,
+      const debug::BehaviourIntegrationFailureAnalyser&);
   /*!
    * \brief integrate the behaviour for a range of integration points.
    * \return an exit status. The returned value has the following meaning:
@@ -360,6 +450,20 @@ namespace mgis::behaviour {
                             const real,
                             const size_type,
                             const size_type);
+  //! \brief debugging version
+  MGIS_EXPORT int integrate_debug(MaterialDataManager&,
+                                  const IntegrationType,
+                                  const real,
+                                  const size_type,
+                                  const size_type);
+  //! \brief debugging version
+  MGIS_EXPORT int integrate_debug(
+      MaterialDataManager&,
+      const IntegrationType,
+      const real,
+      const size_type,
+      const size_type,
+      const debug::BehaviourIntegrationFailureAnalyser&);
   /*!
    * \brief execute the given post-processing
    * \param[out] outputs: post-processing results

@@ -355,43 +355,6 @@ namespace mgis::behaviour {
     return &(s.external_state_variables[o]);
   }  // end of getExternalStateVariable
 
-  StateView make_view(State& s) {
-    auto get_ptr = [](std::vector<real>& v) -> real* {
-      if (v.empty()) {
-        return nullptr;
-      }
-      return &v[0];
-    };  // end of get_ptr
-    StateView v;
-    v.mass_density = &(s.mass_density);
-    v.gradients = get_ptr(s.gradients);
-    v.thermodynamic_forces = get_ptr(s.thermodynamic_forces);
-    v.material_properties = get_ptr(s.material_properties);
-    v.internal_state_variables = get_ptr(s.internal_state_variables);
-    v.stored_energy = &s.stored_energy;
-    v.dissipated_energy = &s.dissipated_energy;
-    v.external_state_variables = get_ptr(s.external_state_variables);
-    return v;
-  }  // end of make_view
-
-  InitialStateView make_view(const State& s) {
-    auto get_ptr = [](const std::vector<real>& v) -> const real* {
-      if (v.empty()) {
-        return nullptr;
-      }
-      return &v[0];
-    };  // end of get_ptr
-    InitialStateView v;
-    v.gradients = get_ptr(s.gradients);
-    v.thermodynamic_forces = get_ptr(s.thermodynamic_forces);
-    v.material_properties = get_ptr(s.material_properties);
-    v.internal_state_variables = get_ptr(s.internal_state_variables);
-    v.stored_energy = &s.stored_energy;
-    v.dissipated_energy = &s.dissipated_energy;
-    v.external_state_variables = get_ptr(s.external_state_variables);
-    return v;
-  }  // end of make_view
-
   static void print_variables(std::ostream& os,
                               const Behaviour& b,
                               const std::vector<Variable>& variables,

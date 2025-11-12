@@ -15,6 +15,7 @@ mfront_behaviours_check_library(BehaviourTest
   Elasticity
   OrthotropicElasticity
   Norton
+  NortonFailure
   Plasticity
   Gurson
   BoundsCheckTest
@@ -30,6 +31,12 @@ mfront_behaviours_check_library(ModelTest
   ode_rk54)
 
 #
+
+add_executable(IntegrationFailureDebugTest
+  EXCLUDE_FROM_ALL
+  IntegrationFailureDebugTest.cxx)
+target_link_libraries(IntegrationFailureDebugTest
+  PRIVATE MFrontGenericInterface)
 
 add_executable(LoadMaterialPropertyTest
   EXCLUDE_FROM_ALL
@@ -122,7 +129,10 @@ add_executable(IntegrateTest5
   EXCLUDE_FROM_ALL IntegrateTest5.cxx)
 target_link_libraries(IntegrateTest5
 	PRIVATE MFrontGenericInterface)
-
+add_executable(IntegrateDebugTest
+  EXCLUDE_FROM_ALL IntegrateDebugTest.cxx)
+target_link_libraries(IntegrateDebugTest
+	PRIVATE MFrontGenericInterface)
 add_executable(RotateFunctionsTest
   EXCLUDE_FROM_ALL RotateFunctionsTest.cxx)
 target_link_libraries(RotateFunctionsTest
@@ -318,6 +328,30 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
 else((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest5
     PROPERTY DEPENDS ModelTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME IntegrationFailureDebugTest
+ COMMAND IntegrationFailureDebugTest "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(check IntegrationFailureDebugTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrationFailureDebugTest
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrationFailureDebugTest
+    PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME IntegrateDebugTest
+ COMMAND IntegrateDebugTest "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(check IntegrateDebugTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrateDebugTest
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrateDebugTest
+    PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME ExternalStateVariableTest

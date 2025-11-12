@@ -12,16 +12,13 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <algorithm>
 #include "MGIS/Utilities/Markdown.hxx"
 
-namespace mgis {
+namespace mgis::utilities {
 
-  namespace utilities {
+  std::string get_heading_signs(const mgis::size_type l) {
+    return std::string(std::max(l, mgis::size_type{1}), '#');
+  }  // end of get_heading_signs
 
-    std::string get_heading_signs(const mgis::size_type) {
-      return std::string(1, '#');
-    }  // end of get_heading_signs
-
-  }  // end of namespace utilities
-
-}  // end of namespace mgis
+}  // end of namespace mgis::utilities

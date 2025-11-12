@@ -107,10 +107,14 @@ MGIS_C_EXPORT mgis_status mgis_bv_free_behaviour_integration_options(
  * \param[in,out] d: behaviour data
  * \param[in,out] b: behaviour
  */
-
 MGIS_C_EXPORT mgis_status mgis_bv_integrate(int* const,
                                             mgis_bv_BehaviourDataView* const,
                                             const mgis_bv_Behaviour* const);
+//! \brief debugging version
+MGIS_C_EXPORT mgis_status
+mgis_bv_integrate_debug(int* const,
+                        mgis_bv_BehaviourDataView* const,
+                        const mgis_bv_Behaviour* const);
 /*!
  * \brief integrate the behaviour. The returned value has the following
  * meaning:
@@ -130,6 +134,9 @@ MGIS_C_EXPORT mgis_status mgis_bv_integrate(int* const,
 MGIS_C_EXPORT mgis_status mgis_bv_integrate_2(int* const,
 					      mgis_bv_BehaviourData* const,
 					      const mgis_bv_Behaviour* const);
+//! \brief debugging version
+MGIS_C_EXPORT mgis_status mgis_bv_integrate_debug_2(
+    int* const, mgis_bv_BehaviourData* const, const mgis_bv_Behaviour* const);
 /*!
  * \brief integrate the behaviour for a range of integration points. The
  * returned value has the following meaning:
@@ -147,6 +154,14 @@ MGIS_C_EXPORT mgis_status mgis_bv_integrate_2(int* const,
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_integrate_material_data_manager_part(int* const,
+                                             mgis_bv_MaterialDataManager* const,
+                                             const mgis_bv_IntegrationType,
+                                             const mgis_real,
+                                             const mgis_size_type,
+                                             const mgis_size_type);
+//! \brief debugging version
+MGIS_C_EXPORT mgis_status
+mgis_bv_integrate_debug_material_data_manager_part(int* const,
                                              mgis_bv_MaterialDataManager* const,
                                              const mgis_bv_IntegrationType,
                                              const mgis_real,
@@ -172,6 +187,13 @@ mgis_bv_integrate_material_data_manager(int* const,
                                         mgis_bv_MaterialDataManager* const,
                                         const mgis_bv_IntegrationType,
                                         const mgis_real);
+//! \brief debugging version
+MGIS_C_EXPORT mgis_status mgis_bv_integrate_debug_material_data_manager(
+    int* const,
+    mgis_ThreadPool* const,
+    mgis_bv_MaterialDataManager* const,
+    const mgis_bv_IntegrationType,
+    const mgis_real);
 
 MGIS_C_EXPORT mgis_status
 mgis_bv_integrate_material_data_manager_with_options(int* const,
@@ -179,7 +201,15 @@ mgis_bv_integrate_material_data_manager_with_options(int* const,
                                                      mgis_bv_MaterialDataManager* const,
                                                      mgis_bv_BehaviourIntegrationOptions* const,
                                                      const mgis_real);
-                                        
+//! \brief debugging version
+MGIS_C_EXPORT mgis_status
+mgis_bv_integrate_debug_material_data_manager_with_options(
+    int* const,
+    mgis_ThreadPool* const,
+    mgis_bv_MaterialDataManager* const,
+    mgis_bv_BehaviourIntegrationOptions* const,
+    const mgis_real);
+
 #ifdef __cplusplus
 }
 #endif /*  __cplusplus */

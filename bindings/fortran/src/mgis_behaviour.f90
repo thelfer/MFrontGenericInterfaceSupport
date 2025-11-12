@@ -3718,6 +3718,28 @@ contains
     type(mgis_status) :: s
     s = integrate_wrapper(r, d%ptr, b%ptr)
   end function integrate
+  ! integrate_debug
+  function integrate_debug(r, d, b) result(s)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function integrate_debug_wrapper(r, d, b) &
+            bind(c,name = 'mgis_bv_integrate_debug_2') result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: r
+         type(c_ptr), intent(in),value :: d
+         type(c_ptr), intent(in),value :: b
+         type(mgis_status) :: s
+       end function integrate_debug_wrapper
+    end interface
+    integer, intent(out) :: r
+    type(BehaviourData), intent(in) :: d
+    type(Behaviour),     intent(in) :: b
+    type(mgis_status) :: s
+    s = integrate_debug_wrapper(r, d%ptr, b%ptr)
+  end function integrate_debug
   ! 
   function integrate_material_data_manager(r, p, m, i, dt) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t
@@ -3748,6 +3770,35 @@ contains
     s = integrate_material_data_manager_wrapper(r, p%ptr, m%ptr, i, dt)
   end function integrate_material_data_manager
   ! 
+  function integrate_debug_material_data_manager(r, p, m, i, dt) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities, only: convert_to_c_index
+    use mgis, only: ThreadPool, mgis_status, report_failure
+    implicit none
+    interface
+       function integrate_debug_material_data_manager_wrapper(r, p, m, i, dt) &
+            bind(c,name = 'mgis_bv_integrate_debug_material_data_manager') &
+            result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_double
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: r
+         type(c_ptr), intent(in),value :: p
+         type(c_ptr), intent(in),value :: m
+         integer,     intent(in),value :: i
+         real(kind = c_double), intent(in),value :: dt
+         type(mgis_status) :: s
+       end function integrate_debug_material_data_manager_wrapper
+    end interface
+    integer, intent(out) :: r
+    type(ThreadPool),          intent(in) :: p
+    type(MaterialDataManager), intent(in) :: m
+    integer,                   intent(in) :: i
+    real(kind = 8),            intent(in) :: dt
+    type(mgis_status) :: s
+    s = integrate_debug_material_data_manager_wrapper(r, p%ptr, m%ptr, i, dt)
+  end function integrate_debug_material_data_manager
+  ! 
   function integrate_material_data_manager_with_options(r, p, m, i, dt) result(s)
    use, intrinsic :: iso_c_binding, only: c_size_t
    use mgis_fortran_utilities, only: convert_to_c_index
@@ -3776,6 +3827,35 @@ contains
    type(mgis_status) :: s
    s = integrate_material_data_manager_with_options_wrapper(r, p%ptr, m%ptr, i%ptr, dt)
   end function integrate_material_data_manager_with_options
+  ! 
+  function integrate_debug_material_data_manager_with_options(r, p, m, i, dt) result(s)
+   use, intrinsic :: iso_c_binding, only: c_size_t
+   use mgis_fortran_utilities, only: convert_to_c_index
+   use mgis, only: ThreadPool, mgis_status, report_failure
+   implicit none
+   interface
+      function integrate_debug_material_data_manager_with_options_wrapper(r, p, m, i, dt) &
+           bind(c,name = 'mgis_bv_integrate_debug_material_data_manager_with_options') &
+           result(s)
+        use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_double
+        use mgis, only: mgis_status
+        implicit none
+        integer(kind=c_int), intent(out) :: r
+        type(c_ptr), intent(in),value :: p
+        type(c_ptr), intent(in),value :: m
+        type(c_ptr), intent(in),value :: i
+        real(kind = c_double), intent(in),value :: dt
+        type(mgis_status) :: s
+      end function integrate_debug_material_data_manager_with_options_wrapper
+   end interface
+   integer,                           intent(out) :: r
+   type(ThreadPool),                  intent(in) :: p
+   type(MaterialDataManager),         intent(in) :: m
+   type(BehaviourIntegrationOptions), intent(in) :: i
+   real(kind = 8), intent(in) :: dt
+   type(mgis_status) :: s
+   s = integrate_debug_material_data_manager_with_options_wrapper(r, p%ptr, m%ptr, i%ptr, dt)
+  end function integrate_debug_material_data_manager_with_options
   !
   function integrate_material_data_manager_part(r, m, i, dt, ni, ne) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t
@@ -3818,4 +3898,46 @@ contains
     nec = nec + 1
     s = integrate_material_data_manager_part_wrapper(r, m%ptr, i, dt, nic, nec)
   end function integrate_material_data_manager_part
+  !
+  function integrate_debug_material_data_manager_part(r, m, i, dt, ni, ne) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities, only: convert_to_c_index
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function integrate_debug_material_data_manager_part_wrapper(r, m, i, dt, ni, ne) &
+            bind(c,name = 'mgis_bv_integrate_debug_material_data_manager_part') &
+            result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t, c_int, c_double
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: r
+         type(c_ptr), intent(in),value :: m
+         integer,     intent(in),value :: i
+         real(kind = c_double), intent(in),value :: dt
+         integer(kind = c_size_t), intent(in),value :: ni
+         integer(kind = c_size_t), intent(in),value :: ne
+         type(mgis_status) :: s
+       end function integrate_debug_material_data_manager_part_wrapper
+    end interface
+    integer, intent(out) :: r
+    type(MaterialDataManager), intent(in) :: m
+    integer,     intent(in),value :: i
+    real(kind = 8),            intent(in) :: dt
+    integer :: ni
+    integer :: ne
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: nic
+    integer(kind=c_size_t) :: nec
+    if(.not. convert_to_c_index(nic, ni)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    if(.not. convert_to_c_index(nec, ne)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    nec = nec + 1
+    s = integrate_debug_material_data_manager_part_wrapper(r, m%ptr, i, dt, nic, nec)
+  end function integrate_debug_material_data_manager_part
 end module  mgis_behaviour

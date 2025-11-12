@@ -146,4 +146,6 @@ namespace mgis::behaviour {
 
 }  // end of namespace mgis::behaviour
 
+#include "MGIS/Behaviour/BehaviourData.ixx"
+
 #endif /* LIB_MGIS_BEHAVIOUR_BEHAVIOURDATA_HXX */
