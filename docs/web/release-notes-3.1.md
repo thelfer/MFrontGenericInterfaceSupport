@@ -67,6 +67,21 @@ The `MGIS/Function` library is described on [this page](functions.html).
 
 # Improvements
 
+## The `integrate_debug` functions
+
+The `integrate_debug` function can be used to generate debug files to
+analyse integration failures. This function is very customizable, see
+[this page](behaviour-integration-failure-analysis.html) for details.
+
+### Example of usage
+
+This snippet shows that the `integrate_debug` functions can be used as
+drop-in replacement for the `integrate` function.
+
+~~~~{.cxx}
+const auto r = integrate_debug(v, b);
+~~~~
+
 ## `getDatabase` and `loadFromDatabase`
 
 > **Note**
