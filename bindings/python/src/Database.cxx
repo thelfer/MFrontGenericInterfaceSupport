@@ -1,5 +1,5 @@
 /*!
- * \file   bindings/python/src/mgis-module.cxx
+ * \file   bindings/python/src/Database.cxx
  * \brief
  * \author Thomas Helfer
  * \date   31/10/2018
@@ -13,15 +13,11 @@
  */
 
 #include <pybind11/pybind11.h>
+#include "MGIS/Database.hxx"
 
-void declareThreadPool(pybind11::module_&);
-#ifdef MGIS_HAVE_TFEL
 void declareDatabase(pybind11::module_&);
-#endif /* MGIS_HAVE_TFEL */
 
-PYBIND11_MODULE(_mgis, m) {
-  declareThreadPool(m);
-#ifdef MGIS_HAVE_TFEL
-  declareDatabase(m);
-#endif /* MGIS_HAVE_TFEL */
-}  // end of module behaviour
+void declareDatabase(pybind11::module_& m) {
+  m.def("getDatabase", mgis::getDatabase,
+        pybind11::return_value_policy::reference);
+}  // end of declareDatabase

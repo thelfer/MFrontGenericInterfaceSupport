@@ -142,7 +142,6 @@ namespace mgis::behaviour {
                                   const BehaviourDataView&,
                                   const mgis::size_type);
 
-
 }  // end of namespace mgis::behaviour
 
 #endif /* __cplusplus */

@@ -1,6 +1,6 @@
 /*!
  * \file   BehaviourDataView.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   21/08/2025
  */
@@ -27,4 +27,4 @@ namespace mgis::behaviour {
     print_markdown(os, b, d.s1, l + 1);
   }  // end of print_markdown
 
-} // end of namespace mgis::behaviour
+}  // end of namespace mgis::behaviour

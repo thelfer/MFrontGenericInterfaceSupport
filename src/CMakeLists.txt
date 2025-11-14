@@ -26,6 +26,11 @@ list(APPEND MFrontGenericInterface_SOURCES
   Model.cxx
   BehaviourIntegrationFailureAnalyser.cxx)
 
+if(MGIS_HAVE_TFEL)
+  list(APPEND MFrontGenericInterface_SOURCES
+       Database.cxx)
+endif(MGIS_HAVE_TFEL)
+
 if(enable-mgis-function)
   list(APPEND MFrontGenericInterface_SOURCES
     BasicLinearSpace.cxx
@@ -82,7 +87,7 @@ endif(enable-static)
 
 if(MGIS_HAVE_TFEL)
   target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_HAVE_TFEL)
-  target_link_libraries(MFrontGenericInterface PUBLIC tfel::TFELMath)
+  target_link_libraries(MFrontGenericInterface PUBLIC tfel::TFELMath tfel::TFELMFrontDatabase)
 endif(MGIS_HAVE_TFEL)
 
 if(enable-openmp)

@@ -37,5 +37,4 @@ namespace mgis::behaviour {
 
 }  // end of namespace mgis::behaviour
 
-
 #endif /* LIB_MGIS_BEHAVIOUR_BEHAVIOURDATA_IXX */

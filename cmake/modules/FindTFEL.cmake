@@ -22,6 +22,7 @@ set(tfel_libs
     TFELMaterial
     TFELMath
     MTestFileGenerator
+    TFELMFrontDatabase
 )
 
 if(DEFINED TFEL_DIR)
