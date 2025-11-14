@@ -12,11 +12,16 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <iostream>
+
 #include <cstdlib>
 #include <iterator>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Context.hxx"
 #include "MGIS/LibrariesManager.hxx"
+#ifdef MGIS_HAVE_TFEL
+#include "MGIS/Database.hxx"
+#endif /* MGIS_HAVE_TFEL */
 #include "MGIS/Behaviour/Hypothesis.hxx"
 #include "MGIS/Behaviour/Behaviour.hxx"
 
@@ -209,6 +214,94 @@ namespace mgis::behaviour {
     }
     return {};
   }
+
+#ifdef MGIS_HAVE_TFEL
+  static std::tuple<std::string, std::string> getLibraryFromDatabase(
+      const LoadFromDatabaseOptions &opts) {
+    auto &db = mgis::getDatabase();
+    const auto epts = [&opts, &db] {
+      if (opts.material.has_value()) {
+        return db.getEntryPoints({.name_filter = opts.name,
+                                  .material_filter = *(opts.material),
+                                  .interface_filter = "generic"});
+      }
+      return db.getEntryPoints(
+          {.name_filter = opts.name, .interface_filter = "generic"});
+    }();
+    if ((epts.empty()) || (epts.size() != 1u)) {
+      auto specs = std::string{"the given specifications ("};
+      specs += "name='" + opts.name + "'";
+      if (opts.material.has_value()) {
+        specs += ", material='" + *(opts.material) + "'";
+      }
+      specs += ")";
+      if (epts.empty()) {
+        mgis::raise("getLibraryFromDatabase: no behaviour matching " + specs);
+      }
+      auto msg = "multiple behaviours matches " + specs + ":";
+      for (const auto &e : epts) {
+        msg += "\n- " + e.library + ": " + e.name;
+      }
+      mgis::raise("getLibraryFromDatabase: " + msg);
+    }
+    return {epts.at(0).library, epts.at(0).name};
+  }  // end of getLibraryFromDatabase
+#endif
+
+  Behaviour loadFromDatabase(const LoadFromDatabaseOptions &opts) {
+#ifdef MGIS_HAVE_TFEL
+    if (!opts.hypothesis.has_value()) {
+      mgis::raise(
+          "mgis::behaviour::loadFromDatabase: "
+          "no hypothesis specified");
+    }
+    const auto [l, b] = getLibraryFromDatabase(opts);
+    return load(l, b, *(opts.hypothesis));
+#else
+    mgis::raise(
+        "mgis::behaviour::loadFromDatabase: "
+        "TFEL support is not enabled");
+#endif
+  }  // end of loadFromDatabase
+
+  Behaviour loadFromDatabase(const FiniteStrainBehaviourOptions &o,
+                             const LoadFromDatabaseOptions &opts) {
+#ifdef MGIS_HAVE_TFEL
+    if (!opts.hypothesis.has_value()) {
+      mgis::raise(
+          "mgis::behaviour::loadFromDatabase: "
+          "no hypothesis specified");
+    }
+    const auto [l, b] = getLibraryFromDatabase(opts);
+    return load(o, l, b, *(opts.hypothesis));
+#else
+    mgis::raise(
+        "mgis::behaviour::loadFromDatabase: "
+        "TFEL support is not enabled");
+#endif
+  }  // end of loadFromDatabase
+
+  std::optional<Behaviour> loadFromDatabase(
+      Context &ctx, const LoadFromDatabaseOptions &opts) noexcept {
+    try {
+      return loadFromDatabase(opts);
+    } catch (...) {
+      registerExceptionInErrorBacktrace(ctx);
+    }
+    return {};
+  }  // end of loadFromDatabase
+
+  std::optional<Behaviour> loadFromDatabase(
+      Context &ctx,
+      const FiniteStrainBehaviourOptions &o,
+      const LoadFromDatabaseOptions &opts) noexcept {
+    try {
+      return loadFromDatabase(o, opts);
+    } catch (...) {
+      registerExceptionInErrorBacktrace(ctx);
+    }
+    return {};
+  }  // end of loadFromDatabase
 
   void rotateGradients(std::span<real> g,
                        const Behaviour &b,

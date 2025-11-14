@@ -714,7 +714,7 @@ namespace mgis::behaviour {
       const real dt) {
     const auto& a = debug::getDefaultBehaviourIntegrationFailureAnalyser();
     return integrate_debug(m, opts, dt, a);
-} // end of integrate_debug
+  }  // end of integrate_debug
 
   BehaviourIntegrationResult integrate_debug(
       MaterialDataManager& m,
@@ -743,7 +743,7 @@ namespace mgis::behaviour {
       const size_type e) {
     const auto& a = debug::getDefaultBehaviourIntegrationFailureAnalyser();
     return integrate_debug(m, opts, dt, b, e, a);
-  } // end of integrate_debug
+  }  // end of integrate_debug
 
   BehaviourIntegrationResult integrate_debug(
       MaterialDataManager& m,
@@ -881,10 +881,10 @@ namespace mgis::behaviour {
   }  // end of integrate
 
   int integrate_debug(MaterialDataManager& m,
-                const IntegrationType it,
-                const real dt,
-                const size_type b,
-                const size_type e) {
+                      const IntegrationType it,
+                      const real dt,
+                      const size_type b,
+                      const size_type e) {
     const auto& a = debug::getDefaultBehaviourIntegrationFailureAnalyser();
     return integrate_debug(m, it, dt, b, e, a);
   }  // end of integrate
@@ -909,7 +909,7 @@ namespace mgis::behaviour {
       s.stored_energy = real{};
     }
     if (src.dissipated_energy != nullptr) {
-    s.dissipated_energy = *(src.dissipated_energy);
+      s.dissipated_energy = *(src.dissipated_energy);
     } else {
       s.dissipated_energy = real{};
     }
@@ -932,7 +932,7 @@ namespace mgis::behaviour {
     std::copy(src.external_state_variables,
               src.external_state_variables + s.external_state_variables.size(),
               s.external_state_variables.begin());
-  } // end of copy
+  }  // end of copy
 
   int integrate_debug(BehaviourDataView& d, const Behaviour& b) {
     const auto& a = debug::getDefaultBehaviourIntegrationFailureAnalyser();

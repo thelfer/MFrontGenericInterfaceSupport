@@ -1,6 +1,6 @@
 /*!
  * \file   IntegrationFailureDebug.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   21/08/2025
  */

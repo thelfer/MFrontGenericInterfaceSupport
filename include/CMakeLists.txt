@@ -45,6 +45,10 @@ mgis_header(MGIS/Behaviour BehaviourIntegrationFailureAnalyser.hxx)
 mgis_header(MGIS/Behaviour FiniteStrainSupport.hxx)
 mgis_header(MGIS/Model Model.hxx)
 
+if(MGIS_HAVE_TFEL)
+mgis_header(MGIS Database.hxx)
+endif(MGIS_HAVE_TFEL)
+
 if(enable-mgis-function)
   mgis_header(MGIS/Function CompileTimeSize.hxx)
   mgis_header(MGIS/Function SpaceConcept.hxx)

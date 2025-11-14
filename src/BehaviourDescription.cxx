@@ -458,8 +458,8 @@ namespace mgis::behaviour {
     return lm.getUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
   }  // end of getUpperPhysicalBound
 
-  void print_markdown(std::ostream & os,
-                      const BehaviourDescription & b,
+  void print_markdown(std::ostream &os,
+                      const BehaviourDescription &b,
                       const mgis::size_type) {
     os << "- library:" << b.library << '\n'
        << "- behaviour: " << b.behaviour << '\n'

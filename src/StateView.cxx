@@ -1,6 +1,6 @@
 /*!
  * \file   StateView.cxx
- * \brief    
+ * \brief
  * \author th202608
  * \date   21/08/2025
  */
@@ -82,11 +82,11 @@ namespace mgis::behaviour {
                       const mgis::size_type l) {
     print_markdown_impl(os, b, s, l);
   }
-  
+
   void print_markdown(std::ostream& os,
                       const Behaviour& b,
                       const InitialStateView& s,
                       const mgis::size_type l) {
     print_markdown_impl(os, b, s, l);
   }
-} // end of namespace mgis::behaviour
+}  // end of namespace mgis::behaviour

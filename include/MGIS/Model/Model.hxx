@@ -41,6 +41,37 @@ namespace mgis::model {
   MGIS_EXPORT Model load(const std::string &,
                          const std::string &,
                          const mgis::behaviour::Hypothesis);
+  /*!
+   * \brief load the description of a model from a library
+   *
+   * \param[in] l: library name
+   * \param[in] m: model name
+   * \param[in] h: modelling hypothesis
+   * \return the model description
+   * \note: use of `std::string` rather than `mgis::string_view` is
+   * meaningfull here
+   */
+  MGIS_EXPORT std::optional<Model> load(
+      Context &,
+      const std::string &,
+      const std::string &,
+      const mgis::behaviour::Hypothesis) noexcept;
+  /*!
+   * \brief load a model from the database
+   *
+   * \return the model description
+   */
+  MGIS_EXPORT Model
+  loadFromDatabase(const mgis::behaviour::LoadFromDatabaseOptions &);
+  /*!
+   * \brief load a model from the database
+   *
+   * \param[in] ctx: execution context
+   * \param[in] opts: options to select the model
+   * \return the model description
+   */
+  MGIS_EXPORT std::optional<Model> loadFromDatabase(
+      Context &, const mgis::behaviour::LoadFromDatabaseOptions &) noexcept;
 
 }  // namespace mgis::model
 

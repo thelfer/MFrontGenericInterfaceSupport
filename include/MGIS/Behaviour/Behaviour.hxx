@@ -136,7 +136,7 @@ namespace mgis::behaviour {
     /*!
      * \brief behaviour options
      *
-     * This is currently only meaningfull for finite strain
+     * This is currently only meaningful for finite strain
      * behaviours where the options stores:
      * - the stress measure used
      * - the consistent tangent operator expected
@@ -188,7 +188,7 @@ namespace mgis::behaviour {
    * \param[in] h: modelling hypothesis
    * \return the behaviour description
    * \note: use of `std::string` rather than `mgis::string_view` is
-   * meaningfull here
+   * meaningful here
    */
   MGIS_EXPORT std::optional<Behaviour> load(
       Context &,
@@ -221,12 +221,59 @@ namespace mgis::behaviour {
    * \param[in] h: modelling hypothesis
    * \return the behaviour description
    * \note: use of `std::string` rather than `mgis::string_view` is
-   * meaningfull here
+   * meaningful here
    */
   MGIS_EXPORT Behaviour load(const FiniteStrainBehaviourOptions &,
                              const std::string &,
                              const std::string &,
                              const Hypothesis);
+  /*!
+   * \brief options passed to the `loadFromDatabase` function
+   */
+  struct LoadFromDatabaseOptions {
+    std::string name;
+    std::optional<Hypothesis> hypothesis;
+    std::optional<std::string> material = {};
+  };
+
+  /*!
+   * \brief load a behaviour from the database
+   *
+   * \param[in] ctx: execution context
+   * \param[in] opts: options to select the behaviour
+   * \return the behaviour description
+   */
+  MGIS_EXPORT std::optional<Behaviour> loadFromDatabase(
+      Context &, const LoadFromDatabaseOptions &) noexcept;
+  /*!
+   * \brief load a finite strain behaviour from the database
+   *
+   * \param[in] ctx: execution context
+   * \param[in] o: finite strain options
+   * \param[in] opts: options to select the behaviour
+   * \return the behaviour description
+   */
+  MGIS_EXPORT std::optional<Behaviour> loadFromDatabase(
+      Context &,
+      const FiniteStrainBehaviourOptions &,
+      const LoadFromDatabaseOptions &) noexcept;
+  /*!
+   * \brief load the description of a behaviour from the database
+   *
+   * \param[in] opts: options to select the behaviour
+   * \return the behaviour description
+   */
+  MGIS_EXPORT Behaviour loadFromDatabase(const LoadFromDatabaseOptions &);
+  /*!
+   * \brief load the description of a finite strain behaviour from the database
+   *
+   * \param[in] o: options
+   * \param[in] opts: options to select the behaviour
+   * \return the behaviour description
+   */
+  MGIS_EXPORT Behaviour loadFromDatabase(const FiniteStrainBehaviourOptions &,
+                                         const LoadFromDatabaseOptions &);
+
   /*!
    * \brief rotate an array of gradients from the global frame to the material
    * frame.

@@ -27,7 +27,7 @@ static int integrateBehaviourData1(mgis::behaviour::BehaviourData& d,
 }  // end of integrateBehaviourData1
 
 static int integrateDebugBehaviourData1(mgis::behaviour::BehaviourData& d,
-					const mgis::behaviour::Behaviour& b) {
+                                        const mgis::behaviour::Behaviour& b) {
   auto v = mgis::behaviour::make_view(d);
   const auto s = mgis::behaviour::integrate_debug(v, b);
   return s;
@@ -73,7 +73,7 @@ void declareIntegrate(jlcxx::Module& m) {
                         const mgis::behaviour::Behaviour&) =
       mgis::behaviour::integrate;
   int (*integrate_debug_ptr1)(mgis::behaviour::BehaviourDataView&,
-			      const mgis::behaviour::Behaviour&) =
+                              const mgis::behaviour::Behaviour&) =
       mgis::behaviour::integrate_debug;
   //   int (*integrate_ptr2)(mgis::behaviour::MaterialDataManager&,
   //                         const IntegrationType, const mgis::real,
