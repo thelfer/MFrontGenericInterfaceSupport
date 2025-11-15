@@ -12,6 +12,7 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <ostream>
 #include <cstdlib>
 #include <iterator>
 
@@ -457,9 +458,13 @@ namespace mgis::behaviour {
     return lm.getUpperPhysicalBound(b.library, b.behaviour, b.hypothesis, v);
   }  // end of getUpperPhysicalBound
 
-  void print_markdown(std::ostream &,
-                      const BehaviourDescription &,
-                      const mgis::size_type) {}  // end of print_markdown
+  void print_markdown(std::ostream &os,
+                      const BehaviourDescription &b,
+                      const mgis::size_type) {
+    os << "- library:" << b.library << '\n'
+       << "- behaviour: " << b.behaviour << '\n'
+       << "- function: " << b.function << "\n\n";
+  }  // end of print_markdown
 
   std::vector<Variable> getBehaviourInitializeFunctionInputs(
       const std::string &l,

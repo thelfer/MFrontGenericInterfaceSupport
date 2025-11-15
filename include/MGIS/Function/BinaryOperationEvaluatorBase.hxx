@@ -3,6 +3,13 @@
  * \brief
  * \author Thomas Helfer
  * \date   07/05/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_FUNCTION_BINARYOPERATIONEVALUATORBASE_HXX
@@ -21,9 +28,8 @@ namespace mgis::function {
   template <EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
   inline constexpr auto BinaryOperationEvaluatorBaseRequirement =
-      (internals::same_decay_type<
-          decltype(getSpace(std::declval<FirstEvaluatorType>())),
-          decltype(getSpace(std::declval<FirstEvaluatorType>()))>)&&  //
+      (std::same_as<evaluator_space<FirstEvaluatorType>,
+                    evaluator_space<SecondEvaluatorType>>)&&  //
       (((ElementEvaluatorConcept<FirstEvaluatorType>)&&(
            ElementEvaluatorConcept<SecondEvaluatorType>)) ||
        ((QuadratureEvaluatorConcept<FirstEvaluatorType>)&&(
@@ -69,8 +75,6 @@ namespace mgis::function {
     [[nodiscard]] constexpr decltype(auto) getSpace() const;
     //! \brief perform consistency checks
     [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
-    //! \brief allocate internal workspace
-    constexpr void allocateWorkspace();
     /*!
      * \brief call operator
      * \param[in] i: integration point index
@@ -130,14 +134,6 @@ namespace mgis::function {
       const BinaryOperationEvaluatorBase<Child,
                                          FirstEvaluatorType,
                                          SecondEvaluatorType>&);
-  //! \brief allocate internal workspace
-  template <typename Child,
-            EvaluatorConcept FirstEvaluatorType,
-            EvaluatorConcept SecondEvaluatorType>
-  constexpr void allocateWorkspace(
-      BinaryOperationEvaluatorBase<Child,
-                                   FirstEvaluatorType,
-                                   SecondEvaluatorType>&);
 
 }  // end of namespace mgis::function
 

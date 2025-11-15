@@ -3,6 +3,13 @@
  * \brief
  * \author Thomas Helfer
  * \date   02/05/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_FUNCTION_MECHANICS_IXX
@@ -56,13 +63,6 @@ namespace mgis::function::internals {
               (internals::disambiguateCheck(ctx, this->s)));
     }
 
-    //! \brief allocate internal workspace
-    constexpr void allocateWorkspace() {
-      internals::disambiguateAllocateWorkspace(this->K);
-      internals::disambiguateAllocateWorkspace(this->F0);
-      internals::disambiguateAllocateWorkspace(this->F1);
-      internals::disambiguateAllocateWorkspace(this->s);
-    }
     //! \brief return the underlying space
     [[nodiscard]] constexpr decltype(auto) getSpace() const {
       return internals::disambiguateGetSpace(this->K);
@@ -167,24 +167,6 @@ namespace mgis::function::internals {
           CauchyStressEvaluatorType>& e) {
     return e.check(eh);
   }  // end of check
-
-  template <unsigned short N,
-            FiniteStrainStiffnessKind ResultFlag,
-            FiniteStrainStiffnessKind SourceFlag,
-            FourthOrderTensorEvaluatorConcept StiffnessEvaluator,
-            TensorEvaluatorConcept DeformationGradientEvaluatorType0,
-            TensorEvaluatorConcept DeformationGradientEvaluatorType1,
-            StensorEvaluatorConcept CauchyStressEvaluatorType>
-  constexpr void allocateWorkspace(
-      ConvertFiniteStrainStiffnessEvaluator<N,
-                                            ResultFlag,
-                                            SourceFlag,
-                                            StiffnessEvaluator,
-                                            DeformationGradientEvaluatorType0,
-                                            DeformationGradientEvaluatorType1,
-                                            CauchyStressEvaluatorType>& e) {
-    return e.allocateWorkspace();
-  }  // end of allocateWorkspace
 
   template <unsigned short N,
             FiniteStrainStiffnessKind ResultFlag,

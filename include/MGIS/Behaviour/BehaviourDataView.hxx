@@ -16,6 +16,7 @@
 #define LIB_MGIS_BEHAVIOUR_BEHAVIOURDATAVIEW_HXX
 
 #ifdef __cplusplus
+#include <iosfwd>
 #include "MGIS/Config.hxx"
 #else
 #include "MGIS/Config-c.h"
@@ -127,6 +128,19 @@ namespace mgis::behaviour {
 
   //! \brief a simple alias
   using BehaviourDataView = ::mgis_bv_BehaviourDataView;
+
+  /*!
+   * \brief print a detailled (verbose) description of the data associated
+   * with an integration point using a markdown format
+   * \param[in] os: ouptut stream
+   * \param[in] d: behaviour
+   * \param[in] d: behaviour data
+   * \param[in] l: title level
+   */
+  MGIS_EXPORT void print_markdown(std::ostream&,
+                                  const Behaviour&,
+                                  const BehaviourDataView&,
+                                  const mgis::size_type);
 
 }  // end of namespace mgis::behaviour
 

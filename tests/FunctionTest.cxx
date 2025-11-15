@@ -342,7 +342,7 @@ struct FunctionTest final : public tfel::tests::TestCase {
     static_assert(
         std::same_as<decltype(view(f2)),
                      FunctionView<SharedSpace<BasicLinearSpace>,
-                                  FunctionDataLayoutDescription{}, false>>);
+                                  FunctionDataLayoutDescription{}, true>>);
     const auto ok = assign(ctx, f3, view(f2));
     TFEL_TESTS_ASSERT(ok);
     const auto values3 = f3.data();

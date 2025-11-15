@@ -3,6 +3,13 @@
  * \brief
  * \author Thomas Helfer
  * \date   07/05/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_FUNCTION_FIXEDSIZEMODIFIER_HXX
@@ -49,8 +56,6 @@ namespace mgis::function {
                                 const EvaluatorType&);
     //! \brief perform consistency checks
     [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
-    //! \brief allocate internal workspace
-    constexpr void allocateWorkspace();
     //! \brief return the underlying  space
     [[nodiscard]] decltype(auto) getSpace() const;
     //! \return the number of components
@@ -112,9 +117,6 @@ namespace mgis::function {
   template <EvaluatorConcept EvaluatorType, size_type N>
   [[nodiscard]] constexpr bool check(
       AbstractErrorHandler&, const FixedSizeModifier<EvaluatorType, N>&);
-  //! \brief allocate internal workspace
-  template <EvaluatorConcept EvaluatorType, size_type N>
-  constexpr void allocateWorkspace(FixedSizeModifier<EvaluatorType, N>&);
   //! \return the number of components
   template <EvaluatorConcept EvaluatorType, size_type N>
   [[nodiscard]] constexpr size_type getNumberOfComponents(

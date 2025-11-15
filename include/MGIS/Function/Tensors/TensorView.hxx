@@ -130,8 +130,13 @@ namespace mgis::function {
 
    private:
     //! \brief underlying function
-    FunctionType& function;
+    function_view<FunctionType> function;
   };  // end of TensorView
+
+  //! \brief partial specialisation
+  template <FunctionConcept FunctionType, TensorConcept TensorType>
+  struct LightweightViewTraits<TensorView<FunctionType, TensorType>>
+      : std::true_type {};
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   [[nodiscard]] constexpr decltype(auto) getSpace(
@@ -140,10 +145,6 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   [[nodiscard]] constexpr bool check(
       AbstractErrorHandler&, const TensorView<FunctionType, TensorType>&);
-  //! \brief allocate internal workspace
-  template <FunctionConcept FunctionType, TensorConcept TensorType>
-  constexpr void allocateWorkspace(
-      TensorView<FunctionType, TensorType>&) noexcept;
   //! \return the number of components
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   [[nodiscard]] constexpr size_type getNumberOfComponents(

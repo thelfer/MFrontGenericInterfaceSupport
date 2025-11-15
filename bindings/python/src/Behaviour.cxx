@@ -179,7 +179,16 @@ Behaviour_getPostProcessingOutputs(const mgis::behaviour::Behaviour &b,
   return p->second.outputs;
 }  // end of Behaviour_getPostProcessingOutputs
 
+static mgis::behaviour::Behaviour Behaviour_loadFromDatabase(
+    const std::string &n,
+    const mgis::behaviour::Hypothesis h,
+    const std::optional<std::string> &m) {
+  return mgis::behaviour::loadFromDatabase(
+      {.name = n, .hypothesis = h, .material = m});
+}  // end of Behaviour_loadFromDatabase
+
 void declareBehaviour(pybind11::module_ &m) {
+  using namespace pybind11::literals;
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::BehaviourDescription;
   using mgis::behaviour::FiniteStrainBehaviourOptions;
@@ -250,6 +259,9 @@ void declareBehaviour(pybind11::module_ &m) {
 
   m.def("load", load_ptr);
   m.def("load", load_ptr2);
+  m.def("loadFromDatabase", Behaviour_loadFromDatabase, "name"_a,
+        "hypothesis"_a, "material"_a = std::optional<std::string>{});
+
   m.def("setParameter", setParameter1);
   m.def("setIntegerParameter", setParameter2);
   m.def("setUnsignedShortParameter", setParameter3);

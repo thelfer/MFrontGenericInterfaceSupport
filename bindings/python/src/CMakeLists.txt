@@ -30,9 +30,15 @@ function(mgis_python_module fullname name)
     COMPONENT python_bindings)
 endfunction(mgis_python_module)
 
-mgis_python_module(mgis _mgis
+set(MGIS_MODULE_SOURCES)
+list(APPEND MGIS_MODULE_SOURCES 
  mgis-module.cxx
  ThreadPool.cxx)
+if(MGIS_HAVE_TFEL)
+  list(APPEND MGIS_MODULE_SOURCES
+       Database.cxx)
+endif(MGIS_HAVE_TFEL)
+mgis_python_module(mgis _mgis ${MGIS_MODULE_SOURCES})
 
 mgis_python_module(mgis_material_property material_property
  material_property-module.cxx

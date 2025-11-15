@@ -35,14 +35,17 @@ namespace mgis::function {
           const PreconditionsCheck<doPreconditionsCheck>& pcheck,
           FunctionType& values)
       : PreconditionsChecker<FixedSizeView>(pcheck, values),
-        function(values) {}  // end of FixedSizeView
+        function(make_view(values)) {}  // end of FixedSizeView
 
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0)  //
       constexpr bool FixedSizeView<FunctionType, N>::check(
-          AbstractErrorHandler& ctx) const {
-    return checkPreconditions(ctx, this->function);
-  }
+          AbstractErrorHandler& eh) const {
+    if (internals::disambiguateGetNumberOfComponents(this->function) != N) {
+      return eh.registerErrorMessage("invalid number of components");
+    }
+    return true;
+  }  // end of check
 
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0)  //
@@ -295,10 +298,6 @@ namespace mgis::function {
                        const FixedSizeView<FunctionType, N>& v) {
     return v.check(eh);
   }  // end of check
-
-  template <FunctionConcept FunctionType, size_type N>
-  constexpr void allocateWorkspace(FixedSizeView<FunctionType, N>&) noexcept {
-  }  // end of allocateWorkspace
 
   template <FunctionConcept FunctionType, size_type N>
   constexpr mgis::size_type getNumberOfComponents(

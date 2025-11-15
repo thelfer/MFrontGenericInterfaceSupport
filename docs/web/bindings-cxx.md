@@ -464,6 +464,12 @@ argument of the `ThreadPool` type allowing a parallelization of the
 behaviour integration. The user may refer to the `IntegrateTest2b.cxx`
 file to have an example on how this use this second overload.
 
+> ** Note **
+>
+> The `integrate_debug` function can be used to generate debug files
+> to analyse integration failures. See
+> [this page](behaviour-integration-failure-analysis.html) for details.
+
 # Support for behaviours' initialize functions {#sec:mgis:2.1:initialize_functions}
 
 Since version 4.1, `MFront` behaviours can declare initialize functions

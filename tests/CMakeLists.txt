@@ -15,6 +15,7 @@ mfront_behaviours_check_library(BehaviourTest
   Elasticity
   OrthotropicElasticity
   Norton
+  NortonFailure
   Plasticity
   Gurson
   BoundsCheckTest
@@ -31,6 +32,12 @@ mfront_behaviours_check_library(ModelTest
 
 #
 
+add_executable(IntegrationFailureDebugTest
+  EXCLUDE_FROM_ALL
+  IntegrationFailureDebugTest.cxx)
+target_link_libraries(IntegrationFailureDebugTest
+  PRIVATE MFrontGenericInterface)
+
 add_executable(LoadMaterialPropertyTest
   EXCLUDE_FROM_ALL
   LoadMaterialPropertyTest.cxx)
@@ -43,6 +50,14 @@ add_test(NAME LoadMaterialPropertyTest
  COMMAND LoadMaterialPropertyTest
  "$<TARGET_FILE:MaterialPropertyTest>")
 add_dependencies(check LoadMaterialPropertyTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST LoadMaterialPropertyTest
+    PROPERTY DEPENDS MaterialPropertyTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST LoadMaterialPropertyTest
+    PROPERTY DEPENDS MaterialPropertyTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 # Test on behaviours
 
@@ -114,7 +129,10 @@ add_executable(IntegrateTest5
   EXCLUDE_FROM_ALL IntegrateTest5.cxx)
 target_link_libraries(IntegrateTest5
 	PRIVATE MFrontGenericInterface)
-
+add_executable(IntegrateDebugTest
+  EXCLUDE_FROM_ALL IntegrateDebugTest.cxx)
+target_link_libraries(IntegrateDebugTest
+	PRIVATE MFrontGenericInterface)
 add_executable(RotateFunctionsTest
   EXCLUDE_FROM_ALL RotateFunctionsTest.cxx)
 target_link_libraries(RotateFunctionsTest
@@ -312,6 +330,30 @@ else((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY DEPENDS ModelTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
+add_test(NAME IntegrationFailureDebugTest
+ COMMAND IntegrationFailureDebugTest "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(check IntegrationFailureDebugTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrationFailureDebugTest
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrationFailureDebugTest
+    PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME IntegrateDebugTest
+ COMMAND IntegrateDebugTest "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(check IntegrateDebugTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrateDebugTest
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST IntegrateDebugTest
+    PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
 add_test(NAME ExternalStateVariableTest
   COMMAND ExternalStateVariableTest "$<TARGET_FILE:BehaviourTest>"  "TensorialExternalStateVariableTest")
 add_dependencies(check ExternalStateVariableTest)
@@ -381,6 +423,10 @@ target_link_libraries(InvalidResultTest
   PRIVATE MFrontGenericInterface)
 add_test(NAME InvalidResultTest COMMAND InvalidResultTest)
 add_dependencies(check InvalidResultTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST InvalidResultTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_executable(ErrorBacktraceTest
  EXCLUDE_FROM_ALL
@@ -389,6 +435,10 @@ target_link_libraries(ErrorBacktraceTest
   PRIVATE MFrontGenericInterface)
 add_test(NAME ErrorBacktraceTest COMMAND ErrorBacktraceTest)
 add_dependencies(check ErrorBacktraceTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST ErrorBacktraceTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 if(enable-mgis-function)
 
@@ -401,6 +451,10 @@ target_link_libraries(SharedSpaceTest
   PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME SharedSpaceTest COMMAND SharedSpaceTest)
 add_dependencies(check SharedSpaceTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST SharedSpaceTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_executable(FunctionTest
  EXCLUDE_FROM_ALL
@@ -419,6 +473,10 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
     target_compile_definitions(FunctionTest
        PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
 endif()
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST FunctionTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_executable(EvaluatorsTest
  EXCLUDE_FROM_ALL
@@ -437,6 +495,55 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
     target_compile_definitions(EvaluatorsTest
        PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
 endif()
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST EvaluatorsTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_executable(UniformEvaluatorsTest
+ EXCLUDE_FROM_ALL
+ UniformEvaluatorsTest.cxx)
+target_link_libraries(UniformEvaluatorsTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME UniformEvaluatorsTest COMMAND UniformEvaluatorsTest)
+add_dependencies(check UniformEvaluatorsTest)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+    target_compile_definitions(UniformEvaluatorsTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
+    target_compile_definitions(UniformEvaluatorsTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+endif()
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST UniformEvaluatorsTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_executable(CoalescedMemoryAccessFunctionViewTest
+ EXCLUDE_FROM_ALL
+ CoalescedMemoryAccessFunctionViewTest.cxx)
+target_link_libraries(CoalescedMemoryAccessFunctionViewTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME CoalescedMemoryAccessFunctionViewTest
+         COMMAND CoalescedMemoryAccessFunctionViewTest)
+add_dependencies(check CoalescedMemoryAccessFunctionViewTest)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+    target_compile_definitions(CoalescedMemoryAccessFunctionViewTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
+    target_compile_definitions(CoalescedMemoryAccessFunctionViewTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+endif()
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST CoalescedMemoryAccessFunctionViewTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_executable(MechanicalEvaluatorsTest
  EXCLUDE_FROM_ALL
@@ -455,6 +562,11 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
     target_compile_definitions(MechanicalEvaluatorsTest
        PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
 endif()
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST MechanicalEvaluatorsTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
 
 add_executable(TensorialFunctionTest
  EXCLUDE_FROM_ALL
@@ -473,6 +585,10 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
     target_compile_definitions(TensorialFunctionTest
        PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
 endif()
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST TensorialFunctionTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_executable(ReduceTest
  EXCLUDE_FROM_ALL
@@ -481,6 +597,10 @@ target_link_libraries(ReduceTest
   PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME ReduceTest COMMAND ReduceTest)
 add_dependencies(check ReduceTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST ReduceTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_executable(MaterialFunctionManagerTest
   EXCLUDE_FROM_ALL MaterialFunctionManagerTest.cxx)

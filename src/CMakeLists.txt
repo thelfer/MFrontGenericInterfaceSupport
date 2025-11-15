@@ -16,19 +16,30 @@ list(APPEND MFrontGenericInterface_SOURCES
   BehaviourDescription.cxx
   Behaviour.cxx
   State.cxx
+  StateView.cxx
   BehaviourData.cxx
+  BehaviourDataView.cxx
   MaterialStateManager.cxx
   MaterialDataManager.cxx
   Integrate.cxx
   FiniteStrainSupport.cxx
-  Model.cxx)
+  Model.cxx
+  BehaviourIntegrationFailureAnalyser.cxx)
+
+if(MGIS_HAVE_TFEL)
+  list(APPEND MFrontGenericInterface_SOURCES
+       Database.cxx)
+endif(MGIS_HAVE_TFEL)
 
 if(enable-mgis-function)
   list(APPEND MFrontGenericInterface_SOURCES
     BasicLinearSpace.cxx
     BasicLinearQuadratureSpace.cxx
+    FixedSizeView.cxx
     Function.cxx
     Evaluator.cxx
+    UniformEvaluator.cxx
+    CoalescedMemoryAccessFunctionView.cxx
     MaterialFunctionManager.cxx)
   if(MGIS_HAVE_TFEL)
     list(APPEND MFrontGenericInterface_SOURCES
@@ -55,6 +66,9 @@ if(enable-exceptions)
   target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_USE_EXCEPTIONS_FOR_CONTRACT_VIOLATION)
   target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING)
 endif(enable-exceptions)
+if(enable-parallel-stl-algorithms)
+  target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_USE_STL_PARALLEL_ALGORITHMS)
+endif(enable-parallel-stl-algorithms)
 
 if(enable-static)
   target_include_directories(MFrontGenericInterface-static
@@ -67,20 +81,33 @@ if(enable-static)
   if(enable-mgis-function)
     target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_FUNCTION_SUPPORT)
   endif(enable-mgis-function)
+  if(enable-parallel-stl-algorithms)
+    target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_USE_STL_PARALLEL_ALGORITHMS)
+  endif(enable-parallel-stl-algorithms)
 endif(enable-static)
 
 if(MGIS_HAVE_TFEL)
   target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_HAVE_TFEL)
-  target_link_libraries(MFrontGenericInterface PUBLIC tfel::TFELMath)
+  target_link_libraries(MFrontGenericInterface PUBLIC tfel::TFELMath tfel::TFELMFrontDatabase)
 endif(MGIS_HAVE_TFEL)
+
+if(enable-openmp)
+  target_link_libraries(MFrontGenericInterface PUBLIC OpenMP::OpenMP_CXX)
+endif(enable-openmp)
+
+if(MGIS_ADDITIONAL_LIBRARIES)
+  target_link_libraries(MFrontGenericInterface PUBLIC ${MGIS_ADDITIONAL_LIBRARIES})
+endif(MGIS_ADDITIONAL_LIBRARIES)
 
 if(UNIX)
   if(Threads_FOUND)
     target_link_libraries(MFrontGenericInterface
-      PRIVATE ${MGIS_DL_LIBRARY} Threads::Threads)
+      PUBLIC  Threads::Threads
+      PRIVATE ${MGIS_DL_LIBRARY})
     if(enable-static)
       target_link_libraries(MFrontGenericInterface-static
-        PRIVATE ${MGIS_DL_LIBRARY} Threads::Threads)
+        PUBLIC  Threads::Threads
+        PRIVATE ${MGIS_DL_LIBRARY})
     endif(enable-static)
   else(Threads_FOUND)
     target_link_libraries(MFrontGenericInterface
@@ -93,10 +120,14 @@ if(UNIX)
 else(UNIX)
   if(Threads_FOUND)
     target_link_libraries(MFrontGenericInterface
-      PRIVATE Threads::Threads)
+      PUBLIC Threads::Threads)
     if(enable-static)
       target_link_libraries(MFrontGenericInterface-static
-        PRIVATE Threads::Threads)
+        PUBLIC Threads::Threads)
     endif(enable-static)
   endif(Threads_FOUND)
 endif(UNIX)
+
+if(MGIS_ADDITIONAL_LINK_FLAGS)
+  target_link_options(MFrontGenericInterface PUBLIC "${MGIS_ADDITIONAL_LINK_FLAGS}")
+endif(MGIS_ADDITIONAL_LINK_FLAGS)

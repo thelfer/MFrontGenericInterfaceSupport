@@ -115,13 +115,31 @@ mgis_status mgis_bv_integrate(int* const r,
   return mgis_report_success();
 }  // end of mgis_bv_integrate
 
+mgis_status mgis_bv_integrate_debug(int* const r,
+                                    mgis_bv_BehaviourDataView* const d,
+                                    const mgis_bv_Behaviour* const b) {
+  *r = mgis::behaviour::integrate_debug(*d, *b);
+  if ((*r != 1) && (*r != 0)) {
+    return mgis_report_failure("behaviour integration failed");
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_integrate
+
 mgis_status mgis_bv_integrate_2(int* const r,
                                 mgis_bv_BehaviourData* const d,
                                 const mgis_bv_Behaviour* const b) {
   auto v = mgis::behaviour::make_view(*d);
   auto s = mgis_bv_integrate(r, &v, b);
   return s;
-}  // end of mgis_bv_integrate2
+}  // end of mgis_bv_integrate_2
+
+mgis_status mgis_bv_integrate_debug_2(int* const r,
+                                      mgis_bv_BehaviourData* const d,
+                                      const mgis_bv_Behaviour* const b) {
+  auto v = mgis::behaviour::make_view(*d);
+  auto s = mgis_bv_integrate_debug(r, &v, b);
+  return s;
+}  // end of mgis_bv_integrate_debug_2
 
 mgis_status mgis_bv_integrate_material_data_manager(
     int* const r,
@@ -141,6 +159,25 @@ mgis_status mgis_bv_integrate_material_data_manager(
   return mgis_report_success();
 }  // end of mgis_bv_integrate_material_data_manager
 
+mgis_status mgis_bv_integrate_debug_material_data_manager(
+    int* const r,
+    mgis_ThreadPool* const p,
+    mgis_bv_MaterialDataManager* const m,
+    const mgis_bv_IntegrationType i,
+    const mgis_real dt) {
+  *r = -1;
+  try {
+    *r =
+        mgis::behaviour::integrate_debug(*p, *m, convertIntegrationType(i), dt);
+    if ((*r != 1) && (*r != 0)) {
+      return mgis_report_failure("behaviour integration failed");
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_integrate_debug_material_data_manager
+
 mgis_status mgis_bv_integrate_material_data_manager_with_options(
     int* const r,
     mgis_ThreadPool* const p,
@@ -158,6 +195,24 @@ mgis_status mgis_bv_integrate_material_data_manager_with_options(
   }
   return mgis_report_success();
 }  // end of mgis_bv_integrate_material_data_manager_with_options
+
+mgis_status mgis_bv_integrate_debug_material_data_manager_with_options(
+    int* const r,
+    mgis_ThreadPool* const p,
+    mgis_bv_MaterialDataManager* const m,
+    mgis_bv_BehaviourIntegrationOptions* const o,
+    const mgis_real dt) {
+  *r = -1;
+  try {
+    *r = mgis::behaviour::integrate_debug(*p, *m, *o, dt).exit_status;
+    if ((*r != 1) && (*r != 0)) {
+      return mgis_report_failure("behaviour integration failed");
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_integrate_debug_material_data_manager_with_options
 
 mgis_status mgis_bv_integrate_material_data_manager_part(
     int* const r,
@@ -177,5 +232,25 @@ mgis_status mgis_bv_integrate_material_data_manager_part(
   }
   return mgis_report_success();
 }  // end of mgis_bv_integrate_material_data_manager_part
+
+mgis_status mgis_bv_integrate_debug_material_data_manager_part(
+    int* const r,
+    mgis_bv_MaterialDataManager* const m,
+    const mgis_bv_IntegrationType i,
+    const mgis_real dt,
+    const mgis_size_type b,
+    const mgis_size_type e) {
+  *r = -1;
+  try {
+    *r = mgis::behaviour::integrate_debug(*m, convertIntegrationType(i), dt, b,
+                                          e);
+    if ((*r != 1) && (*r != 0)) {
+      return mgis_report_failure("behaviour integration failed");
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_integrate_debug_material_data_manager_part
 
 }  // end of extern "C"

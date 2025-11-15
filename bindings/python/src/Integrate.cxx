@@ -29,6 +29,13 @@ static int integrateBehaviourData1(mgis::behaviour::BehaviourData& d,
   return s;
 }  // end of integrateBehaviourData
 
+static int integrateDebugBehaviourData1(mgis::behaviour::BehaviourData& d,
+                                        const mgis::behaviour::Behaviour& b) {
+  auto v = mgis::behaviour::make_view(d);
+  const auto s = mgis::behaviour::integrate_debug(v, b);
+  return s;
+}  // end of integrateDebugBehaviourData
+
 static int BehaviourDataView_executeInitializeFunction(
     mgis::behaviour::BehaviourDataView& v,
     const mgis::behaviour::Behaviour& b,
@@ -239,6 +246,21 @@ void declareIntegrate(pybind11::module_& m) {
   MultiThreadedBehaviourIntegrationResult (*integrate_ptr5)(
       mgis::ThreadPool&, MaterialDataManager&,
       const BehaviourIntegrationOptions&, const mgis::real) = integrate;
+  int (*integrate_debug_ptr1)(BehaviourDataView&, const Behaviour&) =
+      integrate_debug;
+  int (*integrate_debug_ptr2)(MaterialDataManager&, const IntegrationType,
+                              const mgis::real, const mgis::size_type,
+                              const mgis::size_type) = integrate_debug;
+  int (*integrate_debug_ptr3)(mgis::ThreadPool&, MaterialDataManager&,
+                              const IntegrationType, const mgis::real) =
+      integrate_debug;
+  BehaviourIntegrationResult (*integrate_debug_ptr4)(
+      MaterialDataManager&, const BehaviourIntegrationOptions&,
+      const mgis::real, const mgis::size_type, const mgis::size_type) =
+      integrate_debug;
+  MultiThreadedBehaviourIntegrationResult (*integrate_debug_ptr5)(
+      mgis::ThreadPool&, MaterialDataManager&,
+      const BehaviourIntegrationOptions&, const mgis::real) = integrate_debug;
 
   m.def("integrate", &integrateBehaviourData1);
   m.def("integrate", integrate_ptr1);
@@ -246,6 +268,12 @@ void declareIntegrate(pybind11::module_& m) {
   m.def("integrate", integrate_ptr3);
   m.def("integrate", integrate_ptr4);
   m.def("integrate", integrate_ptr5);
+  m.def("integrate_debug", &integrateDebugBehaviourData1);
+  m.def("integrate_debug", integrate_debug_ptr1);
+  m.def("integrate_debug", integrate_debug_ptr2);
+  m.def("integrate_debug", integrate_debug_ptr3);
+  m.def("integrate_debug", integrate_debug_ptr4);
+  m.def("integrate_debug", integrate_debug_ptr5);
   m.def("executePostProcessing", BehaviourDataView_executePostProcessing);
   m.def("executePostProcessing", MaterialDataManager_executePostProcessing);
   m.def("executePostProcessing", MaterialDataManager_executePostProcessing2);

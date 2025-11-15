@@ -23,7 +23,21 @@ if(MGIS_HAVE_TFEL)
 
   find_package(TFELMath REQUIRED
     HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+  find_package(TFELMFrontDatabase REQUIRED
+    HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
 
 endif(MGIS_HAVE_TFEL)
+
+if(UNIX)
+  set(Threads_FOUND @Threads_FOUND@)
+  if(Threads_FOUND)
+    find_package(Threads REQUIRED)
+  endif(Threads_FOUND)
+endif(UNIX)
+
+set(MGIS_REQUIRED_ADDITIONAL_PACKAGES "@MGIS_REQUIRED_ADDITIONAL_PACKAGES@")
+foreach(_package ${MGIS_REQUIRED_ADDITIONAL_PACKAGES})
+  find_package(${_package} REQUIRED)
+endforeach()
 
 include("${CMAKE_CURRENT_LIST_DIR}/MFrontGenericInterfaceTargets.cmake")

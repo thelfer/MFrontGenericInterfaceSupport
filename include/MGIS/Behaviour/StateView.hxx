@@ -16,6 +16,7 @@
 #define LIB_MGIS_BEHAVIOUR_STATEVIEW_HXX
 
 #ifdef __cplusplus
+#include <iosfwd>
 #include "MGIS/Config.hxx"
 #else
 #include "MGIS/Config-c.h"
@@ -85,10 +86,38 @@ typedef struct {
 
 namespace mgis::behaviour {
 
+  // forward declaration
+  struct Behaviour;
+
   //! a simple alias
   using StateView = ::mgis_bv_StateView;
   //! a simple alias
   using InitialStateView = ::mgis_bv_InitialStateView;
+
+  /*!
+   * \brief print a detailled (verbose) description of the integration point
+   * state using a markdown format
+   * \param[in] os: ouptut stream
+   * \param[in] b: behaviour
+   * \param[in] s: state
+   * \param[in] l: title level
+   */
+  MGIS_EXPORT void print_markdown(std::ostream&,
+                                  const Behaviour&,
+                                  const StateView&,
+                                  const mgis::size_type);
+  /*!
+   * \brief print a detailled (verbose) description of the integration point
+   * state using a markdown format
+   * \param[in] os: ouptut stream
+   * \param[in] b: behaviour
+   * \param[in] s: state
+   * \param[in] l: title level
+   */
+  MGIS_EXPORT void print_markdown(std::ostream&,
+                                  const Behaviour&,
+                                  const InitialStateView&,
+                                  const mgis::size_type);
 
 }  // end of namespace mgis::behaviour
 

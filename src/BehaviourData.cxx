@@ -54,24 +54,6 @@ namespace mgis::behaviour {
     d.s1 = d.s0;
   }  // end of update
 
-  BehaviourDataView make_view(BehaviourData& d) {
-    auto get_ptr = [](std::vector<real>& v) -> real* {
-      if (v.empty()) {
-        return nullptr;
-      }
-      return &v[0];
-    };  // end of get_ptr
-    BehaviourDataView v;
-    v.error_message = d.error_message;
-    v.dt = d.dt;
-    v.rdt = &(d.rdt);
-    v.speed_of_sound = &(d.speed_of_sound);
-    v.K = get_ptr(d.K);
-    v.s0 = make_view(static_cast<const State&>(d.s0));
-    v.s1 = make_view(d.s1);
-    return v;
-  }  // end of make_view
-
   void print_markdown(std::ostream& os,
                       const Behaviour& b,
                       const BehaviourData& d,
@@ -80,10 +62,10 @@ namespace mgis::behaviour {
        << " Behaviour description\n\n";
     print_markdown(os, b, l + 1);
     os << mgis::utilities::get_heading_signs(l + 1)
-       << " State at the beginning of the time step\n";
+       << " State at the beginning of the time step\n\n";
     print_markdown(os, b, d.s0, l + 1);
     os << mgis::utilities::get_heading_signs(l + 1)
-       << " State at the end of the time step\n";
+       << " State at the end of the time step\n\n";
     print_markdown(os, b, d.s1, l + 1);
   }  // end of print_markdown
 

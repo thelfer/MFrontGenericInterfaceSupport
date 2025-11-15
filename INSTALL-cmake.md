@@ -58,6 +58,11 @@ Options
 - `disable-tfel`: by default, `MGIS` tries to add support for `TFEL`,
   notably if `tfel-config` is found in the `PATH`. This option disables
   this behaviour.
+- `enable-mgis-function`: enable or disable compilation of the `MGIS/Function` library.
+  By default, compilation of `MGIS/Function` is enabled.
+- `enable-exceptions`: use exceptions to report contract violation and error reporting.
+   By default, contract violation leads to abort the program.
+- `enable-parallel-stl-algorithms`: by default, STL algorithms are used if available
 
 `cmake` usefull variables
 =======================

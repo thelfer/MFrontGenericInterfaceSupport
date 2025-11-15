@@ -509,6 +509,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }
   void test15() {
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
     using namespace mgis;
     using namespace mgis::function;
     auto ctx = Context{};
@@ -524,8 +525,10 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     for (size_type i = 0; i != space.size(); ++i) {
       TFEL_TESTS_ASSERT(std::abs(f2(i) - i) < 1e-12);
     }
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
   }
   void test16() {
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
     using namespace mgis;
     using namespace mgis::function;
     auto ctx = Context{};
@@ -543,6 +546,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     if (isValid(ov)) {
       TFEL_TESTS_ASSERT(std::abs(*ov - 14) < 1e-13);
     }
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
   }
 };
 

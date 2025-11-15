@@ -3,6 +3,13 @@
  * \brief
  * \author Thomas Helfer
  * \date   07/05/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_FUNCTION_FIXEDSIZEVIEW_HXX
@@ -132,9 +139,14 @@ namespace mgis::function {
                  (isFunctionResultTypeMappable<FunctionType>));
 
    private:
-    //! \brief underlying function
-    FunctionType& function;
+    //! \brief underlying view
+    function_view<FunctionType> function;
   };  // end of FixedSizeView
+
+  //! \brief partial specialisation
+  template <FunctionConcept FunctionType, size_type N>
+  struct LightweightViewTraits<FixedSizeView<FunctionType, N>>
+      : std::true_type {};
 
   /*!
    * \brief convert a function to a immutable view
@@ -153,9 +165,6 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, size_type N>
   [[nodiscard]] constexpr bool check(AbstractErrorHandler&,
                                      const FixedSizeView<FunctionType, N>&);
-  //! \brief allocate internal workspace
-  template <FunctionConcept FunctionType, size_type N>
-  constexpr void allocateWorkspace(FixedSizeView<FunctionType, N>&) noexcept;
   //! \return the number of components
   template <FunctionConcept FunctionType, size_type N>
   [[nodiscard]] constexpr size_type getNumberOfComponents(

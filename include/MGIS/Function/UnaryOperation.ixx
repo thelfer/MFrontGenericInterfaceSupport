@@ -3,6 +3,13 @@
  * \brief
  * \author Thomas Helfer
  * \date   09/05/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_FUNCTION_UNARYOPERATION_IXX
@@ -94,10 +101,20 @@ namespace mgis::function {
         std::forward<CallableType>(c));
   }  // end of unary_operation
 
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
+  constexpr auto unary_operation(CallableType&& c, const EvaluatorType& e) {
+    return e | unary_operation(c);
+  }  // end of unary_operation
+
   template <typename CallableType>
   constexpr auto transform(CallableType&& c) {
     return internals::unary_operation_modifier<std::decay_t<CallableType>>(
         std::forward<CallableType>(c));
+  }  // end of transform
+
+  template <typename CallableType, EvaluatorConcept EvaluatorType>
+  constexpr auto transform(CallableType&& c, const EvaluatorType& e) {
+    return e | transform(c);
   }  // end of transform
 
 }  // end of namespace mgis::function

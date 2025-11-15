@@ -3,12 +3,20 @@
  * \brief
  * \author Thomas Helfer
  * \date   29/04/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_FUNCTION_ALGORITHMS_IXX
 #define LIB_MGIS_FUNCTION_ALGORITHMS_IXX
 
 #include <ranges>
+#include <numeric>
 #include <iterator>
 #include <algorithm>
 
@@ -166,11 +174,9 @@ namespace mgis::function::internals {
     lhs[0] = rhs[0];
   }
 
-  template <ExecutionPolicyConceptConcept ExecutionPolicy,
-            typename FunctionType,
-            EvaluatorConcept EvaluatorType>
+  template <typename FunctionType, EvaluatorConcept EvaluatorType>
   constexpr void
-  assign_scalar_impl(const ExecutionPolicy policy, FunctionType& f, const EvaluatorType& e) requires(
+  assign_sequential_scalar_impl(FunctionType& f, const EvaluatorType& e) requires(
       (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
           !hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
     using Space = std::decay_t<decltype(getSpace(f))>;
@@ -178,17 +184,63 @@ namespace mgis::function::internals {
     const auto& space = getSpace(f);
     const auto iranges =
         std::views::iota(space_size_type{}, getSpaceSize(space));
-    // this test is made for assign_impl be constexpr for non-parallel
+    std::for_each(iranges.begin(), iranges.end(),
+                  [&f, e](const space_size_type i) { f(i) = e(i); });
+  }  // end of assign_sequential_scalar_impl
+
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
+
+  template <ExecutionPolicyConceptConcept ExecutionPolicy,
+            typename FunctionType,
+            EvaluatorConcept EvaluatorType>
+  constexpr void
+  assign_scalar_impl(const ExecutionPolicy policy, FunctionType& f, const EvaluatorType& e) requires(
+      (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
+          !hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
+    // this test is made for assign_scalar_impl be constexpr for non-parallel
     // evaluation
     if constexpr (std::same_as<ExecutionPolicy,
                                std::execution::sequenced_policy>) {
-      std::for_each(iranges.begin(), iranges.end(),
-                    [&f, e](const space_size_type i) { f(i) = e(i); });
+      assign_sequential_scalar_impl(f, e);
     } else {
-      std::for_each(policy, iranges.begin(), iranges.end(),
-                    [&f, e](const space_size_type i) { f(i) = e(i); });
+      using Space = std::decay_t<decltype(getSpace(f))>;
+      using space_size_type = typename SpaceTraits<Space>::size_type;
+      const auto& space = getSpace(f);
+      if constexpr (LightweightViewConcept<FunctionType>) {
+        const auto iranges =
+            std::views::iota(space_size_type{}, getSpaceSize(space));
+        std::for_each(policy, iranges.begin(), iranges.end(),
+                      [f, e](const space_size_type i) mutable { f(i) = e(i); });
+      } else {
+        auto v = view(f);
+        const auto iranges =
+            std::views::iota(space_size_type{}, getSpaceSize(space));
+        std::for_each(policy, iranges.begin(), iranges.end(),
+                      [v, e](const space_size_type i) mutable { v(i) = e(i); });
+      }
     }
   }  // end of assign_scalar_impl
+
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
+
+  template <typename FunctionType, EvaluatorConcept EvaluatorType>
+  constexpr void
+  assign_sequential_scalar_impl(FunctionType& f, const EvaluatorType& e) requires(
+      (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
+          hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
+    using Space = std::decay_t<decltype(getSpace(f))>;
+    using space_size_type = typename SpaceTraits<Space>::size_type;
+    const auto& space = getSpace(f);
+    const auto iranges =
+        std::views::iota(space_size_type{}, getSpaceSize(space));
+    std::for_each(iranges.begin(), iranges.end(),
+                  [&space, &f, e](const space_size_type i) {
+                    const auto& wk = getElementWorkspace(space, i);
+                    f(wk, i) = e(wk, i);
+                  });
+  }  // end of assign_sequential_scalar_impl
+
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
@@ -197,28 +249,63 @@ namespace mgis::function::internals {
   assign_scalar_impl(const ExecutionPolicy policy, FunctionType& f, const EvaluatorType& e) requires(
       (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
           hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
-    using Space = std::decay_t<decltype(getSpace(f))>;
-    using space_size_type = typename SpaceTraits<Space>::size_type;
-    const auto& space = getSpace(f);
-    const auto iranges =
-        std::views::iota(space_size_type{}, getSpaceSize(space));
     // this test is made for assign_impl be constexpr for non-parallel
     // evaluation
     if constexpr (std::same_as<ExecutionPolicy,
                                std::execution::sequenced_policy>) {
-      std::for_each(iranges.begin(), iranges.end(),
-                    [&space, &f, e](const space_size_type i) {
-                      const auto& wk = getElementWorkspace(space, i);
-                      f(wk, i) = e(wk, i);
-                    });
+      assign_sequential_scalar_impl(f, e);
     } else {
-      std::for_each(policy, iranges.begin(), iranges.end(),
-                    [&space, &f, e](const space_size_type i) {
-                      const auto& wk = getElementWorkspace(space, i);
-                      f(wk, i) = e(wk, i);
-                    });
+      using Space = std::decay_t<decltype(getSpace(f))>;
+      using space_size_type = typename SpaceTraits<Space>::size_type;
+      const auto& space = getSpace(f);
+      const auto iranges =
+          std::views::iota(space_size_type{}, getSpaceSize(space));
+      if constexpr (LightweightViewConcept<FunctionType>) {
+        std::for_each(policy, iranges.begin(), iranges.end(),
+                      [&space, f, e](const space_size_type i) mutable {
+                        const auto& wk = getElementWorkspace(space, i);
+                        f(wk, i) = e(wk, i);
+                      });
+      } else {
+        auto v = view(f);
+        std::for_each(policy, iranges.begin(), iranges.end(),
+                      [&space, v, e](const space_size_type i) mutable {
+                        const auto& wk = getElementWorkspace(space, i);
+                        v(wk, i) = e(wk, i);
+                      });
+      }
     }
   }  // end of assign_scalar_impl
+
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
+
+  template <typename FunctionType, EvaluatorConcept EvaluatorType>
+  constexpr void
+  assign_sequential_impl(FunctionType& f, const EvaluatorType& e) requires(
+      (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
+          !hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
+    using Space = std::decay_t<decltype(getSpace(f))>;
+    using space_size_type = typename SpaceTraits<Space>::size_type;
+    using result_type = std::invoke_result_t<const EvaluatorType, size_type>;
+    using value_type = std::invoke_result_t<FunctionType, size_type>;
+    constexpr auto use_direct_assignement =
+        requires(value_type & v1, const result_type& v2) {
+      v1 = v2;
+    };
+    const auto& space = getSpace(f);
+    const auto iranges =
+        std::views::iota(space_size_type{}, getSpaceSize(space));
+    std::for_each(iranges.begin(), iranges.end(),
+                  [&f, e](const space_size_type i) {
+                    if constexpr (use_direct_assignement) {
+                      f(i) = e(i);
+                    } else {
+                      assign_value(f(i), e(i));
+                    }
+                  });
+  }  // end of assign_sequential_impl
+
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
@@ -227,10 +314,57 @@ namespace mgis::function::internals {
   assign_impl(const ExecutionPolicy policy, FunctionType& f, const EvaluatorType& e) requires(
       (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
           !hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
+    // this test is made for assign_impl be constexpr for non-parallel
+    // evaluation
+    if constexpr (std::same_as<ExecutionPolicy,
+                               std::execution::sequenced_policy>) {
+      assign_sequential_impl(f, e);
+    } else {
+      using Space = std::decay_t<decltype(getSpace(f))>;
+      using space_size_type = typename SpaceTraits<Space>::size_type;
+      using value_type = std::invoke_result_t<FunctionType, size_type>;
+      using result_type = std::invoke_result_t<const EvaluatorType, size_type>;
+      constexpr auto use_direct_assignement =
+          requires(value_type & v1, const result_type& v2) {
+        v1 = v2;
+      };
+      const auto& space = getSpace(f);
+      const auto iranges =
+          std::views::iota(space_size_type{}, getSpaceSize(space));
+      if constexpr (LightweightViewConcept<FunctionType>) {
+        std::for_each(policy, iranges.begin(), iranges.end(),
+                      [f, e](const space_size_type i) mutable {
+                        if constexpr (use_direct_assignement) {
+                          f(i) = e(i);
+                        } else {
+                          assign_value(f(i), e(i));
+                        }
+                      });
+      } else {
+        auto v = view(f);
+        std::for_each(policy, iranges.begin(), iranges.end(),
+                      [v, e](const space_size_type i) mutable {
+                        if constexpr (use_direct_assignement) {
+                          v(i) = e(i);
+                        } else {
+                          assign_value(v(i), e(i));
+                        }
+                      });
+      }
+    }
+  }  // end of assign_impl
+
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
+
+  template <typename FunctionType, EvaluatorConcept EvaluatorType>
+  constexpr void
+  assign_sequential_impl(FunctionType& f, const EvaluatorType& e) requires(
+      (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
+          hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
     using Space = std::decay_t<decltype(getSpace(f))>;
     using space_size_type = typename SpaceTraits<Space>::size_type;
     using value_type = std::invoke_result_t<FunctionType, size_type>;
-    using result_type = std::invoke_result_t<EvaluatorType, size_type>;
+    using result_type = std::invoke_result_t<const EvaluatorType, size_type>;
     constexpr auto use_direct_assignement =
         requires(value_type & v1, const result_type& v2) {
       v1 = v2;
@@ -238,29 +372,18 @@ namespace mgis::function::internals {
     const auto& space = getSpace(f);
     const auto iranges =
         std::views::iota(space_size_type{}, getSpaceSize(space));
-    // this test is made for assign_impl be constexpr for non-parallel
-    // evaluation
-    if constexpr (std::same_as<ExecutionPolicy,
-                               std::execution::sequenced_policy>) {
-      std::for_each(iranges.begin(), iranges.end(),
-                    [&f, e](const space_size_type i) {
-                      if constexpr (use_direct_assignement) {
-                        f(i) = e(i);
-                      } else {
-                        assign_value(f(i), e(i));
-                      }
-                    });
-    } else {
-      std::for_each(policy, iranges.begin(), iranges.end(),
-                    [&f, e](const space_size_type i) {
-                      if constexpr (use_direct_assignement) {
-                        f(i) = e(i);
-                      } else {
-                        assign_value(f(i), e(i));
-                      }
-                    });
-    }
-  }  // end of assign_impl
+    std::for_each(iranges.begin(), iranges.end(),
+                  [&f, e](const space_size_type i) {
+                    const auto& wk = getElementWorkspace(space, i);
+                    if constexpr (use_direct_assignement) {
+                      f(wk, i) = e(wk, i);
+                    } else {
+                      assign_value(f(wk, i), e(wk, i));
+                    }
+                  });
+  }  // end of assign_sequential_impl
+
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
@@ -269,65 +392,69 @@ namespace mgis::function::internals {
   assign_impl(const ExecutionPolicy policy, FunctionType& f, const EvaluatorType& e) requires(
       (LinearElementSpaceConcept<std::decay_t<decltype(getSpace(f))>>)&&(
           hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
-    using Space = std::decay_t<decltype(getSpace(f))>;
-    using space_size_type = typename SpaceTraits<Space>::size_type;
-    using value_type = std::invoke_result_t<FunctionType, size_type>;
-    using result_type = std::invoke_result_t<EvaluatorType, size_type>;
-    constexpr auto use_direct_assignement =
-        requires(value_type & v1, const result_type& v2) {
-      v1 = v2;
-    };
-    const auto& space = getSpace(f);
-    const auto iranges =
-        std::views::iota(space_size_type{}, getSpaceSize(space));
     // this test is made for assign_impl be constexpr for non-parallel
     // evaluation
     if constexpr (std::same_as<ExecutionPolicy,
                                std::execution::sequenced_policy>) {
-      std::for_each(iranges.begin(), iranges.end(),
-                    [&f, e](const space_size_type i) {
-                      const auto& wk = getElementWorkspace(space, i);
-                      if constexpr (use_direct_assignement) {
-                        f(wk, i) = e(wk, i);
-                      } else {
-                        assign_value(f(wk, i), e(wk, i));
-                      }
-                    });
+      assign_sequential_impl(f, e);
     } else {
-      std::for_each(policy, iranges.begin(), iranges.end(),
-                    [&f, e](const space_size_type i) {
-                      const auto& wk = getElementWorkspace(space, i);
-                      if constexpr (use_direct_assignement) {
-                        f(wk, i) = e(wk, i);
-                      } else {
-                        assign_value(f(wk, i), e(wk, i));
-                      }
-                    });
+      using Space = std::decay_t<decltype(getSpace(f))>;
+      using space_size_type = typename SpaceTraits<Space>::size_type;
+      using value_type = std::invoke_result_t<FunctionType, size_type>;
+      using result_type = std::invoke_result_t<const EvaluatorType, size_type>;
+      constexpr auto use_direct_assignement =
+          requires(value_type & v1, const result_type& v2) {
+        v1 = v2;
+      };
+      const auto& space = getSpace(f);
+      const auto iranges =
+          std::views::iota(space_size_type{}, getSpaceSize(space));
+      if constexpr (LightweightViewConcept<FunctionType>) {
+        std::for_each(policy, iranges.begin(), iranges.end(),
+                      [f, e](const space_size_type i) mutable {
+                        const auto& wk = getElementWorkspace(space, i);
+                        if constexpr (use_direct_assignement) {
+                          f(wk, i) = e(wk, i);
+                        } else {
+                          assign_value(f(wk, i), e(wk, i));
+                        }
+                      });
+      } else {
+        auto v = view(f);
+        std::for_each(policy, iranges.begin(), iranges.end(),
+                      [v, e](const space_size_type i) mutable {
+                        const auto& wk = getElementWorkspace(space, i);
+                        if constexpr (use_direct_assignement) {
+                          v(wk, i) = e(wk, i);
+                        } else {
+                          assign_value(v(wk, i), e(wk, i));
+                        }
+                      });
+      }
     }
   }  // end of assign_impl
+
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   constexpr void assign_sequential(FunctionType& f,
                                    const EvaluatorType e)  //
-      requires(((LinearElementSpaceConcept<std::decay_t<
-                     decltype(getSpace(std::declval<EvaluatorType>()))>>) ||
-                (LinearQuadratureSpaceConcept<std::decay_t<
-                     decltype(getSpace(std::declval<EvaluatorType>()))>>)) &&
-               internals::same_decay_type<
-                   decltype(getSpace(std::declval<FunctionType>())),
-                   decltype(getSpace(std::declval<EvaluatorType>()))>) {
+      requires(
+          ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
+           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)) &&
+          same_decay_type<function_space<FunctionType>,
+                          evaluator_space<EvaluatorType>>) {
     using function_result_type = function_result<FunctionType>;
     using evaluator_result_type = evaluator_result<EvaluatorType>;
-    constexpr auto policy = std::execution::seq;
-    EvaluatorType ev = e;
-    allocateWorkspace(ev);
-    if constexpr ((internals::same_decay_type<function_result_type, real>)&&  //
-                  (internals::same_decay_type<evaluator_result_type, real>)) {
-      internals::assign_scalar_impl(policy, f, ev);
+    if constexpr ((same_decay_type<function_result_type, real>)&&  //
+                  (same_decay_type<evaluator_result_type, real>)) {
+      assign_sequential_scalar_impl(f, e);
     } else {
-      internals::assign_impl(policy, f, ev);
+      assign_sequential_impl(f, e);
     }
   }  // end of assign_sequential
+
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
@@ -335,99 +462,59 @@ namespace mgis::function::internals {
   void assign_parallel(FunctionType& f,
                        const ExecutionPolicy policy,
                        const EvaluatorType e)  //
-      requires(((LinearElementSpaceConcept<std::decay_t<
-                     decltype(getSpace(std::declval<EvaluatorType>()))>>) ||
+      requires(((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
                 (LinearQuadratureSpaceConcept<std::decay_t<
-                     decltype(getSpace(std::declval<EvaluatorType>()))>>)) &&
-               internals::same_decay_type<
-                   decltype(getSpace(std::declval<FunctionType>())),
-                   decltype(getSpace(std::declval<EvaluatorType>()))>) {
+
+                     evaluator_space<EvaluatorType>>>)) &&
+               same_decay_type<function_space<FunctionType>,
+                               evaluator_space<EvaluatorType>>) {
     using function_result_type = function_result<FunctionType>;
     using evaluator_result_type = evaluator_result<EvaluatorType>;
-    thread_local EvaluatorType ev = e;
-    allocateWorkspace(ev);
-    if constexpr ((internals::same_decay_type<function_result_type, real>)&&  //
-                  (internals::same_decay_type<evaluator_result_type, real>)) {
-      assign_scalar_impl(policy, f, ev);
+    if constexpr ((same_decay_type<function_result_type, real>)&&  //
+                  (same_decay_type<evaluator_result_type, real>)) {
+      assign_scalar_impl(policy, f, e);
     } else {
-      assign_impl(policy, f, ev);
+      assign_impl(policy, f, e);
     }
   }  // end of assign_parallel
 
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
+
   template <EvaluatorConcept EvaluatorType, typename OperatorType>
-  constexpr real scalar_reduce_sequential(const EvaluatorType e,
+  constexpr real sequential_scalar_reduce(const EvaluatorType e,
                                           const OperatorType op,
                                           const real initial_value)  //
-      requires(LinearElementSpaceConcept<std::decay_t<
-                   decltype(getSpace(std::declval<EvaluatorType>()))>>) {
+      requires(LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) {
     using Space = std::decay_t<decltype(getSpace(e))>;
     using space_size_type = typename SpaceTraits<Space>::size_type;
-    EvaluatorType ev = e;
-    allocateWorkspace(ev);
-    const auto& space = getSpace(ev);
+    const auto& space = getSpace(e);
     const auto iranges =
         std::views::iota(space_size_type{}, getSpaceSize(space));
-    auto get_value = [&space, &ev](const space_size_type i) {
+    // warning, taking a reference to space would probably lead to
+    // a segfault when offloading to GPUs
+    auto get_value = [&space, e](const space_size_type i) {
       if constexpr (hasElementWorkspace<Space>) {
-        if constexpr (internals::same_decay_type<
-                          evaluator_result<EvaluatorType>, real>) {
+        if constexpr (same_decay_type<evaluator_result<EvaluatorType>, real>) {
           const auto& wk = getElementWorkspace(space, i);
-          return ev(wk, i);
+          return e(wk, i);
         } else {
           const auto& wk = getElementWorkspace(space, i);
-          return ev(wk, i)[0];
+          return e(wk, i)[0];
         }
       } else {
         static_cast<void>(space);
-        if constexpr (internals::same_decay_type<
-                          evaluator_result<EvaluatorType>, real>) {
-          return ev(i);
+        if constexpr (same_decay_type<evaluator_result<EvaluatorType>, real>) {
+          return e(i);
         } else {
-          return ev(i)[0];
+          return e(i)[0];
         }
       }
     };
     return std::transform_reduce(iranges.begin(), iranges.end(), initial_value,
                                  op, get_value);
-  }  // end of scalar_reduce_sequential
+  }  // end of sequential_scalar_reduce
 
-  template <ExecutionPolicyConceptConcept ExecutionPolicy,
-            EvaluatorConcept EvaluatorType,
-            typename OperatorType>
-  real scalar_reduce_parallel_2(const ExecutionPolicy policy,
-                                const EvaluatorType ev,
-                                const OperatorType op,
-                                const real initial_value)  //
-      requires(LinearElementSpaceConcept<std::decay_t<
-                   decltype(getSpace(std::declval<EvaluatorType>()))>>) {
-    using Space = std::decay_t<decltype(getSpace(ev))>;
-    using space_size_type = typename SpaceTraits<Space>::size_type;
-    const auto& space = getSpace(ev);
-    const auto iranges =
-        std::views::iota(space_size_type{}, getSpaceSize(space));
-    auto get_value = [&space, ev](const space_size_type i) {
-      if constexpr (hasElementWorkspace<Space>) {
-        if constexpr (internals::same_decay_type<
-                          evaluator_result<EvaluatorType>, real>) {
-          const auto& wk = getElementWorkspace(space, i);
-          return ev(wk, i);
-        } else {
-          const auto& wk = getElementWorkspace(space, i);
-          return ev(wk, i)[0];
-        }
-      } else {
-        static_cast<void>(space);
-        if constexpr (internals::same_decay_type<
-                          evaluator_result<EvaluatorType>, real>) {
-          return ev(i);
-        } else {
-          return ev(i)[0];
-        }
-      }
-    };
-    return std::transform_reduce(policy, iranges.begin(), iranges.end(),
-                                 initial_value, op, get_value);
-  }
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             EvaluatorConcept EvaluatorType,
@@ -436,16 +523,41 @@ namespace mgis::function::internals {
                               const EvaluatorType& e,
                               const OperatorType op,
                               const real initial_value)  //
-      requires(LinearElementSpaceConcept<std::decay_t<
-                   decltype(getSpace(std::declval<EvaluatorType>()))>>) {
-    thread_local EvaluatorType ev = e;
-    allocateWorkspace(ev);
-    return scalar_reduce_parallel_2(policy, ev, op, initial_value);
+      requires(LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) {
+    using Space = std::decay_t<decltype(getSpace(e))>;
+    using space_size_type = typename SpaceTraits<Space>::size_type;
+    const auto& space = getSpace(e);
+    const auto iranges =
+        std::views::iota(space_size_type{}, getSpaceSize(space));
+    auto get_value = [&space, e](const space_size_type i) {
+      if constexpr (hasElementWorkspace<Space>) {
+        if constexpr (same_decay_type<evaluator_result<EvaluatorType>, real>) {
+          const auto& wk = getElementWorkspace(space, i);
+          return e(wk, i);
+        } else {
+          const auto& wk = getElementWorkspace(space, i);
+          return e(wk, i)[0];
+        }
+      } else {
+        static_cast<void>(space);
+        if constexpr (same_decay_type<evaluator_result<EvaluatorType>, real>) {
+          return e(i);
+        } else {
+          return e(i)[0];
+        }
+      }
+    };
+    return std::transform_reduce(policy, iranges.begin(), iranges.end(),
+                                 initial_value, op, get_value);
   }  // end of scalar_reduce_parallel
+
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
 }  // end of namespace mgis::function::internals
 
 namespace mgis::function {
+
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
@@ -454,13 +566,11 @@ namespace mgis::function {
                         FunctionType& f,
                         const ExecutionPolicy policy,
                         const EvaluatorType e)  //
-      requires(((LinearElementSpaceConcept<std::decay_t<
-                     decltype(getSpace(std::declval<EvaluatorType>()))>>) ||
-                (LinearQuadratureSpaceConcept<std::decay_t<
-                     decltype(getSpace(std::declval<EvaluatorType>()))>>)) &&
-               internals::same_decay_type<
-                   decltype(getSpace(std::declval<FunctionType>())),
-                   decltype(getSpace(std::declval<EvaluatorType>()))>) {
+      requires(
+          ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
+           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)) &&
+          std::same_as<function_space<FunctionType>,
+                       evaluator_space<EvaluatorType>>) {
     if (!areEquivalent(getSpace(f), getSpace(e))) {
       return ctx.registerErrorMessage("unmatched spaces");
     }
@@ -480,6 +590,33 @@ namespace mgis::function {
     return true;
   }  // end of assign
 
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
+
+  template <typename FunctionType, EvaluatorConcept EvaluatorType>
+  constexpr bool assign(AbstractErrorHandler& ctx,
+                        FunctionType& f,
+                        const EvaluatorType e)  //
+      requires(
+          ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
+           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)) &&
+          std::same_as<function_space<FunctionType>,
+                       evaluator_space<EvaluatorType>>) {
+    if (!areEquivalent(getSpace(f), getSpace(e))) {
+      return ctx.registerErrorMessage("unmatched spaces");
+    }
+    if (getNumberOfComponents(f) != getNumberOfComponents(e)) {
+      return ctx.registerErrorMessage("unmatched number of components");
+    }
+    //
+    if (!check(ctx, e)) {
+      return false;
+    }
+    internals::assign_sequential(f, e);
+    return true;
+  }  // end of assign
+
+#ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
+
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             EvaluatorConcept EvaluatorType,
             typename OperatorType>
@@ -488,8 +625,7 @@ namespace mgis::function {
                                               const EvaluatorType e,
                                               const OperatorType op,
                                               const real initial_value)  //
-      requires(LinearElementSpaceConcept<std::decay_t<
-                   decltype(getSpace(std::declval<EvaluatorType>()))>>) {
+      requires(LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) {
     if (getNumberOfComponents(e) != 1) {
       return ctx.registerErrorMessage("non scalar evaluator");
     }
@@ -499,34 +635,28 @@ namespace mgis::function {
     }
     if constexpr (std::same_as<ExecutionPolicy,
                                std::execution::sequenced_policy>) {
-      return internals::scalar_reduce_sequential(e, op, initial_value);
+      return internals::sequential_scalar_reduce(e, op, initial_value);
     } else {
       return internals::scalar_reduce_parallel(policy, e, op, initial_value);
     }
   }  // end of scalar_reduce
 
-  template <typename FunctionType, EvaluatorConcept EvaluatorType>
-  constexpr bool assign(AbstractErrorHandler& ctx,
-                        FunctionType& f,
-                        const EvaluatorType e)  //
-      requires(((LinearElementSpaceConcept<std::decay_t<
-                     decltype(getSpace(std::declval<EvaluatorType>()))>>) ||
-                (LinearQuadratureSpaceConcept<std::decay_t<
-                     decltype(getSpace(std::declval<EvaluatorType>()))>>)) &&
-               internals::same_decay_type<
-                   decltype(getSpace(std::declval<FunctionType>())),
-                   decltype(getSpace(std::declval<EvaluatorType>()))>) {
-    return assign(ctx, f, std::execution::seq, e);
-  }  // end of assign
+#endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
   template <EvaluatorConcept EvaluatorType, typename OperatorType>
   constexpr std::optional<real> scalar_reduce(AbstractErrorHandler& ctx,
                                               const EvaluatorType e,
                                               const OperatorType op,
                                               const real initial_value)  //
-      requires(LinearElementSpaceConcept<std::decay_t<
-                   decltype(getSpace(std::declval<EvaluatorType>()))>>) {
-    return scalar_reduce(ctx, std::execution::seq, e, op, initial_value);
+      requires(LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) {
+    if (getNumberOfComponents(e) != 1) {
+      return ctx.registerErrorMessage("non scalar evaluator");
+    }
+    //
+    if (!check(ctx, e)) {
+      return false;
+    }
+    return internals::sequential_scalar_reduce(e, op, initial_value);
   }  // end of scalar_reduce
 
 }  // namespace mgis::function

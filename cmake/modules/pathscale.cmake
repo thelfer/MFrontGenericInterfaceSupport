@@ -1,6 +1,6 @@
 include(cmake/modules/common-compiler-flags.cmake)
-tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fno-fast-stdlib")
-tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "march=auto")
+mgis_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fno-fast-stdlib")
+mgis_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "march=auto")
 
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 

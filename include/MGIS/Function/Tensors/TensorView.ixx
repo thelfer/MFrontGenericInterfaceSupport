@@ -33,13 +33,18 @@ namespace mgis::function {
       const PreconditionsCheck<doPreconditionsCheck>& pcheck,
       FunctionType& values)
       : PreconditionsChecker<TensorView>(pcheck, values),
-        function(values) {}  // end of TensorView
+        function(make_view(values)) {}  // end of TensorView
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr bool TensorView<FunctionType, TensorType>::check(
-      AbstractErrorHandler& ctx) const {
-    return checkPreconditions(ctx, this->function);
-  }
+      AbstractErrorHandler& eh) const {
+    const auto nc =
+        internals::disambiguateGetNumberOfComponents(this->function);
+    if (nc != compile_time_size<TensorType>) {
+      return eh.registerErrorMessage("invalid number of components");
+    }
+    return true;
+  }  // end of check
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr const typename TensorView<FunctionType, TensorType>::Space&
@@ -207,11 +212,6 @@ namespace mgis::function {
                        const TensorView<FunctionType, TensorType>& v) {
     return v.check(eh);
   }  // end of check
-
-  template <FunctionConcept FunctionType, TensorConcept TensorType>
-  constexpr void allocateWorkspace(
-      TensorView<FunctionType, TensorType>&) noexcept {
-  }  // end of allocateWorkspace
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr size_type getNumberOfComponents(

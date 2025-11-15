@@ -69,9 +69,9 @@ int main(const int argc, const char* const* argv) {
   check_status(mgis_bv_behaviour_get_source(&s, b));
   check_string(s, "ParameterTest.mfront", "invalid source");
   // version
-  const char* v;
-  check_status(mgis_bv_behaviour_get_tfel_version(&v, b));
-  check_string(v, TFEL_VERSION, "invalid TFEL version");
+  const char* tfel_version;
+  check_status(mgis_bv_behaviour_get_tfel_version(&tfel_version, b));
+  check_string(tfel_version, TFEL_VERSION, "invalid TFEL version");
   // number of real parameter
   mgis_size_type nparams;
   check_status(mgis_bv_behaviour_get_number_of_parameters(&nparams, b));

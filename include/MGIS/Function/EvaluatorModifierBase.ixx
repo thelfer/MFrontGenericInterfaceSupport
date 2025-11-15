@@ -3,6 +3,13 @@
  * \brief
  * \author Thomas Helfer
  * \date   07/05/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_FUNCTION_EVALUATORMODIFIERBASE_IXX
@@ -28,12 +35,6 @@ namespace mgis::function {
       AbstractErrorHandler& ctx) const {
     return internals::disambiguateCheck(ctx, this->evaluator);
   }  // end of check
-
-  template <typename Child, EvaluatorConcept EvaluatorType>
-  constexpr void
-  EvaluatorModifierBase<Child, EvaluatorType>::allocateWorkspace() {
-    internals::disambiguateAllocateWorkspace(this->evaluator);
-  }  // end of allocatWorkspace
 
   template <typename Child, EvaluatorConcept EvaluatorType>
   constexpr decltype(auto)
@@ -86,12 +87,6 @@ namespace mgis::function {
                        const EvaluatorModifierBase<Child, EvaluatorType>& e) {
     return e.check(eh);
   }  // end of check
-
-  template <typename Child, EvaluatorConcept EvaluatorType>
-  constexpr void allocateWorkspace(
-      EvaluatorModifierBase<Child, EvaluatorType>& e) {
-    return e.allocateWorkspace();
-  }  // end of allocateWorkspace
 
 }  // end of namespace mgis::function
 

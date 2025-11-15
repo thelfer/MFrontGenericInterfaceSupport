@@ -15,5 +15,13 @@
 #include <pybind11/pybind11.h>
 
 void declareThreadPool(pybind11::module_&);
+#ifdef MGIS_HAVE_TFEL
+void declareDatabase(pybind11::module_&);
+#endif /* MGIS_HAVE_TFEL */
 
-PYBIND11_MODULE(_mgis, m) { declareThreadPool(m); }  // end of module behaviour
+PYBIND11_MODULE(_mgis, m) {
+  declareThreadPool(m);
+#ifdef MGIS_HAVE_TFEL
+  declareDatabase(m);
+#endif /* MGIS_HAVE_TFEL */
+}  // end of module behaviour

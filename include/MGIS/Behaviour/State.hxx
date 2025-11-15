@@ -401,21 +401,20 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT const real* getExternalStateVariable(const State&,
                                                    const size_type);
-
   /*!
    * \brief make a view from a behaviour data
    * \param[in] s: state
    * \return the view
    * \note the view has at most the same life time as the state.
    */
-  MGIS_EXPORT StateView make_view(State&);
+  StateView make_view(State&);
   /*!
    * \brief make a view from a behaviour data
    * \param[in] s: state
    * \return the view
    * \note the view has at most the same life time as the state.
    */
-  MGIS_EXPORT InitialStateView make_view(const State&);
+  InitialStateView make_view(const State&);
   /*!
    * \brief print a detailled (verbose) description of the integration point
    * state using a markdown format
@@ -430,5 +429,7 @@ namespace mgis::behaviour {
                                   const mgis::size_type);
 
 }  // end of namespace mgis::behaviour
+
+#include "MGIS/Behaviour/State.ixx"
 
 #endif /* LIB_MGIS_BEHAVIOUR_STATE_HXX */
