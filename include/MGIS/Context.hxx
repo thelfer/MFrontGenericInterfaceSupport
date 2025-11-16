@@ -27,11 +27,6 @@ namespace mgis {
    * \brief a class used to pass an execution context to most methods of
    * `MGIS` and gather information (error, logs).
    *
-   * The `Context` may be changed at various stage of the computation.
-   * For example, the verbosity level or the logging stream
-   * can be changed when calling a new model: this is can useful
-   * to debug a specific rm.
-   *
    * The default logging stream is the one returned by the
    * `mgis::getLogStream` free function.
    */
