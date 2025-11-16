@@ -65,14 +65,16 @@ namespace mgis::function::internals {
         []<typename TensorType>(const TensorType& t,
                                 const tfel::math::tmatrix<3, 3, real>& R)  //
         requires((tfel::math::TensorConcept<TensorType>) ||
-                 (tfel::math::StensorConcept<TensorType>)) {
+                 (tfel::math::StensorConcept<TensorType>) ||
+                 (tfel::math::ST2toST2Concept<TensorType>)) {
           return tfel::math::change_basis(t, R);
         });
 
     constexpr auto operator()(const tfel::math::tmatrix<3, 3, real>& R) const {
       auto c = [R]<typename TensorType>(const TensorType& t)  //
           requires((tfel::math::TensorConcept<TensorType>) ||
-                   (tfel::math::StensorConcept<TensorType>)) {
+                   (tfel::math::StensorConcept<TensorType>) ||
+                   (tfel::math::ST2toST2Concept<TensorType>)) {
         return tfel::math::change_basis(t, R);
       };
       return internals::unary_operation_modifier<decltype(c)>(c);
@@ -109,7 +111,8 @@ namespace mgis::function::internals {
         []<typename TensorType>(const TensorType& t,
                                 const tfel::math::tmatrix<3, 3, real>& R)  //
         requires((tfel::math::TensorConcept<TensorType>) ||
-                 (tfel::math::StensorConcept<TensorType>)) {
+                 (tfel::math::StensorConcept<TensorType>) ||
+                 (tfel::math::ST2toST2Concept<TensorType>)) {
           return tfel::math::change_basis(t, tfel::math::transpose(R));
         });
 
@@ -117,7 +120,8 @@ namespace mgis::function::internals {
       auto c = [Rb = tfel::math::transpose(R)]<typename TensorType>(
           const TensorType& t)  //
           requires((tfel::math::TensorConcept<TensorType>) ||
-                   (tfel::math::StensorConcept<TensorType>)) {
+                   (tfel::math::StensorConcept<TensorType>) ||
+                   (tfel::math::ST2toST2Concept<TensorType>)) {
         return tfel::math::change_basis(t, Rb);
       };
       return internals::unary_operation_modifier<decltype(c)>(c);

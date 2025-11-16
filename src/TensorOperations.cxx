@@ -67,7 +67,7 @@ namespace mgis::function::internals {
     return ctx.registerErrorMessage("invalid number of components");
   }  // end of computeRotatedSymmetricTensor
 
-} // end of namespace mgis::function::internals
+}  // end of namespace mgis::function::internals
 
 namespace mgis::function {
 
@@ -76,9 +76,13 @@ namespace mgis::function {
       const BasicImmutableFunctionView& t,
       const BasicImmutableFunctionView& r,
       const TensorType type,
-      const RotationOperation ro) noexcept{
+      const RotationOperation ro) noexcept {
     if (type == TensorType::STENSOR) {
       return computeRotatedSymmetricTensor(ctx, t, r, ro);
+    } else if (type == TensorType::TENSOR) {
+      return computeRotatedUnsymmetricTensor(ctx, t, r, ro);
+    } else if (type == TensorType::ST2TOST2) {
+      return computeRotatedST2toST2(ctx, t, r, ro);
     }
     return ctx.registerErrorMessage(
         "computeRotatedTensor: unsupported tensor type");
@@ -94,10 +98,12 @@ namespace mgis::function {
       return computeRotatedSymmetricTensor(ctx, t, r, ro);
     } else if (type == TensorType::TENSOR) {
       return computeRotatedUnsymmetricTensor(ctx, t, r, ro);
+    } else if (type == TensorType::ST2TOST2) {
+      return computeRotatedST2toST2(ctx, t, r, ro);
     }
     return ctx.registerErrorMessage(
         "computeRotatedTensor: unsupported tensor type");
-  } // end of computeRotatedTensor
+  }  // end of computeRotatedTensor
 
   std::optional<Function<BasicLinearSpace>> computeRotatedSymmetricTensor(
       Context& ctx,
@@ -168,5 +174,40 @@ namespace mgis::function {
     }
     return ctx.registerErrorMessage("invalid number of components");
   }  // end of computeRotatedUnsymmetricTensor
+
+  std::optional<Function<BasicLinearSpace>> computeRotatedST2toST2(
+      Context& ctx,
+      const BasicImmutableFunctionView& s,
+      const BasicImmutableFunctionView& r,
+      const RotationOperation ro) noexcept {
+    if (getNumberOfComponents(s) == 9) {
+      return internals::evaluate(ctx, s);
+    } else if (getNumberOfComponents(s) == 16) {
+      return internals::computeRotatedTensor(ctx, s | as_st2tost2<2>, r, ro);
+    } else if (getNumberOfComponents(s) == 36) {
+      return internals::computeRotatedTensor(ctx, s | as_st2tost2<3>, r, ro);
+    }
+    return ctx.registerErrorMessage("invalid number of components");
+  }  // end of computeRotatedST2toST2
+
+  std::optional<Function<BasicLinearSpace>> computeRotatedST2toST2(
+      Context& ctx,
+      const BasicImmutableFunctionView& s,
+      const std::span<real>& r,
+      const RotationOperation ro) noexcept {
+    if (r.size() != 9u) {
+      return ctx.registerErrorMessage(
+          "computeRotatedST2toST2: invalid number of values for the "
+          "rotation matrix");
+    }
+    if (getNumberOfComponents(s) == 9) {
+      return internals::evaluate(ctx, s);
+    } else if (getNumberOfComponents(s) == 16) {
+      return internals::computeRotatedTensor(ctx, s | as_st2tost2<2>, r, ro);
+    } else if (getNumberOfComponents(s) == 36) {
+      return internals::computeRotatedTensor(ctx, s | as_st2tost2<3>, r, ro);
+    }
+    return ctx.registerErrorMessage("invalid number of components");
+  }  // end of computeRotatedST2toST2
 
 }  // end of namespace mgis::function

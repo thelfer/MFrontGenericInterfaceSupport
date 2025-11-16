@@ -32,6 +32,9 @@ endif(enable-openmp)
 
 # enable mgis-function
 option(enable-mgis-function "enable mgis function" ON)
+option(enable-mgis-function-precompiled-operations
+       "enable compilations of some tensorial operations of basic functions. \
+        This requires mgis-functions to be handled **and** TFEL support" ON)
 # enable exceptions usage
 option(enable-exceptions "use exceptions to report contract violation and error reporting" OFF)
 
