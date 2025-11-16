@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/MechanicalOperations.hxx
+ * \file   MGIS/Function/TFEL/MechanicalOperations.hxx
  * \brief
  * \author Thomas Helfer
  * \date   15/11/2025
@@ -16,8 +16,8 @@
 #error "TFEL is required to use tensor evaluators"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_FUNCTION_MECHANICALOPERATIONS_HXX
-#define LIB_MGIS_FUNCTION_MECHANICALOPERATIONS_HXX
+#ifndef LIB_MGIS_FUNCTION_TFEL_MECHANICALOPERATIONS_HXX
+#define LIB_MGIS_FUNCTION_TFEL_MECHANICALOPERATIONS_HXX
 
 #include <optional>
 #include "MGIS/Config.hxx"
@@ -68,4 +68,4 @@ namespace mgis::function {
 
 }  // namespace mgis::function
 
-#endif /* LIB_MGIS_FUNCTION_MECHANICALOPERATIONS_HXX */
+#endif /* LIB_MGIS_FUNCTION_TFEL_MECHANICALOPERATIONS_HXX */

@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/Tensors/TensorConcept.hxx
+ * \file   MGIS/Function/TFEL/TensorConcept.hxx
  * \brief
  * \author Thomas Helfer
  * \date   10/05/2025
@@ -16,8 +16,8 @@
 #error "TFEL is required to use tensor evaluators"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_FUNCTION_TENSORCONCEPT_HXX
-#define LIB_MGIS_FUNCTION_TENSORCONCEPT_HXX
+#ifndef LIB_MGIS_FUNCTION_TFEL_TENSORCONCEPT_HXX
+#define LIB_MGIS_FUNCTION_TFEL_TENSORCONCEPT_HXX
 
 #include <type_traits>
 #include "TFEL/Math/fsarray.hxx"
@@ -154,4 +154,4 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#endif /* LIB_MGIS_FUNCTION_TENSORCONCEPT_HXX */
+#endif /* LIB_MGIS_FUNCTION_TFEL_TENSORCONCEPT_HXX */

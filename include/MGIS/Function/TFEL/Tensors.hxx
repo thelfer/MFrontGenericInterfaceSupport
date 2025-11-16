@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/Tensors.hxx
+ * \file   MGIS/Function/TFEL/Tensors.hxx
  * \brief
  * \author Thomas Helfer
  * \date   11/05/2025
@@ -12,18 +12,19 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_FUNCTION_TENSORS_HXX
-#define LIB_MGIS_FUNCTION_TENSORS_HXX
+#ifndef MGIS_HAVE_TFEL
+#error "TFEL is required to use this header"
+#endif /* MGIS_HAVE_TFEL */
+
+#ifndef LIB_MGIS_FUNCTION_TFEL_TENSORS_HXX
+#define LIB_MGIS_FUNCTION_TFEL_TENSORS_HXX
 
 #include "MGIS/Function/FunctionConcept.hxx"
 #include "MGIS/Function/EvaluatorConcept.hxx"
-
-#ifdef MGIS_HAVE_TFEL
-
-#include "MGIS/Function/Tensors/TensorConcept.hxx"
-#include "MGIS/Function/Tensors/TensorView.hxx"
-#include "MGIS/Function/Tensors/TensorModifier.hxx"
-#include "MGIS/Function/Tensors/CoalescedMemoryAccessTensorView.hxx"
+#include "MGIS/Function/TFEL/TensorConcept.hxx"
+#include "MGIS/Function/TFEL/TensorView.hxx"
+#include "MGIS/Function/TFEL/TensorModifier.hxx"
+#include "MGIS/Function/TFEL/CoalescedMemoryAccessTensorView.hxx"
 
 namespace mgis::function::internals {
 
@@ -374,8 +375,6 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#endif /* MGIS_HAVE_TFEL */
+#include "MGIS/Function/TFEL/Tensors.ixx"
 
-#include "MGIS/Function/Tensors.ixx"
-
-#endif /* LIB_MGIS_FUNCTION_TENSORS_HXX */
+#endif /* LIB_MGIS_FUNCTION_TFEL_TENSORS_HXX */

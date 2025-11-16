@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/TensorOperations.hxx
+ * \file   MGIS/Function/TFEL/TensorOperations.hxx
  * \brief
  * \author Thomas Helfer
  * \date   15/11/2025
@@ -16,8 +16,8 @@
 #error "TFEL is required to use tensor evaluators"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_FUNCTION_TENSOROPERATIONS_HXX
-#define LIB_MGIS_FUNCTION_TENSOROPERATIONS_HXX
+#ifndef LIB_MGIS_FUNCTION_TFEL_TENSOROPERATIONS_HXX
+#define LIB_MGIS_FUNCTION_TFEL_TENSOROPERATIONS_HXX
 
 #include <span>
 #include <optional>
@@ -73,4 +73,4 @@ namespace mgis::function {
 
 }  // namespace mgis::function
 
-#endif /* LIB_MGIS_FUNCTION_TENSOROPERATIONS_HXX */
+#endif /* LIB_MGIS_FUNCTION_TFEL_TENSOROPERATIONS_HXX */

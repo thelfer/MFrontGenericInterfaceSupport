@@ -1,19 +1,30 @@
 /*!
- * \file   MGIS/Function/TensorView.hxx
+ * \file   MGIS/Function/TFEL/TensorView.hxx
  * \brief  This file declares the TensorView class and the
  * transform function, as well as the as_fsarray, as_tvector,
  * as_tmatrix, as_stensor and as_tensor modifiers.
  * \author Thomas Helfer
  * \date   09/05/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_FUNCTION_TENSORVIEW_HXX
-#define LIB_MGIS_FUNCTION_TENSORVIEW_HXX
+#ifndef MGIS_HAVE_TFEL
+#error "TFEL is required to use this header"
+#endif /* MGIS_HAVE_TFEL */
+
+#ifndef LIB_MGIS_FUNCTION_TFEL_TENSORVIEW_HXX
+#define LIB_MGIS_FUNCTION_TFEL_TENSORVIEW_HXX
 
 #include <span>
 #include "MGIS/Contract.hxx"
 #include "MGIS/Function/Function.hxx"
-#include "MGIS/Function/Tensors/TensorConcept.hxx"
+#include "MGIS/Function/TFEL/TensorConcept.hxx"
 
 namespace mgis::function {
 
@@ -152,6 +163,6 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#include "MGIS/Function/Tensors/TensorView.ixx"
+#include "MGIS/Function/TFEL/TensorView.ixx"
 
-#endif /* LIB_MGIS_FUNCTION_TENSORVIEW_HXX */
+#endif /* LIB_MGIS_FUNCTION_TFEL_TENSORVIEW_HXX */

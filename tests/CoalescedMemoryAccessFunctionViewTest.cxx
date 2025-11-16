@@ -16,7 +16,7 @@
 #include "MGIS/Function/BasicLinearSpace.hxx"
 #include "MGIS/Function/BasicLinearQuadratureSpace.hxx"
 #include "MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx"
-#include "MGIS/Function/Tensors.hxx"
+#include "MGIS/Function/TFEL/Tensors.hxx"
 
 struct CoalescedMemoryAccessFunctionViewBaseTest final
     : public tfel::tests::TestCase {

@@ -17,8 +17,8 @@
 #include "MGIS/Behaviour/Hypothesis.hxx"
 #include "MGIS/Function/BasicLinearSpace.hxx"
 #include "MGIS/Function/Algorithms.hxx"
-#include "MGIS/Function/Tensors.hxx"
-#include "MGIS/Function/TensorOperations.hxx"
+#include "MGIS/Function/TFEL/Tensors.hxx"
+#include "MGIS/Function/TFEL/TensorOperations.hxx"
 
 namespace mgis::function::internals {
 
