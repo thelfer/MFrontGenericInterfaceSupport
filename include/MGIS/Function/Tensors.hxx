@@ -1,4 +1,3 @@
-
 /*!
  * \file   MGIS/Function/Tensors.hxx
  * \brief
