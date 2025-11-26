@@ -61,7 +61,7 @@ namespace mgis::model {
     return model;
   }  // end of load
 
-  std::optional<Model> load(
+  std::optional<Model> loadFromDatabase(
       Context &ctx,
       const mgis::behaviour::LoadFromDatabaseOptions &opts) noexcept {
     try {
