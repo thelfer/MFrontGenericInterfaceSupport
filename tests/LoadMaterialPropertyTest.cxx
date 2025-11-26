@@ -267,7 +267,13 @@ static void test7(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     mp.fct(&s, &T, 1, op);
-    check(s.status == -3, "invalid output status");
+    if constexpr (math_errhandling & MATH_ERRNO) {
+      check(s.status == -3,
+            "invalid output status ('" + std::to_string(s.status) + "')");
+    } else {
+      check(s.status == 0,
+            "invalid output status ('" + std::to_string(s.status) + "')");
+    }
   }
 }
 
