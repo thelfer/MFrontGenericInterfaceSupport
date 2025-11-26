@@ -279,16 +279,19 @@ static void test7(const std::string& library) {
           "invalid output status ('" + std::to_string(s.status) + "')");
     check(std::abs(E - std::acos(T)) < eps, "invalid output value");
   }
-#ifndef __INTEL_LLVM_COMPILER
   {
     constexpr auto T = real{-2};
     auto s = OutputStatus{};
     s.status = 2;
     mp.fct(&s, &T, 1, op);
-    check(s.status == -3,
-          "invalid output status ('" + std::to_string(s.status) + "')");
+    if constexpr (math_errhandling & MATH_ERRNO) {
+      check(s.status == -3,
+            "invalid output status ('" + std::to_string(s.status) + "')");
+    } else {
+      check(s.status == 0,
+            "invalid output status ('" + std::to_string(s.status) + "')");
+    }
   }
-#endif /* __INTEL_LLVM_COMPILER */
 }
 
 static void test8(const std::string& library) {
