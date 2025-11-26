@@ -1,5 +1,5 @@
 ---
-title: MFrontGenericInterfaceSupport Version 2.2.1
+title: MFrontGenericInterfaceSupport Version 2.2.2
 author: Thomas Helfer
 date: 2025
 lang: en-EN
@@ -18,8 +18,12 @@ eqnPrefixTemplate: "($$i$$)"
 bibliography: bibliography.bib
 ---
 
-The page describes the new functionalities of Version 2.2.1 of the
+The page describes the new functionalities of Version 2.2.2 of the
 `MFrontGenericInterfaceSupport` project. This version is meant to
-be used with `TFEL` version 4.2.3.
+be used with `TFEL` version 4.2.X.
 
-This version was released on May 12, 2025.
+# Issues fixed
+
+## Issue 192: mass density is not initialized properly by `make_view` for the initial state
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/192>.
