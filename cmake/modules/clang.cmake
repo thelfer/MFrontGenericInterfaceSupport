@@ -1,3 +1,5 @@
+include(CheckCXXSymbolExists)
+
 if(WIN32)
   mgis_enable_cxx_compiler_flag(VISIBILITY_FLAGS "EHsc")
 endif(WIN32)
@@ -80,19 +82,18 @@ if(enable-libcxx)
 endif(enable-libcxx)
 
 if(enable-parallel-stl-algorithms)
- # This is a poor test to check of libstc++ is used
- if(UNIX AND NOT APPLE)
-   if(NOT enable-libcxx)
-     find_package(TBB)
-     if(NOT TBB_FOUND)
-       message(FATAL_ERROR "Intel Threading Building Blocks library (TBB) is required by libstdc++ to support parallel STL algorithms. You may want to disable support for those parallel algorithms by passing -Denable-parallel-stl-algorithms=OFF to cmake")
-     endif(NOT TBB_FOUND)
-     list(APPEND MGIS_REQUIRED_ADDITIONAL_PACKAGES "TBB")
-     list(APPEND MGIS_ADDITIONAL_LIBRARIES "TBB::tbb")
-   endif(NOT enable-libcxx)
- endif(UNIX AND NOT APPLE)
+  if(NOT enable-libcxx)
+    check_cxx_symbol_exists(__GLIBCXX__ version MGIS_GLIBCXX)
+    if(MGIS_GLIBCXX)
+      find_package(TBB)
+      if(NOT TBB_FOUND)
+        message(FATAL_ERROR "Intel Threading Building Blocks library (TBB) is required by libstdc++ to support parallel STL algorithms. You may want to disable support for those parallel algorithms by passing -Denable-parallel-stl-algorithms=OFF to cmake")
+      endif(NOT TBB_FOUND)
+      list(APPEND MGIS_REQUIRED_ADDITIONAL_PACKAGES "TBB")
+      list(APPEND MGIS_ADDITIONAL_LIBRARIES "TBB::tbb")
+   endif()
+  endif(NOT enable-libcxx)
 endif(enable-parallel-stl-algorithms)
-
 
 option(enable-sanitize-options "enable various clang sanitize options (undefined, address,...)" OFF)
 
