@@ -376,6 +376,7 @@ namespace mgis::behaviour {
       return &v[0];
     };  // end of get_ptr
     InitialStateView v;
+    v.mass_density = &(s.mass_density);
     v.gradients = get_ptr(s.gradients);
     v.thermodynamic_forces = get_ptr(s.thermodynamic_forces);
     v.material_properties = get_ptr(s.material_properties);
