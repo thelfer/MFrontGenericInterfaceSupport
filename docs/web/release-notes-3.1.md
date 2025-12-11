@@ -137,6 +137,15 @@ b = mgis_bv.loadFromDatabase(name='\\w+Elasticity\\w+', material='Wood',
 Python bindings are now generated using the
 [`pybind11`](https://github.com/pybind/pybind11) library.
 
+## New tutorials
+
+Two tutorials show how to use the python bindings to interact with a
+finite-strain mechanical behaviour compiled with `MFront` and develop an
+alternative to `MTest`:
+
+- [case of a finite strain behaviour](bindings-python-finite_strain.html)
+- [case of a small strain behaviour](bindings-python-small_strain.html)
+
 # Issues fixed
 
 ## Issue 148: [doc] better document `rdt` usage
