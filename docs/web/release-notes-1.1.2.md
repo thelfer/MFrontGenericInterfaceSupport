@@ -18,6 +18,8 @@ eqnPrefixTemplate: "($$i$$)"
 bibliography: bibliography.bib
 ---
 
+This version was released on December, 12 2025.
+
 # Issues fixed
 
 ## Issue #182: `mgis::behaviour::update` does not handle the case when a multi-components material property or external state variable has been initialized by uniform values and is updated by non-uniform values
