@@ -22,7 +22,7 @@ namespace mgis::function {
       template <size_type begin, ScalarOrTensorConcept ValueType>
       constexpr
       typename CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
-          MutableValues<ValueType> CoalescedMemoryAccessCompositeTensorsView<
+          template MutableValues<ValueType> CoalescedMemoryAccessCompositeTensorsView<
               Space,
               N,
               is_mutable>::get(const size_type i)  //
@@ -44,7 +44,7 @@ namespace mgis::function {
       template <size_type begin, ScalarOrTensorConcept ValueType>
       constexpr
       typename CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
-          MutableValues<ValueType> CoalescedMemoryAccessCompositeTensorsView<
+          template MutableValues<ValueType> CoalescedMemoryAccessCompositeTensorsView<
               Space,
               N,
               is_mutable>::get(const size_type e,
@@ -67,7 +67,7 @@ namespace mgis::function {
       template <size_type begin, ScalarOrTensorConcept ValueType>
       constexpr
       typename CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
-          ConstValues<ValueType> CoalescedMemoryAccessCompositeTensorsView<
+          template ConstValues<ValueType> CoalescedMemoryAccessCompositeTensorsView<
               Space,
               N,
               is_mutable>::get(const size_type i) const  //
@@ -89,7 +89,7 @@ namespace mgis::function {
       template <size_type begin, ScalarOrTensorConcept ValueType>
       constexpr
       typename CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
-          ConstValues<ValueType> CoalescedMemoryAccessCompositeTensorsView<
+          template ConstValues<ValueType> CoalescedMemoryAccessCompositeTensorsView<
               Space,
               N,
               is_mutable>::get(const size_type e,
