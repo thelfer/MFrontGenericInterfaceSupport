@@ -1,4 +1,3 @@
-
 /*!
  * \file   MGIS/Function/Tensors.hxx
  * \brief
@@ -25,6 +24,7 @@
 #include "MGIS/Function/Tensors/TensorView.hxx"
 #include "MGIS/Function/Tensors/TensorModifier.hxx"
 #include "MGIS/Function/Tensors/CoalescedMemoryAccessTensorView.hxx"
+#include "MGIS/Function/Tensors/CoalescedMemoryAccessCompositeTensorsView.hxx"
 
 namespace mgis::function::internals {
 

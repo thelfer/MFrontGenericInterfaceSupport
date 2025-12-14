@@ -13,3 +13,6 @@
  */
 
 #include "MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx"
+#ifdef MGIS_HAVE_TFEL
+#include "MGIS/Function/Tensors/CoalescedMemoryAccessCompositeTensorsView.hxx"
+#endif /* MGIS_HAVE_TFEL */
