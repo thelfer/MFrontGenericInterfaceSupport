@@ -16,5 +16,7 @@
 };
 
 @Integrator{
-  return FAILURE;
+  if(true){
+    return FAILURE;
+  }
 }
