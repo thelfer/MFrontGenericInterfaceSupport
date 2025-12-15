@@ -55,10 +55,10 @@ namespace mgis::function {
       : private PreconditionsChecker<
             CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>> {
     //
-    template <size_type size = N>
+    template <size_type size>
     using MutableValues = std::array<real*, size>;
     //
-    template <size_type size = N>
+    template <size_type size>
     using ConstValues = std::array<const real*, size>;
 
     //! \brief type of the function view associated with a single component
@@ -114,7 +114,7 @@ namespace mgis::function {
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
-    [[nodiscard]] constexpr MutableValues<> getValuesPointers(
+    [[nodiscard]] constexpr MutableValues<N> getValuesPointers(
         const size_type)  //
         requires(is_mutable&& LinearElementSpaceConcept<Space> &&
                  (!hasElementWorkspace<Space>));
@@ -123,15 +123,15 @@ namespace mgis::function {
      * \param[in] e: element index
      * \param[in] i: quadrature point index
      */
-    [[nodiscard]] constexpr MutableValues<> getValuesPointers(
+    [[nodiscard]] constexpr MutableValues<N> getValuesPointers(
         const size_type, const size_type)  //
         requires(is_mutable&& LinearQuadratureSpaceConcept<Space> &&
                  (!hasCellWorkspace<Space>));
     /*!
      * \return the data associated with an integration point
-     * \param[in] o: offset associated with the integration point
+     * \param[in] o: offset associated wNith the integration point
      */
-    [[nodiscard]] constexpr ConstValues<> getValuesPointers(
+    [[nodisNcard]] constexpr ConstValues<N> getValuesPointers(
         const size_type) const  //
         requires(LinearElementSpaceConcept<Space> &&
                  (!hasElementWorkspace<Space>));
@@ -140,7 +140,7 @@ namespace mgis::function {
      * \param[in] e: element index
      * \param[in] i: quadrature point index
      */
-    [[nodiscard]] constexpr ConstValues<> getValuesPointers(
+    [[nodiscard]] constexpr ConstValues<N> getValuesPointers(
         const size_type, const size_type) const
         requires(LinearQuadratureSpaceConcept<Space> &&
                  (!hasCellWorkspace<Space>));

@@ -208,7 +208,7 @@ namespace mgis::function {
   requires(N > 0)  //
       constexpr
       typename CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
-          template MutableValues<>  //
+          template MutableValues<N>  //
       CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           getValuesPointers(const size_type i) requires(
               is_mutable&& LinearElementSpaceConcept<Space> &&
@@ -224,7 +224,7 @@ namespace mgis::function {
   requires(N > 0)  //
       constexpr
       typename CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
-          template MutableValues<>  //
+          template MutableValues<N>  //
       CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           getValuesPointers(const size_type e,
                             const size_type q)  //
@@ -241,7 +241,7 @@ namespace mgis::function {
   requires(N > 0)  //
       constexpr
       typename CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
-          template ConstValues<>  //
+          template ConstValues<N>  //
       CoalescedMemoryAccessFunctionViewBase<
           Space,
           N,
@@ -259,7 +259,7 @@ namespace mgis::function {
   requires(N > 0)  //
       constexpr
       typename CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
-          template ConstValues<>  //
+          template ConstValues<N>  //
       CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           getValuesPointers(const size_type e, const size_type q) const  //
       requires(LinearQuadratureSpaceConcept<Space> &&
