@@ -186,7 +186,7 @@ struct CoalescedMemoryAccessCompositeTensorsViewTest final
     auto ctx = Context{};
     TFEL_TESTS_ASSERT(
         !CompositeView::checkPreconditions(ctx, space, out_values));
-    TFEL_TESTS_CHECK_EQUAL(ctx.getErrorMessage(), "invalid number of values");
+    TFEL_TESTS_CHECK_EQUAL(ctx.getRawErrorMessage(), "invalid number of values");
     if constexpr (config::contract_violation_policy ==
                   config::ContractViolationPolicy::RAISE) {
       bool has_thrown = false;
