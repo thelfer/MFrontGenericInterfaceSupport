@@ -131,7 +131,7 @@ namespace mgis::function {
      * \return the data associated with an integration point
      * \param[in] o: offset associated wNith the integration point
      */
-    [[nodisNcard]] constexpr ConstValues<N> getValuesPointers(
+    [[nodiscard]] constexpr ConstValues<N> getValuesPointers(
         const size_type) const  //
         requires(LinearElementSpaceConcept<Space> &&
                  (!hasElementWorkspace<Space>));
