@@ -21,6 +21,8 @@ bibliography: bibliography.bib
 This version is meant to be used with `TFEL` Version 5.1. This version
 is the first that can optionnaly use directly the `TFEL` libraries.
 
+This version was released on December 15, 2025.
+
 # The `MGIS/Function` library
 
 The main new feature of `MGIS` is the `MGIS/Function`[^functions]
