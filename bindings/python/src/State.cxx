@@ -47,6 +47,8 @@ static void State_setExternalStateVariable(mgis::behaviour::State& s,
                                            pybind11::object v) {
   if (pybind11::isinstance<pybind11::float_>(v)) {
     mgis::behaviour::setExternalStateVariable(s, n, pybind11::cast<double>(v));
+  } else if (pybind11::isinstance<pybind11::int_>(v)) {
+    mgis::behaviour::setExternalStateVariable(s, n, pybind11::cast<double>(v));
   } else {
     mgis::behaviour::setExternalStateVariable(
         s, n, mgis::python::mgis_convert_to_span(v));
@@ -57,6 +59,8 @@ static void State_setExternalStateVariable2(mgis::behaviour::State& s,
                                             const mgis::size_type o,
                                             pybind11::object v) {
   if (pybind11::isinstance<pybind11::float_>(v)) {
+    mgis::behaviour::setExternalStateVariable(s, o, pybind11::cast<double>(v));
+  } else if (pybind11::isinstance<pybind11::int_>(v)) {
     mgis::behaviour::setExternalStateVariable(s, o, pybind11::cast<double>(v));
   } else {
     mgis::behaviour::setExternalStateVariable(
