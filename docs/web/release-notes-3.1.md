@@ -21,7 +21,17 @@ bibliography: bibliography.bib
 This version is meant to be used with `TFEL` Version 5.1. This version
 is the first that can optionnaly use directly the `TFEL` libraries.
 
-This version was released on December 15, 2025.
+This version was released on December 15, 2025. This version was
+released on December, 15 2025 along with:
+
+- [Version 1.1.2](release-notes-1.1.2.html)
+- [Version 1.2.3](release-notes-1.2.3.html)
+- [Version 2.0.1](release-notes-2.0.1.html)
+- [Version 2.1.1](release-notes-2.1.1.html)
+- [Version 2.2.2](release-notes-2.2.2.html)
+- [Version 3.0.2](release-notes-3.0.2.html)
+
+and inherits from all fixes from those releases.
 
 # The `MGIS/Function` library
 
