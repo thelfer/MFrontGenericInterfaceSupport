@@ -42,10 +42,24 @@ static pybind11::object State_getExternalStateVariables(
   return mgis::python::wrapInNumPyArray(s.external_state_variables);
 }  // end of State_getExternalStateVariables
 
+static void State_setMaterialProperty(mgis::behaviour::State& s,
+                                           const std::string& n,
+                                           const mgis::real v) {
+  mgis::behaviour::setMaterialProperty(s, n, v);
+}  // end of State_setMaterialProperty
+
+static void State_setMaterialProperty2(mgis::behaviour::State& s,
+                                       const mgis::size_type o,
+                                       const mgis::real v) {
+  mgis::behaviour::setMaterialProperty(s, o, v);
+}  // end of State_setMaterialProperty2
+
 static void State_setExternalStateVariable(mgis::behaviour::State& s,
                                            const std::string& n,
                                            pybind11::object v) {
   if (pybind11::isinstance<pybind11::float_>(v)) {
+    mgis::behaviour::setExternalStateVariable(s, n, pybind11::cast<double>(v));
+  } else if (pybind11::isinstance<pybind11::int_>(v)) {
     mgis::behaviour::setExternalStateVariable(s, n, pybind11::cast<double>(v));
   } else {
     mgis::behaviour::setExternalStateVariable(
@@ -57,6 +71,8 @@ static void State_setExternalStateVariable2(mgis::behaviour::State& s,
                                             const mgis::size_type o,
                                             pybind11::object v) {
   if (pybind11::isinstance<pybind11::float_>(v)) {
+    mgis::behaviour::setExternalStateVariable(s, o, pybind11::cast<double>(v));
+  } else if (pybind11::isinstance<pybind11::int_>(v)) {
     mgis::behaviour::setExternalStateVariable(s, o, pybind11::cast<double>(v));
   } else {
     mgis::behaviour::setExternalStateVariable(
@@ -81,6 +97,10 @@ void declareState(pybind11::module_& m) {
       .def_property_readonly("external_state_variables",
                              &State_getExternalStateVariables);
   //
+  m.def("setMaterialProperty", State_setMaterialProperty,
+        "set the value of a material property by name");
+  m.def("setMaterialProperty", State_setMaterialProperty2,
+        "set the value of a material property by offset");
   m.def("setExternalStateVariable", State_setExternalStateVariable,
         "set the value of an external state variable by name");
   m.def("setExternalStateVariable", State_setExternalStateVariable2,
