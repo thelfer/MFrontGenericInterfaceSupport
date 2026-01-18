@@ -22,16 +22,16 @@ namespace mgis::function {
       template <size_type begin, ScalarOrTensorConcept ValueType>
       constexpr
       typename CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
-          template MutableValues<ValueType> CoalescedMemoryAccessCompositeTensorsView<
-              Space,
-              N,
-              is_mutable>::get(const size_type i)  //
+          template MutableValues<ValueType>  //
+      CoalescedMemoryAccessCompositeTensorsView<Space,
+                                                N,
+                                                is_mutable>::get(const size_type
+                                                                     i)  //
       requires((begin + internals::CompileTimeSize<ValueType>::value <= N) &&
-               is_mutable && LinearElementSpaceConcept<Space> &&
-               (!hasElementWorkspace<Space>)) {
+               is_mutable && LinearElementSpaceConcept<Space>) {
     if constexpr (std::same_as<real, ValueType>) {
       const auto ptr = this->template getValuePointer<begin>(i);
-      return *(ptr[0]);
+      return ptr[0];
     } else {
       return tfel::math::CoalescedView<ValueType>(
           this->template getValuesPointers<
@@ -44,17 +44,15 @@ namespace mgis::function {
       template <size_type begin, ScalarOrTensorConcept ValueType>
       constexpr
       typename CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
-          template MutableValues<ValueType> CoalescedMemoryAccessCompositeTensorsView<
-              Space,
-              N,
-              is_mutable>::get(const size_type e,
-                               const size_type q)  //
+          template MutableValues<ValueType>  //
+      CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::get(
+          const size_type e,
+          const size_type q)  //
       requires((begin + internals::CompileTimeSize<ValueType>::value <= N) &&
-               is_mutable && LinearQuadratureSpaceConcept<Space> &&
-               (!hasCellWorkspace<Space>)) {
+               is_mutable && LinearQuadratureSpaceConcept<Space>) {
     if constexpr (std::same_as<real, ValueType>) {
       const auto ptr = this->template getValuePointer<begin>(e, q);
-      return *(ptr[0]);
+      return ptr[0];
     } else {
       return tfel::math::CoalescedView<ValueType>(
           this->template getValuesPointers<
@@ -67,16 +65,16 @@ namespace mgis::function {
       template <size_type begin, ScalarOrTensorConcept ValueType>
       constexpr
       typename CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
-          template ConstValues<ValueType> CoalescedMemoryAccessCompositeTensorsView<
-              Space,
-              N,
-              is_mutable>::get(const size_type i) const  //
+          template ConstValues<ValueType>  //
+      CoalescedMemoryAccessCompositeTensorsView<
+          Space,
+          N,
+          is_mutable>::get(const size_type i) const  //
       requires((begin + internals::CompileTimeSize<ValueType>::value <= N) &&
-               LinearElementSpaceConcept<Space> &&
-               (!hasElementWorkspace<Space>)) {
+               LinearElementSpaceConcept<Space>) {
     if constexpr (std::same_as<real, ValueType>) {
       const auto ptr = this->template getValuePointer<begin>(i);
-      return *(ptr[0]);
+      return ptr[0];
     } else {
       return tfel::math::CoalescedView<const ValueType>(
           this->template getValuesPointers<
@@ -89,17 +87,15 @@ namespace mgis::function {
       template <size_type begin, ScalarOrTensorConcept ValueType>
       constexpr
       typename CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
-          template ConstValues<ValueType> CoalescedMemoryAccessCompositeTensorsView<
-              Space,
-              N,
-              is_mutable>::get(const size_type e,
-                               const size_type q) const  //
+          template ConstValues<ValueType>  //
+      CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::get(
+          const size_type e,
+          const size_type q) const  //
       requires((begin + internals::CompileTimeSize<ValueType>::value <= N) &&
-               LinearQuadratureSpaceConcept<Space> &&
-               (!hasCellWorkspace<Space>)) {
+               LinearQuadratureSpaceConcept<Space>) {
     if constexpr (std::same_as<real, ValueType>) {
       const auto ptr = this->template getValuePointer<begin>(e, q);
-      return *(ptr[0]);
+      return ptr[0];
     } else {
       return tfel::math::CoalescedView<const ValueType>(
           this->template getValuesPointers<

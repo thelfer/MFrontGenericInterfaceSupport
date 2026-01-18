@@ -28,12 +28,25 @@
 
 namespace mgis::function {
 
-  /*!
-   * \brief a tensor which is true if the type is equal to real or matches the
-   * TensorConcept
-   */
-  template <typename T>
-  concept ScalarOrTensorConcept = std::same_as<T, real> || TensorConcept<T>;
+  template <ScalarOrTensorConcept ValueType>
+  struct CoalescedMemoryAccessCompositeTensorsViewMutableValue {
+    using type = tfel::math::CoalescedView<ValueType>;
+  };
+
+  template <>
+  struct CoalescedMemoryAccessCompositeTensorsViewMutableValue<real> {
+    using type = real&;
+  };
+
+  template <ScalarOrTensorConcept ValueType>
+  struct CoalescedMemoryAccessCompositeTensorsViewConstValue{
+    using type = tfel::math::CoalescedView<const ValueType>;
+  };
+
+  template <>
+  struct CoalescedMemoryAccessCompositeTensorsViewConstValue<real> {
+    using type = const real&;
+  };
 
   /*!
    * \brief a coalescence view which acts as a tensorial function
@@ -49,15 +62,13 @@ namespace mgis::function {
     //
     template <ScalarOrTensorConcept ValueType>
     using MutableValues =
-        std::conditional_t<std::same_as<real, ValueType>,
-                           real&,
-                           tfel::math::CoalescedView<ValueType>>;
+        typename CoalescedMemoryAccessCompositeTensorsViewMutableValue<
+            ValueType>::type;
     //
     template <ScalarOrTensorConcept ValueType>
     using ConstValues =
-        std::conditional_t<std::same_as<real, ValueType>,
-                           const real&,
-                           tfel::math::CoalescedView<const ValueType>>;
+        typename CoalescedMemoryAccessCompositeTensorsViewConstValue<
+            ValueType>::type;
     // inheriting constructor
     using CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
         CoalescedMemoryAccessFunctionViewBase;
@@ -69,8 +80,7 @@ namespace mgis::function {
     [[nodiscard]] constexpr MutableValues<ValueType>
     get(const size_type) requires(
         (begin + internals::CompileTimeSize<ValueType>::value <= N) &&
-        is_mutable && LinearElementSpaceConcept<Space> &&
-        (!hasElementWorkspace<Space>));
+        is_mutable && LinearElementSpaceConcept<Space>);
     /*!
      * \return the data associated with an integration point
      * \param[in] e: element index
@@ -80,8 +90,7 @@ namespace mgis::function {
     [[nodiscard]] constexpr MutableValues<ValueType>
     get(const size_type, const size_type) requires(
         (begin + internals::CompileTimeSize<ValueType>::value <= N) &&
-        is_mutable && LinearQuadratureSpaceConcept<Space> &&
-        (!hasCellWorkspace<Space>));
+        is_mutable && LinearQuadratureSpaceConcept<Space>);
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
@@ -90,8 +99,7 @@ namespace mgis::function {
     [[nodiscard]] constexpr ConstValues<ValueType> get(
         const size_type) const  //
         requires((begin + internals::CompileTimeSize<ValueType>::value <= N) &&
-                 LinearElementSpaceConcept<Space> &&
-                 (!hasElementWorkspace<Space>));
+                 LinearElementSpaceConcept<Space>);
     /*!
      * \return the data associated with an integration point
      * \param[in] e: element index
@@ -101,8 +109,7 @@ namespace mgis::function {
     [[nodiscard]] constexpr ConstValues<ValueType> get(const size_type,
                                                        const size_type) const
         requires((begin + internals::CompileTimeSize<ValueType>::value <= N) &&
-                 LinearQuadratureSpaceConcept<Space> &&
-                 (!hasCellWorkspace<Space>));
+                 LinearQuadratureSpaceConcept<Space>);
 
   };  // end of CoalescedMemoryAccessCompositeTensorsView
 
