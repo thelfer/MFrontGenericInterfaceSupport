@@ -40,6 +40,7 @@ if(enable-mgis-function)
     Evaluator.cxx
     UniformEvaluator.cxx
     CoalescedMemoryAccessFunctionView.cxx
+    StridedCoalescedMemoryAccessFunctionView.cxx
     MaterialFunctionManager.cxx)
   if(MGIS_HAVE_TFEL)
     list(APPEND MFrontGenericInterface_SOURCES

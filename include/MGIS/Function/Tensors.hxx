@@ -25,6 +25,8 @@
 #include "MGIS/Function/Tensors/TensorModifier.hxx"
 #include "MGIS/Function/Tensors/CoalescedMemoryAccessTensorView.hxx"
 #include "MGIS/Function/Tensors/CoalescedMemoryAccessCompositeTensorsView.hxx"
+#include "MGIS/Function/Tensors/StridedCoalescedMemoryAccessTensorView.hxx"
+#include "MGIS/Function/Tensors/StridedCoalescedMemoryAccessCompositeTensorsView.hxx"
 
 namespace mgis::function::internals {
 
