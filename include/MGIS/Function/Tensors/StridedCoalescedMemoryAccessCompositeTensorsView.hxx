@@ -1,5 +1,6 @@
 /*!
- * \file   MGIS/Function/Tensors/CoalescedMemoryAccessCompositeTensorsView.hxx
+ * \file
+ * MGIS/Function/Tensors/StridedCoalescedMemoryAccessCompositeTensorsView.hxx
  * \brief
  * \author Thomas Helfer
  * \date   27/10/2025
@@ -13,43 +14,44 @@
  */
 
 #ifndef MGIS_HAVE_TFEL
-#error "TFEL is required to use coalesced memory access tensor views"
+#error "TFEL is required to use strided coalesced memory access tensor views"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_FUNCTION_TENSORS_COALESCEDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX
-#define LIB_MGIS_FUNCTION_TENSORS_COALESCEDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX
+#ifndef LIB_MGIS_FUNCTION_TENSORS_STRIDEDCOALESCEDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX
+#define LIB_MGIS_FUNCTION_TENSORS_STRIDEDCOALESCEDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX
 
 #include <tuple>
 #include <concepts>
 #include <type_traits>
-#include "TFEL/Math/Array/CoalescedView.hxx"
-#include "MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx"
+#include "TFEL/Math/Array/StridedCoalescedView.hxx"
+#include "MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.hxx"
 #include "MGIS/Function/Tensors/TensorConcept.hxx"
 
 namespace mgis::function {
 
+
   template <ScalarOrTensorConcept ValueType>
-  struct CoalescedMemoryAccessCompositeTensorsViewMutableValue {
-    using type = tfel::math::CoalescedView<ValueType>;
+  struct StridedCoalescedMemoryAccessCompositeTensorsViewMutableValue {
+    using type = tfel::math::StridedCoalescedView<ValueType>;
   };
 
   template <>
-  struct CoalescedMemoryAccessCompositeTensorsViewMutableValue<real> {
+  struct StridedCoalescedMemoryAccessCompositeTensorsViewMutableValue<real> {
     using type = real&;
   };
 
   template <ScalarOrTensorConcept ValueType>
-  struct CoalescedMemoryAccessCompositeTensorsViewConstValue{
-    using type = tfel::math::CoalescedView<const ValueType>;
+  struct StridedCoalescedMemoryAccessCompositeTensorsViewConstValue{
+    using type = tfel::math::StridedCoalescedView<const ValueType>;
   };
 
   template <>
-  struct CoalescedMemoryAccessCompositeTensorsViewConstValue<real> {
+  struct StridedCoalescedMemoryAccessCompositeTensorsViewConstValue<real> {
     using type = const real&;
   };
 
   /*!
-   * \brief a coalescence view which acts as a tensorial function
+   * \brief a srided coalescence view which acts as a tensorial function
    *
    * \tparam Space: functional space
    * \tparam N: number of components
@@ -57,21 +59,21 @@ namespace mgis::function {
    */
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable = true>
   requires(N > 0)  //
-      struct CoalescedMemoryAccessCompositeTensorsView
-      : CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable> {
+      struct StridedCoalescedMemoryAccessCompositeTensorsView
+      : StridedCoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable> {
     //
     template <ScalarOrTensorConcept ValueType>
     using MutableValues =
-        typename CoalescedMemoryAccessCompositeTensorsViewMutableValue<
+        typename StridedCoalescedMemoryAccessCompositeTensorsViewMutableValue<
             ValueType>::type;
     //
     template <ScalarOrTensorConcept ValueType>
     using ConstValues =
-        typename CoalescedMemoryAccessCompositeTensorsViewConstValue<
+        typename StridedCoalescedMemoryAccessCompositeTensorsViewConstValue<
             ValueType>::type;
     // inheriting constructor
-    using CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
-        CoalescedMemoryAccessFunctionViewBase;
+    using StridedCoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+        StridedCoalescedMemoryAccessFunctionViewBase;
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
@@ -111,11 +113,11 @@ namespace mgis::function {
         requires((begin + internals::CompileTimeSize<ValueType>::value <= N) &&
                  LinearQuadratureSpaceConcept<Space>);
 
-  };  // end of CoalescedMemoryAccessCompositeTensorsView
+  };  // end of StridedCoalescedMemoryAccessCompositeTensorsView
 
 }  // namespace mgis::function
 
-#include "MGIS/Function/Tensors/CoalescedMemoryAccessCompositeTensorsView.ixx"
+#include "MGIS/Function/Tensors/StridedCoalescedMemoryAccessCompositeTensorsView.ixx"
 
-#endif /* LIB_MGIS_FUNCTION_TENSORS_COALESCEDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX \
+#endif /* LIB_MGIS_FUNCTION_TENSORS_STRIDEDCOALESCEDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX \
         */
