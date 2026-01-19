@@ -43,8 +43,8 @@ static pybind11::object State_getExternalStateVariables(
 }  // end of State_getExternalStateVariables
 
 static void State_setMaterialProperty(mgis::behaviour::State& s,
-                                           const std::string& n,
-                                           const mgis::real v) {
+                                      const std::string& n,
+                                      const mgis::real v) {
   mgis::behaviour::setMaterialProperty(s, n, v);
 }  // end of State_setMaterialProperty
 

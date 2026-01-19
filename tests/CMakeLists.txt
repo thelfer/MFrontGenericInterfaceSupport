@@ -545,6 +545,29 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
+add_executable(StridedCoalescedMemoryAccessFunctionViewTest
+ EXCLUDE_FROM_ALL
+ StridedCoalescedMemoryAccessFunctionViewTest.cxx)
+target_link_libraries(StridedCoalescedMemoryAccessFunctionViewTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME StridedCoalescedMemoryAccessFunctionViewTest
+         COMMAND StridedCoalescedMemoryAccessFunctionViewTest)
+add_dependencies(check StridedCoalescedMemoryAccessFunctionViewTest)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+    target_compile_definitions(StridedCoalescedMemoryAccessFunctionViewTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
+    target_compile_definitions(StridedCoalescedMemoryAccessFunctionViewTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+endif()
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST StridedCoalescedMemoryAccessFunctionViewTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
 add_executable(MechanicalEvaluatorsTest
  EXCLUDE_FROM_ALL
  MechanicalEvaluatorsTest.cxx)
