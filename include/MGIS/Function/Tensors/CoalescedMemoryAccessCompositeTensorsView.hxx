@@ -39,7 +39,7 @@ namespace mgis::function {
   };
 
   template <ScalarOrTensorConcept ValueType>
-  struct CoalescedMemoryAccessCompositeTensorsViewConstValue{
+  struct CoalescedMemoryAccessCompositeTensorsViewConstValue {
     using type = tfel::math::CoalescedView<const ValueType>;
   };
 

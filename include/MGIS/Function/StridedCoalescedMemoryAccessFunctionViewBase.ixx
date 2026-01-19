@@ -104,6 +104,15 @@ namespace mgis::function {
   }  // end of StridedCoalescedMemoryAccessFunctionViewBase
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
+  requires(N > 0)  //
+      constexpr const Space& StridedCoalescedMemoryAccessFunctionViewBase<
+          Space,
+          N,
+          is_mutable>::getSpace() const noexcept {
+    return this->space;
+  }  // end of getSpace
+
+  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)                    //
       constexpr std::array<real, N>  //
       StridedCoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::

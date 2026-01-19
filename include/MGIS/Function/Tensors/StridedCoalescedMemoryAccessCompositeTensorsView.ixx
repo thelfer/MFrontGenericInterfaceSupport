@@ -1,5 +1,6 @@
 /*!
- * \file   MGIS/Function/Tensors/CoalescedMemoryAccessCompositeTensorsView.ixx
+ * \file
+ * MGIS/Function/Tensors/StridedCoalescedMemoryAccessCompositeTensorsView.ixx
  * \brief
  * \author Thomas Helfer
  * \date   27/10/2025

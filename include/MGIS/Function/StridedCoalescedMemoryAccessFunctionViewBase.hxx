@@ -75,7 +75,7 @@ namespace mgis::function {
                                                            std::span<real>);
     /*!
      * \return the data associated with an integration point
-     * \param[in] o: offset associated wNith the integration point
+     * \param[in] o: offset associated with the integration point
      */
     [[nodiscard]] constexpr std::array<real, N> getValues(const size_type) const
         requires(LinearElementSpaceConcept<Space>);

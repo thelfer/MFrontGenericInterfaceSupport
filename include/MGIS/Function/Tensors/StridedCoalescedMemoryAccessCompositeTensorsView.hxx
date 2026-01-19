@@ -29,7 +29,6 @@
 
 namespace mgis::function {
 
-
   template <ScalarOrTensorConcept ValueType>
   struct StridedCoalescedMemoryAccessCompositeTensorsViewMutableValue {
     using type = tfel::math::StridedCoalescedView<ValueType>;
@@ -41,7 +40,7 @@ namespace mgis::function {
   };
 
   template <ScalarOrTensorConcept ValueType>
-  struct StridedCoalescedMemoryAccessCompositeTensorsViewConstValue{
+  struct StridedCoalescedMemoryAccessCompositeTensorsViewConstValue {
     using type = tfel::math::StridedCoalescedView<const ValueType>;
   };
 
@@ -51,7 +50,7 @@ namespace mgis::function {
   };
 
   /*!
-   * \brief a srided coalescence view which acts as a tensorial function
+   * \brief a strided coalescence view which acts as a tensorial function
    *
    * \tparam Space: functional space
    * \tparam N: number of components
