@@ -28,12 +28,10 @@ if(MGIS_HAVE_TFEL)
 
 endif(MGIS_HAVE_TFEL)
 
-if(UNIX)
-  set(Threads_FOUND @Threads_FOUND@)
-  if(Threads_FOUND)
-    find_package(Threads REQUIRED)
-  endif(Threads_FOUND)
-endif(UNIX)
+set(MGIS_Threads_FOUND @Threads_FOUND@)
+if(MGIS_Threads_FOUND)
+  find_package(Threads REQUIRED)
+endif(MGIS_Threads_FOUND)
 
 set(MGIS_REQUIRED_ADDITIONAL_PACKAGES "@MGIS_REQUIRED_ADDITIONAL_PACKAGES@")
 foreach(_package ${MGIS_REQUIRED_ADDITIONAL_PACKAGES})
