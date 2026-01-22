@@ -72,6 +72,24 @@ if(enable-python-bindings)
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DESCRIPTION
     "Contains the python bindings for MGIS")
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DEPENDS mgis)
+  # store the location of the python modules in the MGIS_PYTHON_MODULES_INSTALL_DIRECTORY variable
+  if(MGIS_APPEND_SUFFIX)
+    if(WIN32)
+      set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+          bin/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis_${MGIS_SUFFIX_FOR_PYTHON_MODULES})
+    else(WIN32)
+      set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+          "lib${LIB_SUFFIX}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis_${MGIS_SUFFIX_FOR_PYTHON_MODULES}")
+    endif(WIN32)
+  else(MGIS_APPEND_SUFFIX)
+    if(WIN32)
+      set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+          "bin/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis")
+    else(WIN32)
+      set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+          "lib${LIB_SUFFIX}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis")
+    endif(WIN32)
+  endif(MGIS_APPEND_SUFFIX)
 endif(enable-python-bindings)
 
 # fenics-bindings (placed before compiler detection)
@@ -238,6 +256,8 @@ add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(tests)
 add_subdirectory(bindings)
+# shall be included after the other directories
+add_subdirectory(env)
 
 # Packaging
 if(MFrontGenericInterfaceSupportDevelopmentVersion)

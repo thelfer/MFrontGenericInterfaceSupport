@@ -20,6 +20,49 @@ bibliography: bibliography.bib
 
 This version is meant to be used with `TFEL` Version 5.2.
 
+# New features
+
+## Scripts to define environment variables for `mGIS` to work properly
+
+Depending on the system and compilation options, some of following
+variables shall be set for `MGIS` to work properly: `MGISHOME`, `PATH`,
+`LD_LIBRARY_PATH` and `PYTHONPATH`.
+
+`MGIS` now installs automatically the following files in the installation
+directory (refered to `<install_prefix>` in the following):
+
+- `<install_prefix>/share/mgis/env/env.sh` for `UNIX` systems and the
+  `bash` shell. This file shall be used as follows:
+
+  ~~~~{.sh}
+  $ source <install_prefix>/share/mgis/env/env.sh
+  ~~~~
+- `<install_prefix>\share\mgis\env\env.ps1` for `PowerShell`
+  shell under `Windows`. This file shall be used as follows:
+
+  ~~~~{.sh}
+  $ .\<install_prefix>\share\mgis\env\env.ps1
+  ~~~~
+- `<install_prefix>\share\mgis\env\env.bat` for the historical `cmd`
+  shell under `Windows`. This file shall be used as follows:
+
+  ~~~~{.sh}
+  $ call <install_prefix>\share\mgis\env\env.bat
+  ~~~~
+
+> **Note**
+>
+> Those variables are not required if `MGIS` is installed
+> system-wide (for instance in `/usr/local`) and that the `MGIS`'s
+> binaries are not relocated (i.e. moved to a different directory than
+> the one specified during the compilation process as the installation
+> directory).
+
+> **Note**
+>
+> If `MGIS` is built with `TFEL` support, the `TFEL` environment
+> shall be properly set.
+
 # New features of the `MGIS/Function` library
 
 ## Functions using a strided memory access
@@ -78,6 +121,16 @@ const auto e2 = f.get<0, tfel::math::stensor<2, real>>(1);
 // e2 = {10, 20, 30, 40}
 ~~~~
 
+# Issues fixed
+
+## Issue 200: Create environment file in the installation directory
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/200>
+
+## Issue 196: [MGIS/Function] Add function view with strided coalesent memory access
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/196>￼
+
 # Acknowledgements
 
 The authors are grateful to the many contributors to the `TFEL/MFront`
@@ -86,5 +139,3 @@ project, which was supported financially by the CEA (Commissariat à
 l’Énergie Atomique et aux Énergies Alternatives), EDF (Électricité de
 France) and Framatome. Work on `MGIS/Function` was performed as part of
 the EURATOM OperaHPC Project co-funded by the European Union.
-
-# Issues fixed
