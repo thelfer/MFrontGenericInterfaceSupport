@@ -11,6 +11,7 @@
  * - CECILL-C,  Version 1.0 (See accompanying files
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
+#include <iostream>
 
 #include <algorithm>
 #include "MGIS/Raise.hxx"
@@ -171,15 +172,15 @@ namespace mgis::behaviour {
   void setMaterialProperty(MaterialStateManager& m,
                            const std::string_view& n,
                            const real v,
-                           const bool shall_be_updated) {
+                           const MaterialStateManager::UpdatePolicy p) {
     const auto mp = getVariable(m.b.mps, n);
     mgis::raise_if(mp.type != Variable::SCALAR,
                    "setMaterialProperty: "
                    "invalid material property "
                    "(only scalar material property is supported)");
-    getFieldHolder(m.material_properties, n) =
-        MaterialStateManager::FieldHolder{.value = v,
-                                          .shall_be_updated = shall_be_updated};
+    getFieldHolder(m.material_properties,
+                   n) = MaterialStateManager::FieldHolder{
+        .value = v, .shall_be_updated = (p == MaterialStateManager::UPDATE)};
   }  // end of setMaterialProperty
 
   MGIS_EXPORT void setMaterialProperty(
@@ -187,7 +188,7 @@ namespace mgis::behaviour {
       const std::string_view& n,
       const std::span<real>& v,
       const MaterialStateManager::StorageMode s,
-      const bool shall_be_updated) {
+      const MaterialStateManager::UpdatePolicy p) {
     const auto mp = getVariable(m.b.mps, n);
     mgis::raise_if(mp.type != Variable::SCALAR,
                    "setMaterialProperty: "
@@ -200,11 +201,11 @@ namespace mgis::behaviour {
       getFieldHolder(m.material_properties, n) =
           MaterialStateManager ::FieldHolder{
               .value = std::vector<real>{v.begin(), v.end()},
-              .shall_be_updated = shall_be_updated};
+              .shall_be_updated = (p == MaterialStateManager::UPDATE)};
     } else {
-      getFieldHolder(m.material_properties, n) =
-          MaterialStateManager ::FieldHolder{
-              .value = v, .shall_be_updated = shall_be_updated};
+      getFieldHolder(m.material_properties,
+                     n) = MaterialStateManager ::FieldHolder{
+          .value = v, .shall_be_updated = (p == MaterialStateManager::UPDATE)};
     }
   }  // end of setMaterialProperty
 
@@ -228,25 +229,25 @@ namespace mgis::behaviour {
 
   void setMassDensity(MaterialStateManager& m,
                       const real v,
-                      const bool shall_be_updated) {
+                      const MaterialStateManager::UpdatePolicy p) {
     m.mass_density = MaterialStateManager::FieldHolder{
-        .value = v, .shall_be_updated = shall_be_updated};
+        .value = v, .shall_be_updated = (p == MaterialStateManager::UPDATE)};
   }  // end of setMassDensity
 
   MGIS_EXPORT void setMassDensity(MaterialStateManager& m,
                                   const std::span<real>& v,
                                   const MaterialStateManager::StorageMode s,
-                                  const bool shall_be_updated) {
+                                  const MaterialStateManager::UpdatePolicy p) {
     mgis::raise_if(static_cast<mgis::size_type>(v.size()) != m.n,
                    "setMassDensity: invalid number of values "
                    "(does not match the number of integration points)");
     if (s == MaterialStateManager::LOCAL_STORAGE) {
       m.mass_density = MaterialStateManager::FieldHolder{
           .value = std::vector<real>{v.begin(), v.end()},
-          .shall_be_updated = shall_be_updated};
+          .shall_be_updated = (p == MaterialStateManager::UPDATE)};
     } else {
       m.mass_density = MaterialStateManager::FieldHolder{
-          .value = v, .shall_be_updated = shall_be_updated};
+          .value = v, .shall_be_updated = (p == MaterialStateManager::UPDATE)};
     }
   }  // end of setMassDensity
 
@@ -264,15 +265,15 @@ namespace mgis::behaviour {
   void setExternalStateVariable(MaterialStateManager& m,
                                 const std::string_view& n,
                                 const real v,
-                                const bool shall_be_updated) {
+                                const MaterialStateManager::UpdatePolicy p) {
     const auto esv = getVariable(m.b.esvs, n);
     mgis::raise_if(esv.type != Variable::SCALAR,
                    "setExternalStateVariable: "
                    "invalid external state variable "
                    "(only scalar external state variable is supported)");
-    getFieldHolder(m.external_state_variables, n) =
-        MaterialStateManager::FieldHolder{.value = v,
-                                          .shall_be_updated = shall_be_updated};
+    getFieldHolder(m.external_state_variables,
+                   n) = MaterialStateManager::FieldHolder{
+        .value = v, .shall_be_updated = (p == MaterialStateManager::UPDATE)};
   }  // end of setExternalStateVariable
 
   MGIS_EXPORT void setExternalStateVariable(
@@ -280,7 +281,7 @@ namespace mgis::behaviour {
       const std::string_view& n,
       const std::span<real>& v,
       const MaterialStateManager::StorageMode s,
-      const bool shall_be_updated) {
+      const MaterialStateManager::UpdatePolicy p) {
     const auto esv = getVariable(m.b.esvs, n);
     const auto vs = getVariableSize(esv, m.b.hypothesis);
     mgis::raise_if(((static_cast<mgis::size_type>(v.size()) != m.n * vs) &&
@@ -290,17 +291,18 @@ namespace mgis::behaviour {
       if (v.size() == 1u) {
         getFieldHolder(m.external_state_variables, n) =
             MaterialStateManager::FieldHolder{
-                .value = v[0], .shall_be_updated = shall_be_updated};
+                .value = v[0],
+                .shall_be_updated = (p == MaterialStateManager::UPDATE)};
       } else {
         getFieldHolder(m.external_state_variables, n) =
             MaterialStateManager::FieldHolder{
                 .value = std::vector<real>{v.begin(), v.end()},
-                .shall_be_updated = shall_be_updated};
+                .shall_be_updated = (p == MaterialStateManager::UPDATE)};
       }
     } else {
-      getFieldHolder(m.external_state_variables, n) =
-          MaterialStateManager::FieldHolder{
-              .value = v, .shall_be_updated = shall_be_updated};
+      getFieldHolder(m.external_state_variables,
+                     n) = MaterialStateManager::FieldHolder{
+          .value = v, .shall_be_updated = (p == MaterialStateManager::UPDATE)};
     }
   }  // end of setExternalStateVariable
 
@@ -336,7 +338,7 @@ namespace mgis::behaviour {
     auto update_field_holder =
         [&o, &check_size](MaterialStateManager::FieldHolder& dest,
                           const MaterialStateManager::FieldHolder& src) {
-          if (dest.shall_be_updated) {
+          if (!dest.shall_be_updated) {
             return;
           }
           auto& to = dest.value;

@@ -14,6 +14,18 @@
 
 #include "MGIS/Behaviour/MaterialStateManager.h"
 
+namespace mgis::behaviour::internals {
+
+  [[nodiscard]] static MaterialStateManager::UpdatePolicy convert(
+      const mgis_bv_MaterialStateManagerUpdatePolicy p) noexcept {
+    if (p == MGIS_BV_UPDATE_POLICY) {
+      return MaterialStateManager::UPDATE;
+    }
+    return MaterialStateManager::NOUPDATE;
+  }  // end of convert
+
+}  // end of namespace mgis::behaviour::internals
+
 extern "C" {
 
 mgis_status mgis_bv_material_state_manager_initializer_bind_gradients(
@@ -229,7 +241,7 @@ mgis_bv_material_state_manager_set_uniform_scalar_material_property2(
     return mgis_report_failure("null state manager");
   }
   try {
-    const auto b = p == MGIS_BV_UPDATE_POLICY;
+    const auto b = mgis::behaviour::internals::convert(p);
     setMaterialProperty(*m, n, v, b);
   } catch (...) {
     return mgis_handle_cxx_exception();
@@ -261,7 +273,7 @@ mgis_status mgis_bv_material_state_manager_set_uniform_material_property2(
   try {
     const auto& mp = getVariable(m->b.mps, n);
     const auto mpsize = getVariableSize(mp, m->b.hypothesis);
-    const auto b = p == MGIS_BV_UPDATE_POLICY;
+    const auto b = mgis::behaviour::internals::convert(p);
     if (s == MGIS_BV_LOCAL_STORAGE) {
       setMaterialProperty(*m, n, {v, static_cast<mgis_size_type>(mpsize)},
                           mgis::behaviour::MaterialStateManager::LOCAL_STORAGE,
@@ -301,7 +313,7 @@ mgis_status mgis_bv_material_state_manager_set_non_uniform_material_property2(
   try {
     const auto& mp = getVariable(m->b.mps, n);
     const auto mpsize = getVariableSize(mp, m->b.hypothesis);
-    const auto b = p == MGIS_BV_UPDATE_POLICY;
+    const auto b = mgis::behaviour::internals::convert(p);
     if (s == MGIS_BV_LOCAL_STORAGE) {
       setMaterialProperty(
           *m, n, {v, static_cast<mgis_size_type>(m->n * mpsize)},
@@ -363,7 +375,7 @@ mgis_status mgis_bv_material_state_manager_set_uniform_scalar_mass_density2(
     return mgis_report_failure("null state manager");
   }
   try {
-    const auto b = p == MGIS_BV_UPDATE_POLICY;
+    const auto b = mgis::behaviour::internals::convert(p);
     setMassDensity(*m, v, b);
   } catch (...) {
     return mgis_handle_cxx_exception();
@@ -391,7 +403,7 @@ mgis_status mgis_bv_material_state_manager_set_non_uniform_mass_density2(
     return mgis_report_failure("null state values");
   }
   try {
-    const auto b = p == MGIS_BV_UPDATE_POLICY;
+    const auto b = mgis::behaviour::internals::convert(p);
     if (s == MGIS_BV_LOCAL_STORAGE) {
       setMassDensity(*m, {v, static_cast<mgis_size_type>(m->n)},
                      mgis::behaviour::MaterialStateManager::LOCAL_STORAGE, b);
@@ -454,7 +466,7 @@ mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable2(
     return mgis_report_failure("null state manager");
   }
   try {
-    const auto b = p == MGIS_BV_UPDATE_POLICY;
+    const auto b = mgis::behaviour::internals::convert(p);
     setExternalStateVariable(*m, n, v, b);
   } catch (...) {
     return mgis_handle_cxx_exception();
@@ -487,7 +499,7 @@ mgis_status mgis_bv_material_state_manager_set_uniform_external_state_variable2(
   try {
     const auto& esv = getVariable(m->b.esvs, n);
     const auto esvsize = getVariableSize(esv, m->b.hypothesis);
-    const auto b = p == MGIS_BV_UPDATE_POLICY;
+    const auto b = mgis::behaviour::internals::convert(p);
     if (s == MGIS_BV_LOCAL_STORAGE) {
       setExternalStateVariable(
           *m, n, {v, static_cast<mgis_size_type>(esvsize)},
@@ -529,7 +541,7 @@ mgis_bv_material_state_manager_set_non_uniform_external_state_variable2(
   try {
     const auto& esv = getVariable(m->b.esvs, n);
     const auto esvsize = getVariableSize(esv, m->b.hypothesis);
-    const auto b = p == MGIS_BV_UPDATE_POLICY;
+    const auto b = mgis::behaviour::internals::convert(p);
     if (s == MGIS_BV_LOCAL_STORAGE) {
       setExternalStateVariable(
           *m, n, {v, static_cast<mgis_size_type>(esvsize * m->n)},
