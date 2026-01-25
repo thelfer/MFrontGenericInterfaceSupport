@@ -97,8 +97,24 @@ namespace mgis::behaviour {
    */
   struct MGIS_EXPORT MaterialStateManager {
     //! \brief a simple alias
-    using FieldHolder =
-        std::variant<real, std::span<mgis::real>, std::vector<mgis::real>>;
+    struct FieldHolder {
+      FieldHolder& operator=(const mgis::real) noexcept;
+      //! \brief pointer to the values of the field
+      std::variant<real, std::span<mgis::real>, std::vector<mgis::real>> value;
+      /*!
+       * \brief boolean stating if the values shall be updated by the
+       * `updateValues` which is call by the revert or update functions.
+       *
+       * Setting this flag is usefull when the update of the field is already
+       * handled.
+       */
+      bool shall_be_updated = true;
+    };
+    /*!
+     * \brief enum used to express if a variable (material property, external
+     * state variables, mass density) shall be updated or reverted automatically
+     */
+    enum UpdatePolicy { UPDATE, NOUPDATE };
     //! \brief a simple alias
     using StorageMode = mgis::StorageMode;
     //!
@@ -202,22 +218,28 @@ namespace mgis::behaviour {
    * \param[out] m: material data manager
    * \param[in] n: name
    * \param[in] v: value
+   * \param[in] p: update policy
    */
-  MGIS_EXPORT void setMaterialProperty(MaterialStateManager&,
-                                       const std::string_view&,
-                                       const real);
+  MGIS_EXPORT void setMaterialProperty(
+      MaterialStateManager&,
+      const std::string_view&,
+      const real,
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE);
   /*!
    * \brief set the given material property
    * \param[out] m: material data manager
    * \param[in] n: name
    * \param[in] v: values
    * \param[in] s: storage mode
+   * \param[in] p: update policy
    */
-  MGIS_EXPORT void setMaterialProperty(MaterialStateManager&,
-                                       const std::string_view&,
-                                       const std::span<mgis::real>&,
-                                       const MaterialStateManager::StorageMode =
-                                           MaterialStateManager::LOCAL_STORAGE);
+  MGIS_EXPORT void setMaterialProperty(
+      MaterialStateManager&,
+      const std::string_view&,
+      const std::span<mgis::real>&,
+      const MaterialStateManager::StorageMode =
+          MaterialStateManager::LOCAL_STORAGE,
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE);
   /*!
    * \return true if the given external state variable is defined.
    * \param[out] m: material data manager
@@ -238,18 +260,25 @@ namespace mgis::behaviour {
    * \brief set the mass density
    * \param[out] m: material data manager
    * \param[in] v: value
+   * \param[in] p: update policy
    */
-  MGIS_EXPORT void setMassDensity(MaterialStateManager&, const real);
+  MGIS_EXPORT void setMassDensity(
+      MaterialStateManager&,
+      const real,
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE);
   /*!
    * \brief set the mass density
    * \param[out] m: material data manager
    * \param[in] v: values
    * \param[in] s: storage mode
+   * \param[in] p: update policy
    */
-  MGIS_EXPORT void setMassDensity(MaterialStateManager&,
-                                  const std::span<mgis::real>&,
-                                  const MaterialStateManager::StorageMode =
-                                      MaterialStateManager::LOCAL_STORAGE);
+  MGIS_EXPORT void setMassDensity(
+      MaterialStateManager&,
+      const std::span<mgis::real>&,
+      const MaterialStateManager::StorageMode =
+          MaterialStateManager::LOCAL_STORAGE,
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE);
   /*!
    * \return true if the given external state variable is defined.
    * \param[out] m: material data manager
@@ -265,23 +294,28 @@ namespace mgis::behaviour {
    * \param[out] m: material data manager
    * \param[in] n: name
    * \param[in] v: value
+   * \param[in] p: update policy
    */
-  MGIS_EXPORT void setExternalStateVariable(MaterialStateManager&,
-                                            const std::string_view&,
-                                            const real);
+  MGIS_EXPORT void setExternalStateVariable(
+      MaterialStateManager&,
+      const std::string_view&,
+      const real,
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE);
   /*!
    * \brief set the given external state variable
    * \param[out] m: material data manager
    * \param[in] n: name
    * \param[in] v: values
    * \param[in] s: storage mode
+   * \param[in] p: update policy
    */
   MGIS_EXPORT void setExternalStateVariable(
       MaterialStateManager&,
       const std::string_view&,
       const std::span<mgis::real>&,
       const MaterialStateManager::StorageMode =
-          MaterialStateManager::LOCAL_STORAGE);
+          MaterialStateManager::LOCAL_STORAGE,
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE);
   /*!
    * \return true if the given external state variable is defined.
    * \param[out] m: material data manager

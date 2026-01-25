@@ -89,6 +89,22 @@ static void MaterialStateManager_setMaterialProperty(
 }  // end of MaterialStateManager_setMaterialProperty
 
 static void MaterialStateManager_setMaterialProperty2(
+    mgis::behaviour::MaterialStateManager& s,
+    const std::string& n,
+    const mgis::real v,
+    const mgis::behaviour::MaterialStateManager::UpdatePolicy b) {
+  mgis::behaviour::setMaterialProperty(s, n, v, b);
+}  // end of MaterialStateManager_setMaterialProperty
+
+static void MaterialStateManager_setMaterialProperty3(
+    mgis::behaviour::MaterialStateManager& sm,
+    const std::string& n,
+    const pybind11::object& o,
+    const mgis::behaviour::MaterialStateManager::StorageMode s) {
+  setMaterialProperty(sm, n, mgis::python::mgis_convert_to_span(o), s);
+}  // end of MaterialStateManager_setMaterialProperty
+
+static void MaterialStateManager_setMaterialProperty4(
     mgis::behaviour::MaterialStateManager& sm,
     const std::string& n,
     const pybind11::object& o,
@@ -102,11 +118,26 @@ static void MaterialStateManager_setMassDensity(
 }  // end of MaterialStateManager_setMassDensity
 
 static void MaterialStateManager_setMassDensity2(
+    mgis::behaviour::MaterialStateManager& s,
+    const mgis::real v,
+    const mgis::behaviour::MaterialStateManager::UpdatePolicy b) {
+  mgis::behaviour::setMassDensity(s, v, b);
+}  // end of MaterialStateManager_setMassDensity2
+
+static void MaterialStateManager_setMassDensity3(
     mgis::behaviour::MaterialStateManager& sm,
     const pybind11::object& o,
     const mgis::behaviour::MaterialStateManager::StorageMode s) {
   setMassDensity(sm, mgis::python::mgis_convert_to_span(o), s);
-}  // end of MaterialStateManager_setMassDensity
+}  // end of MaterialStateManager_setMassDensity3
+
+static void MaterialStateManager_setMassDensity4(
+    mgis::behaviour::MaterialStateManager& sm,
+    const pybind11::object& o,
+    const mgis::behaviour::MaterialStateManager::StorageMode s,
+    const mgis::behaviour::MaterialStateManager::UpdatePolicy b) {
+  setMassDensity(sm, mgis::python::mgis_convert_to_span(o), s, b);
+}  // end of MaterialStateManager_setMassDensity4
 
 static void MaterialStateManager_setExternalStateVariable(
     mgis::behaviour::MaterialStateManager& s,
@@ -116,12 +147,29 @@ static void MaterialStateManager_setExternalStateVariable(
 }  // end of MaterialStateManager_setExternalStateVariable
 
 static void MaterialStateManager_setExternalStateVariable2(
+    mgis::behaviour::MaterialStateManager& s,
+    const std::string& n,
+    const mgis::real v,
+    const mgis::behaviour::MaterialStateManager::UpdatePolicy b) {
+  mgis::behaviour::setExternalStateVariable(s, n, v, b);
+}  // end of MaterialStateManager_setExternalStateVariable2
+
+static void MaterialStateManager_setExternalStateVariable3(
     mgis::behaviour::MaterialStateManager& sm,
     const std::string& n,
     const pybind11::object& o,
     const mgis::behaviour::MaterialStateManager::StorageMode s) {
   setExternalStateVariable(sm, n, mgis::python::mgis_convert_to_span(o), s);
-}  // end of MaterialStateManager_setExternalStateVariable
+}  // end of MaterialStateManager_setExternalStateVariable3
+
+static void MaterialStateManager_setExternalStateVariable4(
+    mgis::behaviour::MaterialStateManager& sm,
+    const std::string& n,
+    const pybind11::object& o,
+    const mgis::behaviour::MaterialStateManager::StorageMode s,
+    const mgis::behaviour::MaterialStateManager::UpdatePolicy b) {
+  setExternalStateVariable(sm, n, mgis::python::mgis_convert_to_span(o), s, b);
+}  // end of MaterialStateManager_setExternalStateVariable4
 
 void declareMaterialStateManager(pybind11::module_&);
 
@@ -130,6 +178,13 @@ void declareMaterialStateManager(pybind11::module_& m) {
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::MaterialStateManager;
   using mgis::behaviour::MaterialStateManagerInitializer;
+  // wrapping the MaterialStateManager::UpdatePolicy enum
+  pybind11::enum_<MaterialStateManager::UpdatePolicy>(
+      m, "MaterialStateManagerUpdatePolicy")
+      .value("UPDATE", MaterialStateManager::UpdatePolicy::UPDATE)
+      .value("Update", MaterialStateManager::UpdatePolicy::UPDATE)
+      .value("NOUPDATE", MaterialStateManager::UpdatePolicy::NOUPDATE)
+      .value("NoUpdate", MaterialStateManager::UpdatePolicy::NOUPDATE);
   // wrapping the MaterialStateManager::StorageMode enum
   pybind11::enum_<MaterialStateManager::StorageMode>(
       m, "MaterialStateManagerStorageMode")
@@ -182,20 +237,36 @@ void declareMaterialStateManager(pybind11::module_& m) {
                              &MaterialStateManager_getInternalStateVariables)
       .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty)
       .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty2)
+      .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty3)
+      .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty4)
       .def("setMassDensity", &MaterialStateManager_setMassDensity)
       .def("setMassDensity", &MaterialStateManager_setMassDensity2)
+      .def("setMassDensity", &MaterialStateManager_setMassDensity3)
+      .def("setMassDensity", &MaterialStateManager_setMassDensity4)
       .def("setExternalStateVariable",
            &MaterialStateManager_setExternalStateVariable)
       .def("setExternalStateVariable",
-           &MaterialStateManager_setExternalStateVariable2);
+           &MaterialStateManager_setExternalStateVariable2)
+      .def("setExternalStateVariable",
+           &MaterialStateManager_setExternalStateVariable3)
+      .def("setExternalStateVariable",
+           &MaterialStateManager_setExternalStateVariable4);
   // free functions
   m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty);
   m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty2);
+  m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty3);
+  m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty4);
   m.def("setMassDensity", &MaterialStateManager_setMassDensity);
   m.def("setMassDensity", &MaterialStateManager_setMassDensity2);
+  m.def("setMassDensity", &MaterialStateManager_setMassDensity3);
+  m.def("setMassDensity", &MaterialStateManager_setMassDensity4);
   m.def("setExternalStateVariable",
         &MaterialStateManager_setExternalStateVariable);
   m.def("setExternalStateVariable",
         &MaterialStateManager_setExternalStateVariable2);
+  m.def("setExternalStateVariable",
+        &MaterialStateManager_setExternalStateVariable3);
+  m.def("setExternalStateVariable",
+        &MaterialStateManager_setExternalStateVariable4);
 
 }  // end of declareMaterialStateManager

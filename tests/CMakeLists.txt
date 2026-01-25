@@ -101,6 +101,11 @@ target_link_libraries(ParameterTest
 target_compile_definitions(ParameterTest
   PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
 
+add_executable(UpdatePolicyTest
+  EXCLUDE_FROM_ALL UpdatePolicyTest.cxx)
+target_link_libraries(UpdatePolicyTest
+	PRIVATE MFrontGenericInterface)
+
 add_executable(IntegrateTest
   EXCLUDE_FROM_ALL IntegrateTest.cxx)
 target_link_libraries(IntegrateTest
@@ -231,6 +236,18 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
 else((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ParameterTest
+    PROPERTY DEPENDS BehaviourTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME UpdatePolicyTest
+ COMMAND UpdatePolicyTest "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(check UpdatePolicyTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST UpdatePolicyTest
+    PROPERTY DEPENDS BehaviourTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST UpdatePolicyTest
     PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
