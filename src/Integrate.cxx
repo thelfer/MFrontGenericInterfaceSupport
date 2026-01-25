@@ -60,7 +60,9 @@ namespace mgis::behaviour::internals {
       const MaterialDataManager& m,
       const std::vector<Variable>& ds) {
     mgis::raise_if(v.size() != getArraySize(ds, m.b.hypothesis),
-                   "buildEvaluators: ill allocated memory");
+                   "buildEvaluators: ill allocated memory: " +
+                       std::to_string(v.size()) + "values given, expected " +
+                       std::to_string(getArraySize(ds, m.b.hypothesis)) + ")");
     // evaluators
     std::vector<Evaluator> evaluators;
     auto offset = mgis::size_type{};
