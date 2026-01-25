@@ -63,6 +63,24 @@ directory (refered to `<install_prefix>` in the following):
 > If `MGIS` is built with `TFEL` support, the `TFEL` environment
 > shall be properly set.
 
+# New features of the `MGIS/Behaviour` library
+
+## Control on variables updated/reverted in `MaterialStateManager`
+
+By default, material properties, mass density and external state
+variables are updated by the `update` and `revert` functions.
+
+This can now be controlled by passing a value of the
+`MaterialStateManager::UpdatePolicy` type to the functions
+`setMaterialProperty`, `setMassDensity` or `setExternalStateVariable`.
+
+### Example of usage
+
+~~~~{.cxx}
+setExternalStateVariable(m.s1, "Temperature", T1,
+                         MaterialStateManager::UPDATE);
+~~~~
+
 # New features of the `MGIS/Function` library
 
 ## Functions using a strided memory access
@@ -122,6 +140,10 @@ const auto e2 = f.get<0, tfel::math::stensor<2, real>>(1);
 ~~~~
 
 # Issues fixed
+
+## Issue 201: Add the ability to update only the state variables of a `MaterialStateManager`
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/201>
 
 ## Issue 200: Create environment file in the installation directory
 
