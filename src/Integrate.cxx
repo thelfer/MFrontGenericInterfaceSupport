@@ -90,18 +90,18 @@ namespace mgis::behaviour::internals {
               std::make_tuple(offset, s, variable_values.data()));
         }
       };
-      if (std::holds_alternative<real>(p->second)) {
+      if (std::holds_alternative<real>(p->second.value)) {
         if (d.type != Variable::SCALAR) {
           mgis::raise(
               "buildEvaluators: invalid type for "
               "variable '" +
               d.name + "'");
         }
-        v[offset] = std::get<real>(p->second);
-      } else if (std::holds_alternative<std::span<real>>(p->second)) {
-        set_values(std::get<std::span<real>>(p->second));
+        v[offset] = std::get<real>(p->second.value);
+      } else if (std::holds_alternative<std::span<real>>(p->second.value)) {
+        set_values(std::get<std::span<real>>(p->second.value));
       } else {
-        set_values(std::get<std::vector<real>>(p->second));
+        set_values(std::get<std::vector<real>>(p->second.value));
       }
       offset += s;
     }
@@ -115,7 +115,7 @@ namespace mgis::behaviour::internals {
       return {};
     }
     if (isMassDensityUniform(s)) {
-      rho = std::get<mgis::real>(*(s.mass_density));
+      rho = std::get<mgis::real>(s.mass_density->value);
       return {};
     }
     auto check = [&s](const auto& values) {
@@ -127,12 +127,14 @@ namespace mgis::behaviour::internals {
             std::to_string(s.n) + "'integration points)");
       }
     };
-    if (std::holds_alternative<std::vector<mgis::real>>(*(s.mass_density))) {
-      const auto& values = std::get<std::vector<mgis::real>>(*(s.mass_density));
+    if (std::holds_alternative<std::vector<mgis::real>>(
+            s.mass_density->value)) {
+      const auto& values =
+          std::get<std::vector<mgis::real>>(s.mass_density->value);
       check(values);
       return std::make_tuple(0, 1, values.data());
     }
-    const auto& values = std::get<std::span<mgis::real>>(*(s.mass_density));
+    const auto& values = std::get<std::span<mgis::real>>(s.mass_density->value);
     check(values);
     return std::make_tuple(0, 1, values.data());
   }  // end of buildMassDensityEvaluator

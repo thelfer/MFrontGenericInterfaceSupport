@@ -46,6 +46,12 @@ typedef enum {
   MGIS_BV_LOCAL_STORAGE = 0,
   MGIS_BV_EXTERNAL_STORAGE = 1
 } mgis_bv_MaterialStateManagerStorageMode;
+
+typedef enum {
+  MGIS_BV_NO_UPDATE_POLICY = 0,
+  MGIS_BV_UPDATE_POLICY = 1
+} mgis_bv_MaterialStateManagerUpdatePolicy;
+
 /*!
  * \brief bind the gradients to the given array
  * \param[in,out] s: initializer
@@ -156,6 +162,19 @@ MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_set_uniform_scalar_material_property(
     mgis_bv_MaterialStateManager* const, const char* const, const mgis_real);
 /*!
+ * \brief set the value of an uniform scalar material property
+ * \param[in] s: state manager
+ * \param[in] n: name of the material property
+ * \param[in] v: value of the material property
+ * \param[in] p: update policy
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_uniform_scalar_material_property2(
+    mgis_bv_MaterialStateManager* const,
+    const char* const,
+    const mgis_real,
+    const mgis_bv_MaterialStateManagerUpdatePolicy);
+/*!
  * \brief set the value of an uniform material property
  * \param[in] s: state manager
  * \param[in] n: name of the material property
@@ -174,6 +193,21 @@ mgis_bv_material_state_manager_set_uniform_material_property(
  * \param[in] n: name of the material property
  * \param[in] v: values of the material property
  * \param[in] sm: storage mode
+ * \param[in] p: update policy
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_uniform_material_property2(
+    mgis_bv_MaterialStateManager* const,
+    const char* const,
+    mgis_real* const,
+    const mgis_bv_MaterialStateManagerStorageMode,
+    const mgis_bv_MaterialStateManagerUpdatePolicy);
+/*!
+ * \brief set the value of an uniform material property
+ * \param[in] s: state manager
+ * \param[in] n: name of the material property
+ * \param[in] v: values of the material property
+ * \param[in] sm: storage mode
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_set_non_uniform_material_property(
@@ -181,6 +215,21 @@ mgis_bv_material_state_manager_set_non_uniform_material_property(
     const char* const,
     mgis_real* const,
     const mgis_bv_MaterialStateManagerStorageMode);
+/*!
+ * \brief set the value of an uniform material property
+ * \param[in] s: state manager
+ * \param[in] n: name of the material property
+ * \param[in] v: values of the material property
+ * \param[in] sm: storage mode
+ * \param[in] p: update policy
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_non_uniform_material_property2(
+    mgis_bv_MaterialStateManager* const,
+    const char* const,
+    mgis_real* const,
+    const mgis_bv_MaterialStateManagerStorageMode,
+    const mgis_bv_MaterialStateManagerUpdatePolicy);
 
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_is_material_property_defined(
@@ -207,6 +256,17 @@ MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_set_uniform_scalar_mass_density(
     mgis_bv_MaterialStateManager* const, const mgis_real);
 /*!
+ * \brief set the value of an uniform scalar mass density
+ * \param[in] s: state manager
+ * \param[in] v: value of the mass density
+ * \param[in] p: update policy
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_uniform_scalar_mass_density2(
+    mgis_bv_MaterialStateManager* const,
+    const mgis_real,
+    const mgis_bv_MaterialStateManagerUpdatePolicy);
+/*!
  * \brief set the value of an uniform mass density
  * \param[in] s: state manager
  * \param[in] v: values of the mass density
@@ -217,6 +277,19 @@ mgis_bv_material_state_manager_set_non_uniform_mass_density(
     mgis_bv_MaterialStateManager* const,
     mgis_real* const,
     const mgis_bv_MaterialStateManagerStorageMode);
+/*!
+ * \brief set the value of an uniform mass density
+ * \param[in] s: state manager
+ * \param[in] v: values of the mass density
+ * \param[in] sm: storage mode
+ * \param[in] p: update policy
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_non_uniform_mass_density2(
+    mgis_bv_MaterialStateManager* const,
+    mgis_real* const,
+    const mgis_bv_MaterialStateManagerStorageMode,
+    const mgis_bv_MaterialStateManagerUpdatePolicy);
 
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_is_mass_density_defined(
@@ -241,6 +314,13 @@ mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable(
     mgis_bv_MaterialStateManager* const, const char* const, const mgis_real);
 
 MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable2(
+    mgis_bv_MaterialStateManager* const,
+    const char* const,
+    const mgis_real,
+    const mgis_bv_MaterialStateManagerUpdatePolicy);
+
+MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_set_uniform_external_state_variable(
     mgis_bv_MaterialStateManager* const,
     const char* const,
@@ -248,11 +328,27 @@ mgis_bv_material_state_manager_set_uniform_external_state_variable(
     const mgis_bv_MaterialStateManagerStorageMode);
 
 MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_uniform_external_state_variable2(
+    mgis_bv_MaterialStateManager* const,
+    const char* const,
+    mgis_real* const,
+    const mgis_bv_MaterialStateManagerStorageMode,
+    const mgis_bv_MaterialStateManagerUpdatePolicy);
+
+MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
     mgis_bv_MaterialStateManager* const,
     const char* const,
     mgis_real* const,
     const mgis_bv_MaterialStateManagerStorageMode);
+
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_state_manager_set_non_uniform_external_state_variable2(
+    mgis_bv_MaterialStateManager* const,
+    const char* const,
+    mgis_real* const,
+    const mgis_bv_MaterialStateManagerStorageMode,
+    const mgis_bv_MaterialStateManagerUpdatePolicy);
 
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_is_external_state_variable_defined(
