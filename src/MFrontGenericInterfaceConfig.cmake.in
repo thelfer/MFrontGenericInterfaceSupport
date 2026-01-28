@@ -5,6 +5,8 @@ set(MGIS_HAVE_TFEL @MGIS_HAVE_TFEL@)
 
 if(MGIS_HAVE_TFEL)
 
+   set(TFEL_MODULE_PATH "@TFEL_DIR@")
+
    if(TFEL_DIR)
      set(TFEL_MODULE_PATH ${TFEL_DIR})
    else(TFEL_DIR)

@@ -23,6 +23,10 @@ The page describes the new functionalities of Version 3.1.1 of the
 
 # Issues fixed
 
+## Issue 204: Provide the current value of TFEL_DIR as an hint in MFrontGenericInterfaceConfig.cmake.in
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/204>
+
 ## Issue 201: Dependency to `Threads` is not handled properly in `MFrontGenericInterfaceTargets.cmake`
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/201>
