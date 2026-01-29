@@ -27,6 +27,10 @@ The page describes the new functionalities of Version 3.1.1 of the
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/208>
 
+## Issue 207: [mgis-function] Add support for `nvcc`
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/207>
+
 ## Issue 205: Static library build fails with `TFEL` support 
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/205>

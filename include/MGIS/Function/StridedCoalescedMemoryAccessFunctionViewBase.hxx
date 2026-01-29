@@ -37,7 +37,7 @@ namespace mgis::function {
    * +-------++-------++------++-------+----+-------++------++------++-------+
    * ~~~~
    */
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable = true>
+  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0) struct StridedCoalescedMemoryAccessFunctionViewBase
       : private PreconditionsChecker<
             StridedCoalescedMemoryAccessFunctionViewBase<Space,
