@@ -50,7 +50,7 @@ namespace mgis::function {
   /*!
    *
    */
-  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable = true>
+  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0) struct CoalescedMemoryAccessFunctionViewBase
       : private PreconditionsChecker<
             CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>> {
