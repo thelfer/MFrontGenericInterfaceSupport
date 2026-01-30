@@ -204,7 +204,7 @@ if(enable-doxygen-doc)
     list(APPEND CPACK_COMPONENTS_ALL doxygen)
     set(CPACK_COMPONENT_DOXYGEN_DESCRIPTION
       "Contains MGIS' doxygen documentation")
-    set(GENERATE_DOXYGEN ON)
+    set(MGIS_GENERATE_DOXYGEN ON)
   else(DOXYGEN_FOUND)
     message(FATAL_ERROR "doxygen is required")
   endif(DOXYGEN_FOUND)
