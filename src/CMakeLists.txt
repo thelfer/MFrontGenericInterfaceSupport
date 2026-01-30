@@ -49,6 +49,11 @@ if(enable-mgis-function)
   endif(MGIS_HAVE_TFEL)
 endif(enable-mgis-function)
 
+if(MGIS_HDF5_SUPPORT)
+  list(APPEND MFrontGenericInterface_SOURCES HDF5Support.cxx)
+endif(MGIS_HDF5_SUPPORT)
+
+
 mgis_library(MFrontGenericInterface
   ${MFrontGenericInterface_SOURCES})
 
@@ -143,10 +148,16 @@ endif(UNIX)
 
 if(MGIS_HDF5_SUPPORT)
   target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_HAVE_HDF5)
-  target_link_libraries(MFrontGenericInterface PUBLIC hdf5::hdf5_cpp)
+  target_compile_definitions(MFrontGenericInterface PUBLIC ${HDF5_DEFINITIONS})
+  target_include_directories(MFrontGenericInterface SYSTEM  PUBLIC ${HDF5_INCLUDE_DIRS})
+  target_link_libraries(MFrontGenericInterface PUBLIC ${HDF5_LIBRARIES})
+  # target_link_libraries(MFrontGenericInterface PUBLIC hdf5::hdf5_cpp)
   if(enable-static)
     target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_HAVE_HDF5)
-    target_link_libraries(MFrontGenericInterface-static PUBLIC hdf5::hdf5_cpp)
+    target_compile_definitions(MFrontGenericInterface-static PUBLIC ${HDF5_DEFINITIONS})
+    target_include_directories(MFrontGenericInterface-static SYSTEM  PUBLIC ${HDF5_INCLUDE_DIRS})
+    target_link_libraries(MFrontGenericInterface-static PUBLIC ${HDF5_LIBRARIES})
+    # target_link_libraries(MFrontGenericInterface-static PUBLIC hdf5::hdf5_cpp hdf5::hdf5)
   endif(enable-static)
 endif(MGIS_HDF5_SUPPORT)
 

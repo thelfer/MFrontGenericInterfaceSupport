@@ -11,7 +11,6 @@
  * - CECILL-C,  Version 1.0 (See accompanying files
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
-#include <iostream>
 
 #include <algorithm>
 #include "MGIS/Raise.hxx"
@@ -505,5 +504,86 @@ namespace mgis::behaviour {
                                                                offset);
     }
   }  // end of extractInternalStateVariable
+
+  bool save(Context& ctx,
+            H5::Group& g,
+            const std::string& n,
+            const MaterialStateManager::FieldHolder& f,
+            const MaterialStateManagerSavingOptions& opts) noexcept {
+    using namespace mgis::utilities::hdf5;
+    if (std::holds_alternative<real>(f.value)) {
+      return write(ctx, g, n, std::get<real>(f.value), opts.allow_overwrite);
+    } else if (std::holds_alternative<std::span<real>>(f.value)) {
+      return write(ctx, g, n, std::get<std::span<real>>(f.value),
+                   opts.allow_overwrite);
+    }
+    return write(ctx, g, n, std::get<std::vector<real>>(f.value),
+                 opts.allow_overwrite);
+  }  // end of save
+
+  bool save(Context& ctx,
+            H5::Group& g,
+            const MaterialStateManager& s,
+            const MaterialStateManagerSavingOptions& opts) noexcept {
+    using namespace mgis::utilities::hdf5;
+    if (opts.save_gradients) {
+      if (!write(ctx, g, "gradients", s.gradients, opts.allow_overwrite)) {
+        return false;
+      }
+    }
+    if (opts.save_thermodynamic_forces) {
+      if (!write(ctx, g, "thermodynamic_forces", s.thermodynamic_forces,
+                 opts.allow_overwrite)) {
+        return false;
+      }
+    }
+    if (s.mass_density.has_value()) {
+      if (!save(ctx, g, "mass_density", *(s.mass_density), opts)) {
+        return false;
+      }
+    }
+    //
+    if (opts.save_material_properties) {
+      auto og_mp = openGroup(ctx, g, "material_properties");
+      if (isInvalid(og_mp)) {
+        return false;
+      }
+      for (const auto& [n, mp] : s.material_properties) {
+        if (!save(ctx, *og_mp, n, mp, opts)) {
+          return false;
+        }
+      }
+    }
+    //
+    if (!write(ctx, g, "internal_state_variables", s.internal_state_variables,
+               opts.allow_overwrite)) {
+      return false;
+    }
+    if ((opts.save_stored_energies) && (!s.stored_energies.empty())) {
+      if (!write(ctx, g, "stored_energies", s.stored_energies,
+                 opts.allow_overwrite)) {
+        return false;
+      }
+    }
+    if ((opts.save_dissipated_energies) && (!s.dissipated_energies.empty())) {
+      if (!write(ctx, g, "dissipated_energies", s.dissipated_energies,
+                 opts.allow_overwrite)) {
+        return false;
+      }
+    }
+    //
+    if (opts.save_external_state_variables) {
+      auto og_esv = createGroup(ctx, g, "external_state_variables");
+      if (isInvalid(og_esv)) {
+        return false;
+      }
+      for (const auto& [n, esv] : s.external_state_variables) {
+        if (!save(ctx, *og_esv, n, esv, opts)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }  // end of save
 
 }  // end of namespace mgis::behaviour

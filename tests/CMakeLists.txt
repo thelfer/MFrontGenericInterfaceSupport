@@ -665,4 +665,22 @@ endif(MGIS_HAVE_MFRONT_SUPPORT)
 
 endif(MGIS_HAVE_TFEL)
 
+if(MGIS_HDF5_SUPPORT)
+
+  add_executable(HDF5Test EXCLUDE_FROM_ALL HDF5Test.cxx)
+  target_link_libraries(HDF5Test PRIVATE MFrontGenericInterface)
+  add_test(NAME HDF5Test
+   COMMAND HDF5Test "$<TARGET_FILE:BehaviourTest>")
+  add_dependencies(check HDF5Test)
+  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    set_property(TEST HDF5Test
+      PROPERTY DEPENDS BehaviourTest
+      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+  else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    set_property(TEST HDF5Test
+      PROPERTY DEPENDS BehaviourTest)
+  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+endif(MGIS_HDF5_SUPPORT)
+
 endif(enable-mgis-function)

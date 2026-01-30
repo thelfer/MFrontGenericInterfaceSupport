@@ -22,6 +22,10 @@
 #include <variant>
 #include <optional>
 #include <string_view>
+#ifdef MGIS_HAVE_HDF5
+#include "MGIS/Utilities/HDF5Support.hxx"
+#endif /* MGIS_HAVE_HDF5 */
+
 #include "MGIS/Config.hxx"
 #include "MGIS/StorageMode.hxx"
 
@@ -353,6 +357,37 @@ namespace mgis::behaviour {
       std::span<mgis::real>,
       const mgis::behaviour::MaterialStateManager&,
       const std::string_view);
+
+#ifdef MGIS_HAVE_HDF5
+
+  /*!
+   * \brief structure used to customize the saving of a `MaterialStateManager`
+   */
+  struct MaterialStateManagerSavingOptions {
+    const bool allow_overwrite = true;
+    const bool save_gradients = true;
+    const bool save_thermodynamic_forces = true;
+    const bool save_stored_energies = true;
+    const bool save_dissipated_energies = true;
+    const bool save_mass_densities = true;
+    const bool save_material_properties = true;
+    const bool save_external_state_variables = true;
+  };
+
+  /*!
+   * \brief save a `MaterialStateManager` to a file
+   * \param[in] ctx: execution context
+   * \param[in] g: group
+   * \param[in] s: material state manager
+   * \param[in] opts: options
+   */
+  MGIS_EXPORT [[nodiscard]] bool save(
+      Context&,
+      H5::Group&,
+      const MaterialStateManager&,
+      const MaterialStateManagerSavingOptions& = {}) noexcept;
+
+#endif /* MGIS_HAVE_HDF5 */
 
 }  // end of namespace mgis::behaviour
 

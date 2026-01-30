@@ -19,6 +19,10 @@
 #include <thread>
 #include <memory>
 #include <vector>
+#ifdef MGIS_HAVE_HDF5
+#include "MGIS/Utilities/HDF5Support.hxx"
+#endif /* MGIS_HAVE_HDF5 */
+
 #include "MGIS/Config.hxx"
 #include "MGIS/Behaviour/MaterialStateManager.hxx"
 
@@ -279,6 +283,29 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT std::vector<mgis::real> allocatePostProcessingVariables(
       const MaterialDataManager&, const std::string_view);
+
+#ifdef MGIS_HAVE_HDF5
+
+  /*!
+   * \brief structure used to customize the saving of a `MaterialDataManager`
+   */
+  struct MaterialDataManagerSavingOptions
+      : public MaterialStateManagerSavingOptions {};
+
+  /*!
+   * \brief save a `MaterialDataManager` to a file
+   * \param[in] ctx: execution context
+   * \param[in] g: group
+   * \param[in] m: material data manager
+   * \param[in] opts: options
+   */
+  MGIS_EXPORT [[nodiscard]] bool save(
+      Context&,
+      H5::Group&,
+      const MaterialDataManager&,
+      const MaterialDataManagerSavingOptions& = {}) noexcept;
+
+#endif /* MGIS_HAVE_HDF5 */
 
 }  // end of namespace mgis::behaviour
 

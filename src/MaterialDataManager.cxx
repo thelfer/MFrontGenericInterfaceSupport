@@ -182,4 +182,35 @@ namespace mgis::behaviour {
     return outputs;
   }  // end of allocatePostProcessingVariables
 
+  bool save(Context& ctx,
+            H5::Group& g,
+            const MaterialDataManager& m,
+            const MaterialDataManagerSavingOptions& opts) noexcept {
+    using namespace mgis::utilities::hdf5;
+    // group for the state at the beginning of the time step
+    if (!unlinkIfExists(ctx, g, "s0")) {
+      return false;
+    }
+    auto og_s0 = openGroup(ctx, g, "s0");
+    if (isInvalid(og_s0)) {
+      return false;
+    }
+    // group for the state at the end of the time step
+    if (!unlinkIfExists(ctx, g, "s1")) {
+      return false;
+    }
+    auto og_s1 = openGroup(ctx, g, "s1");
+    if (isInvalid(og_s1)) {
+      return false;
+    }
+    //
+    if (!save(ctx, *og_s0, m.s0, opts)) {
+      return false;
+    }
+    if (!save(ctx, *og_s1, m.s1, opts)) {
+      return false;
+    }
+    return true;
+  }  // end of save
+
 }  // end of namespace mgis::behaviour
