@@ -49,7 +49,7 @@ struct CoalescedMemoryAccessFunctionViewBaseTest final
       c1(1) = 3;
       auto components = std::array{view(c0), view(c1)};
       auto coalesced_view =
-          CoalescedMemoryAccessFunctionViewBase<BasicLinearSpace, 2>(
+          CoalescedMemoryAccessFunctionViewBase<BasicLinearSpace, 2, true>(
               components);
       auto ptr0 = coalesced_view.getValuesPointers(0);
       auto ptr1 = coalesced_view.getValuesPointers(1);
