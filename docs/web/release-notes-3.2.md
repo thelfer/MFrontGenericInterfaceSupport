@@ -20,6 +20,13 @@ bibliography: bibliography.bib
 
 This version is meant to be used with `TFEL` Version 5.2.
 
+# Documentation
+
+## `Doxygen` documentation
+
+The doxygen documentation is now online:
+<https://thelfer.github.io/mgis/doxygen/index.html>.
+
 # New features
 
 ## Scripts to define environment variables for `mGIS` to work properly
@@ -140,6 +147,10 @@ const auto e2 = f.get<0, tfel::math::stensor<2, real>>(1);
 ~~~~
 
 # Issues fixed
+
+## Issue 210: [documentation] Deployment of the doxygen documentation
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/210>
 
 ## Issue 201: Add the ability to update only the state variables of a `MaterialStateManager`
 
