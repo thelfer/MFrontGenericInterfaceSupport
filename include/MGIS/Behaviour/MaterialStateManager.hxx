@@ -452,10 +452,12 @@ namespace mgis::behaviour {
    * group.
    *
    * \param[in] ctx: execution context
+   * \param[in] b: behaviour
    * \param[in] g: group
    */
   MGIS_EXPORT [[nodiscard]] std::optional<MaterialStateManagerRestoreOptions>
   getGreedyMaterialStateManagerRestoreOptions(Context&,
+					      const Behaviour&,
                                               const H5::Group&) noexcept;
   /*!
    * \brief restore a `MaterialStateManager` from a HDF5 group

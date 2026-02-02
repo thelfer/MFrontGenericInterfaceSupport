@@ -877,7 +877,6 @@ namespace mgis::behaviour {
     if ((opts.restore_stored_energies) && (s.b.computesStoredEnergy)) {
       if (!read(ctx, s.stored_energies, g, "stored_energies")) {
         return ctx.registerErrorMessage("restoring stored energies failed");
-        return false;
       }
     }
     if ((opts.restore_dissipated_energies) && (s.b.computesDissipatedEnergy)) {

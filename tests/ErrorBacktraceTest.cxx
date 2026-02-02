@@ -1,3 +1,4 @@
+#include <utility>
 #include <string_view>
 #include "MGIS/Raise.hxx"
 #include "MGIS/ErrorBacktrace.hxx"
@@ -51,7 +52,7 @@ int main() {
     try {
       raise("invalid argument");
     } catch (...) {
-      registerExceptionInErrorBacktrace(e);
+      std::ignore = registerExceptionInErrorBacktrace(e);
     }
     expect_eq(e.getRawErrorMessage(), "invalid argument");
   }  // end of ConstructTest
@@ -62,9 +63,9 @@ int main() {
   }  // end of ConstructTest
   {
     ErrorBacktrace e;
-    e.registerErrorMessage(
+    std::ignore = e.registerErrorMessage(
         "first error message\nwith details on multiple lines");
-    e.registerErrorMessage("parent error message");
+    std::ignore = e.registerErrorMessage("parent error message");
     expect_eq(e.getRawErrorMessage(),
               "parent error message\n"
               "* first error message\n"
