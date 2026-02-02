@@ -20,7 +20,7 @@
 #include <memory>
 #include <vector>
 #ifdef MGIS_HAVE_HDF5
-#include "MGIS/Utilities/HDF5Support.hxx"
+#include "MGIS/Utilities/HDF5Forward.hxx"
 #endif /* MGIS_HAVE_HDF5 */
 
 #include "MGIS/Config.hxx"

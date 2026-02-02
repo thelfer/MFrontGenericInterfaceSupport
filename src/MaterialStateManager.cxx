@@ -15,6 +15,9 @@
 #include <utility>
 #include <algorithm>
 #include "MGIS/Raise.hxx"
+#ifdef MGIS_HAVE_HDF5
+#include "MGIS/Utilities/HDF5Support.hxx"
+#endif /* MGIS_HAVE_HDF5 */
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/MaterialStateManager.hxx"
 
@@ -639,6 +642,57 @@ namespace mgis::behaviour {
     return true;
   }  // end of save
 
+  std::optional<MaterialStateManagerRestoreOptions>
+  getGreedyMaterialStateManagerRestoreOptions(Context& ctx,
+                                              const Behaviour& b,
+                                              const H5::Group& g) noexcept {
+    using namespace mgis::utilities::hdf5;
+    const auto odatasets = getDataSetNames(ctx, g);
+    if (isInvalid(odatasets)) {
+      return {};
+    }
+    auto contains = [odatasets](std::string_view n) noexcept {
+      return std::find(odatasets->begin(), odatasets->end(), n) !=
+             odatasets->end();
+    };
+    auto select_ignored_variables = [&g, &ctx](
+                                        const std::vector<Variable>& variables,
+                                        const std::string& gn) {
+      auto og = openGroup(ctx, g, gn);
+      auto ignored_variables = std::vector<std::string>{};
+      if (isInvalid(og)) {
+        return ignored_variables;
+      }
+      const auto oldatasets = getDataSetNames(ctx, *og);
+      if (isInvalid(oldatasets)) {
+        return ignored_variables;
+      }
+      for (const auto& v : variables) {
+        const auto found = std::find(oldatasets->begin(), oldatasets->end(),
+                                     v.name) != oldatasets->end();
+        if (!found) {
+          ignored_variables.push_back(v.name);
+        }
+      }
+      return ignored_variables;
+    };
+    return MaterialStateManagerRestoreOptions{
+        .restore_gradients = contains("gradients"),
+        .restore_thermodynamic_forces = contains("thermodynamic_forces"),
+        .restore_stored_energies = contains("stored_energies"),
+        .restore_dissipated_energies = contains("dissipated_energies"),
+        .restore_internal_state_variables =
+            contains("internal_state_variables"),
+        .restore_mass_densities = contains("mass_density"),
+        .restore_material_properties = subGroupExists(g, "material_properties"),
+        .ignored_material_properties =
+            select_ignored_variables(b.mps, "material_properties"),
+        .restore_external_state_variables =
+            subGroupExists(g, "external_state_variables"),
+        .ignored_external_state_variables =
+            select_ignored_variables(b.esvs, "external_state_variables")};
+  }  // end of getGreedyMaterialStateManagerRestoreOptions
+
   [[nodiscard]] static bool restoreScalarFieldHolder(
       Context& ctx,
       MaterialStateManager::FieldHolder& f,
@@ -840,6 +894,11 @@ namespace mgis::behaviour {
         return false;
       }
       for (const auto& mp : s.b.mps) {
+        if (std::find(opts.ignored_material_properties.begin(),
+                      opts.ignored_material_properties.end(), mp.name) !=
+            opts.ignored_material_properties.end()) {
+          continue;
+        }
         const auto ovsize = getVariableSize(ctx, mp, s.b.hypothesis);
         if (isInvalid(ovsize)) {
           return ctx.registerErrorMessage("restoring material property '" +
@@ -861,6 +920,11 @@ namespace mgis::behaviour {
         return false;
       }
       for (const auto& esv : s.b.esvs) {
+        if (std::find(opts.ignored_external_state_variables.begin(),
+                      opts.ignored_external_state_variables.end(), esv.name) !=
+            opts.ignored_external_state_variables.end()) {
+          continue;
+        }
         const auto ovsize = getVariableSize(ctx, esv, s.b.hypothesis);
         if (isInvalid(ovsize)) {
           return ctx.registerErrorMessage(

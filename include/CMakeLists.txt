@@ -50,6 +50,7 @@ if(MGIS_HAVE_TFEL)
 endif(MGIS_HAVE_TFEL)
 
 if(MGIS_HDF5_SUPPORT)
+  mgis_header(MGIS/Utilities HDF5Forward.hxx)
   mgis_header(MGIS/Utilities HDF5Support.hxx)
 endif(MGIS_HDF5_SUPPORT)
 

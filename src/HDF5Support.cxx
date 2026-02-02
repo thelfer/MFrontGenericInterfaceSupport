@@ -204,29 +204,19 @@ namespace mgis::utilities::hdf5 {
 
   std::optional<std::vector<std::string>> getDataSetNames(
       Context& ctx, const H5::Group& g) noexcept {
-    std::vector<std::string> names;
-    if (!getDataSetNames(ctx, names, g)) {
-      return {};
-    }
-    return names;
-  }
-
-  bool getDataSetNames(Context& ctx,
-                       std::vector<std::string>& n,
-                       const H5::Group& g) noexcept {
-    n.clear();
     try {
+      std::vector<std::string> names;
       const hsize_t s = g.getNumObjs();
       for (hsize_t i = 0; i != s; ++i) {
         if (g.getObjTypeByIdx(i) == H5G_DATASET) {
-          n.push_back(g.getObjnameByIdx(i));
+          names.push_back(g.getObjnameByIdx(i));
         }
       }
-      return true;
+      return names;
     } catch (...) {
       std::ignore = registerH5ExceptionInErrorBacktrace(ctx);
     }
-    return false;
+    return {};
   }  // end of getDataSetNames
 
   std::optional<bool> contains(Context& ctx,

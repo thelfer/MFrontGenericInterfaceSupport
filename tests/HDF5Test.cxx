@@ -13,6 +13,7 @@
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
+#include "MGIS/Utilities/HDF5Support.hxx"
 
 int main(const int argc, const char* const* argv) {
   using namespace mgis;

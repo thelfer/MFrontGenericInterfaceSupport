@@ -88,9 +88,22 @@ directory (refered to `<install_prefix>` in the following):
 
 ## Save/restore operations in `MaterialStateManager` and `MaterialDataManager`
 
-If `HDF5` support is enabled, the functions `save` and `restore` allows
-saving and restoring the values stored in a `MaterialStateManager` or in
-a `MaterialDataManager` to an `HDF5` file.
+If `HDF5` support is enabled, two functions `save` and `restore` are
+available:
+
+- The `save` function allows saving the values stored in a
+  `MaterialStateManager` or in a `MaterialDataManager` to an `HDF5`
+  file.
+- The `restore` function allows retrieving the values stored in a
+  `MaterialStateManager` or in a `MaterialDataManager` from an `HDF5`
+  file.
+
+Those functions have options allowing to precisely select what is saved
+or restored.
+
+By default, one expects to restore the maximum amount of information.
+The `getGreedyMaterialStateManagerRestoreOptions` function creates
+option that can restore everything that has been saved.
 
 ## Control on variables updated/reverted in `MaterialStateManager`
 

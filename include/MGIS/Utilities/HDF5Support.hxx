@@ -21,6 +21,7 @@
 #include <H5Cpp.h>
 #include "MGIS/Config.hxx"
 #include "MGIS/Context.hxx"
+#include "MGIS/Utilities/HDF5Forward.hxx"
 
 namespace mgis::utilities::hdf5 {
 
@@ -105,15 +106,6 @@ namespace mgis::utilities::hdf5 {
    */
   MGIS_EXPORT [[nodiscard]] std::optional<std::vector<std::string>>
   getDataSetNames(Context&, const H5::Group&) noexcept;
-  /*!
-   * \return all the dataset names in a give group
-   * \param[out, in] ctx: execution context
-   * \param[out] n: names
-   * \param[in]  g: group
-   */
-  MGIS_EXPORT [[nodiscard]] bool getDataSetNames(Context&,
-                                                 std::vector<std::string>&,
-                                                 const H5::Group&) noexcept;
   /*!
    * \return true if the given group contains an object with the
    * given name

@@ -15,6 +15,9 @@
 #include <mutex>
 #include <thread>
 #include "MGIS/Raise.hxx"
+#ifdef MGIS_HAVE_HDF5
+#include "MGIS/Utilities/HDF5Support.hxx"
+#endif /* MGIS_HAVE_HDF5 */
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 

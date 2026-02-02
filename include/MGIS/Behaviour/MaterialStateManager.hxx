@@ -23,7 +23,7 @@
 #include <optional>
 #include <string_view>
 #ifdef MGIS_HAVE_HDF5
-#include "MGIS/Utilities/HDF5Support.hxx"
+#include "MGIS/Utilities/HDF5Forward.hxx"
 #endif /* MGIS_HAVE_HDF5 */
 
 #include "MGIS/Config.hxx"
@@ -447,13 +447,26 @@ namespace mgis::behaviour {
     //! \brief list of external state variables that shall not be restored
     const std::vector<std::string> ignored_external_state_variables = {};
   };  // end of MaterialStateManagerRestoreOptions
-
+  /*!
+   * \brief return restore options selecting all that can be read in the given
+   * group.
+   *
+   * \param[in] ctx: execution context
+   * \param[in] g: group
+   */
+  MGIS_EXPORT [[nodiscard]] std::optional<MaterialStateManagerRestoreOptions>
+  getGreedyMaterialStateManagerRestoreOptions(Context&,
+                                              const H5::Group&) noexcept;
   /*!
    * \brief restore a `MaterialStateManager` from a HDF5 group
+   *
    * \param[in] ctx: execution context
    * \param[in] g: group
    * \param[in] s: material state manager
    * \param[in] opts: options
+   *
+   * \note update policies are set to their values for material properties and
+   * external state variables created during the restoration
    */
   MGIS_EXPORT [[nodiscard]] bool restore(
       Context&,
