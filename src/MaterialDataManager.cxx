@@ -213,4 +213,28 @@ namespace mgis::behaviour {
     return true;
   }  // end of save
 
+  bool restore(Context& ctx,
+               MaterialDataManager& m,
+               const H5::Group& g,
+               const MaterialDataManagerRestoreOptions& opts) noexcept {
+    using namespace mgis::utilities::hdf5;
+    // group for the state at the beginning of the time step
+    auto og_s0 = openGroup(ctx, g, "s0");
+    if (isInvalid(og_s0)) {
+      return false;
+    }
+    auto og_s1 = openGroup(ctx, g, "s1");
+    if (isInvalid(og_s1)) {
+      return false;
+    }
+    //
+    if (!restore(ctx, m.s0, *og_s0, opts)) {
+      return false;
+    }
+    if (!restore(ctx, m.s1, *og_s1, opts)) {
+      return false;
+    }
+    return true;
+  }  // end of restore
+
 }  // end of namespace mgis::behaviour

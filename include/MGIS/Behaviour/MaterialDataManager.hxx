@@ -304,7 +304,11 @@ namespace mgis::behaviour {
       H5::Group&,
       const MaterialDataManager&,
       const MaterialDataManagerSavingOptions& = {}) noexcept;
-
+  /*!
+   * \brief structure used to customize the saving of a `MaterialDataManager`
+   */
+  struct MaterialDataManagerRestoreOptions
+      : public MaterialStateManagerRestoreOptions {};
   /*!
    * \brief restore a `MaterialDataManager` from an HDF5 group
    * \param[in] ctx: execution context
@@ -314,9 +318,9 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT [[nodiscard]] bool restore(
       Context&,
-      H5::Group&,
-      const MaterialDataManager&,
-      const MaterialDataManagerSavingOptions& = {}) noexcept;
+      MaterialDataManager&,
+      const H5::Group&,
+      const MaterialDataManagerRestoreOptions& = {}) noexcept;
 
 #endif /* MGIS_HAVE_HDF5 */
 
