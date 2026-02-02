@@ -553,6 +553,8 @@ namespace mgis::behaviour {
     }
   }  // end of extractInternalStateVariable
 
+#ifdef MGIS_HAVE_HDF5
+
   [[nodiscard]] static bool save(
       Context& ctx,
       H5::Group& g,
@@ -873,5 +875,7 @@ namespace mgis::behaviour {
     }
     return true;
   }  // end of restore
+
+#endif /* MGIS_HAVE_HDF5 */
 
 }  // end of namespace mgis::behaviour

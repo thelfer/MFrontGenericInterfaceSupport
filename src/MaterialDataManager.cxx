@@ -182,6 +182,8 @@ namespace mgis::behaviour {
     return outputs;
   }  // end of allocatePostProcessingVariables
 
+#ifdef MGIS_HAVE_HDF5
+
   bool save(Context& ctx,
             H5::Group& g,
             const MaterialDataManager& m,
@@ -228,13 +230,15 @@ namespace mgis::behaviour {
       return false;
     }
     //
-    if (!restore(ctx, m.s0, *og_s0, opts)) {
+    if (!restore(ctx, *og_s0, m.s0, opts)) {
       return false;
     }
-    if (!restore(ctx, m.s1, *og_s1, opts)) {
+    if (!restore(ctx, *og_s1, m.s1, opts)) {
       return false;
     }
     return true;
   }  // end of restore
+
+#endif /* MGIS_HAVE_HDF5 */
 
 }  // end of namespace mgis::behaviour

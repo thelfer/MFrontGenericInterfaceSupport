@@ -22,6 +22,20 @@ This version is meant to be used with `TFEL` Version 5.2.
 
 # Documentation
 
+## New `cmake` options
+
+### HDF5 support
+
+The following options control the support of the `HDF5` library:
+
+- `enable-hdf5-support`: enable HDF5 support for save/restore
+  operations. Note that if this support is not explicitely requested,
+  `MGIS` still tries by default to support `HDF5` but configuration will
+  not fail if the `HDF5` library is not found. See
+  `enable-hdf5-automatic-support` for details.
+- `enable-hdf5-automatic-support`: if set, `MGIS` tries by default to
+  support `HDF5` even if enable-hdf5-support` is not set.
+
 ## `Doxygen` documentation
 
 The doxygen documentation is now online:
@@ -29,7 +43,7 @@ The doxygen documentation is now online:
 
 # New features
 
-## Scripts to define environment variables for `mGIS` to work properly
+## Scripts to define environment variables for `MGIS` to work properly
 
 Depending on the system and compilation options, some of following
 variables shall be set for `MGIS` to work properly: `MGISHOME`, `PATH`,
@@ -71,6 +85,12 @@ directory (refered to `<install_prefix>` in the following):
 > shall be properly set.
 
 # New features of the `MGIS/Behaviour` library
+
+## Save/restore operations in `MaterialStateManager` and `MaterialDataManager`
+
+If `HDF5` support is enabled, the functions `save` and `restore` allows
+saving and restoring the values stored in a `MaterialStateManager` or in
+a `MaterialDataManager` to an `HDF5` file.
 
 ## Control on variables updated/reverted in `MaterialStateManager`
 
@@ -151,6 +171,10 @@ const auto e2 = f.get<0, tfel::math::stensor<2, real>>(1);
 ## Issue 210: [documentation] Deployment of the doxygen documentation
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/210>
+
+## Issue 209: Add basic support for `save`/`restore` operations in  `MaterialDataManager`
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/209>
 
 ## Issue 201: Add the ability to update only the state variables of a `MaterialStateManager`
 
