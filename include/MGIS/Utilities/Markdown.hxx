@@ -18,18 +18,14 @@
 #include <string>
 #include "MGIS/Config.hxx"
 
-namespace mgis {
+namespace mgis::utilities {
 
-  namespace utilities {
+  /*!
+   * \return the heading signs associated with the given heading level
+   * \param[in] l: heading level
+   */
+  MGIS_EXPORT std::string get_heading_signs(const mgis::size_type);
 
-    /*!
-     * \return the heading signs associated with the given heading level
-     * \param[in] l: heading level
-     */
-    MGIS_EXPORT std::string get_heading_signs(const mgis::size_type);
-
-  }  // end of namespace utilities
-
-}  // end of namespace mgis
+}  // end of namespace mgis::utilities
 
 #endif /* LIB_MGIS_UTILITIES_MARKDOWN_HXX */

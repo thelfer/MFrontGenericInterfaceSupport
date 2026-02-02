@@ -46,8 +46,13 @@ mgis_header(MGIS/Behaviour FiniteStrainSupport.hxx)
 mgis_header(MGIS/Model Model.hxx)
 
 if(MGIS_HAVE_TFEL)
-mgis_header(MGIS Database.hxx)
+  mgis_header(MGIS Database.hxx)
 endif(MGIS_HAVE_TFEL)
+
+if(MGIS_HDF5_SUPPORT)
+  mgis_header(MGIS/Utilities HDF5Forward.hxx)
+  mgis_header(MGIS/Utilities HDF5Support.hxx)
+endif(MGIS_HDF5_SUPPORT)
 
 if(enable-mgis-function)
   mgis_header(MGIS/Function CompileTimeSize.hxx)

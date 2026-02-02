@@ -111,6 +111,26 @@ if(enable-julia-bindings)
   set(CMAKE_CXX_STANDARD "${_CMAKE_CXX_STANDARD}")
 endif(enable-julia-bindings)
 
+# HDF5 support (optional)
+
+option(enable-hdf5-support "enable HDF5 support" OFF)
+option(enable-hdf5-automatic-support "if set, try to support HDF5, even if not explicitly requested by enable-hdf5-support" ON)
+if(enable-hdf5-support)
+  find_package(HDF5 REQUIRED COMPONENTS CXX)
+else(enable-hdf5-support)
+  if(enable-hdf5-automatic-support)
+    find_package(HDF5 COMPONENTS CXX)
+  endif(enable-hdf5-automatic-support)
+endif(enable-hdf5-support)
+if(HDF5_FOUND)
+  set(MGIS_HDF5_SUPPORT ON)
+  MESSAGE(STATUS "hdf5 headers     : " ${HDF5_INCLUDE_DIRS})
+  MESSAGE(STATUS "hdf5 librairies  : " ${HDF5_LIBRARIES})
+  MESSAGE(STATUS "hdf5 definitions : " ${HDF5_DEFINITIONS})
+else(HDF5_FOUND)
+  set(MGIS_HDF5_SUPPORT OFF)
+endif(HDF5_FOUND)
+
 # summary
 
 if(enable-c-bindings)
@@ -128,6 +148,10 @@ endif(enable-fortran-bindings)
 if(enable-fenics-bindings)
   message(STATUS "FEniCS bindings support enabled")
 endif(enable-fenics-bindings)
+
+if(MGIS_HDF5_SUPPORT)
+  message(STATUS "HDF5 support enabled")
+endif(MGIS_HDF5_SUPPORT)
 
 find_package(Threads)
 # if(MINGW)
