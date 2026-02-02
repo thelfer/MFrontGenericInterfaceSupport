@@ -895,8 +895,8 @@ namespace mgis::behaviour {
       }
       for (const auto& mp : s.b.mps) {
         if (std::find(opts.ignored_material_properties.begin(),
-                      opts.ignored_material_properties.end(), mp.name) !=
-            opts.ignored_material_properties.end()) {
+                      opts.ignored_material_properties.end(),
+                      mpxs.name) != opts.ignored_material_properties.end()) {
           continue;
         }
         const auto ovsize = getVariableSize(ctx, mp, s.b.hypothesis);
