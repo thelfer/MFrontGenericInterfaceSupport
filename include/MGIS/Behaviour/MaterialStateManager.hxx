@@ -245,6 +245,37 @@ namespace mgis::behaviour {
           MaterialStateManager::LOCAL_STORAGE,
       const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE);
   /*!
+   * \brief set the given material property
+   * \param[out] m: material data manager
+   * \param[in] n: name
+   * \param[in] v: value
+   * \param[in] p: update policy
+   */
+  MGIS_EXPORT [[nodiscard]] bool setMaterialProperty(
+      Context&,
+      MaterialStateManager&,
+      const std::string_view&,
+      const real,
+      const MaterialStateManager::UpdatePolicy =
+          MaterialStateManager::UPDATE) noexcept;
+  /*!
+   * \brief set the given material property
+   * \param[out] m: material data manager
+   * \param[in] n: name
+   * \param[in] v: values
+   * \param[in] s: storage mode
+   * \param[in] p: update policy
+   */
+  MGIS_EXPORT [[nodiscard]] bool setMaterialProperty(
+      Context&,
+      MaterialStateManager&,
+      const std::string_view&,
+      const std::span<mgis::real>&,
+      const MaterialStateManager::StorageMode =
+          MaterialStateManager::LOCAL_STORAGE,
+      const MaterialStateManager::UpdatePolicy =
+          MaterialStateManager::UPDATE) noexcept;
+  /*!
    * \return true if the given external state variable is defined.
    * \param[out] m: material data manager
    * \param[in] n: name
@@ -375,7 +406,7 @@ namespace mgis::behaviour {
   };
 
   /*!
-   * \brief save a `MaterialStateManager` to a file
+   * \brief save a `MaterialStateManager` to an HDF5 group
    * \param[in] ctx: execution context
    * \param[in] g: group
    * \param[in] s: material state manager
@@ -386,6 +417,49 @@ namespace mgis::behaviour {
       H5::Group&,
       const MaterialStateManager&,
       const MaterialStateManagerSavingOptions& = {}) noexcept;
+
+  /*!
+   * \brief structure used to customize how to restore a `MaterialStateManager`
+   */
+  struct MaterialStateManagerRestoreOptions {
+    const bool restore_gradients = true;
+    const bool restore_thermodynamic_forces = true;
+    /*!
+     * \brief flag stating if the stored energies shall be read
+     *
+     * \note this flag is ignored if the behaviour does not compute the
+     * stored energy
+     */
+    const bool restore_stored_energies = true;
+    /*!
+     * \brief flag stating if the dissipated energies shall be read
+     *
+     * \note this flag is ignored if the behaviour does not compute the
+     * dissipated energy
+     */
+    const bool restore_dissipated_energies = true;
+    const bool restore_internal_state_variables = true;
+    const bool restore_mass_densities = true;
+    const bool restore_material_properties = true;
+    //! \brief list of material properties that shall not be restored
+    const std::vector<std::string> ignored_material_properties = {};
+    const bool restore_external_state_variables = true;
+    //! \brief list of external state variables that shall not be restored
+    const std::vector<std::string> ignored_external_state_variables = {};
+  };  // end of MaterialStateManagerRestoreOptions
+
+  /*!
+   * \brief restore a `MaterialStateManager` from a HDF5 group
+   * \param[in] ctx: execution context
+   * \param[in] g: group
+   * \param[in] s: material state manager
+   * \param[in] opts: options
+   */
+  MGIS_EXPORT [[nodiscard]] bool restore(
+      Context&,
+      MaterialStateManager&,
+      const H5::Group&,
+      const MaterialStateManagerRestoreOptions&) noexcept;
 
 #endif /* MGIS_HAVE_HDF5 */
 

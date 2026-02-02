@@ -44,8 +44,8 @@ struct StridedCoalescedMemoryAccessFunctionViewBaseTest final
       auto space = BasicLinearSpace{2};
       auto values = std::vector<double>{5, 12, -2, 3};
       auto coalesced_view =
-          StridedCoalescedMemoryAccessFunctionViewBase<BasicLinearSpace, 2, true>(
-              space, values);
+          StridedCoalescedMemoryAccessFunctionViewBase<BasicLinearSpace, 2,
+                                                       true>(space, values);
       auto ptr0 = coalesced_view.getValues(0);
       auto ptr1 = coalesced_view.getValues(1);
       return {std::array{ptr0[0], ptr0[1]},  //

@@ -293,13 +293,26 @@ namespace mgis::behaviour {
       : public MaterialStateManagerSavingOptions {};
 
   /*!
-   * \brief save a `MaterialDataManager` to a file
+   * \brief save a `MaterialDataManager` to an HDF5 group
    * \param[in] ctx: execution context
    * \param[in] g: group
    * \param[in] m: material data manager
    * \param[in] opts: options
    */
   MGIS_EXPORT [[nodiscard]] bool save(
+      Context&,
+      H5::Group&,
+      const MaterialDataManager&,
+      const MaterialDataManagerSavingOptions& = {}) noexcept;
+
+  /*!
+   * \brief restore a `MaterialDataManager` from an HDF5 group
+   * \param[in] ctx: execution context
+   * \param[in] g: group
+   * \param[in] m: material data manager
+   * \param[in] opts: options
+   */
+  MGIS_EXPORT [[nodiscard]] bool restore(
       Context&,
       H5::Group&,
       const MaterialDataManager&,

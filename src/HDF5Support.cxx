@@ -12,45 +12,49 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <utility>
 #include "MGIS/Utilities/HDF5Support.hxx"
 
 namespace mgis::utilities::hdf5 {
 
-  static InvalidResult registerH5ExceptionInErrorBacktraceWithoutSourceLocation(
+  InvalidResult registerH5ExceptionInErrorBacktraceWithoutSourceLocation(
       ErrorBacktrace& e) noexcept {
     try {
       throw;
     } catch (H5::GroupIException& exception) {
-      e.registerErrorMessageWithoutSourceLocation(exception.getDetailMsg());
+      std::ignore =
+          e.registerErrorMessageWithoutSourceLocation(exception.getDetailMsg());
     } catch (H5::Exception& exception) {
-      e.registerErrorMessageWithoutSourceLocation(exception.getDetailMsg());
+      std::ignore =
+          e.registerErrorMessageWithoutSourceLocation(exception.getDetailMsg());
     } catch (std::exception& exception) {
-      e.registerErrorMessageWithoutSourceLocation(
+      std::ignore = e.registerErrorMessageWithoutSourceLocation(
           std::string{exception.what()});
     } catch (...) {
-      e.registerErrorMessageWithoutSourceLocation("unknown exception thrown");
+      std::ignore = e.registerErrorMessageWithoutSourceLocation(
+          "unknown exception thrown");
     }
     return {};
   }
 
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
-  static InvalidResult registerH5ExceptionInErrorBacktrace(
+  InvalidResult registerH5ExceptionInErrorBacktrace(
       ErrorBacktrace& e, const std::source_location& l) noexcept {
     try {
       throw;
     } catch (H5::GroupIException& exception) {
-      e.registerErrorMessage(exception.getDetailMsg());
+      std::ignore = e.registerErrorMessage(exception.getDetailMsg());
     } catch (H5::Exception& exception) {
-      e.registerErrorMessage(exception.getDetailMsg());
+      std::ignore = e.registerErrorMessage(exception.getDetailMsg());
     } catch (std::exception& exception) {
-      e.registerErrorMessage(std::string{exception.what()}, l);
+      std::ignore = e.registerErrorMessage(std::string{exception.what()}, l);
     } catch (...) {
-      e.registerErrorMessage("unknown exception thrown");
+      std::ignore = e.registerErrorMessage("unknown exception thrown");
     }
     return {};
   }
 #else
-  static InvalidResult registerH5ExceptionInErrorBacktrace(
+  InvalidResult registerH5ExceptionInErrorBacktrace(
       ErrorBacktrace& e) noexcept {
     return registerH5ExceptionInErrorBacktraceWithoutSourceLocation(e);
   }
@@ -125,7 +129,7 @@ namespace mgis::utilities::hdf5 {
       H5::Group gr = g.createGroup(n);
       return gr;
     } catch (...) {
-      registerH5ExceptionInErrorBacktrace(ctx);
+      std::ignore = registerH5ExceptionInErrorBacktrace(ctx);
     }
     return {};
   }  // end of createGroup
@@ -137,7 +141,7 @@ namespace mgis::utilities::hdf5 {
       H5::Group gr = g.openGroup(n);
       return gr;
     } catch (...) {
-      registerH5ExceptionInErrorBacktrace(ctx);
+      std::ignore = registerH5ExceptionInErrorBacktrace(ctx);
     }
     return {};
   }  // end of openGroup
@@ -149,7 +153,7 @@ namespace mgis::utilities::hdf5 {
       g.unlink(n);
       return true;
     } catch (...) {
-      registerH5ExceptionInErrorBacktrace(ctx);
+      std::ignore = registerH5ExceptionInErrorBacktrace(ctx);
     }
     return false;
   }  // end of removeDataSet
@@ -161,7 +165,7 @@ namespace mgis::utilities::hdf5 {
       H5::DataSet d = g.openDataSet(n);
       return d;
     } catch (...) {
-      registerH5ExceptionInErrorBacktrace(ctx);
+      std::ignore = registerH5ExceptionInErrorBacktrace(ctx);
     }
     return {};
   }  // end of openDataSet
@@ -193,7 +197,7 @@ namespace mgis::utilities::hdf5 {
       }
       return true;
     } catch (...) {
-      registerH5ExceptionInErrorBacktrace(ctx);
+      std::ignore = registerH5ExceptionInErrorBacktrace(ctx);
     }
     return false;
   }  // end of getSubGroupNames
@@ -220,7 +224,7 @@ namespace mgis::utilities::hdf5 {
       }
       return true;
     } catch (...) {
-      registerH5ExceptionInErrorBacktrace(ctx);
+      std::ignore = registerH5ExceptionInErrorBacktrace(ctx);
     }
     return false;
   }  // end of getDataSetNames
@@ -238,7 +242,7 @@ namespace mgis::utilities::hdf5 {
       }
       return found;
     } catch (...) {
-      registerH5ExceptionInErrorBacktrace(ctx);
+      std::ignore = registerH5ExceptionInErrorBacktrace(ctx);
     }
     return {};
   }  // end of contains
@@ -252,7 +256,7 @@ namespace mgis::utilities::hdf5 {
       }
       return true;
     } catch (...) {
-      registerH5ExceptionInErrorBacktrace(ctx);
+      std::ignore = registerH5ExceptionInErrorBacktrace(ctx);
     }
     return false;
   }
@@ -289,7 +293,7 @@ namespace mgis::utilities::hdf5 {
       dataset.write(&o, getNativeType<real>());
       return true;
     } catch (...) {
-      registerH5ExceptionInErrorBacktrace(ctx);
+      std::ignore = registerH5ExceptionInErrorBacktrace(ctx);
     }
     return false;
   }  // end of write
@@ -315,7 +319,7 @@ namespace mgis::utilities::hdf5 {
       odataset->read(&o, getNativeType<real>());
       return true;
     } catch (...) {
-      registerH5ExceptionInErrorBacktrace(ctx);
+      std::ignore = registerH5ExceptionInErrorBacktrace(ctx);
     }
     return false;
   }  // end of read
@@ -348,7 +352,7 @@ namespace mgis::utilities::hdf5 {
       }
       return true;
     } catch (...) {
-      registerH5ExceptionInErrorBacktrace(ctx);
+      std::ignore = registerH5ExceptionInErrorBacktrace(ctx);
     }
     return false;
   }
@@ -357,21 +361,46 @@ namespace mgis::utilities::hdf5 {
             std::vector<real>& o,
             const H5::Group& g,
             const std::string& d) noexcept {
+    auto odataset = openDataSet(ctx, g, d);
+    if (isInvalid(odataset)) {
+      return false;
+    }
     try {
-      auto odataset = openDataSet(ctx, g, d);
-      if (isInvalid(odataset)) {
-        return false;
-      }
       H5::DataSpace filespace = odataset->getSpace();
       hsize_t dims[1];
       filespace.getSimpleExtentDims(dims);
       o.resize(dims[0]);
-      odataset->read(&o[0], getNativeType<real>());
+      odataset->read(o.data(), getNativeType<real>());
       return true;
     } catch (...) {
-      registerH5ExceptionInErrorBacktrace(ctx);
+      std::ignore = registerH5ExceptionInErrorBacktrace(ctx);
     }
     return false;
   }
+
+  bool read(Context& ctx,
+            std::span<real> values,
+            const H5::Group& g,
+            const std::string& n) noexcept {
+    using namespace mgis::utilities::hdf5;
+    const auto odataset = openDataSet(ctx, g, n);
+    if (isInvalid(odataset)) {
+      return false;
+    }
+    try {
+      H5::DataSpace filespace = odataset->getSpace();
+      hsize_t dims[1];
+      filespace.getSimpleExtentDims(dims);
+      if (values.size() != dims[0]) {
+        return ctx.registerErrorMessage("invalid size while reading dataset '" +
+                                        n + "'");
+      }
+      odataset->read(values.data(), getNativeType<real>());
+      return true;
+    } catch (...) {
+      std::ignore = registerH5ExceptionInErrorBacktrace(ctx);
+    }
+    return false;
+  }  // end of restore
 
 }  // end of namespace mgis::utilities::hdf5

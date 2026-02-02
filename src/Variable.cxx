@@ -112,7 +112,7 @@ namespace mgis::behaviour::internals {
       mgis::raise("invalid space dimension");
     }
     return static_cast<size_t>(N);
-  }  // end of getVariableSize
+  }  // end of getTinyVectorVariableSize
 
   static size_t getSymmetricTensorVariableSize(
       int &v, const mgis::behaviour::Hypothesis h) {
@@ -302,7 +302,19 @@ namespace mgis::behaviour {
     return s;
   }  // end of getVariableSize
 
-  bool contains(const std::vector<Variable> &vs, const std::string_view n) {
+  std::optional<size_type> getVariableSize(Context &ctx,
+                                           const Variable &v,
+                                           const Hypothesis h) noexcept {
+    try {
+      return getVariableSize(v, h);
+    } catch (...) {
+      std::ignore = registerExceptionInErrorBacktrace(ctx);
+    }
+    return {};
+  }  // end of getVariableSize
+
+  bool contains(const std::vector<Variable> &vs,
+                const std::string_view n) noexcept {
     return std::find_if(vs.begin(), vs.end(), [&n](const Variable &v) {
              return v.name == n;
            }) != vs.end();
@@ -316,6 +328,19 @@ namespace mgis::behaviour {
       mgis::raise("getVariable: no variable named '" + std::string(n) + "'");
     }
     return *p;
+  }  // end of getVariable
+
+  std::optional<const Variable *> getVariable(
+      Context &ctx,
+      const std::vector<Variable> &vs,
+      const std::string_view n) noexcept {
+    const auto p = std::find_if(
+        vs.begin(), vs.end(), [&n](const Variable &v) { return v.name == n; });
+    if (p == vs.end()) {
+      return ctx.registerErrorMessage("getVariable: no variable named '" +
+                                      std::string(n) + "'");
+    }
+    return &(*p);
   }  // end of getVariable
 
   size_type getArraySize(const std::vector<Variable> &vs, const Hypothesis h) {
