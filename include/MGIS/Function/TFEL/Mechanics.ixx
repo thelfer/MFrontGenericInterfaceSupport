@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/Mechanics.ixx
+ * \file   MGIS/Function/TFEL/Mechanics.ixx
  * \brief
  * \author Thomas Helfer
  * \date   02/05/2025
@@ -12,10 +12,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_FUNCTION_MECHANICS_IXX
-#define LIB_MGIS_FUNCTION_MECHANICS_IXX
-
-#ifdef MGIS_HAVE_TFEL
+#ifndef LIB_MGIS_FUNCTION_TFEL_MECHANICS_IXX
+#define LIB_MGIS_FUNCTION_TFEL_MECHANICS_IXX
 
 namespace mgis::function::internals {
 
@@ -286,6 +284,4 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#endif /* MGIS_HAVE_TFEL */
-
-#endif /* LIB_MGIS_FUNCTION_MECHANICS_IXX */
+#endif /* LIB_MGIS_FUNCTION_TFEL_MECHANICS_IXX */

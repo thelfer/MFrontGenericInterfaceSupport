@@ -1,6 +1,6 @@
 /*!
  * \file
- * MGIS/Function/Tensors/StridedCoalescedMemoryAccessCompositeTensorsView.hxx
+ * MGIS/Function/TFEL/StridedCoalescedMemoryAccessCompositeTensorsView.hxx
  * \brief
  * \author Thomas Helfer
  * \date   27/10/2025
@@ -17,15 +17,15 @@
 #error "TFEL is required to use strided coalesced memory access tensor views"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_FUNCTION_TENSORS_STRIDEDCOALESCEDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX
-#define LIB_MGIS_FUNCTION_TENSORS_STRIDEDCOALESCEDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX
+#ifndef LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSCOMPOSITETENSORVIEW_HXX
+#define LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSCOMPOSITETENSORVIEW_HXX
 
 #include <tuple>
 #include <concepts>
 #include <type_traits>
 #include "TFEL/Math/Array/StridedCoalescedView.hxx"
 #include "MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.hxx"
-#include "MGIS/Function/Tensors/TensorConcept.hxx"
+#include "MGIS/Function/TFEL/TensorConcept.hxx"
 
 namespace mgis::function {
 
@@ -116,7 +116,7 @@ namespace mgis::function {
 
 }  // namespace mgis::function
 
-#include "MGIS/Function/Tensors/StridedCoalescedMemoryAccessCompositeTensorsView.ixx"
+#include "MGIS/Function/TFEL/StridedCoalescedMemoryAccessCompositeTensorsView.ixx"
 
-#endif /* LIB_MGIS_FUNCTION_TENSORS_STRIDEDCOALESCEDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX \
+#endif /* LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSCOMPOSITETENSORVIEW_HXX \
         */

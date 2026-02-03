@@ -46,6 +46,11 @@ if(enable-mgis-function)
     list(APPEND MFrontGenericInterface_SOURCES
          TensorView.cxx
          TensorModifier.cxx)
+    if(enable-mgis-function-precompiled-operations)
+      list(APPEND MFrontGenericInterface_SOURCES
+           TensorOperations.cxx
+           MechanicalOperations.cxx)
+    endif(enable-mgis-function-precompiled-operations)
   endif(MGIS_HAVE_TFEL)
 endif(enable-mgis-function)
 

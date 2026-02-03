@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/Tensors/CoalescedMemoryAccessTensorView.hxx
+ * \file   MGIS/Function/TFEL/StridedCoalescedMemoryAccessTensorView.hxx
  * \brief
  * \author Thomas Helfer
  * \date   27/10/2025
@@ -16,12 +16,12 @@
 #error "TFEL is required to use coalesced memory access tensor views"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_FUNCTION_TENSORS_COALESCEDMEMORYACCESSTENSORVIEW_HXX
-#define LIB_MGIS_FUNCTION_TENSORS_COALESCEDMEMORYACCESSTENSORVIEW_HXX
+#ifndef LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSTENSORVIEW_HXX
+#define LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSTENSORVIEW_HXX
 
-#include "TFEL/Math/Array/CoalescedView.hxx"
-#include "MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx"
-#include "MGIS/Function/Tensors/TensorConcept.hxx"
+#include "TFEL/Math/Array/StridedCoalescedView.hxx"
+#include "MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.hxx"
+#include "MGIS/Function/TFEL/TensorConcept.hxx"
 
 namespace mgis::function {
 
@@ -35,28 +35,27 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space,
             TensorConcept TensorType,
             bool is_mutable = true>
-  struct CoalescedMemoryAccessTensorView
-      : CoalescedMemoryAccessFunctionViewBase<
+  struct StridedCoalescedMemoryAccessTensorView
+      : StridedCoalescedMemoryAccessFunctionViewBase<
             Space,
             internals::CompileTimeSize<TensorType>::value,
             is_mutable> {
     //
-    using MutableValues = tfel::math::CoalescedView<TensorType>;
+    using MutableValues = tfel::math::StridedCoalescedView<TensorType>;
     //
-    using ConstValues = tfel::math::CoalescedView<const TensorType>;
+    using ConstValues = tfel::math::StridedCoalescedView<const TensorType>;
 
     // inheriting constructor
-    using CoalescedMemoryAccessFunctionViewBase<
+    using StridedCoalescedMemoryAccessFunctionViewBase<
         Space,
         internals::CompileTimeSize<TensorType>::value,
-        is_mutable>::CoalescedMemoryAccessFunctionViewBase;
+        is_mutable>::StridedCoalescedMemoryAccessFunctionViewBase;
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
     [[nodiscard]] constexpr MutableValues operator()(const size_type) requires(
-        is_mutable&& LinearElementSpaceConcept<Space> &&
-        (!hasElementWorkspace<Space>));
+        is_mutable&& LinearElementSpaceConcept<Space>);
     /*!
      * \return the data associated with an integration point
      * \param[in] e: element index
@@ -64,15 +63,13 @@ namespace mgis::function {
      */
     [[nodiscard]] constexpr MutableValues
     operator()(const size_type, const size_type) requires(
-        is_mutable&& LinearQuadratureSpaceConcept<Space> &&
-        (!hasCellWorkspace<Space>));
+        is_mutable&& LinearQuadratureSpaceConcept<Space>);
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
      */
     [[nodiscard]] constexpr ConstValues operator()(const size_type) const
-        requires(LinearElementSpaceConcept<Space> &&
-                 (!hasElementWorkspace<Space>));
+        requires(LinearElementSpaceConcept<Space>);
     /*!
      * \return the data associated with an integration point
      * \param[in] e: element index
@@ -80,13 +77,13 @@ namespace mgis::function {
      */
     [[nodiscard]] constexpr ConstValues operator()(const size_type,
                                                    const size_type) const
-        requires(LinearQuadratureSpaceConcept<Space> &&
-                 (!hasCellWorkspace<Space>));
+        requires(LinearQuadratureSpaceConcept<Space>);
 
-  };  // end of CoalescedMemoryAccessTensorView
+  };  // end of StridedCoalescedMemoryAccessTensorView
 
 }  // namespace mgis::function
 
-#include "MGIS/Function/Tensors/CoalescedMemoryAccessTensorView.ixx"
+#include "MGIS/Function/TFEL/StridedCoalescedMemoryAccessTensorView.ixx"
 
-#endif /* LIB_MGIS_FUNCTION_TENSORS_COALESCEDMEMORYACCESSTENSORVIEW_HXX */
+#endif /* LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSTENSORVIEW_HXX \
+        */

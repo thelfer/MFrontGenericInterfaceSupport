@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/Mechanics.hxx
+ * \file   MGIS/Function/TFEL/Mechanics.hxx
  * \brief
  * \author Thomas Helfer
  * \date   02/05/2025
@@ -12,18 +12,17 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_FUNCTION_MECHANICS_HXX
-#define LIB_MGIS_FUNCTION_MECHANICS_HXX
-
-#include <type_traits>
-#ifdef MGIS_HAVE_TFEL
-#include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
+#ifndef MGIS_HAVE_TFEL
+#error "TFEL is required to use this header"
 #endif /* MGIS_HAVE_TFEL */
 
-#include "MGIS/Function/Evaluator.hxx"
-#include "MGIS/Function/Tensors.hxx"
+#ifndef LIB_MGIS_FUNCTION_TFEL_MECHANICS_HXX
+#define LIB_MGIS_FUNCTION_TFEL_MECHANICS_HXX
 
-#ifdef MGIS_HAVE_TFEL
+#include <type_traits>
+#include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
+#include "MGIS/Function/Evaluator.hxx"
+#include "MGIS/Function/TFEL/Tensors.hxx"
 
 namespace mgis::function {
 
@@ -68,8 +67,6 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#endif /* MGIS_HAVE_TFEL */
-
-#include "MGIS/Function/Mechanics.ixx"
+#include "MGIS/Function/TFEL/Mechanics.ixx"
 
 #endif /* LIB_MGIS_FUNCTION_MECHANICS_HXX */

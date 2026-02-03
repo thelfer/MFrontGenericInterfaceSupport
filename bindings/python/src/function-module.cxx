@@ -1,8 +1,8 @@
 /*!
- * \file   MGIS/Function/CoalescedMemoryAccessFunctionView.cxx
+ * \file   bindings/python/src/function-module.cxx
  * \brief
  * \author Thomas Helfer
- * \date   11/06/2020
+ * \date   18/11/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
  * Use, modification and distribution are subject
  * to one of the following licences:
@@ -12,7 +12,9 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include "MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx"
-#ifdef MGIS_HAVE_TFEL
-#include "MGIS/Function/TFEL/CoalescedMemoryAccessCompositeTensorsView.hxx"
-#endif /* MGIS_HAVE_TFEL */
+#include <pybind11/pybind11.h>
+
+// forward declarations
+void declareFunction(pybind11::module_&);
+
+PYBIND11_MODULE(function, m) { declareFunction(m); }  // end of module function

@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/Tensors/StridedCoalescedMemoryAccessTensorView.ixx
+ * \file   MGIS/Function/TFEL/StridedCoalescedMemoryAccessTensorView.ixx
  * \brief
  * \author Thomas Helfer
  * \date   17/01/2026
@@ -12,8 +12,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_FUNCTION_TENSORS_STRIDEDCOALESCEDMEMORYACCESSTENSORVIEW_IXX
-#define LIB_MGIS_FUNCTION_TENSORS_STRIDEDCOALESCEDMEMORYACCESSTENSORVIEW_IXX
+#ifndef LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSTENSORVIEW_IXX
+#define LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSTENSORVIEW_IXX
 
 namespace mgis::function {
 
@@ -82,5 +82,5 @@ namespace mgis::function {
 
 }  // namespace mgis::function
 
-#endif /* LIB_MGIS_FUNCTION_TENSORS_STRIDEDCOALESCEDMEMORYACCESSTENSORVIEW_IXX \
+#endif /* LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSTENSORVIEW_IXX \
         */

@@ -25,8 +25,8 @@
 #include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/FixedSizeView.hxx"
 #include "MGIS/Function/FixedSizeModifier.hxx"
-#include "MGIS/Function/Tensors.hxx"
-#include "MGIS/Function/TensorialFunction.hxx"
+#include "MGIS/Function/TFEL/Tensors.hxx"
+#include "MGIS/Function/TFEL/TensorialFunction.hxx"
 
 struct TensorialFunctionsTest final : public tfel::tests::TestCase {
   TensorialFunctionsTest()

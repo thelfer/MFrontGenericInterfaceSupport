@@ -1,16 +1,27 @@
 /*!
- * \file   MGIS/Function/Tensors/TensorModifier.hxx
+ * \file   MGIS/Function/TFEL/TensorModifier.hxx
  * \brief
  * \author Thomas Helfer
  * \date   13/05/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_FUNCTION_TENSORMODIFIER_HXX
-#define LIB_MGIS_FUNCTION_TENSORMODIFIER_HXX
+#ifndef MGIS_HAVE_TFEL
+#error "TFEL is required to use this header"
+#endif /* MGIS_HAVE_TFEL */
+
+#ifndef LIB_MGIS_FUNCTION_TFEL_TENSORMODIFIER_HXX
+#define LIB_MGIS_FUNCTION_TFEL_TENSORMODIFIER_HXX
 
 #include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/EvaluatorModifierBase.hxx"
-#include "MGIS/Function/Tensors/TensorConcept.hxx"
+#include "MGIS/Function/TFEL/TensorConcept.hxx"
 
 namespace mgis::function {
 
@@ -58,6 +69,6 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#include "MGIS/Function/Tensors/TensorModifier.ixx"
+#include "MGIS/Function/TFEL/TensorModifier.ixx"
 
-#endif /* LIB_MGIS_FUNCTION_TENSORMODIFIER_HXX */
+#endif /* LIB_MGIS_FUNCTION_TFEL_TENSORMODIFIER_HXX */

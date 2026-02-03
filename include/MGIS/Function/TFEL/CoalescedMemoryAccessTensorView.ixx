@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/Tensors/CoalescedMemoryAccessTensorView.ixx
+ * \file   MGIS/Function/TFEL/CoalescedMemoryAccessTensorView.ixx
  * \brief
  * \author Thomas Helfer
  * \date   27/10/2025
@@ -12,8 +12,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_FUNCTION_TENSORS_COALESCEDMEMORYACCESSTENSORVIEW_IXX
-#define LIB_MGIS_FUNCTION_TENSORS_COALESCEDMEMORYACCESSTENSORVIEW_IXX
+#ifndef LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSTENSORVIEW_IXX
+#define LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSTENSORVIEW_IXX
 
 namespace mgis::function {
 
@@ -74,4 +74,4 @@ namespace mgis::function {
 
 }  // namespace mgis::function
 
-#endif /* LIB_MGIS_FUNCTION_TENSORS_COALESCEDMEMORYACCESSTENSORVIEW_IXX */
+#endif /* LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSTENSORVIEW_IXX */

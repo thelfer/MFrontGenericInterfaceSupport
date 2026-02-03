@@ -1,5 +1,6 @@
+
 /*!
- * \file   MGIS/Function/TensorialFunction.ixx
+ * \file   MGIS/Function/TFEL/TensorialFunction.ixx
  * \brief
  * \author Thomas Helfer
  * \date   28/08/2025
@@ -12,10 +13,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_FUNCTION_TENSORIALFUNCTION_IXX
-#define LIB_MGIS_FUNCTION_TENSORIALFUNCTION_IXX
-
-#ifdef MGIS_HAVE_TFEL
+#ifndef LIB_MGIS_FUNCTION_TFEL_TENSORIALFUNCTION_IXX
+#define LIB_MGIS_FUNCTION_TFEL_TENSORIALFUNCTION_IXX
 
 namespace mgis::function {
 
@@ -105,6 +104,4 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#endif /* MGIS_HAVE_TFEL */
-
-#endif /* LIB_MGIS_FUNCTION_TENSORIALFUNCTION_HXX */
+#endif /* LIB_MGIS_FUNCTION_TFEL_TENSORIALFUNCTION_IXX */

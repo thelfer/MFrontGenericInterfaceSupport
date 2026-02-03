@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/Tensors/CoalescedMemoryAccessCompositeTensorsView.hxx
+ * \file   MGIS/Function/TFEL/CoalescedMemoryAccessCompositeTensorsView.hxx
  * \brief
  * \author Thomas Helfer
  * \date   27/10/2025
@@ -16,15 +16,15 @@
 #error "TFEL is required to use coalesced memory access tensor views"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_FUNCTION_TENSORS_COALESCEDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX
-#define LIB_MGIS_FUNCTION_TENSORS_COALESCEDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX
+#ifndef LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSCOMPOSITETENSORVIEW_HXX
+#define LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSCOMPOSITETENSORVIEW_HXX
 
 #include <tuple>
 #include <concepts>
 #include <type_traits>
 #include "TFEL/Math/Array/CoalescedView.hxx"
 #include "MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx"
-#include "MGIS/Function/Tensors/TensorConcept.hxx"
+#include "MGIS/Function/TFEL/TensorConcept.hxx"
 
 namespace mgis::function {
 
@@ -115,7 +115,7 @@ namespace mgis::function {
 
 }  // namespace mgis::function
 
-#include "MGIS/Function/Tensors/CoalescedMemoryAccessCompositeTensorsView.ixx"
+#include "MGIS/Function/TFEL/CoalescedMemoryAccessCompositeTensorsView.ixx"
 
-#endif /* LIB_MGIS_FUNCTION_TENSORS_COALESCEDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX \
+#endif /* LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSCOMPOSITETENSORVIEW_HXX \
         */

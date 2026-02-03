@@ -14,5 +14,5 @@
 
 #include "MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.hxx"
 #ifdef MGIS_HAVE_TFEL
-#include "MGIS/Function/Tensors/StridedCoalescedMemoryAccessCompositeTensorsView.hxx"
+#include "MGIS/Function/TFEL/StridedCoalescedMemoryAccessCompositeTensorsView.hxx"
 #endif /* MGIS_HAVE_TFEL */

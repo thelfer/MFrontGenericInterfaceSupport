@@ -24,7 +24,7 @@
 #include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/FixedSizeView.hxx"
 #include "MGIS/Function/FixedSizeModifier.hxx"
-#include "MGIS/Function/Tensors.hxx"
+#include "MGIS/Function/TFEL/Tensors.hxx"
 
 struct EvaluatorsTest final : public tfel::tests::TestCase {
   EvaluatorsTest()

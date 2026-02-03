@@ -530,6 +530,8 @@ namespace mgis::function {
      */
     [[nodiscard]] constexpr bool checkCompatibility(const FunctionView&) const;
     //! \return a view to the function values
+    [[nodiscard]] constexpr std::span<real> data() requires(is_mutable);
+    //! \return a view to the function values
     [[nodiscard]] constexpr std::span<const real> data() const;
     //! \brief destructor
     constexpr ~FunctionView() = default;
@@ -685,8 +687,6 @@ namespace mgis::function {
     view() const;
     //
     using FunctionView<Space, simple_data_layout_description<N>, true>::data;
-    //! \return a view to the function values
-    [[nodiscard]] constexpr std::span<real> data();
     /*!
      * \brief fill the structure using raw data
      *

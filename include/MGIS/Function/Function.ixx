@@ -573,7 +573,14 @@ namespace mgis::function {
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
             bool is_mutable>
+  constexpr std::span<real>
+  FunctionView<Space, layout, is_mutable>::data() requires(is_mutable) {
+    return this->values;
+  }
 
+  template <LinearFunctionalSpaceConcept Space,
+            FunctionDataLayoutDescription layout,
+            bool is_mutable>
   constexpr std::span<const real>  //
   FunctionView<Space, layout, is_mutable>::data() const {
     return this->values;
@@ -710,11 +717,6 @@ namespace mgis::function {
           this->getSpace(), this->storage_values);
     }
   }  // end of view
-
-  template <LinearFunctionalSpaceConcept Space, size_type N>
-  requires(N > 0) constexpr std::span<real> Function<Space, N>::data() {
-    return this->values;
-  }  // end of data
 
   template <LinearFunctionalSpaceConcept Space, size_type N>
   requires(N > 0) constexpr bool Function<Space, N>::fill(

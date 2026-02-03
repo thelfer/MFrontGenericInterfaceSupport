@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/Tensors.ixx
+ * \file   MGIS/Function/TFEL/Tensors.ixx
  * \brief
  * \author Thomas Helfer
  * \date   13/05/2025
@@ -12,8 +12,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_FUNCTION_TENSORS_IXX
-#define LIB_MGIS_FUNCTION_TENSORS_IXX
+#ifndef LIB_MGIS_FUNCTION_TFEL_TENSORS_IXX
+#define LIB_MGIS_FUNCTION_TFEL_TENSORS_IXX
 
 namespace mgis::function::customization_points {
 
@@ -108,4 +108,4 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#endif /* LIB_MGIS_FUNCTION_TENSORS_IXX */
+#endif /* LIB_MGIS_FUNCTION_TFEL_TENSORS_IXX */

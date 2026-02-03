@@ -1,16 +1,23 @@
 /*!
- * \file   MGIS/Function/Tensors/TensorConcept.hxx
+ * \file   MGIS/Function/TFEL/TensorConcept.hxx
  * \brief
  * \author Thomas Helfer
  * \date   10/05/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef MGIS_HAVE_TFEL
 #error "TFEL is required to use tensor evaluators"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_FUNCTION_TENSORCONCEPT_HXX
-#define LIB_MGIS_FUNCTION_TENSORCONCEPT_HXX
+#ifndef LIB_MGIS_FUNCTION_TFEL_TENSORCONCEPT_HXX
+#define LIB_MGIS_FUNCTION_TFEL_TENSORCONCEPT_HXX
 
 #include <type_traits>
 #include "TFEL/Math/fsarray.hxx"
@@ -154,4 +161,4 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#endif /* LIB_MGIS_FUNCTION_TENSORCONCEPT_HXX */
+#endif /* LIB_MGIS_FUNCTION_TFEL_TENSORCONCEPT_HXX */
