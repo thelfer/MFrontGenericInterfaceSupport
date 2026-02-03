@@ -75,6 +75,24 @@ if(enable-python-bindings)
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DESCRIPTION
     "Contains the python bindings for MGIS")
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DEPENDS mgis)
+  # store the location of the python modules in the MGIS_PYTHON_MODULES_INSTALL_DIRECTORY variable
+  if(MGIS_APPEND_SUFFIX)
+    if(WIN32)
+      set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+          bin/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis_${MGIS_SUFFIX_FOR_PYTHON_MODULES})
+    else(WIN32)
+      set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+          "lib${LIB_SUFFIX}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis_${MGIS_SUFFIX_FOR_PYTHON_MODULES}")
+    endif(WIN32)
+  else(MGIS_APPEND_SUFFIX)
+    if(WIN32)
+      set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+          "bin/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis")
+    else(WIN32)
+      set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+          "lib${LIB_SUFFIX}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis")
+    endif(WIN32)
+  endif(MGIS_APPEND_SUFFIX)
 endif(enable-python-bindings)
 
 # fenics-bindings (placed before compiler detection)
@@ -96,6 +114,26 @@ if(enable-julia-bindings)
   set(CMAKE_CXX_STANDARD "${_CMAKE_CXX_STANDARD}")
 endif(enable-julia-bindings)
 
+# HDF5 support (optional)
+
+option(enable-hdf5-support "enable HDF5 support" OFF)
+option(enable-hdf5-automatic-support "if set, try to support HDF5, even if not explicitly requested by enable-hdf5-support" ON)
+if(enable-hdf5-support)
+  find_package(HDF5 REQUIRED COMPONENTS CXX)
+else(enable-hdf5-support)
+  if(enable-hdf5-automatic-support)
+    find_package(HDF5 COMPONENTS CXX)
+  endif(enable-hdf5-automatic-support)
+endif(enable-hdf5-support)
+if(HDF5_FOUND)
+  set(MGIS_HDF5_SUPPORT ON)
+  MESSAGE(STATUS "hdf5 headers     : " ${HDF5_INCLUDE_DIRS})
+  MESSAGE(STATUS "hdf5 librairies  : " ${HDF5_LIBRARIES})
+  MESSAGE(STATUS "hdf5 definitions : " ${HDF5_DEFINITIONS})
+else(HDF5_FOUND)
+  set(MGIS_HDF5_SUPPORT OFF)
+endif(HDF5_FOUND)
+
 # summary
 
 if(enable-c-bindings)
@@ -113,6 +151,10 @@ endif(enable-fortran-bindings)
 if(enable-fenics-bindings)
   message(STATUS "FEniCS bindings support enabled")
 endif(enable-fenics-bindings)
+
+if(MGIS_HDF5_SUPPORT)
+  message(STATUS "HDF5 support enabled")
+endif(MGIS_HDF5_SUPPORT)
 
 find_package(Threads)
 # if(MINGW)
@@ -189,7 +231,7 @@ if(enable-doxygen-doc)
     list(APPEND CPACK_COMPONENTS_ALL doxygen)
     set(CPACK_COMPONENT_DOXYGEN_DESCRIPTION
       "Contains MGIS' doxygen documentation")
-    set(GENERATE_DOXYGEN ON)
+    set(MGIS_GENERATE_DOXYGEN ON)
   else(DOXYGEN_FOUND)
     message(FATAL_ERROR "doxygen is required")
   endif(DOXYGEN_FOUND)
@@ -241,6 +283,8 @@ add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(tests)
 add_subdirectory(bindings)
+# shall be included after the other directories
+add_subdirectory(env)
 
 # Packaging
 if(MFrontGenericInterfaceSupportDevelopmentVersion)

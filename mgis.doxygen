@@ -5,7 +5,7 @@
  */
 
 /*!
- * \mainpage The `MGIS` project
+ * \mainpage The MGIS project
  * \author   Thomas Helfer
  * \date     28/01/2020
  *
@@ -21,7 +21,7 @@
  * Permissive licences have been chosen to allow integration in open-source
  * and proprietary codes.
  * 
- * # The `MFrontGenericInterface` `C++` library
+ * # The MFrontGenericInterface C++ library
  * 
  * The project is build around the `MFrontGenericInterface` library. This
  * library provides two main functions:
@@ -65,16 +65,42 @@
  * 
  * # Versions, branches
  * 
- * ## Branches
+ * - Version `3.1.0` is meant to be build against `TFEL` 5.1
+ * - Version `3.0.1` is meant to be build against `TFEL` 5.0.1
+ * - Version `3.0` is meant to be build against `TFEL` 5.0
+ * - Version `2.2.1` is meant to be build against `TFEL` 4.2.3
+ * - Version `2.2` is meant to be build against `TFEL` 4.2
+ * - Version `2.1` is meant to be build against `TFEL` 4.1
+ * - Version `2.0` is meant to be build against `TFEL` 4.0
+ * - Version `1.2.2` is meant to be build against `TFEL` 3.4.3
+ * - Version `1.2.1` is meant to be build against `TFEL` 3.4.1
+ * - Version `1.2` is meant to be build against `TFEL` 3.4.0
+ * - Version `1.1` is meant to be build against `TFEL` 3.3.0
+ * - Version `1.0` is meant to be build against `TFEL` 3.2.0
+ * - Version `1.0.1` is meant to be build against `TFEL` 3.2.1
  * 
- * - the `master` branch follows the evolution of the `master` branch of
+ * The following branches are available:
+ * 
+ * - The `master` branch follows the evolution of the `master` branch of
  *   the `TFEL` project
- * - the `rliv-1.1` follows the evolution of the 3.3.x series of the `TFEL`
+ * - The `rliv-3.1` follows the evolution of the 5.1.x series of the `TFEL`
  *   project.
- * - the `rliv-1.0` follows the evolution of the 3.2.x series of the `TFEL`
+ * - The `rliv-3.0` follows the evolution of the 5.0.x series of the `TFEL`
+ *   project.
+ * - The `rliv-2.2` follows the evolution of the 4.2.x series of the `TFEL`
+ *   project.
+ * - The `rliv-2.1` follows the evolution of the 4.1.x series of the `TFEL`
+ *   project.
+ * - The `rliv-2.0` follows the evolution of the 4.0.x series of the `TFEL`
+ *   project.
+ * - The `rliv-1.2` follows the evolution of the 3.4.x series of the `TFEL`
+ *   project.
+ * - The `rliv-1.1` follows the evolution of the 3.3.x series of the `TFEL`
+ *   project.
+ * - The `rliv-1.0` follows the evolution of the 3.2.x series of the `TFEL`
  *   project. Note that this branch is **not** compatible with
  *   `TFEL-3.2.0`.
- * 
+ *  * 
  * ## Release notes
  * 
  * - [Version 1.1](release-notes-1.1.html)
@@ -93,6 +119,7 @@
  * - <https://github.com/progschj/ThreadPool> by Jakob Progsch and Václav
  *   Zeman
  * - <https://github.com/martinmoene/span-lite> by Martin Moene
+ * - <https://github.com/jothepro/doxygen-awesome-css> by jothepro
  *
  */
 

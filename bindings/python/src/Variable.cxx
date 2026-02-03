@@ -104,7 +104,10 @@ void declareVariable(pybind11::module_& m) {
   // free functions
   m.def("getVariable", getVariableByString,
         pybind11::return_value_policy::reference);
-  m.def("getVariableSize", &mgis::behaviour::getVariableSize);
+  m.def("getVariableSize",
+        pybind11::overload_cast<const Variable&,
+                                const mgis::behaviour::Hypothesis>(
+            &mgis::behaviour::getVariableSize));
   m.def("getVariableSize", getVariableSizeByString);
   m.def("getArraySize", &mgis::behaviour::getArraySize);
   m.def("getVariableOffset", getVariableOffsetByString);

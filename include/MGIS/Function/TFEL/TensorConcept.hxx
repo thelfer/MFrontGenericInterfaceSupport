@@ -152,6 +152,13 @@ namespace mgis::function {
   template <typename T>
   concept TensorConcept = internals::IsTensor<T>::value;
 
+  /*!
+   * \brief a tensor which is true if the type is equal to real or matches the
+   * TensorConcept
+   */
+  template <typename T>
+  concept ScalarOrTensorConcept = std::same_as<T, real> || TensorConcept<T>;
+
 }  // end of namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_TFEL_TENSORCONCEPT_HXX */

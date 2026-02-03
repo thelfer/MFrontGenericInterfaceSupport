@@ -66,6 +66,13 @@ Options
 - `enable-exceptions`: use exceptions to report contract violation and error reporting.
    By default, contract violation leads to abort the program.
 - `enable-parallel-stl-algorithms`: by default, STL algorithms are used if available
+- `enable-hdf5-support`: enable HDF5 support for save/restore
+  operations. Note that if this support is not explicitely requested,
+  `MGIS` still tries by default to support `HDF5` but configuration will
+  not fail if the `HDF5` library is not found. See
+  `enable-hdf5-automatic-support` for details.
+- `enable-hdf5-automatic-support`: if set, `MGIS` tries by default to
+  support `HDF5` even if enable-hdf5-support` is not set.
 
 `cmake` usefull variables
 =======================

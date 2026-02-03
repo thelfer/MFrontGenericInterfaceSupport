@@ -39,6 +39,10 @@ module mgis_behaviour
      enumerator :: EXTERNAL_STORAGE = 1
   end enum
   enum, bind(C)
+     enumerator :: UPDATE = 0
+     enumerator :: NOUPDATE = 1
+  end enum
+  enum, bind(C)
      enumerator :: PREDICTION_TANGENT_OPERATOR = -3
      enumerator :: PREDICTION_SECANT_OPERATOR = -2
      enumerator :: PREDICTION_ELASTIC_OPERATOR = -1

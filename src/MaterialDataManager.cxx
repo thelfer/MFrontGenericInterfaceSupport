@@ -15,6 +15,9 @@
 #include <mutex>
 #include <thread>
 #include "MGIS/Raise.hxx"
+#ifdef MGIS_HAVE_HDF5
+#include "MGIS/Utilities/HDF5Support.hxx"
+#endif /* MGIS_HAVE_HDF5 */
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 
@@ -181,5 +184,64 @@ namespace mgis::behaviour {
     outputs.resize(s * m.n, real{0});
     return outputs;
   }  // end of allocatePostProcessingVariables
+
+#ifdef MGIS_HAVE_HDF5
+
+  bool save(Context& ctx,
+            H5::Group& g,
+            const MaterialDataManager& m,
+            const MaterialDataManagerSavingOptions& opts) noexcept {
+    using namespace mgis::utilities::hdf5;
+    // group for the state at the beginning of the time step
+    if (!unlinkIfExists(ctx, g, "s0")) {
+      return false;
+    }
+    auto og_s0 = openGroup(ctx, g, "s0");
+    if (isInvalid(og_s0)) {
+      return false;
+    }
+    // group for the state at the end of the time step
+    if (!unlinkIfExists(ctx, g, "s1")) {
+      return false;
+    }
+    auto og_s1 = openGroup(ctx, g, "s1");
+    if (isInvalid(og_s1)) {
+      return false;
+    }
+    //
+    if (!save(ctx, *og_s0, m.s0, opts)) {
+      return false;
+    }
+    if (!save(ctx, *og_s1, m.s1, opts)) {
+      return false;
+    }
+    return true;
+  }  // end of save
+
+  bool restore(Context& ctx,
+               MaterialDataManager& m,
+               const H5::Group& g,
+               const MaterialDataManagerRestoreOptions& opts) noexcept {
+    using namespace mgis::utilities::hdf5;
+    // group for the state at the beginning of the time step
+    auto og_s0 = openGroup(ctx, g, "s0");
+    if (isInvalid(og_s0)) {
+      return false;
+    }
+    auto og_s1 = openGroup(ctx, g, "s1");
+    if (isInvalid(og_s1)) {
+      return false;
+    }
+    //
+    if (!restore(ctx, m.s0, *og_s0, opts)) {
+      return false;
+    }
+    if (!restore(ctx, m.s1, *og_s1, opts)) {
+      return false;
+    }
+    return true;
+  }  // end of restore
+
+#endif /* MGIS_HAVE_HDF5 */
 
 }  // end of namespace mgis::behaviour
