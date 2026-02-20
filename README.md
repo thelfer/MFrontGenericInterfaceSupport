@@ -59,6 +59,8 @@ The following bindings are under consideration:
 
 # Versions, branches
 
+- Version `3.1` is meant to be build against `TFEL` 5.11
+- Version `3.0.2` is meant to be build against `TFEL` 5.0.2
 - Version `3.0.1` is meant to be build against `TFEL` 5.0.1
 - Version `3.0` is meant to be build against `TFEL` 5.0
 - Version `2.2.1` is meant to be build against `TFEL` 4.2.3
