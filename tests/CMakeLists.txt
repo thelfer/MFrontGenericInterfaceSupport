@@ -30,8 +30,8 @@ mfront_behaviours_check_library(BehaviourTest
 mfront_behaviours_check_library(ModelTest
   ode_rk54)
 
-#
 
+#
 add_executable(IntegrationFailureDebugTest
   EXCLUDE_FROM_ALL
   IntegrationFailureDebugTest.cxx)
@@ -460,6 +460,19 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 if(enable-mgis-function)
 
 if(MGIS_HAVE_TFEL)
+
+add_executable(OptionalReferenceTest
+  EXCLUDE_FROM_ALL
+  OptionalReferenceTest.cxx)
+target_link_libraries(OptionalReferenceTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME OptionalReferenceTest
+ COMMAND OptionalReferenceTest "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(check OptionalReferenceTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST OptionalReferenceTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_executable(SharedSpaceTest
  EXCLUDE_FROM_ALL

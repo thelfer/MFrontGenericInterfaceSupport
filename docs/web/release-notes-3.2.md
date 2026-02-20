@@ -201,6 +201,10 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/196>￼
 
+## Issue 158: Model implicite for LICOS software
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/158>￼
+
 # Acknowledgements
 
 The authors are grateful to the many contributors to the `TFEL/MFront`
