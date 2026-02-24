@@ -2,6 +2,7 @@ set(MFrontGenericInterface_SOURCES)
 list(APPEND MFrontGenericInterface_SOURCES
   Raise.cxx
   VerbosityLevel.cxx
+  LogStream.cxx
   ErrorBacktrace.cxx
   Context.cxx
   Contract.cxx

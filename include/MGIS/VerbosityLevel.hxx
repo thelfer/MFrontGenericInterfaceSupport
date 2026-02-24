@@ -8,6 +8,7 @@
 #define LIB_MGIS_VERBOSITYLEVEL_HXX 1
 
 #include <string>
+#include <iosfwd>
 #include <optional>
 #include <string_view>
 #include "MGIS/Config.hxx"
