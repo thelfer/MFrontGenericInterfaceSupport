@@ -8,6 +8,7 @@
 #define LIB_MGIS_INVALIDRESULT_HXX 1
 
 #include <memory>
+#include <cassert>
 #include <optional>
 
 namespace mgis::internal {
@@ -28,6 +29,43 @@ namespace mgis::internal {
   struct InvalidValueTraits {
     //
     static constexpr bool isSpecialized = false;
+  };
+
+  /*!
+   * \brief metafunction allowing returning a value from an optional-like type
+   * or void for boolean values
+   *
+   * - a public static constexpr data member named `isSpecialized` egal to true.
+   * - a public static constexpr method named `deference` taking an r-value
+   *   reference to an optional-like and returning its value.
+   */
+  template <typename Type>
+  struct OptionalTraits {
+    //
+    static constexpr bool isSpecialized = false;
+  };
+
+  //! \brief partial specialisation for boolean values
+  template <>
+  struct OptionalTraits<bool> {
+    static constexpr bool isSpecialized = true;
+    static constexpr void deference(const bool) noexcept {}
+  };
+
+  //! \brief partial specialisation for std::optional values
+  template <typename T>
+  struct OptionalTraits<std::optional<T>> {
+    static constexpr bool isSpecialized = true;
+    static constexpr T &&deference(std::optional<T> &&v) noexcept
+        requires(!std::is_pointer_v<T>) {
+      assert(v.has_value());
+      return std::move(*v);
+    }
+    static constexpr T deference(std::optional<T> &&v) noexcept
+        requires(std::is_pointer_v<T>) {
+      assert(v.has_value());
+      return *v;
+    }
   };
 
 }  // end of namespace mgis::internal

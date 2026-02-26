@@ -168,8 +168,15 @@ namespace mgis::internal {
   template <typename ValueType>
   struct InvalidValueTraits<mgis::OptionalReference<ValueType>> {
     static constexpr bool isSpecialized = true;
-    static mgis::OptionalReference<ValueType> getValue() noexcept {
-      return {};
+    static mgis::OptionalReference<ValueType> getValue() noexcept { return {}; }
+  };
+
+  //! \brief partial specialisation for optional reference
+  template <typename T>
+  struct OptionalTraits<OptionalReference<T>> {
+    static constexpr bool isSpecialized = true;
+    static constexpr T& deference(OptionalReference<T>&& v) noexcept {
+      return *v;
     }
   };
 

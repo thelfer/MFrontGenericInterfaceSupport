@@ -1,6 +1,6 @@
 /*!
  * \file   MGIS/LogStream.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   24/02/2026
  */

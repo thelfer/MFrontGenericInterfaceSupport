@@ -169,10 +169,11 @@ namespace mgis::behaviour {
    * \param[in] h: modelling hypothesis
    * \return the behaviour description
    */
-  MGIS_EXPORT [[nodiscard]] std::optional<Behaviour> load(Context &,
-                                            const std::string &,
-                                            const std::string &,
-                                            const Hypothesis) noexcept;
+  MGIS_EXPORT [[nodiscard]] std::optional<Behaviour> load(
+      Context &,
+      const std::string &,
+      const std::string &,
+      const Hypothesis) noexcept;
   /*!
    * \brief load the description of a finite strain behaviour from a library
    *

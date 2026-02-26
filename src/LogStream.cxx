@@ -1,6 +1,6 @@
 /*!
  * \file   LogStream.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   24/02/2026
  */
@@ -25,7 +25,7 @@ namespace mgis {
   std::ostream &getDefaultLogStream() noexcept {
     auto &os = getGlobalLogStream();
     if (std::holds_alternative<std::ostream *>(os)) {
-      auto* const ptr = std::get<std::ostream *>(os);
+      auto *const ptr = std::get<std::ostream *>(os);
       if (ptr == nullptr) {
         return std::cout;
       }
@@ -51,7 +51,7 @@ namespace mgis {
     return {true, ""};
   }  // end of setDefaultLogStream
 
-  void setDefaultLogStream(std::ostream & os) noexcept{
+  void setDefaultLogStream(std::ostream &os) noexcept {
     getGlobalLogStream() = &os;
   }  // end of setDefaultLogStream
 
@@ -83,7 +83,6 @@ namespace mgis {
     static std::ostream null_stream(&null_buffer);
     setDefaultLogStream(null_stream);
   }  // end of disableDefaultLogStream
-
 
   /*!
    * \class  TerminalColors
@@ -167,7 +166,7 @@ namespace mgis {
     os.write(TerminalColors::LightBlue, sizeof(TerminalColors::LightBlue));
   }
 
-  void resetOutputColor(std::ostream & os) noexcept {
+  void resetOutputColor(std::ostream &os) noexcept {
     os.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
   }
 

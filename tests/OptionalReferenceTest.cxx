@@ -1,6 +1,6 @@
 /*!
  * \file   tests/OptionalReferenceTest.cxx
- * \brief  This file contains unit test of the `OptionalReference` class  
+ * \brief  This file contains unit test of the `OptionalReference` class
  * \author Thomas Helfer
  * \date   20/02/2026
  */

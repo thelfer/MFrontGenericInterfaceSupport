@@ -43,21 +43,34 @@ namespace mgis {
     enum FailureHandlerPolicy { ABORT, RAISE };
     template <FailureHandlerPolicy policy>
     struct FailureHandler {
-      FailureHandler(Context &c) : ctx(c) {}
+      explicit FailureHandler(Context &c) noexcept : ctx(c) {}
       template <typename T>
-      constexpr T &&operator()(std::optional<T> &&v) const {
+      decltype(auto) operator()(T &&v) const
+          requires((internal::OptionalTraits<T>::isSpecialized) &&
+                   (std::is_rvalue_reference_v<decltype(v)>)) {
+        if (isInvalid(v)) {
+          if (policy == FailureHandlerPolicy::RAISE) {
+            raise(this->ctx.getErrorMessage());
+          } else {
+            this->ctx.abort();
+          }
+        }
+        return internal::OptionalTraits<T>::deference(std::move(v));
+      }
+      template <typename T>
+      decltype(auto) operator()(T &&v) const
+          requires((!internal::OptionalTraits<T>::isSpecialized) &&
+                   (std::is_rvalue_reference_v<decltype(v)>)) {
         if (isInvalid(v)) {
           raise(this->ctx.getErrorMessage());
         }
-        return std::move(*v);
+        return std::move(v);
       }
       template <typename T>
-      constexpr T &operator()(OptionalReference<T> &&v) const {
-        if (isInvalid(v)) {
-          raise(this->ctx.getErrorMessage());
-        }
-        return *v;
-      }
+      friend decltype(auto) operator|(T &&v, const FailureHandler &h) requires(
+          std::is_rvalue_reference_v<decltype(v)>) {
+        return h(std::move(v));
+      }  // end of operator|
 
      private:
       //! \brief reference to the context that created the failure handler
@@ -84,13 +97,19 @@ namespace mgis {
     void setVerbosityLevel(const VerbosityLevel) noexcept;
     /*!
      * \return a failure handler
-     * \param[in] policy: policy used to treat a failure
+     * \tparam policy: policy used to treat a failure
      * \note the context must outlive the failure hander
      */
     template <FailureHandlerPolicy policy = FailureHandlerPolicy::RAISE>
-    constexpr FailureHandler<policy> getFailureHandler() {
-      return {*this};
+    [[nodiscard]] FailureHandler<policy> getFailureHandler() {
+      return FailureHandler<policy>{*this};
     }
+    //! \return a failure handler throwing exception in case of failure
+    [[nodiscard]] FailureHandler<FailureHandlerPolicy::RAISE>
+    getThrowingFailureHandler() noexcept;
+    //! \return a failure handler aborting the execution in case of failure
+    [[nodiscard]] FailureHandler<FailureHandlerPolicy::ABORT>
+    getFatalFailureHandler() noexcept;
     /*!
      * \brief set the current log stream.
      * \param[in] s: log stream
@@ -162,6 +181,9 @@ namespace mgis {
     Context(const Context &) = delete;
     Context &operator=(Context &&) = delete;
     Context &operator=(const Context &) = delete;
+    //! \brief printing the error message on the log stream and abort the
+    //! execution
+    [[noreturn]] void abort();
     //! \brief current log stream
     std::variant<std::monostate, std::ostream *, std::shared_ptr<std::ostream>>
         log_stream;

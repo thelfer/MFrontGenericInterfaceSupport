@@ -25,7 +25,7 @@ namespace mgis {
     this->verbosity = l;
   }  // end of setVerbosityLevel
 
-  void Context::setLogStream(std::ostream& s) noexcept {
+  void Context::setLogStream(std::ostream &s) noexcept {
     this->log_stream = &s;
   }  // end of setLogStream
 
@@ -37,7 +37,7 @@ namespace mgis {
     this->log_stream = s;
   }  // end of setLogStream
 
-  void Context::resetLogStream() noexcept{
+  void Context::resetLogStream() noexcept {
     this->log_stream = std::monostate{};
   }
 
@@ -74,7 +74,17 @@ namespace mgis {
       return *ptr;
     }
     return ::mgis::getDefaultLogStream();
-  } // end of log
+  }  // end of log
+
+  void Context::abort() {
+    const auto msg = this->getErrorMessage();
+    if (!msg.empty()) {
+      this->log() << msg << std::endl;
+    } else {
+      this->log() << "fatal error" << std::endl;
+    }
+    std::abort();
+  }  // end of abort
 
   Context::~Context() noexcept = default;
 

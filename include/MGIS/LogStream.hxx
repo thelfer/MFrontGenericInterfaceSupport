@@ -85,7 +85,7 @@ namespace mgis {
    * \param[out] out: output stream
    * \param[in] l: verbosity level
    */
-  MGIS_EXPORT bool resetStreamColor(std::ostream&) noexcept;
+  MGIS_EXPORT bool resetStreamColor(std::ostream &) noexcept;
   /*!
    * \brief print a warning message
    *

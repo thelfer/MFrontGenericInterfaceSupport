@@ -1,6 +1,6 @@
 /*!
  * \file   MGIS/Context.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   24/02/2026
  */
@@ -31,6 +31,16 @@ namespace mgis {
       mgis::debug(this->log(), std::forward<Args>(args)...);
     }
   }  // end of debug
+
+  inline Context::FailureHandler<Context::FailureHandlerPolicy::RAISE>
+  Context::getThrowingFailureHandler() noexcept {
+    return this->getFailureHandler<FailureHandlerPolicy::RAISE>();
+  }
+
+  inline Context::FailureHandler<Context::FailureHandlerPolicy::ABORT>
+  Context::getFatalFailureHandler() noexcept {
+    return this->getFailureHandler<FailureHandlerPolicy::ABORT>();
+  }
 
 }  // end of namespace mgis
 
