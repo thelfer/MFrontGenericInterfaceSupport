@@ -107,4 +107,40 @@ typedef size_t mgis_size_type;
 #define MGIS_EXPORT MGIS_VISIBILITY_EXPORT
 #endif /* */
 
+/*!
+ * \def MGIS_PP_JOIN
+ * \brief this macro joins joins its two arguments together.
+ *
+ * This macro was taken from the boost library:
+ * - http://boost.org/
+ *
+ * The following piece of macro magic joins the two
+ * arguments together, even when one of the arguments is
+ * itself a macro (see 16.3.1 in C++ standard).  The key
+ * is that macro expansion of macro arguments does not
+ * occur in MGIS_PP_DO_JOIN2 but does in MGIS_PP_DO_JOIN.
+ */
+#define MGIS_PP_JOIN(X, Y) MGIS_PP_DO_JOIN(X, Y)
+
+/*!
+ * \def MGIS_PP_DO_JOIN
+ * \brief An helper macro for MGIS_PP_JOIN
+ * \see MGIS_PP_JOIN
+ */
+#define MGIS_PP_DO_JOIN(X, Y) MGIS_PP_DO_JOIN2(X, Y)
+
+/*!
+ * \def MGIS_PP_DO_JOIN2
+ * \brief An helper macro for MGIS_PP_JOIN
+ * \see MGIS_PP_JOIN
+ */
+#define MGIS_PP_DO_JOIN2(X, Y) X##Y
+
+/*!
+ * \brief macro defining a unique local variable name for a temporary variable
+ * that it not meant to be seen by the end-user
+ */
+#define MGIS_TEMPORARY_VARIABLE(X) \
+  MGIS_PP_JOIN(MGIS_PP_JOIN(MGIS_PP_JOIN(mgis_temporary_, X), _), __LINE__)
+
 #endif /* LIB_MGIS_CONFIG_C_H */

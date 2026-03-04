@@ -81,7 +81,7 @@ struct InvokeTest final : public tfel::tests::TestCase {
         ctx, static_cast<double (*)(double)>(std::log), -1);
     TFEL_TESTS_ASSERT(!r4.has_value());
   }  // end of test3
-};  // end of InvokeTest
+};   // end of InvokeTest
 
 TFEL_TESTS_GENERATE_PROXY(InvokeTest, "InvokeTest");
 

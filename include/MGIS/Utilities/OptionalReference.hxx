@@ -1,5 +1,5 @@
 /*!
- * \file   MFEMMGIS/Utilities/OptionalReference.hxx
+ * \file   MGIS/Utilities/OptionalReference.hxx
  * \brief  This header declares the OptionalReference class
  * \author Thomas Helfer
  * \date   19/02/2026

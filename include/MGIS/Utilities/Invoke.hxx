@@ -143,7 +143,6 @@ namespace mgis {
 
 }  // end of namespace mgis
 
-
 #include "MGIS/Utilities/Invoke.ixx"
 
 #endif /* LIB_MGIS_UTILITIES_INVOKE_HXX */
