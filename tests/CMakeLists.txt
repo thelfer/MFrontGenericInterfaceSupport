@@ -486,6 +486,19 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
+add_executable(InvokeTest
+  EXCLUDE_FROM_ALL
+  InvokeTest.cxx)
+target_link_libraries(InvokeTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME InvokeTest
+ COMMAND InvokeTest "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(check InvokeTest)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST InvokeTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
 add_executable(SharedSpaceTest
  EXCLUDE_FROM_ALL
  SharedSpaceTest.cxx)
