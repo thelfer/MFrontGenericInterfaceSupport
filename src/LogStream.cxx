@@ -158,6 +158,28 @@ namespace mgis {
     static constexpr char Reset[4] = {033, '[', 'm', 017};
   };
 
+  void setStreamColor(std::ostream &os, const OutputStreamColors c) noexcept {
+    if (c == OutputStreamColors::BLACK) {
+      os.write(TerminalColors::Black, sizeof(TerminalColors::Black));
+    } else if (c == OutputStreamColors::RED) {
+      os.write(TerminalColors::Red, sizeof(TerminalColors::Red));
+    } else if (c == OutputStreamColors::GREEN) {
+      os.write(TerminalColors::Green, sizeof(TerminalColors::Green));
+    } else if (c == OutputStreamColors::YELLOW) {
+      os.write(TerminalColors::Yellow, sizeof(TerminalColors::Yellow));
+    } else if (c == OutputStreamColors::BLUE) {
+      os.write(TerminalColors::Blue, sizeof(TerminalColors::Blue));
+    } else if (c == OutputStreamColors::PURPLE) {
+      os.write(TerminalColors::Purple, sizeof(TerminalColors::Purple));
+    } else if (c == OutputStreamColors::LIGHTBLUE) {
+      os.write(TerminalColors::LightBlue, sizeof(TerminalColors::LightBlue));
+    } else if (c == OutputStreamColors::WHITE) {
+      os.write(TerminalColors::White, sizeof(TerminalColors::White));
+    } else if (c == OutputStreamColors::RESET) {
+      os.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
+    }
+  }  // end of setStreamColor
+
   void setErrorColor(std::ostream &os) noexcept {
     os.write(TerminalColors::Red, sizeof(TerminalColors::Red));
   }
@@ -166,7 +188,7 @@ namespace mgis {
     os.write(TerminalColors::LightBlue, sizeof(TerminalColors::LightBlue));
   }
 
-  void resetOutputColor(std::ostream &os) noexcept {
+  void resetStreamColor(std::ostream &os) noexcept {
     os.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
   }
 

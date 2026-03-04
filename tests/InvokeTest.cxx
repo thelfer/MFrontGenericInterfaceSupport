@@ -69,14 +69,14 @@ struct InvokeTest final : public tfel::tests::TestCase {
     const auto r1 =
         invokeCheckErrno(ctx, static_cast<double (*)(double)>(std::log), 1);
     TFEL_TESTS_ASSERT(r1.has_value());
-    TFEL_TESTS_CHECK_EQUAL(*r1, 0);
+    TFEL_TESTS_ASSERT(std::abs(*r1) < 1e-14);
     const auto r2 =
         invokeCheckErrno(ctx, static_cast<double (*)(double)>(std::log), -1);
     TFEL_TESTS_ASSERT(!r2.has_value());
     const auto r3 = MGIS_INVOKE_CHECK_ERRNO(
         ctx, static_cast<double (*)(double)>(std::log), 1);
     TFEL_TESTS_ASSERT(r3.has_value());
-    TFEL_TESTS_CHECK_EQUAL(*r3, 0);
+    TFEL_TESTS_ASSERT(std::abs(*r3) < 1e-14);
     const auto r4 = MGIS_INVOKE_CHECK_ERRNO(
         ctx, static_cast<double (*)(double)>(std::log), -1);
     TFEL_TESTS_ASSERT(!r4.has_value());

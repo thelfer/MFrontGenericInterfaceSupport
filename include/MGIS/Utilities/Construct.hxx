@@ -105,7 +105,7 @@
   if (!MGIS_TEMPORARY_VARIABLE(v).has_value()) {   \
     return InvalidResult{};                        \
   }                                                \
-  Type &v = *(MGIS_TEMPORARY_VARIABLE(v));
+  Type& v = *(MGIS_TEMPORARY_VARIABLE(v))
 
 /*!
  * \brief an helper macro to build an unique pointer for type the constructor of
@@ -119,7 +119,8 @@
   std::unique_ptr<Type> v = MGIS_MAKE_UNIQUE(Type, e, __VA_ARGS__); \
   if (v.get() == nullptr) {                                         \
     return InvalidResult{};                                         \
-  }
+  }                                                                 \
+  static_cast<void>(0)
 
 /*!
  * \brief an helper macro to build an unique pointer for type the constructor of
@@ -135,7 +136,8 @@
       MGIS_MAKE_UNIQUE_AS(BaseType, Type, e, __VA_ARGS__); \
   if (v.get() == nullptr) {                                \
     return InvalidResult{};                                \
-  }
+  }                                                        \
+  static_cast<void>(0)
 
 /*!
  * \brief an helper macro to build an shared pointer for type the constructor of
@@ -149,7 +151,8 @@
   std::shared_ptr<Type> v = MGIS_MAKE_SHARED(Type, e, __VA_ARGS__); \
   if (v.get() == nullptr) {                                         \
     return InvalidResult{};                                         \
-  }
+  }                                                                 \
+  static_cast<void>(0)
 
 /*!
  * \brief an helper macro to build an shared pointer for type the constructor of
@@ -165,7 +168,8 @@
       MGIS_MAKE_SHARED_AS(BaseType, Type, e, __VA_ARGS__); \
   if (v.get() == nullptr) {                                \
     return InvalidResult{};                                \
-  }
+  }                                                        \
+  static_cast<void>(0)
 
 namespace mgis {
 
@@ -184,11 +188,11 @@ namespace mgis {
    * \param[in] args: arguments passed to the constructor
    */
   template <typename Type, typename... ArgumentsTypes>
-  [[nodiscard]] std::optional<Type> construct(
-      Context &,
-      const std::source_location &,
-      ArgumentsTypes &&...) noexcept requires
-      std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...>;
+  [[nodiscard]] std::optional<Type> construct(Context&,
+                                              const std::source_location&,
+                                              ArgumentsTypes&&...) noexcept
+    requires std::is_constructible_v<std::remove_const_t<Type>,
+                                     ArgumentsTypes...>;
   /*!
    * \brief try to build a unique pointer holding the given type.
    *
@@ -203,11 +207,11 @@ namespace mgis {
    * \param[in] args: arguments passed to the constructor
    */
   template <typename Type, typename... ArgumentsTypes>
-  [[nodiscard]] std::unique_ptr<Type> make_unique(
-      Context &,
-      const std::source_location &,
-      ArgumentsTypes &&...) noexcept requires
-      std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...>;
+  [[nodiscard]] std::unique_ptr<Type> make_unique(Context&,
+                                                  const std::source_location&,
+                                                  ArgumentsTypes&&...) noexcept
+    requires std::is_constructible_v<std::remove_const_t<Type>,
+                                     ArgumentsTypes...>;
   /*!
    * \brief try to build a unique pointer of a base type holding the given type.
    *
@@ -223,9 +227,10 @@ namespace mgis {
    */
   template <typename BaseType, typename Type, typename... ArgumentsTypes>
   [[nodiscard]] std::unique_ptr<BaseType> make_unique_as(
-      Context &, const std::source_location &, ArgumentsTypes &&...) noexcept
-      requires std::is_base_of_v<BaseType, Type> &&
-      std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...>;
+      Context&, const std::source_location&, ArgumentsTypes&&...) noexcept
+    requires std::is_base_of_v<BaseType, Type> &&
+             std::is_constructible_v<std::remove_const_t<Type>,
+                                     ArgumentsTypes...>;
   /*!
    * \brief try to build a shared pointer holding the given type.
    *
@@ -239,11 +244,11 @@ namespace mgis {
    * \param[in] args: arguments passed to the constructor
    */
   template <typename Type, typename... ArgumentsTypes>
-  [[nodiscard]] std::shared_ptr<Type> make_shared(
-      Context &,
-      const std::source_location &,
-      ArgumentsTypes &&...) noexcept requires
-      std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...>;
+  [[nodiscard]] std::shared_ptr<Type> make_shared(Context&,
+                                                  const std::source_location&,
+                                                  ArgumentsTypes&&...) noexcept
+    requires std::is_constructible_v<std::remove_const_t<Type>,
+                                     ArgumentsTypes...>;
   /*!
    * \brief try to build a shared pointer of a base type holding the given type.
    *
@@ -259,9 +264,10 @@ namespace mgis {
    */
   template <typename BaseType, typename Type, typename... ArgumentsTypes>
   [[nodiscard]] std::shared_ptr<BaseType> make_shared_as(
-      Context &, const std::source_location &, ArgumentsTypes &&...) noexcept
-      requires std::is_base_of_v<BaseType, Type> &&
-      std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...>;
+      Context&, const std::source_location&, ArgumentsTypes&&...) noexcept
+    requires std::is_base_of_v<BaseType, Type> &&
+             std::is_constructible_v<std::remove_const_t<Type>,
+                                     ArgumentsTypes...>;
 
 #endif
 
@@ -278,9 +284,10 @@ namespace mgis {
    * \param[in] args: arguments passed to the constructor
    */
   template <typename Type, typename... ArgumentsTypes>
-  [[nodiscard]] std::optional<Type> construct(
-      Context &, ArgumentsTypes &&...) noexcept requires
-      std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...>;
+  [[nodiscard]] std::optional<Type> construct(Context&,
+                                              ArgumentsTypes&&...) noexcept
+    requires std::is_constructible_v<std::remove_const_t<Type>,
+                                     ArgumentsTypes...>;
   /*!
    * \brief try to build a unique pointer holding the given type.
    *
@@ -295,9 +302,10 @@ namespace mgis {
    * \param[in] args: arguments passed to the constructor
    */
   template <typename Type, typename... ArgumentsTypes>
-  [[nodiscard]] std::unique_ptr<Type> make_unique(
-      Context &, ArgumentsTypes &&...) noexcept requires
-      std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...>;
+  [[nodiscard]] std::unique_ptr<Type> make_unique(Context&,
+                                                  ArgumentsTypes&&...) noexcept
+    requires std::is_constructible_v<std::remove_const_t<Type>,
+                                     ArgumentsTypes...>;
   /*!
    * \brief try to build a unique pointer of a base type holding the given type.
    *
@@ -313,9 +321,10 @@ namespace mgis {
    */
   template <typename BaseType, typename Type, typename... ArgumentsTypes>
   [[nodiscard]] std::unique_ptr<BaseType> make_unique_as(
-      Context &, ArgumentsTypes &&...) noexcept requires
-      std::is_base_of_v<BaseType, Type> &&
-      std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...>;
+      Context&, ArgumentsTypes&&...) noexcept
+    requires std::is_base_of_v<BaseType, Type> &&
+             std::is_constructible_v<std::remove_const_t<Type>,
+                                     ArgumentsTypes...>;
   /*!
    * \brief try to build a shared pointer holding the given type.
    *
@@ -329,9 +338,10 @@ namespace mgis {
    * \param[in] args: arguments passed to the constructor
    */
   template <typename Type, typename... ArgumentsTypes>
-  [[nodiscard]] std::shared_ptr<Type> make_shared(
-      Context &, ArgumentsTypes &&...) noexcept requires
-      std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...>;
+  [[nodiscard]] std::shared_ptr<Type> make_shared(Context&,
+                                                  ArgumentsTypes&&...) noexcept
+    requires std::is_constructible_v<std::remove_const_t<Type>,
+                                     ArgumentsTypes...>;
   /*!
    * \brief try to build a shared pointer of a base type holding the given type.
    *
@@ -347,9 +357,10 @@ namespace mgis {
    */
   template <typename BaseType, typename Type, typename... ArgumentsTypes>
   [[nodiscard]] std::shared_ptr<BaseType> make_shared_as(
-      Context &, ArgumentsTypes &&...) noexcept requires
-      std::is_base_of_v<BaseType, Type> &&
-      std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...>;
+      Context&, ArgumentsTypes&&...) noexcept
+    requires std::is_base_of_v<BaseType, Type> &&
+             std::is_constructible_v<std::remove_const_t<Type>,
+                                     ArgumentsTypes...>;
 
 }  // end of namespace mgis
 

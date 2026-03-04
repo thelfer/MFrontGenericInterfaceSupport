@@ -78,14 +78,14 @@ namespace mgis {
    * \param[in] c: color
    * \note this only works on the terminal
    */
-  MGIS_EXPORT bool setStreamColor(std::ostream &,
+  MGIS_EXPORT void setStreamColor(std::ostream &,
                                   const OutputStreamColors) noexcept;
   /*!
    * \brief reset the color of the output
    * \param[out] out: output stream
    * \param[in] l: verbosity level
    */
-  MGIS_EXPORT bool resetStreamColor(std::ostream &) noexcept;
+  MGIS_EXPORT void resetStreamColor(std::ostream &) noexcept;
   /*!
    * \brief print a warning message
    *
@@ -102,6 +102,9 @@ namespace mgis {
    */
   template <typename... Args>
   void debug(std::ostream &, Args &&...) noexcept;
+
+  MGIS_EXPORT void setErrorColor(std::ostream &) noexcept;
+  MGIS_EXPORT void setWarningColor(std::ostream &) noexcept;
 
 }  // end of namespace mgis
 
