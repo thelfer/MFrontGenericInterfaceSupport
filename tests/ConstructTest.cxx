@@ -1,6 +1,7 @@
 /*!
  * \file   tests/ConstructTest.cxx
- * \brief  This file contains unit test of the `invoke` function
+ * \brief  This file contains unit test of the `construct`, `make_unique` and
+ * `make_shared` functions
  * \author Thomas Helfer
  * \date   20/02/2026
  */
