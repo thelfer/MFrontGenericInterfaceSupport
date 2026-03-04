@@ -22,7 +22,7 @@ namespace mgis {
    * \brief a class that may contain a reference to a class
    *
    * \note this class was introduced by of the lack of optional
-   * references befor to C++-26.
+   * references prior to C++-26.
    * \note the design of the class is loosely modeled by the
    * std::experimental::observer_ptr proposal
    */
@@ -65,6 +65,10 @@ namespace mgis {
     }
 
     constexpr pointer operator->() const noexcept { return this->ptr; }
+
+    [[nodiscard]] constexpr bool has_value() const noexcept {
+      return this->ptr != nullptr;
+    }
 
     [[nodiscard]] constexpr operator bool() const noexcept {
       return this->ptr != nullptr;
