@@ -1,3 +1,4 @@
+
 /*!
  * \file   src/Context.cxx
  * \brief  This file implements the `Context` class
@@ -36,6 +37,14 @@ namespace mgis {
     }
     this->log_stream = s;
   }  // end of setLogStream
+
+  std::shared_ptr<std::ostream> Context::getLogStreamPointer() const noexcept {
+    if (std::holds_alternative<std::shared_ptr<std::ostream>>(
+            this->log_stream)) {
+      return std::get<std::shared_ptr<std::ostream>>(this->log_stream);
+    }
+    return {};
+  }  // end of getLogStreamPointer
 
   void Context::resetLogStream() noexcept {
     this->log_stream = std::monostate{};

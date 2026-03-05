@@ -124,6 +124,9 @@ namespace mgis {
      * free function.
      */
     void setLogStream(std::shared_ptr<std::ostream>) noexcept;
+    //! \return a pointer to a log stream. This pointer may be null.
+    [[nodiscard]] std::shared_ptr<std::ostream> getLogStreamPointer()
+        const noexcept;
     //! \brief reset the default log stream
     void resetLogStream() noexcept;
     /*!
