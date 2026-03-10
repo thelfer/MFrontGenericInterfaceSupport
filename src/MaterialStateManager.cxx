@@ -182,7 +182,7 @@ namespace mgis::behaviour {
     if (isInvalid(omp)) {
       return false;
     }
-    const auto& mp = *(*omp);
+    const auto& mp = *omp;
     if (mp.type != Variable::SCALAR) {
       return ctx.registerErrorMessage(
           "setMaterialProperty: "
@@ -231,7 +231,7 @@ namespace mgis::behaviour {
     if (isInvalid(omp)) {
       return false;
     }
-    const auto& mp = *(*omp);
+    const auto& mp = *omp;
     if (mp.type != Variable::SCALAR) {
       return ctx.registerErrorMessage(
           "setMaterialProperty: "
@@ -376,7 +376,7 @@ namespace mgis::behaviour {
     if (isInvalid(oesv)) {
       return false;
     }
-    if ((*oesv)->type != Variable::SCALAR){
+    if (oesv->type != Variable::SCALAR){
       return ctx.registerErrorMessage(
           "setExternalStateVariable: "
           "invalid external state variable "
@@ -395,10 +395,16 @@ namespace mgis::behaviour {
       const std::span<real>& v,
       const MaterialStateManager::StorageMode s,
       const MaterialStateManager::UpdatePolicy p) noexcept {
-    const auto esv = getVariable(m.b.esvs, n);
-    const auto vs = getVariableSize(esv, m.b.hypothesis);
-    if (((static_cast<mgis::size_type>(v.size()) != m.n * vs) &&
-         (static_cast<mgis::size_type>(v.size()) != vs))) {
+    const auto oesv = getVariable(ctx, m.b.esvs, n);
+    if (isInvalid(oesv)) {
+      return false;
+    }
+    const auto ovs = getVariableSize(ctx, *oesv, m.b.hypothesis);
+    if (isInvalid(ovs)) {
+      return false;
+    }
+    if (((static_cast<mgis::size_type>(v.size()) != m.n * (*ovs)) &&
+         (static_cast<mgis::size_type>(v.size()) != (*ovs)))) {
       return ctx.registerErrorMessage(
           "setExternalStateVariable: invalid number of values");
     }

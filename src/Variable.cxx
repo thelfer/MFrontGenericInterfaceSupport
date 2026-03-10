@@ -330,7 +330,7 @@ namespace mgis::behaviour {
     return *p;
   }  // end of getVariable
 
-  std::optional<const Variable *> getVariable(
+  OptionalReference<const Variable> getVariable(
       Context &ctx,
       const std::vector<Variable> &vs,
       const std::string_view n) noexcept {
@@ -340,7 +340,7 @@ namespace mgis::behaviour {
       return ctx.registerErrorMessage("getVariable: no variable named '" +
                                       std::string(n) + "'");
     }
-    return &(*p);
+    return {&(*p)};
   }  // end of getVariable
 
   size_type getArraySize(const std::vector<Variable> &vs, const Hypothesis h) {

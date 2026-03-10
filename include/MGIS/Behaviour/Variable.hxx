@@ -20,6 +20,7 @@
 #include <string_view>
 #include "MGIS/Config.hxx"
 #include "MGIS/Context.hxx"
+#include "MGIS/Utilities/OptionalReference.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
 
 namespace mgis::behaviour {
@@ -72,7 +73,7 @@ namespace mgis::behaviour {
    * \param[in] vs: variables
    * \param[in] n: name
    */
-  MGIS_EXPORT [[nodiscard]] std::optional<const Variable *> getVariable(
+  MGIS_EXPORT OptionalReference<const Variable> getVariable(
       Context &,
       const std::vector<Variable> &,
       const std::string_view) noexcept;
