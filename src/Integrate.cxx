@@ -56,7 +56,8 @@ namespace mgis::behaviour::internals {
    */
   static std::vector<Evaluator> buildEvaluators(
       std::vector<real>& v,
-      std::map<std::string, MaterialStateManager::FieldHolder>& values,
+      std::map<std::string, MaterialStateManager::FieldHolder, std::less<>>&
+          values,
       const MaterialDataManager& m,
       const std::vector<Variable>& ds) {
     mgis::raise_if(v.size() != getArraySize(ds, m.b.hypothesis),

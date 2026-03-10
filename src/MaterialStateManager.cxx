@@ -140,24 +140,21 @@ namespace mgis::behaviour {
   MaterialStateManager::~MaterialStateManager() = default;
 
   [[nodiscard]] static MaterialStateManager::FieldHolder& getFieldHolder(
-      std::map<std::string, MaterialStateManager::FieldHolder>& m,
+      std::map<std::string, MaterialStateManager::FieldHolder, std::less<>>& m,
       const std::string_view& n) noexcept {
-    // #if __cplusplus > 201103L
-    //       return m[n];
-    // #else  /* __cplusplus > 201103L */
     return m[std::string{n}];
-    // #endif /* __cplusplus > 201103L */
   }  // end of getFieldHolder
 
-  static std::map<std::string,
-                  MaterialStateManager::FieldHolder>::const_iterator
-  getFieldHolderIterator(
-      const std::map<std::string, MaterialStateManager::FieldHolder>& m,
-      const std::string_view& n) {
+  static std::map<std::string, MaterialStateManager::FieldHolder, std::less<>>::
+      const_iterator
+      getFieldHolderIterator(const std::map<std::string,
+                                            MaterialStateManager::FieldHolder,
+                                            std::less<>>& m,
+                             const std::string_view& n) {
     // #if __cplusplus > 201103L
     //       return m.find(n);
     // #else  /* __cplusplus > 201103L */
-    return m.find(std::string{n});
+    return m.find(n);
     // #endif /* __cplusplus > 201103L */
   }  // end of getFieldHolder
 
@@ -259,6 +256,20 @@ namespace mgis::behaviour {
     return true;
   }  // end of setMaterialProperty
 
+  bool unsetMaterialProperty(Context& ctx,
+                             MaterialStateManager& m,
+                             const std::string_view& n) noexcept {
+    const auto omp = getVariable(ctx, m.b.mps, n);
+    if (isInvalid(omp)) {
+      return false;
+    }
+    auto p = m.material_properties.find(n);
+    if (p != m.material_properties.end()) {
+      m.material_properties.erase(p);
+    }
+    return true;
+  }  // end of unsetMaterialProperty
+
   bool isMaterialPropertyDefined(const MaterialStateManager& m,
                                  const std::string_view& n) {
     const auto p = getFieldHolderIterator(m.material_properties, n);
@@ -326,12 +337,11 @@ namespace mgis::behaviour {
         .value = v, .shall_be_updated = (p == MaterialStateManager::UPDATE)};
   }  // end of setExternalStateVariable
 
-  MGIS_EXPORT void setExternalStateVariable(
-      MaterialStateManager& m,
-      const std::string_view& n,
-      const std::span<real>& v,
-      const MaterialStateManager::StorageMode s,
-      const MaterialStateManager::UpdatePolicy p) {
+  void setExternalStateVariable(MaterialStateManager& m,
+                                const std::string_view& n,
+                                const std::span<real>& v,
+                                const MaterialStateManager::StorageMode s,
+                                const MaterialStateManager::UpdatePolicy p) {
     const auto esv = getVariable(m.b.esvs, n);
     const auto vs = getVariableSize(esv, m.b.hypothesis);
     mgis::raise_if(((static_cast<mgis::size_type>(v.size()) != m.n * vs) &&
@@ -355,6 +365,76 @@ namespace mgis::behaviour {
           .value = v, .shall_be_updated = (p == MaterialStateManager::UPDATE)};
     }
   }  // end of setExternalStateVariable
+
+  bool setExternalStateVariable(
+      Context& ctx,
+      MaterialStateManager& m,
+      const std::string_view& n,
+      const real v,
+      const MaterialStateManager::UpdatePolicy p) noexcept {
+    const auto oesv = getVariable(ctx, m.b.esvs, n);
+    if (isInvalid(oesv)) {
+      return false;
+    }
+    if ((*oesv)->type != Variable::SCALAR){
+      return ctx.registerErrorMessage(
+          "setExternalStateVariable: "
+          "invalid external state variable "
+          "(only scalar external state variable is supported)");
+    }
+    getFieldHolder(m.external_state_variables,
+                   n) = MaterialStateManager::FieldHolder{
+        .value = v, .shall_be_updated = (p == MaterialStateManager::UPDATE)};
+    return true;
+  }  // end of setExternalStateVariable
+
+  bool setExternalStateVariable(
+      Context& ctx,
+      MaterialStateManager& m,
+      const std::string_view& n,
+      const std::span<real>& v,
+      const MaterialStateManager::StorageMode s,
+      const MaterialStateManager::UpdatePolicy p) noexcept {
+    const auto esv = getVariable(m.b.esvs, n);
+    const auto vs = getVariableSize(esv, m.b.hypothesis);
+    if (((static_cast<mgis::size_type>(v.size()) != m.n * vs) &&
+         (static_cast<mgis::size_type>(v.size()) != vs))) {
+      return ctx.registerErrorMessage(
+          "setExternalStateVariable: invalid number of values");
+    }
+    if (s == MaterialStateManager::LOCAL_STORAGE) {
+      if (v.size() == 1u) {
+        getFieldHolder(m.external_state_variables, n) =
+            MaterialStateManager::FieldHolder{
+                .value = v[0],
+                .shall_be_updated = (p == MaterialStateManager::UPDATE)};
+      } else {
+        getFieldHolder(m.external_state_variables, n) =
+            MaterialStateManager::FieldHolder{
+                .value = std::vector<real>{v.begin(), v.end()},
+                .shall_be_updated = (p == MaterialStateManager::UPDATE)};
+      }
+    } else {
+      getFieldHolder(m.external_state_variables,
+                     n) = MaterialStateManager::FieldHolder{
+          .value = v, .shall_be_updated = (p == MaterialStateManager::UPDATE)};
+    }
+    return true;
+  }  // end of setExternalStateVariable
+
+  bool unsetExternalStateVariable(Context& ctx,
+                                  MaterialStateManager& m,
+                                  const std::string_view& n) noexcept {
+    const auto oesv = getVariable(ctx, m.b.esvs, n);
+    if (isInvalid(oesv)) {
+      return false;
+    }
+    auto p = m.external_state_variables.find(n);
+    if (p != m.external_state_variables.end()) {
+      m.external_state_variables.erase(p);
+    }
+    return true;
+  }  // end of unsetExternalStateVariable
 
   bool isExternalStateVariableDefined(const MaterialStateManager& m,
                                       const std::string_view& n) {
@@ -440,8 +520,8 @@ namespace mgis::behaviour {
         };  // end of update_field_holder
     auto check_mps =
         [](const Behaviour& b,
-           const std::map<std::string, MaterialStateManager::FieldHolder>&
-               mps) {
+           const std::map<std::string, MaterialStateManager::FieldHolder,
+                          std::less<>>& mps) {
           for (const auto& mp : mps) {
             auto find_mp = [&mp](const Variable& d) {
               return mp.first == d.name;
@@ -941,4 +1021,4 @@ namespace mgis::behaviour {
 
 #endif /* MGIS_HAVE_HDF5 */
 
-}  // end of namespace mgis::behaviour
+  }  // end of namespace mgis::behaviour
