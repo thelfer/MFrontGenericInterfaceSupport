@@ -120,6 +120,19 @@ namespace mgis::behaviour {
   MGIS_EXPORT [[nodiscard]] size_type getVariableOffset(
       const std::vector<Variable> &, const std::string_view, const Hypothesis);
   /*!
+   * \return the offset of the given variable for the given hypothesis
+   *
+   * \param[in] ctx: execution context
+   * \param[in] vs: variables
+   * \param[in] n: variable name
+   * \param[in] h: modelling hypothesis
+   */
+  MGIS_EXPORT [[nodiscard]] std::optional<size_type> getVariableOffset(
+      Context &,
+      const std::vector<Variable> &,
+      const std::string_view,
+      const Hypothesis) noexcept;
+  /*!
    * \return the type of the given variable as a string
    * \param[in] v: variable
    */

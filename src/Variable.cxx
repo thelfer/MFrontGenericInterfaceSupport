@@ -364,6 +364,21 @@ namespace mgis::behaviour {
     raise("getVariableOffset: no variable named '" + std::string(n) + "'");
   }  // end of getVariableOffset
 
+  std::optional<size_type> getVariableOffset(Context &ctx,
+                                             const std::vector<Variable> &vs,
+                                             const std::string_view n,
+                                             const Hypothesis h) noexcept {
+    auto o = size_type{};
+    for (const auto &v : vs) {
+      if (v.name == n) {
+        return o;
+      }
+      o += getVariableSize(v, h);
+    }
+    return ctx.registerErrorMessage("getVariableOffset: no variable named '" +
+                                    std::string(n) + "'");
+  }  // end of getVariableOffset
+
   std::string getVariableTypeSymbolicRepresentation(const int id) {
     auto t = id;
     const auto s = internals::getVariableTypeSymbolicRepresentation(t);
