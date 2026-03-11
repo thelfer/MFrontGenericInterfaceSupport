@@ -141,7 +141,7 @@ namespace mgis::behaviour {
 
   [[nodiscard]] static MaterialStateManager::FieldHolder& getFieldHolder(
       std::map<std::string, MaterialStateManager::FieldHolder, std::less<>>& m,
-      const std::string_view& n) noexcept {
+      std::string_view n) noexcept {
     return m[std::string{n}];
   }  // end of getFieldHolder
 
@@ -150,7 +150,7 @@ namespace mgis::behaviour {
       getFieldHolderIterator(const std::map<std::string,
                                             MaterialStateManager::FieldHolder,
                                             std::less<>>& m,
-                             const std::string_view& n) {
+                             std::string_view n) {
     // #if __cplusplus > 201103L
     //       return m.find(n);
     // #else  /* __cplusplus > 201103L */
@@ -159,7 +159,7 @@ namespace mgis::behaviour {
   }  // end of getFieldHolder
 
   void setMaterialProperty(MaterialStateManager& m,
-                           const std::string_view& n,
+                           std::string_view n,
                            const real v,
                            const MaterialStateManager::UpdatePolicy p) {
     const auto mp = getVariable(m.b.mps, n);
@@ -175,7 +175,7 @@ namespace mgis::behaviour {
   bool setMaterialProperty(
       Context& ctx,
       MaterialStateManager& m,
-      const std::string_view& n,
+      std::string_view n,
       const real v,
       const MaterialStateManager::UpdatePolicy p) noexcept {
     const auto omp = getVariable(ctx, m.b.mps, n);
@@ -196,7 +196,7 @@ namespace mgis::behaviour {
   }  // end of setMaterialProperty
 
   void setMaterialProperty(MaterialStateManager& m,
-                           const std::string_view& n,
+                           std::string_view n,
                            const std::span<real>& v,
                            const MaterialStateManager::StorageMode s,
                            const MaterialStateManager::UpdatePolicy p) {
@@ -223,7 +223,7 @@ namespace mgis::behaviour {
   bool setMaterialProperty(
       Context& ctx,
       MaterialStateManager& m,
-      const std::string_view& n,
+      std::string_view n,
       const std::span<real>& v,
       const MaterialStateManager::StorageMode s,
       const MaterialStateManager::UpdatePolicy p) noexcept {
@@ -258,7 +258,7 @@ namespace mgis::behaviour {
 
   bool unsetMaterialProperty(Context& ctx,
                              MaterialStateManager& m,
-                             const std::string_view& n) noexcept {
+                             std::string_view n) noexcept {
     const auto omp = getVariable(ctx, m.b.mps, n);
     if (isInvalid(omp)) {
       return false;
@@ -271,13 +271,13 @@ namespace mgis::behaviour {
   }  // end of unsetMaterialProperty
 
   bool isMaterialPropertyDefined(const MaterialStateManager& m,
-                                 const std::string_view& n) {
+                                 std::string_view n) {
     const auto p = getFieldHolderIterator(m.material_properties, n);
     return p != m.material_properties.end();
   }  // end of isMaterialPropertyDefined
 
   bool isMaterialPropertyUniform(const MaterialStateManager& m,
-                                 const std::string_view& n) {
+                                 std::string_view n) {
     const auto p = getFieldHolderIterator(m.material_properties, n);
     if (p == m.material_properties.end()) {
       mgis::raise(
@@ -324,7 +324,7 @@ namespace mgis::behaviour {
   }  // end of isMassDensityUniform
 
   void setExternalStateVariable(MaterialStateManager& m,
-                                const std::string_view& n,
+                                std::string_view n,
                                 const real v,
                                 const MaterialStateManager::UpdatePolicy p) {
     const auto esv = getVariable(m.b.esvs, n);
@@ -338,7 +338,7 @@ namespace mgis::behaviour {
   }  // end of setExternalStateVariable
 
   void setExternalStateVariable(MaterialStateManager& m,
-                                const std::string_view& n,
+                                std::string_view n,
                                 const std::span<real>& v,
                                 const MaterialStateManager::StorageMode s,
                                 const MaterialStateManager::UpdatePolicy p) {
@@ -369,14 +369,14 @@ namespace mgis::behaviour {
   bool setExternalStateVariable(
       Context& ctx,
       MaterialStateManager& m,
-      const std::string_view& n,
+      std::string_view n,
       const real v,
       const MaterialStateManager::UpdatePolicy p) noexcept {
     const auto oesv = getVariable(ctx, m.b.esvs, n);
     if (isInvalid(oesv)) {
       return false;
     }
-    if (oesv->type != Variable::SCALAR){
+    if (oesv->type != Variable::SCALAR) {
       return ctx.registerErrorMessage(
           "setExternalStateVariable: "
           "invalid external state variable "
@@ -391,7 +391,7 @@ namespace mgis::behaviour {
   bool setExternalStateVariable(
       Context& ctx,
       MaterialStateManager& m,
-      const std::string_view& n,
+      std::string_view n,
       const std::span<real>& v,
       const MaterialStateManager::StorageMode s,
       const MaterialStateManager::UpdatePolicy p) noexcept {
@@ -430,7 +430,7 @@ namespace mgis::behaviour {
 
   bool unsetExternalStateVariable(Context& ctx,
                                   MaterialStateManager& m,
-                                  const std::string_view& n) noexcept {
+                                  std::string_view n) noexcept {
     const auto oesv = getVariable(ctx, m.b.esvs, n);
     if (isInvalid(oesv)) {
       return false;
@@ -443,13 +443,13 @@ namespace mgis::behaviour {
   }  // end of unsetExternalStateVariable
 
   bool isExternalStateVariableDefined(const MaterialStateManager& m,
-                                      const std::string_view& n) {
+                                      std::string_view n) {
     const auto p = getFieldHolderIterator(m.external_state_variables, n);
     return p != m.external_state_variables.end();
   }  // end of isExternalStateVariableDefined
 
   bool isExternalStateVariableUniform(const MaterialStateManager& m,
-                                      const std::string_view& n) {
+                                      std::string_view n) {
     const auto p = getFieldHolderIterator(m.external_state_variables, n);
     mgis::raise_if(p == m.external_state_variables.end(),
                    "isExternalStateVariableUniform: "
@@ -1027,4 +1027,4 @@ namespace mgis::behaviour {
 
 #endif /* MGIS_HAVE_HDF5 */
 
-  }  // end of namespace mgis::behaviour
+}  // end of namespace mgis::behaviour

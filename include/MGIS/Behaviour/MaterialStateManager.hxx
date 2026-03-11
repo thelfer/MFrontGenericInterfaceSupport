@@ -226,7 +226,7 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT void setMaterialProperty(
       MaterialStateManager&,
-      const std::string_view&,
+      std::string_view,
       const real,
       const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE);
   /*!
@@ -239,7 +239,7 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT void setMaterialProperty(
       MaterialStateManager&,
-      const std::string_view&,
+      std::string_view,
       const std::span<mgis::real>&,
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE,
@@ -256,7 +256,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT [[nodiscard]] bool setMaterialProperty(
       Context&,
       MaterialStateManager&,
-      const std::string_view&,
+      std::string_view,
       const real,
       const MaterialStateManager::UpdatePolicy =
           MaterialStateManager::UPDATE) noexcept;
@@ -273,7 +273,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT [[nodiscard]] bool setMaterialProperty(
       Context&,
       MaterialStateManager&,
-      const std::string_view&,
+      std::string_view,
       const std::span<mgis::real>&,
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE,
@@ -288,21 +288,21 @@ namespace mgis::behaviour {
    * \param[in] n: name
    */
   MGIS_EXPORT [[nodiscard]] bool unsetMaterialProperty(
-      Context&, MaterialStateManager&, const std::string_view&) noexcept;
+      Context&, MaterialStateManager&, std::string_view) noexcept;
   /*!
    * \return true if the given external state variable is defined.
    * \param[out] m: material state manager
    * \param[in] n: name
    */
   MGIS_EXPORT bool isMaterialPropertyDefined(const MaterialStateManager&,
-                                             const std::string_view&);
+                                             std::string_view);
   /*!
    * \brief chek if the given material property is uniform
    * \param[out] m: material state manager
    * \param[in] n: name
    */
   MGIS_EXPORT bool isMaterialPropertyUniform(const MaterialStateManager&,
-                                             const std::string_view&);
+                                             std::string_view);
   /*!
    * \brief set the mass density
    * \param[out] m: material state manager
@@ -345,7 +345,7 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT void setExternalStateVariable(
       MaterialStateManager&,
-      const std::string_view&,
+      std::string_view,
       const real,
       const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE);
   /*!
@@ -358,7 +358,7 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT void setExternalStateVariable(
       MaterialStateManager&,
-      const std::string_view&,
+      std::string_view,
       const std::span<mgis::real>&,
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE,
@@ -375,7 +375,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT [[nodiscard]] bool setExternalStateVariable(
       Context&,
       MaterialStateManager&,
-      const std::string_view&,
+      std::string_view,
       const real,
       const MaterialStateManager::UpdatePolicy =
           MaterialStateManager::UPDATE) noexcept;
@@ -392,7 +392,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT [[nodiscard]] bool setExternalStateVariable(
       Context&,
       MaterialStateManager&,
-      const std::string_view&,
+      std::string_view,
       const std::span<mgis::real>&,
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE,
@@ -407,21 +407,21 @@ namespace mgis::behaviour {
    * \param[in] n: name
    */
   MGIS_EXPORT [[nodiscard]] bool unsetExternalStateVariable(
-      Context&, MaterialStateManager&, const std::string_view&) noexcept;
+      Context&, MaterialStateManager&, std::string_view) noexcept;
   /*!
    * \return true if the given external state variable is defined.
    * \param[out] m: material state manager
    * \param[in] n: name
    */
   MGIS_EXPORT bool isExternalStateVariableDefined(const MaterialStateManager&,
-                                                  const std::string_view&);
+                                                  std::string_view);
   /*!
    * \return true if the given external state variable is uniform.
    * \param[out] m: material state manager
    * \param[in] n: name
    */
   MGIS_EXPORT bool isExternalStateVariableUniform(const MaterialStateManager&,
-                                                  const std::string_view&);
+                                                  std::string_view);
   /*!
    * \brief update the values of a state from another state
    * \param[out] o: output state
