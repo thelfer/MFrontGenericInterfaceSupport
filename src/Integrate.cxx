@@ -93,18 +93,27 @@ namespace mgis::behaviour::internals {
               std::make_tuple(offset, s, variable_values.data()));
         }
       };
-      if (std::holds_alternative<real>(p->second.value)) {
-        if (d.type != Variable::SCALAR) {
-          mgis::raise(
-              "buildEvaluators: invalid type for "
-              "variable '" +
-              d.name + "'");
-        }
-        v[offset] = std::get<real>(p->second.value);
-      } else if (std::holds_alternative<std::span<real>>(p->second.value)) {
-        set_values(std::get<std::span<real>>(p->second.value));
+      if (std::holds_alternative<std::monostate>(p->second)) {
+        raise("uninitialized field holder '" + p->first + "'");
+      }
+      if (std::holds_alternative<std::span<const real>>(p->second)) {
+        set_values(std::get<std::span<const real>>(p->second));
       } else {
-        set_values(std::get<std::vector<real>>(p->second.value));
+        const auto& fh =
+            std::get<MaterialStateManager::MutableFieldHolder>(p->second);
+        if (std::holds_alternative<real>(fh.value)) {
+          if (d.type != Variable::SCALAR) {
+            mgis::raise(
+                "buildEvaluators: invalid type for "
+                "variable '" +
+                d.name + "'");
+          }
+          v[offset] = std::get<real>(fh.value);
+        } else if (std::holds_alternative<std::span<real>>(fh.value)) {
+          set_values(std::get<std::span<real>>(fh.value));
+        } else {
+          set_values(std::get<std::vector<real>>(fh.value));
+        }
       }
       offset += s;
     }

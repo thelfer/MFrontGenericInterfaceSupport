@@ -32,8 +32,18 @@ int main(const int argc, const char* const* argv) {
     setExternalStateVariable(m.s1, "Temperature", T1,
                              MaterialStateManager::UPDATE);
     update(m);
-    const auto T =
-        std::get<real>(m.s0.external_state_variables["Temperature"].value);
+    const auto& T_bts = m.s0.external_state_variables.at("Temperature");
+    if (!std::holds_alternative<MaterialStateManager::MutableFieldHolder>(T_bts)) {
+      std::cerr << "invalid type for the temperature\n";
+      return EXIT_FAILURE;
+    }
+    const auto& Tvalue_bts =
+        std::get<MaterialStateManager::MutableFieldHolder>(T_bts).value;
+    if (!std::holds_alternative<real>(Tvalue_bts)) {
+      std::cerr << "invalid type for the temperature\n";
+      return EXIT_FAILURE;
+    }
+    const auto T = std::get<real>(Tvalue_bts);
     if (std::abs(T - T1) > 1.e-12) {
       std::cerr << "UpdatePolicyTest: invalid temperature value (" << T
                 << ")\n";
@@ -52,8 +62,18 @@ int main(const int argc, const char* const* argv) {
     setExternalStateVariable(m.s1, "Temperature", T1,
                              MaterialStateManager::NOUPDATE);
     update(m);
-    const auto T =
-        std::get<real>(m.s0.external_state_variables["Temperature"].value);
+    const auto& T_bts = m.s0.external_state_variables.at("Temperature");
+    if (!std::holds_alternative<MaterialStateManager::MutableFieldHolder>(T_bts)) {
+      std::cerr << "invalid type for the temperature\n";
+      return EXIT_FAILURE;
+    }
+    const auto& Tvalue_bts =
+        std::get<MaterialStateManager::MutableFieldHolder>(T_bts).value;
+    if (!std::holds_alternative<real>(Tvalue_bts)) {
+      std::cerr << "invalid type for the temperature\n";
+      return EXIT_FAILURE;
+    }
+    const auto T = std::get<real>(Tvalue_bts);
     if (std::abs(T - T0) > 1.e-12) {
       std::cerr << "UpdatePolicyTest: invalid temperature value (" << T
                 << ")\n";
@@ -72,8 +92,18 @@ int main(const int argc, const char* const* argv) {
     setExternalStateVariable(m.s1, "Temperature", T1,
                              MaterialStateManager::UPDATE);
     revert(m);
-    const auto T =
-        std::get<real>(m.s1.external_state_variables["Temperature"].value);
+    const auto& T_ets = m.s1.external_state_variables.at("Temperature");
+    if (!std::holds_alternative<MaterialStateManager::MutableFieldHolder>(T_ets)) {
+      std::cerr << "invalid type for the temperature\n";
+      return EXIT_FAILURE;
+    }
+    const auto& Tvalue_ets =
+        std::get<MaterialStateManager::MutableFieldHolder>(T_ets).value;
+    if (!std::holds_alternative<real>(Tvalue_ets)) {
+      std::cerr << "invalid type for the temperature\n";
+      return EXIT_FAILURE;
+    }
+    const auto T = std::get<real>(Tvalue_ets);
     if (std::abs(T - T0) > 1.e-12) {
       std::cerr << "UpdatePolicyTest: invalid temperature value (" << T
                 << ")\n";
@@ -92,8 +122,18 @@ int main(const int argc, const char* const* argv) {
     setExternalStateVariable(m.s1, "Temperature", T1,
                              MaterialStateManager::NOUPDATE);
     revert(m);
-    const auto T =
-        std::get<real>(m.s1.external_state_variables["Temperature"].value);
+    const auto& T_ets = m.s1.external_state_variables.at("Temperature");
+    if (!std::holds_alternative<MaterialStateManager::MutableFieldHolder>(T_ets)) {
+      std::cerr << "invalid type for the temperature\n";
+      return EXIT_FAILURE;
+    }
+    const auto& Tvalue_ets =
+        std::get<MaterialStateManager::MutableFieldHolder>(T_ets).value;
+    if (!std::holds_alternative<real>(Tvalue_ets)) {
+      std::cerr << "invalid type for the temperature\n";
+      return EXIT_FAILURE;
+    }
+    const auto T = std::get<real>(Tvalue_ets);
     if (std::abs(T - T1) > 1.e-12) {
       std::cerr << "UpdatePolicyTest: invalid temperature value (" << T
                 << ")\n";

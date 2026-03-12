@@ -73,11 +73,16 @@ int main(const int argc, const char* const* argv) {
       return EXIT_FAILURE;
     }
     const auto& T = m.s1.external_state_variables.at("Temperature");
-    if (!std::holds_alternative<real>(T.value)) {
+    if (!std::holds_alternative<MaterialStateManager::MutableFieldHolder>(T)) {
       std::cerr << "invalid type for the temperature\n";
       return EXIT_FAILURE;
     }
-    if (std::abs(std::get<real>(T.value) - 293.15) > 1e-10) {
+    const auto& Tvalue = std::get<MaterialStateManager::MutableFieldHolder>(T).value;
+    if (!std::holds_alternative<real>(Tvalue)) {
+      std::cerr << "invalid type for the temperature\n";
+      return EXIT_FAILURE;
+    }
+    if (std::abs(std::get<real>(Tvalue) - 293.15) > 1e-10) {
       std::cerr << "invalid value for the temperature\n";
       return EXIT_FAILURE;
     }
