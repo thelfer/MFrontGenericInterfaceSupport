@@ -112,6 +112,16 @@ namespace mgis::behaviour {
   MGIS_EXPORT [[nodiscard]] size_type getArraySize(
       const std::vector<Variable> &, const Hypothesis);
   /*!
+   * \return the size of an array that may contain the values described by the
+   * given array of variables
+   *
+   * \param[in, out] ctx: execution context
+   * \param[in] vs: variables
+   * \param[in] h: modelling hypothesis
+   */
+  MGIS_EXPORT [[nodiscard]] std::optional<size_type> getArraySize(
+      Context &, const std::vector<Variable> &, const Hypothesis) noexcept;
+  /*!
    * \return the offset of the given variable for the given hypothesis
    * \param[in] vs: variables
    * \param[in] n: variable name

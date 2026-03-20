@@ -351,17 +351,25 @@ namespace mgis::behaviour {
     return s;
   }  // end of getArraySize
 
+  std::optional<size_type> getArraySize(Context &ctx,
+                                        const std::vector<Variable> &vs,
+                                        const Hypothesis h) noexcept {
+    auto s = size_type{};
+    for (const auto &v : vs) {
+      const auto os2 = getVariableSize(ctx, v, h);
+      if (isInvalid(os2)) {
+        return {};
+      }
+      s += *os2;
+    }
+    return s;
+  }  // end of getArraySize
+
   size_type getVariableOffset(const std::vector<Variable> &vs,
                               const std::string_view n,
                               const Hypothesis h) {
-    auto o = size_type{};
-    for (const auto &v : vs) {
-      if (v.name == n) {
-        return o;
-      }
-      o += getVariableSize(v, h);
-    }
-    raise("getVariableOffset: no variable named '" + std::string(n) + "'");
+    auto ctx = Context{};
+    return getVariableOffset(ctx, vs, n, h) | ctx.getThrowingFailureHandler();
   }  // end of getVariableOffset
 
   std::optional<size_type> getVariableOffset(Context &ctx,

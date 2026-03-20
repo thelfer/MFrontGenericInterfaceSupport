@@ -109,7 +109,10 @@ void declareVariable(pybind11::module_& m) {
                                 const mgis::behaviour::Hypothesis>(
             &mgis::behaviour::getVariableSize));
   m.def("getVariableSize", getVariableSizeByString);
-  m.def("getArraySize", &mgis::behaviour::getArraySize);
+  m.def("getArraySize",
+        pybind11::overload_cast<const std::vector<Variable>&,
+                                const mgis::behaviour::Hypothesis>(
+            &mgis::behaviour::getArraySize));
   m.def("getVariableOffset", getVariableOffsetByString);
   m.def("getVariableTypeSymbolicRepresentation",
         &mgis::behaviour::getVariableTypeSymbolicRepresentation);
