@@ -20,10 +20,10 @@ namespace mgis {
     using NonConstType = std::remove_const_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
                                                   ArgumentsTypes...>) {
-      return makestd::optional<Type>(std::forward<ArgumentsTypes>(args)...);
+      return std::make_optional<Type>(std::forward<ArgumentsTypes>(args)...);
     } else {
       try {
-        return makestd::optional<Type>(std::forward<ArgumentsTypes>(args)...);
+        return std::make_optional<Type>(std::forward<ArgumentsTypes>(args)...);
       } catch (...) {
         registerExceptionInErrorBacktrace(ctx, l);
       }
@@ -125,7 +125,7 @@ namespace mgis {
       return Type{std::forward<ArgumentsTypes>(args)...};
     } else {
       try {
-        return std::optional<Type>(std::forward<ArgumentsTypes>(args)...);
+        return std::make_optional<Type>(std::forward<ArgumentsTypes>(args)...);
       } catch (...) {
         std::ignore =
             registerExceptionInErrorBacktraceWithoutSourceLocation(ctx);
