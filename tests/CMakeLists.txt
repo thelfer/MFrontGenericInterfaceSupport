@@ -710,8 +710,6 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 endif(MGIS_HAVE_MFRONT_SUPPORT)
 
-endif(MGIS_HAVE_TFEL)
-
 if(MGIS_HDF5_SUPPORT)
 
   add_executable(HDF5Test EXCLUDE_FROM_ALL HDF5Test.cxx)
@@ -729,5 +727,7 @@ if(MGIS_HDF5_SUPPORT)
   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 endif(MGIS_HDF5_SUPPORT)
+
+endif(MGIS_HAVE_TFEL)
 
 endif(enable-mgis-function)
