@@ -62,12 +62,14 @@ namespace mgis::function {
      * \param[in] c: callable type
      * \param[in] e: modified evaluator
      */
-    constexpr UnaryOperation(const CallableType&, const EvaluatorType&);
+    MGIS_HOST_DEVICE constexpr UnaryOperation(const CallableType&,
+                                              const EvaluatorType&);
     //
     using internals::UnaryOperationBase<CallableType,
                                         EvaluatorType>::getNumberOfComponents;
     //! \brief apply the modifier
-    constexpr auto apply(const evaluator_result<EvaluatorType>&) const;
+    MGIS_HOST_DEVICE constexpr auto apply(
+        const evaluator_result<EvaluatorType>&) const;
 
    private:
     CallableType modifier;
@@ -93,7 +95,8 @@ namespace mgis::function {
     using internals::UnaryOperationBase<CallableType,
                                         EvaluatorType>::getNumberOfComponents;
     //! \brief apply the modifier
-    constexpr auto apply(const evaluator_result<EvaluatorType>&) const;
+    MGIS_HOST_DEVICE constexpr auto apply(
+        const evaluator_result<EvaluatorType>&) const;
   };
 
   //! \return the number of components
@@ -130,14 +133,14 @@ namespace mgis::function {
       using Tag = ::mgis::function::EvaluatorModifierTag;
       //
       template <typename EvaluatorType>
-      constexpr auto operator()(EvaluatorType&&) const
+      MGIS_HOST_DEVICE constexpr auto operator()(EvaluatorType&&) const
           requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
               std::invocable<CallableType,
                              evaluator_result<std::decay_t<EvaluatorType>>>));
     };
 
     template <typename CallableType>
-    constexpr auto unary_operation_modifier2(CallableType);
+    MGIS_HOST_DEVICE constexpr auto unary_operation_modifier2(CallableType);
 
   }  // namespace internals
 
@@ -298,39 +301,71 @@ namespace mgis::function {
 
 namespace mgis::function {
 
-  inline constexpr auto negate = internals::unary_operation_modifier2(
-      []<typename OperandType>(const OperandType& a) constexpr
-          ->tfel::math::UnaryOperationResult<OperandType,
-                                             tfel::math::OpNeg>  //
-      requires(compile_time_size<
-                   tfel::math::UnaryOperationResult<OperandType,
-                                                    tfel::math::OpNeg>> !=
-               dynamic_extent) {  //
-        return -a;
-      });
+  struct NegateOperator {
+    template <typename OperandType>
+    MGIS_HOST_DEVICE constexpr auto operator()(const OperandType& a) const
+        -> tfel::math::UnaryOperationResult<OperandType,
+                                            tfel::math::OpNeg>  //
+    requires(compile_time_size<
+                 tfel::math::UnaryOperationResult<OperandType,
+                                                  tfel::math::OpNeg>> !=
+             dynamic_extent) {  //
+      return -a;
+    }
+  };
+
+  inline constexpr auto negate =
+      internals::unary_operation_modifier2(NegateOperator{});
+
+  struct MultiplyByScalarOperator {
+    MGIS_HOST_DEVICE constexpr MultiplyByScalarOperator(const real s_)
+        : s(s_) {}
+    //
+    template <typename FirstOperandType>
+    MGIS_HOST_DEVICE constexpr auto operator()(const FirstOperandType& a) const
+        -> tfel::math::BinaryOperationResult<FirstOperandType,
+                                             real,
+                                             tfel::math::OpMult>  //
+    requires(compile_time_size<
+                 tfel::math::BinaryOperationResult<FirstOperandType,
+                                                   real,
+                                                   tfel::math::OpMult>> !=
+             dynamic_extent) {
+      return a * (this->s);
+    };
+
+   private:
+    const real s;
+  };
 
   constexpr auto multiply_by_scalar(const real s) {
-    auto c = [b = s]<typename FirstOperandType>(const FirstOperandType& a)
-        -> tfel::math::BinaryOperationResult<FirstOperandType, real,
-                                             tfel::math::OpMult>  //
-    requires(compile_time_size<tfel::math::BinaryOperationResult<
-                 FirstOperandType, real, tfel::math::OpMult>> !=
-             dynamic_extent) {
-      return a * b;
-    };
-    return internals::unary_operation_modifier<decltype(c)>(c);
+    return internals::unary_operation_modifier<MultiplyByScalarOperator>(
+        MultiplyByScalarOperator(s));
   }
 
-  constexpr auto divide_by_scalar(const real s) {
-    auto c = [b = s]<typename FirstOperandType>(const FirstOperandType& a)
-        -> tfel::math::BinaryOperationResult<FirstOperandType, real,
-                                             tfel::math::OpDiv>  //
-    requires(compile_time_size<tfel::math::BinaryOperationResult<
-                 FirstOperandType, real, tfel::math::OpDiv>> !=
+  struct DivideByScalarOperator {
+    MGIS_HOST_DEVICE constexpr DivideByScalarOperator(const real s_) : s(s_) {}
+    //
+    template <typename FirstOperandType>
+    MGIS_HOST_DEVICE constexpr auto operator()(const FirstOperandType& a) const
+        -> tfel::math::BinaryOperationResult<FirstOperandType,
+                                             real,
+                                             tfel::math::OpMult>  //
+    requires(compile_time_size<
+                 tfel::math::BinaryOperationResult<FirstOperandType,
+                                                   real,
+                                                   tfel::math::OpMult>> !=
              dynamic_extent) {
-      return a / b;
+      return a / (this->s);
     };
-    return internals::unary_operation_modifier<decltype(c)>(c);
+
+   private:
+    const real s;
+  };
+
+  constexpr auto divide_by_scalar(const real s) {
+    return internals::unary_operation_modifier<DivideByScalarOperator>(
+        DivideByScalarOperator(s));
   }  // end of divide_by_scalar
 
 }  // end of namespace mgis::function

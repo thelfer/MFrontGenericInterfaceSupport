@@ -467,46 +467,47 @@ if(MGIS_HAVE_TFEL)
     set_property(TEST ContextTest
       PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+  add_executable(OptionalReferenceTest
+    EXCLUDE_FROM_ALL
+    OptionalReferenceTest.cxx)
+  target_link_libraries(OptionalReferenceTest
+    PRIVATE MFrontGenericInterface tfel::TFELTests)
+  add_test(NAME OptionalReferenceTest
+   COMMAND OptionalReferenceTest "$<TARGET_FILE:BehaviourTest>")
+  add_dependencies(check OptionalReferenceTest)
+  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    set_property(TEST OptionalReferenceTest
+      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  
+  add_executable(ConstructTest EXCLUDE_FROM_ALL ConstructTest.cxx)
+  target_link_libraries(ConstructTest
+    PRIVATE MFrontGenericInterface tfel::TFELTests)
+  add_test(NAME ConstructTest
+   COMMAND ConstructTest "$<TARGET_FILE:BehaviourTest>")
+  add_dependencies(check ConstructTest)
+  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    set_property(TEST ConstructTest
+      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  
+  add_executable(InvokeTest EXCLUDE_FROM_ALL InvokeTest.cxx)
+  target_link_libraries(InvokeTest
+    PRIVATE MFrontGenericInterface tfel::TFELTests)
+  add_test(NAME InvokeTest
+   COMMAND InvokeTest "$<TARGET_FILE:BehaviourTest>")
+  add_dependencies(check InvokeTest)
+  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    set_property(TEST InvokeTest
+      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
 endif(MGIS_HAVE_TFEL)
 
 if(enable-mgis-function)
 
 if(MGIS_HAVE_TFEL)
-
-add_executable(OptionalReferenceTest
-  EXCLUDE_FROM_ALL
-  OptionalReferenceTest.cxx)
-target_link_libraries(OptionalReferenceTest
-  PRIVATE MFrontGenericInterface tfel::TFELTests)
-add_test(NAME OptionalReferenceTest
- COMMAND OptionalReferenceTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check OptionalReferenceTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST OptionalReferenceTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_executable(ConstructTest EXCLUDE_FROM_ALL ConstructTest.cxx)
-target_link_libraries(ConstructTest
-  PRIVATE MFrontGenericInterface tfel::TFELTests)
-add_test(NAME ConstructTest
- COMMAND ConstructTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check ConstructTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ConstructTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_executable(InvokeTest EXCLUDE_FROM_ALL InvokeTest.cxx)
-target_link_libraries(InvokeTest
-  PRIVATE MFrontGenericInterface tfel::TFELTests)
-add_test(NAME InvokeTest
- COMMAND InvokeTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check InvokeTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST InvokeTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_executable(SharedSpaceTest
  EXCLUDE_FROM_ALL
@@ -693,6 +694,23 @@ add_executable(MaterialFunctionManagerTest
   EXCLUDE_FROM_ALL MaterialFunctionManagerTest.cxx)
 target_link_libraries(MaterialFunctionManagerTest
 	PRIVATE MFrontGenericInterface tfel::TFELTests)
+
+if(enable-cuda-algorithms)
+  add_executable(FunctionTest-cuda
+    EXCLUDE_FROM_ALL
+    FunctionTest-cuda.cu)
+  target_compile_options(FunctionTest-cuda
+    PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:${MGIS_CUDA_FLAGS}>)
+  target_link_libraries(FunctionTest-cuda
+    PRIVATE MFrontGenericInterface tfel::TFELTests)
+  add_test(NAME FunctionTest-cuda
+   COMMAND FunctionTest-cuda "$<TARGET_FILE:BehaviourTest>")
+  add_dependencies(check FunctionTest-cuda)
+  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    set_property(TEST FunctionTest-cuda
+      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+endif(enable-cuda-algorithms)
 
 if(MGIS_HAVE_MFRONT_SUPPORT)
 
