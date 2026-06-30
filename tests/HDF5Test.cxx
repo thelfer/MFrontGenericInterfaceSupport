@@ -77,7 +77,8 @@ int main(const int argc, const char* const* argv) {
       std::cerr << "invalid type for the temperature\n";
       return EXIT_FAILURE;
     }
-    const auto& Tvalue = std::get<MaterialStateManager::MutableFieldHolder>(T).value;
+    const auto& Tvalue =
+        std::get<MaterialStateManager::MutableFieldHolder>(T).value;
     if (!std::holds_alternative<real>(Tvalue)) {
       std::cerr << "invalid type for the temperature\n";
       return EXIT_FAILURE;

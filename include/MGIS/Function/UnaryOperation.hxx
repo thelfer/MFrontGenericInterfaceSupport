@@ -165,10 +165,6 @@ namespace mgis::function::customization_points {
   template <typename T>
   struct AbsoluteValue;
 
-  inline constexpr auto absolute_value = []<typename T>(const T& v) {
-    return AbsoluteValue<T>::exe(v);
-  };
-
   template <>
   struct AbsoluteValue<real> {
     static constexpr real exe(const real& v) noexcept { return v < 0 ? -v : v; }
@@ -201,10 +197,6 @@ namespace mgis::function::customization_points {
   template <typename T>
   struct MaximumComponent;
 
-  inline constexpr auto maximum_component = []<typename T>(const T& v) {
-    return MaximumComponent<T>::exe(v);
-  };
-
   template <>
   struct MaximumComponent<real> {
     static constexpr real exe(const real& v) noexcept { return v; }
@@ -232,16 +224,13 @@ namespace mgis::function::customization_points {
   template <std::size_t N>
   requires(N > 0) struct MaximumComponent<std::array<real, N>> {
     static constexpr real exe(const std::array<real, N>& v) noexcept {
-      return maximum_component(std::span<const real, N>(v.data(), N));
+      return MaximumComponent<std::span<const real, N>>::exe(
+          std::span<const real, N>(v.data(), N));
     }
   };
 
   template <typename T>
   struct MinimumComponent;
-
-  inline constexpr auto minimum_component = []<typename T>(const T& v) {
-    return MinimumComponent<T>::exe(v);
-  };
 
   template <>
   struct MinimumComponent<real> {
@@ -270,36 +259,40 @@ namespace mgis::function::customization_points {
   template <std::size_t N>
   requires(N > 0) struct MinimumComponent<std::array<real, N>> {
     static constexpr real exe(const std::array<real, N>& v) noexcept {
-      return minimum_component(std::span<const real, N>(v.data(), N));
+      return MinimumComponent<std::span<const real, N>>::exe(
+          std::span<const real, N>(v.data(), N));
     }
   };
 
 }  // namespace mgis::function::customization_points
 
-namespace mgis::function {
+namespace mgis::function::internals {
 
-  inline constexpr auto absolute_value = internals::unary_operation_modifier2(
-      []<typename ValueType>(const ValueType& v) constexpr {
-        return customization_points::absolute_value(v);
-      });
+  struct AbsoluteValueOperator {
+    template <typename ValueType>
+    MGIS_HOST_DEVICE constexpr auto operator()(const ValueType& v) const {  //
+      return customization_points::AbsoluteValue<std::decay_t<ValueType>>::exe(
+          v);
+    }
+  };
 
-  inline constexpr auto maximum_component =
-      internals::unary_operation_modifier2(
-          []<typename ValueType>(const ValueType& v) constexpr {
-            return customization_points::maximum_component(v);
-          });
+  struct MaximumComponentOperator {
+    template <typename ValueType>
+    MGIS_HOST_DEVICE constexpr auto operator()(const ValueType& v) const {  //
+      return customization_points::MaximumComponent<
+          std::decay_t<ValueType>>::exe(v);
+    }
+  };
 
-  inline constexpr auto minimum_component =
-      internals::unary_operation_modifier2(
-          []<typename ValueType>(const ValueType& v) constexpr {
-            return customization_points::minimum_component(v);
-          });
-
-}  // end of namespace mgis::function
+  struct MinimumComponentOperator {
+    template <typename ValueType>
+    MGIS_HOST_DEVICE constexpr auto operator()(const ValueType& v) const {  //
+      return customization_points::MinimumComponent<
+          std::decay_t<ValueType>>::exe(v);
+    }
+  };
 
 #ifdef MGIS_HAVE_TFEL
-
-namespace mgis::function {
 
   struct NegateOperator {
     template <typename OperandType>
@@ -313,9 +306,6 @@ namespace mgis::function {
       return -a;
     }
   };
-
-  inline constexpr auto negate =
-      internals::unary_operation_modifier2(NegateOperator{});
 
   struct MultiplyByScalarOperator {
     MGIS_HOST_DEVICE constexpr MultiplyByScalarOperator(const real s_)
@@ -332,16 +322,11 @@ namespace mgis::function {
                                                    tfel::math::OpMult>> !=
              dynamic_extent) {
       return a * (this->s);
-    };
+    }
 
    private:
     const real s;
   };
-
-  constexpr auto multiply_by_scalar(const real s) {
-    return internals::unary_operation_modifier<MultiplyByScalarOperator>(
-        MultiplyByScalarOperator(s));
-  }
 
   struct DivideByScalarOperator {
     MGIS_HOST_DEVICE constexpr DivideByScalarOperator(const real s_) : s(s_) {}
@@ -357,19 +342,48 @@ namespace mgis::function {
                                                    tfel::math::OpMult>> !=
              dynamic_extent) {
       return a / (this->s);
-    };
+    }
 
    private:
     const real s;
   };
 
+#endif /* MGIS_HAVE_TFEL */
+
+}  // end of namespace mgis::function::internals
+
+namespace mgis::function {
+
+  inline constexpr auto absolute_value =
+      internals::unary_operation_modifier2(internals::AbsoluteValueOperator{});
+
+  inline constexpr auto maximum_component =
+      internals::unary_operation_modifier2(
+          internals::MaximumComponentOperator{});
+
+  inline constexpr auto minimum_component =
+      internals::unary_operation_modifier2(
+          internals::MinimumComponentOperator{});
+
+#ifdef MGIS_HAVE_TFEL
+
+  inline constexpr auto negate =
+      internals::unary_operation_modifier2(internals::NegateOperator{});
+
+  constexpr auto multiply_by_scalar(const real s) {
+    return internals::unary_operation_modifier<
+        internals::MultiplyByScalarOperator>(
+        internals::MultiplyByScalarOperator(s));
+  }
+
   constexpr auto divide_by_scalar(const real s) {
-    return internals::unary_operation_modifier<DivideByScalarOperator>(
-        DivideByScalarOperator(s));
+    return internals::unary_operation_modifier<
+        internals::DivideByScalarOperator>(
+        internals::DivideByScalarOperator(s));
   }  // end of divide_by_scalar
 
-}  // end of namespace mgis::function
-
 #endif /* MGIS_HAVE_TFEL */
+
+}  // end of namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_UNARYOPERATION_HXX */

@@ -33,7 +33,8 @@ int main(const int argc, const char* const* argv) {
                              MaterialStateManager::UPDATE);
     update(m);
     const auto& T_bts = m.s0.external_state_variables.at("Temperature");
-    if (!std::holds_alternative<MaterialStateManager::MutableFieldHolder>(T_bts)) {
+    if (!std::holds_alternative<MaterialStateManager::MutableFieldHolder>(
+            T_bts)) {
       std::cerr << "invalid type for the temperature\n";
       return EXIT_FAILURE;
     }
@@ -63,7 +64,8 @@ int main(const int argc, const char* const* argv) {
                              MaterialStateManager::NOUPDATE);
     update(m);
     const auto& T_bts = m.s0.external_state_variables.at("Temperature");
-    if (!std::holds_alternative<MaterialStateManager::MutableFieldHolder>(T_bts)) {
+    if (!std::holds_alternative<MaterialStateManager::MutableFieldHolder>(
+            T_bts)) {
       std::cerr << "invalid type for the temperature\n";
       return EXIT_FAILURE;
     }
@@ -93,7 +95,8 @@ int main(const int argc, const char* const* argv) {
                              MaterialStateManager::UPDATE);
     revert(m);
     const auto& T_ets = m.s1.external_state_variables.at("Temperature");
-    if (!std::holds_alternative<MaterialStateManager::MutableFieldHolder>(T_ets)) {
+    if (!std::holds_alternative<MaterialStateManager::MutableFieldHolder>(
+            T_ets)) {
       std::cerr << "invalid type for the temperature\n";
       return EXIT_FAILURE;
     }
@@ -123,7 +126,8 @@ int main(const int argc, const char* const* argv) {
                              MaterialStateManager::NOUPDATE);
     revert(m);
     const auto& T_ets = m.s1.external_state_variables.at("Temperature");
-    if (!std::holds_alternative<MaterialStateManager::MutableFieldHolder>(T_ets)) {
+    if (!std::holds_alternative<MaterialStateManager::MutableFieldHolder>(
+            T_ets)) {
       std::cerr << "invalid type for the temperature\n";
       return EXIT_FAILURE;
     }

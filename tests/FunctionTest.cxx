@@ -231,6 +231,7 @@ struct FunctionTest final : public tfel::tests::TestCase {
     this->test9();
     this->test10();
     this->test11();
+    this->test12();
     return this->result;
   }
 
@@ -716,6 +717,22 @@ struct FunctionTest final : public tfel::tests::TestCase {
     };
     check5(0, "invalid number of components");
 #endif /* MGIS_USE_EXCEPTIONS_FOR_CONTRACT_VIOLATION */
+  }
+  void test12() {
+    using namespace mgis;
+    using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
+    auto space = BasicLinearSpace{2};
+    auto values = std::vector<real>{1, 2, 3, 4};
+    constexpr auto layout =
+        FunctionDataLayoutDescription{.data_size = 2, .data_stride = 2};
+    const auto view =
+        FunctionView<BasicLinearSpace, layout, false>{space, values};
+    for (size_type i = 0; i != 2; ++i) {
+      auto v = view(i);
+      TFEL_TESTS_ASSERT(std::abs(v[0] - (2 * i + 1)) < eps);
+      TFEL_TESTS_ASSERT(std::abs(v[1] - (2 * i + 2)) < eps);
+    }
   }
 };
 

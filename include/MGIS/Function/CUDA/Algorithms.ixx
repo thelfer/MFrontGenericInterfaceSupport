@@ -27,7 +27,7 @@ namespace mgis::function::cuda {
       return;
     }
     f(idx);
-  } // end of kernel
+  }  // end of kernel
 
   template <typename CallableType, typename SpaceSizeType>
   [[nodiscard]] bool call_kernel(Context& ctx,
@@ -53,7 +53,7 @@ namespace mgis::function::cuda {
     return true;
   }  // end of call_kernel
 
-} // end of namespace mgis::function::cuda
+}  // end of namespace mgis::function::cuda
 
 namespace mgis::function {
 
@@ -102,12 +102,11 @@ namespace mgis::function {
         };
         return cuda::call_kernel(ctx, c, fct, space_size);
       }
-    }
-    else {
+    } else {
       auto v = view(f);
       if constexpr (use_direct_assignement) {
-        auto fct = [v, e] MGIS_HOST_DEVICE(
-                       const space_size_type i) mutable -> void {
+        auto fct =
+            [v, e] MGIS_HOST_DEVICE(const space_size_type i) mutable -> void {
           v(i) = e(i);
         };
         return cuda::call_kernel(ctx, c, fct, space_size);

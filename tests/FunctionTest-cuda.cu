@@ -91,6 +91,8 @@ struct CUDAFunctionTest final : public tfel::tests::TestCase {
     using namespace mgis::function;
     constexpr auto eps = real{1e-14};
     constexpr auto layout = FunctionDataLayoutDescription{1, 1};
+    constexpr auto layout2 =
+        FunctionDataLayoutDescription{.data_size = 2, .data_stride = 2};
     auto ctx = Context{};
     auto a = thrust::universal_vector<real>{4};
     auto b = thrust::universal_vector<real>{4};
@@ -102,17 +104,65 @@ struct CUDAFunctionTest final : public tfel::tests::TestCase {
         space, std::span<real>(thrust::raw_pointer_cast(a.data()), 4));
     auto b_view = FunctionView<BasicLinearSpace, layout, false>(
         space, std::span<real>(thrust::raw_pointer_cast(b.data()), 4));
-    auto c = CUDAExecutionConfiguration{.number_of_threads_per_block = 4};
+    auto conf = CUDAExecutionConfiguration{.number_of_threads_per_block = 4};
     {
-      const auto ok = assign(ctx, c, a_view, b_view | multiply_by_scalar(3));
+      const auto ok = assign(ctx, conf, a_view, b_view | multiply_by_scalar(3));
+      TFEL_TESTS_ASSERT(ok);
       for (mgis::size_type i = 0; i != 4; ++i) {
         TFEL_TESTS_ASSERT(std::abs(a[i] - 6 * i) < eps);
       }
     }
     {
-      const auto ok = assign(ctx, c, a_view, b_view | divide_by_scalar(3));
+      const auto ok = assign(ctx, conf, a_view, b_view | divide_by_scalar(3));
+      TFEL_TESTS_ASSERT(ok);
       for (mgis::size_type i = 0; i != 4; ++i) {
         TFEL_TESTS_ASSERT(std::abs(a[i] - static_cast<real>(2 * i) / 3) < eps);
+      }
+    }
+    {
+      const auto ok = assign(ctx, conf, a_view, b_view | negate);
+      TFEL_TESTS_ASSERT(ok);
+      for (mgis::size_type i = 0; i != 4; ++i) {
+        TFEL_TESTS_ASSERT(std::abs(a[i] + 2 * i) < eps);
+      }
+    }
+    //
+    for (mgis::size_type i = 0; i != 4; ++i) {
+      b[i] = (i % 2 == 0)  //
+                 ? 2 * static_cast<real>(i)
+                 : -3 * static_cast<real>(i);
+    }
+    {
+      const auto ok = assign(ctx, conf, a_view, b_view | absolute_value);
+      TFEL_TESTS_ASSERT(ok);
+      for (mgis::size_type i = 0; i != 4; ++i) {
+        if (i % 2 == 0) {
+          TFEL_TESTS_ASSERT(std::abs(a[i] - 2 * i) < eps);
+        } else {
+          TFEL_TESTS_ASSERT(std::abs(a[i] - 3 * i) < eps);
+        }
+      }
+    }
+    //
+    auto c = thrust::universal_vector<real>{4 * 2};
+    for (mgis::size_type i = 0; i != 4; ++i) {
+      c[i * 2] = 2 * i;
+      c[i * 2 + 1] = -3 * static_cast<real>(i);
+    }
+    auto c_view = FunctionView<BasicLinearSpace, layout2, false>(
+        space, std::span<const real>(thrust::raw_pointer_cast(c.data()), 8));
+    {
+      const auto ok = assign(ctx, conf, a_view, c_view | maximum_component);
+      TFEL_TESTS_ASSERT(ok);
+      for (mgis::size_type i = 0; i != 4; ++i) {
+        TFEL_TESTS_ASSERT(std::abs(a[i] - 2 * i) < eps);
+      }
+    }
+    {
+      const auto ok = assign(ctx, conf, a_view, c_view | minimum_component);
+      TFEL_TESTS_ASSERT(ok);
+      for (mgis::size_type i = 0; i != 4; ++i) {
+        TFEL_TESTS_ASSERT(std::abs(a[i] + 3 * i) < eps);
       }
     }
   }
