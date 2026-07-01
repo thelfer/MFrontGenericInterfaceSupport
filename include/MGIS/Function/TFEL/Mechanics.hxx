@@ -24,18 +24,40 @@
 #include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/TFEL/Tensors.hxx"
 
+namespace mgis::function::internals {
+
+  struct HydrostaticStressOperator {
+    MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
+        const tfel::math::StensorConcept auto& s) const noexcept {
+      return tfel::math::trace(s) / 3;
+    }
+  };
+
+  struct VonMisesStressOperator {
+    MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
+        const tfel::math::StensorConcept auto& s) const noexcept {
+      return tfel::math::sigmaeq(s);
+    }
+  };
+
+  struct FirstPiolaKirchhoffStressToCauchyStressOperator {
+    template <tfel::math::TensorConcept TensorType>
+    MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
+        const TensorType& pk1, const TensorType& F) noexcept {
+      return tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress(pk1, F);
+    }
+  };
+
+}  // end of namespace mgis::function::internals
+
 namespace mgis::function {
 
   inline constexpr auto hydrostatic_stress =
       internals::unary_operation_modifier2(
-          [](const tfel::math::StensorConcept auto& s) {
-            return tfel::math::trace(s) / 3;
-          });
+          internals::HydrostaticStressOperator{});
 
-  inline constexpr auto vmis = internals::unary_operation_modifier2(
-      [](const tfel::math::StensorConcept auto& s) {
-        return tfel::math::sigmaeq(s);
-      });
+  inline constexpr auto vmis =
+      internals::unary_operation_modifier2(internals::VonMisesStressOperator{});
 
   inline constexpr auto von_mises_stress = vmis;
 
@@ -45,11 +67,7 @@ namespace mgis::function {
 
   inline constexpr auto from_pk1_to_cauchy =
       internals::binary_operation_modifier2(
-          []<tfel::math::TensorConcept TensorType>(const TensorType& pk1,
-                                                   const TensorType& F) {
-            return tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress(
-                pk1, F);
-          });
+          internals::FirstPiolaKirchhoffStressToCauchyStressOperator{});
 
   // convertion of finite strain tangent operators
   using FiniteStrainStiffnessKind =

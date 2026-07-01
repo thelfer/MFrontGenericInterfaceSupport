@@ -167,13 +167,16 @@ namespace mgis::function::customization_points {
 
   template <>
   struct AbsoluteValue<real> {
-    static constexpr real exe(const real& v) noexcept { return v < 0 ? -v : v; }
+    [[nodiscard]] static constexpr real exe(const real& v) noexcept {
+      return v < 0 ? -v : v;
+    }
   };
 
   template <std::size_t N>
   requires((N > 0) && (N != std::dynamic_extent))  //
       struct AbsoluteValue<std::span<const real, N>> {
-    static constexpr auto exe(const std::span<const real, N>& v) noexcept {
+    [[nodiscard]] static constexpr auto exe(
+        const std::span<const real, N>& v) noexcept {
       auto r = std::array<real, N>{};
       for (std::size_t i = 0; i != N; ++i) {
         r[i] = std::abs(v[i]);
@@ -185,7 +188,8 @@ namespace mgis::function::customization_points {
   template <std::size_t N>
   requires((N > 0) && (N != std::dynamic_extent))  //
       struct AbsoluteValue<std::array<const real, N>> {
-    static constexpr auto exe(const std::array<const real, N>& v) noexcept {
+    [[nodiscard]] static constexpr auto exe(
+        const std::array<const real, N>& v) noexcept {
       auto r = std::array<real, N>{};
       for (std::size_t i = 0; i != N; ++i) {
         r[i] = std::abs(v[i]);
@@ -199,13 +203,16 @@ namespace mgis::function::customization_points {
 
   template <>
   struct MaximumComponent<real> {
-    static constexpr real exe(const real& v) noexcept { return v; }
+    [[nodiscard]] static constexpr real exe(const real& v) noexcept {
+      return v;
+    }
   };
 
   template <std::size_t N>
   requires((N > 0) && (N != std::dynamic_extent))  //
       struct MaximumComponent<std::span<const real, N>> {
-    static constexpr real exe(const std::span<const real, N>& v) noexcept
+    [[nodiscard]] static constexpr real exe(
+        const std::span<const real, N>& v) noexcept
         requires((N != 0) && (N != std::dynamic_extent)) {
       if constexpr (N == 1) {
         return v[0];
@@ -223,7 +230,8 @@ namespace mgis::function::customization_points {
 
   template <std::size_t N>
   requires(N > 0) struct MaximumComponent<std::array<real, N>> {
-    static constexpr real exe(const std::array<real, N>& v) noexcept {
+    [[nodiscard]] static constexpr real exe(
+        const std::array<real, N>& v) noexcept {
       return MaximumComponent<std::span<const real, N>>::exe(
           std::span<const real, N>(v.data(), N));
     }
@@ -234,13 +242,16 @@ namespace mgis::function::customization_points {
 
   template <>
   struct MinimumComponent<real> {
-    static constexpr real exe(const real& v) noexcept { return v; }
+    [[nodiscard]] static constexpr real exe(const real& v) noexcept {
+      return v;
+    }
   };
 
   template <std::size_t N>
   requires((N > 0) && (N != std::dynamic_extent))  //
       struct MinimumComponent<std::span<const real, N>> {
-    static constexpr real exe(const std::span<const real, N>& v) noexcept
+    [[nodiscard]] static constexpr real exe(
+        const std::span<const real, N>& v) noexcept
         requires((N != 0) && (N != std::dynamic_extent)) {
       if constexpr (N == 1) {
         return v[0];
@@ -258,7 +269,8 @@ namespace mgis::function::customization_points {
 
   template <std::size_t N>
   requires(N > 0) struct MinimumComponent<std::array<real, N>> {
-    static constexpr real exe(const std::array<real, N>& v) noexcept {
+    [[nodiscard]] static constexpr real exe(
+        const std::array<real, N>& v) noexcept {
       return MinimumComponent<std::span<const real, N>>::exe(
           std::span<const real, N>(v.data(), N));
     }
@@ -270,7 +282,8 @@ namespace mgis::function::internals {
 
   struct AbsoluteValueOperator {
     template <typename ValueType>
-    MGIS_HOST_DEVICE constexpr auto operator()(const ValueType& v) const {  //
+    MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
+        const ValueType& v) const {  //
       return customization_points::AbsoluteValue<std::decay_t<ValueType>>::exe(
           v);
     }
@@ -278,7 +291,8 @@ namespace mgis::function::internals {
 
   struct MaximumComponentOperator {
     template <typename ValueType>
-    MGIS_HOST_DEVICE constexpr auto operator()(const ValueType& v) const {  //
+    MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
+        const ValueType& v) const {  //
       return customization_points::MaximumComponent<
           std::decay_t<ValueType>>::exe(v);
     }
@@ -286,7 +300,8 @@ namespace mgis::function::internals {
 
   struct MinimumComponentOperator {
     template <typename ValueType>
-    MGIS_HOST_DEVICE constexpr auto operator()(const ValueType& v) const {  //
+    MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
+        const ValueType& v) const {  //
       return customization_points::MinimumComponent<
           std::decay_t<ValueType>>::exe(v);
     }
@@ -296,7 +311,8 @@ namespace mgis::function::internals {
 
   struct NegateOperator {
     template <typename OperandType>
-    MGIS_HOST_DEVICE constexpr auto operator()(const OperandType& a) const
+    MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
+        const OperandType& a) const
         -> tfel::math::UnaryOperationResult<OperandType,
                                             tfel::math::OpNeg>  //
     requires(compile_time_size<
@@ -312,7 +328,8 @@ namespace mgis::function::internals {
         : s(s_) {}
     //
     template <typename FirstOperandType>
-    MGIS_HOST_DEVICE constexpr auto operator()(const FirstOperandType& a) const
+    MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
+        const FirstOperandType& a) const
         -> tfel::math::BinaryOperationResult<FirstOperandType,
                                              real,
                                              tfel::math::OpMult>  //
@@ -332,7 +349,8 @@ namespace mgis::function::internals {
     MGIS_HOST_DEVICE constexpr DivideByScalarOperator(const real s_) : s(s_) {}
     //
     template <typename FirstOperandType>
-    MGIS_HOST_DEVICE constexpr auto operator()(const FirstOperandType& a) const
+    MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
+        const FirstOperandType& a) const
         -> tfel::math::BinaryOperationResult<FirstOperandType,
                                              real,
                                              tfel::math::OpMult>  //

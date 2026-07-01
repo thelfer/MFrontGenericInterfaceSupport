@@ -35,10 +35,10 @@ namespace mgis::function::cuda {
                                  CallableType f,
                                  const SpaceSizeType s) {
     const int nthreads = c.number_of_threads_per_block;
-    const int nblocks = static_cast<int>(s + 1) / nthreads;
     if (nthreads < 1) {
       return ctx.registerErrorMessage("invalid number of threads per block");
     }
+    const int nblocks = static_cast<int>(s + nthreads + 1) / nthreads;
     apply_kernel<<<nblocks, nthreads>>>(f, s);
     const auto cuda_launch_error = cudaGetLastError();
     if (cuda_launch_error != cudaSuccess) {
