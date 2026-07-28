@@ -1,4 +1,3 @@
-
 /*!
  * \file   src/Context.cxx
  * \brief  This file implements the `Context` class
@@ -6,17 +5,27 @@
  */
 
 #include <fstream>
+#include <algorithm>
 #include "MGIS/LogStream.hxx"
 #include "MGIS/Context.hxx"
 
 namespace mgis {
 
   Context::Context() noexcept
-      : verbosity(mgis::getDefaultVerbosityLevel()) {  //
-  }                                                    // end of Context
+      : verbosity(mgis::getDefaultVerbosityLevel()) {
+    // Initialisation de la racine du profilage
+    this->root_profiling_data.name = "root";
+    this->root_profiling_data.calls = 1;
+    this->profiling_stack.push_back(&this->root_profiling_data);
+  }  // end of Context
 
   Context::Context(const ContextInitializer &i) noexcept
-      : verbosity(i.verbosity) {}  // end of Context
+      : verbosity(i.verbosity) {
+    // Initialisation de la racine du profilage
+    this->root_profiling_data.name = "root";
+    this->root_profiling_data.calls = 1;
+    this->profiling_stack.push_back(&this->root_profiling_data);
+  }  // end of Context
 
   const VerbosityLevel &Context::getVerbosityLevel() const noexcept {
     return this->verbosity;
@@ -25,6 +34,60 @@ namespace mgis {
   void Context::setVerbosityLevel(const VerbosityLevel l) noexcept {
     this->verbosity = l;
   }  // end of setVerbosityLevel
+
+  void Context::enableProfiling(const bool b) noexcept {
+    this->profiling_enabled = b;
+  }  // end of enableProfiling
+
+  bool Context::isProfilingEnabled() const noexcept {
+    return this->profiling_enabled;
+  }   // end of isProfilingEnabled
+
+  ProfilingSection
+  Context::startNewProfiling(std::string name, bool enabled) noexcept {
+    return ProfilingSection{*this, std::move(name), enabled};
+  }  // end of startNewProfiling
+
+  void Context::pushProfilingNode(std::string name) noexcept {
+    if (this->profiling_stack.empty()) return;
+
+    ProfilingData* current = this->profiling_stack.back();
+    
+    auto it = std::find_if(
+        current->children.begin(),
+        current->children.end(),
+        [&name](const std::unique_ptr<ProfilingData>& child) {
+          return child->name == name;
+        });
+
+    if (it != current->children.end()) {
+      this->profiling_stack.push_back(it->get());
+    } else {
+      auto new_node = std::make_unique<ProfilingData>();
+      new_node->name = std::move(name);
+      
+      ProfilingData* ptr = new_node.get();
+      current->children.push_back(std::move(new_node));
+      this->profiling_stack.push_back(ptr);
+    }
+  }  // end of pushProfilingNode
+
+  void Context::popProfilingNode(double dt) noexcept {
+    if (this->profiling_stack.size() > 1) {
+      ProfilingData* current = this->profiling_stack.back();
+      current->time_in_seconds += dt;
+      current->calls += 1;
+
+      this->profiling_stack.pop_back();
+    } else if (this->profiling_stack.size() == 1) {
+      this->profiling_stack.back()->time_in_seconds += dt;
+    }
+  }  // end of popProfilingNode
+
+  const ProfilingData&
+  Context::getProfilingResultTree() const noexcept {
+    return this->root_profiling_data;
+  }  // end of getProfilingResultTree
 
   void Context::setLogStream(std::ostream &s) noexcept {
     this->log_stream = &s;

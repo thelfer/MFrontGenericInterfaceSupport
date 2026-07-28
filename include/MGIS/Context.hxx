@@ -10,11 +10,14 @@
 #include <memory>
 #include <variant>
 #include <ostream>
+#include <vector>
 #include "MGIS/Config.hxx"
 #include "MGIS/Raise.hxx"
 #include "MGIS/LogStream.hxx"
 #include "MGIS/VerbosityLevel.hxx"
 #include "MGIS/ErrorBacktrace.hxx"
+#include "ProfilingData.hxx"
+#include "Profiling.hxx"
 
 namespace mgis {
 
@@ -29,7 +32,7 @@ namespace mgis {
 
   /*!
    * \brief a class used to pass an execution context to most methods of
-   * `MGIS` and gather information (error, logs).
+   * `MGIS` and gather information (error, logs, profiling).
    *
    * The `Context` may be changed at various stage of the computation.
    * For example, the verbosity level or the logging stream
@@ -76,6 +79,7 @@ namespace mgis {
       //! \brief reference to the context that created the failure handler
       Context &ctx;
     };
+
     /*!
      * \brief default constructor
      *
@@ -83,18 +87,74 @@ namespace mgis {
      * `getDefaultVerbosityLevel` function.
      */
     Context() noexcept;
+
     /*!
      * \brief constructor for an initializer
      * \param[in] i: initializer
      */
     Context(const ContextInitializer &) noexcept;
+
     //! \return the verbosity level
     [[nodiscard]] const VerbosityLevel &getVerbosityLevel() const noexcept;
+
     /*!
      * \brief change the level of verbosity
      * \param[in] l: the new verbose level
      */
     void setVerbosityLevel(const VerbosityLevel) noexcept;
+
+    /*!
+     * \brief enable or disable profiling
+     * \param[in] b: a boolean value stating whether profiling shall be enabled
+     *
+     * \note when profiling is disabled, profiling sections introduce
+     * almost no overhead.
+     */
+    void enableProfiling(const bool b) noexcept;
+
+    /*!
+     * \return true if profiling is enabled, false otherwise
+     */
+    [[nodiscard]] bool isProfilingEnabled() const noexcept;
+
+    /*!
+     * \brief start a new profiling section
+     * \param[in] name: name of the profiling section
+     * \param[in] enabled: boolean stating whether this profiling section
+     * shall effectively collect timing information
+     *
+     * \return a profiling section object
+     *
+     * \note the returned object relies on RAII semantics:
+     * timing starts during construction and stops during destruction.
+     */
+    [[nodiscard]] ProfilingSection startNewProfiling(
+        std::string name,
+        bool enabled) noexcept;
+
+    /*!
+     * \brief push a new profiling node into the current execution stack
+     * \param[in] name: name of the profiling section
+     *
+     * \note this method is meant to be called internally by the 
+     * `Profiling` class during its construction.
+     */
+    void pushProfilingNode(std::string name) noexcept;
+
+    /*!
+     * \brief pop the current profiling node from the execution stack and accumulate time
+     * \param[in] dt: execution time of the section in seconds
+     *
+     * \note this method is meant to be called internally by the 
+     * `Profiling` class during its destruction.
+     */
+    void popProfilingNode(double dt) noexcept;
+
+    /*!
+     * \return the root node of the profiling results tree gathered during execution
+     */
+    [[nodiscard]] const ProfilingData& getProfilingResultTree() const noexcept;
+
     /*!
      * \return a failure handler
      * \tparam policy: policy used to treat a failure
@@ -104,18 +164,22 @@ namespace mgis {
     [[nodiscard]] FailureHandler<policy> getFailureHandler() {
       return FailureHandler<policy>{*this};
     }
+
     //! \return a failure handler throwing exception in case of failure
     [[nodiscard]] FailureHandler<FailureHandlerPolicy::RAISE>
     getThrowingFailureHandler() noexcept;
+
     //! \return a failure handler aborting the execution in case of failure
     [[nodiscard]] FailureHandler<FailureHandlerPolicy::ABORT>
     getFatalFailureHandler() noexcept;
+
     /*!
      * \brief set the current log stream.
      * \param[in] s: log stream
      * \note the user is responsible for ensuring that the given object is alive
      */
     void setLogStream(std::ostream &) noexcept;
+
     /*!
      * \brief set the current log stream.
      * \param[in] s: log stream
@@ -124,17 +188,21 @@ namespace mgis {
      * free function.
      */
     void setLogStream(std::shared_ptr<std::ostream>) noexcept;
+
     //! \return a pointer to a log stream. This pointer may be null.
     [[nodiscard]] std::shared_ptr<std::ostream> getLogStreamPointer()
         const noexcept;
+
     //! \brief reset the default log stream
     void resetLogStream() noexcept;
+
     /*!
-     *  \brief disable the default log stream
+     * \brief disable the default log stream
      *
      * \note logging is disable by creating a no-op output stream
      */
     void disableLogStream() noexcept;
+
     /*!
      * \return the current log stream
      *
@@ -142,6 +210,7 @@ namespace mgis {
      * `getDefaultLogStream` for details.
      */
     [[nodiscard]] std::ostream &log() noexcept;
+
     /*!
      * \brief display the given arguments in the log stream if the current
      * verbosity level (as returned by the `getVerbosityLevel` method) is
@@ -156,6 +225,7 @@ namespace mgis {
      */
     template <typename... Args>
     std::ostream &log(const VerbosityLevel, Args &&...) noexcept;
+
     /*!
      * \brief a simple wrapper around the `log` method to print a warning
      *
@@ -164,6 +234,7 @@ namespace mgis {
      */
     template <typename... Args>
     void warning(Args &&...) noexcept;
+
     /*!
      * \brief a simple wrapper around the `log` method which sets the minimun
      * verbosity level to `verboseDebug`
@@ -175,6 +246,7 @@ namespace mgis {
      */
     template <typename... Args>
     void debug(Args &&...) noexcept;
+
     //! \brief destructor
     ~Context() noexcept override;
 
@@ -184,18 +256,31 @@ namespace mgis {
     Context(const Context &) = delete;
     Context &operator=(Context &&) = delete;
     Context &operator=(const Context &) = delete;
+
     //! \brief printing the error message on the log stream and abort the
     //! execution
     [[noreturn]] void abort();
+
     //! \brief current log stream
     std::variant<std::monostate, std::ostream *, std::shared_ptr<std::ostream>>
         log_stream;
+
     /*!
      * \brief local level of verbosity, initialize by the
      * global option returned by the `getVerbosityLevel`
      * function
      */
     VerbosityLevel verbosity;
+
+    //! \brief boolean stating whether profiling is enabled
+    bool profiling_enabled = false;
+
+    //! \brief root node of the profiling tree containing all recorded sections
+    ProfilingData root_profiling_data;
+
+    //! \brief call stack used to track the hierarchical level of the active profiling sections
+    std::vector<ProfilingData*> profiling_stack;
+
   };  // end of class Context
 
 }  // end of namespace mgis

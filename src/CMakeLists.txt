@@ -5,6 +5,7 @@ list(APPEND MFrontGenericInterface_SOURCES
   LogStream.cxx
   ErrorBacktrace.cxx
   Context.cxx
+  Profiling.cxx
   Contract.cxx
   ThreadPool.cxx
   ThreadedTaskResult.cxx
