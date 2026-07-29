@@ -164,6 +164,11 @@ namespace mgis::behaviour {
     MaterialStateManager(const Behaviour&,
                          const size_type,
                          const MaterialStateManagerInitializer&);
+    //
+    MaterialStateManager(MaterialStateManager&&) = delete;
+    MaterialStateManager(const MaterialStateManager&) = delete;
+    MaterialStateManager& operator=(MaterialStateManager&&) = delete;
+    MaterialStateManager& operator=(const MaterialStateManager&) = delete;
     //! \brief destructor
     ~MaterialStateManager();
     //! \brief view to the values of the gradients
@@ -234,14 +239,6 @@ namespace mgis::behaviour {
     std::vector<mgis::real> stored_energies_values;
     //! \brief value of the dissipated energies, if hold internally
     std::vector<mgis::real> dissipated_energies_values;
-    //! \brief move constructor
-    MaterialStateManager(MaterialStateManager&&) = delete;
-    //! \brief copy constructor
-    MaterialStateManager(const MaterialStateManager&) = delete;
-    //! \brief move assignement
-    MaterialStateManager& operator=(MaterialStateManager&&) = delete;
-    //! \brief copy assignement
-    MaterialStateManager& operator=(const MaterialStateManager&) = delete;
   };  // end of struct MaterialStateManager
 
   /*!

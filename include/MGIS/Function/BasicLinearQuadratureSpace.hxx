@@ -37,20 +37,20 @@ namespace mgis::function {
     constexpr BasicLinearQuadratureSpace(
         const BasicLinearQuadratureSpace&) noexcept;
     //! \return the number of quadrature points
-    constexpr size_type size() const noexcept;
+    [[nodiscard]] constexpr size_type size() const noexcept;
     //! \return the number of cells in the quadrature space
-    constexpr size_type getNumberOfCells() const noexcept;
+    [[nodiscard]] constexpr size_type getNumberOfCells() const noexcept;
     /*!
      * \return the number quadrature points for the given element
      * \param[in] e: cell index
      */
-    constexpr size_type getNumberOfQuadraturePoints(
+    [[nodiscard]] constexpr size_type getNumberOfQuadraturePoints(
         const size_type) const noexcept;
     /*!
      * \return the workspace of the element
      * \param[in] e: cell index
      */
-    constexpr DummyCellWorkspace getCellWorkspace(
+    [[nodiscard]] constexpr DummyCellWorkspace getCellWorkspace(
         const size_type) const noexcept;
     /*!
      * \return the offset associated with a quadrature space
@@ -58,7 +58,7 @@ namespace mgis::function {
      * \param[in] e: cell index
      * \param[in] i: quadrature point index
      */
-    constexpr size_type getQuadraturePointOffset(
+    [[nodiscard]] constexpr size_type getQuadraturePointOffset(
         const size_type, const size_type) const noexcept;
     //! \brief destructor
     constexpr ~BasicLinearQuadratureSpace() noexcept;

@@ -31,6 +31,7 @@ namespace mgis::function {
   requires((std::is_copy_constructible_v<CallableType>)&&(
       std::invocable<CallableType,
                      evaluator_result<EvaluatorType>>))  //
+      MGIS_HOST_DEVICE
       constexpr auto UnaryOperation<CallableType, EvaluatorType>::apply(
           const evaluator_result<EvaluatorType>& values) const {
     return this->modifier(values);
@@ -40,6 +41,7 @@ namespace mgis::function {
   requires((std::is_trivially_default_constructible_v<CallableType>)&&(
       std::invocable<CallableType,
                      evaluator_result<EvaluatorType>>))  //
+      MGIS_HOST_DEVICE
       constexpr auto UnaryOperation2<CallableType, EvaluatorType>::apply(
           const evaluator_result<EvaluatorType>& values) const {
     auto c = CallableType{};
@@ -79,9 +81,9 @@ namespace mgis::function {
 
     template <typename CallableType>
     template <typename EvaluatorType>
-    constexpr auto unary_operation_modifier2_impl<CallableType>::operator()(
-        EvaluatorType&& e) const
-        requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
+    MGIS_HOST_DEVICE constexpr auto
+    unary_operation_modifier2_impl<CallableType>::operator()(EvaluatorType&& e)
+        const requires((EvaluatorConcept<std::decay_t<EvaluatorType>>)&&(
             std::invocable<CallableType,
                            evaluator_result<std::decay_t<EvaluatorType>>>)) {
       return UnaryOperation2<CallableType, std::decay_t<EvaluatorType>>(

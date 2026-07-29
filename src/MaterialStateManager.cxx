@@ -32,7 +32,7 @@ namespace mgis::behaviour {
 
   MaterialStateManager::FieldHolder&
   MaterialStateManager::FieldHolder::operator=(const mgis::real v) noexcept {
-    this->operator=(MutableFieldHolder{v});
+    this->operator=(MutableFieldHolder{.value = v});
     return *this;
   }  // end of value
 
@@ -722,66 +722,67 @@ namespace mgis::behaviour {
       o.mass_density.reset();
     }
     return true;
-    }  // end of updateValues
+  }  // end of updateValues
 
-    void updateValues(MaterialStateManager & o, const MaterialStateManager& i) {
-      auto ctx = Context{};
-      updateValues(ctx, o, i) | ctx.getThrowingFailureHandler();
-    }  // end of updateValues
+  void updateValues(MaterialStateManager& o, const MaterialStateManager& i) {
+    auto ctx = Context{};
+    updateValues(ctx, o, i) | ctx.getThrowingFailureHandler();
+  }  // end of updateValues
 
-    namespace internals {
+  namespace internals {
 
-      static void extractScalarInternalStateVariable(
-          std::span<mgis::real> o,
-          const mgis::behaviour::MaterialStateManager& s,
-          const mgis::size_type offset) {
-        const auto stride = s.internal_state_variables_stride;
-        auto* const p = o.data();
-        const auto* const piv = s.internal_state_variables.data() + offset;
-        for (mgis::size_type i = 0; i != s.n; ++i) {
-          p[i] = piv[i * stride];
-        }
-      }  // end of extractScalarInternalStateVariable
-
-      static void extractInternalStateVariable(
-          std::span<mgis::real> o,
-          const mgis::behaviour::MaterialStateManager& s,
-          const mgis::size_type nc,
-          const mgis::size_type offset) {
-        const auto stride = s.internal_state_variables_stride;
-        auto* p = o.data();
-        const auto* const piv = s.internal_state_variables.data() + offset;
-        for (mgis::size_type i = 0; i != s.n; ++i) {
-          const auto is = i * stride;
-          for (mgis::size_type j = 0; j != nc; ++j, ++p) {
-            *p = piv[is + j];
-          }
-        }
-      }  // end of extractScalarInternalStateVariable
-
-    }  // end of namespace internals
-
-    void extractInternalStateVariable(
-        std::span<mgis::real> o, const mgis::behaviour::MaterialStateManager& s,
-        const std::string_view n) {
-      const auto& iv = mgis::behaviour::getVariable(s.b.isvs, n);
-      const auto nc = mgis::behaviour::getVariableSize(iv, s.b.hypothesis);
-      const auto offset =
-          mgis::behaviour::getVariableOffset(s.b.isvs, n, s.b.hypothesis);
-      // checking compatibility
-      if (o.size() != s.n * nc) {
-        mgis::raise(
-            "extractInternalStateVariable: "
-            "unmatched number of integration points");
+    static void extractScalarInternalStateVariable(
+        std::span<mgis::real> o,
+        const mgis::behaviour::MaterialStateManager& s,
+        const mgis::size_type offset) {
+      const auto stride = s.internal_state_variables_stride;
+      auto* const p = o.data();
+      const auto* const piv = s.internal_state_variables.data() + offset;
+      for (mgis::size_type i = 0; i != s.n; ++i) {
+        p[i] = piv[i * stride];
       }
-      if (nc == 1) {
-        mgis::behaviour::internals::extractScalarInternalStateVariable(o, s,
-                                                                       offset);
-      } else {
-        mgis::behaviour::internals::extractInternalStateVariable(o, s, nc,
-                                                                 offset);
+    }  // end of extractScalarInternalStateVariable
+
+    static void extractInternalStateVariable(
+        std::span<mgis::real> o,
+        const mgis::behaviour::MaterialStateManager& s,
+        const mgis::size_type nc,
+        const mgis::size_type offset) {
+      const auto stride = s.internal_state_variables_stride;
+      auto* p = o.data();
+      const auto* const piv = s.internal_state_variables.data() + offset;
+      for (mgis::size_type i = 0; i != s.n; ++i) {
+        const auto is = i * stride;
+        for (mgis::size_type j = 0; j != nc; ++j, ++p) {
+          *p = piv[is + j];
+        }
       }
-    }  // end of extractInternalStateVariable
+    }  // end of extractScalarInternalStateVariable
+
+  }  // end of namespace internals
+
+  void extractInternalStateVariable(
+      std::span<mgis::real> o,
+      const mgis::behaviour::MaterialStateManager& s,
+      const std::string_view n) {
+    const auto& iv = mgis::behaviour::getVariable(s.b.isvs, n);
+    const auto nc = mgis::behaviour::getVariableSize(iv, s.b.hypothesis);
+    const auto offset =
+        mgis::behaviour::getVariableOffset(s.b.isvs, n, s.b.hypothesis);
+    // checking compatibility
+    if (o.size() != s.n * nc) {
+      mgis::raise(
+          "extractInternalStateVariable: "
+          "unmatched number of integration points");
+    }
+    if (nc == 1) {
+      mgis::behaviour::internals::extractScalarInternalStateVariable(o, s,
+                                                                     offset);
+    } else {
+      mgis::behaviour::internals::extractInternalStateVariable(o, s, nc,
+                                                               offset);
+    }
+  }  // end of extractInternalStateVariable
 
 #ifdef MGIS_HAVE_HDF5
 
@@ -1216,4 +1217,4 @@ namespace mgis::behaviour {
 
 #endif /* MGIS_HAVE_HDF5 */
 
-  }  // end of namespace mgis::behaviour
+}  // end of namespace mgis::behaviour

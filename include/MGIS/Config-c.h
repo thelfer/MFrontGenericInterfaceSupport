@@ -143,4 +143,23 @@ typedef size_t mgis_size_type;
 #define MGIS_TEMPORARY_VARIABLE(X) \
   MGIS_PP_JOIN(MGIS_PP_JOIN(MGIS_PP_JOIN(mgis_temporary_, X), _), __LINE__)
 
+#if (defined __CUDACC__) || (defined __HIPCC__)
+#ifndef MGIS_DEVICE
+#define MGIS_DEVICE __device__
+#endif /* MGIS_DEVICE */
+#ifndef MGIS_HOST
+#define MGIS_HOST __host__
+#endif /* MGIS_HOST */
+#endif /* (defined __CUDACC__) || (defined __HIPCC__) */
+
+#ifndef MGIS_DEVICE
+#define MGIS_DEVICE
+#endif /* MGIS_DEVICE */
+
+#ifndef MGIS_HOST
+#define MGIS_HOST
+#endif /* MGIS_HOST */
+
+#define MGIS_HOST_DEVICE MGIS_DEVICE MGIS_HOST
+
 #endif /* LIB_MGIS_CONFIG_C_H */

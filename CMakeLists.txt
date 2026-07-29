@@ -21,6 +21,9 @@ install(FILES "${PROJECT_BINARY_DIR}/mgis-config-version.cmake"
 set(CMAKE_CXX_STANDARD 20)
 set(CXX_STANDARD_REQUIRED ON)
 
+# enable tests
+option(enable-testing "" ON)
+
 # portable-build
 option(enable-portable-build "produce binary that can be shared between various machine (same architecture, same gcc version, different processors" OFF)
 
@@ -39,7 +42,19 @@ option(enable-mgis-function-precompiled-operations
 option(enable-exceptions "use exceptions to report contract violation and error reporting" OFF)
 
 # support for STL parallel algorithms
-option(enable-parallel-stl-algorithms "enable STL parallel algorithms" ON)
+option(enable-parallel-stl-algorithms "enable STL parallel algorithms" OFF)
+
+# support for CUDA algorithms
+option(enable-cuda-algorithms "enable CUDA parallel algorithms" OFF)
+
+if(enable-cuda-algorithms)
+  enable_language(CUDA)
+  if(CMAKE_CUDA_COMPILER_ID STREQUAL "NVIDIA")
+    set(MGIS_CUDA_FLAGS "--expt-relaxed-constexpr" "--extended-lambda" "--diag-suppress=20012")
+  else()
+    set(MGIS_CUDA_FLAGS)
+  endif(CMAKE_CUDA_COMPILER_ID STREQUAL "NVIDIA")
+endif(enable-cuda-algorithms)
 
 # C-bindings (placed before compiler detection)
 option(enable-c-bindings "enable c bindings support")
@@ -262,26 +277,30 @@ endif(enable-website)
 
 add_subdirectory(docs)
 
-# testing
-set(CTEST_CONFIGURATION_TYPE "${JOB_BUILD_CONFIGURATION}")
-# (must be placed *before* any add_subdirectory, cmake bug ?)
-enable_testing()
-
-if(CMAKE_VERSION VERSION_GREATER 3.21.4)
-  set(ctest_args )
-  list(APPEND ctest_args --output-junit ctest-results.xml) 
-endif(CMAKE_VERSION VERSION_GREATER 3.21.4)
-if(CMAKE_CONFIGURATION_TYPES)
-  add_custom_target(check COMMAND
-    ${CMAKE_CTEST_COMMAND} ${ctest_args} -T test -C $<CONFIGURATION>)
-else(CMAKE_CONFIGURATION_TYPES)
-  add_custom_target(check COMMAND
-    ${CMAKE_CTEST_COMMAND} ${ctest_args} -T test )
-endif(CMAKE_CONFIGURATION_TYPES)
+if(enable-testing)
+  # testing
+  set(CTEST_CONFIGURATION_TYPE "${JOB_BUILD_CONFIGURATION}")
+  # (must be placed *before* any add_subdirectory, cmake bug ?)
+  enable_testing()
+  
+  if(CMAKE_VERSION VERSION_GREATER 3.21.4)
+    set(ctest_args )
+    list(APPEND ctest_args --output-junit ctest-results.xml) 
+  endif(CMAKE_VERSION VERSION_GREATER 3.21.4)
+  if(CMAKE_CONFIGURATION_TYPES)
+    add_custom_target(check COMMAND
+      ${CMAKE_CTEST_COMMAND} ${ctest_args} -T test -C $<CONFIGURATION>)
+  else(CMAKE_CONFIGURATION_TYPES)
+    add_custom_target(check COMMAND
+      ${CMAKE_CTEST_COMMAND} ${ctest_args} -T test )
+  endif(CMAKE_CONFIGURATION_TYPES)
+endif(enable-testing)
 
 add_subdirectory(include)
 add_subdirectory(src)
-add_subdirectory(tests)
+if(enable-testing)
+  add_subdirectory(tests)
+endif(enable-testing)
 add_subdirectory(bindings)
 # shall be included after the other directories
 add_subdirectory(env)

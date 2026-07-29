@@ -12,6 +12,7 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <numbers>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
 #include "MGIS/Behaviour/Behaviour.hxx"
@@ -24,8 +25,8 @@ namespace mgis::behaviour {
   void convertFiniteStrainStress_PK1_2D(real* const P,
                                         const real* const F,
                                         const real* const s) {
-    constexpr const real cste = 1.41421356237309504880;
-    constexpr const real icste = 0.70710678118654752440;
+    constexpr auto cste = std::numbers::sqrt2_v<real>;
+    constexpr auto icste = std::numbers::sqrt2_v<real> / 2;
     P[0] = -(s[3] * F[2] * F[3] - cste * s[0] * F[1] * F[2]) * icste;
     P[1] = -(s[3] * F[2] * F[4] - cste * F[0] * s[1] * F[2]) * icste;
     P[2] = F[0] * s[2] * F[1] - s[2] * F[3] * F[4];
@@ -36,7 +37,7 @@ namespace mgis::behaviour {
   void convertFiniteStrainStress_PK1_3D(real* const P,
                                         const real* const F,
                                         const real* const s) {
-    constexpr const real cste = 1.41421356237309504880;
+    constexpr auto cste = std::numbers::sqrt2_v<real>;
     P[0] = -((2 * s[0] * F[7] - cste * s[3] * F[5]) * F[8] -
              cste * s[4] * F[3] * F[7] + cste * s[4] * F[1] * F[5] +
              cste * s[3] * F[2] * F[3] - 2 * s[0] * F[1] * F[2]) /
@@ -241,8 +242,8 @@ namespace mgis::behaviour {
                                                         const real* const ds,
                                                         const real* const F,
                                                         const real* const s) {
-    constexpr const real cste = 1.41421356237309504880;
-    constexpr const real icste = 0.70710678118654752440;
+    constexpr auto cste = std::numbers::sqrt2_v<real>;
+    constexpr auto icste = std::numbers::sqrt2_v<real> / 2;
     // diff(P[1],F[0])
     dP[0] = -(ds[15] * F[2] * F[3] - cste * ds[0] * F[1] * F[2]) * icste;
     dP[5] = -(ds[15] * F[2] * F[4] - cste * F[0] * ds[5] * F[2] -
@@ -301,7 +302,7 @@ namespace mgis::behaviour {
                                                         const real* const ds,
                                                         const real* const F,
                                                         const real* const s) {
-    constexpr const real cste = 1.41421356237309504880;
+    constexpr auto cste = std::numbers::sqrt2_v<real>;
     //(%i15) f90(diff(P[1],F_0));
     dP[0] = -((2 * ds[0] * F[7] - cste * ds[27] * F[5]) * F[8] -
               cste * ds[36] * F[3] * F[7] + cste * ds[36] * F[1] * F[5] +
