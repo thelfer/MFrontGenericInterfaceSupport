@@ -470,7 +470,7 @@ if(MGIS_HAVE_TFEL)
 
   add_executable(ProfilingTest
    EXCLUDE_FROM_ALL ProfilingTest.cxx)
-  target_link_libraries(ProfilingTest PRIVATE MFrontGenericInterface tfel::TFELTests curl)
+  target_link_libraries(ProfilingTest PRIVATE MFrontGenericInterface tfel::TFELTests)
   add_test(NAME ProfilingTest COMMAND ProfilingTest)
   add_dependencies(check ProfilingTest)
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
