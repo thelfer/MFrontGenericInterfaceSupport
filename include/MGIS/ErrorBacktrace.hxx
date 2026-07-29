@@ -56,8 +56,7 @@ namespace mgis {
      */
     [[nodiscard]] InvalidResult registerErrorMessage(
         const char *const,
-        const std::source_location & =
-            std::source_location::current()) override final;
+        const std::source_location & = std::source_location::current()) final;
     /*!
      * \brief register a new error message
      * \param[in] e: error code
@@ -69,8 +68,7 @@ namespace mgis {
         const std::source_location & =
             std::source_location::current()) noexcept;
 #else
-    [[nodiscard]] InvalidResult registerErrorMessage(
-        const char *const) override final;
+    [[nodiscard]] InvalidResult registerErrorMessage(const char *const) final;
     /*!
      * \brief register a new error message
      * \param[in] e: error code
@@ -122,12 +120,13 @@ namespace mgis {
      * \return the error message
      * \param[in] e: error report
      */
-    static std::string getErrorMessage(const ErrorReport &) noexcept;
+    [[nodiscard]] static std::string getErrorMessage(
+        const ErrorReport &) noexcept;
     //! \return the registered error messages
-    std::string getErrorMessage_() const noexcept;
+    [[nodiscard]] std::string getErrorMessage_() const noexcept;
     //! \return the error message without the decoration (file name, function
     //! name, line number)
-    std::string getRawErrorMessage_() const noexcept;
+    [[nodiscard]] std::string getRawErrorMessage_() const noexcept;
     //! \brief treat the case when error reporting is fatal
     void treatFatalCase_() const noexcept;
     //! \brief list of registered error message

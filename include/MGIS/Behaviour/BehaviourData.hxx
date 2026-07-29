@@ -58,7 +58,7 @@ namespace mgis::behaviour {
      */
     char* error_message;
     //! \brief time increment
-    mgis::real dt;
+    real dt = real{};
     /*!
      * \brief the stiffness matrix.
      *

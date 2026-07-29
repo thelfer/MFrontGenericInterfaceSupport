@@ -22,7 +22,7 @@
 namespace mgis {
 
   //! \brief a simple alias
-  using ExceptionHandler = void (*)(void);
+  using ExceptionHandler = void (*)();
 
   /*!
    * \brief set an exception handler

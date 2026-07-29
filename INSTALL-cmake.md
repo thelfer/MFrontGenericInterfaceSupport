@@ -53,6 +53,7 @@ Options
   pandoc is found)
 - `enable-portable-build`: do not use processor specific flags.
 - `enable-static`: compiles static libraries
+- `enable-testing`: enable compilation of tests
 - `enable-doxygen-doc`: enable the generation of the API documentation
   using with `Doxygen`.
 - `disable-tfel`: by default, `MGIS` tries to add support for `TFEL`,

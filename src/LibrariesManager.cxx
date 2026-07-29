@@ -54,7 +54,7 @@ namespace mgis {
 #else
     const auto e = ::dlerror();
     if (e != nullptr) {
-      return std::string(e);
+      return {e};
     }
     return "";
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */

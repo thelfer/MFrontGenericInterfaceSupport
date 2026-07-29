@@ -59,7 +59,8 @@ namespace mgis::behaviour::debug {
      * a significant overhead and is normally not required for correctly written
      * behaviours but data corruption may occur, so copying is safer.
      */
-    virtual bool shallCopyBehaviourDataBeforeIntegration() const noexcept = 0;
+    [[nodiscard]] virtual bool shallCopyBehaviourDataBeforeIntegration()
+        const noexcept = 0;
     //! \brief destructor
     virtual ~BehaviourIntegrationFailureAnalyser() noexcept;
   };

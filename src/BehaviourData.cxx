@@ -34,8 +34,7 @@ namespace mgis::behaviour {
   // Then, nonstatic data members shall be initialized in the order they were
   // declared in the class definition (again regardless of the order of the
   // mem-initializers).
-  BehaviourData::BehaviourData(const Behaviour& b)
-      : dt(0), rdt(1), speed_of_sound(0), s0(b), s1(s0) {
+  BehaviourData::BehaviourData(const Behaviour& b) : s0(b), s1(s0) {
     static char error_message_buffer[512];
     this->error_message = error_message_buffer;
     this->K.resize(

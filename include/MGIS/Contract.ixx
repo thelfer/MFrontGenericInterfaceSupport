@@ -10,7 +10,7 @@
 
 namespace mgis {
 
-  constexpr ContractViolationHandler::~ContractViolationHandler(){};
+  constexpr ContractViolationHandler::~ContractViolationHandler() = default;
 
 }  // namespace mgis
 

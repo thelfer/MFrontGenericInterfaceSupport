@@ -83,6 +83,11 @@ namespace mgis {
      * \param[in] i: initializer
      */
     Context(const ContextInitializer &) noexcept;
+    //
+    Context(Context &&) = delete;
+    Context(const Context &) = delete;
+    Context &operator=(Context &&) = delete;
+    Context &operator=(const Context &) = delete;
     //! \return the verbosity level
     [[nodiscard]] const VerbosityLevel &getVerbosityLevel() const noexcept;
     /*!
@@ -174,11 +179,6 @@ namespace mgis {
     ~Context() noexcept override;
 
    private:
-    //
-    Context(Context &&) = delete;
-    Context(const Context &) = delete;
-    Context &operator=(Context &&) = delete;
-    Context &operator=(const Context &) = delete;
     //! \brief printing the error message on the log stream and abort the
     //! execution
     [[noreturn]] void abort();

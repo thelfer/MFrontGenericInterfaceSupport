@@ -43,34 +43,36 @@ namespace mgis::function {
     //! \brief copy constructor
     constexpr UniformEvaluator(const UniformEvaluator&) noexcept;
     //! \brief return the underlying space
-    constexpr const Space& getSpace() const noexcept;
+    [[nodiscard]] constexpr const Space& getSpace() const noexcept;
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    constexpr ValueType operator()(const element_index<Space>&) const noexcept
-        requires(ElementSpaceConcept<Space>);
+    [[nodiscard]] constexpr ValueType operator()(const element_index<Space>&)
+        const noexcept requires(ElementSpaceConcept<Space>);
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    constexpr ValueType operator()(const element_workspace<Space>&,
-                                   const element_index<Space>&) const noexcept
+    [[nodiscard]] constexpr ValueType operator()(
+        const element_workspace<Space>&,
+        const element_index<Space>&) const noexcept
         requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>);
     /*!
      * \brief call operator
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    constexpr ValueType operator()(const cell_index<Space>&,
-                                   const quadrature_point_index<Space>&)
-        const noexcept requires(QuadratureSpaceConcept<Space>);
+    [[nodiscard]] constexpr ValueType operator()(
+        const cell_index<Space>&,
+        const quadrature_point_index<Space>&) const noexcept
+        requires(QuadratureSpaceConcept<Space>);
     /*!
      * \brief call operator
      * \param[in] e: cell index
      * \param[in] i: integration point index
      */
-    constexpr ValueType operator()(
+    [[nodiscard]] constexpr ValueType operator()(
         const cell_workspace<Space>&,
         const cell_index<Space>&,
         const quadrature_point_index<Space>&) const noexcept
@@ -82,9 +84,9 @@ namespace mgis::function {
     //
     static_assert(N > 0);
     //
-    static constexpr real buildValues(const real) noexcept;
+    [[nodiscard]] static constexpr real buildValues(const real) noexcept;
     //
-    static constexpr std::array<real, N> buildValues(
+    [[nodiscard]] static constexpr std::array<real, N> buildValues(
         const std::span<const real>&) noexcept;
     //! \brief underlying discretization space
     const Space space;

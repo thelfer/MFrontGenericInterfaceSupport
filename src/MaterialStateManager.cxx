@@ -32,7 +32,7 @@ namespace mgis::behaviour {
 
   MaterialStateManager::FieldHolder&
   MaterialStateManager::FieldHolder::operator=(const mgis::real v) noexcept {
-    this->operator=(MutableFieldHolder{v});
+    this->operator=(MutableFieldHolder{.value = v});
     return *this;
   }  // end of value
 
