@@ -33,7 +33,8 @@ namespace mgis::function {
               EvaluatorConcept FirstEvaluatorType,
               EvaluatorConcept SecondEvaluatorType>
     struct BinaryOperationModifierBase {
-      static constexpr size_type getNumberOfComponents() noexcept {
+      MGIS_HOST_DEVICE [[nodiscard]] static constexpr size_type
+      getNumberOfComponents() noexcept {
         using result_type =
             std::invoke_result_t<CallableType,
                                  evaluator_result<FirstEvaluatorType>,
@@ -76,17 +77,19 @@ namespace mgis::function {
      * \param[in] e1: evaluator associated with the first argument
      * \param[in] e2: evaluator associated with the second argument
      */
-    constexpr BinaryOperationModifier(const CallableType&,
-                                      const FirstEvaluatorType&,
-                                      const SecondEvaluatorType&);
+    MGIS_HOST_DEVICE constexpr BinaryOperationModifier(
+        const CallableType&,
+        const FirstEvaluatorType&,
+        const SecondEvaluatorType&);
     //
     using internals::BinaryOperationModifierBase<
         CallableType,
         FirstEvaluatorType,
         SecondEvaluatorType>::getNumberOfComponents;
     //! \brief apply the modifier
-    constexpr auto apply(const evaluator_result<FirstEvaluatorType>&,
-                         const evaluator_result<SecondEvaluatorType>&) const;
+    MGIS_HOST_DEVICE [[nodiscard]] constexpr auto apply(
+        const evaluator_result<FirstEvaluatorType>&,
+        const evaluator_result<SecondEvaluatorType>&) const;
 
    private:
     CallableType modifier;
@@ -96,10 +99,10 @@ namespace mgis::function {
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
-  constexpr mgis::size_type getNumberOfComponents(
-      const BinaryOperationModifier<CallableType,
-                                    FirstEvaluatorType,
-                                    SecondEvaluatorType>&);
+  MGIS_HOST_DEVICE [[nodiscard]] constexpr mgis::size_type
+  getNumberOfComponents(const BinaryOperationModifier<CallableType,
+                                                      FirstEvaluatorType,
+                                                      SecondEvaluatorType>&);
 
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
@@ -137,18 +140,19 @@ namespace mgis::function {
         FirstEvaluatorType,
         SecondEvaluatorType>::getNumberOfComponents;
     //! \brief apply the modifier
-    constexpr auto apply(const evaluator_result<FirstEvaluatorType>&,
-                         const evaluator_result<SecondEvaluatorType>&) const;
+    MGIS_HOST_DEVICE constexpr auto apply(
+        const evaluator_result<FirstEvaluatorType>&,
+        const evaluator_result<SecondEvaluatorType>&) const;
   };
 
   //! \return the number of components
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
-  constexpr mgis::size_type getNumberOfComponents(
-      const BinaryOperationModifier2<CallableType,
-                                     FirstEvaluatorType,
-                                     SecondEvaluatorType>&);
+  MGIS_HOST_DEVICE [[nodiscard]] constexpr mgis::size_type
+  getNumberOfComponents(const BinaryOperationModifier2<CallableType,
+                                                       FirstEvaluatorType,
+                                                       SecondEvaluatorType>&);
 
   namespace internals {
 
@@ -158,11 +162,12 @@ namespace mgis::function {
       //! \brief this alias allows to match the Evaluator Modifier concept
       using Tag = ::mgis::function::EvaluatorModifierTag;
       //
-      constexpr BinaryOperatorCurrying(const CallableType&,
-                                       const SecondEvaluatorType&);
+      MGIS_HOST_DEVICE constexpr BinaryOperatorCurrying(
+          const CallableType&, const SecondEvaluatorType&);
       //
       template <typename FirstEvaluatorType>
-      constexpr auto operator()(FirstEvaluatorType&&) const requires(
+      MGIS_HOST_DEVICE constexpr auto
+      operator()(FirstEvaluatorType&&) const requires(
           (EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&  //
           (std::invocable<CallableType,
                           evaluator_result<std::decay_t<FirstEvaluatorType>>,
@@ -179,10 +184,12 @@ namespace mgis::function {
       //! \brief this alias allows to match the Evaluator Modifier concept
       using Tag = ::mgis::function::EvaluatorModifierTag;
       //
-      constexpr BinaryOperatorCurrying2(const SecondEvaluatorType&);
+      MGIS_HOST_DEVICE constexpr BinaryOperatorCurrying2(
+          const SecondEvaluatorType&);
       //
       template <typename FirstEvaluatorType>
-      constexpr auto operator()(FirstEvaluatorType&&) const requires(
+      MGIS_HOST_DEVICE constexpr auto
+      operator()(FirstEvaluatorType&&) const requires(
           (EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&  //
           (std::invocable<CallableType,
                           evaluator_result<std::decay_t<FirstEvaluatorType>>,
@@ -195,15 +202,15 @@ namespace mgis::function {
     template <typename CallableType>
     struct binary_operation_modifier {
       //
-      constexpr binary_operation_modifier(const CallableType&);
+      MGIS_HOST_DEVICE constexpr binary_operation_modifier(const CallableType&);
       //
       template <typename SecondEvaluatorType>
-      constexpr auto operator()(SecondEvaluatorType&&) const
+      MGIS_HOST_DEVICE constexpr auto operator()(SecondEvaluatorType&&) const
           requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>);
       //
       template <typename FirstEvaluatorType, typename SecondEvaluatorType>
-      constexpr auto operator()(FirstEvaluatorType&&,
-                                SecondEvaluatorType&&) const
+      MGIS_HOST_DEVICE constexpr auto operator()(FirstEvaluatorType&&,
+                                                 SecondEvaluatorType&&) const
           requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&   //
                    (EvaluatorConcept<std::decay_t<SecondEvaluatorType>>)&&  //
                    (std::invocable<
@@ -219,12 +226,12 @@ namespace mgis::function {
     struct binary_operation_modifier2_impl {
       //
       template <typename SecondEvaluatorType>
-      constexpr auto operator()(SecondEvaluatorType&&) const
+      MGIS_HOST_DEVICE constexpr auto operator()(SecondEvaluatorType&&) const
           requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>);
       //
       template <typename FirstEvaluatorType, typename SecondEvaluatorType>
-      constexpr auto operator()(FirstEvaluatorType&&,
-                                SecondEvaluatorType&&) const
+      MGIS_HOST_DEVICE constexpr auto operator()(FirstEvaluatorType&&,
+                                                 SecondEvaluatorType&&) const
           requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&   //
                    (EvaluatorConcept<std::decay_t<SecondEvaluatorType>>)&&  //
                    (std::invocable<
@@ -234,23 +241,23 @@ namespace mgis::function {
     };
 
     template <typename CallableType>
-    constexpr auto binary_operation_modifier2(CallableType);
+    MGIS_HOST_DEVICE constexpr auto binary_operation_modifier2(CallableType);
 
   }  // namespace internals
 
   template <typename CallableType, typename SecondEvaluatorType>
-  constexpr auto binary_operation(CallableType&&,
-                                  SecondEvaluatorType&&)  //
+  MGIS_HOST_DEVICE constexpr auto binary_operation(CallableType&&,
+                                                   SecondEvaluatorType&&)  //
       requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>);
 
   template <typename CallableType,
             typename FirstEvaluatorType,
             typename SecondEvaluatorType>
-  constexpr auto binary_operation(CallableType&&,
-                                  FirstEvaluatorType&&,
-                                  SecondEvaluatorType&&)                //
-      requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&   //
-               (EvaluatorConcept<std::decay_t<SecondEvaluatorType>>)&&  //
+  MGIS_HOST_DEVICE constexpr auto binary_operation(CallableType&&,
+                                                   FirstEvaluatorType&&,
+                                                   SecondEvaluatorType&&)  //
+      requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&      //
+               (EvaluatorConcept<std::decay_t<SecondEvaluatorType>>)&&     //
                (std::invocable<
                    std::decay_t<CallableType>,
                    evaluator_result<std::decay_t<FirstEvaluatorType>>,
@@ -262,86 +269,135 @@ namespace mgis::function {
 
 #ifdef MGIS_HAVE_TFEL
 
+namespace mgis::function::internals {
+
+  struct AdditionOperator {
+    //
+    template <typename FirstOperandType, typename SecondOperandType>
+    MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
+        const FirstOperandType& a, const SecondOperandType& b) const
+        -> tfel::math::BinaryOperationResult<FirstOperandType,
+                                             SecondOperandType,
+                                             tfel::math::OpPlus>  //
+    requires(compile_time_size<
+                 tfel::math::BinaryOperationResult<FirstOperandType,
+                                                   SecondOperandType,
+                                                   tfel::math::OpPlus>> !=
+             dynamic_extent) {
+      return a + b;
+    }
+  };
+
+  struct SubstractionOperator {
+    //
+    template <typename FirstOperandType, typename SecondOperandType>
+    MGIS_HOST_DEVICE constexpr auto operator()(const FirstOperandType& a,
+                                               const SecondOperandType& b)
+        -> tfel::math::BinaryOperationResult<FirstOperandType,
+                                             SecondOperandType,
+                                             tfel::math::OpMinus>  //
+    requires(compile_time_size<
+                 tfel::math::BinaryOperationResult<FirstOperandType,
+                                                   SecondOperandType,
+                                                   tfel::math::OpMinus>> !=
+             dynamic_extent) {
+      return a - b;
+    }
+  };
+
+  struct MultiplyOperator {
+    //
+    template <typename FirstOperandType, typename SecondOperandType>
+    MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
+        const FirstOperandType& a, const SecondOperandType& b) const
+        -> tfel::math::BinaryOperationResult<FirstOperandType,
+                                             SecondOperandType,
+                                             tfel::math::OpMult>  //
+    requires(compile_time_size<
+                 tfel::math::BinaryOperationResult<FirstOperandType,
+                                                   SecondOperandType,
+                                                   tfel::math::OpMult>> !=
+             dynamic_extent) {
+      return a * b;
+    }
+  };
+
+  struct DivideOperator {
+    //
+    template <typename FirstOperandType, typename SecondOperandType>
+    MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
+        const FirstOperandType& a, const SecondOperandType& b) const
+        -> tfel::math::BinaryOperationResult<FirstOperandType,
+                                             SecondOperandType,
+                                             tfel::math::OpDiv>  //
+    requires(compile_time_size<
+                 tfel::math::BinaryOperationResult<FirstOperandType,
+                                                   SecondOperandType,
+                                                   tfel::math::OpDiv>> !=
+             dynamic_extent) {
+      return a / b;
+    }
+  };
+
+  struct MeanValueOperator {
+    //
+    template <typename FirstOperandType, typename SecondOperandType>
+    MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
+        const FirstOperandType& a, const SecondOperandType& b) const
+        -> tfel::math::BinaryOperationResult<
+            tfel::math::BinaryOperationResult<FirstOperandType,
+                                              SecondOperandType,
+                                              tfel::math::OpMinus>,
+            real,
+            tfel::math::OpDiv>  //
+    requires(compile_time_size<tfel::math::BinaryOperationResult<
+                 tfel::math::BinaryOperationResult<FirstOperandType,
+                                                   SecondOperandType,
+                                                   tfel::math::OpMinus>,
+                 real,
+                 tfel::math::OpDiv>> != dynamic_extent) {
+      return (a + b) / 2;
+    }
+  };
+
+  struct InnerProductOperator {
+    //
+    template <typename FirstOperandType, typename SecondOperandType>
+    MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
+        const FirstOperandType& a, const SecondOperandType& b) const
+        -> tfel::math::BinaryOperationResult<FirstOperandType,
+                                             SecondOperandType,
+                                             tfel::math::OpDotProduct>  //
+    requires(compile_time_size<
+                 tfel::math::BinaryOperationResult<FirstOperandType,
+                                                   SecondOperandType,
+                                                   tfel::math::OpDotProduct>> !=
+             dynamic_extent) {
+      return a | b;
+    }
+  };
+
+}  // end of namespace mgis::function::internals
+
 namespace mgis::function {
 
-  inline constexpr auto add = internals::binary_operation_modifier2(
-      []<typename FirstOperandType, typename SecondOperandType>(
-          const FirstOperandType& a, const SecondOperandType& b) constexpr
-          ->tfel::math::BinaryOperationResult<FirstOperandType,
-                                              SecondOperandType,
-                                              tfel::math::OpPlus>  //
-      requires(compile_time_size<
-                   tfel::math::BinaryOperationResult<FirstOperandType,
-                                                     SecondOperandType,
-                                                     tfel::math::OpPlus>> !=
-               dynamic_extent) { return a + b; });
+  inline constexpr auto add =
+      internals::binary_operation_modifier2(internals::AdditionOperator{});
 
-  inline constexpr auto substract = internals::binary_operation_modifier2(
-      []<typename FirstOperandType, typename SecondOperandType>(
-          const FirstOperandType& a, const SecondOperandType& b) constexpr
-          ->tfel::math::BinaryOperationResult<FirstOperandType,
-                                              SecondOperandType,
-                                              tfel::math::OpMinus>  //
-      requires(compile_time_size<
-                   tfel::math::BinaryOperationResult<FirstOperandType,
-                                                     SecondOperandType,
-                                                     tfel::math::OpMinus>> !=
-               dynamic_extent) { return a - b; });
+  inline constexpr auto substract =
+      internals::binary_operation_modifier2(internals::SubstractionOperator{});
 
-  inline constexpr auto mean_value = internals::binary_operation_modifier2(
-      []<typename FirstOperandType, typename SecondOperandType>(
-          const FirstOperandType& a, const SecondOperandType& b) constexpr
-          ->tfel::math::BinaryOperationResult<
-              tfel::math::BinaryOperationResult<FirstOperandType,
-                                                SecondOperandType,
-                                                tfel::math::OpMinus>,
-              real,
-              tfel::math::OpDiv>  //
-      requires(compile_time_size<tfel::math::BinaryOperationResult<
-                   tfel::math::BinaryOperationResult<FirstOperandType,
-                                                     SecondOperandType,
-                                                     tfel::math::OpMinus>,
-                   real,
-                   tfel::math::OpDiv>> != dynamic_extent) {
-        return (a + b) / 2;
-      });
+  inline constexpr auto multiply =
+      internals::binary_operation_modifier2(internals::MultiplyOperator{});
 
-  inline constexpr auto multiply = internals::binary_operation_modifier2(
-      []<typename FirstOperandType, typename SecondOperandType>(
-          const FirstOperandType& a, const SecondOperandType& b) constexpr
-          ->tfel::math::BinaryOperationResult<FirstOperandType,
-                                              SecondOperandType,
-                                              tfel::math::OpMult>  //
-      requires(compile_time_size<
-                   tfel::math::BinaryOperationResult<FirstOperandType,
-                                                     SecondOperandType,
-                                                     tfel::math::OpMult>> !=
-               dynamic_extent) { return a * b; });
+  inline constexpr auto divide =
+      internals::binary_operation_modifier2(internals::DivideOperator{});
 
-  inline constexpr auto divide = internals::binary_operation_modifier2(
-      []<typename FirstOperandType, typename SecondOperandType>(
-          const FirstOperandType& a, const SecondOperandType& b) constexpr
-          ->tfel::math::BinaryOperationResult<FirstOperandType,
-                                              SecondOperandType,
-                                              tfel::math::OpDiv>  //
-      requires(compile_time_size<
-                   tfel::math::BinaryOperationResult<FirstOperandType,
-                                                     SecondOperandType,
-                                                     tfel::math::OpDiv>> !=
-               dynamic_extent) { return a / b; });
+  inline constexpr auto mean_value =
+      internals::binary_operation_modifier2(internals::MeanValueOperator{});
 
-  inline constexpr auto inner_product = internals::binary_operation_modifier2(
-      []<typename FirstOperandType, typename SecondOperandType>(
-          const FirstOperandType& a, const SecondOperandType& b) constexpr
-          ->tfel::math::BinaryOperationResult<FirstOperandType,
-                                              SecondOperandType,
-                                              tfel::math::OpDotProduct>  //
-      requires(
-          compile_time_size<
-              tfel::math::BinaryOperationResult<FirstOperandType,
-                                                SecondOperandType,
-                                                tfel::math::OpDotProduct>> !=
-          dynamic_extent) { return a | b; });
+  inline constexpr auto inner_product =
+      internals::binary_operation_modifier2(internals::InnerProductOperator{});
 
 }  // end of namespace mgis::function
 

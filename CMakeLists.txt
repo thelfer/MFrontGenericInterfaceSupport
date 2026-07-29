@@ -39,7 +39,19 @@ option(enable-mgis-function-precompiled-operations
 option(enable-exceptions "use exceptions to report contract violation and error reporting" OFF)
 
 # support for STL parallel algorithms
-option(enable-parallel-stl-algorithms "enable STL parallel algorithms" ON)
+option(enable-parallel-stl-algorithms "enable STL parallel algorithms" OFF)
+
+# support for CUDA algorithms
+option(enable-cuda-algorithms "enable CUDA parallel algorithms" OFF)
+
+if(enable-cuda-algorithms)
+  enable_language(CUDA)
+  if(CMAKE_CUDA_COMPILER_ID STREQUAL "NVIDIA")
+    set(MGIS_CUDA_FLAGS "--expt-relaxed-constexpr" "--extended-lambda" "--diag-suppress=20012")
+  else()
+    set(MGIS_CUDA_FLAGS)
+  endif(CMAKE_CUDA_COMPILER_ID STREQUAL "NVIDIA")
+endif(enable-cuda-algorithms)
 
 # C-bindings (placed before compiler detection)
 option(enable-c-bindings "enable c bindings support")

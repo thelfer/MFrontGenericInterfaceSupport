@@ -15,6 +15,8 @@
 #ifndef LIB_MGIS_FUNCTION_FUNCTION_IXX
 #define LIB_MGIS_FUNCTION_FUNCTION_IXX
 
+#include <iostream>
+
 #include <concepts>
 #include <algorithm>
 #include "MGIS/Raise.hxx"

@@ -24,6 +24,11 @@ This version is meant to be used with `TFEL` Version 5.2.
 
 ## New `cmake` options
 
+### Support for `CUDA` in `MGIS/Function`
+
+Support for `CUDA` in `MGIS/Function` is enable by
+`enable-cuda-algorithms`.
+
 ### HDF5 support
 
 The following options control the support of the `HDF5` library:
@@ -180,6 +185,10 @@ const auto e2 = f.get<0, tfel::math::stensor<2, real>>(1);
 ~~~~
 
 # Issues fixed
+
+## Issue 220: [mgis-functions] Add support for `nvcc`
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/220>
 
 ## Issue 210: [documentation] Deployment of the doxygen documentation
 
