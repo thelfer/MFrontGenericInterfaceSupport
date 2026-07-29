@@ -467,6 +467,16 @@ if(MGIS_HAVE_TFEL)
     set_property(TEST ContextTest
       PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+  add_executable(ProfilingTest
+   EXCLUDE_FROM_ALL ProfilingTest.cxx)
+  target_link_libraries(ProfilingTest PRIVATE MFrontGenericInterface tfel::TFELTests curl)
+  add_test(NAME ProfilingTest COMMAND ProfilingTest)
+  add_dependencies(check ProfilingTest)
+  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    set_property(TEST ProfilingTest
+      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 endif(MGIS_HAVE_TFEL)
 
 if(enable-mgis-function)
