@@ -12,6 +12,7 @@
 #include "MGIS/Config.hxx"
 #include "MGIS/InvalidResult.hxx"
 #include "MGIS/AbstractErrorHandler.hxx"
+#include "MGIS/Utilities/OptionalReference.hxx"
 
 namespace mgis {
 

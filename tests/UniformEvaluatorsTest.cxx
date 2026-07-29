@@ -20,7 +20,7 @@
 #include "TFEL/Tests/TestManager.hxx"
 #include "MGIS/Function/BasicLinearSpace.hxx"
 #include "MGIS/Function/UniformEvaluator.hxx"
-#include "MGIS/Function/Tensors.hxx"
+#include "MGIS/Function/TFEL/Tensors.hxx"
 
 struct UniformEvaluatorsTest final : public tfel::tests::TestCase {
   UniformEvaluatorsTest()

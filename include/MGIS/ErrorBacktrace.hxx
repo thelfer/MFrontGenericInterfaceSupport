@@ -48,7 +48,13 @@ namespace mgis {
     //! \brief specify if error reporting shall be fatal
     static void unsetErrorReportingAsFatal() noexcept;
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
-    InvalidResult registerErrorMessage(
+    /*!
+     * \brief register a new error message
+     * \param[in] e: error message
+     * \param[in] l: description of the call site
+     * \note for convenience, this method always return an invalid object
+     */
+    [[nodiscard]] InvalidResult registerErrorMessage(
         const char *const,
         const std::source_location & =
             std::source_location::current()) override final;
@@ -58,25 +64,27 @@ namespace mgis {
      * \param[in] l: description of the call site
      * \note for convenience, this method always return an invalid object
      */
-    InvalidResult registerErrorMessage(
+    [[nodiscard]] InvalidResult registerErrorMessage(
         const ErrorReport,
         const std::source_location & =
             std::source_location::current()) noexcept;
 #else
-    InvalidResult registerErrorMessage(const char *const) override final;
+    [[nodiscard]] InvalidResult registerErrorMessage(
+        const char *const) override final;
     /*!
      * \brief register a new error message
      * \param[in] e: error code
      * \note for convenience, this method always return an invalid results
      */
-    InvalidResult registerErrorMessage(const ErrorReport) noexcept;
+    [[nodiscard]] InvalidResult registerErrorMessage(
+        const ErrorReport) noexcept;
 #endif
     /*!
      * \brief register a new error message
      * \param[in] e: error code
      * \note for convenience, this method always return `InvalidResult`
      */
-    InvalidResult registerErrorMessageWithoutSourceLocation(
+    [[nodiscard]] InvalidResult registerErrorMessageWithoutSourceLocation(
         const ErrorReport) noexcept;
     //! \brief remove the error messages
     void clearErrorMessages() noexcept;
@@ -84,15 +92,15 @@ namespace mgis {
      * \return the registered error messages
      * \param[in] b: boolean. If true, the error message are cleared
      */
-    std::string getErrorMessage(const bool = true) noexcept;
+    [[nodiscard]] std::string getErrorMessage(const bool = true) noexcept;
     /*!
      * \return the error message without the decoration (file name, function
      * name, line number) \param[in] b: boolean. If true, the error message are
      * cleared
      */
-    std::string getRawErrorMessage(const bool = true) noexcept;
+    [[nodiscard]] std::string getRawErrorMessage(const bool = true) noexcept;
     //! \return if the list registered error messages is empty
-    bool empty() const noexcept;
+    [[nodiscard]] bool empty() const noexcept;
     //! \brief destructor
     ~ErrorBacktrace() noexcept override;
 
@@ -129,25 +137,31 @@ namespace mgis {
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
   /*!
    * \brief a custom Lippincott-like function that extract error messages from
-   * an exception an \param[out] e: error back trace handler \param[in] l:
-   * description of the call site
+   * an exception
+   *
+   * \param[out] e: error back trace handler
+   * \param[in] l: description of the call site
    */
-  MGIS_EXPORT InvalidResult registerExceptionInErrorBacktrace(
+  MGIS_EXPORT [[nodiscard]] InvalidResult registerExceptionInErrorBacktrace(
       ErrorBacktrace &,
       const std::source_location & = std::source_location::current()) noexcept;
 #else
   /*!
    * \brief a custom Lippincott-like function that extract error messages from
-   * an exception an \param[out] e: error back trace handler
+   * an exception
+   *
+   * \param[out] e: error back trace handler
    */
-  MGIS_EXPORT InvalidResult
-  registerExceptionInErrorBacktrace(ErrorBacktrace &) noexcept;
+  MGIS_EXPORT [[nodiscard]] InvalidResult registerExceptionInErrorBacktrace(
+      ErrorBacktrace &) noexcept;
 #endif
   /*!
    * \brief a custom Lippincott-like function that extract error messages from
-   * an exception an \param[out] e: error back trace handler
+   * an exception
+   *
+   *\param[out] e: error back trace handler
    */
-  MGIS_EXPORT InvalidResult
+  MGIS_EXPORT [[nodiscard]] InvalidResult
   registerExceptionInErrorBacktraceWithoutSourceLocation(
       ErrorBacktrace &) noexcept;
 

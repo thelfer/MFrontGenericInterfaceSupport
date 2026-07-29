@@ -1,0 +1,3 @@
+$env:MGISHOME=(Split-Path(Split-Path (Split-Path $PSScriptRoot)))
+$env:PATH=$env:MGISHOME+'\bin;'+$env:PATH
+$env:PYTHONPATH=$env:MGISHOME+'\@NATIVE_MGIS_PYTHON_MODULES_INSTALL_DIRECTORY@;'+$env:PYTHONPATH

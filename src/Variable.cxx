@@ -112,7 +112,7 @@ namespace mgis::behaviour::internals {
       mgis::raise("invalid space dimension");
     }
     return static_cast<size_t>(N);
-  }  // end of getVariableSize
+  }  // end of getTinyVectorVariableSize
 
   static size_t getSymmetricTensorVariableSize(
       int &v, const mgis::behaviour::Hypothesis h) {
@@ -302,7 +302,19 @@ namespace mgis::behaviour {
     return s;
   }  // end of getVariableSize
 
-  bool contains(const std::vector<Variable> &vs, const std::string_view n) {
+  std::optional<size_type> getVariableSize(Context &ctx,
+                                           const Variable &v,
+                                           const Hypothesis h) noexcept {
+    try {
+      return getVariableSize(v, h);
+    } catch (...) {
+      std::ignore = registerExceptionInErrorBacktrace(ctx);
+    }
+    return {};
+  }  // end of getVariableSize
+
+  bool contains(const std::vector<Variable> &vs,
+                const std::string_view n) noexcept {
     return std::find_if(vs.begin(), vs.end(), [&n](const Variable &v) {
              return v.name == n;
            }) != vs.end();
@@ -318,6 +330,19 @@ namespace mgis::behaviour {
     return *p;
   }  // end of getVariable
 
+  OptionalReference<const Variable> getVariable(
+      Context &ctx,
+      const std::vector<Variable> &vs,
+      const std::string_view n) noexcept {
+    const auto p = std::find_if(
+        vs.begin(), vs.end(), [&n](const Variable &v) { return v.name == n; });
+    if (p == vs.end()) {
+      return ctx.registerErrorMessage("getVariable: no variable named '" +
+                                      std::string(n) + "'");
+    }
+    return {&(*p)};
+  }  // end of getVariable
+
   size_type getArraySize(const std::vector<Variable> &vs, const Hypothesis h) {
     auto s = size_type{};
     for (const auto &v : vs) {
@@ -326,9 +351,31 @@ namespace mgis::behaviour {
     return s;
   }  // end of getArraySize
 
+  std::optional<size_type> getArraySize(Context &ctx,
+                                        const std::vector<Variable> &vs,
+                                        const Hypothesis h) noexcept {
+    auto s = size_type{};
+    for (const auto &v : vs) {
+      const auto os2 = getVariableSize(ctx, v, h);
+      if (isInvalid(os2)) {
+        return {};
+      }
+      s += *os2;
+    }
+    return s;
+  }  // end of getArraySize
+
   size_type getVariableOffset(const std::vector<Variable> &vs,
                               const std::string_view n,
                               const Hypothesis h) {
+    auto ctx = Context{};
+    return getVariableOffset(ctx, vs, n, h) | ctx.getThrowingFailureHandler();
+  }  // end of getVariableOffset
+
+  std::optional<size_type> getVariableOffset(Context &ctx,
+                                             const std::vector<Variable> &vs,
+                                             const std::string_view n,
+                                             const Hypothesis h) noexcept {
     auto o = size_type{};
     for (const auto &v : vs) {
       if (v.name == n) {
@@ -336,7 +383,8 @@ namespace mgis::behaviour {
       }
       o += getVariableSize(v, h);
     }
-    raise("getVariableOffset: no variable named '" + std::string(n) + "'");
+    return ctx.registerErrorMessage("getVariableOffset: no variable named '" +
+                                    std::string(n) + "'");
   }  // end of getVariableOffset
 
   std::string getVariableTypeSymbolicRepresentation(const int id) {

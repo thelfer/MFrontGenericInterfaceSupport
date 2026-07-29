@@ -2,6 +2,7 @@ set(MFrontGenericInterface_SOURCES)
 list(APPEND MFrontGenericInterface_SOURCES
   Raise.cxx
   VerbosityLevel.cxx
+  LogStream.cxx
   ErrorBacktrace.cxx
   Context.cxx
   Contract.cxx
@@ -40,13 +41,24 @@ if(enable-mgis-function)
     Evaluator.cxx
     UniformEvaluator.cxx
     CoalescedMemoryAccessFunctionView.cxx
+    StridedCoalescedMemoryAccessFunctionView.cxx
     MaterialFunctionManager.cxx)
   if(MGIS_HAVE_TFEL)
     list(APPEND MFrontGenericInterface_SOURCES
          TensorView.cxx
          TensorModifier.cxx)
+    if(enable-mgis-function-precompiled-operations)
+      list(APPEND MFrontGenericInterface_SOURCES
+           TensorOperations.cxx
+           MechanicalOperations.cxx)
+    endif(enable-mgis-function-precompiled-operations)
   endif(MGIS_HAVE_TFEL)
 endif(enable-mgis-function)
+
+if(MGIS_HDF5_SUPPORT)
+  list(APPEND MFrontGenericInterface_SOURCES HDF5Support.cxx)
+endif(MGIS_HDF5_SUPPORT)
+
 
 mgis_library(MFrontGenericInterface
   ${MFrontGenericInterface_SOURCES})
@@ -88,6 +100,19 @@ endif(enable-static)
 if(MGIS_HAVE_TFEL)
   target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_HAVE_TFEL)
   target_link_libraries(MFrontGenericInterface PUBLIC tfel::TFELMath tfel::TFELMFrontDatabase)
+  if(enable-static)                                                                                                                                    
+    target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_HAVE_TFEL)
+    if(TARGET tfel::TFELMath-static)                                                                
+      target_link_libraries(MFrontGenericInterface-static PUBLIC tfel::TFELMath-static)
+    else()
+      target_link_libraries(MFrontGenericInterface-static PUBLIC tfel::TFELMath)
+    endif()
+    if(TARGET tfel::TFELMFrontDatabase-static)                                                                
+      target_link_libraries(MFrontGenericInterface-static PUBLIC tfel::TFELMFrontDatabase-static)                                                
+    else()
+      target_link_libraries(MFrontGenericInterface-static PUBLIC tfel::TFELMFrontDatabase)                                              
+    endif()
+  endif(enable-static) 
 endif(MGIS_HAVE_TFEL)
 
 if(enable-openmp)
@@ -126,6 +151,21 @@ else(UNIX)
     endif(enable-static)
   endif(Threads_FOUND)
 endif(UNIX)
+
+if(MGIS_HDF5_SUPPORT)
+  target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_HAVE_HDF5)
+  target_compile_definitions(MFrontGenericInterface PUBLIC ${HDF5_DEFINITIONS})
+  target_include_directories(MFrontGenericInterface SYSTEM  PUBLIC ${HDF5_INCLUDE_DIRS})
+  target_link_libraries(MFrontGenericInterface PUBLIC ${HDF5_LIBRARIES})
+  # target_link_libraries(MFrontGenericInterface PUBLIC hdf5::hdf5_cpp)
+  if(enable-static)
+    target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_HAVE_HDF5)
+    target_compile_definitions(MFrontGenericInterface-static PUBLIC ${HDF5_DEFINITIONS})
+    target_include_directories(MFrontGenericInterface-static SYSTEM  PUBLIC ${HDF5_INCLUDE_DIRS})
+    target_link_libraries(MFrontGenericInterface-static PUBLIC ${HDF5_LIBRARIES})
+    # target_link_libraries(MFrontGenericInterface-static PUBLIC hdf5::hdf5_cpp hdf5::hdf5)
+  endif(enable-static)
+endif(MGIS_HDF5_SUPPORT)
 
 if(MGIS_ADDITIONAL_LINK_FLAGS)
   target_link_options(MFrontGenericInterface PUBLIC "${MGIS_ADDITIONAL_LINK_FLAGS}")

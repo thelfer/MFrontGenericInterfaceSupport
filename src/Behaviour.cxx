@@ -12,8 +12,7 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <iostream>
-
+#include <utility>
 #include <cstdlib>
 #include <iterator>
 #include "MGIS/Raise.hxx"
@@ -197,7 +196,7 @@ namespace mgis::behaviour {
     try {
       return load(l, f, h);
     } catch (...) {
-      registerExceptionInErrorBacktrace(ctx);
+      std::ignore = registerExceptionInErrorBacktrace(ctx);
     }
     return {};
   }  // end of load
@@ -210,7 +209,7 @@ namespace mgis::behaviour {
     try {
       return load(o, l, f, h);
     } catch (...) {
-      registerExceptionInErrorBacktrace(ctx);
+      std::ignore = registerExceptionInErrorBacktrace(ctx);
     }
     return {};
   }
@@ -286,7 +285,7 @@ namespace mgis::behaviour {
     try {
       return loadFromDatabase(opts);
     } catch (...) {
-      registerExceptionInErrorBacktrace(ctx);
+      std::ignore = registerExceptionInErrorBacktrace(ctx);
     }
     return {};
   }  // end of loadFromDatabase
@@ -298,7 +297,7 @@ namespace mgis::behaviour {
     try {
       return loadFromDatabase(o, opts);
     } catch (...) {
-      registerExceptionInErrorBacktrace(ctx);
+      std::ignore = registerExceptionInErrorBacktrace(ctx);
     }
     return {};
   }  // end of loadFromDatabase

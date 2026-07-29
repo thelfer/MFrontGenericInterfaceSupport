@@ -97,6 +97,13 @@ namespace mgis::attributes {
   template <bool>
   struct ThrowingAttribute {};
 
+  /*!
+   * \brief an attribute use to indicate that a method may abort the process in
+   * case of error is the boolean value is true
+   */
+  template <bool>
+  struct AbortingAttribute {};
+
 }  // namespace mgis::attributes
 
 namespace mgis {
@@ -107,6 +114,8 @@ namespace mgis {
   inline constexpr auto throwing = attributes::ThrowingAttribute<true>{};
   //
   inline constexpr auto not_throwing = attributes::ThrowingAttribute<false>{};
+  //
+  inline constexpr auto aborting = attributes::AbortingAttribute<true>{};
 
   //! \brief a simple alias to the the default indexing type used by mgis
   using size_type = mgis_size_type;

@@ -1,5 +1,5 @@
 ---
-title: MFrontGenericInterfaceSupport Version 2.1
+title: MFrontGenericInterfaceSupport Version 2.2.1
 author: Thomas Helfer
 date: 2025
 lang: en-EN

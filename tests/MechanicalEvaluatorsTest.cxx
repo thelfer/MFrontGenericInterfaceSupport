@@ -21,7 +21,7 @@
 #include "MGIS/Function/Function.hxx"
 #include "MGIS/Function/FixedSizeView.hxx"
 #include "MGIS/Function/FixedSizeModifier.hxx"
-#include "MGIS/Function/Mechanics.hxx"
+#include "MGIS/Function/TFEL/Mechanics.hxx"
 
 struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
   MechanicalEvaluatorsTest()

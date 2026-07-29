@@ -105,13 +105,6 @@ IF(TFEL_CONFIG AND MFRONT AND MFRONT_QUERY)
      list(APPEND TFEL_LIBRARIES ${${lib}_LIBRARY})
   endforeach(lib)
    
-  # find_path(TFEL_CONFIG_INCLUDE_PATH TFELConfig.hxx
-  #     HINTS ${TFELHOME}/include/TFEL/Config
-  # )
-  # get_filename_component(TFEL_INCLUDE_PATH
-  #     ${TFEL_CONFIG_INCLUDE_PATH}/../.. ABSOLUTE CACHE
-  # )
-      
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(TFEL DEFAULT_MSG
       TFEL_VERSION
@@ -130,7 +123,8 @@ endif(TFEL_CONFIG AND MFRONT AND MFRONT_QUERY)
 
 if(DEFINED TFEL_DIR)
   foreach(lib ${tfel_libs})
-    find_package(${lib} REQUIRED)
+    find_package(${lib} REQUIRED HINTS ${TFEL_DIR})
+    find_package(${lib}Static HINTS ${TFEL_DIR})
   endforeach(lib)
   set(MGIS_HAVE_TFEL ON)
 endif(DEFINED TFEL_DIR)

@@ -373,7 +373,7 @@ namespace mgis::function::internals {
     const auto iranges =
         std::views::iota(space_size_type{}, getSpaceSize(space));
     std::for_each(iranges.begin(), iranges.end(),
-                  [&f, e](const space_size_type i) {
+                  [&space, &f, e](const space_size_type i) {
                     const auto& wk = getElementWorkspace(space, i);
                     if constexpr (use_direct_assignement) {
                       f(wk, i) = e(wk, i);
@@ -411,7 +411,7 @@ namespace mgis::function::internals {
           std::views::iota(space_size_type{}, getSpaceSize(space));
       if constexpr (LightweightViewConcept<FunctionType>) {
         std::for_each(policy, iranges.begin(), iranges.end(),
-                      [f, e](const space_size_type i) mutable {
+                      [&space, f, e](const space_size_type i) mutable {
                         const auto& wk = getElementWorkspace(space, i);
                         if constexpr (use_direct_assignement) {
                           f(wk, i) = e(wk, i);
@@ -422,7 +422,7 @@ namespace mgis::function::internals {
       } else {
         auto v = view(f);
         std::for_each(policy, iranges.begin(), iranges.end(),
-                      [v, e](const space_size_type i) mutable {
+                      [&space, v, e](const space_size_type i) mutable {
                         const auto& wk = getElementWorkspace(space, i);
                         if constexpr (use_direct_assignement) {
                           v(wk, i) = e(wk, i);

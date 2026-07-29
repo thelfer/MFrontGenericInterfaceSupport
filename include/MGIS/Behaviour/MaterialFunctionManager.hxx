@@ -16,6 +16,7 @@
 #include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/SharedSpace.hxx"
 #include "MGIS/Function/Function.hxx"
+#include "MGIS/Behaviour/TimeStepStage.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 
 namespace mgis::behaviour {
@@ -94,14 +95,6 @@ namespace mgis::behaviour {
     //! \brief behaviour, may be null if the behaviour is not managed
     std::shared_ptr<const Behaviour> behaviour_ptr;
   };
-
-  enum TimeStepStage {
-    BEGINNING_OF_TIME_STEP,
-    END_OF_TIME_STEP,
-  };
-
-  inline constexpr auto bts = TimeStepStage::BEGINNING_OF_TIME_STEP;
-  inline constexpr auto ets = TimeStepStage::END_OF_TIME_STEP;
 
   // this variable is a workaround Visual Studio 2022 limitation
   // on defining default value for non-type template argument

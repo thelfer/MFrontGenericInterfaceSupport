@@ -4,6 +4,7 @@
  * \date   04/11/2022
  */
 
+#include <utility>
 #include <sstream>
 #include <iostream>
 #include "MGIS/Raise.hxx"
@@ -223,10 +224,11 @@ namespace mgis {
     try {
       throw;
     } catch (std::exception &exception) {
-      e.registerErrorMessageWithoutSourceLocation(
+      std::ignore = e.registerErrorMessageWithoutSourceLocation(
           std::string{exception.what()});
     } catch (...) {
-      e.registerErrorMessageWithoutSourceLocation("unknown exception thrown");
+      std::ignore = e.registerErrorMessageWithoutSourceLocation(
+          "unknown exception thrown");
     }
     return {};
   }

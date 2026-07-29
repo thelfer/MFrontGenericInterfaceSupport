@@ -12,6 +12,7 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <utility>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Context.hxx"
 #include "MGIS/Model/Model.hxx"
@@ -50,7 +51,7 @@ namespace mgis::model {
     try {
       return ::mgis::model::load(l, m, h);
     } catch (...) {
-      registerExceptionInErrorBacktrace(ctx);
+      std::ignore = registerExceptionInErrorBacktrace(ctx);
     }
     return {};
   }  // end of load
@@ -61,13 +62,13 @@ namespace mgis::model {
     return model;
   }  // end of load
 
-  std::optional<Model> load(
+  std::optional<Model> loadFromDatabase(
       Context &ctx,
       const mgis::behaviour::LoadFromDatabaseOptions &opts) noexcept {
     try {
       return ::mgis::model::loadFromDatabase(opts);
     } catch (...) {
-      registerExceptionInErrorBacktrace(ctx);
+      std::ignore = registerExceptionInErrorBacktrace(ctx);
     }
     return {};
   }  // end of load

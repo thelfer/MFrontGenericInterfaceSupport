@@ -56,11 +56,14 @@ namespace mgis::behaviour::internals {
    */
   static std::vector<Evaluator> buildEvaluators(
       std::vector<real>& v,
-      std::map<std::string, MaterialStateManager::FieldHolder>& values,
+      std::map<std::string, MaterialStateManager::FieldHolder, std::less<>>&
+          values,
       const MaterialDataManager& m,
       const std::vector<Variable>& ds) {
     mgis::raise_if(v.size() != getArraySize(ds, m.b.hypothesis),
-                   "buildEvaluators: ill allocated memory");
+                   "buildEvaluators: ill allocated memory: " +
+                       std::to_string(v.size()) + "values given, expected " +
+                       std::to_string(getArraySize(ds, m.b.hypothesis)) + ")");
     // evaluators
     std::vector<Evaluator> evaluators;
     auto offset = mgis::size_type{};
@@ -90,18 +93,27 @@ namespace mgis::behaviour::internals {
               std::make_tuple(offset, s, variable_values.data()));
         }
       };
-      if (std::holds_alternative<real>(p->second)) {
-        if (d.type != Variable::SCALAR) {
-          mgis::raise(
-              "buildEvaluators: invalid type for "
-              "variable '" +
-              d.name + "'");
-        }
-        v[offset] = std::get<real>(p->second);
-      } else if (std::holds_alternative<std::span<real>>(p->second)) {
-        set_values(std::get<std::span<real>>(p->second));
+      if (std::holds_alternative<std::monostate>(p->second)) {
+        raise("uninitialized field holder '" + p->first + "'");
+      }
+      if (std::holds_alternative<std::span<const real>>(p->second)) {
+        set_values(std::get<std::span<const real>>(p->second));
       } else {
-        set_values(std::get<std::vector<real>>(p->second));
+        const auto& fh =
+            std::get<MaterialStateManager::MutableFieldHolder>(p->second);
+        if (std::holds_alternative<real>(fh.value)) {
+          if (d.type != Variable::SCALAR) {
+            mgis::raise(
+                "buildEvaluators: invalid type for "
+                "variable '" +
+                d.name + "'");
+          }
+          v[offset] = std::get<real>(fh.value);
+        } else if (std::holds_alternative<std::span<real>>(fh.value)) {
+          set_values(std::get<std::span<real>>(fh.value));
+        } else {
+          set_values(std::get<std::vector<real>>(fh.value));
+        }
       }
       offset += s;
     }
@@ -115,7 +127,7 @@ namespace mgis::behaviour::internals {
       return {};
     }
     if (isMassDensityUniform(s)) {
-      rho = std::get<mgis::real>(*(s.mass_density));
+      rho = std::get<mgis::real>(s.mass_density->value);
       return {};
     }
     auto check = [&s](const auto& values) {
@@ -127,12 +139,14 @@ namespace mgis::behaviour::internals {
             std::to_string(s.n) + "'integration points)");
       }
     };
-    if (std::holds_alternative<std::vector<mgis::real>>(*(s.mass_density))) {
-      const auto& values = std::get<std::vector<mgis::real>>(*(s.mass_density));
+    if (std::holds_alternative<std::vector<mgis::real>>(
+            s.mass_density->value)) {
+      const auto& values =
+          std::get<std::vector<mgis::real>>(s.mass_density->value);
       check(values);
       return std::make_tuple(0, 1, values.data());
     }
-    const auto& values = std::get<std::span<mgis::real>>(*(s.mass_density));
+    const auto& values = std::get<std::span<mgis::real>>(s.mass_density->value);
     check(values);
     return std::make_tuple(0, 1, values.data());
   }  // end of buildMassDensityEvaluator

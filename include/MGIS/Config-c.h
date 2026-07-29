@@ -46,26 +46,41 @@
 #define MGIS_VISIBILITY_EXPORT __declspec(dllexport)
 #define MGIS_VISIBILITY_LOCAL
 #else /* defined _WIN32 || defined __CYGWIN__ */
-#if (defined __GNUC__) && (!defined __INTEL_COMPILER)
+#if (defined __GNUC__) && (!defined __INTEL_COMPILER) && \
+    (!defined __NVCOMPILER) && (!defined __clang__)
 #if __GNUC__ >= 4
-#define MGIS_VISIBILITY_IMPORT __attribute__((visibility("default")))
-#define MGIS_VISIBILITY_EXPORT __attribute__((visibility("default")))
-#define MGIS_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
-#else /* __GNUC__ >= 4 */
+#define MGIS_VISIBILITY_IMPORT [[gnu::visibility("default")]]
+#define MGIS_VISIBILITY_EXPORT [[gnu::visibility("default")]]
+#define MGIS_VISIBILITY_LOCAL [[gnu::visibility("hidden")]]
+#else /*__GNUC__ >= 4 */
 #define MGIS_VISIBILITY_IMPORT
 #define MGIS_VISIBILITY_EXPORT
 #define MGIS_VISIBILITY_LOCAL
-#endif /* __GNUC__ >= 4 */
+#endif /* LIB_MGIS_CONFIG_HXX */
 #elif defined __INTEL_COMPILER
+#define MGIS_VISIBILITY_IMPORT [[gnu::visibility("default")]]
+#define MGIS_VISIBILITY_EXPORT [[gnu::visibility("default")]]
+#define MGIS_VISIBILITY_LOCAL [[gnu::visibility("hidden")]]
+#elif (defined __NVCOMPILER)
 #define MGIS_VISIBILITY_IMPORT __attribute__((visibility("default")))
 #define MGIS_VISIBILITY_EXPORT __attribute__((visibility("default")))
 #define MGIS_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
-#else /* defined __INTEL_COMPILER */
+#elif defined __clang__
+#if __clang_major__ >= 18
+#define MGIS_VISIBILITY_IMPORT [[gnu::visibility("default")]]
+#define MGIS_VISIBILITY_EXPORT [[gnu::visibility("default")]]
+#define MGIS_VISIBILITY_LOCAL [[gnu::visibility("hidden")]]
+#else /* __clang_major__ >= 18 */
+#define MGIS_VISIBILITY_IMPORT __attribute__((visibility("default")))
+#define MGIS_VISIBILITY_EXPORT __attribute__((visibility("default")))
+#define MGIS_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
+#endif /* __clang_major__ >= 18 */
+#else
 #define MGIS_VISIBILITY_IMPORT
 #define MGIS_VISIBILITY_EXPORT
 #define MGIS_VISIBILITY_LOCAL
-#endif /* defined __INTEL_COMPILER */
-#endif /* defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ */
+#endif /* LIB_MGIS_CONFIG_HXX */
+#endif /* LIB_MGIS_CONFIG_HXX */
 
 #ifdef MGIS_REAL_TYPE
 /*! \brief alias to the numeric type used in the library */
@@ -91,5 +106,41 @@ typedef size_t mgis_size_type;
 #else
 #define MGIS_EXPORT MGIS_VISIBILITY_EXPORT
 #endif /* */
+
+/*!
+ * \def MGIS_PP_JOIN
+ * \brief this macro joins joins its two arguments together.
+ *
+ * This macro was taken from the boost library:
+ * - http://boost.org/
+ *
+ * The following piece of macro magic joins the two
+ * arguments together, even when one of the arguments is
+ * itself a macro (see 16.3.1 in C++ standard).  The key
+ * is that macro expansion of macro arguments does not
+ * occur in MGIS_PP_DO_JOIN2 but does in MGIS_PP_DO_JOIN.
+ */
+#define MGIS_PP_JOIN(X, Y) MGIS_PP_DO_JOIN(X, Y)
+
+/*!
+ * \def MGIS_PP_DO_JOIN
+ * \brief An helper macro for MGIS_PP_JOIN
+ * \see MGIS_PP_JOIN
+ */
+#define MGIS_PP_DO_JOIN(X, Y) MGIS_PP_DO_JOIN2(X, Y)
+
+/*!
+ * \def MGIS_PP_DO_JOIN2
+ * \brief An helper macro for MGIS_PP_JOIN
+ * \see MGIS_PP_JOIN
+ */
+#define MGIS_PP_DO_JOIN2(X, Y) X##Y
+
+/*!
+ * \brief macro defining a unique local variable name for a temporary variable
+ * that it not meant to be seen by the end-user
+ */
+#define MGIS_TEMPORARY_VARIABLE(X) \
+  MGIS_PP_JOIN(MGIS_PP_JOIN(MGIS_PP_JOIN(mgis_temporary_, X), _), __LINE__)
 
 #endif /* LIB_MGIS_CONFIG_C_H */

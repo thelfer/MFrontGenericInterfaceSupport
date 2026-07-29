@@ -10,6 +10,7 @@
 
 #include "MGIS/Config.hxx"
 #include "MGIS/InvalidResult.hxx"
+#include "MGIS/Utilities/OptionalReference.hxx"
 
 // source_location  seems badly supported by the current compilers (2022):
 // - with some compilers, this header is missing

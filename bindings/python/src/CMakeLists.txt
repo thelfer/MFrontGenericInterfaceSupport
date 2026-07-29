@@ -63,4 +63,8 @@ mgis_python_module(mgis_model model
  model-module.cxx
  Model.cxx)
 
-
+if(enable-mgis-function)
+  mgis_python_module(mgis_function function
+    function-module.cxx
+    Function.cxx)
+endif(enable-mgis-function)
