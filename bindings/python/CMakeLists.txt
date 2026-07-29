@@ -1,5 +1,5 @@
 add_subdirectory(src)
 add_subdirectory(mgis)
-if(MGIS_HAVE_MFRONT_SUPPORT)
+if(MGIS_HAVE_MFRONT_SUPPORT AND enable-testing)
   add_subdirectory(tests)
-endif(MGIS_HAVE_MFRONT_SUPPORT)
+endif(MGIS_HAVE_MFRONT_SUPPORT AND enable-testing)

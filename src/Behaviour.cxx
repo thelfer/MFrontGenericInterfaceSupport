@@ -75,7 +75,7 @@ namespace mgis::behaviour {
     d.b = lm.getBehaviour(l, b, h);
     //
     if (d.btype == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      d.options.resize(2, mgis::real(0));
+      d.options.resize(2, mgis::real{});
     }
     // initialize functions
     for (const auto &i : lm.getBehaviourInitializeFunctions(l, b, h)) {
@@ -133,13 +133,13 @@ namespace mgis::behaviour {
           "This method shall only be called for finite strain behaviour");
     }
     if (o.stress_measure == FiniteStrainBehaviourOptions::CAUCHY) {
-      d.options[0] = mgis::real(0);
+      d.options[0] = mgis::real{};
     } else if (o.stress_measure == FiniteStrainBehaviourOptions::PK2) {
-      d.options[0] = mgis::real(1);
+      d.options[0] = mgis::real{1};
       d.thermodynamic_forces[0] = {"SecondPiolaKirchhoffStress",
                                    Variable::STENSOR, 1};
     } else if (o.stress_measure == FiniteStrainBehaviourOptions::PK1) {
-      d.options[0] = mgis::real(2);
+      d.options[0] = mgis::real{2};
       d.thermodynamic_forces[0] = {"FirstPiolaKirchhoffStress",
                                    Variable::TENSOR, 3};
     } else {
@@ -148,18 +148,18 @@ namespace mgis::behaviour {
           "internal error (unsupported stress measure)");
     }
     if (o.tangent_operator == FiniteStrainBehaviourOptions::DSIG_DF) {
-      d.options[1] = mgis::real(0);
+      d.options[1] = mgis::real{};
     } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DS_DEGL) {
-      d.options[1] = mgis::real(1);
+      d.options[1] = mgis::real{1};
       d.to_blocks[0] = {{"SecondPiolaKirchhoffStress", Variable::STENSOR, 1},
                         {"GreenLagrangeStrain", Variable::STENSOR, 1}};
 
     } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DPK1_DF) {
-      d.options[1] = mgis::real(2);
+      d.options[1] = mgis::real{2};
       d.to_blocks[0] = {{"FirstPiolaKirchhoffStress", Variable::TENSOR, 3},
                         {"DeformationGradient", Variable::TENSOR, 3}};
     } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DTAU_DDF) {
-      d.options[1] = mgis::real(3);
+      d.options[1] = mgis::real{3};
       d.to_blocks[0] = {
           {"KirchhoffStress", Variable::STENSOR, 3},
           {"SpatialIncrementOfTheDeformationGradient", Variable::TENSOR, 3}};

@@ -124,6 +124,11 @@ namespace mgis::behaviour {
     MaterialDataManager(const Behaviour&,
                         const size_type,
                         const MaterialDataManagerInitializer&);
+    //
+    MaterialDataManager(MaterialDataManager&&) = delete;
+    MaterialDataManager(const MaterialDataManager&) = delete;
+    MaterialDataManager& operator=(MaterialDataManager&&) = delete;
+    MaterialDataManager& operator=(const MaterialDataManager&) = delete;
     /*!
      * \brief set if the `MaterialDataManager` must take care of thread-safety.
      * This flag is mostly used in members functions allocating memory.
@@ -240,14 +245,6 @@ namespace mgis::behaviour {
     const Behaviour& b;
 
    private:
-    //! move constructor
-    MaterialDataManager(MaterialDataManager&&) = delete;
-    //! copy constructor
-    MaterialDataManager(const MaterialDataManager&) = delete;
-    //! move assignement
-    MaterialDataManager& operator=(MaterialDataManager&&) = delete;
-    //! copy assignement
-    MaterialDataManager& operator=(const MaterialDataManager&) = delete;
     //! \brief values of the stiffness matrices, if hold internally.
     std::vector<real> K_values;
     //! \brief values of the speed of sound, if hold internally.

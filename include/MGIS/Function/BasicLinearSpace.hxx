@@ -23,7 +23,7 @@ namespace mgis::function {
     constexpr BasicLinearSpace(BasicLinearSpace&&) noexcept;
     constexpr BasicLinearSpace(const BasicLinearSpace&) noexcept;
     //
-    constexpr size_type size() const noexcept;
+    [[nodiscard]] constexpr size_type size() const noexcept;
     //! \brief destructor
     constexpr ~BasicLinearSpace() noexcept;
 

@@ -23,9 +23,9 @@ namespace mgis::function {
   requires(BinaryOperationModifierRequirements<CallableType,
                                                FirstEvaluatorType,
                                                SecondEvaluatorType>)  //
-      constexpr BinaryOperationModifier<CallableType,
-                                        FirstEvaluatorType,
-                                        SecondEvaluatorType>::
+      MGIS_HOST_DEVICE constexpr BinaryOperationModifier<CallableType,
+                                                         FirstEvaluatorType,
+                                                         SecondEvaluatorType>::
           BinaryOperationModifier(const CallableType& c,
                                   const FirstEvaluatorType& e1,
                                   const SecondEvaluatorType& e2)
@@ -40,6 +40,7 @@ namespace mgis::function {
   requires(BinaryOperationModifierRequirements<CallableType,
                                                FirstEvaluatorType,
                                                SecondEvaluatorType>)  //
+      MGIS_HOST_DEVICE
       constexpr auto BinaryOperationModifier<CallableType,
                                              FirstEvaluatorType,
                                              SecondEvaluatorType>::
@@ -54,6 +55,7 @@ namespace mgis::function {
   requires(BinaryOperationModifier2Requirements<CallableType,
                                                 FirstEvaluatorType,
                                                 SecondEvaluatorType>)  //
+      MGIS_HOST_DEVICE
       constexpr auto BinaryOperationModifier2<CallableType,
                                               FirstEvaluatorType,
                                               SecondEvaluatorType>::
@@ -66,7 +68,7 @@ namespace mgis::function {
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
-  constexpr mgis::size_type getNumberOfComponents(
+  MGIS_HOST_DEVICE constexpr mgis::size_type getNumberOfComponents(
       const BinaryOperationModifier<CallableType,
                                     FirstEvaluatorType,
                                     SecondEvaluatorType>& e) {
@@ -76,7 +78,7 @@ namespace mgis::function {
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
-  constexpr mgis::size_type getNumberOfComponents(
+  MGIS_HOST_DEVICE constexpr mgis::size_type getNumberOfComponents(
       const BinaryOperationModifier2<CallableType,
                                      FirstEvaluatorType,
                                      SecondEvaluatorType>& e) {
@@ -87,6 +89,7 @@ namespace mgis::function {
 
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>
     requires(std::is_copy_constructible_v<CallableType>)  //
+        MGIS_HOST_DEVICE
         constexpr BinaryOperatorCurrying<CallableType, SecondEvaluatorType>::
             BinaryOperatorCurrying(const CallableType& c,
                                    const SecondEvaluatorType& e)
@@ -95,7 +98,7 @@ namespace mgis::function {
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>
     requires(std::is_copy_constructible_v<CallableType>)  //
         template <typename FirstEvaluatorType>
-        constexpr auto BinaryOperatorCurrying<
+        MGIS_HOST_DEVICE constexpr auto BinaryOperatorCurrying<
             CallableType,
             SecondEvaluatorType>::operator()(FirstEvaluatorType&& e1) const
         requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&(
@@ -109,32 +112,36 @@ namespace mgis::function {
 
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>
     requires(std::is_trivially_default_constructible_v<CallableType>)  //
+        MGIS_HOST_DEVICE
         constexpr BinaryOperatorCurrying2<CallableType, SecondEvaluatorType>::
             BinaryOperatorCurrying2(const SecondEvaluatorType& e)
         : e2(e) {}
 
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>
-    requires(std::is_trivially_default_constructible_v<CallableType>) template <
-        typename FirstEvaluatorType>
-    constexpr auto BinaryOperatorCurrying2<CallableType, SecondEvaluatorType>::
-    operator()(FirstEvaluatorType&& e1) const requires(
-        (EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&  //
-        (std::invocable<CallableType,
-                        evaluator_result<std::decay_t<FirstEvaluatorType>>,
-                        evaluator_result<SecondEvaluatorType>>)) {
+    requires(std::is_trivially_default_constructible_v<CallableType>)  //
+        template <typename FirstEvaluatorType>
+        MGIS_HOST_DEVICE constexpr auto BinaryOperatorCurrying2<
+            CallableType,
+            SecondEvaluatorType>::operator()(FirstEvaluatorType&& e1) const
+        requires(
+            (EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&  //
+            (std::invocable<CallableType,
+                            evaluator_result<std::decay_t<FirstEvaluatorType>>,
+                            evaluator_result<SecondEvaluatorType>>)) {
       return BinaryOperationModifier2<
           CallableType, std::decay_t<FirstEvaluatorType>, SecondEvaluatorType>(
           std::forward<FirstEvaluatorType>(e1), this->e2);
     }  // end of operator()
 
     template <typename CallableType>
-    constexpr binary_operation_modifier<
+    MGIS_HOST_DEVICE constexpr binary_operation_modifier<
         CallableType>::binary_operation_modifier(const CallableType& c)
         : modifier(c) {}  // end of binary_operation_modifier
 
     template <typename CallableType>
     template <typename SecondEvaluatorType>
-    constexpr auto binary_operation_modifier<CallableType>::operator()(
+    MGIS_HOST_DEVICE constexpr auto
+    binary_operation_modifier<CallableType>::operator()(
         SecondEvaluatorType&& e2) const
         requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>) {
       return BinaryOperatorCurrying<CallableType,
@@ -144,7 +151,8 @@ namespace mgis::function {
 
     template <typename CallableType>
     template <typename FirstEvaluatorType, typename SecondEvaluatorType>
-    constexpr auto binary_operation_modifier<CallableType>::operator()(
+    MGIS_HOST_DEVICE constexpr auto
+    binary_operation_modifier<CallableType>::operator()(
         FirstEvaluatorType&& e1, SecondEvaluatorType&& e2) const
         requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&   //
                  (EvaluatorConcept<std::decay_t<SecondEvaluatorType>>)&&  //
@@ -161,7 +169,8 @@ namespace mgis::function {
 
     template <typename CallableType>
     template <typename SecondEvaluatorType>
-    constexpr auto binary_operation_modifier2_impl<CallableType>::operator()(
+    MGIS_HOST_DEVICE constexpr auto
+    binary_operation_modifier2_impl<CallableType>::operator()(
         SecondEvaluatorType&& e2) const
         requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>) {
       return BinaryOperatorCurrying2<CallableType,
@@ -171,7 +180,8 @@ namespace mgis::function {
 
     template <typename CallableType>
     template <typename FirstEvaluatorType, typename SecondEvaluatorType>
-    constexpr auto binary_operation_modifier2_impl<CallableType>::operator()(
+    MGIS_HOST_DEVICE constexpr auto
+    binary_operation_modifier2_impl<CallableType>::operator()(
         FirstEvaluatorType&& e1, SecondEvaluatorType&& e2) const
         requires((EvaluatorConcept<std::decay_t<FirstEvaluatorType>>)&&   //
                  (EvaluatorConcept<std::decay_t<SecondEvaluatorType>>)&&  //
@@ -187,15 +197,15 @@ namespace mgis::function {
     }  // end of operator()
 
     template <typename CallableType>
-    constexpr auto binary_operation_modifier2(CallableType) {
+    MGIS_HOST_DEVICE constexpr auto binary_operation_modifier2(CallableType) {
       return binary_operation_modifier2_impl<CallableType>{};
     }  // end of binary_operation_modifier2
 
   }  // namespace internals
 
   template <typename CallableType, typename SecondEvaluatorType>
-  constexpr auto binary_operation(CallableType&& c,
-                                  SecondEvaluatorType&& e2)  //
+  MGIS_HOST_DEVICE constexpr auto binary_operation(CallableType&& c,
+                                                   SecondEvaluatorType&& e2)  //
       requires(EvaluatorConcept<std::decay_t<SecondEvaluatorType>>) {
     auto modifier =
         internals::binary_operation_modifier<std::decay_t<CallableType>>(

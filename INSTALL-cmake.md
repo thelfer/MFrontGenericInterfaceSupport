@@ -53,6 +53,7 @@ Options
   pandoc is found)
 - `enable-portable-build`: do not use processor specific flags.
 - `enable-static`: compiles static libraries
+- `enable-testing`: enable compilation of tests
 - `enable-doxygen-doc`: enable the generation of the API documentation
   using with `Doxygen`.
 - `disable-tfel`: by default, `MGIS` tries to add support for `TFEL`,
@@ -66,6 +67,8 @@ Options
 - `enable-exceptions`: use exceptions to report contract violation and error reporting.
    By default, contract violation leads to abort the program.
 - `enable-parallel-stl-algorithms`: by default, STL algorithms are used if available
+- `enable-cuda-algorithms`: add support for algorithms expressed in
+  `CUDA` programming model.
 - `enable-hdf5-support`: enable HDF5 support for save/restore
   operations. Note that if this support is not explicitely requested,
   `MGIS` still tries by default to support `HDF5` but configuration will

@@ -34,11 +34,6 @@ namespace mgis {
    * \brief a class used to pass an execution context to most methods of
    * `MGIS` and gather information (error, logs, profiling).
    *
-   * The `Context` may be changed at various stage of the computation.
-   * For example, the verbosity level or the logging stream
-   * can be changed when calling a new model: this is can useful
-   * to debug a specific rm.
-   *
    * The default logging stream is the one returned by the
    * `mgis::getDefaultLogStream` free function.
    */
@@ -93,7 +88,11 @@ namespace mgis {
      * \param[in] i: initializer
      */
     Context(const ContextInitializer &) noexcept;
-
+    //
+    Context(Context &&) = delete;
+    Context(const Context &) = delete;
+    Context &operator=(Context &&) = delete;
+    Context &operator=(const Context &) = delete;
     //! \return the verbosity level
     [[nodiscard]] const VerbosityLevel &getVerbosityLevel() const noexcept;
 
@@ -251,12 +250,6 @@ namespace mgis {
     ~Context() noexcept override;
 
    private:
-    //
-    Context(Context &&) = delete;
-    Context(const Context &) = delete;
-    Context &operator=(Context &&) = delete;
-    Context &operator=(const Context &) = delete;
-
     //! \brief printing the error message on the log stream and abort the
     //! execution
     [[noreturn]] void abort();

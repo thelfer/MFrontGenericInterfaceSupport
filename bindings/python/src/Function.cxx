@@ -11,9 +11,10 @@
 #include "MGIS/Function/Function.hxx"
 #include "MGIS/Function/BasicLinearSpace.hxx"
 
-mgis::function::FunctionView<mgis::function::BasicLinearSpace,
-                             mgis::function::FunctionDataLayoutDescription{},
-                             false>
+static mgis::function::FunctionView<
+    mgis::function::BasicLinearSpace,
+    mgis::function::FunctionDataLayoutDescription{},
+    false>
 mgis_convert_to_span(const pybind11::array_t<double> &o) {
   using namespace mgis::function;
   const auto i = o.request();
@@ -26,6 +27,7 @@ mgis_convert_to_span(const pybind11::array_t<double> &o) {
   mgis::raise("convert_to_span: expected one dimensional array");
 }  // end of mgis_convert_to_span
 
+void declareFunction(pybind11::module_ &);
 void declareFunction(pybind11::module_ &m) {
   // FunctionView<BasicLinearSpace, FunctionDataLayoutDescription{}, false
   using mgis::real;

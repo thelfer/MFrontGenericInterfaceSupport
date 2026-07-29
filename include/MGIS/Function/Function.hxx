@@ -114,7 +114,8 @@ namespace mgis::function {
      * \return the data offset associated with the given integration point.
      * \param[in] i: integration point
      */
-    constexpr size_type getDataOffset(const size_type) const noexcept;
+    [[nodiscard]] constexpr size_type getDataOffset(
+        const size_type) const noexcept;
   };  // end of struct FunctionDataLayout
 
   /*!

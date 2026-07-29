@@ -20,14 +20,14 @@
 extern "C" {
 
 mgis_status mgis_report_success() {
-  return {MGIS_SUCCESS, nullptr};
+  return {.exit_status = MGIS_SUCCESS, .msg = nullptr};
 }  // end of mgis_status mgis_report_success
 
 mgis_status mgis_report_failure(const char* const e) {
   static thread_local char msg[512];
   ::strncpy(msg, e, 511);
   msg[511] = '\0';
-  return {MGIS_FAILURE, msg};
+  return {.exit_status = MGIS_FAILURE, .msg = msg};
 }  // end of mgis_status mgis_report_failure
 
 mgis_status mgis_handle_cxx_exception() {

@@ -14,7 +14,7 @@
 
 namespace mgis::behaviour::debug {
 
-  static std::size_t getIdentifier() {
+  [[nodiscard]] static std::size_t getIdentifier() {
     static auto id = std::size_t{};
     return id++;
   }
@@ -22,7 +22,7 @@ namespace mgis::behaviour::debug {
   BehaviourIntegrationFailureAnalyser::
       ~BehaviourIntegrationFailureAnalyser() noexcept = default;
 
-  static std::function<
+  [[nodiscard]] static std::function<
       std::string(std::string_view, std::string_view, std::string_view)>&
   getBehaviourIntegrationFailureAnalysisFileNameGenerator() {
     static std::function<std::string(std::string_view, std::string_view,
@@ -70,7 +70,8 @@ namespace mgis::behaviour::debug {
         print_markdown(f, b, d, 0);
       }
     }
-    bool shallCopyBehaviourDataBeforeIntegration() const noexcept override {
+    [[nodiscard]] bool shallCopyBehaviourDataBeforeIntegration()
+        const noexcept override {
       return true;
     }
     ~DefaultBehaviourIntegrationFailureAnalyser() override = default;

@@ -40,19 +40,19 @@ namespace mgis {
     constexpr OptionalReference(pointer p) noexcept : ptr(p) {}
 
     template <typename ValueType2>
-    requires(std::is_convertible<ValueType2*, ValueType*>::value)  //
+    requires(std::is_convertible_v<ValueType2*, ValueType*>)  //
         constexpr OptionalReference(
             OptionalReference<ValueType2> other) noexcept
         : ptr(other.get()) {}
 
     template <typename ValueType2>
-    requires(std::is_convertible<ValueType2*, ValueType*>::value)  //
+    requires(std::is_convertible_v<ValueType2*, ValueType*>)  //
         constexpr OptionalReference(
             std::unique_ptr<ValueType2> const& other) noexcept
         : ptr(other.get()) {}
 
     template <typename ValueType2>
-    requires(std::is_convertible<ValueType2*, ValueType*>::value)  //
+    requires(std::is_convertible_v<ValueType2*, ValueType*>)  //
         constexpr OptionalReference(
             std::shared_ptr<ValueType2> const& other) noexcept
         : ptr(other.get()) {}
