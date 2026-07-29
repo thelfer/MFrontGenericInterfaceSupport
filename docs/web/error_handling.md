@@ -19,7 +19,20 @@ bibliography: bibliography.bib
 ---
 
 This section describes the error handling strategy introduced in
-`MGIS` Version 3.1.
+`MGIS` Version 3.1 which is meant to:
+
+1.  ensure performances and compatibility with the HPC techniques used
+    in the code (MPI currently and eventually OpenMP in the future).
+2.  provide rich error messages to the end-user.
+
+The first point eliminates the use of exceptions in most cases (see
+below the special cases of constructors).
+
+Some other standard strategies provided by the standard have also been
+discarded, although their design have inspired the proposed solution.
+For example, `std::error_code` only allows
+to use predefined error messages that are not able to describe the
+context.
 
 A function or a method using this error handling strategy is
 recognizable as follows:
@@ -45,6 +58,7 @@ A function that may fail shall generally return either:
 - an `std::unique_ptr` or an `std::shared_ptr` object holding if those
   results are stored on the heap. In this case, the failure of the
   function is indicated by the fact that the underlying pointer is null.
+- a class to which an `InvalidValue` object is implicitly convertible.
 
 > ** Note **
 > 
@@ -91,11 +105,11 @@ is passed as the first argument to most functions.
 The `ErrorBacktrace` class, and the `Context` class mostly provides the
 `registerErrorMessage` method that can register an error in the form of:
 
-1.  a -string
-2.  a -string
-3.  a couple of a function allowing to return an error message from an
-    integer value. This kind of function is provided by many HPC
-    libraries.
+1. a `C`-string
+2. a  `C++`-string
+3. a couple of a function allowing to return an error message from an
+  integer value. This kind of function is provided by many HPC
+  libraries.
 
 For convenience, the `registerErrorMessage` always returns an invalid
 value, i.e. a value that is convertible to any of the returned type
@@ -111,9 +125,8 @@ below). However, if `MGIS` is compiled with the flag
 ### Source location
 
 In debug mode, the source location, as returned by the
-`std::source_location::current_location`
-method, is automatically added to the error message returned by the
-`getErrorMessage` method.
+`std::source_location::current_location` method, is automatically added
+to the error message returned by the `getErrorMessage` method.
 
 Note that this feature is currently only supported by `gcc` compilers.
 
@@ -122,6 +135,68 @@ In some cases, the source location is not meaningful. In this case, the
 
 If the information about the source location are not wanted, the
 `getRawErrorMessage` method can be used.
+
+## Example of usage of the `registerErrorMessage` method
+
+The following code illustrates the usage of the `ErrorBacktrace`,
+through a `Context` object:
+
+~~~~{.cxx}
+void processNext(){};
+
+bool f3(Context &ctx)
+{
+  // for this example, the message is useless
+  // In pratice, one shall report the cause of the error
+  // and not expose details, like the function name.
+  //
+  // Examples:
+  //
+  // - "negative temperature detected"
+  // - "non convergence of the nonlinear solver"
+  //
+  // Note that the function name, the source file and the
+  // line number are automatically added in debug mode.
+  return ctx.registerErrorMessage("invalid call");
+}
+
+bool f2(Context &ctx)
+{
+  if (!f3(ctx)) {
+    // f2 fails, but we don't have any more information
+    // to add for the end user (i.e. f3 is an internal 
+    // method and a message like `f3 failed` is not 
+    // meaningful), so we just return
+    return false;
+  }
+  processNext();
+  return true;
+}
+
+bool f1(Context &ctx)
+{
+  if (!f2(ctx)) {
+    return e.registerErrorMessage("invalid call to f2");
+  }
+  processNext();
+  return true;
+}
+~~~~
+
+If the `f1` function is called, the
+following error message is generated in release mode:
+
+~~~~ bash
+invalid call to f2
+* invalid call
+~~~~
+
+In debug mode, the following message is generated:
+
+~~~~{.bash}
+/home/UserDir/tests/core/error_backtrace_handler/error_backtrace_handler_test.cpp:31: in function 'bool f1(mgis::ErrorBacktrace&)': invalid call to f2
+* /home/UserDir/tests/core/error_backtrace_handler/error_backtrace_handler_test.cpp:14: in function 'bool f3(mgis::ErrorBacktrace&)': invalid call
+~~~~
 
 ### Warning about usage of `C`-strings
 
@@ -142,9 +217,9 @@ dedicated non-template function implemented in a source file.
 Constructors don't return values. There are mostly two ways to handle
 failure in constructors:
 
--   exceptions
--   having a boolean data member stating if the object is valid (this
-    strategy is used by the standard `iostream` library for instance).
+- exceptions
+- having a boolean data member stating if the object is valid (this
+  strategy is used by the standard `iostream` library for instance).
 
 Here, we propose to use exceptions and to wrap constructors in dedicated
 functions.
@@ -174,6 +249,90 @@ Aside from the first argument (a reference to an instance of the
 `ErrorBacktrace` class), all the other arguments are forwarded to the
 constructor of the object.
 
+### The `MGIS_CONSTRUCT` macro
+
+The `MGIS_CONSTRUCT` macro is a wrapper
+around the `construct` function which adds
+the current source location when required (typically in the `debug`
+mode).
+
+### The `MGIS_TRY_CONSTRUCT` macro
+
+A typical pattern of usage of the `construct` function (through the
+`MGIS_CONSTRUCT` macro) is to try to build an object and:
+
+1. to defer the result in case of success.
+2. to stop the execution of the current function in case of failure.
+
+Here is a typical example of this pattern:
+
+~~~~{.cxx}
+auto tmp_v = MGIS_CONSTRUCT(ObjectType, e, ...);
+if(!tmp_v.has_value()){
+  return false;
+}
+auto& v = *(tmp_v);
+~~~~
+
+The `MGIS_TRY_CONSTRUCT` macro reduces
+this code as follows:
+
+~~~~{.cxx}
+MGIS_TRY_CONSTRUCT(ObjectType, v, e, ...);
+// Here you can work with variable v which is a reference
+// to the ObjectType built by the "construct" function
+~~~~
+
+## The `make_unique` function
+
+The `make_unique` function tries to allocate an object on the heap and
+stores it in a `std::unique_ptr`.
+
+If an exception is thrown during the construction of the object, the
+error message held by the exception is registered in an instance of the
+`ErrorBacktrace` and an empty pointer is
+returned.
+
+### Helper macros for the `make_unique` function
+
+The `MGIS_MAKE_UNIQUE` and
+`MGIS_TRY_MAKE_UNIQUE` macros are similar
+to the `MGIS_CONSTRUCT` and
+`MGIS_TRY_CONSTRUCT` macros respectively.
+
+## The `make_unique_as` function
+
+The `make_unique_as` function is similar to the `make_unique` function
+except that the built object is stored in a `std::unique_ptr` of some
+base class. This method is useful in a polymorphic context.
+
+### Helper macros for the `make_unique_as` function
+
+The `MGIS_MAKE_UNIQUE_AS` and `MGIS_TRY_MAKE_UNIQUE_AS` macros are
+similar to the `MGIS_CONSTRUCT` and `MGIS_TRY_CONSTRUCT` macros
+respectively.
+
+## The `make_shared` function
+
+The `make_shared` function is similar to the `make_unique` function
+except that the result is stored in a `std::shared_ptr`.
+
+### Helper macros for the `make_shared` function
+
+The `MGIS_MAKE_SHARED` and `MGIS_TRY_MAKE_SHARED` macros are similar to
+the `MGIS_CONSTRUCT` and `MGIS_TRY_CONSTRUCT` macros respectively.
+
+## The `make_shared_as` function
+
+The `make_shared_as` function is similar to the `make_unique_as` function
+except that the result is stored in a `std::shared_ptr`.
+
+### Helper macros for the `make_shared_as` function
+
+The `MGIS_MAKE_SHARED_AS` and `MGIS_TRY_MAKE_SHARED_AS` macros are
+similar to the `MGIS_CONSTRUCT` and `MGIS_TRY_CONSTRUCT` macros
+respectively.
+
 # Interaction with an external library that may use exceptions
 
 ## The `registerExceptionInErrorBacktrace` function
@@ -182,17 +341,17 @@ Call to external libraries that relies on the usage of exceptions must
 be encapsulated in appropriate `try/catch`
 blocks as follows:
 
-``` cpp
+~~~~{.cxx}
 try{
   ....
 } catch(...)
   registerExceptionInErrorBacktrace(e);
 }
-```
+~~~~
 
-The `registerExceptionInErrorBacktrace` is
-a Lippincott-like helper function which translate exceptions derived
-from `std::exception` into error messages.
+The `registerExceptionInErrorBacktrace` is a Lippincott-like helper
+function which translate exceptions derived from `std::exception` into
+error messages.
 
 If the external library to be used, used another exception hierarchy,
 then appropriate versions of this helper function shall be created.
