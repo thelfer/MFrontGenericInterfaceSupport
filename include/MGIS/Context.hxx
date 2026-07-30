@@ -138,7 +138,7 @@ namespace mgis {
      * \note this method is meant to be called internally by the 
      * `Profiling` class during its construction.
      */
-    void pushProfilingNode(std::string name) noexcept;
+    void pushProfilingNode(std::string) noexcept;
 
     /*!
      * \brief pop the current profiling node from the execution stack and accumulate time
