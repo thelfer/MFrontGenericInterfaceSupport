@@ -16,8 +16,8 @@
 #include "MGIS/LogStream.hxx"
 #include "MGIS/VerbosityLevel.hxx"
 #include "MGIS/ErrorBacktrace.hxx"
-#include "ProfilingData.hxx"
-#include "Profiling.hxx"
+#include "MGIS/ProfilingData.hxx"
+#include "MGIS/Profiling.hxx"
 
 namespace mgis {
 
