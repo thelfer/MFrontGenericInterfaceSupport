@@ -127,32 +127,32 @@ namespace mgis {
      * \note the returned object relies on RAII semantics:
      * timing starts during construction and stops during destruction.
      */
-    [[nodiscard]] ProfilingSection startNewProfiling(
-        std::string,
-        bool) noexcept;
+    [[nodiscard]] ProfilingSection startNewProfiling(std::string,
+                                                     bool) noexcept;
 
     /*!
      * \brief push a new profiling node into the current execution stack
      * \param[in] name: name of the profiling section
      *
-     * \note this method is meant to be called internally by the 
+     * \note this method is meant to be called internally by the
      * `Profiling` class during its construction.
      */
     void pushProfilingNode(std::string) noexcept;
 
     /*!
-     * \brief pop the current profiling node from the execution stack and accumulate time
-     * \param[in] dt: execution time of the section in seconds
+     * \brief pop the current profiling node from the execution stack and
+     * accumulate time \param[in] dt: execution time of the section in seconds
      *
-     * \note this method is meant to be called internally by the 
+     * \note this method is meant to be called internally by the
      * `Profiling` class during its destruction.
      */
     void popProfilingNode(double) noexcept;
 
     /*!
-     * \return the root node of the profiling results tree gathered during execution
+     * \return the root node of the profiling results tree gathered during
+     * execution
      */
-    [[nodiscard]] const ProfilingData& getProfilingResultTree() const noexcept;
+    [[nodiscard]] const ProfilingData &getProfilingResultTree() const noexcept;
 
     /*!
      * \return a failure handler
@@ -274,10 +274,11 @@ namespace mgis {
     /*!
      * \brief Keeps track of the current path in the profiling tree.
      *
-     * \note This stack does not manage memory. The lifetime and memory management of
-     * the ProfilingData nodes are strictly handled by the tree structure itself.
+     * \note This stack does not manage memory. The lifetime and memory
+     * management of the ProfilingData nodes are strictly handled by the tree
+     * structure itself.
      */
-    std::vector<ProfilingData*> profiling_stack;
+    std::vector<ProfilingData *> profiling_stack;
 
   };  // end of class Context
 

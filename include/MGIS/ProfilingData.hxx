@@ -16,6 +16,6 @@ namespace mgis {
     std::vector<std::unique_ptr<ProfilingData>> children;
   };
 
-} // end of namespace mgis
+}  // end of namespace mgis
 
 #endif

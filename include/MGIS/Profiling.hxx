@@ -19,12 +19,11 @@ namespace mgis {
   class Context;
 
   class MGIS_EXPORT ProfilingSection {
-  public:
-    //! \brief Standard constructor (active or inactive depending on the 'enabled' flag)
-    ProfilingSection(Context& ctx,
-                     std::string,
-                     bool) noexcept;
-    
+   public:
+    //! \brief Standard constructor (active or inactive depending on the
+    //! 'enabled' flag)
+    ProfilingSection(Context& ctx, std::string, bool) noexcept;
+
     //! \brief Default constructor (fallback, always inactive)
     ProfilingSection() noexcept : ctx_ptr(nullptr), active(false) {}
 
@@ -36,12 +35,12 @@ namespace mgis {
     ProfilingSection(ProfilingSection&&) = delete;
     ProfilingSection& operator=(ProfilingSection&&) = delete;
 
-  private:
+   private:
     Context* ctx_ptr;
     bool active;
     std::chrono::high_resolution_clock::time_point start;
   };
 
-} // end of namespace mgis
+}  // end of namespace mgis
 
 #endif

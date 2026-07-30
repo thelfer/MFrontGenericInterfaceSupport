@@ -11,8 +11,7 @@
 
 namespace mgis {
 
-  Context::Context() noexcept
-      : verbosity(mgis::getDefaultVerbosityLevel()) {
+  Context::Context() noexcept : verbosity(mgis::getDefaultVerbosityLevel()) {
     // Initialisation de la racine du profilage
     this->root_profiling_data.name = "root";
     this->root_profiling_data.calls = 1;
@@ -41,32 +40,31 @@ namespace mgis {
 
   bool Context::isProfilingEnabled() const noexcept {
     return this->profiling_enabled;
-  }   // end of isProfilingEnabled
+  }  // end of isProfilingEnabled
 
-  ProfilingSection
-  Context::startNewProfiling(std::string name, bool enabled) noexcept {
+  ProfilingSection Context::startNewProfiling(std::string name,
+                                              bool enabled) noexcept {
     return ProfilingSection{*this, std::move(name), enabled};
   }  // end of startNewProfiling
 
   void Context::pushProfilingNode(std::string name) noexcept {
     if (this->profiling_stack.empty()) return;
 
-    ProfilingData* current = this->profiling_stack.back();
-    
-    auto it = std::find_if(
-        current->children.begin(),
-        current->children.end(),
-        [&name](const std::unique_ptr<ProfilingData>& child) {
-          return child->name == name;
-        });
+    ProfilingData *current = this->profiling_stack.back();
+
+    auto it =
+        std::find_if(current->children.begin(), current->children.end(),
+                     [&name](const std::unique_ptr<ProfilingData> &child) {
+                       return child->name == name;
+                     });
 
     if (it != current->children.end()) {
       this->profiling_stack.push_back(it->get());
     } else {
       auto new_node = std::make_unique<ProfilingData>();
       new_node->name = std::move(name);
-      
-      ProfilingData* ptr = new_node.get();
+
+      ProfilingData *ptr = new_node.get();
       current->children.push_back(std::move(new_node));
       this->profiling_stack.push_back(ptr);
     }
@@ -74,7 +72,7 @@ namespace mgis {
 
   void Context::popProfilingNode(double dt) noexcept {
     if (this->profiling_stack.size() > 1) {
-      ProfilingData* current = this->profiling_stack.back();
+      ProfilingData *current = this->profiling_stack.back();
       current->time_in_seconds += dt;
       current->calls += 1;
 
@@ -84,8 +82,7 @@ namespace mgis {
     }
   }  // end of popProfilingNode
 
-  const ProfilingData&
-  Context::getProfilingResultTree() const noexcept {
+  const ProfilingData &Context::getProfilingResultTree() const noexcept {
     return this->root_profiling_data;
   }  // end of getProfilingResultTree
 

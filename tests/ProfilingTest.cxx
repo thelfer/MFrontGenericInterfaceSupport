@@ -21,7 +21,7 @@
 struct ProfilingTest final : public tfel::tests::TestCase {
   ProfilingTest()
       : tfel::tests::TestCase("MGIS/Profiling", "ProfilingSystemTests") {
-  } // end of ProfilingTest
+  }  // end of ProfilingTest
 
   tfel::tests::TestResult execute() override {
     this->testToggle();
@@ -35,7 +35,7 @@ struct ProfilingTest final : public tfel::tests::TestCase {
  private:
   void testToggle() {
     mgis::Context ctx;
-    
+
     // By default
     ctx.enableProfiling(false);
     TFEL_TESTS_ASSERT(!ctx.isProfilingEnabled());
@@ -51,19 +51,15 @@ struct ProfilingTest final : public tfel::tests::TestCase {
     // Simulate a nested structure
     {
       CatchTimeSection(ctx, "Parent");
-      {
-        CatchTimeSection(ctx, "Child1");
-      }
-      {
-        CatchTimeSection(ctx, "Child2");
-      }
+      { CatchTimeSection(ctx, "Child1"); }
+      { CatchTimeSection(ctx, "Child2"); }
     }
 
     const auto& root = ctx.getProfilingResultTree();
-    
+
     // The root must have exactly 1 child ("Parent")
     TFEL_TESTS_ASSERT(root.children.size() == 1);
-    
+
     const auto& parent = root.children[0];
     TFEL_TESTS_CHECK_EQUAL(parent->name, "Parent");
     TFEL_TESTS_CHECK_EQUAL(parent->calls, 1u);
@@ -89,7 +85,7 @@ struct ProfilingTest final : public tfel::tests::TestCase {
 
     const auto& root = ctx.getProfilingResultTree();
     TFEL_TESTS_ASSERT(root.children.size() == 1);
-    
+
     const auto& loop = root.children[0];
     TFEL_TESTS_CHECK_EQUAL(loop->name, "Loop");
     TFEL_TESTS_CHECK_EQUAL(loop->calls, 1u);
@@ -97,16 +93,15 @@ struct ProfilingTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(loop->children.size() == 1);
     const auto& body = loop->children[0];
     TFEL_TESTS_CHECK_EQUAL(body->name, "Body");
-    TFEL_TESTS_CHECK_EQUAL(body->calls, 5u); // If the loop ran five times, we have a problem
+    TFEL_TESTS_CHECK_EQUAL(
+        body->calls, 5u);  // If the loop ran five times, we have a problem
   }
 
   void testDisabledState() {
     mgis::Context ctx;
-    ctx.enableProfiling(false); // Profiling disabled
+    ctx.enableProfiling(false);  // Profiling disabled
 
-    {
-      CatchTimeSection(ctx, "ShouldNotAppear");
-    }
+    { CatchTimeSection(ctx, "ShouldNotAppear"); }
 
     // The tree must be empty because the block was inactive
     const auto& root = ctx.getProfilingResultTree();
@@ -115,7 +110,7 @@ struct ProfilingTest final : public tfel::tests::TestCase {
 
   void testLocalForcedState() {
     mgis::Context ctx;
-    ctx.enableProfiling(false); // Global profiling disabled
+    ctx.enableProfiling(false);  // Global profiling disabled
 
     {
       // Force local activation
