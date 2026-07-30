@@ -271,7 +271,12 @@ namespace mgis {
     //! \brief root node of the profiling tree containing all recorded sections
     ProfilingData root_profiling_data;
 
-    //! \brief call stack used to track the hierarchical level of the active profiling sections
+    /*!
+     * \brief Keeps track of the current path in the profiling tree.
+     *
+     * \note This stack does not manage memory. The lifetime and memory management of
+     * the ProfilingData nodes are strictly handled by the tree structure itself.
+     */
     std::vector<ProfilingData*> profiling_stack;
 
   };  // end of class Context
