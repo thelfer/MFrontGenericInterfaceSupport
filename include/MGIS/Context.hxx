@@ -147,7 +147,7 @@ namespace mgis {
      * \note this method is meant to be called internally by the 
      * `Profiling` class during its destruction.
      */
-    void popProfilingNode(double dt) noexcept;
+    void popProfilingNode(double) noexcept;
 
     /*!
      * \return the root node of the profiling results tree gathered during execution
