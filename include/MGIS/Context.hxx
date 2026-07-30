@@ -109,7 +109,7 @@ namespace mgis {
      * \note when profiling is disabled, profiling sections introduce
      * almost no overhead.
      */
-    void enableProfiling(const bool b) noexcept;
+    void enableProfiling(const bool) noexcept;
 
     /*!
      * \return true if profiling is enabled, false otherwise
