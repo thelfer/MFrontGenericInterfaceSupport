@@ -22,8 +22,8 @@ namespace mgis {
   public:
     //! \brief Standard constructor (active or inactive depending on the 'enabled' flag)
     ProfilingSection(Context& ctx,
-                     std::string name,
-                     bool enabled) noexcept;
+                     std::string,
+                     bool) noexcept;
     
     //! \brief Default constructor (fallback, always inactive)
     ProfilingSection() noexcept : ctx_ptr(nullptr), active(false) {}
