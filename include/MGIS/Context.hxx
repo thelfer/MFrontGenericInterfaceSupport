@@ -128,8 +128,8 @@ namespace mgis {
      * timing starts during construction and stops during destruction.
      */
     [[nodiscard]] ProfilingSection startNewProfiling(
-        std::string name,
-        bool enabled) noexcept;
+        std::string,
+        bool) noexcept;
 
     /*!
      * \brief push a new profiling node into the current execution stack
