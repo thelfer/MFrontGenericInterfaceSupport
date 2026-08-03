@@ -1,4 +1,4 @@
-name: CI with TFEL support on Ubuntu
+name: CI with TFEL and CUDA support on Ubuntu
 
 on:
   push:
@@ -13,12 +13,16 @@ env:
 jobs:
   build:
 
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     steps:
+
+    - name: Install CUDA
+      uses: Jimver/cuda-toolkit@v0.2.36
+      with:
+        id: cuda-toolkit
+      run: echo "Installed cuda version is: ${{steps.cuda-toolkit.outputs.cuda}}"
+      run: echo "Cuda install location: ${{steps.cuda-toolkit.outputs.CUDA_PATH}}"
 
     - name: Checkout TFEL
       uses: actions/checkout@v7
@@ -51,8 +55,10 @@ jobs:
               -Denable-python-bindings=OFF                                   \
               -Denable-portable-build=ON                                     \
               -Denable-julia-bindings=OFF                                    \
+              -Denable-parallel-stl-algorithms=OFF                           \
+              -Denable-cuda-algorithms=ON                                    \
               -DTFEL_DIR=${{github.workspace}}/install-tfel/share/tfel/cmake \
-              -Denable-parallel-stl-algorithms=OFF
+              -DCMAKE_CUDA_COMPILER=nvcc
 
     - name: Compile
       run: |
