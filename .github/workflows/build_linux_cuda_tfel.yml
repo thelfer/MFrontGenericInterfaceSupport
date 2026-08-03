@@ -78,6 +78,8 @@ jobs:
       if: failure()
       run: |
         ls  ${{github.workspace}}/build
+        ls  ${{github.workspace}}/build/Testing
+        ls  ${{github.workspace}}/build/Testing/Temporary
         cat ${{github.workspace}}/build/Testing/Temporary/LastTest.log
 
     - name: Publish test report
