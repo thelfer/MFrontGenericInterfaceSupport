@@ -61,7 +61,8 @@ jobs:
               -Denable-parallel-stl-algorithms=OFF                           \
               -Denable-cuda-algorithms=ON                                    \
               -DTFEL_DIR=${{github.workspace}}/install-tfel/share/tfel/cmake \
-              -DCMAKE_CUDA_COMPILER=nvcc
+              -DCMAKE_CUDA_COMPILER=nvcc                                     \
+              -DCUDA_ARCHITECTURES=native
 
     - name: Compile
       run: |
