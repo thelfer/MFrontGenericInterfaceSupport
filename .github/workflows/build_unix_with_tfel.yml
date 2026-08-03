@@ -16,19 +16,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
     - name: Checkout TFEL
       uses: actions/checkout@v7
       with:
         path: tfel
+
     - name: Checkout MGIS
       uses: actions/checkout@v7
       with:
         path: mgis
+
     - name: Install TFEL
-      - uses: actions/checkout@v7
-        with:
-          repository: https://github.com/thelfer/tfel
-          path: tfel
       run: |
         cmake  ${{github.workspace}}/tfel                               \
                -B ${{github.workspace}}/build-tfel                      \
