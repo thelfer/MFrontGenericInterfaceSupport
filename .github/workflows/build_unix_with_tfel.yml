@@ -17,6 +17,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Install TFEL
       - uses: actions/checkout@v4
         - repository: https://github.com/thelfer/tfel
@@ -25,6 +26,7 @@ jobs:
               -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-tfel
         cmake --build ${{github.workspace}}/build-tfel --target all -j $(nproc)
         cmake --build ${{github.workspace}}/build-tfel --target install
+
     - name: Configure
       run: |
         source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
@@ -37,10 +39,12 @@ jobs:
               -Denable-julia-bindings=OFF                                    \
               -DTFEL_DIR=${{github.workspace}}/install-tfel/share/tfel/cmake \
               -Denable-parallel-stl-algorithms=OFF
+
     - name: Compile
       run: |
         source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
         cmake --build ${{github.workspace}}/build --target all -j $(nproc)
+
     - name: Test
       run: |
         source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
