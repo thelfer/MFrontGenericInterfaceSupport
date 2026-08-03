@@ -71,4 +71,4 @@ jobs:
     - name: Test
       run: |
         source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
-        cmake --build ${{github.workspace}}/build --target all -j $(nproc)
+        cmake --build ${{github.workspace}}/build --target check -j $(nproc)
