@@ -22,12 +22,12 @@ jobs:
         - repository: https://github.com/thelfer/tfel
       run: |
         cmake -B ${{github.workspace}}/build-tfel -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
-	      -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-tfel
+              -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-tfel
         cmake --build ${{github.workspace}}/build-tfel --target all -j $(nproc)
         cmake --build ${{github.workspace}}/build-tfel --target install
     - name: Configure
       run: |
-	source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
+        source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
         cmake --build ${{github.workspace}}/build-tfel                       \
               -DCMAKE_BUILD_TYPE=Release .                                   \
               -Denable-c-bindings=ON                                         \
@@ -39,9 +39,9 @@ jobs:
               -Denable-parallel-stl-algorithms=OFF
     - name: Compile
       run: |
-	source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
+        source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
         cmake --build ${{github.workspace}}/build --target all -j $(nproc)
     - name: Test
       run: |
-	source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
+        source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
         cmake --build ${{github.workspace}}/build --target all -j $(nproc)
