@@ -20,7 +20,7 @@ jobs:
     - name: Checkout TFEL
       uses: actions/checkout@v7
       with:
-        repository: https://github.com/thelfer/tfel
+        repository: thelfer/tfel
         path: tfel
 
     - name: Checkout MGIS
