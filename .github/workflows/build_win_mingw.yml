@@ -1,0 +1,29 @@
+name: Windows MinGW build
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  msys2-ucrt64:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: git mingw-w64-ucrt-x86_64-gnuplot mingw-w64-ucrt-x86_64-gcc-libgfortran mingw-w64-ucrt-x86_64-gcc-fortran mingw-w64-ucrt-x86_64-cc mingw-w64-ucrt-x86_64-cc mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-ninja
+      - name: Configure CMake
+        run:
+          cmake  -B ${{github.workspace}}/build -GNinja -DCMAKE_BUILD_TYPE=Release -Denable-c-bindings=ON -Denable-fortran-bindings=ON -Denable-python-bindings=OFF
+      - name: Build
+        run:
+          cmake --build ${{github.workspace}}/build -j $(nproc)
+      - name: Check
+        run:
+          cmake --build ${{github.workspace}}/build --target=check -j $(nproc)
