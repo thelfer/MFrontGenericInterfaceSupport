@@ -280,7 +280,7 @@ namespace mgis {
      */
     std::vector<ProfilingData *> profiling_stack;
 
-  };  // end of class Context
+  };  // end of struct Context
 
 }  // end of namespace mgis
 
