@@ -16,7 +16,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v7
+    - name: Checkout TFEL
+      uses: actions/checkout@v7
+      with:
+        path: tfel
+    - name: Checkout MGIS
+      uses: actions/checkout@v7
       with:
         path: mgis
     - name: Install TFEL
