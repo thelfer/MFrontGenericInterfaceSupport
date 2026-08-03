@@ -16,13 +16,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    
+    - uses: actions/checkout@v7
+      with:
+        path: mgis
     - name: Install TFEL
-    #   - uses: actions/checkout@v4
-    #    - repository: https://github.com/thelfer/tfel
+      - uses: actions/checkout@v7
+        with:
+          repository: https://github.com/thelfer/tfel
+          path: tfel
       run: |
-        cmake -B ${{github.workspace}}/build-tfel -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+        cmake  ${{github.workspace}}/tfel                               \
+               -B ${{github.workspace}}/build-tfel                      \
+              -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                    \
               -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-tfel
         cmake --build ${{github.workspace}}/build-tfel --target all -j $(nproc)
         cmake --build ${{github.workspace}}/build-tfel --target install
@@ -30,7 +35,8 @@ jobs:
     - name: Configure
       run: |
         source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
-        cmake --build ${{github.workspace}}/build-tfel                       \
+        cmake ${{github.workspace}}/build/mgis                               \
+              -B ${{github.workspace}}/build                                 \
               -DCMAKE_BUILD_TYPE=Release .                                   \
               -Denable-c-bindings=ON                                         \
               -Denable-fortran-bindings=ON                                   \
