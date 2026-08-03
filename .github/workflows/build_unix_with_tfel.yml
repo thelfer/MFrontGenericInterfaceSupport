@@ -17,15 +17,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    #
-    # - name: Install TFEL
+    
+    - name: Install TFEL
     #   - uses: actions/checkout@v4
-    #     - repository: https://github.com/thelfer/tfel
-    #   run: |
-    #     cmake -B ${{github.workspace}}/build-tfel -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
-    #           -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-tfel
-    #     cmake --build ${{github.workspace}}/build-tfel --target all -j $(nproc)
-    #     cmake --build ${{github.workspace}}/build-tfel --target install
+    #    - repository: https://github.com/thelfer/tfel
+      run: |
+        cmake -B ${{github.workspace}}/build-tfel -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+              -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-tfel
+        cmake --build ${{github.workspace}}/build-tfel --target all -j $(nproc)
+        cmake --build ${{github.workspace}}/build-tfel --target install
 
     - name: Configure
       run: |
