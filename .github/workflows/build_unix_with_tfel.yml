@@ -43,7 +43,7 @@ jobs:
     - name: Configure
       run: |
         source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
-        cmake ${{github.workspace}}/build/mgis                               \
+        cmake ${{github.workspace}}/mgis                                     \
               -B ${{github.workspace}}/build                                 \
               -DCMAKE_BUILD_TYPE=Release                                     \
               -Denable-c-bindings=ON                                         \
