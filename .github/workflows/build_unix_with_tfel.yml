@@ -1,0 +1,47 @@
+name: CI with TFEL support on Ubuntu
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install TFEL
+      - uses: actions/checkout@v4
+        - repository: https://github.com/thelfer/tfel
+      run: |
+        cmake -B ${{github.workspace}}/build-tfel -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+	      -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-tfel
+        cmake --build ${{github.workspace}}/build-tfel --target all -j $(nproc)
+        cmake --build ${{github.workspace}}/build-tfel --target install
+    - name: Configure
+      run: |
+	source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
+        cmake --build ${{github.workspace}}/build-tfel                       \
+              -DCMAKE_BUILD_TYPE=Release .                                   \
+              -Denable-c-bindings=ON                                         \
+              -Denable-fortran-bindings=ON                                   \
+              -Denable-python-bindings=OFF                                   \
+              -Denable-portable-build=ON                                     \
+              -Denable-julia-bindings=OFF                                    \
+              -DTFEL_DIR=${{github.workspace}}/install-tfel/share/tfel/cmake \
+              -Denable-parallel-stl-algorithms=OFF
+    - name: Compile
+      run: |
+	source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
+        cmake --build ${{github.workspace}}/build --target all -j $(nproc)
+    - name: Test
+      run: |
+	source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
+        cmake --build ${{github.workspace}}/build --target all -j $(nproc)
