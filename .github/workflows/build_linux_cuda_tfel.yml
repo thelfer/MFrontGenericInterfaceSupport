@@ -73,3 +73,14 @@ jobs:
       run: |
         source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
         cmake --build ${{github.workspace}}/build --target check -j $(nproc)
+
+    - name: Print test log on failure
+      if: failure()
+      run: |
+        cat ${{github.workspace}}/build/Testing/Temporary/LastTest.log
+
+    - name: Publish test report
+      uses: mikepenz/action-junit-report@v6
+      if: success() || failure() # always run even if the previous step fails
+      with:
+        report_paths: '**/build/tests/*.xml'
