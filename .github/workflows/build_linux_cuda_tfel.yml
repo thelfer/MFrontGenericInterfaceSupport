@@ -77,6 +77,7 @@ jobs:
     - name: Print test log on failure
       if: failure()
       run: |
+        ls  ${{github.workspace}}/build
         cat ${{github.workspace}}/build/Testing/Temporary/LastTest.log
 
     - name: Publish test report
