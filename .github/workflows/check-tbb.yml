@@ -1,4 +1,4 @@
-name: CI with TFEL and TBB support on Linux
+name: CI with TFEL and TBB support on Linux (spack)
 
 on:
   push:
