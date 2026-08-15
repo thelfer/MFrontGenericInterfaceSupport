@@ -186,7 +186,11 @@ const auto e2 = f.get<0, tfel::math::stensor<2, real>>(1);
 
 # Issues fixed
 
-## Issue 220: [mgis-functions] Add support for `nvcc`
+## Issue 226: [mgis-function] make assign_value extensible to support external types
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/226>
+
+## Issue 220: [mgis-function] Add support for `nvcc`
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/220>
 
