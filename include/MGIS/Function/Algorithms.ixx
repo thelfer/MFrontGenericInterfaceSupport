@@ -65,9 +65,9 @@ namespace mgis::function::algorithm {
 
 namespace mgis::function::internals {
 
-  constexpr void assign_value(auto& lhs, const auto& rhs) {
-    std::copy(rhs.begin(), rhs.end(), lhs.begin());
-  }
+  //   constexpr void assign_value(auto& lhs, const auto& rhs) {
+  //     std::copy(rhs.begin(), rhs.end(), lhs.begin());
+  //   }
 
   constexpr void assign_value(std::span<real> lhs, const auto& rhs) {
     std::copy(rhs.begin(), rhs.end(), lhs.begin());
