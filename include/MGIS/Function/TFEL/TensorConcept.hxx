@@ -19,6 +19,7 @@
 #ifndef LIB_MGIS_FUNCTION_TFEL_TENSORCONCEPT_HXX
 #define LIB_MGIS_FUNCTION_TFEL_TENSORCONCEPT_HXX
 
+#include <concepts>
 #include <type_traits>
 #include "TFEL/Math/fsarray.hxx"
 #include "TFEL/Math/tvector.hxx"
@@ -32,68 +33,76 @@
 #include "TFEL/Math/Array/View.hxx"
 #include "MGIS/Function/CompileTimeSize.hxx"
 
+namespace mgis::function{
+
+  template <typename T>
+  concept TensorValueConcept = ((::tfel::math::MutableScalarConcept<T>)&&(
+      std::same_as<::tfel::math::base_type<T>, real>));
+
+} // end of namespace mgis::function
+
 namespace mgis::function::internals {
 
   //! \brief partial specialization for finite size array
-  template <unsigned short N>
-  struct CompileTimeSize<tfel::math::fsarray<N, real>> {
+  template <unsigned short N, TensorValueConcept ValueType>
+  struct CompileTimeSize<tfel::math::fsarray<N, ValueType>> {
     static constexpr size_type value = N;
   };
 
   //! \brief partial specialization for tiny vectors
-  template <unsigned short N>
-  struct CompileTimeSize<tfel::math::tvector<N, real>> {
+  template <unsigned short N, TensorValueConcept ValueType>
+  struct CompileTimeSize<tfel::math::tvector<N, ValueType>> {
     static constexpr size_type value = N;
   };
 
   //! \brief partial specialization for tiny matrices
-  template <unsigned short N, unsigned short M>
-  struct CompileTimeSize<tfel::math::tmatrix<N, M, real>> {
+  template <unsigned short N, unsigned short M, TensorValueConcept ValueType>
+  struct CompileTimeSize<tfel::math::tmatrix<N, M, ValueType>> {
     static constexpr size_type value = N * M;
   };
 
   //! \brief partial specialization for symmetric tensors
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct CompileTimeSize<tfel::math::stensor<N, real>> {
+      struct CompileTimeSize<tfel::math::stensor<N, ValueType>> {
     static constexpr size_type value = tfel::math::StensorDimeToSize<N>::value;
   };
 
   //! \brief partial specialization for tensors
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct CompileTimeSize<tfel::math::tensor<N, real>> {
+      struct CompileTimeSize<tfel::math::tensor<N, ValueType>> {
     static constexpr size_type value = tfel::math::TensorDimeToSize<N>::value;
   };
 
   //! \brief partial specialization for fourth order tensors
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct CompileTimeSize<tfel::math::t2tot2<N, real>> {
+      struct CompileTimeSize<tfel::math::t2tot2<N, ValueType>> {
     static constexpr size_type value = tfel::math::TensorDimeToSize<N>::value *
                                        tfel::math::TensorDimeToSize<N>::value;
   };
 
   //! \brief partial specialization for fourth order tensors
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct CompileTimeSize<tfel::math::t2tost2<N, real>> {
+      struct CompileTimeSize<tfel::math::t2tost2<N, ValueType>> {
     static constexpr size_type value = tfel::math::TensorDimeToSize<N>::value *
                                        tfel::math::StensorDimeToSize<N>::value;
   };
 
   //! \brief partial specialization for fourth order tensors
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct CompileTimeSize<tfel::math::st2tot2<N, real>> {
+      struct CompileTimeSize<tfel::math::st2tot2<N, ValueType>> {
     static constexpr size_type value = tfel::math::StensorDimeToSize<N>::value *
                                        tfel::math::TensorDimeToSize<N>::value;
   };
 
   //! \brief partial specialization for fourth order tensors
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct CompileTimeSize<tfel::math::st2tost2<N, real>> {
+      struct CompileTimeSize<tfel::math::st2tost2<N, ValueType>> {
     static constexpr size_type value = tfel::math::StensorDimeToSize<N>::value *
                                        tfel::math::StensorDimeToSize<N>::value;
   };
@@ -106,43 +115,43 @@ namespace mgis::function::internals {
   template <typename T>
   struct IsTensor : std::false_type {};
 
-  template <unsigned short N>
-  struct IsTensor<tfel::math::fsarray<N, real>> : std::true_type {};
+  template <unsigned short N, TensorValueConcept ValueType>
+  struct IsTensor<tfel::math::fsarray<N, ValueType>> : std::true_type {};
 
-  template <unsigned short N>
-  struct IsTensor<tfel::math::tvector<N, real>> : std::true_type {};
+  template <unsigned short N, TensorValueConcept ValueType>
+  struct IsTensor<tfel::math::tvector<N, ValueType>> : std::true_type {};
 
-  template <unsigned short N, unsigned short M>
-  struct IsTensor<tfel::math::tmatrix<N, M, real>> : std::true_type {};
+  template <unsigned short N, unsigned short M, TensorValueConcept ValueType>
+  struct IsTensor<tfel::math::tmatrix<N, M, ValueType>> : std::true_type {};
 
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct IsTensor<tfel::math::stensor<N, real>> : std::true_type {
+      struct IsTensor<tfel::math::stensor<N, ValueType>> : std::true_type {
   };
 
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct IsTensor<tfel::math::tensor<N, real>> : std::true_type {
+      struct IsTensor<tfel::math::tensor<N, ValueType>> : std::true_type {
   };
 
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct IsTensor<tfel::math::t2tot2<N, real>> : std::true_type {
+      struct IsTensor<tfel::math::t2tot2<N, ValueType>> : std::true_type {
   };
 
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct IsTensor<tfel::math::t2tost2<N, real>> : std::true_type {
+      struct IsTensor<tfel::math::t2tost2<N, ValueType>> : std::true_type {
   };
 
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct IsTensor<tfel::math::st2tot2<N, real>> : std::true_type {
+      struct IsTensor<tfel::math::st2tot2<N, ValueType>> : std::true_type {
   };
 
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType>
   requires((N == 1) || (N == 2) || (N == 3))  //
-      struct IsTensor<tfel::math::st2tost2<N, real>> : std::true_type {
+      struct IsTensor<tfel::math::st2tost2<N, ValueType>> : std::true_type {
   };
 
 }  // namespace mgis::function::internals
@@ -157,7 +166,7 @@ namespace mgis::function {
    * TensorConcept
    */
   template <typename T>
-  concept ScalarOrTensorConcept = std::same_as<T, real> || TensorConcept<T>;
+  concept ScalarOrTensorConcept = TensorValueConcept<T> || TensorConcept<T>;
 
 }  // end of namespace mgis::function
 

@@ -19,6 +19,7 @@
 #ifndef LIB_MGIS_FUNCTION_TFEL_TENSORS_HXX
 #define LIB_MGIS_FUNCTION_TFEL_TENSORS_HXX
 
+#include "TFEL/Math/Forward/General.hxx"
 #include "MGIS/Function/FunctionConcept.hxx"
 #include "MGIS/Function/EvaluatorConcept.hxx"
 #include "MGIS/Function/TFEL/TensorConcept.hxx"
@@ -160,128 +161,240 @@ namespace mgis::function::internals {
 namespace mgis::function {
 
   template <typename EvaluatorType>
-  concept Stensor1DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::stensor<1u, real>>);
+  concept Stensor1DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                                //
+      (::tfel::math::StensorConcept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       1u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept Stensor2DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::stensor<2u, real>>);
+  concept Stensor2DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                                //
+      (::tfel::math::StensorConcept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       2u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept Stensor3DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::stensor<3u, real>>);
+  concept Stensor3DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                                //
+      (::tfel::math::StensorConcept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       3u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept StensorEvaluatorConcept =
-      (Stensor1DEvaluatorConcept<EvaluatorType>) ||
-      (Stensor2DEvaluatorConcept<EvaluatorType>) ||
-      (Stensor3DEvaluatorConcept<EvaluatorType>);
+  concept StensorEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
+      (::tfel::math::StensorConcept<evaluator_result<EvaluatorType>>)&&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept Tensor1DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::tensor<1u, real>>);
+  concept Tensor1DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (::tfel::math::TensorConcept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       1u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept Tensor2DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::tensor<2u, real>>);
+  concept Tensor2DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
+      (::tfel::math::TensorConcept<evaluator_result<EvaluatorType>>)&&    //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> == 2u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept Tensor3DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::tensor<3u, real>>);
+  concept Tensor3DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (::tfel::math::TensorConcept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       3u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept TensorEvaluatorConcept = (Tensor1DEvaluatorConcept<EvaluatorType>) ||
-                                   (Tensor2DEvaluatorConcept<EvaluatorType>) ||
-                                   (Tensor3DEvaluatorConcept<EvaluatorType>);
+  concept TensorEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
+      (::tfel::math::TensorConcept<evaluator_result<EvaluatorType>>) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept ST2toST21DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::st2tost2<1u, real>>);
+  concept ST2toST21DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (::tfel::math::ST2toST2Concept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       1u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept ST2toST22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::st2tost2<2u, real>>);
+  concept ST2toST22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
+      (::tfel::math::ST2toST2Concept<evaluator_result<EvaluatorType>>)&&    //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> == 2u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept ST2toST23DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::st2tost2<3u, real>>);
+  concept ST2toST23DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (::tfel::math::ST2toST2Concept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       3u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept ST2toST2EvaluatorConcept =
-      (ST2toST21DEvaluatorConcept<EvaluatorType>) ||
-      (ST2toST22DEvaluatorConcept<EvaluatorType>) ||
-      (ST2toST23DEvaluatorConcept<EvaluatorType>);
+  concept ST2toST2EvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
+      (::tfel::math::ST2toST2Concept<evaluator_result<EvaluatorType>>) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept ST2toT21DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::st2tot2<1u, real>>);
+  concept ST2toT21DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (::tfel::math::ST2toT2Concept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       1u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept ST2toT22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::st2tot2<2u, real>>);
+  concept ST2toT22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
+      (::tfel::math::ST2toT2Concept<evaluator_result<EvaluatorType>>)&&    //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> == 2u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept ST2toT23DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::st2tot2<3u, real>>);
+  concept ST2toT23DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (::tfel::math::ST2toT2Concept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       3u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept ST2toT2EvaluatorConcept =
-      (ST2toT21DEvaluatorConcept<EvaluatorType>) ||
-      (ST2toT22DEvaluatorConcept<EvaluatorType>) ||
-      (ST2toT23DEvaluatorConcept<EvaluatorType>);
+  concept ST2toT2EvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
+      (::tfel::math::ST2toT2Concept<evaluator_result<EvaluatorType>>) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept T2toST21DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::t2tost2<1u, real>>);
+  concept T2toST21DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (::tfel::math::T2toST2Concept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       1u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept T2toST22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::t2tost2<2u, real>>);
+  concept T2toST22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
+      (::tfel::math::T2toST2Concept<evaluator_result<EvaluatorType>>)&&    //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> == 2u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept T2toST23DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::t2tost2<3u, real>>);
+  concept T2toST23DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (::tfel::math::T2toST2Concept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       3u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept T2toST2EvaluatorConcept =
-      (T2toST21DEvaluatorConcept<EvaluatorType>) ||
-      (T2toST22DEvaluatorConcept<EvaluatorType>) ||
-      (T2toST23DEvaluatorConcept<EvaluatorType>);
+  concept T2toST2EvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
+      (::tfel::math::T2toST2Concept<evaluator_result<EvaluatorType>>) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept T2toT21DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::t2tot2<1u, real>>);
+  concept T2toT21DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (::tfel::math::T2toT2Concept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       1u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept T2toT22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::t2tot2<2u, real>>);
+  concept T2toT22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
+      (::tfel::math::T2toT2Concept<evaluator_result<EvaluatorType>>)&&    //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> == 2u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept T2toT23DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&(
-      std::is_convertible_v<evaluator_result<EvaluatorType>,
-                            tfel::math::t2tot2<3u, real>>);
+  concept T2toT23DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (::tfel::math::T2toT2Concept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       3u) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
-  concept T2toT2EvaluatorConcept = (T2toT21DEvaluatorConcept<EvaluatorType>) ||
-                                   (T2toT22DEvaluatorConcept<EvaluatorType>) ||
-                                   (T2toT23DEvaluatorConcept<EvaluatorType>);
+  concept T2toT2EvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
+      (::tfel::math::T2toT2Concept<evaluator_result<EvaluatorType>>) &&  //
+      (std::same_as<
+          std::decay_t<::tfel::math::base_type<
+              ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
+          real>);
 
   template <typename EvaluatorType>
   concept FourthOrderTensorEvaluatorConcept =
@@ -298,47 +411,47 @@ namespace mgis::function {
                    : compile_time_size<TensorType> ==
                          number_of_components<FunctionType>);
 
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType = real>
   requires((N == 1) || (N == 2) || (N == 3))  //
       inline constexpr auto as_stensor =
-          internals::tensor_modifier<tfel::math::stensor<N, real>>{};
+          internals::tensor_modifier<tfel::math::stensor<N, ValueType>>{};
 
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType = real>
   requires((N == 1) || (N == 2) || (N == 3))  //
       inline constexpr auto as_tensor =
-          internals::tensor_modifier<tfel::math::tensor<N, real>>{};
+          internals::tensor_modifier<tfel::math::tensor<N, ValueType>>{};
 
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType = real>
   inline constexpr auto as_fsarray =
-      internals::tensor_modifier<tfel::math::fsarray<N, real>>{};
+      internals::tensor_modifier<tfel::math::fsarray<N, ValueType>>{};
 
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType = real>
   inline constexpr auto as_tvector =
-      internals::tensor_modifier<tfel::math::tvector<N, real>>{};
+      internals::tensor_modifier<tfel::math::tvector<N, ValueType>>{};
 
-  template <unsigned short N, unsigned short M>
+  template <unsigned short N, unsigned short M, TensorValueConcept ValueType = real>
   inline constexpr auto as_tmatrix =
-      internals::tensor_modifier<tfel::math::tmatrix<N, M, real>>{};
+      internals::tensor_modifier<tfel::math::tmatrix<N, M, ValueType>>{};
 
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType = real>
   requires((N == 1) || (N == 2) || (N == 3))  //
       inline constexpr auto as_st2tost2 =
-          internals::tensor_modifier<tfel::math::st2tost2<N, real>>{};
+          internals::tensor_modifier<tfel::math::st2tost2<N, ValueType>>{};
 
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType = real>
   requires((N == 1) || (N == 2) || (N == 3))  //
       inline constexpr auto as_t2tost2 =
-          internals::tensor_modifier<tfel::math::t2tost2<N, real>>{};
+          internals::tensor_modifier<tfel::math::t2tost2<N, ValueType>>{};
 
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType = real>
   requires((N == 1) || (N == 2) || (N == 3))  //
       inline constexpr auto as_st2tot2 =
-          internals::tensor_modifier<tfel::math::st2tot2<N, real>>{};
+          internals::tensor_modifier<tfel::math::st2tot2<N, ValueType>>{};
 
-  template <unsigned short N>
+  template <unsigned short N, TensorValueConcept ValueType = real>
   requires((N == 1) || (N == 2) || (N == 3))  //
       inline constexpr auto as_t2tot2 =
-          internals::tensor_modifier<tfel::math::t2tot2<N, real>>{};
+          internals::tensor_modifier<tfel::math::t2tot2<N, ValueType>>{};
 
   inline constexpr auto trace = internals::unary_operation_modifier2(
       []<typename TensorType>(const TensorType& t) requires(

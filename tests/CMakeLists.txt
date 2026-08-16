@@ -664,6 +664,27 @@ if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
+add_executable(QuantityFunctionTest
+ EXCLUDE_FROM_ALL
+ QuantityFunctionTest.cxx)
+target_link_libraries(QuantityFunctionTest
+  PRIVATE MFrontGenericInterface tfel::TFELTests)
+add_test(NAME QuantityFunctionTest COMMAND QuantityFunctionTest)
+add_dependencies(check QuantityFunctionTest)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+    target_compile_definitions(QuantityFunctionTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
+    target_compile_definitions(QuantityFunctionTest
+       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+endif()
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST QuantityFunctionTest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_executable(TensorialFunctionTest
  EXCLUDE_FROM_ALL
