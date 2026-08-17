@@ -229,6 +229,10 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/200>
 
+## Issue 199: [mgis-function] add support for `TFEL/Math`'s quantities
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/199>
+
 ## Issue 196: [MGIS/Function] Add function view with strided coalesent memory access
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/196>￼
