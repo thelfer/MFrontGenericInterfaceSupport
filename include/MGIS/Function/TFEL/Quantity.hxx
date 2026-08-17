@@ -88,9 +88,6 @@ namespace mgis::function {
   }  // end of operator|
 
   template <::tfel::math::unit::UnitConcept UnitType>
-  inline constexpr auto as_qt = internals::quantity_modifier<UnitType>{};
-
-  template <::tfel::math::unit::UnitConcept UnitType>
   inline constexpr auto as_quantity = internals::quantity_modifier<UnitType>{};
 
   template <typename T>
@@ -100,11 +97,23 @@ namespace mgis::function {
   template <typename T>
   concept MutableScalarConcept = (ScalarConcept<T>) || (!std::is_const_v<T>);
 
+  namespace internals {
+
+    template <MutableScalarConcept T>
+    struct ScalarModifier{
+      using type = quantity_modifier<::tfel::math::quantity_unit<T>>;
+    };
+
+    template <>
+    struct ScalarModifier<real> {
+      using type = fixed_size_modifier<1>;
+    };
+
+  }  // end of namespace internals
+
   template <MutableScalarConcept T = real>
-  inline constexpr auto as_scalar = std::conditional_t<
-      std::same_as<T, real>,
-      internals::fixed_size_modifier<1>,
-      internals::quantity_modifier<::tfel::math::quantity_unit<T>>>{};
+  inline constexpr auto as_qt =
+      typename internals::ScalarModifier<T>::type{};
 
 }  // end of namespace mgis::function
 

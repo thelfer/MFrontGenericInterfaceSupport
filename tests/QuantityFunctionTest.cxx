@@ -19,6 +19,7 @@
 #include <array>
 #include <cmath>
 #include <memory>
+#include <numbers>
 #include <cstdlib>
 #include <optional>
 #include <iostream>
@@ -31,6 +32,7 @@
 #include "MGIS/Function/Evaluator.hxx"
 #include "MGIS/Function/TFEL/Quantity.hxx"
 #include "MGIS/Function/TFEL/Tensors.hxx"
+#include "MGIS/Function/TFEL/Mechanics.hxx"
 
 struct QuantityFunctionsTest final : public tfel::tests::TestCase {
   QuantityFunctionsTest()
@@ -39,6 +41,7 @@ struct QuantityFunctionsTest final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
+    this->test3();
     return this->result;
   }
 
@@ -69,8 +72,8 @@ struct QuantityFunctionsTest final : public tfel::tests::TestCase {
       auto space = BasicLinearSpace{4};
       Function f(space, 1);
       Function f2(space, 1);
-      auto t = f | as_scalar<time>;
-      auto t2 = f2 | as_qt<::tfel::math::unit::Time>;
+      auto t = f | as_qt<time>;
+      auto t2 = f2 | as_quantity<::tfel::math::unit::Time>;
       t(0) = time{1};
       t(1) = time{-2};
       t(2) = time{-5};
@@ -113,6 +116,21 @@ struct QuantityFunctionsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(check_value((*values)[2], -10));
     TFEL_TESTS_STATIC_ASSERT(check_value((*values)[3], 8));
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
+  }
+  void test3() {
+    using namespace mgis;
+    using namespace mgis::function;
+    using stress = ::tfel::math::qt<::tfel::math::unit::Stress, real>;
+    auto ctx = ContractViolationHandler{};
+    auto space = BasicLinearSpace{1};
+    Function f(space, 4);
+    Function f2(space, 1);
+    auto t = f | as_stensor<2u, stress>;
+    auto t2 = f2 | as_qt<stress>;
+    t(0) = {stress{1}, stress{-2}, stress{-5}, stress{4}};
+    const auto ok = assign(ctx, t2, t | vmis);
+    TFEL_TESTS_ASSERT(ok);
+    TFEL_TESTS_ASSERT(check_value(f2(0)[0], std::sqrt(51)));
   }
 };
 

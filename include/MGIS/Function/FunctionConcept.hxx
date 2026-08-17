@@ -485,20 +485,8 @@ namespace mgis::function {
   requires((N > 0) && (N != dynamic_extent))  //
       inline constexpr auto as_array = internals::fixed_size_modifier<N>{};
 
-#ifndef MGIS_HAVE_TFEL
-  template <typename T>
-  concept ScalarConcept = std::same_as<std::decay_t<T>, real>;
-
-  template <typename T>
-  concept MutableScalarConcept = (ScalarConcept<T>) || (!std::is_const_v<T>);
-
   inline constexpr auto as_scalar = internals::fixed_size_modifier<1>{};
-#endif /* MGIS_HAVE_TFEL */
 
 }  // end of namespace mgis::function
-
-#ifdef MGIS_HAVE_TFEL
-#include "MGIS/Function/TFEL/Quantity.hxx"
-#endif /* MGIS_HAVE_TFEL */
 
 #endif /* LIB_MGIS_FUNCTION_FUNCTIONCONCEPT_HXX */
