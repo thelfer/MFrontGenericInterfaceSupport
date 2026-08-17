@@ -1,6 +1,6 @@
 /*!
  * \file   QuantityFunctionTest.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   16/08/2026
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -69,7 +69,7 @@ struct QuantityFunctionsTest final : public tfel::tests::TestCase {
       auto space = BasicLinearSpace{4};
       Function f(space, 1);
       Function f2(space, 1);
-      auto t = f | as_qt<::tfel::math::unit::Time>;
+      auto t = f | as_scalar<time>;
       auto t2 = f2 | as_qt<::tfel::math::unit::Time>;
       t(0) = time{1};
       t(1) = time{-2};
@@ -125,4 +125,3 @@ int main() {
   m.addXMLTestOutput("QuantityFunctionsTest.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-

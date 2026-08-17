@@ -33,13 +33,13 @@
 #include "TFEL/Math/Array/View.hxx"
 #include "MGIS/Function/CompileTimeSize.hxx"
 
-namespace mgis::function{
+namespace mgis::function {
 
   template <typename T>
   concept TensorValueConcept = ((::tfel::math::MutableScalarConcept<T>)&&(
       std::same_as<::tfel::math::base_type<T>, real>));
 
-} // end of namespace mgis::function
+}  // end of namespace mgis::function
 
 namespace mgis::function::internals {
 

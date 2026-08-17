@@ -213,9 +213,11 @@ namespace mgis::function {
           real>);
 
   template <typename EvaluatorType>
-  concept Tensor2DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
-      (::tfel::math::TensorConcept<evaluator_result<EvaluatorType>>)&&    //
-      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> == 2u) &&  //
+  concept Tensor2DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (::tfel::math::TensorConcept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       2u) &&  //
       (std::same_as<
           std::decay_t<::tfel::math::base_type<
               ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
@@ -234,7 +236,7 @@ namespace mgis::function {
 
   template <typename EvaluatorType>
   concept TensorEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
-      (::tfel::math::TensorConcept<evaluator_result<EvaluatorType>>) &&  //
+      (::tfel::math::TensorConcept<evaluator_result<EvaluatorType>>)&&  //
       (std::same_as<
           std::decay_t<::tfel::math::base_type<
               ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
@@ -242,7 +244,7 @@ namespace mgis::function {
 
   template <typename EvaluatorType>
   concept ST2toST21DEvaluatorConcept =
-      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (EvaluatorConcept<EvaluatorType>)&&                                 //
       (::tfel::math::ST2toST2Concept<evaluator_result<EvaluatorType>>)&&  //
       (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
        1u) &&  //
@@ -252,9 +254,11 @@ namespace mgis::function {
           real>);
 
   template <typename EvaluatorType>
-  concept ST2toST22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
-      (::tfel::math::ST2toST2Concept<evaluator_result<EvaluatorType>>)&&    //
-      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> == 2u) &&  //
+  concept ST2toST22DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                                 //
+      (::tfel::math::ST2toST2Concept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       2u) &&  //
       (std::same_as<
           std::decay_t<::tfel::math::base_type<
               ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
@@ -262,7 +266,7 @@ namespace mgis::function {
 
   template <typename EvaluatorType>
   concept ST2toST23DEvaluatorConcept =
-      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (EvaluatorConcept<EvaluatorType>)&&                                 //
       (::tfel::math::ST2toST2Concept<evaluator_result<EvaluatorType>>)&&  //
       (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
        3u) &&  //
@@ -273,7 +277,7 @@ namespace mgis::function {
 
   template <typename EvaluatorType>
   concept ST2toST2EvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
-      (::tfel::math::ST2toST2Concept<evaluator_result<EvaluatorType>>) &&  //
+      (::tfel::math::ST2toST2Concept<evaluator_result<EvaluatorType>>)&&  //
       (std::same_as<
           std::decay_t<::tfel::math::base_type<
               ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
@@ -281,7 +285,7 @@ namespace mgis::function {
 
   template <typename EvaluatorType>
   concept ST2toT21DEvaluatorConcept =
-      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (EvaluatorConcept<EvaluatorType>)&&                                //
       (::tfel::math::ST2toT2Concept<evaluator_result<EvaluatorType>>)&&  //
       (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
        1u) &&  //
@@ -291,9 +295,11 @@ namespace mgis::function {
           real>);
 
   template <typename EvaluatorType>
-  concept ST2toT22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
-      (::tfel::math::ST2toT2Concept<evaluator_result<EvaluatorType>>)&&    //
-      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> == 2u) &&  //
+  concept ST2toT22DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                                //
+      (::tfel::math::ST2toT2Concept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       2u) &&  //
       (std::same_as<
           std::decay_t<::tfel::math::base_type<
               ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
@@ -301,7 +307,7 @@ namespace mgis::function {
 
   template <typename EvaluatorType>
   concept ST2toT23DEvaluatorConcept =
-      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (EvaluatorConcept<EvaluatorType>)&&                                //
       (::tfel::math::ST2toT2Concept<evaluator_result<EvaluatorType>>)&&  //
       (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
        3u) &&  //
@@ -312,7 +318,7 @@ namespace mgis::function {
 
   template <typename EvaluatorType>
   concept ST2toT2EvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
-      (::tfel::math::ST2toT2Concept<evaluator_result<EvaluatorType>>) &&  //
+      (::tfel::math::ST2toT2Concept<evaluator_result<EvaluatorType>>)&&  //
       (std::same_as<
           std::decay_t<::tfel::math::base_type<
               ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
@@ -320,7 +326,7 @@ namespace mgis::function {
 
   template <typename EvaluatorType>
   concept T2toST21DEvaluatorConcept =
-      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (EvaluatorConcept<EvaluatorType>)&&                                //
       (::tfel::math::T2toST2Concept<evaluator_result<EvaluatorType>>)&&  //
       (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
        1u) &&  //
@@ -330,9 +336,11 @@ namespace mgis::function {
           real>);
 
   template <typename EvaluatorType>
-  concept T2toST22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
-      (::tfel::math::T2toST2Concept<evaluator_result<EvaluatorType>>)&&    //
-      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> == 2u) &&  //
+  concept T2toST22DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                                //
+      (::tfel::math::T2toST2Concept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       2u) &&  //
       (std::same_as<
           std::decay_t<::tfel::math::base_type<
               ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
@@ -340,7 +348,7 @@ namespace mgis::function {
 
   template <typename EvaluatorType>
   concept T2toST23DEvaluatorConcept =
-      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (EvaluatorConcept<EvaluatorType>)&&                                //
       (::tfel::math::T2toST2Concept<evaluator_result<EvaluatorType>>)&&  //
       (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
        3u) &&  //
@@ -351,7 +359,7 @@ namespace mgis::function {
 
   template <typename EvaluatorType>
   concept T2toST2EvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
-      (::tfel::math::T2toST2Concept<evaluator_result<EvaluatorType>>) &&  //
+      (::tfel::math::T2toST2Concept<evaluator_result<EvaluatorType>>)&&  //
       (std::same_as<
           std::decay_t<::tfel::math::base_type<
               ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
@@ -369,9 +377,11 @@ namespace mgis::function {
           real>);
 
   template <typename EvaluatorType>
-  concept T2toT22DEvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
-      (::tfel::math::T2toT2Concept<evaluator_result<EvaluatorType>>)&&    //
-      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> == 2u) &&  //
+  concept T2toT22DEvaluatorConcept =
+      (EvaluatorConcept<EvaluatorType>)&&                               //
+      (::tfel::math::T2toT2Concept<evaluator_result<EvaluatorType>>)&&  //
+      (::tfel::math::space_dimension<evaluator_result<EvaluatorType>> ==
+       2u) &&  //
       (std::same_as<
           std::decay_t<::tfel::math::base_type<
               ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
@@ -390,7 +400,7 @@ namespace mgis::function {
 
   template <typename EvaluatorType>
   concept T2toT2EvaluatorConcept = (EvaluatorConcept<EvaluatorType>)&&  //
-      (::tfel::math::T2toT2Concept<evaluator_result<EvaluatorType>>) &&  //
+      (::tfel::math::T2toT2Concept<evaluator_result<EvaluatorType>>)&&  //
       (std::same_as<
           std::decay_t<::tfel::math::base_type<
               ::tfel::math::numeric_type<evaluator_result<EvaluatorType>>>>,
@@ -429,7 +439,9 @@ namespace mgis::function {
   inline constexpr auto as_tvector =
       internals::tensor_modifier<tfel::math::tvector<N, ValueType>>{};
 
-  template <unsigned short N, unsigned short M, TensorValueConcept ValueType = real>
+  template <unsigned short N,
+            unsigned short M,
+            TensorValueConcept ValueType = real>
   inline constexpr auto as_tmatrix =
       internals::tensor_modifier<tfel::math::tmatrix<N, M, ValueType>>{};
 
