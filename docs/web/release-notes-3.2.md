@@ -128,6 +128,25 @@ setExternalStateVariable(m.s1, "Temperature", T1,
 
 # New features of the `MGIS/Function` library
 
+## Support for quantities
+
+Quantities is features of the [TFEL/Math
+library](https://thelfer.github.io/tfel/web/tfel-math.html#sec:tfel_math:quantities)
+which allows assigning an unit to a floating point number.
+
+`MGIS/Function` provides `as_qt` to turn a function into a view
+returning quantities. Tensor modifiers, such as `as_stensor` now allows
+to specify a quantity as an optional argument.
+
+### Example of usage
+
+~~~~{.c++}
+// make a view of a scalar function which returns a stress value
+auto s = f | as_qt<stress>;
+// make a view of the function return a symmetric tensor in 2D whose values are stress
+auto s = f2 | as_stensor<2u, stress>;
+~~~~
+
 ## Functions using a strided memory access
 
 The following classes have been introduced:

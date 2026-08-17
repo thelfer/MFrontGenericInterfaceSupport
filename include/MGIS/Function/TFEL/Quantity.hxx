@@ -100,7 +100,7 @@ namespace mgis::function {
   namespace internals {
 
     template <MutableScalarConcept T>
-    struct ScalarModifier{
+    struct ScalarModifier {
       using type = quantity_modifier<::tfel::math::quantity_unit<T>>;
     };
 
@@ -112,8 +112,7 @@ namespace mgis::function {
   }  // end of namespace internals
 
   template <MutableScalarConcept T = real>
-  inline constexpr auto as_qt =
-      typename internals::ScalarModifier<T>::type{};
+  inline constexpr auto as_qt = typename internals::ScalarModifier<T>::type{};
 
 }  // end of namespace mgis::function
 
