@@ -49,7 +49,7 @@ target_compile_definitions(LoadMaterialPropertyTest
 add_test(NAME LoadMaterialPropertyTest
  COMMAND LoadMaterialPropertyTest
  "$<TARGET_FILE:MaterialPropertyTest>")
-add_dependencies(check LoadMaterialPropertyTest)
+add_dependencies(build-tests LoadMaterialPropertyTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST LoadMaterialPropertyTest
     PROPERTY DEPENDS MaterialPropertyTest
@@ -177,7 +177,7 @@ target_link_libraries(ComputeSpeedOfSoundTest2
 add_test(NAME MFrontGenericBehaviourInterfaceTest
  COMMAND MFrontGenericBehaviourInterfaceTest
  "$<TARGET_FILE:BehaviourTest>" "Gurson")
-add_dependencies(check MFrontGenericBehaviourInterfaceTest)
+add_dependencies(build-tests MFrontGenericBehaviourInterfaceTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST MFrontGenericBehaviourInterfaceTest
     PROPERTY DEPENDS BehaviourTest
@@ -190,7 +190,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME MFrontGenericBehaviourInterfaceTest2
  COMMAND MFrontGenericBehaviourInterfaceTest2
  "$<TARGET_FILE:BehaviourTest>" "FiniteStrainSingleCrystal")
-add_dependencies(check MFrontGenericBehaviourInterfaceTest2)
+add_dependencies(build-tests MFrontGenericBehaviourInterfaceTest2)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST MFrontGenericBehaviourInterfaceTest2
     PROPERTY DEPENDS BehaviourTest
@@ -203,7 +203,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME MFrontGenericBehaviourInterfaceTest3
  COMMAND MFrontGenericBehaviourInterfaceTest3
  "$<TARGET_FILE:BehaviourTest>" "FiniteStrainSingleCrystal")
-add_dependencies(check MFrontGenericBehaviourInterfaceTest3)
+add_dependencies(build-tests MFrontGenericBehaviourInterfaceTest3)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST MFrontGenericBehaviourInterfaceTest3
     PROPERTY DEPENDS BehaviourTest
@@ -216,7 +216,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME BoundsCheckTest
  COMMAND BoundsCheckTest
  "$<TARGET_FILE:BehaviourTest>" "BoundsCheckTest")
-add_dependencies(check BoundsCheckTest)
+add_dependencies(build-tests BoundsCheckTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST BoundsCheckTest
     PROPERTY DEPENDS BehaviourTest
@@ -229,7 +229,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME ParameterTest
  COMMAND ParameterTest
  "$<TARGET_FILE:BehaviourTest>" "ParameterTest")
-add_dependencies(check ParameterTest)
+add_dependencies(build-tests ParameterTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ParameterTest
     PROPERTY DEPENDS BehaviourTest
@@ -241,7 +241,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME UpdatePolicyTest
  COMMAND UpdatePolicyTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check UpdatePolicyTest)
+add_dependencies(build-tests UpdatePolicyTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST UpdatePolicyTest
     PROPERTY DEPENDS BehaviourTest
@@ -253,7 +253,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME IntegrateTest
  COMMAND IntegrateTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check IntegrateTest)
+add_dependencies(build-tests IntegrateTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest
     PROPERTY DEPENDS BehaviourTest
@@ -265,7 +265,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME IntegrateTest2
  COMMAND IntegrateTest2 "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check IntegrateTest2)
+add_dependencies(build-tests IntegrateTest2)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest2
     PROPERTY DEPENDS BehaviourTest
@@ -277,7 +277,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME IntegrateTest2b
  COMMAND IntegrateTest2b "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check IntegrateTest2b)
+add_dependencies(build-tests IntegrateTest2b)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest2b
     PROPERTY DEPENDS BehaviourTest
@@ -289,7 +289,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME IntegrateTest3
  COMMAND IntegrateTest3 "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check IntegrateTest3)
+add_dependencies(build-tests IntegrateTest3)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest3
     PROPERTY DEPENDS BehaviourTest
@@ -301,7 +301,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME IntegrateTest3b
  COMMAND IntegrateTest3b "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check IntegrateTest3b)
+add_dependencies(build-tests IntegrateTest3b)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest3b
     PROPERTY DEPENDS BehaviourTest
@@ -313,7 +313,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME RotateFunctionsTest
  COMMAND RotateFunctionsTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check RotateFunctionsTest)
+add_dependencies(build-tests RotateFunctionsTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST RotateFunctionsTest
     PROPERTY DEPENDS BehaviourTest
@@ -325,7 +325,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME IntegrateTest4
  COMMAND IntegrateTest4 "$<TARGET_FILE:ModelTest>")
-add_dependencies(check IntegrateTest4)
+add_dependencies(build-tests IntegrateTest4)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest4
     PROPERTY DEPENDS ModelTest
@@ -337,7 +337,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME IntegrateTest5
  COMMAND IntegrateTest5 "$<TARGET_FILE:ModelTest>")
-add_dependencies(check IntegrateTest5)
+add_dependencies(build-tests IntegrateTest5)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest5
     PROPERTY DEPENDS ModelTest
@@ -349,7 +349,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME IntegrationFailureDebugTest
  COMMAND IntegrationFailureDebugTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check IntegrationFailureDebugTest)
+add_dependencies(build-tests IntegrationFailureDebugTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrationFailureDebugTest
     PROPERTY DEPENDS BehaviourTest
@@ -361,7 +361,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME IntegrateDebugTest
  COMMAND IntegrateDebugTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check IntegrateDebugTest)
+add_dependencies(build-tests IntegrateDebugTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateDebugTest
     PROPERTY DEPENDS BehaviourTest
@@ -373,7 +373,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME ExternalStateVariableTest
   COMMAND ExternalStateVariableTest "$<TARGET_FILE:BehaviourTest>"  "TensorialExternalStateVariableTest")
-add_dependencies(check ExternalStateVariableTest)
+add_dependencies(build-tests ExternalStateVariableTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ExternalStateVariableTest
     PROPERTY DEPENDS BehaviourTest
@@ -385,7 +385,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME InitializeFunctionTest
   COMMAND InitializeFunctionTest "$<TARGET_FILE:BehaviourTest>"  "InitializeFunctionTest")
-add_dependencies(check InitializeFunctionTest)
+add_dependencies(build-tests InitializeFunctionTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST InitializeFunctionTest
     PROPERTY DEPENDS BehaviourTest
@@ -397,7 +397,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME PostProcessingTest
   COMMAND PostProcessingTest "$<TARGET_FILE:BehaviourTest>"  "PostProcessingTest")
-add_dependencies(check PostProcessingTest)
+add_dependencies(build-tests PostProcessingTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST PostProcessingTest
     PROPERTY DEPENDS BehaviourTest
@@ -409,7 +409,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME ComputeSpeedOfSoundTest
  COMMAND ComputeSpeedOfSoundTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check ComputeSpeedOfSoundTest)
+add_dependencies(build-tests ComputeSpeedOfSoundTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ComputeSpeedOfSoundTest
     PROPERTY DEPENDS BehaviourTest
@@ -421,7 +421,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME ComputeSpeedOfSoundTest2
  COMMAND ComputeSpeedOfSoundTest2 "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check ComputeSpeedOfSoundTest2)
+add_dependencies(build-tests ComputeSpeedOfSoundTest2)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ComputeSpeedOfSoundTest2
     PROPERTY DEPENDS BehaviourTest
@@ -439,7 +439,7 @@ add_executable(InvalidResultTest
 target_link_libraries(InvalidResultTest
   PRIVATE MFrontGenericInterface)
 add_test(NAME InvalidResultTest COMMAND InvalidResultTest)
-add_dependencies(check InvalidResultTest)
+add_dependencies(build-tests InvalidResultTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST InvalidResultTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
@@ -451,7 +451,7 @@ add_executable(ErrorBacktraceTest
 target_link_libraries(ErrorBacktraceTest
   PRIVATE MFrontGenericInterface)
 add_test(NAME ErrorBacktraceTest COMMAND ErrorBacktraceTest)
-add_dependencies(check ErrorBacktraceTest)
+add_dependencies(build-tests ErrorBacktraceTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ErrorBacktraceTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
@@ -462,7 +462,7 @@ if(MGIS_HAVE_TFEL)
    EXCLUDE_FROM_ALL ContextTest.cxx)
   target_link_libraries(ContextTest PRIVATE MFrontGenericInterface tfel::TFELTests)
   add_test(NAME ContextTest COMMAND ContextTest)
-  add_dependencies(check ContextTest)
+  add_dependencies(build-tests ContextTest)
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST ContextTest
       PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
@@ -472,7 +472,7 @@ if(MGIS_HAVE_TFEL)
    EXCLUDE_FROM_ALL ProfilingTest.cxx)
   target_link_libraries(ProfilingTest PRIVATE MFrontGenericInterface tfel::TFELTests)
   add_test(NAME ProfilingTest COMMAND ProfilingTest)
-  add_dependencies(check ProfilingTest)
+  add_dependencies(build-tests ProfilingTest)
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST ProfilingTest
       PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
@@ -484,7 +484,7 @@ if(MGIS_HAVE_TFEL)
     PRIVATE MFrontGenericInterface tfel::TFELTests)
   add_test(NAME OptionalReferenceTest
    COMMAND OptionalReferenceTest "$<TARGET_FILE:BehaviourTest>")
-  add_dependencies(check OptionalReferenceTest)
+  add_dependencies(build-tests OptionalReferenceTest)
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST OptionalReferenceTest
       PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
@@ -495,7 +495,7 @@ if(MGIS_HAVE_TFEL)
     PRIVATE MFrontGenericInterface tfel::TFELTests)
   add_test(NAME ConstructTest
    COMMAND ConstructTest "$<TARGET_FILE:BehaviourTest>")
-  add_dependencies(check ConstructTest)
+  add_dependencies(build-tests ConstructTest)
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST ConstructTest
       PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
@@ -506,7 +506,7 @@ if(MGIS_HAVE_TFEL)
     PRIVATE MFrontGenericInterface tfel::TFELTests)
   add_test(NAME InvokeTest
    COMMAND InvokeTest "$<TARGET_FILE:BehaviourTest>")
-  add_dependencies(check InvokeTest)
+  add_dependencies(build-tests InvokeTest)
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST InvokeTest
       PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
@@ -524,7 +524,7 @@ add_executable(SharedSpaceTest
 target_link_libraries(SharedSpaceTest
   PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME SharedSpaceTest COMMAND SharedSpaceTest)
-add_dependencies(check SharedSpaceTest)
+add_dependencies(build-tests SharedSpaceTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST SharedSpaceTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
@@ -536,7 +536,7 @@ add_executable(FunctionTest
 target_link_libraries(FunctionTest
   PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME FunctionTest COMMAND FunctionTest)
-add_dependencies(check FunctionTest)
+add_dependencies(build-tests FunctionTest)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
     target_compile_definitions(FunctionTest
@@ -558,7 +558,7 @@ add_executable(EvaluatorsTest
 target_link_libraries(EvaluatorsTest
   PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME EvaluatorsTest COMMAND EvaluatorsTest)
-add_dependencies(check EvaluatorsTest)
+add_dependencies(build-tests EvaluatorsTest)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
     target_compile_definitions(EvaluatorsTest
@@ -580,7 +580,7 @@ add_executable(UniformEvaluatorsTest
 target_link_libraries(UniformEvaluatorsTest
   PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME UniformEvaluatorsTest COMMAND UniformEvaluatorsTest)
-add_dependencies(check UniformEvaluatorsTest)
+add_dependencies(build-tests UniformEvaluatorsTest)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
     target_compile_definitions(UniformEvaluatorsTest
@@ -603,7 +603,7 @@ target_link_libraries(CoalescedMemoryAccessFunctionViewTest
   PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME CoalescedMemoryAccessFunctionViewTest
          COMMAND CoalescedMemoryAccessFunctionViewTest)
-add_dependencies(check CoalescedMemoryAccessFunctionViewTest)
+add_dependencies(build-tests CoalescedMemoryAccessFunctionViewTest)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
     target_compile_definitions(CoalescedMemoryAccessFunctionViewTest
@@ -626,7 +626,7 @@ target_link_libraries(StridedCoalescedMemoryAccessFunctionViewTest
   PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME StridedCoalescedMemoryAccessFunctionViewTest
          COMMAND StridedCoalescedMemoryAccessFunctionViewTest)
-add_dependencies(check StridedCoalescedMemoryAccessFunctionViewTest)
+add_dependencies(build-tests StridedCoalescedMemoryAccessFunctionViewTest)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
     target_compile_definitions(StridedCoalescedMemoryAccessFunctionViewTest
@@ -648,7 +648,7 @@ add_executable(MechanicalEvaluatorsTest
 target_link_libraries(MechanicalEvaluatorsTest
   PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME MechanicalEvaluatorsTest COMMAND MechanicalEvaluatorsTest)
-add_dependencies(check MechanicalEvaluatorsTest)
+add_dependencies(build-tests MechanicalEvaluatorsTest)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
     target_compile_definitions(MechanicalEvaluatorsTest
@@ -670,7 +670,7 @@ add_executable(QuantityFunctionTest
 target_link_libraries(QuantityFunctionTest
   PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME QuantityFunctionTest COMMAND QuantityFunctionTest)
-add_dependencies(check QuantityFunctionTest)
+add_dependencies(build-tests QuantityFunctionTest)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
     target_compile_definitions(QuantityFunctionTest
@@ -692,7 +692,7 @@ add_executable(TensorialFunctionTest
 target_link_libraries(TensorialFunctionTest
   PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME TensorialFunctionTest COMMAND TensorialFunctionTest)
-add_dependencies(check TensorialFunctionTest)
+add_dependencies(build-tests TensorialFunctionTest)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
     target_compile_definitions(TensorialFunctionTest
@@ -714,7 +714,7 @@ add_executable(ReduceTest
 target_link_libraries(ReduceTest
   PRIVATE MFrontGenericInterface tfel::TFELTests)
 add_test(NAME ReduceTest COMMAND ReduceTest)
-add_dependencies(check ReduceTest)
+add_dependencies(build-tests ReduceTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ReduceTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
@@ -735,7 +735,7 @@ if(enable-cuda-algorithms)
     PRIVATE MFrontGenericInterface tfel::TFELTests)
   add_test(NAME FunctionTest-cuda
    COMMAND FunctionTest-cuda "$<TARGET_FILE:BehaviourTest>")
-  add_dependencies(check FunctionTest-cuda)
+  add_dependencies(build-tests FunctionTest-cuda)
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST FunctionTest-cuda
       PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
@@ -746,7 +746,7 @@ if(MGIS_HAVE_MFRONT_SUPPORT)
 
 add_test(NAME MaterialFunctionManagerTest
  COMMAND MaterialFunctionManagerTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check MaterialFunctionManagerTest)
+add_dependencies(build-tests MaterialFunctionManagerTest)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST MaterialFunctionManagerTest
     PROPERTY DEPENDS BehaviourTest
@@ -764,7 +764,7 @@ if(MGIS_HDF5_SUPPORT)
   target_link_libraries(HDF5Test PRIVATE MFrontGenericInterface)
   add_test(NAME HDF5Test
    COMMAND HDF5Test "$<TARGET_FILE:BehaviourTest>")
-  add_dependencies(check HDF5Test)
+  add_dependencies(build-tests HDF5Test)
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST HDF5Test
       PROPERTY DEPENDS BehaviourTest

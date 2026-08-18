@@ -95,7 +95,7 @@ endif(MSVC)
 add_test(NAME MFrontGenericBehaviourInterfaceTest-c
  COMMAND MFrontGenericBehaviourInterfaceTest-c
  "$<TARGET_FILE:BehaviourTest>" "Gurson")
-add_dependencies(check MFrontGenericBehaviourInterfaceTest-c)
+add_dependencies(build-tests MFrontGenericBehaviourInterfaceTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST MFrontGenericBehaviourInterfaceTest-c
     PROPERTY DEPENDS BehaviourTest
@@ -108,7 +108,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME MFrontGenericBehaviourInterfaceTest2-c
  COMMAND MFrontGenericBehaviourInterfaceTest2-c
  "$<TARGET_FILE:BehaviourTest>" "FiniteStrainSingleCrystal")
-add_dependencies(check MFrontGenericBehaviourInterfaceTest2-c)
+add_dependencies(build-tests MFrontGenericBehaviourInterfaceTest2-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST MFrontGenericBehaviourInterfaceTest2-c
     PROPERTY DEPENDS BehaviourTest
@@ -121,7 +121,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME MFrontGenericBehaviourInterfaceTest3-c
  COMMAND MFrontGenericBehaviourInterfaceTest3-c
  "$<TARGET_FILE:BehaviourTest>" "FiniteStrainSingleCrystal")
-add_dependencies(check MFrontGenericBehaviourInterfaceTest3-c)
+add_dependencies(build-tests MFrontGenericBehaviourInterfaceTest3-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST MFrontGenericBehaviourInterfaceTest3-c
     PROPERTY DEPENDS BehaviourTest
@@ -134,7 +134,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME BehaviourDataTest-c
  COMMAND BehaviourDataTest-c
  "$<TARGET_FILE:BehaviourTest>" "Gurson")
-add_dependencies(check BehaviourDataTest-c)
+add_dependencies(build-tests BehaviourDataTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST BehaviourDataTest-c
     PROPERTY DEPENDS BehaviourTest
@@ -147,7 +147,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME StateTest-c
  COMMAND StateTest-c
  "$<TARGET_FILE:BehaviourTest>" "Gurson")
-add_dependencies(check StateTest-c)
+add_dependencies(build-tests StateTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST StateTest-c
     PROPERTY DEPENDS BehaviourTest
@@ -160,7 +160,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME StateTest2-c
  COMMAND StateTest2-c
  "$<TARGET_FILE:BehaviourTest>" "Gurson")
-add_dependencies(check StateTest2-c)
+add_dependencies(build-tests StateTest2-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST StateTest2-c
     PROPERTY DEPENDS BehaviourTest
@@ -173,7 +173,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME BoundsCheckTest-c
  COMMAND BoundsCheckTest-c
  "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check BoundsCheckTest-c)
+add_dependencies(build-tests BoundsCheckTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST BoundsCheckTest-c
     PROPERTY DEPENDS BehaviourTest
@@ -186,7 +186,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME ParameterTest-c
  COMMAND ParameterTest-c
  "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check ParameterTest-c)
+add_dependencies(build-tests ParameterTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ParameterTest-c
     PROPERTY DEPENDS BehaviourTest
@@ -199,7 +199,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME ExternalStateVariableTest-c
  COMMAND ExternalStateVariableTest-c
  "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check ExternalStateVariableTest-c)
+add_dependencies(build-tests ExternalStateVariableTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ExternalStateVariableTest-c
     PROPERTY DEPENDS BehaviourTest
@@ -212,7 +212,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME IntegrateTest-c
  COMMAND IntegrateTest-c
  "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check IntegrateTest-c)
+add_dependencies(build-tests IntegrateTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest-c
     PROPERTY DEPENDS BehaviourTest
@@ -225,7 +225,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME IntegrateTest2-c
  COMMAND IntegrateTest2-c
  "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check IntegrateTest2-c)
+add_dependencies(build-tests IntegrateTest2-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest2-c
     PROPERTY DEPENDS BehaviourTest
@@ -238,7 +238,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME IntegrateTest3-c
  COMMAND IntegrateTest3-c
  "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(check IntegrateTest3-c)
+add_dependencies(build-tests IntegrateTest3-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest3-c
     PROPERTY DEPENDS BehaviourTest
@@ -251,7 +251,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME IntegrateTest4-c
  COMMAND IntegrateTest4-c
  "$<TARGET_FILE:ModelTest>")
-add_dependencies(check IntegrateTest4-c)
+add_dependencies(build-tests IntegrateTest4-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest4-c
     PROPERTY DEPENDS ModelTest
@@ -264,7 +264,7 @@ endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 add_test(NAME IntegrateTest5-c
  COMMAND IntegrateTest5-c
  "$<TARGET_FILE:ModelTest>")
-add_dependencies(check IntegrateTest5-c)
+add_dependencies(build-tests IntegrateTest5-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest5-c
     PROPERTY DEPENDS ModelTest
