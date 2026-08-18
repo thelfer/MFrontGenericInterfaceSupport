@@ -27,13 +27,16 @@ The simplest way to compile this package is:
 
 2. Type `make` to compile the package.
 
-3. Optionally, type `make check` to run any self-tests that come with
+4. Optionally, type `make built-tests` to compile all tests come with
+  the package. This is automatically called by `make check`
+
+4. Optionally, type `make check` to run any self-tests that come with
   the package.
 
-4. Type `make install` to install the programs and any data files and
+5. Type `make install` to install the programs and any data files and
   documentation.
 
-5. You can remove the program binaries and object files from the source
+6. You can remove the program binaries and object files from the source
   code directory by typing `make clean`.
 
 Options

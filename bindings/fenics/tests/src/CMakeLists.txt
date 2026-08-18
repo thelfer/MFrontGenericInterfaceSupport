@@ -48,7 +48,7 @@ function(test_fenics_bindings test)
       MGIS_FENICS_TEST_DATA=${PROJECT_SOURCE_DIR}/bindings/fenics/tests/data
       MGIS_TEST_BEHAVIOURS_LIBRARY=$<TARGET_FILE:BehaviourTest>
       MGIS_TEST_TFEL_VERSION=${TFEL_VERSION})
-    add_dependencies(check ${test}_fenics)
+    add_dependencies(build-tests ${test}_fenics)
   endif(CMAKE_CONFIGURATION_TYPES)
 endfunction(test_fenics_bindings)
 

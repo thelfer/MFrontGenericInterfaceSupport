@@ -287,12 +287,15 @@ if(enable-testing)
     set(ctest_args )
     list(APPEND ctest_args --output-junit ctest-results.xml) 
   endif(CMAKE_VERSION VERSION_GREATER 3.21.4)
+  add_custom_target(build-tests)
   if(CMAKE_CONFIGURATION_TYPES)
     add_custom_target(check COMMAND
-      ${CMAKE_CTEST_COMMAND} ${ctest_args} -T test -C $<CONFIGURATION>)
+      ${CMAKE_CTEST_COMMAND} ${ctest_args} -T test -C $<CONFIGURATION>
+      DEPENDS build-tests)
   else(CMAKE_CONFIGURATION_TYPES)
     add_custom_target(check COMMAND
-      ${CMAKE_CTEST_COMMAND} ${ctest_args} -T test )
+      ${CMAKE_CTEST_COMMAND} ${ctest_args} -T test
+      DEPENDS build-tests)
   endif(CMAKE_CONFIGURATION_TYPES)
 endif(enable-testing)
 
