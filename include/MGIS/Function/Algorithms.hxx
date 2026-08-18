@@ -124,16 +124,18 @@ namespace mgis::function {
    * \param[in] e: right hand side
    */
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
-            typename FunctionType,
+            ViewableFunctionArgumentConcept FunctionType,
             EvaluatorConcept EvaluatorType>
   [[nodiscard]] constexpr bool assign(AbstractErrorHandler&,
-                                      FunctionType&,
+                                      FunctionType&&,
                                       const ExecutionPolicy,
                                       const EvaluatorType)  //
       requires(
-          (internals::isEvaluatorAssignableToFunction<EvaluatorType, FunctionType>)&&(
-              (LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
-              (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)));
+          (internals::isEvaluatorAssignableToFunction<
+              EvaluatorType,
+              std::decay_t<FunctionType>>)&&  //
+          ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
+           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)));
   /*!
    * \brief assign the evaluator to a function
    * \param[in] ctx: execution context
@@ -160,12 +162,15 @@ namespace mgis::function {
    * \param[in] lhs: left hand side
    * \param[in] e: right hand side
    */
-  template <typename FunctionType, EvaluatorConcept EvaluatorType>
+  template <ViewableFunctionArgumentConcept FunctionType,
+            EvaluatorConcept EvaluatorType>
   [[nodiscard]] constexpr bool assign(AbstractErrorHandler&,
-                                      FunctionType&,
+                                      FunctionType&&,
                                       const EvaluatorType)  //
       requires(
-          (internals::isEvaluatorAssignableToFunction<EvaluatorType, FunctionType>)&&  //
+          (internals::isEvaluatorAssignableToFunction<
+              EvaluatorType,
+              std::decay_t<FunctionType>>)&&  //
           ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
            (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)));
   /*!

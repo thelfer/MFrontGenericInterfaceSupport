@@ -556,14 +556,16 @@ namespace mgis::function {
 #ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
-            typename FunctionType,
+            ViewableFunctionArgumentConcept FunctionType,
             EvaluatorConcept EvaluatorType>
   constexpr bool assign(AbstractErrorHandler& ctx,
-                        FunctionType& f,
+                        FunctionType&& f,
                         const ExecutionPolicy policy,
                         const EvaluatorType e)  //
       requires(
-          (internals::isEvaluatorAssignableToFunction<EvaluatorType, FunctionType>)&&  //
+          (internals::isEvaluatorAssignableToFunction<
+              EvaluatorType,
+              std::decay_t<FunctionType>>)&&  //
           ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
            (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>))) {
     if (!areEquivalent(getSpace(f), getSpace(e))) {
@@ -587,12 +589,15 @@ namespace mgis::function {
 
 #endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
-  template <typename FunctionType, EvaluatorConcept EvaluatorType>
+  template <ViewableFunctionArgumentConcept FunctionType,
+            EvaluatorConcept EvaluatorType>
   constexpr bool assign(AbstractErrorHandler& ctx,
-                        FunctionType& f,
+                        FunctionType&& f,
                         const EvaluatorType e)  //
       requires(
-          (internals::isEvaluatorAssignableToFunction<EvaluatorType, FunctionType>)&&  //
+          (internals::isEvaluatorAssignableToFunction<
+              EvaluatorType,
+              std::decay_t<FunctionType>>)&&  //
           ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
            (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>))) {
     if (!areEquivalent(getSpace(f), getSpace(e))) {

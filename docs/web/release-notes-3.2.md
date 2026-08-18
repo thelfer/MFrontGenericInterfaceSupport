@@ -227,16 +227,55 @@ This following code now generates a view rather than an evaluator:
 auto v = f.view() | as_array<2>;
 ~~~~
 
-In comparison, to achieve the same behaviour in Version 3.1, creation of
-an intermediate variable was required, as follows:
+> By comparison, to achieve the same behaviour in Version 3.1, creation of
+> an intermediate variable was required, as follows:
+> 
+> ~~~~{.cxx}
+> // creating an array view in Version 3.1:
+> auto f_view = f.view();
+> auto v = f_view | as_array<2>;
+> ~~~~
+
+## Temporary views can be used in "assignement" `operator|` and `assign` function
+
+In Version 3.1, "assignement" `operator|` and `assign` function did not
+accept temporaries.
+
+This behaviour has been changed in Version 3.2 which allows a more
+direct code:
 
 ~~~~{.cxx}
-// creating an array view in Version 3.1:
-auto f_view = f.view();
-auto v = f_view | as_array<2>;
+f2 | as_scalar | (f | as_scalar); // "assignement" operator|
 ~~~~
 
+or equivalently:
+
+~~~~{.cxx}
+assign(ctx, f | as_scalar, f2 | as_scalar);
+~~~~
+
+> By comparison, Version 3.1 would have forced to store the view resulting
+> from `f | as_scalar` into a temporary as follows:
+> 
+> ~~~~{.cxx}
+> auto tmp = f | as_scalar;
+> assign(ctx, tmp, f2 | as_scalar);
+> ~~~~
+
 # Issues fixed
+
+## Issue 236: [mgis-function] Allow "assignement" operator | and `assign` algorithm to work on temporary views
+￼
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/236>
+
+## Issue #233: [cmake] Add a build-tests target
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/233>
+
+## Issue 232: [mgis-function] add more constraint on the `assign` algorithm to detect if values of the function can be assigned to the values of the evaluator
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/232>
 
 ## Issue 227: [mgis-function] allow modifiers and views to take lightweigh functions views by copy, i.e. alleviate restrictions that views and modifiers can't operate on temporaries
 
