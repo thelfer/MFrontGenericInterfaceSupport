@@ -30,6 +30,72 @@
 #endif /* __cpp_lib_parallel_algorithm */
 #endif /* MGIS_USE_STL_PARALLEL_ALGORITHMS */
 
+namespace mgis::function::internals {
+
+  constexpr void assign_value(std::span<real>, const auto&);
+
+  constexpr void assign_value(std::span<real>, const std::span<const real>);
+
+  constexpr void assign_value(std::span<real>, const std::span<real>);
+
+  constexpr void assign_value(real&, const std::span<real>&);
+
+  constexpr void assign_value(real&, const std::span<const real>&);
+
+  constexpr void assign_value(real&, const std::span<real, 1u>&);
+
+  constexpr void assign_value(real&, const std::span<const real, 1u>&);
+
+  constexpr void assign_value(real&, const std::array<real, 1u>&);
+
+  constexpr void assign_value(std::array<real, 1u>&, const real);
+
+  constexpr void assign_value(std::array<real, 1u>&,
+                              const std::array<real, 1u>);
+
+  constexpr void assign_value(std::array<real, 1u>&, const std::span<real>);
+
+  constexpr void assign_value(std::array<real, 1u>&,
+                              const std::span<const real>);
+
+  constexpr void assign_value(std::array<real, 1u>&, const std::span<real, 1u>);
+
+  constexpr void assign_value(std::array<real, 1u>&,
+                              const std::span<const real, 1u>);
+
+  constexpr void assign_value(std::span<real, 1u>, const real);
+
+  constexpr void assign_value(std::span<real>, const real);
+
+  constexpr void assign_value(std::span<real>, const std::span<real, 1u>);
+
+  constexpr void assign_value(std::span<real>, const std::span<const real, 1u>);
+
+  constexpr void assign_value(std::span<real, 1u>, const std::span<real>);
+
+  constexpr void assign_value(std::span<real, 1u>, const std::span<const real>);
+
+  constexpr void assign_value(std::span<real, 1u>, const std::span<real, 1u>);
+
+  constexpr void assign_value(std::span<real, 1u>,
+                              const std::span<const real, 1u>);
+
+  constexpr void assign_value(std::span<real, 1u>, const std::array<real, 1u>&);
+
+  template <typename EvaluatorType, typename FunctionType>
+  concept isEvaluatorAssignableToFunction =
+      (EvaluatorConcept<EvaluatorType>)&&  //
+      (FunctionConcept<FunctionType>)&&    //
+      (std::same_as<function_space<FunctionType>,
+                    evaluator_space<EvaluatorType>>)&&  //
+      ((requires(function_result<FunctionType> & lhs,
+                 const evaluator_result<EvaluatorType>& rhs) { lhs = rhs; }) ||
+       (requires(function_result<FunctionType> & lhs,
+                 const evaluator_result<EvaluatorType>& rhs) {
+         assign_value(lhs, rhs);
+       }));
+}  // end of namespace mgis::function::internals
+
 namespace mgis::function {
 
 #ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
@@ -65,10 +131,9 @@ namespace mgis::function {
                                       const ExecutionPolicy,
                                       const EvaluatorType)  //
       requires(
-          ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
-           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)) &&
-          std::same_as<function_space<FunctionType>,
-                       evaluator_space<EvaluatorType>>);
+          (internals::isEvaluatorAssignableToFunction<EvaluatorType, FunctionType>)&&(
+              (LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
+              (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)));
   /*!
    * \brief assign the evaluator to a function
    * \param[in] ctx: execution context
@@ -86,6 +151,7 @@ namespace mgis::function {
       const EvaluatorType,
       const OperatorType,
       const real) requires(LinearElementSpaceConcept<evaluator_space<EvaluatorType>>);
+
 #endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
   /*!
@@ -99,10 +165,9 @@ namespace mgis::function {
                                       FunctionType&,
                                       const EvaluatorType)  //
       requires(
+          (internals::isEvaluatorAssignableToFunction<EvaluatorType, FunctionType>)&&  //
           ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
-           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)) &&
-          std::same_as<function_space<FunctionType>,
-                       evaluator_space<EvaluatorType>>);
+           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)));
   /*!
    * \brief assign the evaluator to a function
    * \param[in] ctx: execution context

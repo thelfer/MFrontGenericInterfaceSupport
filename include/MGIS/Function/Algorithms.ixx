@@ -65,10 +65,6 @@ namespace mgis::function::algorithm {
 
 namespace mgis::function::internals {
 
-  //   constexpr void assign_value(auto& lhs, const auto& rhs) {
-  //     std::copy(rhs.begin(), rhs.end(), lhs.begin());
-  //   }
-
   constexpr void assign_value(std::span<real> lhs, const auto& rhs) {
     std::copy(rhs.begin(), rhs.end(), lhs.begin());
   }
@@ -567,10 +563,9 @@ namespace mgis::function {
                         const ExecutionPolicy policy,
                         const EvaluatorType e)  //
       requires(
+          (internals::isEvaluatorAssignableToFunction<EvaluatorType, FunctionType>)&&  //
           ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
-           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)) &&
-          std::same_as<function_space<FunctionType>,
-                       evaluator_space<EvaluatorType>>) {
+           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>))) {
     if (!areEquivalent(getSpace(f), getSpace(e))) {
       return ctx.registerErrorMessage("unmatched spaces");
     }
@@ -597,10 +592,9 @@ namespace mgis::function {
                         FunctionType& f,
                         const EvaluatorType e)  //
       requires(
+          (internals::isEvaluatorAssignableToFunction<EvaluatorType, FunctionType>)&&  //
           ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
-           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)) &&
-          std::same_as<function_space<FunctionType>,
-                       evaluator_space<EvaluatorType>>) {
+           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>))) {
     if (!areEquivalent(getSpace(f), getSpace(e))) {
       return ctx.registerErrorMessage("unmatched spaces");
     }
