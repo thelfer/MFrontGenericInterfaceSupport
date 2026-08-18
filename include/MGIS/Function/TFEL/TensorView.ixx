@@ -32,14 +32,14 @@ namespace mgis::function {
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr TensorView<FunctionType, TensorType>::TensorView(
-      FunctionType& values)
+      ConstructorArgumentType values)
       : TensorView(preconditions_check, values) {}  // end of TensorView
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   template <bool doPreconditionsCheck>
   constexpr TensorView<FunctionType, TensorType>::TensorView(
       const PreconditionsCheck<doPreconditionsCheck>& pcheck,
-      FunctionType& values)
+      ConstructorArgumentType values)
       : PreconditionsChecker<TensorView>(pcheck, values),
         function(make_view(values)) {}  // end of TensorView
 

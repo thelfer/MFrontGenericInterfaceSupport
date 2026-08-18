@@ -30,7 +30,7 @@ namespace mgis::function {
   template <FunctionConcept FunctionType,
             ::tfel::math::unit::UnitConcept UnitType>
   constexpr QuantityView<FunctionType, UnitType>::QuantityView(
-      FunctionType& values)
+      ConstructorArgumentType values)
       : QuantityView(preconditions_check, values) {}  // end of QuantityView
 
   template <FunctionConcept FunctionType,
@@ -38,7 +38,7 @@ namespace mgis::function {
   template <bool doPreconditionsCheck>
   constexpr QuantityView<FunctionType, UnitType>::QuantityView(
       const PreconditionsCheck<doPreconditionsCheck>& pcheck,
-      FunctionType& values)
+      ConstructorArgumentType values)
       : PreconditionsChecker<QuantityView>(pcheck, values),
         function(make_view(values)) {}  // end of QuantityView
 

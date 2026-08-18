@@ -25,9 +25,7 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0)  //
       constexpr FixedSizeView<FunctionType, N>::FixedSizeView(
-          std::conditional_t<LightweightViewConcept<FunctionType>,
-                             FunctionType,
-                             FunctionType&> values)
+          ConstructorArgumentType values)
       : FixedSizeView(preconditions_check, values) {}  // end of FixedSizeView
 
   template <FunctionConcept FunctionType, size_type N>
@@ -35,9 +33,7 @@ namespace mgis::function {
       template <bool doPreconditionsCheck>
       constexpr FixedSizeView<FunctionType, N>::FixedSizeView(
           const PreconditionsCheck<doPreconditionsCheck>& pcheck,
-          std::conditional_t<LightweightViewConcept<FunctionType>,
-                             FunctionType,
-                             FunctionType&> values)
+          ConstructorArgumentType values)
       : PreconditionsChecker<FixedSizeView>(pcheck, values),
         function(make_view(values)) {}  // end of FixedSizeView
 

@@ -46,6 +46,11 @@ namespace mgis::function {
       : private PreconditionsChecker<QuantityView<FunctionType, UnitType>> {
     //
     using Space = function_space<FunctionType>;
+    //! \brief a simple alias used to workaround what seems to be a bug in gcc 16.x
+    using ConstructorArgumentType =
+        std::conditional_t<LightweightViewConcept<FunctionType>,
+                           FunctionType,
+                           FunctionType&>;
     /*!
      * \brief method checking that the precondition of the constructor are met.
      * \param[in] eh: error handler
@@ -57,7 +62,7 @@ namespace mgis::function {
      * \brief constructor
      * \param[in] values: function
      */
-    constexpr QuantityView(FunctionType&);
+    constexpr QuantityView(ConstructorArgumentType);
     /*!
      * \brief constructor
      * \param[in] pcheck: object stating if preconditions must be checked
@@ -65,7 +70,7 @@ namespace mgis::function {
      */
     template <bool doPreconditionsCheck>
     constexpr QuantityView(const PreconditionsCheck<doPreconditionsCheck>&,
-                           FunctionType&);
+                           ConstructorArgumentType);
     //! \brief perform consistency checks
     [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
     //! \brief return the underlying  space

@@ -37,7 +37,11 @@ namespace mgis::function {
     //! \brief value returned by non-const call operator
     using mutable_value_type =
         std::conditional_t<N == 1, real&, std::span<real, N>>;
-
+    //! \brief a simple alias used to workaround what seems to be a bug in gcc 16.x
+    using ConstructorArgumentType =
+        std::conditional_t<LightweightViewConcept<FunctionType>,
+                           FunctionType,
+                           FunctionType&>;
     /*!
      * \brief method checking that the precondition of the constructor are met.
      * \param[in] eh: error handler
@@ -50,21 +54,15 @@ namespace mgis::function {
      * \brief constructor
      * \param[in] values: function
      */
-    constexpr FixedSizeView(
-        std::conditional_t<LightweightViewConcept<FunctionType>,
-                           FunctionType,
-                           FunctionType&>);
+    constexpr FixedSizeView(ConstructorArgumentType);
     /*!
      * \brief constructor
      * \param[in] pcheck: object stating if preconditions must be checked
      * \param[in] values: function
      */
     template <bool doPreconditionsCheck>
-    constexpr FixedSizeView(
-        const PreconditionsCheck<doPreconditionsCheck>&,
-        std::conditional_t<LightweightViewConcept<FunctionType>,
-                           FunctionType,
-                           FunctionType&>);
+    constexpr FixedSizeView(const PreconditionsCheck<doPreconditionsCheck>&,
+                            ConstructorArgumentType);
     //! \brief perform consistency checks
     [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
     //! \brief return the underlying  space
