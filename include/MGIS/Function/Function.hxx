@@ -680,12 +680,14 @@ namespace mgis::function {
     [[nodiscard]] constexpr FunctionView<Space,
                                          simple_data_layout_description<N>,
                                          true>
-    view();
+    view() &;
     //! \brief return a view of the function
     [[nodiscard]] constexpr FunctionView<Space,
                                          simple_data_layout_description<N>,
                                          false>
-    view() const;
+    view() const&;
+    //
+    auto view() && = delete;
     //
     using FunctionView<Space, simple_data_layout_description<N>, true>::data;
     /*!
@@ -735,6 +737,9 @@ namespace mgis::function {
   template <LinearFunctionalSpaceConcept Space, size_type N>
   [[nodiscard]] constexpr auto view(const Function<Space, N>&);
 
+  template <LinearFunctionalSpaceConcept Space, size_type N>
+  auto view(Function<Space, N>&&) = delete;
+
   /*!
    * \brief convert a function to a immutable view
    * \param[in] f: function
@@ -742,6 +747,9 @@ namespace mgis::function {
   template <size_type N, LinearFunctionalSpaceConcept Space, size_type N2>
   [[nodiscard]] constexpr auto view(const Function<Space, N2>&)  //
       requires((N > 0) && (N != dynamic_extent) && (N == N2));
+
+  template <LinearFunctionalSpaceConcept Space, size_type N, size_type N2>
+  auto view(Function<Space, N>&&) = delete;
 
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,

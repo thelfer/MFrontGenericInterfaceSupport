@@ -37,6 +37,7 @@ namespace mgis::function {
     //! \brief value returned by non-const call operator
     using mutable_value_type =
         std::conditional_t<N == 1, real&, std::span<real, N>>;
+
     /*!
      * \brief method checking that the precondition of the constructor are met.
      * \param[in] eh: error handler
@@ -44,19 +45,26 @@ namespace mgis::function {
      */
     static constexpr bool checkPreconditions(AbstractErrorHandler&,
                                              const FunctionType&);
+
     /*!
      * \brief constructor
      * \param[in] values: function
      */
-    constexpr FixedSizeView(FunctionType&);
+    constexpr FixedSizeView(
+        std::conditional_t<LightweightViewConcept<FunctionType>,
+                           FunctionType,
+                           FunctionType&>);
     /*!
      * \brief constructor
      * \param[in] pcheck: object stating if preconditions must be checked
      * \param[in] values: function
      */
     template <bool doPreconditionsCheck>
-    constexpr FixedSizeView(const PreconditionsCheck<doPreconditionsCheck>&,
-                            FunctionType&);
+    constexpr FixedSizeView(
+        const PreconditionsCheck<doPreconditionsCheck>&,
+        std::conditional_t<LightweightViewConcept<FunctionType>,
+                           FunctionType,
+                           FunctionType&>);
     //! \brief perform consistency checks
     [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
     //! \brief return the underlying  space

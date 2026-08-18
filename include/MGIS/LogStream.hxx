@@ -22,7 +22,7 @@ namespace mgis {
    *
    * \note by default, std::cout is returned
    */
-  MGIS_EXPORT [[nodiscard]] std::ostream &getDefaultLogStream() noexcept;
+  MGIS_EXPORT MGIS_NODISCARD std::ostream &getDefaultLogStream() noexcept;
   /*!
    * \brief set the default log stream as a file.
    *
@@ -33,7 +33,7 @@ namespace mgis {
    * \note In parallel, each process shall have its own output file or call
    * `disableDefaultLogStream` except on the root process
    */
-  MGIS_EXPORT [[nodiscard]] std::pair<bool, std::string> setDefaultLogStream(
+  MGIS_EXPORT MGIS_NODISCARD std::pair<bool, std::string> setDefaultLogStream(
       std::string_view) noexcept;
   /*!
    * \brief set the default log stream from an exisiting output stream

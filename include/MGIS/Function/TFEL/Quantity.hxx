@@ -49,22 +49,21 @@ namespace mgis::function::internals {
      * \brief create a new view
      * \param[in] f: function type
      */
-    template <FunctionConcept FunctionType>
-    constexpr auto operator()(FunctionType& f) const
-        requires(number_of_components<FunctionType> == dynamic_extent
-                     ? true
-                     : 1 == number_of_components<FunctionType>) {
-      return QuantityView<FunctionType, UnitType>(f);
+    template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType>
+    constexpr auto operator()(QualifiedFunctionArgumentType&& f) const requires(
+        checkNumberOfComponentsCompatibility<QualifiedFunctionArgumentType,
+                                             1u>()) {
+      return QuantityView<std::decay_t<QualifiedFunctionArgumentType>,
+                          UnitType>(
+          std::forward<QualifiedFunctionArgumentType>(f));
     }
     /*!
      * \brief create a new modifier
      * \param[in] e: evaluator type
      */
     template <EvaluatorConcept EvaluatorType>
-    constexpr auto operator()(const EvaluatorType& e) const
-        requires(number_of_components<EvaluatorType> == dynamic_extent
-                     ? true
-                     : 1 == number_of_components<EvaluatorType>) {
+    constexpr auto operator()(const EvaluatorType& e) const requires(
+        checkEvaluatorNumberOfComponentsCompatibility<EvaluatorType, 1u>()) {
       return QuantityModifier<EvaluatorType, UnitType>(e);
     }
   };
@@ -77,14 +76,14 @@ namespace mgis::function {
   concept QuantityConcept = (::tfel::math::QuantityConcept<std::decay_t<T>>)&&(
       std::same_as<::tfel::math::base_type<std::decay_t<T>>, real>);
 
-  template <FunctionConcept FunctionType,
+  template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType,
             ::tfel::math::unit::UnitConcept UnitType>
-  constexpr auto operator|(FunctionType& f,
+  constexpr auto operator|(QualifiedFunctionArgumentType&& f,
                            const internals::quantity_modifier<UnitType>& m)  //
-      requires(number_of_components<FunctionType> == dynamic_extent
-                   ? true
-                   : 1 == number_of_components<FunctionType>) {
-    return m(f);
+      requires(internals::checkNumberOfComponentsCompatibility<
+               QualifiedFunctionArgumentType,
+               1u>()) {
+    return m(std::forward<QualifiedFunctionArgumentType>(f));
   }  // end of operator|
 
   template <::tfel::math::unit::UnitConcept UnitType>

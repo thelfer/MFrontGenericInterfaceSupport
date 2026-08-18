@@ -20,6 +20,12 @@ bibliography: bibliography.bib
 
 This version is meant to be used with `TFEL` Version 5.2.
 
+# Known incompatibilities
+
+- Modifiers in `MGIS/Function` now creates a view from a temporary view
+  rather than an evaluator. See below for details. In practice, most
+  views are also evaluators, so this shall not impact existing user code.
+
 # Documentation
 
 ## New `cmake` options
@@ -180,7 +186,7 @@ const auto e1 = f(0);
 const auto e2 = f(1);
 // e2 = {10, 20, 30, 40}
 ~~~~
-  
+
 ## `StridedCoalescedMemoryAccessCompositeTensorsView`
 
 `StridedCoalescedMemoryAccessCompositeTensorsView` allows retrieving
@@ -203,7 +209,38 @@ const auto e2 = f.get<0, tfel::math::stensor<2, real>>(1);
 // e2 = {10, 20, 30, 40}
 ~~~~
 
+## Allow modifiers to handle temporary views
+
+In Version 3.1, passing a temporary view to a modifier would create an
+evaluator. This behaviour was due to the fact that:
+
+- modifier could not operate on temporary functions (i.e. could not
+  operator on an `rvalue` in `C++`'s precise wording)
+- immutable views generally also matches the `EvaluatorConcept`, and
+  modifiers were authorized to operate on temporary evaluators
+
+In Version 3.2, modifiers are now allowed to operate on temporary views.
+This following code now generates a view rather than an evaluator:
+
+~~~~{.cxx}
+// creating an array view from an rvalue.
+auto v = f.view() | as_array<2>;
+~~~~
+
+In comparison, to achieve the same behaviour in Version 3.1, creation of
+an intermediate variable was required, as follows:
+
+~~~~{.cxx}
+// creating an array view in Version 3.1:
+auto f_view = f.view();
+auto v = f_view | as_array<2>;
+~~~~
+
 # Issues fixed
+
+## Issue 227: [mgis-function] allow modifiers and views to take lightweigh functions views by copy, i.e. alleviate restrictions that views and modifiers can't operate on temporaries
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/227>
 
 ## Issue 226: [mgis-function] make assign_value extensible to support external types
 

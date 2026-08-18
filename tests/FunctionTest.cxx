@@ -232,6 +232,7 @@ struct FunctionTest final : public tfel::tests::TestCase {
     this->test10();
     this->test11();
     this->test12();
+    this->test13();
     return this->result;
   }
 
@@ -734,6 +735,37 @@ struct FunctionTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(std::abs(v[1] - (2 * i + 2)) < eps);
     }
   }
+  void test13() {
+#ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
+    using namespace mgis;
+    using namespace mgis::function;
+    auto check_value = [](const real& a, const real b) constexpr->bool {
+      constexpr auto eps = real{1e-12};
+      auto local_abs = [](const real r) { return r > 0 ? r : -r; };
+      return local_abs(a - b) < eps;
+    };
+    constexpr auto values = []() constexpr->std::array<real, 4> {
+      auto space = BasicLinearSpace{2};
+      auto f = Function<BasicLinearSpace>{space, 2};
+      // creating an array view from an rvalue.
+      // This feature was introduced in MGIS 3.2
+      auto v = f.view() | as_array<2>;
+      v(0)[0] = 5;
+      v(0)[1] = 12;
+      v(1)[0] = -2;
+      v(1)[1] = 3;
+      const auto data = f.data();
+      std::array<real, 4> fvalues;
+      std::copy(data.begin(), data.end(), fvalues.begin());
+      return fvalues;
+    }
+    ();
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[0], 5));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[1], 12));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[2], -2));
+    TFEL_TESTS_STATIC_ASSERT(check_value(values[3], 3));
+#endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
+  }    // end of test13
 };
 
 TFEL_TESTS_GENERATE_PROXY(FunctionTest, "FunctionTest");

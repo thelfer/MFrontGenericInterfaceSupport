@@ -47,12 +47,10 @@ namespace mgis::function::internals {
     //! \brief this alias allows to match the Evaluator Modifier concept
     using Tag = ::mgis::function::EvaluatorModifierTag;
 
-    template <FunctionConcept FunctionType>
-    constexpr auto operator()(FunctionType&) const
-        requires(number_of_components<FunctionType> == dynamic_extent
-                     ? true
-                     : compile_time_size<TensorType> ==
-                           number_of_components<FunctionType>);
+    template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType>
+    constexpr auto operator()(QualifiedFunctionArgumentType&&) const requires(
+        checkNumberOfComponentsCompatibility<QualifiedFunctionArgumentType,
+                                             compile_time_size<TensorType>>());
     /*!
      * \brief create a new modifier
      * \param[in] e: evaluator type
@@ -413,13 +411,13 @@ namespace mgis::function {
       ST2toT2EvaluatorConcept<EvaluatorType> ||
       T2toT2EvaluatorConcept<EvaluatorType>;
 
-  template <FunctionConcept FunctionType, TensorConcept TensorType>
-  constexpr auto operator|(FunctionType&,
+  template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType,
+            TensorConcept TensorType>
+  constexpr auto operator|(QualifiedFunctionArgumentType&&,
                            const internals::tensor_modifier<TensorType>&)  //
-      requires(number_of_components<FunctionType> == dynamic_extent
-                   ? true
-                   : compile_time_size<TensorType> ==
-                         number_of_components<FunctionType>);
+      requires(internals::checkNumberOfComponentsCompatibility<
+               QualifiedFunctionArgumentType,
+               compile_time_size<TensorType>>());
 
   template <unsigned short N, TensorValueConcept ValueType = real>
   requires((N == 1) || (N == 2) || (N == 3))  //

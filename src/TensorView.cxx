@@ -31,4 +31,8 @@ namespace mgis::function {
                                       tfel::math::stensor<3u, mgis::real>>> ==
       6);
 
+  static_assert(
+      FunctionConcept<TensorView<Function<BasicLinearSpace>,
+                                 tfel::math::stensor<3u, mgis::real>>>);
+
 }  // end of namespace mgis::function

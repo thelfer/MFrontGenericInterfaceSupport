@@ -701,7 +701,7 @@ namespace mgis::function {
   requires(N > 0) constexpr FunctionView<Space,
                                          simple_data_layout_description<N>,
                                          true>  //
-      Function<Space, N>::view() {
+      Function<Space, N>::view() & {
     return *this;
   }  // end of view
 
@@ -709,7 +709,7 @@ namespace mgis::function {
   requires(N > 0) constexpr FunctionView<Space,
                                          simple_data_layout_description<N>,
                                          false>  //
-      Function<Space, N>::view() const {
+      Function<Space, N>::view() const& {
     if constexpr (N == dynamic_extent) {
       return FunctionView<Space, simple_data_layout_description<N>, false>(
           this->getSpace(), this->storage_values, this->getNumberOfComponents(),

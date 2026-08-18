@@ -2,6 +2,13 @@
  * \file   MGIS/ErrorBacktrace.hxx
  * \brief  This file declares the `ErrorBacktrace` class.
  * \date   04/11/2022
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_ERRORBACKTRACE_HXX
@@ -141,7 +148,7 @@ namespace mgis {
    * \param[out] e: error back trace handler
    * \param[in] l: description of the call site
    */
-  MGIS_EXPORT [[nodiscard]] InvalidResult registerExceptionInErrorBacktrace(
+  MGIS_EXPORT MGIS_NODISCARD InvalidResult registerExceptionInErrorBacktrace(
       ErrorBacktrace &,
       const std::source_location & = std::source_location::current()) noexcept;
 #else
@@ -151,8 +158,8 @@ namespace mgis {
    *
    * \param[out] e: error back trace handler
    */
-  MGIS_EXPORT [[nodiscard]] InvalidResult registerExceptionInErrorBacktrace(
-      ErrorBacktrace &) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD InvalidResult
+  registerExceptionInErrorBacktrace(ErrorBacktrace &) noexcept;
 #endif
   /*!
    * \brief a custom Lippincott-like function that extract error messages from
@@ -160,7 +167,7 @@ namespace mgis {
    *
    *\param[out] e: error back trace handler
    */
-  MGIS_EXPORT [[nodiscard]] InvalidResult
+  MGIS_EXPORT MGIS_NODISCARD InvalidResult
   registerExceptionInErrorBacktraceWithoutSourceLocation(
       ErrorBacktrace &) noexcept;
 

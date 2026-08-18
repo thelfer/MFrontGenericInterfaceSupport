@@ -42,4 +42,19 @@ namespace mgis::function {
   static_assert(EvaluatorConcept<FixedSizeView<Function<BasicLinearSpace>, 9>>);
   static_assert(FunctionConcept<FixedSizeView<Function<BasicLinearSpace>, 9>>);
 
+  static_assert(LightweightViewConcept<FunctionView<BasicLinearSpace>>);
+  static_assert(ViewableFunctionArgumentConcept<Function<BasicLinearSpace>&>);
+  static_assert(!ViewableFunctionArgumentConcept<Function<BasicLinearSpace>&&>);
+  static_assert(
+      !ViewableFunctionArgumentConcept<const Function<BasicLinearSpace>&>);
+  static_assert(
+      ViewableFunctionArgumentConcept<FunctionView<BasicLinearSpace>&>);
+  static_assert(
+      ViewableFunctionArgumentConcept<FunctionView<BasicLinearSpace>&&>);
+  static_assert(
+      !ViewableFunctionArgumentConcept<const FunctionView<BasicLinearSpace>&>);
+  static_assert(internals::checkNumberOfComponentsCompatibility<
+                FunctionView<BasicLinearSpace>&,
+                6>());
+
 }  // end of namespace mgis::function

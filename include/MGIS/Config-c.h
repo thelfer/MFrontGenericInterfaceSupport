@@ -82,12 +82,28 @@
 #endif /* LIB_MGIS_CONFIG_HXX */
 #endif /* LIB_MGIS_CONFIG_HXX */
 
+// Versions of clang prior to 18 does not support declaring an exportable
+// function nodiscard, i.e. the following declaration does not compile:
+//
+// MGIS_VISIBILITY_EXPORT [[nodiscard]] f()
+//
+// MGIS_NODISCARD is a workaround
+#if defined __clang__
+#if __clang_major__ >= 18
+#define MGIS_NODISCARD [[nodiscard]]
+#else /* __clang_major__ >= 18 */
+#define MGIS_NODISCARD
+#endif
+#else /*defined __clang__ */
+#define MGIS_NODISCARD [[nodiscard]]
+#endif
+
 #ifdef MGIS_REAL_TYPE
-/*! \brief alias to the numeric type used in the library */
-typedef MGIS_REAL_TYPE mgis_real;
+    /*! \brief alias to the numeric type used in the library */
+    typedef MGIS_REAL_TYPE mgis_real;
 #else  /* MGIS_REAL_TYPE */
-/*! \brief alias to the numeric type used in the library */
-typedef double mgis_real;
+    /*! \brief alias to the numeric type used in the library */
+    typedef double mgis_real;
 #endif /* MGIS_REAL_TYPE */
 
 //! alias to the index type type used in the library

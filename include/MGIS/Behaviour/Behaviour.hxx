@@ -169,7 +169,7 @@ namespace mgis::behaviour {
    * \param[in] h: modelling hypothesis
    * \return the behaviour description
    */
-  MGIS_EXPORT [[nodiscard]] std::optional<Behaviour> load(
+  MGIS_EXPORT MGIS_NODISCARD std::optional<Behaviour> load(
       Context &,
       const std::string &,
       const std::string &,
@@ -191,7 +191,7 @@ namespace mgis::behaviour {
    * \note: use of `std::string` rather than `mgis::string_view` is
    * meaningful here
    */
-  MGIS_EXPORT [[nodiscard]] std::optional<Behaviour> load(
+  MGIS_EXPORT MGIS_NODISCARD std::optional<Behaviour> load(
       Context &,
       const FiniteStrainBehaviourOptions &,
       const std::string &,
@@ -244,7 +244,7 @@ namespace mgis::behaviour {
    * \param[in] opts: options to select the behaviour
    * \return the behaviour description
    */
-  MGIS_EXPORT [[nodiscard]] std::optional<Behaviour> loadFromDatabase(
+  MGIS_EXPORT MGIS_NODISCARD std::optional<Behaviour> loadFromDatabase(
       Context &, const LoadFromDatabaseOptions &) noexcept;
   /*!
    * \brief load a finite strain behaviour from the database
@@ -254,7 +254,7 @@ namespace mgis::behaviour {
    * \param[in] opts: options to select the behaviour
    * \return the behaviour description
    */
-  MGIS_EXPORT [[nodiscard]] std::optional<Behaviour> loadFromDatabase(
+  MGIS_EXPORT MGIS_NODISCARD std::optional<Behaviour> loadFromDatabase(
       Context &,
       const FiniteStrainBehaviourOptions &,
       const LoadFromDatabaseOptions &) noexcept;

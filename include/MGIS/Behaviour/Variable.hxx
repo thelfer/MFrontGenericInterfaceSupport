@@ -59,14 +59,14 @@ namespace mgis::behaviour {
    * \param[in] vs: variables
    * \param[in] n: name
    */
-  MGIS_EXPORT [[nodiscard]] bool contains(const std::vector<Variable> &,
-                                          const std::string_view) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD bool contains(const std::vector<Variable> &,
+                                           const std::string_view) noexcept;
   /*!
    * \return the variable with the given name
    * \param[in] vs: variables
    * \param[in] n: name
    */
-  MGIS_EXPORT [[nodiscard]] const Variable &getVariable(
+  MGIS_EXPORT MGIS_NODISCARD const Variable &getVariable(
       const std::vector<Variable> &, const std::string_view);
   /*!
    * \return the variable with the given name
@@ -81,27 +81,27 @@ namespace mgis::behaviour {
    * \return the type of a variable from an identifier
    * \param[in] id: type identifier
    */
-  MGIS_EXPORT [[nodiscard]] Variable::Type getVariableType(const int);
+  MGIS_EXPORT MGIS_NODISCARD Variable::Type getVariableType(const int);
   /*!
    * \return a symbolic representation from a type identifier
    * \param[in] id: type identifier
    */
-  MGIS_EXPORT [[nodiscard]] std::string getVariableTypeSymbolicRepresentation(
+  MGIS_EXPORT MGIS_NODISCARD std::string getVariableTypeSymbolicRepresentation(
       const int);
   /*!
    * \return the size of a variable
    * \param[in] v: variable
    * \param[in] h: modelling hypothesis
    */
-  MGIS_EXPORT [[nodiscard]] size_type getVariableSize(const Variable &,
-                                                      const Hypothesis);
+  MGIS_EXPORT MGIS_NODISCARD size_type getVariableSize(const Variable &,
+                                                       const Hypothesis);
   /*!
    * \return the size of a variable
    * \param[in, out] ctx: execution context
    * \param[in] v: variable
    * \param[in] h: modelling hypothesis
    */
-  MGIS_EXPORT [[nodiscard]] std::optional<size_type> getVariableSize(
+  MGIS_EXPORT MGIS_NODISCARD std::optional<size_type> getVariableSize(
       Context &, const Variable &, const Hypothesis) noexcept;
   /*!
    * \return the size of an array that may contain the values described by the
@@ -109,8 +109,8 @@ namespace mgis::behaviour {
    * \param[in] vs: variables
    * \param[in] h: modelling hypothesis
    */
-  MGIS_EXPORT [[nodiscard]] size_type getArraySize(
-      const std::vector<Variable> &, const Hypothesis);
+  MGIS_EXPORT MGIS_NODISCARD size_type
+  getArraySize(const std::vector<Variable> &, const Hypothesis);
   /*!
    * \return the size of an array that may contain the values described by the
    * given array of variables
@@ -119,7 +119,7 @@ namespace mgis::behaviour {
    * \param[in] vs: variables
    * \param[in] h: modelling hypothesis
    */
-  MGIS_EXPORT [[nodiscard]] std::optional<size_type> getArraySize(
+  MGIS_EXPORT MGIS_NODISCARD std::optional<size_type> getArraySize(
       Context &, const std::vector<Variable> &, const Hypothesis) noexcept;
   /*!
    * \return the offset of the given variable for the given hypothesis
@@ -127,7 +127,7 @@ namespace mgis::behaviour {
    * \param[in] n: variable name
    * \param[in] h: modelling hypothesis
    */
-  MGIS_EXPORT [[nodiscard]] size_type getVariableOffset(
+  MGIS_EXPORT MGIS_NODISCARD size_type getVariableOffset(
       const std::vector<Variable> &, const std::string_view, const Hypothesis);
   /*!
    * \return the offset of the given variable for the given hypothesis
@@ -137,7 +137,7 @@ namespace mgis::behaviour {
    * \param[in] n: variable name
    * \param[in] h: modelling hypothesis
    */
-  MGIS_EXPORT [[nodiscard]] std::optional<size_type> getVariableOffset(
+  MGIS_EXPORT MGIS_NODISCARD std::optional<size_type> getVariableOffset(
       Context &,
       const std::vector<Variable> &,
       const std::string_view,
@@ -146,7 +146,7 @@ namespace mgis::behaviour {
    * \return the type of the given variable as a string
    * \param[in] v: variable
    */
-  MGIS_EXPORT [[nodiscard]] std::string getVariableTypeAsString(
+  MGIS_EXPORT MGIS_NODISCARD std::string getVariableTypeAsString(
       const Variable &);
 
 }  // end of namespace mgis::behaviour
