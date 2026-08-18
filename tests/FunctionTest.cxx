@@ -10,6 +10,7 @@
 #endif
 
 #include <cmath>
+#include <tuple>
 #include <memory>
 #include <cstdlib>
 #include <iostream>
@@ -233,6 +234,7 @@ struct FunctionTest final : public tfel::tests::TestCase {
     this->test11();
     this->test12();
     this->test13();
+    this->test14();
     return this->result;
   }
 
@@ -766,6 +768,31 @@ struct FunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(check_value(values[3], 3));
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }    // end of test13
+  void test14() {
+#ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
+    using namespace mgis;
+    using namespace mgis::function;
+    auto check_value = [](const real& a, const real b) constexpr->bool {
+      constexpr auto eps = real{1e-12};
+      auto local_abs = [](const real r) { return r > 0 ? r : -r; };
+      return local_abs(a - b) < eps;
+    };
+    auto ctx = Context{};
+    auto space = BasicLinearSpace{2};
+    auto f = Function<BasicLinearSpace>{space, 1};
+    auto f2 = Function<BasicLinearSpace>{space, 1};
+    auto f3 = Function<BasicLinearSpace>{space, 1};
+    std::tie(f(0)[0], f(1)[0]) = std::tuple{5, 12};
+    const auto ok = f | as_scalar | (f2 | as_scalar);
+    const auto ok2 = assign(ctx, f3 | as_scalar, f | as_scalar);
+    TFEL_TESTS_ASSERT(ok);
+    TFEL_TESTS_ASSERT(ok2);
+    TFEL_TESTS_ASSERT(check_value(f2(0)[0], 5));
+    TFEL_TESTS_ASSERT(check_value(f2(1)[0], 12));
+    TFEL_TESTS_ASSERT(check_value(f3(0)[0], 5));
+    TFEL_TESTS_ASSERT(check_value(f3(1)[0], 12));
+#endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
+  }
 };
 
 TFEL_TESTS_GENERATE_PROXY(FunctionTest, "FunctionTest");

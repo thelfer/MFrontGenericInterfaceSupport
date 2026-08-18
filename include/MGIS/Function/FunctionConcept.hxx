@@ -458,10 +458,11 @@ namespace mgis::function {
    * \param[in] e: evaluator
    * \param[in] f: function
    */
-  template <EvaluatorConcept EvaluatorType, FunctionConcept FunctionType>
-  [[nodiscard]] bool operator|(EvaluatorType, FunctionType&) requires(
+  template <EvaluatorConcept EvaluatorType,
+            ViewableFunctionArgumentConcept FunctionType>
+  [[nodiscard]] bool operator|(EvaluatorType, FunctionType&&) requires(
       std::same_as<evaluator_space<EvaluatorType>,
-                   function_space<FunctionType>>);
+                   function_space<std::decay_t<FunctionType>>>);
 #endif
 
 }  // end of namespace mgis::function
