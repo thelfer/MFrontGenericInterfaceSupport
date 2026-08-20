@@ -296,7 +296,7 @@ namespace mgis::behaviour {
    * \param[in] m: material data manager
    * \param[in] opts: options
    */
-  MGIS_EXPORT [[nodiscard]] bool save(
+  MGIS_EXPORT MGIS_NODISCARD bool save(
       Context&,
       H5::Group&,
       const MaterialDataManager&,
@@ -313,7 +313,7 @@ namespace mgis::behaviour {
    * \param[in] m: material data manager
    * \param[in] opts: options
    */
-  MGIS_EXPORT [[nodiscard]] bool restore(
+  MGIS_EXPORT MGIS_NODISCARD bool restore(
       Context&,
       MaterialDataManager&,
       const H5::Group&,

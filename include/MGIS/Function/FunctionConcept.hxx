@@ -312,6 +312,22 @@ namespace mgis::function {
          { view(f) } -> LightweightViewConcept;
        }));
 
+  template <typename FunctionType>
+  concept LightweightFunctionConcept =
+      (FunctionConcept<FunctionType>)&&(LightweightViewConcept<FunctionType>);
+
+  template <typename FunctionType>
+  concept NonLightweightFunctionConcept =
+      (FunctionConcept<FunctionType>)&&(!LightweightViewConcept<FunctionType>);
+
+  template <typename QualifiedFunctionArgumentType>
+  concept ViewableFunctionArgumentConcept =
+      (FunctionConcept<std::decay_t<QualifiedFunctionArgumentType>>)&&  //
+      (!std::is_const_v<
+          std::remove_reference_t<QualifiedFunctionArgumentType>>)&&  //
+      ((LightweightViewConcept<std::decay_t<QualifiedFunctionArgumentType>>) ||
+       (std::is_lvalue_reference_v<QualifiedFunctionArgumentType>));
+
   namespace internals {
 
     template <bool, FunctionConcept FunctionType>
@@ -338,9 +354,10 @@ namespace mgis::function {
                                          FunctionType>::type>;
 
   //! \brief an helper function to create a view when required
-  template <FunctionConcept FunctionType>
-  constexpr function_view<FunctionType> make_view(FunctionType& f) {
-    if constexpr (LightweightViewConcept<FunctionType>) {
+  template <ViewableFunctionArgumentConcept FunctionType>
+  constexpr function_view<std::decay_t<FunctionType>> make_view(
+      FunctionType&& f) {
+    if constexpr (LightweightFunctionConcept<std::decay_t<FunctionType>>) {
       return f;
     } else {
       return view(f);
@@ -419,6 +436,19 @@ namespace mgis::function {
           std::decay_t<function_result<FunctionType>>>::value;
     };
 
+    template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType,
+              size_type N>
+    [[nodiscard]] constexpr bool
+    checkNumberOfComponentsCompatibility() noexcept {
+      constexpr auto Nc =
+          number_of_components<std::decay_t<QualifiedFunctionArgumentType>>;
+      if constexpr (Nc == dynamic_extent) {
+        return true;
+      } else {
+        return N == Nc;
+      }
+    }  // end of checkNumberOfComponentsCompatibility
+
   }  // namespace internals
 
 #ifndef _MSC_VER
@@ -428,10 +458,11 @@ namespace mgis::function {
    * \param[in] e: evaluator
    * \param[in] f: function
    */
-  template <EvaluatorConcept EvaluatorType, FunctionConcept FunctionType>
-  [[nodiscard]] bool operator|(EvaluatorType, FunctionType&) requires(
+  template <EvaluatorConcept EvaluatorType,
+            ViewableFunctionArgumentConcept FunctionType>
+  [[nodiscard]] bool operator|(EvaluatorType, FunctionType&&) requires(
       std::same_as<evaluator_space<EvaluatorType>,
-                   function_space<FunctionType>>);
+                   function_space<std::decay_t<FunctionType>>>);
 #endif
 
 }  // end of namespace mgis::function
@@ -448,22 +479,20 @@ namespace mgis::function::internals {
     //! \brief this alias allows to match the Evaluator Modifier concept
     using Tag = ::mgis::function::EvaluatorModifierTag;
 
-    template <FunctionConcept FunctionType>
-    constexpr auto operator()(FunctionType& f) const
-        requires(number_of_components<FunctionType> == dynamic_extent
-                     ? true
-                     : N == number_of_components<FunctionType>) {
-      return FixedSizeView<FunctionType, N>(f);
+    template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType>
+    constexpr auto operator()(QualifiedFunctionArgumentType&& f) const requires(
+        checkNumberOfComponentsCompatibility<QualifiedFunctionArgumentType,
+                                             N>()) {
+      return FixedSizeView<std::decay_t<QualifiedFunctionArgumentType>, N>(
+          std::forward<QualifiedFunctionArgumentType>(f));
     }
     /*!
      * \brief create a new modifier
      * \param[in] e: evaluator type
      */
     template <EvaluatorConcept EvaluatorType>
-    constexpr auto operator()(const EvaluatorType& e) const
-        requires(number_of_components<EvaluatorType> == dynamic_extent
-                     ? true
-                     : N == number_of_components<EvaluatorType>) {
+    constexpr auto operator()(const EvaluatorType& e) const requires(
+        checkEvaluatorNumberOfComponentsCompatibility<EvaluatorType, N>()) {
       return FixedSizeModifier<EvaluatorType, N>(e);
     }
   };
@@ -472,13 +501,14 @@ namespace mgis::function::internals {
 
 namespace mgis::function {
 
-  template <FunctionConcept FunctionType, size_type N>
-  constexpr auto operator|(FunctionType& f,
+  template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType,
+            size_type N>
+  constexpr auto operator|(QualifiedFunctionArgumentType&& f,
                            const internals::fixed_size_modifier<N>& m)  //
-      requires(number_of_components<FunctionType> == dynamic_extent
-                   ? true
-                   : N == number_of_components<FunctionType>) {
-    return m(f);
+      requires(internals::checkNumberOfComponentsCompatibility<
+               QualifiedFunctionArgumentType,
+               N>()) {
+    return m(std::forward<QualifiedFunctionArgumentType>(f));
   }
 
   template <size_type N>

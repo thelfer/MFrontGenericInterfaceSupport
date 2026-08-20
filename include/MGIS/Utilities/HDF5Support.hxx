@@ -29,32 +29,32 @@ namespace mgis::utilities::hdf5 {
   H5::PredType getNativeType() noexcept;
   //
   template <>
-  MGIS_EXPORT [[nodiscard]] H5::PredType getNativeType<float>() noexcept;
+  MGIS_EXPORT MGIS_NODISCARD H5::PredType getNativeType<float>() noexcept;
   template <>
-  MGIS_EXPORT [[nodiscard]] H5::PredType getNativeType<double>() noexcept;
+  MGIS_EXPORT MGIS_NODISCARD H5::PredType getNativeType<double>() noexcept;
   template <>
-  MGIS_EXPORT [[nodiscard]] H5::PredType getNativeType<long double>() noexcept;
+  MGIS_EXPORT MGIS_NODISCARD H5::PredType getNativeType<long double>() noexcept;
   /*!
    * \brief check if an object with the given path exists in the given group
    * \param[in] g: group
    * \param[in] p: path
    */
-  MGIS_EXPORT [[nodiscard]] bool exists(const H5::Group&,
-                                        const std::string&) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD bool exists(const H5::Group&,
+                                         const std::string&) noexcept;
   /*!
    * \brief check if a group with the given path exists in the given given
    * \param[in] g: group
    * \param[in] p: path
    */
-  MGIS_EXPORT [[nodiscard]] bool subGroupExists(const H5::Group&,
-                                                const std::string&) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD bool subGroupExists(const H5::Group&,
+                                                 const std::string&) noexcept;
   /*!
    * \brief create a new group
    * \param[out, in] ctx: execution context
    * \param[in] g: parent group
    * \param[in] n: group name
    */
-  MGIS_EXPORT [[nodiscard]] std::optional<H5::Group> createGroup(
+  MGIS_EXPORT MGIS_NODISCARD std::optional<H5::Group> createGroup(
       Context&, const H5::Group&, const std::string&) noexcept;
   /*!
    * \brief open a new group
@@ -62,7 +62,7 @@ namespace mgis::utilities::hdf5 {
    * \param[in] g: parent group
    * \param[in] n: group name
    */
-  MGIS_EXPORT [[nodiscard]] std::optional<H5::Group> openGroup(
+  MGIS_EXPORT MGIS_NODISCARD std::optional<H5::Group> openGroup(
       Context&, const H5::Group&, const std::string&) noexcept;
   /*!
    * \brief open a data set
@@ -70,7 +70,7 @@ namespace mgis::utilities::hdf5 {
    * \param[in] g: parent group
    * \param[in] n: data set name
    */
-  MGIS_EXPORT [[nodiscard]] std::optional<H5::DataSet> openDataSet(
+  MGIS_EXPORT MGIS_NODISCARD std::optional<H5::DataSet> openDataSet(
       Context& ctx, const H5::Group&, const std::string&) noexcept;
   /*!
    * \brief remove a data set
@@ -78,15 +78,15 @@ namespace mgis::utilities::hdf5 {
    * \param[in] g: parent group
    * \param[in] n: data set name
    */
-  MGIS_EXPORT [[nodiscard]] bool removeDataSet(Context&,
-                                               const H5::Group&,
-                                               const std::string&) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD bool removeDataSet(Context&,
+                                                const H5::Group&,
+                                                const std::string&) noexcept;
   /*!
    * \param[in]  g: group
    * \param[in]  b: boolean allowing other objects than groups to be
    * inside the given group
    */
-  MGIS_EXPORT [[nodiscard]] std::optional<std::vector<std::string>>
+  MGIS_EXPORT MGIS_NODISCARD std::optional<std::vector<std::string>>
   getSubGroupNames(Context&, const H5::Group&, const bool) noexcept;
   /*!
    * \param[out, in] ctx: execution context
@@ -95,16 +95,16 @@ namespace mgis::utilities::hdf5 {
    * \param[in]  b: boolean allowing other objects than groups to be
    * inside the given group
    */
-  MGIS_EXPORT [[nodiscard]] bool getSubGroupNames(Context&,
-                                                  std::vector<std::string>&,
-                                                  const H5::Group&,
-                                                  const bool) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD bool getSubGroupNames(Context&,
+                                                   std::vector<std::string>&,
+                                                   const H5::Group&,
+                                                   const bool) noexcept;
   /*!
    * \return all the dataset names in a give group
    * \param[out, in] ctx: execution context
    * \param[in]  g: group
    */
-  MGIS_EXPORT [[nodiscard]] std::optional<std::vector<std::string>>
+  MGIS_EXPORT MGIS_NODISCARD std::optional<std::vector<std::string>>
   getDataSetNames(Context&, const H5::Group&) noexcept;
   /*!
    * \return true if the given group contains an object with the
@@ -113,7 +113,7 @@ namespace mgis::utilities::hdf5 {
    * \param[in] g: group
    * \param[in] n: name
    */
-  MGIS_EXPORT [[nodiscard]] std::optional<bool> contains(
+  MGIS_EXPORT MGIS_NODISCARD std::optional<bool> contains(
       Context&, const H5::Group&, const std::string&) noexcept;
   /*!
    * \brief delete an existing group or dataset if it exists
@@ -121,9 +121,9 @@ namespace mgis::utilities::hdf5 {
    * \param[in] g: parent group
    * \param[in] n: group or dataset name
    */
-  MGIS_EXPORT [[nodiscard]] bool unlinkIfExists(Context&,
-                                                const H5::Group&,
-                                                const std::string&) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD bool unlinkIfExists(Context&,
+                                                 const H5::Group&,
+                                                 const std::string&) noexcept;
   /*!
    * \param[out, in] ctx: execution context
    * \param g : HDF5 group
@@ -131,21 +131,21 @@ namespace mgis::utilities::hdf5 {
    * \param o : object to be written
    * \param[in]  b: allow overwrite
    */
-  MGIS_EXPORT [[nodiscard]] bool write(Context&,
-                                       H5::Group&,
-                                       const std::string&,
-                                       const real&,
-                                       const bool) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD bool write(Context&,
+                                        H5::Group&,
+                                        const std::string&,
+                                        const real&,
+                                        const bool) noexcept;
   /*!
    * \param[out, in] ctx: execution context
    * \param[out] o : object to be written
    * \param g : HDF5 group
    * \param n : name of the dataset
    */
-  MGIS_EXPORT [[nodiscard]] bool read(Context&,
-                                      real&,
-                                      const H5::Group&,
-                                      const std::string&) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD bool read(Context&,
+                                       real&,
+                                       const H5::Group&,
+                                       const std::string&) noexcept;
   /*!
    * \param[out, in] ctx: execution context
    * \param g : HDF5 group
@@ -153,31 +153,31 @@ namespace mgis::utilities::hdf5 {
    * \param o : object to be written
    * \param[in]  b: allow overwrite
    */
-  MGIS_EXPORT [[nodiscard]] bool write(Context&,
-                                       H5::Group&,
-                                       const std::string&,
-                                       std::span<const real>,
-                                       const bool) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD bool write(Context&,
+                                        H5::Group&,
+                                        const std::string&,
+                                        std::span<const real>,
+                                        const bool) noexcept;
   /*!
    * \param[out, in] ctx: execution context
    * \param[out] o : object to be read
    * \param g : HDF5 group
    * \param n : name of the dataset
    */
-  MGIS_EXPORT [[nodiscard]] bool read(Context&,
-                                      std::vector<real>&,
-                                      const H5::Group&,
-                                      const std::string&) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD bool read(Context&,
+                                       std::vector<real>&,
+                                       const H5::Group&,
+                                       const std::string&) noexcept;
   /*!
    * \param[out, in] ctx: execution context
    * \param[out] o : object to be read
    * \param g : HDF5 group
    * \param n : name of the dataset
    */
-  MGIS_EXPORT [[nodiscard]] bool read(Context&,
-                                      std::span<real>,
-                                      const H5::Group&,
-                                      const std::string&) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD bool read(Context&,
+                                       std::span<real>,
+                                       const H5::Group&,
+                                       const std::string&) noexcept;
 
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
   /*!
@@ -187,7 +187,7 @@ namespace mgis::utilities::hdf5 {
    * \param[out] e: error back trace handler
    * \param[in] l: description of the call site
    */
-  MGIS_EXPORT [[nodiscard]] InvalidResult registerH5ExceptionInErrorBacktrace(
+  MGIS_EXPORT MGIS_NODISCARD InvalidResult registerH5ExceptionInErrorBacktrace(
       ErrorBacktrace&,
       const std::source_location& = std::source_location::current()) noexcept;
 #else
@@ -198,8 +198,8 @@ namespace mgis::utilities::hdf5 {
    * \param[out] e: error back trace handler
    * \param[in] l: description of the call site
    */
-  MGIS_EXPORT [[nodiscard]] InvalidResult registerH5ExceptionInErrorBacktrace(
-      ErrorBacktrace&) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD InvalidResult
+  registerH5ExceptionInErrorBacktrace(ErrorBacktrace&) noexcept;
 #endif
   /*!
    * \brief a custom Lippincott-like function that extract error messages from
@@ -207,7 +207,7 @@ namespace mgis::utilities::hdf5 {
    *
    *\param[out] e: error back trace handler
    */
-  MGIS_EXPORT [[nodiscard]] InvalidResult
+  MGIS_EXPORT MGIS_NODISCARD InvalidResult
   registerH5ExceptionInErrorBacktraceWithoutSourceLocation(
       ErrorBacktrace&) noexcept;
 

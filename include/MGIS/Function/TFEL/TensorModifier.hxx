@@ -35,10 +35,9 @@ namespace mgis::function {
   template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
   inline constexpr bool areTensorModifierRequirementsSatisfied =
       ((isEvaluatorResultTypeMappable<EvaluatorType>)&&  //
-       (number_of_components<EvaluatorType> != dynamic_extent
-            ? compile_time_size<TensorType> ==
-                  number_of_components<EvaluatorType>
-            : true));
+       (internals::checkEvaluatorNumberOfComponentsCompatibility<
+           EvaluatorType,
+           compile_time_size<TensorType>>()));
 
   /*!
    * \brief a base class for evaluators exposing tensorial object

@@ -278,16 +278,55 @@ The `FunctionView` class matches the `FunctionEvaluator` concept (See
 Section @sec:mgis:function:overview and [this page](evaluators.html) for
 details).
 
-## Tensorial functions
+## Views
 
-### The `TensorView` class
+### Fixed-size Array functions
+
+The `view` function has a template overload taking the a size as
+argument. This overload transforms a general function into a function
+returning a fixed-size results.
+
+`view<1>` is treated a special case and the resulting function returns
+directly scalar object.
+
+### Scalar functions
+
+`as_scalar` allows to turn a generic function into a view returning a
+scalar value. In pratice, `as_scalar` generates the same view than the
+`view<1>` function.
+
+### Support for quantities
+
+Quantities is features of the [TFEL/Math
+library](https://thelfer.github.io/tfel/web/tfel-math.html#sec:tfel_math:quantities)
+which allows assigning an unit to a floating point number.
+
+`MGIS/Function` provides `as_qt` to turn a function into a view
+returning quantities.
+
+#### Example of usage
+
+~~~~{.c++}
+// make a view of a scalar function which returns a stress value
+auto s = f | as_qt<stress>;
+~~~~
+
+### Tensorial functions
 
 The `TensorView` class allows to make views which returns tensorial
-objects from functions returning data in contiguous memory.
+objects from functions returning data in contiguous memory. This
+features requires to be built with `TFEL`'s support.
 
 A `TensorView` is generally created by combining a `FunctionView` which
 a modifier such as `as_stensor` (See [this page](evaluators.html) for
 details).
+
+#### Example of usage
+
+~~~~{.c++}
+// make a view of the function return a symmetric tensor in 2D whose values are stress
+auto s = f | as_stensor<2u, stress>;
+~~~~
 
 ### The `CoalescedMemoryAccessTensorView` class
 

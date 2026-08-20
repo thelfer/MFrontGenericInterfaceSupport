@@ -65,10 +65,6 @@ namespace mgis::function::algorithm {
 
 namespace mgis::function::internals {
 
-  constexpr void assign_value(auto& lhs, const auto& rhs) {
-    std::copy(rhs.begin(), rhs.end(), lhs.begin());
-  }
-
   constexpr void assign_value(std::span<real> lhs, const auto& rhs) {
     std::copy(rhs.begin(), rhs.end(), lhs.begin());
   }
@@ -560,17 +556,18 @@ namespace mgis::function {
 #ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
-            typename FunctionType,
+            ViewableFunctionArgumentConcept FunctionType,
             EvaluatorConcept EvaluatorType>
   constexpr bool assign(AbstractErrorHandler& ctx,
-                        FunctionType& f,
+                        FunctionType&& f,
                         const ExecutionPolicy policy,
                         const EvaluatorType e)  //
       requires(
+          (internals::isEvaluatorAssignableToFunction<
+              EvaluatorType,
+              std::decay_t<FunctionType>>)&&  //
           ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
-           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)) &&
-          std::same_as<function_space<FunctionType>,
-                       evaluator_space<EvaluatorType>>) {
+           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>))) {
     if (!areEquivalent(getSpace(f), getSpace(e))) {
       return ctx.registerErrorMessage("unmatched spaces");
     }
@@ -592,15 +589,17 @@ namespace mgis::function {
 
 #endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
-  template <typename FunctionType, EvaluatorConcept EvaluatorType>
+  template <ViewableFunctionArgumentConcept FunctionType,
+            EvaluatorConcept EvaluatorType>
   constexpr bool assign(AbstractErrorHandler& ctx,
-                        FunctionType& f,
+                        FunctionType&& f,
                         const EvaluatorType e)  //
       requires(
+          (internals::isEvaluatorAssignableToFunction<
+              EvaluatorType,
+              std::decay_t<FunctionType>>)&&  //
           ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
-           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)) &&
-          std::same_as<function_space<FunctionType>,
-                       evaluator_space<EvaluatorType>>) {
+           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>))) {
     if (!areEquivalent(getSpace(f), getSpace(e))) {
       return ctx.registerErrorMessage("unmatched spaces");
     }

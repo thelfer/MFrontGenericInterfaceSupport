@@ -33,6 +33,12 @@ namespace mgis::function {
   static_assert(
       number_of_components<
           FixedSizeModifier<FunctionEvaluator<BasicLinearSpace>, 9>> == 9);
+  static_assert(internals::checkEvaluatorNumberOfComponentsCompatibility<
+                FunctionView<BasicLinearSpace>&,
+                6>());
+  static_assert(internals::checkEvaluatorNumberOfComponentsCompatibility<
+                FixedSizeModifier<FunctionEvaluator<BasicLinearSpace>, 9>,
+                9>());
 
   static_assert(EvaluatorConcept<
                 FixedSizeModifier<FunctionEvaluator<BasicLinearSpace>, 9>>);

@@ -1,0 +1,86 @@
+name: CI with TFEL and CUDA support on Ubuntu
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Install CUDA
+      uses: Jimver/cuda-toolkit@v0.2.36
+      with:
+        id: cuda-toolkit
+
+    - name: Print CUDA version
+      run: |
+        echo "Installed cuda version is: ${{steps.cuda-toolkit.outputs.cuda}}"
+        echo "Cuda install location: ${{steps.cuda-toolkit.outputs.CUDA_PATH}}"
+
+    - name: Checkout TFEL
+      uses: actions/checkout@v7
+      with:
+        repository: thelfer/tfel
+        path: tfel
+
+    - name: Checkout MGIS
+      uses: actions/checkout@v7
+      with:
+        path: mgis
+
+    - name: Install TFEL
+      run: |
+        cmake  ${{github.workspace}}/tfel                               \
+               -B ${{github.workspace}}/build-tfel                      \
+              -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                    \
+              -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-tfel
+        cmake --build ${{github.workspace}}/build-tfel --target all -j $(nproc)
+        cmake --build ${{github.workspace}}/build-tfel --target install
+
+    - name: Configure
+      run: |
+        source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
+        cmake ${{github.workspace}}/mgis                                     \
+              -B ${{github.workspace}}/build                                 \
+              -DCMAKE_BUILD_TYPE=Release                                     \
+              -Denable-c-bindings=ON                                         \
+              -Denable-fortran-bindings=ON                                   \
+              -Denable-python-bindings=OFF                                   \
+              -Denable-portable-build=ON                                     \
+              -Denable-julia-bindings=OFF                                    \
+              -Denable-parallel-stl-algorithms=OFF                           \
+              -Denable-cuda-algorithms=ON                                    \
+              -DTFEL_DIR=${{github.workspace}}/install-tfel/share/tfel/cmake \
+              -DCMAKE_CUDA_COMPILER=nvcc                                     \
+              -DCUDA_ARCHITECTURES=native
+
+    - name: Compile
+      run: |
+        source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
+        cmake --build ${{github.workspace}}/build --target all -j $(nproc)
+
+    # - name: Test
+    #   run: |
+    #     source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
+    #     cmake --build ${{github.workspace}}/build --target check -j $(nproc)
+
+    # - name: Print test log on failure
+    #   if: failure()
+    #   run: |
+    #     cat ${{github.workspace}}/build/Testing/Temporary/*.log
+
+    # - name: Publish test report
+    #   uses: mikepenz/action-junit-report@v6
+    #   if: success() || failure() # always run even if the previous step fails
+    #   with:
+    #     report_paths: '**/build/tests/*.xml'

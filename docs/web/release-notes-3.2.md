@@ -20,6 +20,12 @@ bibliography: bibliography.bib
 
 This version is meant to be used with `TFEL` Version 5.2.
 
+# Known incompatibilities
+
+- Modifiers in `MGIS/Function` now creates a view from a temporary view
+  rather than an evaluator. See below for details. In practice, most
+  views are also evaluators, so this shall not impact existing user code.
+
 # Documentation
 
 ## New `cmake` options
@@ -128,6 +134,25 @@ setExternalStateVariable(m.s1, "Temperature", T1,
 
 # New features of the `MGIS/Function` library
 
+## Support for quantities
+
+Quantities is features of the [TFEL/Math
+library](https://thelfer.github.io/tfel/web/tfel-math.html#sec:tfel_math:quantities)
+which allows assigning an unit to a floating point number.
+
+`MGIS/Function` provides `as_qt` to turn a function into a view
+returning quantities. Tensor modifiers, such as `as_stensor` now allows
+to specify a quantity as an optional argument.
+
+### Example of usage
+
+~~~~{.c++}
+// make a view of a scalar function which returns a stress value
+auto s = f | as_qt<stress>;
+// make a view of the function return a symmetric tensor in 2D whose values are stress
+auto s = f2 | as_stensor<2u, stress>;
+~~~~
+
 ## Functions using a strided memory access
 
 The following classes have been introduced:
@@ -161,7 +186,7 @@ const auto e1 = f(0);
 const auto e2 = f(1);
 // e2 = {10, 20, 30, 40}
 ~~~~
-  
+
 ## `StridedCoalescedMemoryAccessCompositeTensorsView`
 
 `StridedCoalescedMemoryAccessCompositeTensorsView` allows retrieving
@@ -184,9 +209,83 @@ const auto e2 = f.get<0, tfel::math::stensor<2, real>>(1);
 // e2 = {10, 20, 30, 40}
 ~~~~
 
+## Allow modifiers to handle temporary views
+
+In Version 3.1, passing a temporary view to a modifier would create an
+evaluator. This behaviour was due to the fact that:
+
+- modifier could not operate on temporary functions (i.e. could not
+  operator on an `rvalue` in `C++`'s precise wording)
+- immutable views generally also matches the `EvaluatorConcept`, and
+  modifiers were authorized to operate on temporary evaluators
+
+In Version 3.2, modifiers are now allowed to operate on temporary views.
+This following code now generates a view rather than an evaluator:
+
+~~~~{.cxx}
+// creating an array view from an rvalue.
+auto v = f.view() | as_array<2>;
+~~~~
+
+> By comparison, to achieve the same behaviour in Version 3.1, creation of
+> an intermediate variable was required, as follows:
+> 
+> ~~~~{.cxx}
+> // creating an array view in Version 3.1:
+> auto f_view = f.view();
+> auto v = f_view | as_array<2>;
+> ~~~~
+
+## Temporary views can be used in "assignement" `operator|` and `assign` function
+
+In Version 3.1, "assignement" `operator|` and `assign` function did not
+accept temporaries.
+
+This behaviour has been changed in Version 3.2 which allows a more
+direct code:
+
+~~~~{.cxx}
+f2 | as_scalar | (f | as_scalar); // "assignement" operator|
+~~~~
+
+or equivalently:
+
+~~~~{.cxx}
+assign(ctx, f | as_scalar, f2 | as_scalar);
+~~~~
+
+> By comparison, Version 3.1 would have forced to store the view resulting
+> from `f | as_scalar` into a temporary as follows:
+> 
+> ~~~~{.cxx}
+> auto tmp = f | as_scalar;
+> assign(ctx, tmp, f2 | as_scalar);
+> ~~~~
+
 # Issues fixed
 
-## Issue 220: [mgis-functions] Add support for `nvcc`
+## Issue 236: [mgis-function] Allow "assignement" operator | and `assign` algorithm to work on temporary views
+￼
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/236>
+
+## Issue #233: [cmake] Add a build-tests target
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/233>
+
+## Issue 232: [mgis-function] add more constraint on the `assign` algorithm to detect if values of the function can be assigned to the values of the evaluator
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/232>
+
+## Issue 227: [mgis-function] allow modifiers and views to take lightweigh functions views by copy, i.e. alleviate restrictions that views and modifiers can't operate on temporaries
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/227>
+
+## Issue 226: [mgis-function] make assign_value extensible to support external types
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/226>
+
+## Issue 220: [mgis-function] Add support for `nvcc`
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/220>
 
@@ -205,6 +304,10 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 ## Issue 200: Create environment file in the installation directory
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/200>
+
+## Issue 199: [mgis-function] add support for `TFEL/Math`'s quantities
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/199>
 
 ## Issue 196: [MGIS/Function] Add function view with strided coalesent memory access
 

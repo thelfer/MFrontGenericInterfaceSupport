@@ -3,6 +3,13 @@
  * \brief
  * \author th202608
  * \date   28/08/2025
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifdef NDEBUG
@@ -33,7 +40,6 @@ struct TensorialFunctionsTest final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("MGIS/Function", "TensorialFunctionsTests") {
   }  // end of TensorialFunctionsTest
   tfel::tests::TestResult execute() override {
-    this->test1();
     this->test1();
     this->test2();
     this->test3();

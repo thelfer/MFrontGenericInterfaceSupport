@@ -1107,7 +1107,7 @@ namespace mgis::behaviour {
     }
     if (opts.restore_mass_densities) {
       if (!s.mass_density.has_value()) {
-        s.mass_density = real{};
+        s.mass_density = MutableFieldHolder{.value = real{}};
       }
       if (!restoreScalarMutableFieldHolder(ctx, *(s.mass_density), g,
                                            "mass_density", s.n)) {

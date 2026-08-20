@@ -267,6 +267,17 @@ namespace mgis::function {
           std::decay_t<evaluator_result<EvaluatorType>>>::value;
     };
 
+    template <EvaluatorConcept EvaluatorType, size_type N>
+    [[nodiscard]] constexpr bool
+    checkEvaluatorNumberOfComponentsCompatibility() noexcept {
+      constexpr auto Nc = number_of_components<EvaluatorType>;
+      if constexpr (Nc == dynamic_extent) {
+        return true;
+      } else {
+        return N == Nc;
+      }
+    }  // end of checkEvaluatorNumberOfComponentsCompatibility
+
   }  // namespace internals
 
 }  // end of namespace mgis::function

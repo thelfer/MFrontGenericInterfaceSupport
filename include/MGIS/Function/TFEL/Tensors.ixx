@@ -79,14 +79,15 @@ namespace mgis::function::customization_points {
 namespace mgis::function::internals {
 
   template <TensorConcept TensorType>
-  template <FunctionConcept FunctionType>
-  constexpr auto tensor_modifier<TensorType>::operator()(FunctionType& f) const
-      requires(number_of_components<FunctionType> == dynamic_extent
-                   ? true
-                   : compile_time_size<TensorType> ==
-                         number_of_components<FunctionType>) {
-    return TensorView<FunctionType, TensorType>(f);
-  }
+  template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType>
+  constexpr auto tensor_modifier<TensorType>::operator()(
+      QualifiedFunctionArgumentType&& f) const
+      requires(checkNumberOfComponentsCompatibility<
+               QualifiedFunctionArgumentType,
+               compile_time_size<TensorType>>()) {
+    return TensorView<std::decay_t<QualifiedFunctionArgumentType>, TensorType>(
+        std::forward<QualifiedFunctionArgumentType>(f));
+  }  // end of operator()
 
   template <TensorConcept TensorType>
   template <EvaluatorConcept EvaluatorType>
@@ -102,14 +103,14 @@ namespace mgis::function::internals {
 
 namespace mgis::function {
 
-  template <FunctionConcept FunctionType, TensorConcept TensorType>
-  constexpr auto operator|(FunctionType& f,
+  template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType,
+            TensorConcept TensorType>
+  constexpr auto operator|(QualifiedFunctionArgumentType&& f,
                            const internals::tensor_modifier<TensorType>& m)  //
-      requires(number_of_components<FunctionType> == dynamic_extent
-                   ? true
-                   : compile_time_size<TensorType> ==
-                         number_of_components<FunctionType>) {
-    return m(f);
+      requires(internals::checkNumberOfComponentsCompatibility<
+               QualifiedFunctionArgumentType,
+               compile_time_size<TensorType>>()) {
+    return m(std::forward<QualifiedFunctionArgumentType>(f));
   }
 
 }  // end of namespace mgis::function

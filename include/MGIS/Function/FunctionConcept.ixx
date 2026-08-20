@@ -37,12 +37,18 @@ namespace mgis::function::internals {
 
 namespace mgis::function {
 
-  template <EvaluatorConcept EvaluatorType, FunctionConcept FunctionType>
-  bool operator|(EvaluatorType e, FunctionType& f) requires(
+  template <EvaluatorConcept EvaluatorType,
+            ViewableFunctionArgumentConcept FunctionType>
+  bool operator|(EvaluatorType e, FunctionType&& f) requires(
       std::same_as<evaluator_space<EvaluatorType>,
-                   function_space<FunctionType>>) {
+                   function_space<std::decay_t<FunctionType>>>) {
     Context ctx;
-    return assign(ctx, f, e);
+    if constexpr (LightweightFunctionConcept<std::decay_t<FunctionType>>) {
+      auto tmp = f; // always make a copy to allow using rvalues
+      return assign(ctx, tmp, e);
+    } else {
+      return assign(ctx, f, e);
+    }
   }  // end of operator |
 
 }  // end of namespace mgis::function

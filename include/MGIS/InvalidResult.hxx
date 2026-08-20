@@ -95,7 +95,7 @@ namespace mgis {
     //! \brief implicit conversion to std::optional<bool>
     [[nodiscard]] constexpr operator std::optional<bool>() &&noexcept;
 
-  };  // end of class InvalidResult
+  };  // end of struct InvalidResult
   /*!
    * \return if the given boolean is true
    * \param[in] b: value

@@ -46,6 +46,7 @@ if(enable-mgis-function)
     MaterialFunctionManager.cxx)
   if(MGIS_HAVE_TFEL)
     list(APPEND MFrontGenericInterface_SOURCES
+         Quantity.cxx
          TensorView.cxx
          TensorModifier.cxx)
     if(enable-mgis-function-precompiled-operations)

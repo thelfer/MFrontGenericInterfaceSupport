@@ -2,6 +2,13 @@
  * \file   MGIS/Context.hxx
  * \brief  This file declares the `Context` class
  * \date   08/02/2023
+ * \copyright (C) Copyright Thomas Helfer 2018.
+ * Use, modification and distribution are subject
+ * to one of the following licences:
+ * - GNU Lesser General Public License (LGPL), Version 3.0. (See accompanying
+ *   file LGPL-3.0.txt)
+ * - CECILL-C,  Version 1.0 (See accompanying files
+ *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
 #ifndef LIB_MGIS_CONTEXT_HXX
@@ -16,8 +23,8 @@
 #include "MGIS/LogStream.hxx"
 #include "MGIS/VerbosityLevel.hxx"
 #include "MGIS/ErrorBacktrace.hxx"
-#include "ProfilingData.hxx"
-#include "Profiling.hxx"
+#include "MGIS/ProfilingData.hxx"
+#include "MGIS/Profiling.hxx"
 
 namespace mgis {
 
@@ -109,7 +116,7 @@ namespace mgis {
      * \note when profiling is disabled, profiling sections introduce
      * almost no overhead.
      */
-    void enableProfiling(const bool b) noexcept;
+    void enableProfiling(const bool) noexcept;
 
     /*!
      * \return true if profiling is enabled, false otherwise
@@ -127,32 +134,32 @@ namespace mgis {
      * \note the returned object relies on RAII semantics:
      * timing starts during construction and stops during destruction.
      */
-    [[nodiscard]] ProfilingSection startNewProfiling(
-        std::string name,
-        bool enabled) noexcept;
+    [[nodiscard]] ProfilingSection startNewProfiling(std::string,
+                                                     bool) noexcept;
 
     /*!
      * \brief push a new profiling node into the current execution stack
      * \param[in] name: name of the profiling section
      *
-     * \note this method is meant to be called internally by the 
+     * \note this method is meant to be called internally by the
      * `Profiling` class during its construction.
      */
-    void pushProfilingNode(std::string name) noexcept;
+    void pushProfilingNode(std::string) noexcept;
 
     /*!
-     * \brief pop the current profiling node from the execution stack and accumulate time
-     * \param[in] dt: execution time of the section in seconds
+     * \brief pop the current profiling node from the execution stack and
+     * accumulate time \param[in] dt: execution time of the section in seconds
      *
-     * \note this method is meant to be called internally by the 
+     * \note this method is meant to be called internally by the
      * `Profiling` class during its destruction.
      */
-    void popProfilingNode(double dt) noexcept;
+    void popProfilingNode(double) noexcept;
 
     /*!
-     * \return the root node of the profiling results tree gathered during execution
+     * \return the root node of the profiling results tree gathered during
+     * execution
      */
-    [[nodiscard]] const ProfilingData& getProfilingResultTree() const noexcept;
+    [[nodiscard]] const ProfilingData &getProfilingResultTree() const noexcept;
 
     /*!
      * \return a failure handler
@@ -274,12 +281,13 @@ namespace mgis {
     /*!
      * \brief Keeps track of the current path in the profiling tree.
      *
-     * \note This stack does not manage memory. The lifetime and memory management of
-     * the ProfilingData nodes are strictly handled by the tree structure itself.
+     * \note This stack does not manage memory. The lifetime and memory
+     * management of the ProfilingData nodes are strictly handled by the tree
+     * structure itself.
      */
-    std::vector<ProfilingData*> profiling_stack;
+    std::vector<ProfilingData *> profiling_stack;
 
-  };  // end of class Context
+  };  // end of struct Context
 
 }  // end of namespace mgis
 
