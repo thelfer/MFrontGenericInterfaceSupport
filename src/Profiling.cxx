@@ -19,6 +19,11 @@ namespace mgis {
     }
   } // end of ProfilingSection
 
+  ProfilingSection::ProfilingSection(std::string /* name */) noexcept
+      : ctx_ptr(nullptr), 
+        active(false) {
+  } // end of legacy ProfilingSection
+
   ProfilingSection::~ProfilingSection() noexcept {
     if (this->active && this->ctx_ptr != nullptr) {
       const auto end = std::chrono::high_resolution_clock::now();

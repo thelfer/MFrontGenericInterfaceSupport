@@ -9,10 +9,22 @@
 #define MGIS_CONCAT_INNER(a, b) a##b
 #define MGIS_VARNAME() MGIS_CONCAT(mgis_timer_, __COUNTER__)
 
+/*Temporary macro to allow compiling (careful, the old CatchTimeSection(NAME) will not work)*/
+#define MGIS_CATCH_TIME_SECTION_1(NAME) \
+  mgis::ProfilingSection MGIS_VARNAME()(NAME)
+
+#define MGIS_GET_CATCH_MACRO(_1, _2, MACRO_NAME, ...) MACRO_NAME
+#define MGIS_EXPAND(x) x
+
+#define CatchTimeSection(...) \
+  MGIS_EXPAND(MGIS_GET_CATCH_MACRO(__VA_ARGS__, MGIS_CATCH_TIME_SECTION_2, MGIS_CATCH_TIME_SECTION_1)(__VA_ARGS__))
+
 #define CatchTimeSection(CTX, NAME) \
   mgis::ProfilingSection MGIS_VARNAME()(CTX, NAME, (CTX).isProfilingEnabled())
 #define CatchLocalTimeSection(CTX, NAME, IS_ENABLED) \
   mgis::ProfilingSection MGIS_VARNAME()(CTX, NAME, IS_ENABLED)
+
+
 
 namespace mgis {
 
@@ -24,6 +36,9 @@ namespace mgis {
     ProfilingSection(Context& ctx,
                      std::string name,
                      bool enabled) noexcept;
+    
+    //! \brief dummy constructor for 1-argument CatchTimeSection
+    ProfilingSection(std::string name) noexcept;
     
     //! \brief Default constructor (fallback, always inactive)
     ProfilingSection() noexcept : ctx_ptr(nullptr), active(false) {}
