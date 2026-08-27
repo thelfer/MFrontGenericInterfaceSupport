@@ -15,20 +15,22 @@
 #ifndef LIB_MGIS_FUNCTION_ALGORITHMS_HXX
 #define LIB_MGIS_FUNCTION_ALGORITHMS_HXX
 
-#include <concepts>
-#include <optional>
-#include <execution>
-#include "MGIS/Config.hxx"
-#include "MGIS/AbstractErrorHandler.hxx"
-#include "MGIS/Function/SpaceConcept.hxx"
-#include "MGIS/Function/EvaluatorConcept.hxx"
-#include "MGIS/Function/FunctionConcept.hxx"
-
 #ifdef MGIS_USE_STL_PARALLEL_ALGORITHMS
 #ifdef __cpp_lib_parallel_algorithm
 #define MGIS_HAS_STL_PARALLEL_ALGORITHMS
 #endif /* __cpp_lib_parallel_algorithm */
 #endif /* MGIS_USE_STL_PARALLEL_ALGORITHMS */
+
+#include <concepts>
+#include <optional>
+#ifdef MGIS_USE_STL_PARALLEL_ALGORITHMS
+#include <execution>
+#endif /* MGIS_USE_STL_PARALLEL_ALGORITHMS */
+#include "MGIS/Config.hxx"
+#include "MGIS/AbstractErrorHandler.hxx"
+#include "MGIS/Function/SpaceConcept.hxx"
+#include "MGIS/Function/EvaluatorConcept.hxx"
+#include "MGIS/Function/FunctionConcept.hxx"
 
 namespace mgis::function {
 
