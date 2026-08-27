@@ -23,6 +23,10 @@ The page describes the new functionalities of Version 3.1.1 of the
 
 # Issues fixed
 
+## Issue 242: [mgis-function] don't include execution if support for parallel STL algorithms is not requested, to avoid implicit dependeny to `TBB` with `gcc`
+ 
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/242>
+
 ## Issue 208: [mgis-function] Fix `Algorithms.ixx`: some captures of the element space are missing
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/208>
