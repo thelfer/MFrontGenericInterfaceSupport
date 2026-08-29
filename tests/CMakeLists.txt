@@ -94,6 +94,14 @@ macro(add_tfel_library_test name source lib)
   set_test_environment(${name})
 endmacro()
 
+# ===========================================================================
+# Simple Tests
+# ===========================================================================
+
+add_simple_test(IntegrationFailureDebugTest IntegrationFailureDebugTest.cxx)
+add_simple_test(InvalidResultTest InvalidResultTest.cxx)
+add_simple_test(ErrorBacktraceTest ErrorBacktraceTest.cxx)
+
 # =============================================================================
 # MFront Behaviour Libraries (unchanged from original)
 # =============================================================================
@@ -127,14 +135,6 @@ if(MGIS_HAVE_MFRONT_SUPPORT)
     ComputeSpeedOfSound)
 
   mfront_behaviours_check_library(ModelTest ode_rk54)
-
-  # ===========================================================================
-  # Simple Tests
-  # ===========================================================================
-
-  add_simple_test(IntegrationFailureDebugTest IntegrationFailureDebugTest.cxx)
-  add_simple_test(InvalidResultTest InvalidResultTest.cxx)
-  add_simple_test(ErrorBacktraceTest ErrorBacktraceTest.cxx)
 
   # Tests that depend on behaviour libraries
   add_library_test_with_tfel_version(LoadMaterialPropertyTest LoadMaterialPropertyTest.cxx MaterialPropertyTest)
