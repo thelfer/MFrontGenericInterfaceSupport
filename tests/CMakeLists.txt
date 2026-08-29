@@ -1,781 +1,242 @@
-STRING(REPLACE "\\;" ";" MGIS_PATH_STRING "$ENV{PATH}")
-STRING(REPLACE ";" "\\;" MGIS_PATH_STRING "${MGIS_PATH_STRING}")
+string(REPLACE "\\;" ";" MGIS_PATH_STRING "$ENV{PATH}")
+string(REPLACE ";" "\\;" MGIS_PATH_STRING "${MGIS_PATH_STRING}")
+
+# =============================================================================
+# Helper Macros
+# =============================================================================
+
+# Set Windows-specific test environment
+macro(set_test_environment test_name)
+  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    set_property(TEST ${test_name} PROPERTY
+      ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
+  endif()
+endmacro()
+
+# Add compiler flags for function tests (GNU < 14.2.0 and NVHPC)
+macro(add_function_test_flags name)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
+      target_compile_definitions(${name} PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+    endif()
+  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
+    target_compile_definitions(${name} PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
+  endif()
+endmacro()
+
+# Add a simple test executable
+macro(add_simple_test name source)
+  add_executable(${name} EXCLUDE_FROM_ALL ${source})
+  target_link_libraries(${name} PRIVATE MFrontGenericInterface)
+  add_test(NAME ${name} COMMAND ${name})
+  add_dependencies(build-tests ${name})
+  set_test_environment(${name})
+endmacro()
+
+# Add a test that depends on a library
+macro(add_library_test name source lib)
+  add_executable(${name} EXCLUDE_FROM_ALL ${source})
+  target_link_libraries(${name} PRIVATE MFrontGenericInterface)
+  add_test(NAME ${name} COMMAND ${name} "$<TARGET_FILE:${lib}>")
+  add_dependencies(build-tests ${name})
+  set_property(TEST ${name} PROPERTY DEPENDS ${lib})
+  set_test_environment(${name})
+endmacro()
+
+# Add a library test with TFEL_VERSION definition
+macro(add_library_test_with_tfel_version name source lib)
+  add_executable(${name} EXCLUDE_FROM_ALL ${source})
+  target_link_libraries(${name} PRIVATE MFrontGenericInterface)
+  target_compile_definitions(${name} PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
+  add_test(NAME ${name} COMMAND ${name} "$<TARGET_FILE:${lib}>")
+  add_dependencies(build-tests ${name})
+  set_property(TEST ${name} PROPERTY DEPENDS ${lib})
+  set_test_environment(${name})
+endmacro()
+
+# Add a test with specific behaviour
+macro(add_behaviour_test name source lib behaviour)
+  add_executable(${name} EXCLUDE_FROM_ALL ${source})
+  target_link_libraries(${name} PRIVATE MFrontGenericInterface)
+  add_test(NAME ${name} COMMAND ${name} "$<TARGET_FILE:${lib}>" "${behaviour}")
+  add_dependencies(build-tests ${name})
+  set_property(TEST ${name} PROPERTY DEPENDS ${lib})
+  set_test_environment(${name})
+endmacro()
+
+# Add a test with TFEL_VERSION definition
+macro(add_tfel_version_test name source lib behaviour)
+  add_executable(${name} EXCLUDE_FROM_ALL ${source})
+  target_link_libraries(${name} PRIVATE MFrontGenericInterface)
+  target_compile_definitions(${name} PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
+  add_test(NAME ${name} COMMAND ${name} "$<TARGET_FILE:${lib}>" "${behaviour}")
+  add_dependencies(build-tests ${name})
+  set_property(TEST ${name} PROPERTY DEPENDS ${lib})
+  set_test_environment(${name})
+endmacro()
+
+# Add a test with TFEL tests library
+macro(add_tfel_test name source)
+  add_executable(${name} EXCLUDE_FROM_ALL ${source})
+  target_link_libraries(${name} PRIVATE MFrontGenericInterface tfel::TFELTests)
+  add_test(NAME ${name} COMMAND ${name})
+  add_dependencies(build-tests ${name})
+  set_test_environment(${name})
+endmacro()
+
+# Add a test with TFEL tests library and behaviour library
+macro(add_tfel_library_test name source lib)
+  add_executable(${name} EXCLUDE_FROM_ALL ${source})
+  target_link_libraries(${name} PRIVATE MFrontGenericInterface tfel::TFELTests)
+  add_test(NAME ${name} COMMAND ${name} "$<TARGET_FILE:${lib}>")
+  add_dependencies(build-tests ${name})
+  set_property(TEST ${name} PROPERTY DEPENDS ${lib})
+  set_test_environment(${name})
+endmacro()
+
+# =============================================================================
+# MFront Behaviour Libraries (unchanged from original)
+# =============================================================================
 
 if(MGIS_HAVE_MFRONT_SUPPORT)
 
-mfront_material_properties_check_library(MaterialPropertyTest
-  MaterialPropertyBoundCheck
-  MaterialPropertyBoundCheck2
-  MaterialPropertyBoundCheck3
-  MaterialPropertyErrnoCheck
-  MaterialPropertyErrnoCheck2
-  Inconel600_YoungModulus)
+  mfront_material_properties_check_library(
+    MaterialPropertyTest
+    MaterialPropertyBoundCheck
+    MaterialPropertyBoundCheck2
+    MaterialPropertyBoundCheck3
+    MaterialPropertyErrnoCheck
+    MaterialPropertyErrnoCheck2
+    Inconel600_YoungModulus)
 
-mfront_behaviours_check_library(BehaviourTest
-  Elasticity
-  OrthotropicElasticity
-  Norton
-  NortonFailure
-  Plasticity
-  Gurson
-  BoundsCheckTest
-  ParameterTest
-  FiniteStrainSingleCrystal
-  StandardElastoViscoPlasticityPlasticityTest11
-  TensorialExternalStateVariableTest
-  InitializeFunctionTest
-  PostProcessingTest
-  ComputeSpeedOfSound)
+  mfront_behaviours_check_library(
+    BehaviourTest
+    Elasticity
+    OrthotropicElasticity
+    Norton
+    NortonFailure
+    Plasticity
+    Gurson
+    BoundsCheckTest
+    ParameterTest
+    FiniteStrainSingleCrystal
+    StandardElastoViscoPlasticityPlasticityTest11
+    TensorialExternalStateVariableTest
+    InitializeFunctionTest
+    PostProcessingTest
+    ComputeSpeedOfSound)
 
-mfront_behaviours_check_library(ModelTest
-  ode_rk54)
+  mfront_behaviours_check_library(ModelTest ode_rk54)
 
+  # ===========================================================================
+  # Simple Tests
+  # ===========================================================================
 
-#
-add_executable(IntegrationFailureDebugTest
-  EXCLUDE_FROM_ALL
-  IntegrationFailureDebugTest.cxx)
-target_link_libraries(IntegrationFailureDebugTest
-  PRIVATE MFrontGenericInterface)
+  add_simple_test(IntegrationFailureDebugTest IntegrationFailureDebugTest.cxx)
+  add_simple_test(InvalidResultTest InvalidResultTest.cxx)
+  add_simple_test(ErrorBacktraceTest ErrorBacktraceTest.cxx)
 
-add_executable(LoadMaterialPropertyTest
-  EXCLUDE_FROM_ALL
-  LoadMaterialPropertyTest.cxx)
-target_link_libraries(LoadMaterialPropertyTest
-  PRIVATE MFrontGenericInterface)
-target_compile_definitions(LoadMaterialPropertyTest
-  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
+  # Tests that depend on behaviour libraries
+  add_library_test_with_tfel_version(LoadMaterialPropertyTest LoadMaterialPropertyTest.cxx MaterialPropertyTest)
 
-add_test(NAME LoadMaterialPropertyTest
- COMMAND LoadMaterialPropertyTest
- "$<TARGET_FILE:MaterialPropertyTest>")
-add_dependencies(build-tests LoadMaterialPropertyTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST LoadMaterialPropertyTest
-    PROPERTY DEPENDS MaterialPropertyTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST LoadMaterialPropertyTest
-    PROPERTY DEPENDS MaterialPropertyTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  # Tests with TFEL_VERSION
+  add_tfel_version_test(MFrontGenericBehaviourInterfaceTest
+    MFrontGenericBehaviourInterfaceTest.cxx BehaviourTest Gurson)
+  add_tfel_version_test(MFrontGenericBehaviourInterfaceTest2
+    MFrontGenericBehaviourInterfaceTest2.cxx BehaviourTest FiniteStrainSingleCrystal)
+  add_tfel_version_test(MFrontGenericBehaviourInterfaceTest3
+    MFrontGenericBehaviourInterfaceTest3.cxx BehaviourTest FiniteStrainSingleCrystal)
+  add_tfel_version_test(BoundsCheckTest BoundsCheckTest.cxx BehaviourTest BoundsCheckTest)
+  add_tfel_version_test(ParameterTest ParameterTest.cxx BehaviourTest ParameterTest)
 
-# Test on behaviours
-
-add_executable(MFrontGenericBehaviourInterfaceTest
-  EXCLUDE_FROM_ALL
-  MFrontGenericBehaviourInterfaceTest.cxx)
-target_link_libraries(MFrontGenericBehaviourInterfaceTest
-  PRIVATE MFrontGenericInterface)
-target_compile_definitions(MFrontGenericBehaviourInterfaceTest
-  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
-
-add_executable(MFrontGenericBehaviourInterfaceTest2
-  EXCLUDE_FROM_ALL
-  MFrontGenericBehaviourInterfaceTest2.cxx)
-target_compile_definitions(MFrontGenericBehaviourInterfaceTest2
-  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
-target_link_libraries(MFrontGenericBehaviourInterfaceTest2
-  PRIVATE MFrontGenericInterface)
-
-add_executable(MFrontGenericBehaviourInterfaceTest3
-  EXCLUDE_FROM_ALL
-  MFrontGenericBehaviourInterfaceTest3.cxx)
-target_compile_definitions(MFrontGenericBehaviourInterfaceTest3
-  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
-target_link_libraries(MFrontGenericBehaviourInterfaceTest3
-  PRIVATE MFrontGenericInterface)
-
-add_executable(BoundsCheckTest
-  EXCLUDE_FROM_ALL
-  BoundsCheckTest.cxx)
-target_link_libraries(BoundsCheckTest
-  PRIVATE MFrontGenericInterface)
-target_compile_definitions(BoundsCheckTest
-  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
-
-add_executable(ParameterTest
-  EXCLUDE_FROM_ALL
-  ParameterTest.cxx)
-target_link_libraries(ParameterTest
-  PRIVATE MFrontGenericInterface)
-target_compile_definitions(ParameterTest
-  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
-
-add_executable(UpdatePolicyTest
-  EXCLUDE_FROM_ALL UpdatePolicyTest.cxx)
-target_link_libraries(UpdatePolicyTest
-	PRIVATE MFrontGenericInterface)
-
-add_executable(IntegrateTest
-  EXCLUDE_FROM_ALL IntegrateTest.cxx)
-target_link_libraries(IntegrateTest
-	PRIVATE MFrontGenericInterface)
-add_executable(IntegrateTest2
-  EXCLUDE_FROM_ALL IntegrateTest2.cxx)
-target_link_libraries(IntegrateTest2
-	PRIVATE MFrontGenericInterface)
-add_executable(IntegrateTest2b
-  EXCLUDE_FROM_ALL IntegrateTest2b.cxx)
-target_link_libraries(IntegrateTest2b
-	PRIVATE MFrontGenericInterface)
-add_executable(IntegrateTest3
-  EXCLUDE_FROM_ALL IntegrateTest3.cxx)
-target_link_libraries(IntegrateTest3
-	PRIVATE MFrontGenericInterface)
-add_executable(IntegrateTest3b
-  EXCLUDE_FROM_ALL IntegrateTest3b.cxx)
-target_link_libraries(IntegrateTest3b
-	PRIVATE MFrontGenericInterface)
-add_executable(IntegrateTest4
-  EXCLUDE_FROM_ALL IntegrateTest4.cxx)
-target_link_libraries(IntegrateTest4
-	PRIVATE MFrontGenericInterface)
-add_executable(IntegrateTest5
-  EXCLUDE_FROM_ALL IntegrateTest5.cxx)
-target_link_libraries(IntegrateTest5
-	PRIVATE MFrontGenericInterface)
-add_executable(IntegrateDebugTest
-  EXCLUDE_FROM_ALL IntegrateDebugTest.cxx)
-target_link_libraries(IntegrateDebugTest
-	PRIVATE MFrontGenericInterface)
-add_executable(RotateFunctionsTest
-  EXCLUDE_FROM_ALL RotateFunctionsTest.cxx)
-target_link_libraries(RotateFunctionsTest
-	PRIVATE MFrontGenericInterface)
-
-add_executable(ExternalStateVariableTest
-  EXCLUDE_FROM_ALL ExternalStateVariableTest.cxx)
-target_link_libraries(ExternalStateVariableTest
-	PRIVATE MFrontGenericInterface)
-target_compile_definitions(ExternalStateVariableTest
-  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
-
-add_executable(InitializeFunctionTest
-  EXCLUDE_FROM_ALL InitializeFunctionTest.cxx)
-target_link_libraries(InitializeFunctionTest
-	PRIVATE MFrontGenericInterface)
-target_compile_definitions(InitializeFunctionTest
-  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
-
-add_executable(PostProcessingTest
-  EXCLUDE_FROM_ALL PostProcessingTest.cxx)
-target_link_libraries(PostProcessingTest
-	PRIVATE MFrontGenericInterface)
-target_compile_definitions(PostProcessingTest
-  PRIVATE -DTFEL_VERSION="${TFEL_VERSION}")
-
-add_executable(ComputeSpeedOfSoundTest
-  EXCLUDE_FROM_ALL ComputeSpeedOfSoundTest.cxx)
-target_link_libraries(ComputeSpeedOfSoundTest
-	PRIVATE MFrontGenericInterface)
-
-add_executable(ComputeSpeedOfSoundTest2
-  EXCLUDE_FROM_ALL ComputeSpeedOfSoundTest2.cxx)
-target_link_libraries(ComputeSpeedOfSoundTest2
-	PRIVATE MFrontGenericInterface)
-
-add_test(NAME MFrontGenericBehaviourInterfaceTest
- COMMAND MFrontGenericBehaviourInterfaceTest
- "$<TARGET_FILE:BehaviourTest>" "Gurson")
-add_dependencies(build-tests MFrontGenericBehaviourInterfaceTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST MFrontGenericBehaviourInterfaceTest
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST MFrontGenericBehaviourInterfaceTest
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME MFrontGenericBehaviourInterfaceTest2
- COMMAND MFrontGenericBehaviourInterfaceTest2
- "$<TARGET_FILE:BehaviourTest>" "FiniteStrainSingleCrystal")
-add_dependencies(build-tests MFrontGenericBehaviourInterfaceTest2)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST MFrontGenericBehaviourInterfaceTest2
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST MFrontGenericBehaviourInterfaceTest2
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME MFrontGenericBehaviourInterfaceTest3
- COMMAND MFrontGenericBehaviourInterfaceTest3
- "$<TARGET_FILE:BehaviourTest>" "FiniteStrainSingleCrystal")
-add_dependencies(build-tests MFrontGenericBehaviourInterfaceTest3)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST MFrontGenericBehaviourInterfaceTest3
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST MFrontGenericBehaviourInterfaceTest3
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME BoundsCheckTest
- COMMAND BoundsCheckTest
- "$<TARGET_FILE:BehaviourTest>" "BoundsCheckTest")
-add_dependencies(build-tests BoundsCheckTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST BoundsCheckTest
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST BoundsCheckTest
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME ParameterTest
- COMMAND ParameterTest
- "$<TARGET_FILE:BehaviourTest>" "ParameterTest")
-add_dependencies(build-tests ParameterTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ParameterTest
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ParameterTest
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME UpdatePolicyTest
- COMMAND UpdatePolicyTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(build-tests UpdatePolicyTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST UpdatePolicyTest
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST UpdatePolicyTest
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME IntegrateTest
- COMMAND IntegrateTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(build-tests IntegrateTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME IntegrateTest2
- COMMAND IntegrateTest2 "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(build-tests IntegrateTest2)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest2
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest2
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME IntegrateTest2b
- COMMAND IntegrateTest2b "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(build-tests IntegrateTest2b)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest2b
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest2b
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME IntegrateTest3
- COMMAND IntegrateTest3 "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(build-tests IntegrateTest3)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest3
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest3
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME IntegrateTest3b
- COMMAND IntegrateTest3b "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(build-tests IntegrateTest3b)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest3b
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest3b
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME RotateFunctionsTest
- COMMAND RotateFunctionsTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(build-tests RotateFunctionsTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST RotateFunctionsTest
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST RotateFunctionsTest
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME IntegrateTest4
- COMMAND IntegrateTest4 "$<TARGET_FILE:ModelTest>")
-add_dependencies(build-tests IntegrateTest4)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest4
-    PROPERTY DEPENDS ModelTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest4
-    PROPERTY DEPENDS ModelTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME IntegrateTest5
- COMMAND IntegrateTest5 "$<TARGET_FILE:ModelTest>")
-add_dependencies(build-tests IntegrateTest5)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest5
-    PROPERTY DEPENDS ModelTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest5
-    PROPERTY DEPENDS ModelTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME IntegrationFailureDebugTest
- COMMAND IntegrationFailureDebugTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(build-tests IntegrationFailureDebugTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrationFailureDebugTest
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrationFailureDebugTest
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME IntegrateDebugTest
- COMMAND IntegrateDebugTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(build-tests IntegrateDebugTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateDebugTest
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateDebugTest
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME ExternalStateVariableTest
-  COMMAND ExternalStateVariableTest "$<TARGET_FILE:BehaviourTest>"  "TensorialExternalStateVariableTest")
-add_dependencies(build-tests ExternalStateVariableTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ExternalStateVariableTest
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ExternalStateVariableTest
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME InitializeFunctionTest
-  COMMAND InitializeFunctionTest "$<TARGET_FILE:BehaviourTest>"  "InitializeFunctionTest")
-add_dependencies(build-tests InitializeFunctionTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST InitializeFunctionTest
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST InitializeFunctionTest
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME PostProcessingTest
-  COMMAND PostProcessingTest "$<TARGET_FILE:BehaviourTest>"  "PostProcessingTest")
-add_dependencies(build-tests PostProcessingTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST PostProcessingTest
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST PostProcessingTest
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME ComputeSpeedOfSoundTest
- COMMAND ComputeSpeedOfSoundTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(build-tests ComputeSpeedOfSoundTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ComputeSpeedOfSoundTest
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ComputeSpeedOfSoundTest
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_test(NAME ComputeSpeedOfSoundTest2
- COMMAND ComputeSpeedOfSoundTest2 "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(build-tests ComputeSpeedOfSoundTest2)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ComputeSpeedOfSoundTest2
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ComputeSpeedOfSoundTest2
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  # Other behaviour tests
+  add_library_test(UpdatePolicyTest UpdatePolicyTest.cxx BehaviourTest)
+  add_library_test(IntegrateTest IntegrateTest.cxx BehaviourTest)
+  add_library_test(IntegrateTest2 IntegrateTest2.cxx BehaviourTest)
+  add_library_test(IntegrateTest2b IntegrateTest2b.cxx BehaviourTest)
+  add_library_test(IntegrateTest3 IntegrateTest3.cxx BehaviourTest)
+  add_library_test(IntegrateTest3b IntegrateTest3b.cxx BehaviourTest)
+  add_library_test(IntegrateTest4 IntegrateTest4.cxx ModelTest)
+  add_library_test(IntegrateTest5 IntegrateTest5.cxx ModelTest)
+  add_library_test(RotateFunctionsTest RotateFunctionsTest.cxx BehaviourTest)
+  add_library_test(IntegrateDebugTest IntegrateDebugTest.cxx BehaviourTest)
+  add_tfel_version_test(ExternalStateVariableTest ExternalStateVariableTest.cxx
+    BehaviourTest TensorialExternalStateVariableTest)
+  add_tfel_version_test(InitializeFunctionTest InitializeFunctionTest.cxx
+    BehaviourTest InitializeFunctionTest)
+  add_tfel_version_test(PostProcessingTest PostProcessingTest.cxx
+    BehaviourTest PostProcessingTest)
+  add_library_test(ComputeSpeedOfSoundTest ComputeSpeedOfSoundTest.cxx BehaviourTest)
+  add_library_test(ComputeSpeedOfSoundTest2 ComputeSpeedOfSoundTest2.cxx BehaviourTest)
 
 endif(MGIS_HAVE_MFRONT_SUPPORT)
 
-add_executable(InvalidResultTest
- EXCLUDE_FROM_ALL
- InvalidResultTest.cxx)
-target_link_libraries(InvalidResultTest
-  PRIVATE MFrontGenericInterface)
-add_test(NAME InvalidResultTest COMMAND InvalidResultTest)
-add_dependencies(build-tests InvalidResultTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST InvalidResultTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_executable(ErrorBacktraceTest
- EXCLUDE_FROM_ALL
- ErrorBacktraceTest.cxx)
-target_link_libraries(ErrorBacktraceTest
-  PRIVATE MFrontGenericInterface)
-add_test(NAME ErrorBacktraceTest COMMAND ErrorBacktraceTest)
-add_dependencies(build-tests ErrorBacktraceTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ErrorBacktraceTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+# ===========================================================================
+# TFEL-dependent Tests
+# ===========================================================================
 
 if(MGIS_HAVE_TFEL)
-  add_executable(ContextTest
-   EXCLUDE_FROM_ALL ContextTest.cxx)
-  target_link_libraries(ContextTest PRIVATE MFrontGenericInterface tfel::TFELTests)
-  add_test(NAME ContextTest COMMAND ContextTest)
-  add_dependencies(build-tests ContextTest)
-  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-    set_property(TEST ContextTest
-      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  add_tfel_test(ContextTest ContextTest.cxx)
+  add_tfel_test(ProfilingTest ProfilingTest.cxx)
+  add_tfel_library_test(OptionalReferenceTest OptionalReferenceTest.cxx BehaviourTest)
+  add_tfel_library_test(ConstructTest ConstructTest.cxx BehaviourTest)
+  add_tfel_library_test(InvokeTest InvokeTest.cxx BehaviourTest)
 
-  add_executable(ProfilingTest
-   EXCLUDE_FROM_ALL ProfilingTest.cxx)
-  target_link_libraries(ProfilingTest PRIVATE MFrontGenericInterface tfel::TFELTests)
-  add_test(NAME ProfilingTest COMMAND ProfilingTest)
-  add_dependencies(build-tests ProfilingTest)
-  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-    set_property(TEST ProfilingTest
-      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  add_executable(OptionalReferenceTest
-    EXCLUDE_FROM_ALL
-    OptionalReferenceTest.cxx)
-  target_link_libraries(OptionalReferenceTest
-    PRIVATE MFrontGenericInterface tfel::TFELTests)
-  add_test(NAME OptionalReferenceTest
-   COMMAND OptionalReferenceTest "$<TARGET_FILE:BehaviourTest>")
-  add_dependencies(build-tests OptionalReferenceTest)
-  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-    set_property(TEST OptionalReferenceTest
-      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  
-  add_executable(ConstructTest EXCLUDE_FROM_ALL ConstructTest.cxx)
-  target_link_libraries(ConstructTest
-    PRIVATE MFrontGenericInterface tfel::TFELTests)
-  add_test(NAME ConstructTest
-   COMMAND ConstructTest "$<TARGET_FILE:BehaviourTest>")
-  add_dependencies(build-tests ConstructTest)
-  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-    set_property(TEST ConstructTest
-      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  
-  add_executable(InvokeTest EXCLUDE_FROM_ALL InvokeTest.cxx)
-  target_link_libraries(InvokeTest
-    PRIVATE MFrontGenericInterface tfel::TFELTests)
-  add_test(NAME InvokeTest
-   COMMAND InvokeTest "$<TARGET_FILE:BehaviourTest>")
-  add_dependencies(build-tests InvokeTest)
-  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-    set_property(TEST InvokeTest
-      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  if(enable-mgis-function)
+    add_tfel_test(SharedSpaceTest SharedSpaceTest.cxx)
 
-endif(MGIS_HAVE_TFEL)
+    # Function tests with compiler-specific flags
+    add_tfel_test(FunctionTest FunctionTest.cxx)
+    add_function_test_flags(FunctionTest)
 
-if(enable-mgis-function)
+    add_tfel_test(EvaluatorsTest EvaluatorsTest.cxx)
+    add_function_test_flags(EvaluatorsTest)
 
-if(MGIS_HAVE_TFEL)
+    add_tfel_test(UniformEvaluatorsTest UniformEvaluatorsTest.cxx)
+    add_function_test_flags(UniformEvaluatorsTest)
 
-add_executable(SharedSpaceTest
- EXCLUDE_FROM_ALL
- SharedSpaceTest.cxx)
-target_link_libraries(SharedSpaceTest
-  PRIVATE MFrontGenericInterface tfel::TFELTests)
-add_test(NAME SharedSpaceTest COMMAND SharedSpaceTest)
-add_dependencies(build-tests SharedSpaceTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST SharedSpaceTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    add_tfel_test(CoalescedMemoryAccessFunctionViewTest CoalescedMemoryAccessFunctionViewTest.cxx)
+    add_function_test_flags(CoalescedMemoryAccessFunctionViewTest)
 
-add_executable(FunctionTest
- EXCLUDE_FROM_ALL
- FunctionTest.cxx)
-target_link_libraries(FunctionTest
-  PRIVATE MFrontGenericInterface tfel::TFELTests)
-add_test(NAME FunctionTest COMMAND FunctionTest)
-add_dependencies(build-tests FunctionTest)
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-    target_compile_definitions(FunctionTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
-    target_compile_definitions(FunctionTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-endif()
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST FunctionTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    add_tfel_test(StridedCoalescedMemoryAccessFunctionViewTest StridedCoalescedMemoryAccessFunctionViewTest.cxx)
+    add_function_test_flags(StridedCoalescedMemoryAccessFunctionViewTest)
 
-add_executable(EvaluatorsTest
- EXCLUDE_FROM_ALL
- EvaluatorsTest.cxx)
-target_link_libraries(EvaluatorsTest
-  PRIVATE MFrontGenericInterface tfel::TFELTests)
-add_test(NAME EvaluatorsTest COMMAND EvaluatorsTest)
-add_dependencies(build-tests EvaluatorsTest)
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-    target_compile_definitions(EvaluatorsTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
-    target_compile_definitions(EvaluatorsTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-endif()
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST EvaluatorsTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    add_tfel_test(MechanicalEvaluatorsTest MechanicalEvaluatorsTest.cxx)
+    add_function_test_flags(MechanicalEvaluatorsTest)
 
-add_executable(UniformEvaluatorsTest
- EXCLUDE_FROM_ALL
- UniformEvaluatorsTest.cxx)
-target_link_libraries(UniformEvaluatorsTest
-  PRIVATE MFrontGenericInterface tfel::TFELTests)
-add_test(NAME UniformEvaluatorsTest COMMAND UniformEvaluatorsTest)
-add_dependencies(build-tests UniformEvaluatorsTest)
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-    target_compile_definitions(UniformEvaluatorsTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
-    target_compile_definitions(UniformEvaluatorsTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-endif()
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST UniformEvaluatorsTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    add_tfel_test(QuantityFunctionTest QuantityFunctionTest.cxx)
+    add_function_test_flags(QuantityFunctionTest)
 
-add_executable(CoalescedMemoryAccessFunctionViewTest
- EXCLUDE_FROM_ALL
- CoalescedMemoryAccessFunctionViewTest.cxx)
-target_link_libraries(CoalescedMemoryAccessFunctionViewTest
-  PRIVATE MFrontGenericInterface tfel::TFELTests)
-add_test(NAME CoalescedMemoryAccessFunctionViewTest
-         COMMAND CoalescedMemoryAccessFunctionViewTest)
-add_dependencies(build-tests CoalescedMemoryAccessFunctionViewTest)
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-    target_compile_definitions(CoalescedMemoryAccessFunctionViewTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
-    target_compile_definitions(CoalescedMemoryAccessFunctionViewTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-endif()
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST CoalescedMemoryAccessFunctionViewTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    add_tfel_test(TensorialFunctionTest TensorialFunctionTest.cxx)
+    add_function_test_flags(TensorialFunctionTest)
 
-add_executable(StridedCoalescedMemoryAccessFunctionViewTest
- EXCLUDE_FROM_ALL
- StridedCoalescedMemoryAccessFunctionViewTest.cxx)
-target_link_libraries(StridedCoalescedMemoryAccessFunctionViewTest
-  PRIVATE MFrontGenericInterface tfel::TFELTests)
-add_test(NAME StridedCoalescedMemoryAccessFunctionViewTest
-         COMMAND StridedCoalescedMemoryAccessFunctionViewTest)
-add_dependencies(build-tests StridedCoalescedMemoryAccessFunctionViewTest)
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-    target_compile_definitions(StridedCoalescedMemoryAccessFunctionViewTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
-    target_compile_definitions(StridedCoalescedMemoryAccessFunctionViewTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-endif()
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST StridedCoalescedMemoryAccessFunctionViewTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    add_tfel_test(ReduceTest ReduceTest.cxx)
 
-add_executable(MechanicalEvaluatorsTest
- EXCLUDE_FROM_ALL
- MechanicalEvaluatorsTest.cxx)
-target_link_libraries(MechanicalEvaluatorsTest
-  PRIVATE MFrontGenericInterface tfel::TFELTests)
-add_test(NAME MechanicalEvaluatorsTest COMMAND MechanicalEvaluatorsTest)
-add_dependencies(build-tests MechanicalEvaluatorsTest)
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-    target_compile_definitions(MechanicalEvaluatorsTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
-    target_compile_definitions(MechanicalEvaluatorsTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-endif()
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST MechanicalEvaluatorsTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    # MaterialFunctionManagerTest - executable created here, test registered conditionally
+    add_executable(MaterialFunctionManagerTest EXCLUDE_FROM_ALL MaterialFunctionManagerTest.cxx)
+    target_link_libraries(MaterialFunctionManagerTest PRIVATE MFrontGenericInterface tfel::TFELTests)
+    add_dependencies(build-tests MaterialFunctionManagerTest)
+    set_test_environment(MaterialFunctionManagerTest)
 
-add_executable(QuantityFunctionTest
- EXCLUDE_FROM_ALL
- QuantityFunctionTest.cxx)
-target_link_libraries(QuantityFunctionTest
-  PRIVATE MFrontGenericInterface tfel::TFELTests)
-add_test(NAME QuantityFunctionTest COMMAND QuantityFunctionTest)
-add_dependencies(build-tests QuantityFunctionTest)
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-    target_compile_definitions(QuantityFunctionTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
-    target_compile_definitions(QuantityFunctionTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-endif()
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST QuantityFunctionTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    if(enable-cuda-algorithms)
+      add_executable(FunctionTest-cuda EXCLUDE_FROM_ALL FunctionTest-cuda.cu)
+      target_compile_options(FunctionTest-cuda PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:${MGIS_CUDA_FLAGS}>)
+      target_link_libraries(FunctionTest-cuda PRIVATE MFrontGenericInterface tfel::TFELTests)
+      add_test(NAME FunctionTest-cuda COMMAND FunctionTest-cuda "$<TARGET_FILE:BehaviourTest>")
+      add_dependencies(build-tests FunctionTest-cuda)
+      set_property(TEST FunctionTest-cuda PROPERTY DEPENDS BehaviourTest)
+      set_test_environment(FunctionTest-cuda)
+    endif()
 
-add_executable(TensorialFunctionTest
- EXCLUDE_FROM_ALL
- TensorialFunctionTest.cxx)
-target_link_libraries(TensorialFunctionTest
-  PRIVATE MFrontGenericInterface tfel::TFELTests)
-add_test(NAME TensorialFunctionTest COMMAND TensorialFunctionTest)
-add_dependencies(build-tests TensorialFunctionTest)
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-    target_compile_definitions(TensorialFunctionTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-  endif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.2.0)
-endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
-    target_compile_definitions(TensorialFunctionTest
-       PRIVATE MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS)
-endif()
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST TensorialFunctionTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    if(MGIS_HAVE_MFRONT_SUPPORT)
+      add_test(NAME MaterialFunctionManagerTest
+        COMMAND MaterialFunctionManagerTest "$<TARGET_FILE:BehaviourTest>")
+      set_property(TEST MaterialFunctionManagerTest PROPERTY DEPENDS BehaviourTest)
+    endif()
+  endif(enable-mgis-function)
 
-add_executable(ReduceTest
- EXCLUDE_FROM_ALL
- ReduceTest.cxx)
-target_link_libraries(ReduceTest
-  PRIVATE MFrontGenericInterface tfel::TFELTests)
-add_test(NAME ReduceTest COMMAND ReduceTest)
-add_dependencies(build-tests ReduceTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ReduceTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-add_executable(MaterialFunctionManagerTest
-  EXCLUDE_FROM_ALL MaterialFunctionManagerTest.cxx)
-target_link_libraries(MaterialFunctionManagerTest
-	PRIVATE MFrontGenericInterface tfel::TFELTests)
-
-if(enable-cuda-algorithms)
-  add_executable(FunctionTest-cuda
-    EXCLUDE_FROM_ALL
-    FunctionTest-cuda.cu)
-  target_compile_options(FunctionTest-cuda
-    PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:${MGIS_CUDA_FLAGS}>)
-  target_link_libraries(FunctionTest-cuda
-    PRIVATE MFrontGenericInterface tfel::TFELTests)
-  add_test(NAME FunctionTest-cuda
-   COMMAND FunctionTest-cuda "$<TARGET_FILE:BehaviourTest>")
-  add_dependencies(build-tests FunctionTest-cuda)
-  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-    set_property(TEST FunctionTest-cuda
-      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-endif(enable-cuda-algorithms)
-
-if(MGIS_HAVE_MFRONT_SUPPORT)
-
-add_test(NAME MaterialFunctionManagerTest
- COMMAND MaterialFunctionManagerTest "$<TARGET_FILE:BehaviourTest>")
-add_dependencies(build-tests MaterialFunctionManagerTest)
-if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST MaterialFunctionManagerTest
-    PROPERTY DEPENDS BehaviourTest
-    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST MaterialFunctionManagerTest
-    PROPERTY DEPENDS BehaviourTest)
-endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-endif(MGIS_HAVE_MFRONT_SUPPORT)
-
-if(MGIS_HDF5_SUPPORT)
-
-  add_executable(HDF5Test EXCLUDE_FROM_ALL HDF5Test.cxx)
-  target_link_libraries(HDF5Test PRIVATE MFrontGenericInterface)
-  add_test(NAME HDF5Test
-   COMMAND HDF5Test "$<TARGET_FILE:BehaviourTest>")
-  add_dependencies(build-tests HDF5Test)
-  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-    set_property(TEST HDF5Test
-      PROPERTY DEPENDS BehaviourTest
-      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;${MGIS_PATH_STRING}")
-  else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-    set_property(TEST HDF5Test
-      PROPERTY DEPENDS BehaviourTest)
-  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-endif(MGIS_HDF5_SUPPORT)
+  if(MGIS_HDF5_SUPPORT)
+    add_library_test(HDF5Test HDF5Test.cxx BehaviourTest)
+  endif()
 
 endif(MGIS_HAVE_TFEL)
-
-endif(enable-mgis-function)
