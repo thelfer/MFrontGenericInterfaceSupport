@@ -27,6 +27,7 @@
 #endif /* MGIS_HAVE_HDF5 */
 
 #include "MGIS/Config.hxx"
+#include "MGIS/Context.hxx"
 #include "MGIS/StorageMode.hxx"
 
 #ifdef MGIS_FUNCTION_SUPPORT
