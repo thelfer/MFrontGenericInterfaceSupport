@@ -19,6 +19,7 @@
 #include <vector>
 #include <variant>
 #include <utility>
+#include <string_view>
 #include <type_traits>
 #include "MGIS/Config.hxx"
 #include "MGIS/InvalidResult.hxx"
@@ -33,6 +34,8 @@ namespace mgis {
    * by the standard library (exceptions, `std::error_code`, etc...)
    */
   struct MGIS_EXPORT ErrorBacktrace : AbstractErrorHandler {
+    //! brief a simple alias
+    using TerminateHandler = void (*)(std::string_view);
     //! brief a simple alias
     using ErrorReportFunction = std::string (*)(const int);
     /*!
@@ -50,11 +53,32 @@ namespace mgis {
      */
     using ErrorReport = std::
         variant<const char *, std::pair<int, ErrorReportFunction>, std::string>;
+    /*!
+     * \brief specify a new terminate handler
+     * \param[in] h: handler
+     */
+    static void setTerminateHandler(TerminateHandler &) noexcept;
     //! \brief specify if error reporting shall be fatal
     static void setErrorReportingAsFatal() noexcept;
     //! \brief specify if error reporting shall be fatal
     static void unsetErrorReportingAsFatal() noexcept;
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
+    /*!
+     * \brief terminate the excution after displaying the given error message
+     * \param[in] e: error message
+     * \param[in] l: description of the call site
+     */
+    [[noreturn]] void terminate(
+        const char *const,
+        const std::source_location & = std::source_location::current());
+    /*!
+     * \brief terminate the excution after displaying the given error message
+     * \param[in] e: error code
+     * \param[in] l: description of the call site
+     */
+    [[noreturn]] void terminate(
+        const ErrorReport,
+        const std::source_location & = std::source_location::current());
     /*!
      * \brief register a new error message
      * \param[in] e: error message
@@ -75,6 +99,21 @@ namespace mgis {
         const std::source_location & =
             std::source_location::current()) noexcept;
 #else
+    /*!
+     * \brief terminate the excution after displaying the given error message
+     * \param[in] e: error message
+     */
+    [[noreturn]] void terminate(const char *const);
+    /*!
+     * \brief terminate the excution after displaying the given error message
+     * \param[in] e: error code
+     */
+    [[noreturn]] void terminate(const ErrorReport);
+    /*!
+     * \brief register a new error message
+     * \param[in] e: error message
+     * \note for convenience, this method always return an invalid object
+     */
     [[nodiscard]] InvalidResult registerErrorMessage(const char *const) final;
     /*!
      * \brief register a new error message
@@ -135,7 +174,9 @@ namespace mgis {
     //! name, line number)
     [[nodiscard]] std::string getRawErrorMessage_() const noexcept;
     //! \brief treat the case when error reporting is fatal
-    void treatFatalCase_() const noexcept;
+    void treatFatalCase() const;
+    //! \brief call the terminate handler
+    [[noreturn]] void terminate() const;
     //! \brief list of registered error message
     std::vector<ErrorMessage> error_messages;
   };  // end of ErrorBacktrace

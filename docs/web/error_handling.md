@@ -94,6 +94,15 @@ violation. This behaviour can be changed by passing
 
 The `Context` class is used for standard error management.
 
+### Terminating the program
+
+`Context::terminate` allows to terminate the program. This shall only be
+used when an internal error is detected, for instance when an invariant
+of the code is not respected. This method calls the terminal handler
+registred by `Context::setTerminateHandler`. The default terminate
+handler prints the current error stack on `std::cerr` and calls
+`std::terminate`.
+
 ### Reporting error to end-user
 
 The `Context` class inherits from the `ErrorBacktrace` class, which has

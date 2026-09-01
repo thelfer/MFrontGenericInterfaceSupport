@@ -45,7 +45,8 @@ namespace mgis::function {
                             number_of_components<FunctionType>);
     //
     using Space = function_space<FunctionType>;
-    //! \brief a simple alias used to workaround what seems to be a bug in gcc 16.x
+    //! \brief a simple alias used to workaround what seems to be a bug in
+    //! gcc 16.x
     using ConstructorArgumentType =
         std::conditional_t<LightweightViewConcept<FunctionType>,
                            FunctionType,

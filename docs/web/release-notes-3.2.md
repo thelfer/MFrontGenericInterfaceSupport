@@ -264,10 +264,13 @@ assign(ctx, f | as_scalar, f2 | as_scalar);
 
 # Issues fixed
 
+## Issue 248: Add `ErrorBacktrace::terminate` 
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/248>
+
 ## Issue 245: Add an overload of `isInvalid` for taking an `InvalidResult` as argument
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/245>
-
 
 ## Issue 244: Avoid repeating `Context` object in `construct`, `make_unique` or `make_shared` (and siblings) when the constructor takes a `Context` as first argument`
 

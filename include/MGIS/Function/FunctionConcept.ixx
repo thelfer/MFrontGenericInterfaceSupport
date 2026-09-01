@@ -44,7 +44,7 @@ namespace mgis::function {
                    function_space<std::decay_t<FunctionType>>>) {
     Context ctx;
     if constexpr (LightweightFunctionConcept<std::decay_t<FunctionType>>) {
-      auto tmp = f; // always make a copy to allow using rvalues
+      auto tmp = f;  // always make a copy to allow using rvalues
       return assign(ctx, tmp, e);
     } else {
       return assign(ctx, f, e);

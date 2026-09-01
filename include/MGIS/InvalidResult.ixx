@@ -63,15 +63,14 @@ namespace mgis {
     return internal::InvalidValueTraits<Type>::getValue();
   }  // end of operator Type
 
-  constexpr InvalidResult::operator std::optional<bool>()
-      &&noexcept {
+  constexpr InvalidResult::operator std::optional<bool>() &&noexcept {
     return {};
   }  // end of operator std::optional<bool>
 
   constexpr bool isInvalid(const InvalidResult &) noexcept {
     return true;
   }  // end of is Invalid
-  
+
   constexpr bool isInvalid(const bool b) noexcept {
     return !b;
   }  // end of is Invalid
