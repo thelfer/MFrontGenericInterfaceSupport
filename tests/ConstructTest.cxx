@@ -19,6 +19,16 @@
 #include "TFEL/Tests/TestManager.hxx"
 #include "MGIS/Utilities/Construct.hxx"
 
+struct BuidableWithContext{
+  BuidableWithContext(::mgis::Context &){};
+}; // end of BuidableWithContext
+
+struct BuidableWithAndWithoutContext{
+  BuidableWithAndWithoutContext(::mgis::Context &) noexcept : build_with_context(true){};
+  BuidableWithAndWithoutContext() noexcept {};
+  bool build_with_context = false;
+}; // end of BuidableWithContext
+
 struct ConstructTest final : public tfel::tests::TestCase {
   ConstructTest()
       : tfel::tests::TestCase("MGIS/Utilities", "ConstructTests") {
@@ -29,6 +39,8 @@ struct ConstructTest final : public tfel::tests::TestCase {
     this->test3();
     this->test4();
     this->test5();
+    this->test6();
+    this->test7();
     return this->result;
   }  // end of execute
 
@@ -187,6 +199,26 @@ struct ConstructTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(!try_make_unique(true));
     TFEL_TESTS_ASSERT(try_make_shared(false));
     TFEL_TESTS_ASSERT(!try_make_shared(true));
+  }
+
+  void test6() {
+    using namespace mgis;
+    auto ctx = Context{};
+    auto o = construct<BuidableWithContext>(ctx);
+    TFEL_TESTS_ASSERT(isValid(o));
+    auto po = make_unique<BuidableWithContext>(ctx);
+    TFEL_TESTS_ASSERT(isValid(po));
+  } // end of test6
+
+  void test7() {
+    using namespace mgis;
+    auto ctx = Context{};
+    auto o = construct<BuidableWithAndWithoutContext>(ctx);
+    TFEL_TESTS_ASSERT(isValid(o));
+    TFEL_TESTS_CHECK_EQUAL(o->build_with_context, true);
+    auto po = make_unique<BuidableWithAndWithoutContext>(ctx);
+    TFEL_TESTS_ASSERT(isValid(po));
+    TFEL_TESTS_CHECK_EQUAL(po->build_with_context, true);
   }
 };
 

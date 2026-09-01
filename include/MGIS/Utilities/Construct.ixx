@@ -8,14 +8,14 @@
 #ifndef LIB_MGIS_UTILITIES_CONSTRUCT_IXX
 #define LIB_MGIS_UTILITIES_CONSTRUCT_IXX
 
-namespace mgis {
+namespace mgis::internals {
 
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
 
   template <typename Type, typename... ArgumentsTypes>
-  std::optional<Type> construct(Context &ctx,
-                                const std::source_location &l,
-                                ArgumentsTypes &&...args) noexcept requires
+  std::optional<Type> construct_impl(Context &ctx,
+                                     const std::source_location &l,
+                                     ArgumentsTypes &&...args) noexcept requires
       std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...> {
     using NonConstType = std::remove_const_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
@@ -32,9 +32,10 @@ namespace mgis {
   }  // end of construct
 
   template <typename Type, typename... ArgumentsTypes>
-  std::unique_ptr<Type> make_unique(Context &ctx,
-                                    const std::source_location &l,
-                                    ArgumentsTypes &&...args) noexcept requires
+  std::unique_ptr<Type> make_unique_impl(
+      Context &ctx,
+      const std::source_location &l,
+      ArgumentsTypes &&...args) noexcept requires
       std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...> {
     using NonConstType = std::remove_const_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
@@ -51,10 +52,11 @@ namespace mgis {
   }  // end of make_unique
 
   template <typename BaseType, typename Type, typename... ArgumentsTypes>
-  std::unique_ptr<BaseType> make_unique_as(Context &ctx,
-                                           const std::source_location &l,
-                                           ArgumentsTypes &&...args) noexcept
-      requires std::is_base_of_v<BaseType, Type> &&
+  std::unique_ptr<BaseType> make_unique_as_impl(
+      Context &ctx,
+      const std::source_location &l,
+      ArgumentsTypes &&...args) noexcept requires
+      std::is_base_of_v<BaseType, Type> &&
       std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...> {
     using NonConstType = std::remove_const_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
@@ -73,9 +75,10 @@ namespace mgis {
   }  // end of make_unique_as
 
   template <typename Type, typename... ArgumentsTypes>
-  std::shared_ptr<Type> make_shared(Context &ctx,
-                                    const std::source_location &l,
-                                    ArgumentsTypes &&...args) noexcept requires
+  std::shared_ptr<Type> make_shared_impl(
+      Context &ctx,
+      const std::source_location &l,
+      ArgumentsTypes &&...args) noexcept requires
       std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...> {
     using NonConstType = std::remove_const_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
@@ -92,10 +95,11 @@ namespace mgis {
   }  // end of make_shared
 
   template <typename BaseType, typename Type, typename... ArgumentsTypes>
-  std::shared_ptr<BaseType> make_shared_as(Context &ctx,
-                                           const std::source_location &l,
-                                           ArgumentsTypes &&...args) noexcept
-      requires std::is_base_of_v<BaseType, Type> &&
+  std::shared_ptr<BaseType> make_shared_as_impl(
+      Context &ctx,
+      const std::source_location &l,
+      ArgumentsTypes &&...args) noexcept requires
+      std::is_base_of_v<BaseType, Type> &&
       std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...> {
     using NonConstType = std::remove_const_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
@@ -116,8 +120,8 @@ namespace mgis {
 #endif /* MGIS_USE_SOURCE_LOCATION_INFORMATION */
 
   template <typename Type, typename... ArgumentsTypes>
-  std::optional<Type> construct(Context &ctx,
-                                ArgumentsTypes &&...args) noexcept requires
+  std::optional<Type> construct_impl(Context &ctx,
+                                     ArgumentsTypes &&...args) noexcept requires
       std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...> {
     using NonConstType = std::remove_const_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
@@ -135,8 +139,8 @@ namespace mgis {
   }  // end of construct
 
   template <typename Type, typename... ArgumentsTypes>
-  std::unique_ptr<Type> make_unique(Context &ctx,
-                                    ArgumentsTypes &&...args) noexcept requires
+  std::unique_ptr<Type> make_unique_impl(
+      Context &ctx, ArgumentsTypes &&...args) noexcept requires
       std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...> {
     using NonConstType = std::remove_const_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
@@ -154,9 +158,9 @@ namespace mgis {
   }  // end of make_unique
 
   template <typename BaseType, typename Type, typename... ArgumentsTypes>
-  std::unique_ptr<BaseType> make_unique_as(Context &ctx,
-                                           ArgumentsTypes &&...args) noexcept
-      requires std::is_base_of_v<BaseType, Type> &&
+  std::unique_ptr<BaseType> make_unique_as_impl(
+      Context &ctx, ArgumentsTypes &&...args) noexcept requires
+      std::is_base_of_v<BaseType, Type> &&
       std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...> {
     using NonConstType = std::remove_const_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
@@ -176,8 +180,8 @@ namespace mgis {
   }  // end of make_unique_as
 
   template <typename Type, typename... ArgumentsTypes>
-  std::shared_ptr<Type> make_shared(Context &ctx,
-                                    ArgumentsTypes &&...args) noexcept requires
+  std::shared_ptr<Type> make_shared_impl(
+      Context &ctx, ArgumentsTypes &&...args) noexcept requires
       std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...> {
     using NonConstType = std::remove_const_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
@@ -195,9 +199,9 @@ namespace mgis {
   }  // end of make_shared
 
   template <typename BaseType, typename Type, typename... ArgumentsTypes>
-  std::shared_ptr<BaseType> make_shared_as(Context &ctx,
-                                           ArgumentsTypes &&...args) noexcept
-      requires std::is_base_of_v<BaseType, Type> &&
+  std::shared_ptr<BaseType> make_shared_as_impl(
+      Context &ctx, ArgumentsTypes &&...args) noexcept requires
+      std::is_base_of_v<BaseType, Type> &&
       std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...> {
     using NonConstType = std::remove_const_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
@@ -216,6 +220,162 @@ namespace mgis {
     }
   }  // end of make_shared_as
 
-}  // namespace mgis
+}  // namespace mgis::internals
+
+namespace mgis {
+
+#ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
+
+  template <typename Type, typename... ArgumentsTypes>
+  std::optional<Type> construct(Context &ctx,
+                                const std::source_location &l,
+                                ArgumentsTypes &&...args) noexcept
+      requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...> {
+    if constexpr (::mgis::internals::is_constructible_with_context<
+                      Type, ArgumentsTypes...>) {
+      return ::mgis::internals::construct_impl<Type>(
+          ctx, l, ctx, std::forward<ArgumentsTypes>(args)...);
+    } else {
+      return ::mgis::internals::construct_impl<Type>(
+          ctx, l, ctx, std::forward<ArgumentsTypes>(args)...);
+    }
+  }  // end of construct
+
+  template <typename Type, typename... ArgumentsTypes>
+  std::unique_ptr<Type> make_unique(Context &ctx,
+                                    const std::source_location &l,
+                                    ArgumentsTypes &&...args) noexcept
+      requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...> {
+    if constexpr (::mgis::internals::is_constructible_with_context<
+                      Type, ArgumentsTypes...>) {
+      return ::mgis::internals::make_unique_impl<Type>(
+          ctx, l, ctx, std::forward<ArgumentsTypes>(args)...);
+    } else {
+      return ::mgis::internals::make_unique_impl<Type>(
+          ctx, l, std::forward<ArgumentsTypes>(args)...);
+    }
+  }  // end of make_unique
+
+  template <typename BaseType, typename Type, typename... ArgumentsTypes>
+  std::unique_ptr<BaseType> make_unique_as(Context &ctx,
+                                           const std::source_location &l,
+                                           ArgumentsTypes &&...args) noexcept
+      requires std::is_base_of_v<BaseType, Type> &&
+      ::mgis::internals::is_constructible<Type, ArgumentsTypes...> {
+    if constexpr (::mgis::internals::is_constructible_with_context<
+                      Type, ArgumentsTypes...>) {
+      return ::mgis::internals::make_unique_imp_asl<BaseType, Type>(
+          ctx, l, ctx, std::forward<ArgumentsTypes>(args)...);
+    } else {
+      return ::mgis::internals::make_unique_imp_asl<BaseType, Type>(
+          ctx, l, std::forward<ArgumentsTypes>(args)...);
+    }
+  }  // end of make_unique_as
+
+  template <typename Type, typename... ArgumentsTypes>
+  std::shared_ptr<Type> make_shared(Context &ctx,
+                                    const std::source_location &l,
+                                    ArgumentsTypes &&...args) noexcept
+      requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...> {
+    if constexpr (::mgis::internals::is_constructible_with_context<
+                      Type, ArgumentsTypes...>) {
+      return ::mgis::internals::make_shared_impl<Type>(
+          ctx, l, ctx, std::forward<ArgumentsTypes>(args)...);
+    } else {
+      return ::mgis::internals::make_shared_impl<Type>(
+          ctx, l, std::forward<ArgumentsTypes>(args)...);
+    }
+  }  // end of make_shared
+
+  template <typename BaseType, typename Type, typename... ArgumentsTypes>
+  std::shared_ptr<BaseType> make_shared_as(Context &ctx,
+                                           const std::source_location &l,
+                                           ArgumentsTypes &&...args) noexcept
+      requires std::is_base_of_v<BaseType, Type> &&
+      ::mgis::internals::is_constructible<Type, ArgumentsTypes...> {
+    if constexpr (::mgis::internals::is_constructible_with_context<
+                      Type, ArgumentsTypes...>) {
+      return ::mgis::internals::make_shared_as_impl<BaseType, Type>(
+          ctx, l, ctx, std::forward<ArgumentsTypes>(args)...);
+    } else {
+      return ::mgis::internals::make_shared_as_impl<BaseType, Type>(
+          ctx, l, std::forward<ArgumentsTypes>(args)...);
+    }
+  }  // end of make_shared_as
+
+#endif /* MGIS_USE_SOURCE_LOCATION_INFORMATION */
+
+  template <typename Type, typename... ArgumentsTypes>
+  std::optional<Type> construct(Context &ctx, ArgumentsTypes &&...args) noexcept
+      requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...> {
+    if constexpr (::mgis::internals::is_constructible_with_context<
+                      Type, ArgumentsTypes...>) {
+      return ::mgis::internals::construct_impl<Type>(
+          ctx, ctx, std::forward<ArgumentsTypes>(args)...);
+    } else {
+      return ::mgis::internals::construct_impl<Type>(
+          ctx, std::forward<ArgumentsTypes>(args)...);
+    }
+  }  // end of construct
+
+  template <typename Type, typename... ArgumentsTypes>
+  std::unique_ptr<Type> make_unique(Context &ctx,
+                                    ArgumentsTypes &&...args) noexcept
+      requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...> {
+    if constexpr (::mgis::internals::is_constructible_with_context<
+                      Type, ArgumentsTypes...>) {
+      return ::mgis::internals::make_unique_impl<Type>(
+          ctx, ctx, std::forward<ArgumentsTypes>(args)...);
+    } else {
+      return ::mgis::internals::make_unique_impl<Type>(
+          ctx, std::forward<ArgumentsTypes>(args)...);
+    }
+  }  // end of make_unique
+
+  template <typename BaseType, typename Type, typename... ArgumentsTypes>
+  std::unique_ptr<BaseType> make_unique_as(Context &ctx,
+                                           ArgumentsTypes &&...args) noexcept
+      requires std::is_base_of_v<BaseType, Type> &&
+      ::mgis::internals::is_constructible<Type, ArgumentsTypes...> {
+    if constexpr (::mgis::internals::is_constructible_with_context<
+                      Type, ArgumentsTypes...>) {
+      return ::mgis::internals::make_unique_as_impl<BaseType, Type>(
+          ctx, ctx, std::forward<ArgumentsTypes>(args)...);
+    } else {
+      return ::mgis::internals::make_unique_as_impl<BaseType, Type>(
+          ctx, std::forward<ArgumentsTypes>(args)...);
+    }
+  }  // end of make_unique_as
+
+  template <typename Type, typename... ArgumentsTypes>
+  std::shared_ptr<Type> make_shared(Context &ctx,
+                                    ArgumentsTypes &&...args) noexcept
+      requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...> {
+    if constexpr (::mgis::internals::is_constructible_with_context<
+                      Type, ArgumentsTypes...>) {
+      return ::mgis::internals::make_shared_impl<Type>(
+          ctx, ctx, std::forward<ArgumentsTypes>(args)...);
+    } else {
+      return ::mgis::internals::make_shared_impl<Type>(
+          ctx, std::forward<ArgumentsTypes>(args)...);
+    }
+  }  // end of make_shared
+
+  template <typename BaseType, typename Type, typename... ArgumentsTypes>
+  std::shared_ptr<BaseType> make_shared_as(Context &ctx,
+                                           ArgumentsTypes &&...args) noexcept
+      requires std::is_base_of_v<BaseType, Type> &&
+      ::mgis::internals::is_constructible<Type, ArgumentsTypes...> {
+    if constexpr (::mgis::internals::is_constructible_with_context<
+                      Type, ArgumentsTypes...>) {
+      return ::mgis::internals::make_shared_as_impl<BaseType, Type>(
+          ctx, ctx, std::forward<ArgumentsTypes>(args)...);
+    } else {
+      return ::mgis::internals::make_shared_as_impl<BaseType, Type>(
+          ctx, std::forward<ArgumentsTypes>(args)...);
+    }
+  }  // end of make_shared_as
+
+}  // end of namespace mgis
 
 #endif /* LIB_MGIS_UTILITIES_CONSTRUCT_IXX */
