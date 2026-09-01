@@ -268,6 +268,11 @@ assign(ctx, f | as_scalar, f2 | as_scalar);
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/245>
 
+
+## Issue 244: Avoid repeating `Context` object in `construct`, `make_unique` or `make_shared` (and siblings) when the constructor takes a `Context` as first argument`
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/244>
+
 ## Issue 236: [mgis-function] Allow "assignement" operator | and `assign` algorithm to work on temporary views
 ￼
 

@@ -44,12 +44,13 @@ namespace mgis::function::internals {
       const BasicImmutableFunctionView& r,
       const RotationOperation ro) noexcept {
     const auto rm = r | as_tmatrix<3, 3>;
+    if(!rm.check(ctx)){
+      return ctx.registerErrorMessage("invalid number of components");
+    }
     if (ro == RotationOperation::FORWARD) {
       return internals::evaluate(ctx, t | rotate(rm));
-    } else {
-      return internals::evaluate(ctx, t | rotate_backwards(rm));
     }
-    return ctx.registerErrorMessage("invalid number of components");
+    return internals::evaluate(ctx, t | rotate_backwards(rm));
   }  // end of computeRotatedSymmetricTensor
 
   template <typename TensorFunctionView>
@@ -61,10 +62,8 @@ namespace mgis::function::internals {
     const auto rm = tfel::math::tmatrix<3u, 3u, real>{r.data()};
     if (ro == RotationOperation::FORWARD) {
       return internals::evaluate(ctx, t | rotate(rm));
-    } else {
-      return internals::evaluate(ctx, t | rotate_backwards(rm));
     }
-    return ctx.registerErrorMessage("invalid number of components");
+    return internals::evaluate(ctx, t | rotate_backwards(rm));
   }  // end of computeRotatedSymmetricTensor
 
 }  // end of namespace mgis::function::internals
