@@ -19,15 +19,16 @@
 #include "TFEL/Tests/TestManager.hxx"
 #include "MGIS/Utilities/Construct.hxx"
 
-struct BuidableWithContext{
+struct BuidableWithContext {
   BuidableWithContext(::mgis::Context &){};
-}; // end of BuidableWithContext
+};  // end of BuidableWithContext
 
-struct BuidableWithAndWithoutContext{
-  BuidableWithAndWithoutContext(::mgis::Context &) noexcept : build_with_context(true){};
+struct BuidableWithAndWithoutContext {
+  BuidableWithAndWithoutContext(::mgis::Context &) noexcept
+      : build_with_context(true){};
   BuidableWithAndWithoutContext() noexcept {};
   bool build_with_context = false;
-}; // end of BuidableWithContext
+};  // end of BuidableWithContext
 
 struct ConstructTest final : public tfel::tests::TestCase {
   ConstructTest()
@@ -208,7 +209,7 @@ struct ConstructTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(isValid(o));
     auto po = make_unique<BuidableWithContext>(ctx);
     TFEL_TESTS_ASSERT(isValid(po));
-  } // end of test6
+  }  // end of test6
 
   void test7() {
     using namespace mgis;

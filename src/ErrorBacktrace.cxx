@@ -19,6 +19,15 @@ namespace mgis::internal {
     return isErrorReportingFatal;
   }  // end of isErrorReportingFatal
 
+  static ErrorBacktrace::TerminateHandler &getTerminateHandler() noexcept {
+    static ErrorBacktrace::TerminateHandler h = +[](std::string_view msg) {
+      std::cerr << "mgis default terminate handler called\n"  //
+                << msg << '\n';
+      std::terminate();
+    };
+    return h;
+  }  // end of getTerminateHandler
+
 }  // end of namespace mgis::internal
 
 namespace mgis {
@@ -32,6 +41,13 @@ namespace mgis {
     return result;
   }  // end of split
 
+  void ErrorBacktrace::setTerminateHandler(TerminateHandler &h) noexcept {
+    if (h == nullptr) {
+      return;
+    }
+    ::mgis::internal::getTerminateHandler() = h;
+  }  // end of setTerminateHandler
+
   void ErrorBacktrace::setErrorReportingAsFatal() noexcept {
     ::mgis::internal::isErrorReportingFatal() = true;
   }  // end of setIfErrorReportingIsFatal
@@ -41,6 +57,18 @@ namespace mgis {
   }  // end of setIfErrorReportingIsFatal
 
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
+
+  void ErrorBacktrace::terminate(const char *msg,
+                                 const std::source_location &l) {
+    std::ignore = this->registerErrorMessage(msg, l);
+    this->terminate();
+  }  // end of terminate
+
+  void ErrorBacktrace::terminate(const ErrorReport e,
+                                 const std::source_location &l) {
+    std::ignore = this->registerErrorMessage(e, l);
+    this->terminate();
+  }  // end of terminate
 
   InvalidResult ErrorBacktrace::registerErrorMessage(
       const char *msg, const std::source_location &l) {
@@ -54,11 +82,21 @@ namespace mgis {
           {l.file_name(), l.function_name(), l.line(), e});
     } catch (...) {
     }
-    this->treatFatalCase_();
+    this->treatFatalCase();
     return {};
   }  // end of registerErrorMessage
 
 #else
+
+  void ErrorBacktrace::terminate(const char *msg) {
+    std::ignore = this->registerErrorMessage(ErrorReport{msg});
+    this->terminate();
+  }  // end of terminate
+
+  void ErrorBacktrace::terminate(const ErrorReport e) {
+    std::ignore = this->registerErrorMessage(e);
+    this->terminate();
+  }  // end of terminate
 
   InvalidResult ErrorBacktrace::registerErrorMessage(const char *msg) {
     return this->registerErrorMessage(ErrorReport{msg});
@@ -79,7 +117,7 @@ namespace mgis {
       this->error_messages.push_back(em);
     } catch (...) {
     }
-    this->treatFatalCase_();
+    this->treatFatalCase();
     return {};
   }  // end of registerErrorMessage
 
@@ -184,20 +222,23 @@ namespace mgis {
     return this->error_messages.clear();
   }  // end of clearErrorMessages
 
-  void ErrorBacktrace::treatFatalCase_() const noexcept {
+  void ErrorBacktrace::treatFatalCase() const {
     if (::mgis::internal::isErrorReportingFatal()) {
-      std::cerr << this->getErrorMessage_() << std::endl;
-      std::abort();
+      this->terminate();
     }
     if constexpr (config::default_error_report_policy ==
                   config::ErrorReportPolicy::RAISE) {
       raise(this->getErrorMessage_());
     } else if constexpr (config::default_error_report_policy ==
                          config::ErrorReportPolicy::ABORT) {
-      std::cerr << this->getErrorMessage_() << std::endl;
-      std::abort();
-    }
-  }  // end of treatFatalCase_
+      this->terminate();
+    };
+  }  // end of treatFatalCase
+
+  void ErrorBacktrace::terminate() const {
+    ::mgis::internal::getTerminateHandler()(this->getErrorMessage_());
+    std::abort();  // just in case the handler returns
+  }                // end of terminate
 
   ErrorBacktrace::~ErrorBacktrace() noexcept = default;
 

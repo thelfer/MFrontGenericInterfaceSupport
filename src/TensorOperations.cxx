@@ -44,7 +44,7 @@ namespace mgis::function::internals {
       const BasicImmutableFunctionView& r,
       const RotationOperation ro) noexcept {
     const auto rm = r | as_tmatrix<3, 3>;
-    if(!rm.check(ctx)){
+    if (!rm.check(ctx)) {
       return ctx.registerErrorMessage("invalid number of components");
     }
     if (ro == RotationOperation::FORWARD) {

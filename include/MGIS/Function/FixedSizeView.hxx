@@ -37,7 +37,8 @@ namespace mgis::function {
     //! \brief value returned by non-const call operator
     using mutable_value_type =
         std::conditional_t<N == 1, real&, std::span<real, N>>;
-    //! \brief a simple alias used to workaround what seems to be a bug in gcc 16.x
+    //! \brief a simple alias used to workaround what seems to be a bug in
+    //! gcc 16.x
     using ConstructorArgumentType =
         std::conditional_t<LightweightViewConcept<FunctionType>,
                            FunctionType,
