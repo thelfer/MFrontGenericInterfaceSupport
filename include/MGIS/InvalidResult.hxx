@@ -97,6 +97,11 @@ namespace mgis {
 
   };  // end of struct InvalidResult
   /*!
+   * \return false
+   * \param[in] v: value
+   */
+  [[nodiscard]] constexpr bool isInvalid(const InvalidResult &) noexcept;
+  /*!
    * \return if the given boolean is true
    * \param[in] b: value
    */

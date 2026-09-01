@@ -264,6 +264,10 @@ assign(ctx, f | as_scalar, f2 | as_scalar);
 
 # Issues fixed
 
+## Issue 245: Add an overload of `isInvalid` for taking an `InvalidResult` as argument
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/245>
+
 ## Issue 236: [mgis-function] Allow "assignement" operator | and `assign` algorithm to work on temporary views
 ￼
 

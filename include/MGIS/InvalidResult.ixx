@@ -58,16 +58,20 @@ namespace mgis::internal {
 namespace mgis {
 
   template <typename Type>
-  [[nodiscard]] constexpr InvalidResult::operator Type() &&noexcept
+  constexpr InvalidResult::operator Type() &&noexcept
       requires(internal::InvalidValueTraits<Type>::isSpecialized) {
     return internal::InvalidValueTraits<Type>::getValue();
   }  // end of operator Type
 
-  [[nodiscard]] constexpr InvalidResult::operator std::optional<bool>()
+  constexpr InvalidResult::operator std::optional<bool>()
       &&noexcept {
     return {};
   }  // end of operator std::optional<bool>
 
+  constexpr bool isInvalid(const InvalidResult &) noexcept {
+    return true;
+  }  // end of is Invalid
+  
   constexpr bool isInvalid(const bool b) noexcept {
     return !b;
   }  // end of is Invalid
