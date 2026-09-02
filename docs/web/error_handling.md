@@ -94,6 +94,11 @@ violation. This behaviour can be changed by passing
 
 The `Context` class is used for standard error management.
 
+### Checking and assertion
+
+`Context::assertOrTerminate` checks if an assertion is true. If not,
+`Context::terminate` is called.
+
 ### Terminating the program
 
 `Context::terminate` allows to terminate the program. This shall only be

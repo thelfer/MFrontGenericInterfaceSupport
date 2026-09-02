@@ -64,6 +64,28 @@ namespace mgis {
     static void unsetErrorReportingAsFatal() noexcept;
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
     /*!
+     * \brief assert that the given boolean is true. If `false`, `terminate` is
+     * called.
+     *
+     * \param[in] b: test
+     * \param[in] e: error message
+     * \param[in] l: description of the call site
+     */
+    void assertOrTerminate(const bool,
+                const char *const,
+                const std::source_location & = std::source_location::current());
+    /*!
+     * \brief assert that the given boolean is true. If `false`, `terminate` is
+     * called.
+     *
+     * \param[in] b: test
+     * \param[in] e: error code
+     * \param[in] l: description of the call site
+     */
+    void assertOrTerminate(const bool,
+                const ErrorReport,
+                const std::source_location & = std::source_location::current());
+    /*!
      * \brief terminate the excution after displaying the given error message
      * \param[in] e: error message
      * \param[in] l: description of the call site
@@ -99,6 +121,22 @@ namespace mgis {
         const std::source_location & =
             std::source_location::current()) noexcept;
 #else
+    /*!
+     * \brief assert that the given boolean is true. If `false`, `terminate` is
+     * called.
+     *
+     * \param[in] b: test
+     * \param[in] e: error message
+     */
+    void assertOrTerminate(const bool, const char *const);
+    /*!
+     * \brief assert that the given boolean is true. If `false`, `terminate` is
+     * called.
+     *
+     * \param[in] b: test
+     * \param[in] e: error code
+     */
+    void assertOrTerminate(const bool, const ErrorReport);
     /*!
      * \brief terminate the excution after displaying the given error message
      * \param[in] e: error message
@@ -213,5 +251,7 @@ namespace mgis {
       ErrorBacktrace &) noexcept;
 
 }  // end of namespace mgis
+
+#include "MGIS/ErrorBacktrace.ixx"
 
 #endif /* LIB_MGIS_ERRORBACKTRACE_HXX */
