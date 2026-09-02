@@ -264,6 +264,10 @@ assign(ctx, f | as_scalar, f2 | as_scalar);
 
 # Issues fixed
 
+## Issue 250: Add `ErrorBacktrace::assertOrTerminate` 
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/250>
+
 ## Issue 248: Add `ErrorBacktrace::terminate` 
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/248>
