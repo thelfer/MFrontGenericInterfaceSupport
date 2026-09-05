@@ -19,8 +19,10 @@ jobs:
         include:
           - os: ubuntu-latest
             jobs_flag: '-j $(nproc)'
+            fortran_support: 'ON'
           - os: macos-latest
             jobs_flag: '-j $(sysctl -n hw.ncpu)'
+            fortran_support: 'OFF'
 
     runs-on: ${{ matrix.os }}
 
@@ -53,7 +55,7 @@ jobs:
               -B ${{github.workspace}}/build                                 \
               -DCMAKE_BUILD_TYPE=Release                                     \
               -Denable-c-bindings=ON                                         \
-              -Denable-fortran-bindings=ON                                   \
+              -Denable-fortran-bindings=${{ matrix.fortran_support }}        \
               -Denable-python-bindings=OFF                                   \
               -Denable-portable-build=ON                                     \
               -Denable-julia-bindings=OFF                                    \
