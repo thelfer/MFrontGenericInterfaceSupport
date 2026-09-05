@@ -34,8 +34,8 @@ jobs:
       shell: spack-sh {0}
       run: |
         # spack install python py-numpy py-pybind11
-        spack install tbb ${{ matrix.jobs_flag }}
-        spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea ${{ matrix.jobs_flag }}
+        spack install tbb
+        spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
     - name: cmake
       shell: spack-sh {0}
       run: |
