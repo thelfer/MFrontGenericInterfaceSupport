@@ -16,6 +16,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            jobs_flag: '-j $(nproc)'
+          - os: macos-latest
+            jobs_flag: '-j $(sysctl -n hw.ncpu)'
+
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -37,7 +43,7 @@ jobs:
                -B ${{github.workspace}}/build-tfel                      \
               -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                    \
               -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-tfel
-        cmake --build ${{github.workspace}}/build-tfel --target all -j $(nproc)
+        cmake --build ${{github.workspace}}/build-tfel --target all ${{ matrix.jobs_flag }}
         cmake --build ${{github.workspace}}/build-tfel --target install
 
     - name: Configure
@@ -57,12 +63,12 @@ jobs:
     - name: Compile
       run: |
         source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
-        cmake --build ${{github.workspace}}/build --target all -j $(nproc)
+        cmake --build ${{github.workspace}}/build --target all ${{ matrix.jobs_flag }}
 
     - name: Test
       run: |
         source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
-        cmake --build ${{github.workspace}}/build --target check -j $(nproc)
+        cmake --build ${{github.workspace}}/build --target check ${{ matrix.jobs_flag }}
 
     - name: Print test log on failure
       if: failure()
