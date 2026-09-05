@@ -9,7 +9,16 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            jobs_flag: '-j $(nproc)'
+          - os: macos-latest
+            jobs_flag: '-j $(sysctl -n hw.ncpu)'
+
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v4
@@ -25,8 +34,8 @@ jobs:
       shell: spack-sh {0}
       run: |
         # spack install python py-numpy py-pybind11
-        spack install tbb
-        spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
+        spack install tbb ${{ matrix.jobs_flag }}
+        spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea ${{ matrix.jobs_flag }}
     - name: cmake
       shell: spack-sh {0}
       run: |
@@ -48,11 +57,11 @@ jobs:
         # spack load python py-numpy py-pybind11
         spack load tfel
         spack load intel-tbb
-        make
+        make ${{ matrix.jobs_flag }}
     - name: make check
       shell: spack-sh {0}
       run: |
         # spack load python py-numpy py-pybind11 tfel
         spack load tfel
         spack load intel-tbb
-        make check
+        make check ${{ matrix.jobs_flag }}
