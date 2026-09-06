@@ -1,4 +1,4 @@
-name: CI with TFEL support on Ubuntu (spack)
+name: CI with TFEL support on Ubuntu and MacOS (spack)
 
 on:
   push:
