@@ -284,7 +284,7 @@ static void test7(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     mp.fct(&s, &T, 1, op);
-    if constexpr (math_errhandling & MATH_ERRNO) {
+    if (math_errhandling & MATH_ERRNO) {
       check(s.status == -3,
             "invalid output status ('" + std::to_string(s.status) + "')");
     } else {
