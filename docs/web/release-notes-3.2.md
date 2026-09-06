@@ -264,6 +264,10 @@ assign(ctx, f | as_scalar, f2 | as_scalar);
 
 # Issues fixed
 
+## Issue 255: Fix `InvokeTest` on `MacOS`
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/255>
+
 ## Issue 250: Add `ErrorBacktrace::assertOrTerminate` 
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/250>
