@@ -75,7 +75,7 @@ namespace mgis {
   /*!
    * \brief a class convertible to many values used as invalid result.
    *
-   * This class has been designed to make the `MANTA_TRY*` macros
+   * This class has been designed to make the `MGIS_TRY*` macros
    * compatible with any function/methods respecting the guideline
    * of error handling.
    *
