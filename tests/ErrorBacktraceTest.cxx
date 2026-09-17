@@ -30,6 +30,12 @@ namespace mgis::internal {
     return true;
   }
 
+  static std::optional<std::unique_ptr<int>> f4(ErrorBacktrace &e) {
+    return e.registerErrorMessage<std::optional<std::unique_ptr<int>>>(
+        "using explicit return type, because of std::optional permissive "
+        "constructor would not allow to use InvalidResult");
+  }
+
 }  // end of namespace mgis::internal
 
 #endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
@@ -60,6 +66,13 @@ int main() {
     ErrorBacktrace e;
     expect_false(::mgis::internal::f1(e));
     expect_eq(e.getRawErrorMessage(), "invalid call to f2\n* invalid call");
+  }  // end of ConstructTest
+  {
+    ErrorBacktrace e;
+    expect_false(isValid(::mgis::internal::f4(e)));
+    expect_eq(e.getRawErrorMessage(),
+              "using explicit return type, because of std::optional permissive "
+              "constructor would not allow to use InvalidResult");
   }  // end of ConstructTest
   {
     ErrorBacktrace e;

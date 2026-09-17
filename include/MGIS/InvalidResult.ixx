@@ -23,15 +23,6 @@ namespace mgis::internal {
     static constexpr auto getValue() noexcept { return std::optional<T>{}; }
   };
 
-  //! \brief partial specialisation for std::optional
-  template <typename T>
-  struct InvalidValueTraits<std::optional<const T>> {
-    static constexpr bool isSpecialized = true;
-    static constexpr auto getValue() noexcept {
-      return std::optional<const T>{};
-    }
-  };
-
   //! \brief partial specialisation for std::optional<bool>
   template <>
   struct InvalidValueTraits<std::optional<bool>> {

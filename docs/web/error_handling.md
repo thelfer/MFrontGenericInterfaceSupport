@@ -58,7 +58,7 @@ A function that may fail shall generally return either:
 - an `std::unique_ptr` or an `std::shared_ptr` object holding if those
   results are stored on the heap. In this case, the failure of the
   function is indicated by the fact that the underlying pointer is null.
-- a class to which an `InvalidValue` object is implicitly convertible.
+- a class to which an `InvalidResult` object is implicitly convertible.
 
 > ** Note **
 > 
@@ -128,6 +128,16 @@ The `ErrorBacktrace` class, and the `Context` class mostly provides the
 For convenience, the `registerErrorMessage` always returns an invalid
 value, i.e. a value that is convertible to any of the returned type
 described in the previous section.
+
+
+> **Note**
+>
+> In some rare case, it may happen that the implicit conversion is
+> leading to a compile-time error ambiguous. This is for
+> instance the case for functions returning an optional
+> of a type that can be invalid. In this case, one may
+> remove the ambiguity by specifying the expected return type
+> a template parameter of the `registerErrorMessage` method.
 
 By default, the error messages are packed up to the moment when error(s)
 must be reported to the end-user. The error messages can then be
