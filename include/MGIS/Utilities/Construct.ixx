@@ -13,23 +13,26 @@ namespace mgis::internals {
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
 
   template <typename Type, typename... ArgumentsTypes>
-  std::optional<Type> construct_impl(Context &ctx,
-                                     const std::source_location &l,
-                                     ArgumentsTypes &&...args) noexcept requires
-      std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...> {
-    using NonConstType = std::remove_const_t<Type>;
+  std::optional<std::remove_cvref_t<Type>> construct_impl(
+      Context &ctx,
+      const std::source_location &l,
+      ArgumentsTypes &&...args) noexcept requires
+      std::is_constructible_v<std::remove_cvref_t<Type>, ArgumentsTypes...> {
+    using NonConstType = std::remove_cvref_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
                                                   ArgumentsTypes...>) {
-      return std::make_optional<Type>(std::forward<ArgumentsTypes>(args)...);
+      return std::make_optional<NonConstType>(
+          std::forward<ArgumentsTypes>(args)...);
     } else {
       try {
-        return std::make_optional<Type>(std::forward<ArgumentsTypes>(args)...);
+        return std::make_optional<NonConstType>(
+            std::forward<ArgumentsTypes>(args)...);
       } catch (...) {
         registerExceptionInErrorBacktrace(ctx, l);
       }
       return {};
     }
-  }  // end of construct
+  }  // end of construct_impl
 
   template <typename Type, typename... ArgumentsTypes>
   std::unique_ptr<Type> make_unique_impl(
@@ -120,23 +123,25 @@ namespace mgis::internals {
 #endif /* MGIS_USE_SOURCE_LOCATION_INFORMATION */
 
   template <typename Type, typename... ArgumentsTypes>
-  std::optional<Type> construct_impl(Context &ctx,
-                                     ArgumentsTypes &&...args) noexcept requires
-      std::is_constructible_v<std::remove_const_t<Type>, ArgumentsTypes...> {
-    using NonConstType = std::remove_const_t<Type>;
+  std::optional<std::remove_cvref_t<Type>> construct_impl(
+      Context &ctx, ArgumentsTypes &&...args) noexcept requires
+      std::is_constructible_v<std::remove_cvref_t<Type>, ArgumentsTypes...> {
+    using NonConstType = std::remove_cvref_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
                                                   ArgumentsTypes...>) {
-      return Type{std::forward<ArgumentsTypes>(args)...};
+      return std::make_optional<NonConstType>(
+          std::forward<ArgumentsTypes>(args)...);
     } else {
       try {
-        return std::make_optional<Type>(std::forward<ArgumentsTypes>(args)...);
+        return std::make_optional<NonConstType>(
+            std::forward<ArgumentsTypes>(args)...);
       } catch (...) {
         std::ignore =
             registerExceptionInErrorBacktraceWithoutSourceLocation(ctx);
       }
       return {};
     }
-  }  // end of construct
+  }  // end of construct_impl
 
   template <typename Type, typename... ArgumentsTypes>
   std::unique_ptr<Type> make_unique_impl(
@@ -227,10 +232,12 @@ namespace mgis {
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
 
   template <typename Type, typename... ArgumentsTypes>
-  std::optional<Type> construct(Context &ctx,
-                                const std::source_location &l,
-                                ArgumentsTypes &&...args) noexcept
-      requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...> {
+  std::optional<std::remove_cvref_t<Type>> construct(
+      Context &ctx,
+      const std::source_location &l,
+      ArgumentsTypes &&...args) noexcept
+      requires ::mgis::internals::is_constructible<std::remove_cvref_t<Type>,
+                                                   ArgumentsTypes...> {
     if constexpr (::mgis::internals::is_constructible_with_context<
                       Type, ArgumentsTypes...>) {
       return ::mgis::internals::construct_impl<Type>(
