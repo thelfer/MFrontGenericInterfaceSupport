@@ -71,9 +71,10 @@ namespace mgis {
      * \param[in] e: error message
      * \param[in] l: description of the call site
      */
-    void assertOrTerminate(const bool,
-                const char *const,
-                const std::source_location & = std::source_location::current());
+    void assertOrTerminate(
+        const bool,
+        const char *const,
+        const std::source_location & = std::source_location::current());
     /*!
      * \brief assert that the given boolean is true. If `false`, `terminate` is
      * called.
@@ -82,9 +83,10 @@ namespace mgis {
      * \param[in] e: error code
      * \param[in] l: description of the call site
      */
-    void assertOrTerminate(const bool,
-                const ErrorReport,
-                const std::source_location & = std::source_location::current());
+    void assertOrTerminate(
+        const bool,
+        const ErrorReport,
+        const std::source_location & = std::source_location::current());
     /*!
      * \brief terminate the excution after displaying the given error message
      * \param[in] e: error message
@@ -120,6 +122,30 @@ namespace mgis {
         const ErrorReport,
         const std::source_location & =
             std::source_location::current()) noexcept;
+    /*!
+     * \brief register a new error message
+     * \param[in] e: error message
+     * \param[in] l: description of the call site
+     * \note for convenience, this method always return an invalid object
+     */
+    template <typename ReturnType>
+    [[nodiscard]] ReturnType registerErrorMessage(
+        const char *const,
+        const std::source_location & = std::source_location::current())  //
+        requires(internal::InvalidValueTraits<ReturnType>::isSpecialized);
+    /*!
+     * \brief register a new error message
+     * \param[in] e: error code
+     * \param[in] l: description of the call site
+     * \note for convenience, this method always return an invalid object
+     */
+    template <typename ReturnType>
+    [[nodiscard]] InvalidResult registerErrorMessage(
+        const ErrorReport,
+        const std::source_location & =
+            std::source_location::current()) noexcept  //
+        requires(internal::InvalidValueTraits<ReturnType>::isSpecialized);
+
 #else
     /*!
      * \brief assert that the given boolean is true. If `false`, `terminate` is
@@ -160,6 +186,23 @@ namespace mgis {
      */
     [[nodiscard]] InvalidResult registerErrorMessage(
         const ErrorReport) noexcept;
+    /*!
+     * \brief register a new error message
+     * \param[in] e: error message
+     * \note for convenience, this method always return an invalid object
+     */
+    template <typename ReturnType>
+    [[nodiscard]] ReturnType registerErrorMessage(const char *const)  //
+        requires(internal::InvalidValueTraits<ReturnType>::isSpecialized);
+    /*!
+     * \brief register a new error message
+     * \param[in] e: error code
+     * \note for convenience, this method always return an invalid results
+     */
+    template <typename ReturnType>
+    [[nodiscard]] ReturnType registerErrorMessage(
+        const ErrorReport) noexcept  //
+        requires(internal::InvalidValueTraits<ReturnType>::isSpecialized);
 #endif
     /*!
      * \brief register a new error message

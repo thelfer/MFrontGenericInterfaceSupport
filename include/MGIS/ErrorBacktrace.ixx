@@ -32,6 +32,24 @@ namespace mgis {
     }
   }  // end of assertOrTerminate
 
+  template <typename ReturnType>
+  ReturnType ErrorBacktrace::registerErrorMessage(
+      const char *const e,
+      const std::source_location &l)  //
+      requires(internal::InvalidValueTraits<ReturnType>::isSpecialized) {
+    std::ignore = this->registerErrorMessage(e, l);
+    return internal::InvalidValueTraits<ReturnType>::getValue();
+  }  // end of registerErrorMessage
+
+  template <typename ReturnType>
+  ReturnType ErrorBacktrace::registerErrorMessage(
+      const ErrorReport e,
+      const std::source_location &l) noexcept  //
+      requires(internal::InvalidValueTraits<ReturnType>::isSpecialized) {
+    std::ignore = this->registerErrorMessage(e, l);
+    return internal::InvalidValueTraits<ReturnType>::getValue();
+  }  // end of registerErrorMessage
+
 #else
 
   inline void ErrorBacktrace::assertOrTerminate(const bool b, const char *msg) {
@@ -46,6 +64,21 @@ namespace mgis {
       this->terminate(e);
     }
   }  // end of assertOrTerminate
+
+  template <typename ReturnType>
+  ReturnType ErrorBacktrace::registerErrorMessage(const char *const e)  //
+      requires(internal::InvalidValueTraits<ReturnType>::isSpecialized) {
+    std::ignore = this->registerErrorMessage(e);
+    return internal::InvalidValueTraits<ReturnType>::getValue();
+  }  // end of registerErrorMessage
+
+  template <typename ReturnType>
+  ReturnType ErrorBacktrace::registerErrorMessage(
+      const ErrorReport e) noexcept  //
+      requires(internal::InvalidValueTraits<ReturnType>::isSpecialized) {
+    std::ignore = this->registerErrorMessage(e);
+    return internal::InvalidValueTraits<ReturnType>::getValue();
+  }  // end of registerErrorMessage
 
 #endif
 
