@@ -62,6 +62,18 @@ namespace mgis {
     static void setErrorReportingAsFatal() noexcept;
     //! \brief specify if error reporting shall be fatal
     static void unsetErrorReportingAsFatal() noexcept;
+    /*!
+     * \brief call the terminate handler
+     * \param[in] msg: message
+     */
+    [[noreturn]] static void terminate(std::string_view);
+    /*!
+     * \brief call the terminate handler
+     * \param[in] msg: message
+     *
+     * \note this function is simply an alias to `terminate`
+     */
+    [[noreturn]] static void abort(std::string_view);
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
     /*!
      * \brief assert that the given boolean is true. If `false`, `terminate` is
