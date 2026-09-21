@@ -35,8 +35,6 @@ namespace mgis {
    */
   struct MGIS_EXPORT ErrorBacktrace : AbstractErrorHandler {
     //! brief a simple alias
-    using TerminateHandler = void (*)(std::string_view);
-    //! brief a simple alias
     using ErrorReportFunction = std::string (*)(const int);
     /*!
      * \brief a simple alias listing the main way to report an error.
@@ -53,20 +51,10 @@ namespace mgis {
      */
     using ErrorReport = std::
         variant<const char *, std::pair<int, ErrorReportFunction>, std::string>;
-    /*!
-     * \brief specify a new terminate handler
-     * \param[in] h: handler
-     */
-    static void setTerminateHandler(TerminateHandler &) noexcept;
     //! \brief specify if error reporting shall be fatal
     static void setErrorReportingAsFatal() noexcept;
     //! \brief specify if error reporting shall be fatal
     static void unsetErrorReportingAsFatal() noexcept;
-    /*!
-     * \brief call the terminate handler
-     * \param[in] msg: message
-     */
-    [[noreturn]] static void terminate(std::string_view);
     /*!
      * \brief call the terminate handler
      * \param[in] msg: message

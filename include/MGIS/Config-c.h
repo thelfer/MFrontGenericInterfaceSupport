@@ -98,6 +98,16 @@
 #define MGIS_NODISCARD [[nodiscard]]
 #endif
 
+#if defined __clang__
+#if __clang_major__ >= 18
+#define MGIS_NORETURN [[noreturn]]
+#else /* __clang_major__ >= 18 */
+#define MGIS_NORETURN
+#endif
+#else /*defined __clang__ */
+#define MGIS_NORETURN [[noreturn]]
+#endif
+
 #ifdef MGIS_REAL_TYPE
     /*! \brief alias to the numeric type used in the library */
     typedef MGIS_REAL_TYPE mgis_real;

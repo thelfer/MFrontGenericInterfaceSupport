@@ -16,6 +16,7 @@
 #define LIB_MGIS_CONFIG_HXX
 
 #include <limits>
+#include <string_view>
 #include "MGIS/Config-c.h"
 
 namespace mgis::config {
@@ -126,6 +127,26 @@ namespace mgis {
   //! \brief a constant whose role is similar to std::dynamic_extent
   inline constexpr size_type dynamic_extent =
       std::numeric_limits<size_type>::max();
+
+  //! brief a simple alias
+  using TerminateHandler = void (*)(std::string_view);
+  /*!
+   * \brief specify a new terminate handler
+   * \param[in] h: handler
+   */
+  void setTerminateHandler(TerminateHandler &) noexcept;
+  /*!
+   * \brief call the terminate handler
+   * \param[in] msg: message
+   */
+  MGIS_EXPORT MGIS_NORETURN void terminate(std::string_view);
+  /*!
+   * \brief call the terminate handler
+   * \param[in] msg: message
+   *
+   * \note this function is simply an alias to `terminate`
+   */
+  MGIS_EXPORT MGIS_NORETURN void abort(std::string_view);
 
 }  // end of namespace mgis
 

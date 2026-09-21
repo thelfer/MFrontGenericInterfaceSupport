@@ -19,15 +19,6 @@ namespace mgis::internal {
     return isErrorReportingFatal;
   }  // end of isErrorReportingFatal
 
-  static ErrorBacktrace::TerminateHandler &getTerminateHandler() noexcept {
-    static ErrorBacktrace::TerminateHandler h = +[](std::string_view msg) {
-      std::cerr << "mgis default terminate handler called\n"  //
-                << msg << '\n';
-      std::terminate();
-    };
-    return h;
-  }  // end of getTerminateHandler
-
 }  // end of namespace mgis::internal
 
 namespace mgis {
@@ -40,22 +31,6 @@ namespace mgis {
     }
     return result;
   }  // end of split
-
-  void ErrorBacktrace::setTerminateHandler(TerminateHandler &h) noexcept {
-    if (h == nullptr) {
-      return;
-    }
-    ::mgis::internal::getTerminateHandler() = h;
-  }  // end of setTerminateHandler
-
-  void ErrorBacktrace::terminate(std::string_view msg) {
-    ::mgis::internal::getTerminateHandler()(msg);
-    std::abort();  // just in case the handler returns
-  }  // end of terminate
-
-  void ErrorBacktrace::abort(std::string_view msg) {
-    ErrorBacktrace::terminate(msg);
-  }  // end of abort
 
   void ErrorBacktrace::setErrorReportingAsFatal() noexcept {
     ::mgis::internal::isErrorReportingFatal() = true;
@@ -245,7 +220,7 @@ namespace mgis {
   }  // end of treatFatalCase
 
   void ErrorBacktrace::terminate() const {
-    ErrorBacktrace::terminate(this->getErrorMessage_());
+    ::mgis::terminate(this->getErrorMessage_());
   }  // end of terminate
 
   ErrorBacktrace::~ErrorBacktrace() noexcept = default;

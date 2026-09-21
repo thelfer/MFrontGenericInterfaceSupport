@@ -1,5 +1,6 @@
 set(MFrontGenericInterface_SOURCES)
 list(APPEND MFrontGenericInterface_SOURCES
+  Config.cxx
   Raise.cxx
   VerbosityLevel.cxx
   LogStream.cxx
