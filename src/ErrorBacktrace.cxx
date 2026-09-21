@@ -48,6 +48,15 @@ namespace mgis {
     ::mgis::internal::getTerminateHandler() = h;
   }  // end of setTerminateHandler
 
+  void ErrorBacktrace::terminate(std::string_view msg) {
+    ::mgis::internal::getTerminateHandler()(msg);
+    std::abort();  // just in case the handler returns
+  }  // end of terminate
+
+  void ErrorBacktrace::abort(std::string_view msg) {
+    ErrorBacktrace::terminate(msg);
+  }  // end of abort
+
   void ErrorBacktrace::setErrorReportingAsFatal() noexcept {
     ::mgis::internal::isErrorReportingFatal() = true;
   }  // end of setIfErrorReportingIsFatal
@@ -236,9 +245,8 @@ namespace mgis {
   }  // end of treatFatalCase
 
   void ErrorBacktrace::terminate() const {
-    ::mgis::internal::getTerminateHandler()(this->getErrorMessage_());
-    std::abort();  // just in case the handler returns
-  }                // end of terminate
+    ErrorBacktrace::terminate(this->getErrorMessage_());
+  }  // end of terminate
 
   ErrorBacktrace::~ErrorBacktrace() noexcept = default;
 
