@@ -183,6 +183,7 @@ if(MGIS_HAVE_TFEL)
   add_tfel_library_test(InvokeTest InvokeTest.cxx BehaviourTest)
 
   if(enable-mgis-function)
+    add_tfel_test(AlgorithmsTest AlgorithmsTest.cxx)
     add_tfel_test(SharedSpaceTest SharedSpaceTest.cxx)
 
     # Function tests with compiler-specific flags

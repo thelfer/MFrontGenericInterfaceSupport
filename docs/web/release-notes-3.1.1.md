@@ -23,6 +23,10 @@ The page describes the new functionalities of Version 3.1.1 of the
 
 # Issues fixed
 
+## Issue 263: `copy<N>` does not compile for `N ≥ 5` and loses the first value
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/263>
+
 ## Issue 243: [cmake] Fix `_TFEL_MODULE_PATH` when `TFELHOME` is defined
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/243>
