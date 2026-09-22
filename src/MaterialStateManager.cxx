@@ -266,7 +266,7 @@ namespace mgis::behaviour {
           .value = std::vector<real>{v.begin(), v.end()},
           .shall_be_updated = (p == MaterialStateManager::UPDATE)};
     } else {
-      if (p != MaterialStateManager::UPDATE) {
+      if (p == MaterialStateManager::UPDATE) {
         return ctx.registerErrorMessage(
             "update policy must be equal to `NOUPDATE` when using a "
             "non-modifiable external storage");
@@ -463,7 +463,7 @@ namespace mgis::behaviour {
             .shall_be_updated = (p == MaterialStateManager::UPDATE)};
       }
     } else {
-      if (p != MaterialStateManager::UPDATE) {
+      if (p == MaterialStateManager::UPDATE) {
         return ctx.registerErrorMessage(
             "update policy must be equal to `NOUPDATE` when using a "
             "non-modifiable external storage");
