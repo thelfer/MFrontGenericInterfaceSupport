@@ -122,7 +122,7 @@ namespace mgis::function {
       const BasicImmutableFunctionView& pk1,
       const BasicImmutableFunctionView& F) noexcept {
     return internals::evaluateUnaryOperationOnCauchyStressComputedFromPK1(
-        ctx, pk1, F, vmis);
+        ctx, pk1, F, hydrostatic_stress);
   }
 
   std::optional<Function<BasicLinearSpace>>
