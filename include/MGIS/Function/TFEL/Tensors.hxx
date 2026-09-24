@@ -49,8 +49,9 @@ namespace mgis::function::internals {
 
     template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType>
     constexpr auto operator()(QualifiedFunctionArgumentType&&) const requires(
-        checkNumberOfComponentsCompatibility<QualifiedFunctionArgumentType,
-                                             compile_time_size<TensorType>>());
+        internals::checkNumberOfComponentsCompatibility<
+            QualifiedFunctionArgumentType,
+            compile_time_size<TensorType>>());
     /*!
      * \brief create a new modifier
      * \param[in] e: evaluator type

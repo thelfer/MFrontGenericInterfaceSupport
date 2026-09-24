@@ -139,14 +139,14 @@ namespace mgis {
    * \brief call the terminate handler
    * \param[in] msg: message
    */
-  MGIS_EXPORT MGIS_NORETURN void terminate(std::string_view);
+  MGIS_NORETURN MGIS_EXPORT void terminate(std::string_view);
   /*!
    * \brief call the terminate handler
    * \param[in] msg: message
    *
    * \note this function is simply an alias to `terminate`
    */
-  MGIS_EXPORT MGIS_NORETURN void abort(std::string_view);
+  MGIS_NORETURN MGIS_EXPORT void abort(std::string_view);
 
 }  // end of namespace mgis
 

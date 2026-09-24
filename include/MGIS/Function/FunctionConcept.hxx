@@ -481,8 +481,8 @@ namespace mgis::function::internals {
 
     template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType>
     constexpr auto operator()(QualifiedFunctionArgumentType&& f) const requires(
-        checkNumberOfComponentsCompatibility<QualifiedFunctionArgumentType,
-                                             N>()) {
+        internals::checkNumberOfComponentsCompatibility<
+            QualifiedFunctionArgumentType, N>()) {
       return FixedSizeView<std::decay_t<QualifiedFunctionArgumentType>, N>(
           std::forward<QualifiedFunctionArgumentType>(f));
     }

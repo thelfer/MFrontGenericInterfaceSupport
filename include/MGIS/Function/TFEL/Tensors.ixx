@@ -82,7 +82,7 @@ namespace mgis::function::internals {
   template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType>
   constexpr auto tensor_modifier<TensorType>::operator()(
       QualifiedFunctionArgumentType&& f) const
-      requires(checkNumberOfComponentsCompatibility<
+      requires(internals::checkNumberOfComponentsCompatibility<
                QualifiedFunctionArgumentType,
                compile_time_size<TensorType>>()) {
     return TensorView<std::decay_t<QualifiedFunctionArgumentType>, TensorType>(
