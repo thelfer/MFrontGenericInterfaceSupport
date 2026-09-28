@@ -67,7 +67,11 @@ namespace mgis {
           requires((!internal::OptionalTraits<T>::isSpecialized) &&
                    (std::is_rvalue_reference_v<decltype(v)>)) {
         if (isInvalid(v)) {
-          raise(this->ctx.getErrorMessage());
+          if (policy == FailureHandlerPolicy::RAISE) {
+            raise(this->ctx.getErrorMessage());
+          } else {
+            this->ctx.abort();
+          }
         }
         return std::move(v);
       }
