@@ -21,6 +21,7 @@
 
 #include "TFEL/Math/qt.hxx"
 #include "MGIS/Function/FunctionConcept.hxx"
+#include "MGIS/Function/TFEL/General.hxx"
 
 namespace mgis::function {
 

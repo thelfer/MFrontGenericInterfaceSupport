@@ -20,6 +20,7 @@
 #define LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSTENSORVIEW_HXX
 
 #include "TFEL/Math/Array/CoalescedView.hxx"
+#include "MGIS/Function/TFEL/General.hxx"
 #include "MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx"
 #include "MGIS/Function/TFEL/TensorConcept.hxx"
 

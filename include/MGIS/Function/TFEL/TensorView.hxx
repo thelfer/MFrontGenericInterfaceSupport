@@ -24,6 +24,7 @@
 #include <span>
 #include "MGIS/Contract.hxx"
 #include "MGIS/Function/Function.hxx"
+#include "MGIS/Function/TFEL/General.hxx"
 #include "MGIS/Function/TFEL/TensorConcept.hxx"
 
 namespace mgis::function {

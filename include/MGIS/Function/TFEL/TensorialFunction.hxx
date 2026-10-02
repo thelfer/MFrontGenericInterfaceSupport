@@ -20,6 +20,7 @@
 #define LIB_MGIS_FUNCTION_TFEL_TENSORIALFUNCTION_HXX
 
 #include "MGIS/Function/Function.hxx"
+#include "MGIS/Function/TFEL/General.hxx"
 #include "MGIS/Function/TFEL/Tensors.hxx"
 
 namespace mgis::function {
