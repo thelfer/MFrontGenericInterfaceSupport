@@ -31,7 +31,11 @@ namespace mgis::function {
                                                   EvaluatorType>)  //
       constexpr auto TensorModifier<TensorType, EvaluatorType>::apply(
           const evaluator_result<EvaluatorType>& values) const {
-    return tfel::math::map<const TensorType>(values.data());
+    if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
+      return tfel::math::map<const TensorType>(values.data());
+    } else {
+      return TensorType(tfel::math::map<const TensorType>(values.data()));
+    }
   }  // end of apply
 
   template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>

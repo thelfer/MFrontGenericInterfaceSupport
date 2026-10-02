@@ -24,6 +24,7 @@
 #include <type_traits>
 #include "TFEL/Math/Array/CoalescedView.hxx"
 #include "MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx"
+#include "MGIS/Function/TFEL/General.hxx"
 #include "MGIS/Function/TFEL/TensorConcept.hxx"
 
 namespace mgis::function {

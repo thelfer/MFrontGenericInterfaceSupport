@@ -22,6 +22,7 @@
 #include "TFEL/Math/Forward/General.hxx"
 #include "MGIS/Function/FunctionConcept.hxx"
 #include "MGIS/Function/EvaluatorConcept.hxx"
+#include "MGIS/Function/TFEL/General.hxx"
 #include "MGIS/Function/TFEL/TensorConcept.hxx"
 #include "MGIS/Function/TFEL/TensorView.hxx"
 #include "MGIS/Function/TFEL/TensorModifier.hxx"

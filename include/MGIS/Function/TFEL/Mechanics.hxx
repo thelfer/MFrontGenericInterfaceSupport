@@ -22,6 +22,7 @@
 #include <type_traits>
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include "MGIS/Function/Evaluator.hxx"
+#include "MGIS/Function/TFEL/General.hxx"
 #include "MGIS/Function/TFEL/Tensors.hxx"
 
 namespace mgis::function::internals {

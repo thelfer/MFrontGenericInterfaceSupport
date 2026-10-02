@@ -21,6 +21,7 @@
 
 #include "TFEL/Math/qt.hxx"
 #include "MGIS/Function/CompileTimeSize.hxx"
+#include "MGIS/Function/TFEL/General.hxx"
 #include "MGIS/Function/TFEL/QuantityView.hxx"
 #include "MGIS/Function/TFEL/QuantityModifier.hxx"
 

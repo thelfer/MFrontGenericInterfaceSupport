@@ -21,6 +21,7 @@
 
 #include "TFEL/Math/Array/StridedCoalescedView.hxx"
 #include "MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.hxx"
+#include "MGIS/Function/TFEL/General.hxx"
 #include "MGIS/Function/TFEL/TensorConcept.hxx"
 
 namespace mgis::function {

@@ -32,6 +32,7 @@
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Math/Array/View.hxx"
 #include "MGIS/Function/CompileTimeSize.hxx"
+#include "MGIS/Function/TFEL/General.hxx"
 
 namespace mgis::function {
 

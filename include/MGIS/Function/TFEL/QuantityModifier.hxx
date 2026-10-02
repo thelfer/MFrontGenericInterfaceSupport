@@ -22,6 +22,7 @@
 #include "MGIS/Contract.hxx"
 #include "MGIS/Function/SpaceConcept.hxx"
 #include "MGIS/Function/EvaluatorConcept.hxx"
+#include "MGIS/Function/TFEL/General.hxx"
 
 namespace mgis::function {
 

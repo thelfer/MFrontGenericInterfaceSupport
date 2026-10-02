@@ -24,6 +24,7 @@
 #include "MGIS/Config.hxx"
 #include "MGIS/Function/BasicLinearSpace.hxx"
 #include "MGIS/Function/Function.hxx"
+#include "MGIS/Function/TFEL/General.hxx"
 
 namespace mgis::function {
 
