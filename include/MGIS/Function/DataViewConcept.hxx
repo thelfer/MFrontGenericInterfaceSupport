@@ -31,7 +31,7 @@ namespace mgis::function {
 
   //! \brief a concept used to distinguish views from data
   template <typename T>
-  concept DataViewConcept = ::mgis::function::internals::IsDataView<T>::type;
+  concept DataViewConcept = ::mgis::function::internals::IsDataView<T>::value;
 
 }  // end of namespace mgis::function
 
