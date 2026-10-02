@@ -50,6 +50,7 @@ mgis_header(MGIS Database.hxx)
 endif(MGIS_HAVE_TFEL)
 
 if(enable-mgis-function)
+  mgis_header(MGIS/Function DataViewConcept.hxx)
   mgis_header(MGIS/Function CompileTimeSize.hxx)
   mgis_header(MGIS/Function SpaceConcept.hxx)
   mgis_header(MGIS/Function BasicLinearSpace.hxx)
