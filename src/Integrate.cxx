@@ -6,7 +6,7 @@
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
+ * or the CECILL-A licence. A copy of those§s licences are delivered
  * with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
@@ -846,7 +846,7 @@ namespace mgis::behaviour {
     }
     auto res = MultiThreadedBehaviourIntegrationResult{};
     for (auto& t : tasks) {
-      const auto& ri = *(t.get());
+      const auto ri = *(t.get());
       res.exit_status = std::min(res.exit_status, ri.exit_status);
       res.results.push_back(ri);
     }

@@ -23,6 +23,10 @@ The page describes the new functionalities of Version 3.0.3 of the
 
 # Issues fixed
 
+## Issue 276: Dangling reference while collecting threaded integration results
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/276>
+
 ## Issue 194: [python] `setExternalStateVariable` shall accept integers
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/194>
