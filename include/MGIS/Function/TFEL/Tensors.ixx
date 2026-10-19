@@ -91,12 +91,10 @@ namespace mgis::function::internals {
 
   template <TensorConcept TensorType>
   template <EvaluatorConcept EvaluatorType>
-  constexpr auto tensor_modifier<TensorType>::
-  operator()(const EvaluatorType& e) const requires(
-      (areTensorModifierRequirementsSatisfied<TensorType, std::decay_t<EvaluatorType>>)&&(
-          checkEvaluatorNumberOfComponentsCompatibility<
-              EvaluatorType,
-              compile_time_size<TensorType>>())) {
+  constexpr auto tensor_modifier<TensorType>::operator()(const EvaluatorType& e)
+      const requires((areTensorModifierRequirementsSatisfied<
+                      TensorType,
+                      std::decay_t<EvaluatorType>>)) {
     using Modifier = TensorModifier<TensorType, std::decay_t<EvaluatorType>>;
     return Modifier(e);
   }  // end of operator()

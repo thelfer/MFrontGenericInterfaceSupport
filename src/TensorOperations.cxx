@@ -45,7 +45,7 @@ namespace mgis::function::internals {
       const RotationOperation ro) noexcept {
     const auto rm = r | as_tmatrix<3, 3>;
     if (!rm.check(ctx)) {
-      return ctx.registerErrorMessage("invalid number of components");
+      return {};
     }
     if (ro == RotationOperation::FORWARD) {
       return internals::evaluate(ctx, t | rotate(rm));

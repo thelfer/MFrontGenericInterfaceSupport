@@ -59,10 +59,8 @@ namespace mgis::function::internals {
      */
     template <EvaluatorConcept EvaluatorType>
     constexpr auto operator()(const EvaluatorType&) const requires(
-        (areTensorModifierRequirementsSatisfied<TensorType, std::decay_t<EvaluatorType>>)&&(
-            checkEvaluatorNumberOfComponentsCompatibility<
-                EvaluatorType,
-                compile_time_size<TensorType>>()));
+        (areTensorModifierRequirementsSatisfied<TensorType,
+                                                std::decay_t<EvaluatorType>>));
   };
 
   struct RotateModifier {
