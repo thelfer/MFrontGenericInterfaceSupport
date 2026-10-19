@@ -38,6 +38,9 @@ namespace mgis::python {
 
   pybind11::array_t<double> wrapInNumPyArray(std::span<double>& v,
                                              const size_type nc) {
+    if (nc == 0) {
+      return pybind11::array_t<double>();
+    }
     return pybind11::array_t<double>(
         {v.size() / nc, nc}, /* Buffer dimensions */
         {nc * sizeof(double), sizeof(double)}, v.data(), pybind11::none());
@@ -61,6 +64,9 @@ namespace mgis::python {
   pybind11::array_t<double> wrapInNumPyArray(std::span<double>& v,
                                              const size_type nl,
                                              const size_type nc) {
+    if ((nc == 0) || (nl == 0)) {
+      return pybind11::array_t<double>();
+    }
     return pybind11::array_t<double>(
         {v.size() / (nc * nl), nl, nc},
         {(nc * nl) * sizeof(double), nc * sizeof(double), sizeof(double)},

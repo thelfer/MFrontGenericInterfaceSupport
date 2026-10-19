@@ -44,21 +44,40 @@ static void MaterialStateManagerInitializer_bindDissipatedEnergies(
   i.dissipated_energies = mgis::python::mgis_convert_to_span(K);
 }  // end of MaterialStateManagerInitializer_bindDissipatedEnergies
 
+/*!
+ * \brief wrap values stored per integration point
+ * \param[in] values: values
+ * \param[in] n: number of integration points
+ * \param[in] stride: number of values per integration point
+ */
+static pybind11::object MaterialStateManager_wrapPerIntegrationPointValues(
+    std::span<mgis::real>& values,
+    const mgis::size_type n,
+    const mgis::size_type stride) {
+  if (stride == 0) {
+    // one empty row per integration point
+    return pybind11::array_t<double>(
+        std::vector<pybind11::ssize_t>{static_cast<pybind11::ssize_t>(n), 0});
+  }
+  return mgis::python::wrapInNumPyArray(values, stride);
+}  // end of MaterialStateManager_wrapPerIntegrationPointValues
+
 static pybind11::object MaterialStateManager_getGradients(
     mgis::behaviour::MaterialStateManager& s) {
-  return mgis::python::wrapInNumPyArray(s.gradients, s.gradients_stride);
+  return MaterialStateManager_wrapPerIntegrationPointValues(
+      s.gradients, s.n, s.gradients_stride);
 }  // end of MaterialStateManager_getGradients
 
 static pybind11::object MaterialStateManager_getThermodynamicForces(
     mgis::behaviour::MaterialStateManager& s) {
-  return mgis::python::wrapInNumPyArray(s.thermodynamic_forces,
-                                        s.thermodynamic_forces_stride);
+  return MaterialStateManager_wrapPerIntegrationPointValues(
+      s.thermodynamic_forces, s.n, s.thermodynamic_forces_stride);
 }  // end of MaterialStateManager_getThermodynamicForces
 
 static pybind11::object MaterialStateManager_getInternalStateVariables(
     mgis::behaviour::MaterialStateManager& s) {
-  return mgis::python::wrapInNumPyArray(s.internal_state_variables,
-                                        s.internal_state_variables_stride);
+  return MaterialStateManager_wrapPerIntegrationPointValues(
+      s.internal_state_variables, s.n, s.internal_state_variables_stride);
 }  // end of MaterialStateManager_getInternalStateVariables
 
 static pybind11::object MaterialStateManager_getStoredEnergies(
