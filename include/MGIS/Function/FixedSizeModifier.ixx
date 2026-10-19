@@ -15,6 +15,8 @@
 #ifndef LIB_MGIS_FUNCTION_FIXEDSIZEMODIFIER_IXX
 #define LIB_MGIS_FUNCTION_FIXEDSIZEMODIFIER_IXX
 
+#include <array>
+#include <algorithm>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Function/DataViewConcept.hxx"
 
@@ -89,9 +91,8 @@ namespace mgis::function {
         if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
           return std::span<const real, N>(this->evaluator(i).data(), N);
         } else {
-          const auto v = this->evaluator(i);
           auto r = std::array<real, N>{};
-          std::copy(v.begin(), v.end(), r.begin());
+          std::copy_n(this->evaluator(i).data(), N, r.begin());
           return r;
         }
       }
@@ -123,9 +124,8 @@ namespace mgis::function {
         if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
           return std::span<const real, N>(this->evaluator(wk, i).data(), N);
         } else {
-          const auto v = this->evaluator(wk, i);
           auto r = std::array<real, N>{};
-          std::copy(v.begin(), v.end(), r.begin());
+          std::copy_n(this->evaluator(wk, i).data(), N, r.begin());
           return r;
         }
       }
@@ -157,9 +157,8 @@ namespace mgis::function {
         if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
           return std::span<const real, N>(this->evaluator(e, i).data(), N);
         } else {
-          const auto v = this->evaluator(e, i);
           auto r = std::array<real, N>{};
-          std::copy(v.begin(), v.end(), r.begin());
+          std::copy_n(this->evaluator(e, i).data(), N, r.begin());
           return r;
         }
       }
@@ -193,9 +192,8 @@ namespace mgis::function {
         if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
           return std::span<const real, N>(this->evaluator(wk, e, i).data(), N);
         } else {
-          const auto v = this->evaluator(wk, e, i);
           auto r = std::array<real, N>{};
-          std::copy(v.begin(), v.end(), r.begin());
+          std::copy_n(this->evaluator(wk, e, i).data(), N, r.begin());
           return r;
         }
       }
