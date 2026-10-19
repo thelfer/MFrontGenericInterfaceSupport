@@ -22,6 +22,10 @@ namespace mgis::function::internals {
   struct IsDataView : std::false_type {};
 
   //! \brief partial specialisation for std::span
+  template <typename T>
+  struct IsDataView<T&> : std::true_type {};
+
+  //! \brief partial specialisation for std::span
   template <class T, std::size_t Extent>
   struct IsDataView<::std::span<T, Extent>> : std::true_type{};
 

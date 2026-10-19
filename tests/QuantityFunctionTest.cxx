@@ -42,6 +42,7 @@ struct QuantityFunctionsTest final : public tfel::tests::TestCase {
     this->test1();
     this->test2();
     this->test3();
+    this->test4();
     return this->result;
   }
 
@@ -131,6 +132,20 @@ struct QuantityFunctionsTest final : public tfel::tests::TestCase {
     const auto ok = assign(ctx, t2, t | vmis);
     TFEL_TESTS_ASSERT(ok);
     TFEL_TESTS_ASSERT(check_value(f2(0)[0], std::sqrt(51)));
+  }
+  void test4() {
+    using namespace mgis;
+    using namespace mgis::function;
+    using stress = ::tfel::math::qt<::tfel::math::unit::Stress, real>;
+    // a result returned by value must be copied, not referenced (issue #289)
+    auto space = BasicLinearSpace{1};
+    Function f(space, 4);
+    const auto q = f | as_stensor<2> | unary_operation([](const auto& s) {
+                     return std::array<real, 1>{s[0]};
+                   }) |
+                   as_quantity<::tfel::math::unit::Stress>;
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<evaluator_result<std::decay_t<decltype(q)>>, stress>));
   }
 };
 
