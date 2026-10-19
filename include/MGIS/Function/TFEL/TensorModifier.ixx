@@ -26,6 +26,26 @@ namespace mgis::function {
     return compile_time_size<TensorType>;
   }
 
+  //! \brief perform consistency checks
+  template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
+  requires(areTensorModifierRequirementsSatisfied<TensorType,
+                                                  EvaluatorType>)  //
+  constexpr bool TensorModifier<TensorType, EvaluatorType>::check(
+      AbstractErrorHandler& eh) const {
+    const auto c =
+        EvaluatorModifierBase<TensorModifier<TensorType, EvaluatorType>,
+                              EvaluatorType>::check(eh);
+    if (!c) {
+      return false;
+    }
+    const auto nc =
+        internals::disambiguateGetNumberOfComponents(this->evaluator);
+    if (nc != compile_time_size<TensorType>) {
+      return eh.registerErrorMessage("invalid number of components");
+    }
+    return true;
+  }
+
   template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
   requires(areTensorModifierRequirementsSatisfied<TensorType,
                                                   EvaluatorType>)  //

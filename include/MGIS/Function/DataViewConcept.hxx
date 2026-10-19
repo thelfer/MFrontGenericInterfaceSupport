@@ -27,7 +27,7 @@ namespace mgis::function::internals {
 
   //! \brief partial specialisation for std::span
   template <class T, std::size_t Extent>
-  struct IsDataView<::std::span<T, Extent>> : std::true_type{};
+  struct IsDataView<::std::span<T, Extent>> : std::true_type {};
 
 }  // end of namespace mgis::function::internals
 

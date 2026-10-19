@@ -37,8 +37,6 @@ namespace mgis {
     std::abort();  // just in case the handler returns
   }                // end of terminate
 
-  void abort(std::string_view msg) {
-    ::mgis::terminate(msg);
-  }  // end of abort
+  void abort(std::string_view msg) { ::mgis::terminate(msg); }  // end of abort
 
 }  // end of namespace mgis

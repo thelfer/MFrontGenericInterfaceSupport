@@ -480,9 +480,10 @@ namespace mgis::function::internals {
     using Tag = ::mgis::function::EvaluatorModifierTag;
 
     template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType>
-    constexpr auto operator()(QualifiedFunctionArgumentType&& f) const requires(
-        internals::checkNumberOfComponentsCompatibility<
-            QualifiedFunctionArgumentType, N>()) {
+    constexpr auto operator()(QualifiedFunctionArgumentType&& f) const
+        requires(internals::checkNumberOfComponentsCompatibility<
+                 QualifiedFunctionArgumentType,
+                 N>()) {
       return FixedSizeView<std::decay_t<QualifiedFunctionArgumentType>, N>(
           std::forward<QualifiedFunctionArgumentType>(f));
     }

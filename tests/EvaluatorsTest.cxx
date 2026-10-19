@@ -47,6 +47,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     this->test14();
     this->test15();
     this->test16();
+    this->test17();
     return this->result;
   }
 
@@ -547,6 +548,18 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(std::abs(*ov - 14) < 1e-13);
     }
 #endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
+  }
+  void test17() {
+    using namespace mgis;
+    using namespace mgis::function;
+    auto ctx = Context{};
+    const Function f(BasicLinearSpace{1}, 4);
+    const auto e = f.view() | as_stensor<1>;
+    TFEL_TESTS_ASSERT(e.check(ctx) == false);
+    TFEL_TESTS_CHECK_EQUAL(ctx.getRawErrorMessage(),
+                           "invalid number of components");
+    const auto e2 = f.view() | as_stensor<2>;
+    TFEL_TESTS_ASSERT(e2.check(ctx) == true);
   }
 };
 
