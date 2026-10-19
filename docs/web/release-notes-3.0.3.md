@@ -23,6 +23,10 @@ The page describes the new functionalities of Version 3.0.3 of the
 
 # Issues fixed
 
+## Issue 291: Division by zero when a behaviour declares no internal state variable
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/291>
+
 ## Issue 276: Dangling reference while collecting threaded integration results
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/276>
