@@ -9,11 +9,14 @@
 #undef NDEBUG
 #endif
 
+#include <span>
 #include <cmath>
+#include <array>
 #include <memory>
 #include <limits>
 #include <cstdlib>
 #include <iostream>
+#include <algorithm>
 #include <stdexcept>
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
@@ -25,6 +28,71 @@
 #include "MGIS/Function/FixedSizeView.hxx"
 #include "MGIS/Function/FixedSizeModifier.hxx"
 #include "MGIS/Function/TFEL/Tensors.hxx"
+
+template <typename T>
+struct ByValueModifierResult {
+  static T exe(const T& v) { return v; }
+};
+
+template <typename T, std::size_t N>
+struct ByValueModifierResult<std::span<const T, N>> {
+  static std::array<T, N> exe(std::span<const T, N> values) {
+    auto r = std::array<T, N>{};
+    std::copy(values.begin(), values.end(), r.begin());
+    return r;
+  }
+};
+
+template <typename T>
+struct ByValueModifierResult<std::span<const T>> {
+  static std::vector<T> exe(std::span<const T> values) {
+    auto r = std::vector<T>{};
+    r.resize(values.size());
+    std::copy(values.begin(), values.end(), r.begin());
+    return r;
+  }
+};
+
+template <::mgis::function::EvaluatorConcept EvaluatorType>
+struct ByValueModifier
+    : ::mgis::function::EvaluatorModifierBase<ByValueModifier<EvaluatorType>,
+                                              EvaluatorType> {
+  // inheriting constructor
+  using ::mgis::function::EvaluatorModifierBase<
+      ByValueModifier,
+      EvaluatorType>::EvaluatorModifierBase;
+  //! \return the size of the tensorial object to be exposed
+  constexpr ::mgis::size_type getNumberOfComponents() const noexcept {
+    return this->evaluator.getNumberOfComponents();
+  }
+  constexpr auto apply(
+      const ::mgis::function::evaluator_result<EvaluatorType>& v) const {
+    return ByValueModifierResult<std::decay_t<
+        ::mgis::function::evaluator_result<EvaluatorType>>>::exe(v);
+  }
+};
+
+template <::mgis::function::EvaluatorConcept EvaluatorType>
+constexpr ::mgis::size_type getNumberOfComponents(
+    const ByValueModifier<EvaluatorType>& e) noexcept {
+  return e.getNumberOfComponents();
+}
+
+struct by_value_modifier {
+  //! \brief this alias allows to match the Evaluator Modifier concept
+  using Tag = ::mgis::function::EvaluatorModifierTag;
+
+  /*!
+   * \brief create a new modifier
+   * \param[in] e: evaluator type
+   */
+  template <::mgis::function::EvaluatorConcept EvaluatorType>
+  constexpr auto operator()(const EvaluatorType& e) const {
+    return ByValueModifier<EvaluatorType>(e);
+  }
+};
+
+inline constexpr auto by_value = by_value_modifier{};
 
 struct EvaluatorsTest final : public tfel::tests::TestCase {
   EvaluatorsTest()
@@ -48,6 +116,7 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     this->test15();
     this->test16();
     this->test17();
+    this->test18();
     return this->result;
   }
 
@@ -559,7 +628,31 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_EQUAL(ctx.getRawErrorMessage(),
                            "invalid number of components");
     const auto e2 = f.view() | as_stensor<2>;
-    TFEL_TESTS_ASSERT(e2.check(ctx) == true);
+    TFEL_TESTS_ASSERT(e2.check(ctx));
+  }
+  void test18() {
+    using namespace mgis;
+    using namespace mgis::function;
+    auto ctx = Context{};
+    const auto values = std::array<real, 4>{1, 2, -3, 4};
+    Function f(BasicLinearSpace{1}, 4);
+    auto v0 = f(0);
+    std::copy(values.begin(), values.end(), v0.begin());
+    const auto v = view<4>(f.view() | by_value);
+    TFEL_TESTS_ASSERT(v.check(ctx));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<decltype(v(0)), std::array<real, 4>>));
+    TFEL_TESTS_CHECK_EQUAL(v(0), values);
+    const auto v2 = view<4>(view<4>(f.view() | by_value));
+    TFEL_TESTS_ASSERT(v2.check(ctx));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<decltype(v2(0)), std::array<real, 4>>));
+    TFEL_TESTS_CHECK_EQUAL(v2(0), values);
+    const auto v3 = view<4>(view<4>(f) | by_value);
+    TFEL_TESTS_ASSERT(v3.check(ctx));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<decltype(v3(0)), std::array<real, 4>>));
+    TFEL_TESTS_CHECK_EQUAL(v3(0), values);
   }
 };
 

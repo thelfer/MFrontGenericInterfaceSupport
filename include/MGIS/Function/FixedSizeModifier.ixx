@@ -15,7 +15,10 @@
 #ifndef LIB_MGIS_FUNCTION_FIXEDSIZEMODIFIER_IXX
 #define LIB_MGIS_FUNCTION_FIXEDSIZEMODIFIER_IXX
 
+#include <array>
+#include <algorithm>
 #include "MGIS/Raise.hxx"
+#include "MGIS/Function/DataViewConcept.hxx"
 
 namespace mgis::function {
 
@@ -85,10 +88,16 @@ namespace mgis::function {
       if constexpr (has_data_method) {
         return std::span<const real, N>(this->evaluator.data(unsafe, i), N);
       } else {
-        return std::span<const real, N>(this->evaluator(i).data(), N);
+        if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
+          return std::span<const real, N>(this->evaluator(i).data(), N);
+        } else {
+          auto r = std::array<real, N>{};
+          std::copy_n(this->evaluator(i).data(), N, r.begin());
+          return r;
+        }
       }
     }
-  }
+  }  // end of operator()
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0)  //
@@ -112,10 +121,16 @@ namespace mgis::function {
       if constexpr (has_data_method) {
         return std::span<const real, N>(this->evaluator.data(unsafe, wk, i), N);
       } else {
-        return std::span<const real, N>(this->evaluator(wk, i).data(), N);
+        if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
+          return std::span<const real, N>(this->evaluator(wk, i).data(), N);
+        } else {
+          auto r = std::array<real, N>{};
+          std::copy_n(this->evaluator(wk, i).data(), N, r.begin());
+          return r;
+        }
       }
     }
-  }
+  }  // end of operator()
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0)  //
@@ -139,10 +154,16 @@ namespace mgis::function {
       if constexpr (has_data_method) {
         return std::span<const real, N>(this->evaluator.data(unsafe, e, i), N);
       } else {
-        return std::span<const real, N>(this->evaluator(e, i).data(), N);
+        if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
+          return std::span<const real, N>(this->evaluator(e, i).data(), N);
+        } else {
+          auto r = std::array<real, N>{};
+          std::copy_n(this->evaluator(e, i).data(), N, r.begin());
+          return r;
+        }
       }
     }
-  }
+  }  // end of operator()
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0)  //
@@ -168,7 +189,13 @@ namespace mgis::function {
         return std::span<const real, N>(this->evaluator.data(unsafe, wk, e, i),
                                         N);
       } else {
-        return std::span<const real, N>(this->evaluator(wk, e, i).data(), N);
+        if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
+          return std::span<const real, N>(this->evaluator(wk, e, i).data(), N);
+        } else {
+          auto r = std::array<real, N>{};
+          std::copy_n(this->evaluator(wk, e, i).data(), N, r.begin());
+          return r;
+        }
       }
     }
   }

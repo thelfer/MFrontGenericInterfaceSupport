@@ -187,9 +187,9 @@ namespace mgis::function::customization_points {
 
   template <std::size_t N>
   requires((N > 0) && (N != std::dynamic_extent))  //
-      struct AbsoluteValue<std::array<const real, N>> {
+      struct AbsoluteValue<std::array<real, N>> {
     [[nodiscard]] static constexpr auto exe(
-        const std::array<const real, N>& v) noexcept {
+        const std::array<real, N>& v) noexcept {
       auto r = std::array<real, N>{};
       for (std::size_t i = 0; i != N; ++i) {
         r[i] = std::abs(v[i]);
