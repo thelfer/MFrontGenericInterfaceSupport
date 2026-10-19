@@ -54,6 +54,8 @@ namespace mgis::function {
     // inheriting constructor
     using EvaluatorModifierBase<TensorModifier,
                                 EvaluatorType>::EvaluatorModifierBase;
+    //! \brief perform consistency checks
+    [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
     //! \return the size of the tensorial object to be exposed
     constexpr size_type getNumberOfComponents() noexcept;
     /*!

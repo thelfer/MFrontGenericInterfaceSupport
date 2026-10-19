@@ -30,14 +30,14 @@ namespace mgis::function::internals {
   //! \brief partial specialisation for tfel::math::View
   template <typename MappedType, typename IndexingPolicyType>
   struct IsDataView<::tfel::math::View<MappedType, IndexingPolicyType>>
-    : std::true_type{};
+      : std::true_type {};
 
   //! \brief partial specialisation for tfel::math::CoalescedView
   template <
       ::tfel::math::MappableMathObjectUsingCoalescedViewConcept MappedType,
       typename IndexingPolicyType>
   struct IsDataView<::tfel::math::CoalescedView<MappedType, IndexingPolicyType>>
-    : std::true_type{};
+      : std::true_type {};
 
 }  // end of namespace mgis::function::internals
 
