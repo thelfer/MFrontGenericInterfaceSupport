@@ -82,8 +82,7 @@ namespace mgis::function {
         return tfel::math::const_qt_ref<UnitType, real>(
             *(this->evaluator(i).data()));
       } else {
-        return tfel::math::qt<UnitType, real>(
-            *(this->evaluator(i).data()));
+        return tfel::math::qt<UnitType, real>(*(this->evaluator(i).data()));
       }
     }
   }
@@ -154,8 +153,8 @@ namespace mgis::function {
           *(this->evaluator.data(unsafe, wk, e, i)));
     } else {
       if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
-      return tfel::math::const_qt_ref<UnitType, real>(
-          *(this->evaluator(wk, e, i).data()));
+        return tfel::math::const_qt_ref<UnitType, real>(
+            *(this->evaluator(wk, e, i).data()));
       } else {
         return tfel::math::qt<UnitType, real>(
             *(this->evaluator(wk, e, i).data()));
