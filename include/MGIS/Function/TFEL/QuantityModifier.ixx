@@ -78,8 +78,13 @@ namespace mgis::function {
       return tfel::math::const_qt_ref<UnitType, real>(
           *(this->evaluator.data(unsafe, i)));
     } else {
-      return tfel::math::const_qt_ref<UnitType, real>(
-          *(this->evaluator(i).data()));
+      if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
+        return tfel::math::const_qt_ref<UnitType, real>(
+            *(this->evaluator(i).data()));
+      } else {
+        return tfel::math::qt<UnitType, real>(
+            *(this->evaluator(i).data()));
+      }
     }
   }
 
@@ -98,8 +103,12 @@ namespace mgis::function {
       return tfel::math::const_qt_ref<UnitType, real>(
           *(this->evaluator.data(unsafe, wk, i)));
     } else {
-      return tfel::math::const_qt_ref<UnitType, real>(
-          *(this->evaluator(wk, i).data()));
+      if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
+        return tfel::math::const_qt_ref<UnitType, real>(
+            *(this->evaluator(wk, i).data()));
+      } else {
+        return tfel::math::qt<UnitType, real>(*(this->evaluator(wk, i).data()));
+      }
     }
   }
 
@@ -118,8 +127,12 @@ namespace mgis::function {
       return tfel::math::const_qt_ref<UnitType, real>(
           *(this->evaluator.data(unsafe, e, i)));
     } else {
-      return tfel::math::const_qt_ref<UnitType, real>(
-          *(this->evaluator(e, i).data()));
+      if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
+        return tfel::math::const_qt_ref<UnitType, real>(
+            *(this->evaluator(e, i).data()));
+      } else {
+        return tfel::math::qt<UnitType, real>(*(this->evaluator(e, i).data()));
+      }
     }
   }
 
@@ -140,8 +153,13 @@ namespace mgis::function {
       return tfel::math::const_qt_ref<UnitType, real>(
           *(this->evaluator.data(unsafe, wk, e, i)));
     } else {
+      if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
       return tfel::math::const_qt_ref<UnitType, real>(
           *(this->evaluator(wk, e, i).data()));
+      } else {
+        return tfel::math::qt<UnitType, real>(
+            *(this->evaluator(wk, e, i).data()));
+      }
     }
   }
 
