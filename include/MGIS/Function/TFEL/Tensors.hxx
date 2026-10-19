@@ -49,18 +49,20 @@ namespace mgis::function::internals {
     using Tag = ::mgis::function::EvaluatorModifierTag;
 
     template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType>
-    constexpr auto operator()(QualifiedFunctionArgumentType&&) const requires(
-        internals::checkNumberOfComponentsCompatibility<
-            QualifiedFunctionArgumentType,
-            compile_time_size<TensorType>>());
+    constexpr auto operator()(QualifiedFunctionArgumentType&&) const
+        requires(internals::checkNumberOfComponentsCompatibility<
+                 QualifiedFunctionArgumentType,
+                 compile_time_size<TensorType>>());
     /*!
      * \brief create a new modifier
      * \param[in] e: evaluator type
      */
     template <EvaluatorConcept EvaluatorType>
     constexpr auto operator()(const EvaluatorType&) const requires(
-        (areTensorModifierRequirementsSatisfied<TensorType,
-                                                std::decay_t<EvaluatorType>>));
+        (areTensorModifierRequirementsSatisfied<TensorType, std::decay_t<EvaluatorType>>)&&(
+            checkEvaluatorNumberOfComponentsCompatibility<
+                EvaluatorType,
+                compile_time_size<TensorType>>()));
   };
 
   struct RotateModifier {
