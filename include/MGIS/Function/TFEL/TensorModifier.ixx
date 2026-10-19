@@ -28,6 +28,8 @@ namespace mgis::function {
 
   //! \brief perform consistency checks
   template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
+  requires(areTensorModifierRequirementsSatisfied<TensorType,
+                                                  EvaluatorType>)  //
   constexpr bool TensorModifier<TensorType, EvaluatorType>::check(
       AbstractErrorHandler& eh) const {
     const auto c =
