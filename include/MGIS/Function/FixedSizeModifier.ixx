@@ -87,7 +87,7 @@ namespace mgis::function {
         return std::span<const real, N>(this->evaluator.data(unsafe, i), N);
       } else {
         if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
-          return std::span<const real, N>(this->evaluator.data(i).data(), N);
+          return std::span<const real, N>(this->evaluator(i).data(), N);
         } else {
           const auto v = this->evaluator(i);
           auto r = std::array<real, N>{};
