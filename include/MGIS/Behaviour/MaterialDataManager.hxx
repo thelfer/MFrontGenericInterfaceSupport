@@ -258,6 +258,12 @@ namespace mgis::behaviour {
     bool thread_safe = true;
   };  // end of struct MaterialDataManager
 
+  //! \brief additional arguments passed to the upate function
+  struct UpdateArguments {
+    //! \brief boolean stating if tangent operator blocks must be zeroed
+    const bool zero_tangent_operator_blocks = true;
+  };
+
   /*!
    * \brief update the behaviour data by:
    * - setting s1 equal to s0
@@ -265,6 +271,14 @@ namespace mgis::behaviour {
    * \param[in,out] m: material data manager
    */
   MGIS_EXPORT void update(MaterialDataManager&);
+  /*!
+   * \brief update the behaviour data by:
+   * - setting s1 equal to s0
+   * - filling the stiffness matrix with 0
+   * \param[in,out] m: material data manager
+   * \param[in,out] args: additional arguments
+   */
+  MGIS_EXPORT void update(MaterialDataManager&, const UpdateArguments&);
   /*!
    * \brief revert the behaviour data by:
    * - setting s1 equal to s0

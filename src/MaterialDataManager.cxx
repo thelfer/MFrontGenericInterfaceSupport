@@ -167,9 +167,15 @@ namespace mgis::behaviour {
 
   MaterialDataManager::~MaterialDataManager() = default;
 
-  void update(MaterialDataManager& m) {
-    std::fill(m.K.begin(), m.K.end(), real{0});
+  void update(MaterialDataManager& m, const UpdateArguments& args) {
+    if (args.zero_tangent_operator_blocks) {
+      std::fill(m.K.begin(), m.K.end(), real{0});
+    }
     updateValues(m.s0, m.s1);
+ }  // end of update
+
+  void update(MaterialDataManager& m) {
+    update(m, UpdateArguments{});
   }  // end of update
 
   void revert(MaterialDataManager& m) {
