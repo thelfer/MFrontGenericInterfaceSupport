@@ -118,7 +118,11 @@ mgis_status mgis_bv_integrate(int* const r,
 mgis_status mgis_bv_integrate_debug(int* const r,
                                     mgis_bv_BehaviourDataView* const d,
                                     const mgis_bv_Behaviour* const b) {
-  *r = mgis::behaviour::integrate_debug(*d, *b);
+  try {
+    *r = mgis::behaviour::integrate_debug(*d, *b);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
   if ((*r != 1) && (*r != 0)) {
     return mgis_report_failure("behaviour integration failed");
   }
