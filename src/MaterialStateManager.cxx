@@ -1047,9 +1047,7 @@ namespace mgis::behaviour {
           return true;
         }
         auto& values = std::get<std::vector<real>>(f.value);
-        if (values.empty()) {
-          values.resize(vsize);
-        }
+        values.resize(vsize);
         odataset->read(values.data(), getNativeType<real>());
         return true;
       }
@@ -1062,23 +1060,16 @@ namespace mgis::behaviour {
       if (std::holds_alternative<std::span<real>>(f.value)) {
         auto& values = std::get<std::span<real>>(f.value);
         const auto fsize = values.size();
-        if (fsize != ng) {
+        if (fsize != ng * vsize) {
           return ctx.registerErrorMessage(
               "invalid storage for '" + n + "' (expected '" +
-              std::to_string(ng) + "', got '" + std::to_string(fsize) + "')");
+              std::to_string(ng * vsize) + "', got '" + std::to_string(fsize) +
+              "')");
         }
         odataset->read(values.data(), getNativeType<real>());
       } else if (std::holds_alternative<std::vector<real>>(f.value)) {
         auto& values = std::get<std::vector<real>>(f.value);
-        if (values.empty()) {
-          values.resize(ng);
-        }
-        const auto fsize = values.size();
-        if (fsize != ng) {
-          return ctx.registerErrorMessage(
-              "invalid storage for '" + n + "' (expected '" +
-              std::to_string(ng) + "', got '" + std::to_string(fsize) + "')");
-        }
+        values.resize(ng * vsize);
         odataset->read(values.data(), getNativeType<real>());
       }
       return true;
