@@ -381,7 +381,11 @@ namespace mgis::behaviour {
       if (v.name == n) {
         return o;
       }
-      o += getVariableSize(v, h);
+      const auto s = getVariableSize(ctx, v, h);
+      if (!s.has_value()) {
+        return {};
+      }
+      o += *s;
     }
     return ctx.registerErrorMessage("getVariableOffset: no variable named '" +
                                     std::string(n) + "'");
