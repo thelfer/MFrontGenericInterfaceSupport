@@ -1,0 +1,28 @@
+@DSL Default;
+@Behaviour FiniteStrainPostProcessingTest;
+@Description {
+  "Hencky elasticity with a post-processing, used to check that the "
+  "post-processings of finite strain behaviours use the stress measure "
+  "chosen at loading"
+}
+
+@StrainMeasure Hencky;
+
+@ProvidesSymmetricTangentOperator;
+@Integrator {
+  constexpr auto young = stress{150e9};
+  constexpr auto nu = real{0.3};
+  const auto lambda = computeLambda(young, nu);
+  const auto mu = computeMu(young, nu);
+  const auto e = eto + deto;
+  sig = lambda * trace(e) * StrainStensor::Id() + 2 * mu * e;
+  if (computeTangentOperator_) {
+    Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+  }
+}
+
+@PostProcessingVariable stress pr;
+pr.setEntryName("MeanStress");
+@PostProcessing MeanStress {
+  pr = trace(sig) / 3;
+}
