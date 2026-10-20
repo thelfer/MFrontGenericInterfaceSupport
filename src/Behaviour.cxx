@@ -609,7 +609,7 @@ namespace mgis::behaviour {
         (b.rotate_array_of_tangent_operator_blocks_ptr == nullptr)) {
       mgis::raise(
           "rotateTangentOperatorBlocks: no function performing the rotation of "
-          "the thermodynamic forces defined");
+          "the tangent operator blocks defined");
     }
   }  // end of checkBehaviourRotateTangentOperatorBlocks
 
