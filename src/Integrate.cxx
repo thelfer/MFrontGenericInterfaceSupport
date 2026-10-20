@@ -659,6 +659,10 @@ namespace mgis::behaviour {
       }));
       b += d;
     }
+    // all the tasks are completed before an exception is rethrown
+    for (auto& t : tasks) {
+      t.wait();
+    }
     auto res = MultiThreadedBehaviourIntegrationResult{};
     for (auto& t : tasks) {
       const auto ri = *(t.get());
@@ -705,6 +709,10 @@ namespace mgis::behaviour {
                                                     b + d);
       }));
       b += d;
+    }
+    // all the tasks are completed before an exception is rethrown
+    for (auto& t : tasks) {
+      t.wait();
     }
     auto res = MultiThreadedBehaviourIntegrationResult{};
     for (auto& t : tasks) {
@@ -798,6 +806,10 @@ namespace mgis::behaviour {
       }));
       b += d;
     }
+    // all the tasks are completed before an exception is rethrown
+    for (auto& t : tasks) {
+      t.wait();
+    }
     auto res = MultiThreadedBehaviourIntegrationResult{};
     for (auto& t : tasks) {
       const auto ri = *(t.get());
@@ -843,6 +855,10 @@ namespace mgis::behaviour {
         return internals::integrate_debug(m, opts, dt, b, b + d, analyser);
       }));
       b += d;
+    }
+    // all the tasks are completed before an exception is rethrown
+    for (auto& t : tasks) {
+      t.wait();
     }
     auto res = MultiThreadedBehaviourIntegrationResult{};
     for (auto& t : tasks) {
@@ -1075,6 +1091,10 @@ namespace mgis::behaviour {
                                                 b + d);
       }));
       b += d;
+    }
+    // all the tasks are completed before an exception is rethrown
+    for (auto& t : tasks) {
+      t.wait();
     }
     auto res = MultiThreadedBehaviourIntegrationResult{};
     for (auto& t : tasks) {
