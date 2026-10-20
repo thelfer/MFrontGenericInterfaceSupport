@@ -43,7 +43,7 @@ namespace mgis::behaviour {
           "RotationMatrix2D::RotationMatrix2D: "
           "empty values for material axis in 2D");
     }
-    if (!(v.size() % 2)) {
+    if (v.size() % 2 != 0) {
       mgis::raise(
           "RotationMatrix2D::RotationMatrix2D: "
           "invalid number of values for material axis in 2D");
@@ -65,7 +65,7 @@ namespace mgis::behaviour {
           "empty values for material axis in 3D");
     }
     const auto s = v.size();
-    if (!(s % 3)) {
+    if (s % 3 != 0) {
       mgis::raise(
           "RotationMatrix3D::RotationMatrix3D: "
           "invalid number of values for material axis in 3D");

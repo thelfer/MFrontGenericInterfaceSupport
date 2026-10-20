@@ -349,7 +349,7 @@ namespace mgis::behaviour {
                   toString(b.hypothesis) + "'");
     }
     if (r.a.size() != 2u) {
-      if (nipts != r.a.size() % 2) {
+      if (nipts != r.a.size() / 2) {
         mgis::raise(std::string(m) +
                     ": the number of integration points handled "
                     "by the rotation matrix is different from the "
@@ -367,7 +367,7 @@ namespace mgis::behaviour {
                   toString(b.hypothesis) + "'");
     }
     if (r.a1.a.size() != 3u) {
-      if (nipts != r.a1.a.size() % 3) {
+      if (nipts != r.a1.a.size() / 3) {
         mgis::raise(std::string(m) +
                     ": the number of integration points handled "
                     "by the rotation matrix is different from the "
@@ -375,7 +375,7 @@ namespace mgis::behaviour {
       }
     }
     if (r.a2.a.size() != 3u) {
-      if (nipts != r.a2.a.size() % 3) {
+      if (nipts != r.a2.a.size() / 3) {
         mgis::raise(std::string(m) +
                     ": the number of integration points handled "
                     "by the rotation matrix is different from the "
