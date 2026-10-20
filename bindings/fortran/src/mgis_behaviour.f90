@@ -2417,7 +2417,7 @@ contains
     if( r%exit_status .ne. MGIS_SUCCESS) then
        return
     end if
-    r = behaviour_get_number_of_internal_state_variables(n, b)
+    r = behaviour_get_internal_state_variables_size(n, b)
     if( r%exit_status .ne. MGIS_SUCCESS) then
        return
     end if
