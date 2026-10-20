@@ -5,8 +5,11 @@
  * \date   29/01/2026
  */
 
+#include <map>
 #include <array>
 #include <cmath>
+#include <vector>
+#include <numeric>
 #include <cstdlib>
 #include <iostream>
 #include "MGIS/Behaviour/State.hxx"
@@ -113,6 +116,40 @@ int main(const int argc, const char* const* argv) {
                    "viscoplastic strain at the last integration point"
                 << "(expected '" << p_ref[i] << "', computed '" << pe[i]
                 << "')\n";
+      return EXIT_FAILURE;
+    }
+  }
+  // external state variables which are not scalars, given at each
+  // integration point
+  const auto b2 = load(argv[1], "TensorialExternalStateVariableTest",
+                       Hypothesis::TRIDIMENSIONAL);
+  auto values = std::map<std::string, std::vector<real>>{};
+  auto m2 = MaterialDataManager{b2, 2};
+  auto m3 = MaterialDataManager{b2, 2};
+  for (const auto& mp : b2.mps) {
+    setMaterialProperty(m2.s1, mp.name, 1);
+    setMaterialProperty(m3.s1, mp.name, 1);
+  }
+  for (const auto& v : b2.esvs) {
+    auto& w = values[v.name];
+    w.resize(m2.n * getVariableSize(v, b2.hypothesis));
+    std::iota(w.begin(), w.end(), real{1});
+    setExternalStateVariable(m2.s1, v.name, w);
+    auto zeros = std::vector<real>(w.size(), real{0});
+    setExternalStateVariable(m3.s1, v.name, zeros);
+  }
+  auto og = createGroup(ctx, root, "TensorialExternalStateVariables");
+  if ((isInvalid(og)) || (!save(ctx, *og, m2.s1)) ||
+      (!restore(ctx, m3.s1, *og, {.restore_mass_densities = false}))) {
+    std::cerr << ctx.getErrorMessage() << '\n';
+    return EXIT_FAILURE;
+  }
+  for (const auto& [n, w] : values) {
+    const auto& esv = std::get<MaterialStateManager::MutableFieldHolder>(
+        m3.s1.external_state_variables.at(n));
+    if (std::get<std::vector<real>>(esv.value) != w) {
+      std::cerr << "invalid values for the external state variable '" << n
+                << "'\n";
       return EXIT_FAILURE;
     }
   }
