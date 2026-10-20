@@ -28,13 +28,13 @@ bibliography: bibliography.bib
 
 ![Principle of MGIS](img/mgis.svg){width=100%}
 
-This project aims at proving tools (functions, classes, bindings,
+This project aims at providing tools (functions, classes, bindings,
 etc...) to handle behaviours written using `MFront` generic interface.
 For information about `MFront`, see
 <http://thelfer.github.io/tfel/web/index.html>.
 
 Those tools are meant to be used by (`FEM`, `FFT`, etc.) solver
-developers. This tools are *not* linked to the `TFEL` libraries.
+developers. These tools are *not* linked to the `TFEL` libraries.
 Permissive licences have been chosen to allow integration in open-source
 and proprietary codes.
 

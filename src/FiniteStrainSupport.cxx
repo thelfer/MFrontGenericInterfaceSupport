@@ -128,7 +128,7 @@ namespace mgis::behaviour {
     if (s.size() != m.n * ts) {
       mgis::raise(
           "convertFiniteStrainStress: "
-          "unsupported tangent operator");
+          "invalid array size");
     }
     convertFiniteStrainStress_PK1_2D(s, m, 0, m.n);
   }  // end of convertFiniteStrainStress_PK1_2D
@@ -147,7 +147,7 @@ namespace mgis::behaviour {
     if (s.size() != m.n * ts) {
       mgis::raise(
           "convertFiniteStrainStress: "
-          "unsupported tangent operator");
+          "invalid array size");
     }
     convertFiniteStrainStress_PK1_3D(s, m, 0, m.n);
   }  // end of convertFiniteStrainStress_PK1_3D
@@ -171,7 +171,7 @@ namespace mgis::behaviour {
     } else {
       mgis::raise(
           "convertFiniteStrainStress: "
-          "unsupported tangent operator");
+          "unsupported stress measure");
     }
   }  // end of convertFiniteStrainStress
 
@@ -189,7 +189,7 @@ namespace mgis::behaviour {
     if (P.size() != ts) {
       mgis::raise(
           "convertFiniteStrainStress: "
-          "unsupported tangent operator");
+          "invalid array size");
     }
     convertFiniteStrainStress_PK1_2D(P.data(), d.s1.gradients.data(),
                                      d.s1.thermodynamic_forces.data());
@@ -209,7 +209,7 @@ namespace mgis::behaviour {
     if (P.size() != ts) {
       mgis::raise(
           "convertFiniteStrainStress: "
-          "unsupported tangent operator");
+          "invalid array size");
     }
     convertFiniteStrainStress_PK1_3D(P.data(), d.s1.gradients.data(),
                                      d.s1.thermodynamic_forces.data());
@@ -234,7 +234,7 @@ namespace mgis::behaviour {
     } else {
       mgis::raise(
           "convertFiniteStrainStress: "
-          "unsupported tangent operator");
+          "unsupported stress measure");
     }
   }  // end of convertFiniteStrainStress
 
@@ -768,7 +768,7 @@ namespace mgis::behaviour {
     if (K.size() != m.n * Ks) {
       mgis::raise(
           "convertFiniteStrainTangentOperator: "
-          "unsupported tangent operator");
+          "invalid array size");
     }
     convertFiniteStrainTangentOperator_PK1_2D(K, m, 0, m.n);
   }  // end of convertFiniteStrainTangentOperator_PK1_2D
@@ -789,7 +789,7 @@ namespace mgis::behaviour {
     if (K.size() != m.n * Ks) {
       mgis::raise(
           "convertFiniteStrainTangentOperator: "
-          "unsupported tangent operator");
+          "invalid array size");
     }
     convertFiniteStrainTangentOperator_PK1_3D(K, m, 0, m.n);
   }  // end of convertFiniteStrainTangentOperator_PK1_3D
@@ -833,7 +833,7 @@ namespace mgis::behaviour {
     if (K.size() != Ks) {
       mgis::raise(
           "convertFiniteStrainTangentOperator: "
-          "unsupported tangent operator");
+          "invalid array size");
     }
     convertFiniteStrainTangentOperator_PK1_2D(K.data(), d.K.data(),
                                               d.s1.gradients.data(),
@@ -856,7 +856,7 @@ namespace mgis::behaviour {
     if (K.size() != Ks) {
       mgis::raise(
           "convertFiniteStrainTangentOperator: "
-          "unsupported tangent operator");
+          "invalid array size");
     }
     convertFiniteStrainTangentOperator_PK1_3D(K.data(), d.K.data(),
                                               d.s1.gradients.data(),

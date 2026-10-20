@@ -417,7 +417,7 @@ namespace mgis {
         return "PK2Stress";
       } else if (s != mgis::behaviour::FiniteStrainBehaviourOptions::PK1) {
         mgis::raise(
-            "LibrariesManager::getRotateBehaviourTangentOperatorBlocksFunction:"
+            "LibrariesManager::getRotateBehaviourThermodynamicForcesFunction:"
             " unsupported stress measure");
       }
       return "PK1Stress";
@@ -450,7 +450,7 @@ namespace mgis {
       }
       mgis::raise_if(s != mgis::behaviour::FiniteStrainBehaviourOptions::PK1,
                      "LibrariesManager::"
-                     "getRotateArrayOfBehaviourTangentOperatorBlocksFunction:"
+                     "getRotateArrayOfBehaviourThermodynamicForcesFunction:"
                      " unsupported stress measure");
       return "PK1Stress";
     }();

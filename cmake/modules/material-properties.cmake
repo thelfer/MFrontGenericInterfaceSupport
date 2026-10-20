@@ -11,7 +11,7 @@ function(add_mfront_material_properties_generated_source lib file)
       COMMAND "${MFRONT}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=generic" "${mfront_file}"
-      DEPENDS "${mfront_file}"
+      DEPENDS "${mfront_file}" "${MFRONT}"
       COMMENT "mfront source ${mfront_file}")
   set(${lib}_SOURCES ${mfront_output} ${${lib}_SOURCES} PARENT_SCOPE)
 endfunction(add_mfront_material_properties_generated_source)

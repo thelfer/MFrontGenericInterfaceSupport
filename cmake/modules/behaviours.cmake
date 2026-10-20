@@ -8,7 +8,7 @@ macro(add_mfront_dependency name file)
     COMMAND "${MFRONT}"
     ARGS    "--search-path=${CMAKE_CURRENT_SOURCE_DIR}"
     ARGS    "--interface=mfront" "${mfront_file}"
-    DEPENDS "${mfront_file}"
+    DEPENDS "${mfront_file}" "${MFRONT}"
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     COMMENT "mfront source ${mfront_file}")
   set(${name}_dependencies_SOURCES
@@ -26,7 +26,7 @@ function(add_mfront_behaviour_sources lib  file)
     COMMAND "${MFRONT}"
     ARGS    "--interface=generic"
     ARGS     "${mfront_file}"
-    DEPENDS "${mfront_file}"
+    DEPENDS "${mfront_file}" "${MFRONT}"
     COMMENT "mfront source ${mfront_file}")
   set(${lib}_SOURCES ${mfront_output1} ${mfront_output2}
     ${${lib}_SOURCES} PARENT_SCOPE)

@@ -27,7 +27,7 @@ The simplest way to compile this package is:
 
 2. Type `make` to compile the package.
 
-4. Optionally, type `make built-tests` to compile all tests come with
+3. Optionally, type `make build-tests` to compile all tests come with
   the package. This is automatically called by `make check`
 
 4. Optionally, type `make check` to run any self-tests that come with
@@ -78,7 +78,7 @@ Options
   not fail if the `HDF5` library is not found. See
   `enable-hdf5-automatic-support` for details.
 - `enable-hdf5-automatic-support`: if set, `MGIS` tries by default to
-  support `HDF5` even if enable-hdf5-support` is not set.
+  support `HDF5` even if `enable-hdf5-support` is not set.
 
 `cmake` usefull variables
 =======================

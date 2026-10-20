@@ -6,7 +6,7 @@ For information about `MFront`, see
 <http://thelfer.github.io/tfel/web/index.html>.
 
 Those tools are meant to be used by (`FEM`, `FFT`, etc.) solver
-developers. This tools are *not* linked to the `TFEL` libraries.
+developers. These tools are *not* linked to the `TFEL` libraries.
 Permissive licences have been chosen to allow integration in open-source
 and proprietary codes.
 

@@ -638,14 +638,14 @@ namespace mgis::behaviour {
           return ctx.registerErrorMessage(
               "material property '" + mp.first +
               "' defined in the material state manager is not defined "
-              " by the behaviour");
+              "by the behaviour");
         }
       }
       return true;
     };
     if (&i.b != &o.b) {
       return ctx.registerErrorMessage(
-          "the material state managers do not holds the same behaviour");
+          "the material state managers do not hold the same behaviour");
     }
     if (!check_mps(o.b, i.material_properties)) {
       return false;
