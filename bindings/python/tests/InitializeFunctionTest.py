@@ -28,7 +28,7 @@ class InitalizeFunctionTest(unittest.TestCase):
         self.assertTrue(b.tfel_version == version, "invalid TFEL version")
         ifcts = b.getInitializeFunctionsNames()
         self.assertTrue(
-            len(ifcts) == 2, "invalid number of initialization functions")
+            len(ifcts) == 3, "invalid number of initialization functions")
         self.assertTrue("StressFromInitialPressure" in ifcts,
                         "invalid initialization functions names")
         self.assertTrue("ElasticStrainFromInitialStress" in ifcts,

@@ -322,6 +322,7 @@ namespace mgis::behaviour::internals {
       v.dt = mgis::real{};
       const auto ri = (p.f)(&v, nullptr);
       if (ri != 0) {
+        r.exit_status = -1;
         r.n = i;
         v.error_message[511] = '\0';
         r.error_message = std::string(v.error_message);
@@ -356,6 +357,7 @@ namespace mgis::behaviour::internals {
       v.dt = mgis::real{};
       const auto ri = (p.f)(&v, inputs_values + inputs_stride * i);
       if (ri != 0) {
+        r.exit_status = -1;
         r.n = i;
         v.error_message[511] = '\0';
         r.error_message = std::string(v.error_message);
@@ -489,6 +491,7 @@ namespace mgis::behaviour::internals {
       v.dt = mgis::real{};
       const auto ri = (p.f)(outputs_values + outputs_stride * i, &v);
       if (ri != 0) {
+        r.exit_status = -1;
         r.n = i;
         v.error_message[511] = '\0';
         r.error_message = std::string(v.error_message);
