@@ -1931,7 +1931,8 @@ contains
   function behaviour_has_upper_physical_bound(r, b, n) result(s)
     use, intrinsic :: iso_c_binding, only: c_int
     use mgis_fortran_utilities
-    use mgis, only: mgis_status
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
     interface
        function behaviour_has_upper_physical_bound_wrapper(r, b, n) &
             bind(c,name='mgis_bv_behaviour_has_upper_physical_bound') result(s)
