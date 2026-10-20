@@ -5,6 +5,7 @@
  * \date   17/02/2021
  */
 
+#include <utility>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/RotationMatrix.hxx"
 
@@ -34,6 +35,16 @@ namespace mgis::behaviour {
         a(initializeLocalSpan(values, this->a_values, s)) {
   }  // end of MaterialAxisStorage::MaterialAxisStorage
 
+  MaterialAxisStorage::MaterialAxisStorage(std::vector<mgis::real>&& values)
+      : a_values(std::move(values)), a(this->a_values) {
+  }  // end of MaterialAxisStorage::MaterialAxisStorage
+
+  MaterialAxisStorage::MaterialAxisStorage(const MaterialAxisStorage& src)
+      : a_values(src.a_values),
+        a(this->a_values.empty() ? src.a
+                                 : std::span<const mgis::real>(this->a_values)) {
+  }  // end of MaterialAxisStorage::MaterialAxisStorage
+
   MaterialAxisStorage::~MaterialAxisStorage() = default;
 
   static std::span<const mgis::real> checkMaterialAxis2D(
@@ -43,7 +54,7 @@ namespace mgis::behaviour {
           "RotationMatrix2D::RotationMatrix2D: "
           "empty values for material axis in 2D");
     }
-    if (!(v.size() % 2)) {
+    if (v.size() % 2 != 0) {
       mgis::raise(
           "RotationMatrix2D::RotationMatrix2D: "
           "invalid number of values for material axis in 2D");
@@ -65,7 +76,7 @@ namespace mgis::behaviour {
           "empty values for material axis in 3D");
     }
     const auto s = v.size();
-    if (!(s % 3)) {
+    if (s % 3 != 0) {
       mgis::raise(
           "RotationMatrix3D::RotationMatrix3D: "
           "invalid number of values for material axis in 3D");
