@@ -2131,7 +2131,7 @@ contains
   ! \brief return the transpose of the tangent operator
   function behaviour_data_get_tangent_operator(K, d) result(s)
     use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer
-    use mgis, only: mgis_status, MGIS_SUCCESS
+    use mgis, only: mgis_status, MGIS_SUCCESS, report_failure
     implicit none
     interface
        function behaviour_data_get_tangent_operator_wrapper(K, d) &
@@ -2152,6 +2152,7 @@ contains
     type(Behaviour) :: b
     integer gs
     integer ths
+    integer nK
     nullify(K)
     s = behaviour_data_get_behaviour(b, d)
     if( s%exit_status .ne. MGIS_SUCCESS) then
@@ -2165,9 +2166,20 @@ contains
     if( s%exit_status .ne. MGIS_SUCCESS) then
        return
     end if
+    s = behaviour_get_tangent_operator_array_size(nK, b)
+    if( s%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    if (nK .ne. ths * gs) then
+       s = report_failure("behaviour_data_get_tangent_operator: " // &
+            "the tangent operator is not made of a single block")
+       return
+    end if
     s = behaviour_data_get_tangent_operator_wrapper(p, d%ptr)
     if( s%exit_status .eq. MGIS_SUCCESS) then
-       call c_f_pointer(p,K,[ths,gs])
+       ! the blocks are stored row by row: the Fortran array, stored column
+       ! by column, is the transpose of the tangent operator
+       call c_f_pointer(p,K,[gs,ths])
     end if
   end function behaviour_data_get_tangent_operator
   !
@@ -3595,8 +3607,8 @@ contains
   end function material_state_manager_is_external_state_variable_uniform
   ! \brief return the transpose of the tangent operator
   function material_data_manager_get_tangent_operator(K, m) result(r)
-    use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer
-    use mgis, only: mgis_status, MGIS_SUCCESS
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer, c_size_t
+    use mgis, only: mgis_status, MGIS_SUCCESS, report_failure
     implicit none
     interface
        function material_data_manager_get_tangent_operator_wrapper(K, m) &
@@ -3609,6 +3621,16 @@ contains
          type(c_ptr), intent(in), value :: m
          type(mgis_status) :: r
        end function material_data_manager_get_tangent_operator_wrapper
+       function material_data_manager_get_tangent_operator_stride_wrapper(s, m) &
+            bind(c,name = 'mgis_bv_material_data_manager_get_tangent_operator_stride')&
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: s
+         type(c_ptr), intent(in), value :: m
+         type(mgis_status) :: r
+       end function material_data_manager_get_tangent_operator_stride_wrapper
     end interface
     real(kind=8), dimension(:,:,:), pointer, intent(out) :: K
     type(MaterialDataManager), intent(in) :: m
@@ -3618,6 +3640,7 @@ contains
     integer n
     integer gs
     integer ths
+    integer(kind=c_size_t) nK
     nullify(K)
     r = material_data_manager_get_state_0(s0, m)
     if( r%exit_status .ne. MGIS_SUCCESS) then
@@ -3631,7 +3654,7 @@ contains
     if( r%exit_status .ne. MGIS_SUCCESS) then
        return
     end if
-    r = material_state_manager_get_thermodynamic_forces_stride(gs, s0)
+    r = material_state_manager_get_thermodynamic_forces_stride(ths, s0)
     if( r%exit_status .ne. MGIS_SUCCESS) then
        return
     end if
@@ -3639,9 +3662,18 @@ contains
     if( r%exit_status .ne. MGIS_SUCCESS) then
        return
     end if
-    if( r%exit_status .eq. MGIS_SUCCESS) then
-       call c_f_pointer(p,K,[ths,gs, n])
+    r = material_data_manager_get_tangent_operator_stride_wrapper(nK, m %ptr)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
     end if
+    if (nK .ne. ths * gs) then
+       r = report_failure("material_data_manager_get_tangent_operator: " // &
+            "the tangent operator is not made of a single block")
+       return
+    end if
+    ! the blocks are stored row by row: the Fortran array, stored column by
+    ! column, is the transpose of the tangent operator at each point
+    call c_f_pointer(p,K,[gs, ths, n])
   end function material_data_manager_get_tangent_operator
   !
   function free_material_data_manager(ptr) result(r)
