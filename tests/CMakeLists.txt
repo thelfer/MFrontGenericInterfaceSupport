@@ -132,6 +132,7 @@ if(MGIS_HAVE_MFRONT_SUPPORT)
     TensorialExternalStateVariableTest
     InitializeFunctionTest
     PostProcessingTest
+    FiniteStrainPostProcessingTest
     ComputeSpeedOfSound)
 
   mfront_behaviours_check_library(ModelTest ode_rk54)
@@ -160,6 +161,8 @@ if(MGIS_HAVE_MFRONT_SUPPORT)
   add_library_test(IntegrateTest5 IntegrateTest5.cxx ModelTest)
   add_library_test(RotateFunctionsTest RotateFunctionsTest.cxx BehaviourTest)
   add_library_test(IntegrateDebugTest IntegrateDebugTest.cxx BehaviourTest)
+  add_library_test(FiniteStrainPostProcessingTest
+    FiniteStrainPostProcessingTest.cxx BehaviourTest)
   add_tfel_version_test(ExternalStateVariableTest ExternalStateVariableTest.cxx
     BehaviourTest TensorialExternalStateVariableTest)
   add_tfel_version_test(InitializeFunctionTest InitializeFunctionTest.cxx
