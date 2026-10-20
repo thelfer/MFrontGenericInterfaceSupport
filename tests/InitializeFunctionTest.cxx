@@ -38,7 +38,7 @@ static void check_behaviour(const mgis::behaviour::Behaviour& b,
   check(b.hypothesis == h, "invalid hypothesis");
   check(b.source == "InitializeFunctionTest.mfront", "invalid source");
   check(b.tfel_version == TFEL_VERSION, "invalid TFEL version");
-  check(b.initialize_functions.size() == 2u,
+  check(b.initialize_functions.size() == 3u,
         "invalid number of initialize functions");
   check(b.initialize_functions.find("ElasticStrainFromInitialStress") !=
             b.initialize_functions.end(),
@@ -141,6 +141,17 @@ static void call_initialize_function2(const mgis::behaviour::Behaviour& b) {
   }
 }  // end of call_initialize_function
 
+static void call_failing_initialize_function(
+    const mgis::behaviour::Behaviour& b) {
+  using namespace mgis::behaviour;
+  auto m = MaterialDataManager{b, 2};
+  setExternalStateVariable(m.s0, "Temperature", 293.15);
+  setExternalStateVariable(m.s1, "Temperature", 293.15);
+  const auto r = executeInitializeFunction(m, "Failure");
+  check(r.exit_status == -1,
+        "the failure of the initialize function is not reported");
+}  // end of call_failing_initialize_function
+
 int main(const int argc, const char* const* argv) {
   using namespace mgis::behaviour;
   constexpr const auto h = Hypothesis::TRIDIMENSIONAL;
@@ -152,6 +163,7 @@ int main(const int argc, const char* const* argv) {
     check_behaviour(b, h);
     call_initialize_function(b);
     call_initialize_function2(b);
+    call_failing_initialize_function(b);
   } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;

@@ -27,3 +27,7 @@
 @InitializeFunction StressFromInitialPressure {
   sig = pr * Stensor::Id();
 }
+
+@InitializeFunction Failure {
+  tfel::raise("Failure: this initialize function always fails");
+}
