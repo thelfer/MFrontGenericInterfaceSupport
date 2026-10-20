@@ -264,7 +264,9 @@ namespace mgis::behaviour::internals {
     const auto isvs_stride = m.s0.internal_state_variables_stride;
     const auto computes_stored_energy = m.b.computesStoredEnergy;
     const auto computes_dissipated_energy = m.b.computesDissipatedEnergy;
-    v.speed_of_sound = m.speed_of_sound.data() + i;
+    if (!m.speed_of_sound.empty()) {
+      v.speed_of_sound = m.speed_of_sound.data() + i;
+    }
     v.s0.gradients = m.s0.gradients.data() + g_stride * i;
     v.s1.gradients = m.s1.gradients.data() + g_stride * i;
     v.s0.thermodynamic_forces = m.s0.thermodynamic_forces.data() + t_stride * i;
