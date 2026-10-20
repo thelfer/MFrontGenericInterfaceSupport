@@ -5,6 +5,7 @@
  * \date   17/02/2021
  */
 
+#include <utility>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/RotationMatrix.hxx"
 
@@ -32,6 +33,16 @@ namespace mgis::behaviour {
       const std::span<const mgis::real>& values, const mgis::StorageMode& s)
       : a_values(copyValuesIfRequired(values, s)),
         a(initializeLocalSpan(values, this->a_values, s)) {
+  }  // end of MaterialAxisStorage::MaterialAxisStorage
+
+  MaterialAxisStorage::MaterialAxisStorage(std::vector<mgis::real>&& values)
+      : a_values(std::move(values)), a(this->a_values) {
+  }  // end of MaterialAxisStorage::MaterialAxisStorage
+
+  MaterialAxisStorage::MaterialAxisStorage(const MaterialAxisStorage& src)
+      : a_values(src.a_values),
+        a(this->a_values.empty() ? src.a
+                                 : std::span<const mgis::real>(this->a_values)) {
   }  // end of MaterialAxisStorage::MaterialAxisStorage
 
   MaterialAxisStorage::~MaterialAxisStorage() = default;

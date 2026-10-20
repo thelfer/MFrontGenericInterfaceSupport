@@ -11,6 +11,7 @@
 #include <span>
 #include <array>
 #include <vector>
+#include "MGIS/Config.hxx"
 #include "MGIS/StorageMode.hxx"
 
 namespace mgis::behaviour {
@@ -28,7 +29,7 @@ namespace mgis::behaviour {
    * - an array of 3 values
    * - an array of 3 x n values where n is the number of integration points.
    */
-  struct MaterialAxisStorage {
+  struct MGIS_EXPORT MaterialAxisStorage {
     //! \brief constructor from an external array
     MaterialAxisStorage(const std::span<const mgis::real> &,
                         const mgis::StorageMode &);
@@ -37,6 +38,12 @@ namespace mgis::behaviour {
      * \param[in] values: values to be stored
      */
     MaterialAxisStorage(std::vector<mgis::real> &&);
+    /*!
+     * \brief copy constructor
+     * \note if the values are stored locally, the copy refers to its own
+     * values
+     */
+    MaterialAxisStorage(const MaterialAxisStorage &);
     //! \brief destructor
     ~MaterialAxisStorage();
 

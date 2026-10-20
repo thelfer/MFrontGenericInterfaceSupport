@@ -101,6 +101,7 @@ endmacro()
 add_simple_test(IntegrationFailureDebugTest IntegrationFailureDebugTest.cxx)
 add_simple_test(InvalidResultTest InvalidResultTest.cxx)
 add_simple_test(ErrorBacktraceTest ErrorBacktraceTest.cxx)
+add_simple_test(RotationMatrixTest RotationMatrixTest.cxx)
 
 # =============================================================================
 # MFront Behaviour Libraries (unchanged from original)
