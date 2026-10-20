@@ -122,6 +122,7 @@ Here is the list of the generated functions:
   `<behaviour_function_name>_<hypothesis>_rotateThermodynamicForces_PK2Stress`.
   This function assumes that its first argument is the second
   Piola-Kirchhoff stress in the material frame.
+-
   `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_dsig_dF`.
   This function assumes that its first argument is the derivative of the
   Cauchy stress with respect to the deformation gradient in the material
@@ -132,10 +133,15 @@ Here is the list of the generated functions:
   first Piola-Kirchhoff stress with respect to the deformation gradient
   in the material frame.
 -
-  `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_PK2Stress`.
+  `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_dPK2_dEGL`.
   This function assumes that its first argument is the derivative of the
   second Piola-Kirchhoff stress with respect to the Green-Lagrange
   strain in the material frame.
+-
+  `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_dtau_ddF`.
+  This function assumes that its first argument is the derivative of the
+  Kirchhoff stress with respect to the spatial increment of the
+  deformation gradient in the material frame.
 
 # Features of `MGIS` related to orthotropic behaviours {#sec:mgis:orthotropic_behaviours:mgis_support}
 

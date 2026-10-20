@@ -260,7 +260,7 @@ namespace mgis::behaviour {
 
   /*!
    * \brief update the behaviour data by:
-   * - setting s1 equal to s0
+   * - setting s0 equal to s1
    * - filling the stiffness matrix with 0
    * \param[in,out] m: material data manager
    */

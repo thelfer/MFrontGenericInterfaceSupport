@@ -25,7 +25,7 @@ The `MFront` behaviour will handle, at each integration point:
 
 The interface with `FEniCS` will be handled by the
 `MFrontGenericInterfaceSupport` project (`MGIS`)[^3]. This project aims
-at proving tools (functions, classes, bindings, etc...) to handle
+at providing tools (functions, classes, bindings, etc...) to handle
 behaviours written using `MFront` generic interface. Written in `C++`,
 it provides bindings for various languages: `C`, `python`, `fortran`.
 This library also provides the so-called `FEniCS` bindings briefly
@@ -159,7 +159,7 @@ for (i, t) in enumerate(load_steps):
         # project the strain on the Quadrature space with `MFront` conventions
         local_project(eps_MFront(u1), Weps, deps)
         # assigning the values in the material data manager
-        m.s1.gradients[:, :] = deps.vector().get_local().reshape((m.n, m.gradients_stride))
+        m.s1.gradients[:, :] = deps.vector().get_local().reshape((m.n, m.s1.gradients_stride))
         # behaviour integration
         it = mgis_bv.IntegrationType.IntegrationWithConsitentTangentOperator
         mgis_bv.integrate(m, it, 0, 0, m.n);

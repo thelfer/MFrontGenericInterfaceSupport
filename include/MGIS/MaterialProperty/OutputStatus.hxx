@@ -42,7 +42,7 @@ typedef struct {
    *   out of its bounds and a strict out of bounds policy is declared.
    * - If the exit status is -2, a C++ exception was thrown. If the exception
    *   was a child of `std::exception`, the content of the string returned by
-   *   the `what` method is copyied in the `message` field. Otherwise, the
+   *   the `what` method is copied in the `message` field. Otherwise, the
    *   message field contains the "unknown exception" string.
    * - If the exit status is -3, an error occured in the `C` library, i.e. the
    *   `errno` value was set to a non zero value during the computation.

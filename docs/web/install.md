@@ -70,7 +70,7 @@ The simplest way to compile this package is:
 - `enable-fortran-bindings`: compiles bindings for the `Fortran2003`
   language (default=OFF)
 - `enable-python-bindings`: compiles the `Python` bindings. This requires
-  the `Boost/Python` library to be available (default=OFF)
+  the `pybind11` library to be available (default=OFF)
 - `enable-fenics-bindings`: compiles the `FEniCS` bindings. Those
   bindings are experimental and very limited. To use `MGIS` with
   `FEniCS`, usage of the `Python` bindings are encouraged.

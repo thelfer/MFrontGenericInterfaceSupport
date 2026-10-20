@@ -12,12 +12,12 @@
  * The official website of the `MGIS` project is the following:
  * <https://thelfer.github.io/mgis/web/index.html>.
  *
- * This project aims at proving tools (functions, classes, bindings,
+ * This project aims at providing tools (functions, classes, bindings,
  * etc...) to handle behaviours written using `MFront` generic interface.
  * For information about `MFront`, see <http://tfel.sourceforge.net>.
  * 
  * Those tools are meant to be used by (`FEM`, `FFT`, etc.) solver
- * developers. This tools are *not* linked to the `TFEL` libraries.
+ * developers. These tools are *not* linked to the `TFEL` libraries.
  * Permissive licences have been chosen to allow integration in open-source
  * and proprietary codes.
  * 

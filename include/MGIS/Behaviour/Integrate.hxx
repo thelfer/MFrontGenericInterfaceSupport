@@ -197,9 +197,11 @@ namespace mgis::behaviour {
       MaterialDataManager&, const std::string_view, std::span<const real>);
   /*!
    * \brief execute the given initialize function over a range of integration
-   * points \param[in,out] d: material data manager \param[in] n: name of the
-   * initialize function \param[in] b: first index of the range \param[in] e:
-   * last index of the range
+   * points
+   * \param[in,out] d: material data manager
+   * \param[in] n: name of the initialize function
+   * \param[in] b: first index of the range
+   * \param[in] e: last index of the range
    */
   MGIS_EXPORT BehaviourIntegrationResult
   executeInitializeFunction(MaterialDataManager&,
@@ -208,8 +210,10 @@ namespace mgis::behaviour {
                             const size_type);
   /*!
    * \brief execute the given initialize function over a range of integration
-   * points \param[in,out] d: material data manager \param[in] n: name of the
-   * initialize function \param[in] inputs: initialize function inputs
+   * points
+   * \param[in,out] d: material data manager
+   * \param[in] n: name of the initialize function
+   * \param[in] inputs: initialize function inputs
    * \param[in] b: first index of the range
    * \param[in] e: last index of the range
    *
@@ -223,17 +227,20 @@ namespace mgis::behaviour {
                             const size_type);
   /*!
    * \brief execute the given initialize function  over all integration points
-   * using a thread pool to parallelize the integration. \param[in,out] p:
-   * thread pool \param[in,out] d: material data manager \param[in] n: name of
-   * the initialize function
+   * using a thread pool to parallelize the integration.
+   * \param[in,out] p: thread pool
+   * \param[in,out] d: material data manager
+   * \param[in] n: name of the initialize function
    */
   MGIS_EXPORT MultiThreadedBehaviourIntegrationResult executeInitializeFunction(
       ThreadPool&, MaterialDataManager&, const std::string_view);
   /*!
    * \brief execute the given initialize function  over all integration points
-   * using a thread pool to parallelize the integration. \param[in,out] p:
-   * thread pool \param[in,out] d: material data manager \param[in] n: name of
-   * the initialize function \param[in] inputs: initialize function inputs
+   * using a thread pool to parallelize the integration.
+   * \param[in,out] p: thread pool
+   * \param[in,out] d: material data manager
+   * \param[in] n: name of the initialize function
+   * \param[in] inputs: initialize function inputs
    *
    * \note the inputs can be uniform or not.
    */
