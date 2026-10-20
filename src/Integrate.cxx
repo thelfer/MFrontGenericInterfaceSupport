@@ -313,6 +313,9 @@ namespace mgis::behaviour::internals {
     auto& ws = m.getBehaviourIntegrationWorkSpace();
     auto v = internals::initializeBehaviourDataView(ws);
     auto behaviour_evaluators = internals::buildBehaviourEvaluators(ws, m);
+    real bopts[Behaviour::nopts + 1] = {};  // option passed to the behaviour
+    v.K = &bopts[0];
+    std::copy(m.b.options.begin(), m.b.options.end(), v.K + 1);
     v.rdt = nullptr;
     // loop over integration points
     auto r = BehaviourIntegrationResult{};
@@ -346,6 +349,9 @@ namespace mgis::behaviour::internals {
     auto& ws = m.getBehaviourIntegrationWorkSpace();
     auto v = internals::initializeBehaviourDataView(ws);
     auto behaviour_evaluators = internals::buildBehaviourEvaluators(ws, m);
+    real bopts[Behaviour::nopts + 1] = {};  // option passed to the behaviour
+    v.K = &bopts[0];
+    std::copy(m.b.options.begin(), m.b.options.end(), v.K + 1);
     v.rdt = nullptr;
     // loop over integration points
     auto r = BehaviourIntegrationResult{};
@@ -479,6 +485,9 @@ namespace mgis::behaviour::internals {
     auto& ws = m.getBehaviourIntegrationWorkSpace();
     auto v = internals::initializeBehaviourDataView(ws);
     auto behaviour_evaluators = internals::buildBehaviourEvaluators(ws, m);
+    real bopts[Behaviour::nopts + 1] = {};  // option passed to the behaviour
+    v.K = &bopts[0];
+    std::copy(m.b.options.begin(), m.b.options.end(), v.K + 1);
     v.rdt = nullptr;
     // loop over integration points
     auto r = BehaviourIntegrationResult{};
@@ -562,6 +571,7 @@ namespace mgis::behaviour {
           "invalid size of the inputs '" +
           std::string{n} + "'");
     }
+    std::copy(b.options.begin(), b.options.end(), d.K + 1);
     const auto& f = ifct.f;
     return f(&d, nullptr);
   }  // end of executeInitializeFunction
@@ -577,6 +587,7 @@ namespace mgis::behaviour {
           "invalid size of the inputs '" +
           std::string{n} + "'");
     }
+    std::copy(b.options.begin(), b.options.end(), d.K + 1);
     const auto& f = ifct.f;
     return f(&d, inputs.data());
   }  // end of executeInitializeFunction
@@ -1030,6 +1041,7 @@ namespace mgis::behaviour {
           "invalid size of the outputs '" +
           std::string{n} + "'");
     }
+    std::copy(b.options.begin(), b.options.end(), d.K + 1);
     return (p.f)(outputs.data(), &d);
   }  // end of executePostProcessing
 
