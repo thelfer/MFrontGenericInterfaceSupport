@@ -1,0 +1,47 @@
+name: ci
+
+# The status of this workflow is the ci badge of the README: it succeeds when
+# the last runs of the workflows below on master all succeeded. Cancelled
+# runs, replaced by the run of a newer commit, are ignored.
+on:
+  workflow_run:
+    workflows:
+      - "CI with TFEL support on Ubuntu and MacOS (spack)"
+      - "CI with TFEL support on Ubuntu on Mac Os"
+      - "CI with TFEL and TBB support on Linux and MacOs (spack)"
+      - "Windows Visual Studio build"
+      - "Windows MinGW build"
+      - "CI with TFEL and CUDA support on Ubuntu"
+      - "CI without TFEL support with MGIS/Function on Ubuntu"
+      - "CI without TFEL without mgis-function support on Ubuntu"
+    types: [completed]
+    branches: [master]
+
+permissions:
+  actions: read
+
+jobs:
+  status:
+    name: all the workflows passing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the last runs of the workflows on master
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          status=0
+          for workflow in check.yml \
+                      build_unix_with_tfel.yml \
+                      check-tbb.yml \
+                      build_win_msvc.yml \
+                      build_win_mingw.yml \
+                      build_linux_cuda_tfel.yml \
+                      check-without-TFEL-with-function.yml \
+                      check-without-TFEL-without-function.yml; do
+            conclusion=$(gh run list -R ${{ github.repository }} -w $workflow -b master \
+                           --status completed -L 20 --json conclusion \
+                           -q 'map(select(.conclusion != "cancelled"))[0].conclusion')
+            echo "$workflow: $conclusion"
+            [ "$conclusion" = success ] || status=1
+          done
+          exit $status

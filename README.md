@@ -1,17 +1,22 @@
 # MFrontGenericInterfaceSupport
 
+[![ci](https://github.com/thelfer/MFrontGenericInterfaceSupport/actions/workflows/ci.yml/badge.svg)](https://github.com/thelfer/MFrontGenericInterfaceSupport/actions)
+[![doxygen](https://img.shields.io/github/actions/workflow/status/thelfer/MFrontGenericInterfaceSupport/doxygen.yml?branch=master&label=doxygen)](https://thelfer.github.io/mgis/doxygen/index.html)
+[![C++20](https://img.shields.io/badge/C%2B%2B-20-blue)](https://en.cppreference.com/cpp/20)
+[![spack](https://img.shields.io/spack/v/mgis)](https://packages.spack.io/package.html?name=mgis)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.02003/status.svg)](https://doi.org/10.21105/joss.02003)
+
 This project aims at providing tools (functions, classes, bindings,
-etc...) to handle behaviours written using the `MFront` generic interface.
-For information about `MFront`, see
-<http://thelfer.github.io/tfel/web/index.html>.
+etc...) to handle behaviours written using the
+[`MFront`](https://thelfer.github.io/tfel/web/index.html) generic interface.
 
 Those tools are meant to be used by (`FEM`, `FFT`, etc.) solver
 developers. These tools are *not* linked to the `TFEL` libraries.
 Permissive licences have been chosen to allow integration in open-source
 and proprietary codes.
 
-This project is described in this paper:
-[![DOI](https://joss.theoj.org/papers/10.21105/joss.02003/status.svg)](https://doi.org/10.21105/joss.02003)
+The goal and features of MGIS are described in its
+[JOSS paper](https://doi.org/10.21105/joss.02003).
 
 The official website can be found here:
 <https://thelfer.github.io/mgis/web/index.html>.
