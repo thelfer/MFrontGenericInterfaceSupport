@@ -1,0 +1,62 @@
+name: Clean the build cache
+description: >
+  Remove from the build cache the packages that no job of the run used (see
+  push-build-cache), or all of them, then update its index. Needs GH_TOKEN,
+  GITHUB_USER and GITHUB_TOKEN.
+inputs:
+  prune:
+    description: remove the unused packages, only when all the jobs succeeded
+    required: true
+  wipe:
+    description: remove all the packages
+    default: "false"
+runs:
+  using: composite
+  steps:
+  - if: inputs.prune == 'true' && inputs.wipe != 'true'
+    uses: actions/download-artifact@v8
+    with:
+      pattern: used-hashes-*
+  - name: Remove the packages
+    id: remove
+    if: inputs.prune == 'true' || inputs.wipe == 'true'
+    shell: bash
+    run: |
+      package=/users/${{ github.repository_owner }}/packages/container/${BUILD_CACHE##*/}
+      if [ "${{ inputs.wipe }}" = true ]; then
+        # keep nothing but the index
+        : > keep.txt
+      else
+        cat used-hashes-*/used-hashes.txt | sort -u > keep.txt
+        echo "$(wc -l < keep.txt) packages used"
+        # safety net against empty or truncated lists
+        if [ "$(wc -l < keep.txt)" -lt 20 ]; then
+          echo "too few packages used, nothing removed"
+          exit 1
+        fi
+      fi
+      if ! gh api --paginate "$package/versions" \
+             --jq '.[] | [.id, (.metadata.container.tags | join(","))] | @tsv' > versions.txt 2> error.txt; then
+        if grep -q "HTTP 404" error.txt; then
+          echo "no build cache yet, nothing removed"
+          echo "missing=true" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+        cat error.txt
+        exit 1
+      fi
+      echo "$(wc -l < versions.txt) versions in the build cache"
+      while IFS=$'\t' read -r id tags; do
+        hash=$(echo "$tags" | sed -nE 's/.*-([a-z0-9]{32})\.spack$/\1/p')
+        if [ -z "$tags" ] || { [ -n "$hash" ] && ! grep -qx "$hash" keep.txt; }; then
+          echo "removing $id ${tags:-(untagged)}"
+          gh api -X DELETE "$package/versions/$id" < /dev/null
+        fi
+      done < versions.txt
+  - name: Update the index
+    if: ${{ !cancelled() && steps.remove.outputs.missing != 'true' }}
+    shell: bash
+    run: |
+      spack mirror add --unsigned --oci-username-variable GITHUB_USER --oci-password-variable GITHUB_TOKEN \
+            buildcache $BUILD_CACHE
+      spack buildcache update-index buildcache

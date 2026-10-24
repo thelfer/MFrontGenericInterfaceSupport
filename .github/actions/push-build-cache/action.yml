@@ -1,0 +1,32 @@
+name: Push to the build cache
+description: >
+  Push the installed packages to the build cache and upload the list of the packages
+  used by the job, which clean-build-cache keeps.
+inputs:
+  artifact:
+    description: name of the artifact holding the list of the packages used
+    required: true
+  exclude:
+    description: package not to push, e.g. the one tested
+    default: ""
+runs:
+  using: composite
+  steps:
+  - name: Push the installed packages
+    shell: bash
+    run: |
+      spack buildcache push --only package buildcache \
+            $(spack --color never find --format '{name} /{hash}' | awk -v x="${{ inputs.exclude }}" '$1 != x { print $2 }')
+  # including the build dependencies, which are not installed when they come from the build cache
+  - name: List the packages used
+    shell: bash
+    run: |
+      spack --color never python -c 'import spack.store; print("\n".join(sorted({d.dag_hash() for s in spack.store.STORE.db.query() for d in s.traverse() if not d.external})))' \
+            > used-hashes.txt
+      echo "$(wc -l < used-hashes.txt) packages used"
+  - uses: actions/upload-artifact@v7
+    with:
+      name: ${{ inputs.artifact }}
+      path: used-hashes.txt
+      overwrite: true  # when a job is rerun
+      retention-days: 1

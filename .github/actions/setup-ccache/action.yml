@@ -1,0 +1,37 @@
+name: Set up ccache
+description: >
+  Install ccache and restore the compilations cached by the previous runs under the
+  given key. save-ccache saves them at the end of the job. The compilations shall not use
+  -march=native, as the runners have different processors and the ccache of Ubuntu 24.04
+  (4.9) does not expand this option.
+inputs:
+  key:
+    description: name of the cache, e.g. the operating system
+    required: true
+runs:
+  using: composite
+  steps:
+  - name: Install ccache
+    shell: bash
+    run: |
+      if [ "$(uname -s)" = Darwin ]; then
+        brew install ccache
+      else
+        sudo apt-get update
+        sudo apt-get install -y ccache
+      fi
+      echo "CCACHE_DIR=$RUNNER_TEMP/ccache" >> $GITHUB_ENV
+      # an upper bound, in addition to the removal of the unused files by save-ccache
+      echo "CCACHE_MAXSIZE=500M" >> $GITHUB_ENV
+      # start of the job and name of the cache, see save-ccache
+      echo "CCACHE_START=$(date +%s)" >> $GITHUB_ENV
+      echo "CCACHE_KEY=ccache-${{ inputs.key }}" >> $GITHUB_ENV
+  - uses: actions/cache/restore@v6
+    with:
+      path: ${{ runner.temp }}/ccache
+      key: ccache-${{ inputs.key }}-${{ github.run_id }}-${{ github.run_attempt }}
+      restore-keys: ccache-${{ inputs.key }}-
+  # restored with the cache, then shown by save-ccache for this job only
+  - name: Reset the statistics
+    shell: bash
+    run: ccache --zero-stats

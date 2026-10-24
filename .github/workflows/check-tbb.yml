@@ -1,15 +1,32 @@
+# The dependencies are stored as Spack binaries in the GitHub Container Registry, and
+# the compilations of MGIS by ccache in the GitHub Actions cache (see .github/actions).
+# Only the runs on master write to the Spack binary cache: pull requests only read it.
 name: CI with TFEL and TBB support on Linux and MacOs (spack)
 
 on:
+  # keep the build cache up to date with the latest dependencies
+  schedule:
+    - cron: 47 1 * * *
+  workflow_dispatch:
   push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
+# one run at a time outside pull requests, since the runs on master clean the build
+# cache, whereas a new commit pushed to a pull request cancels the previous run
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || 'master' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  BUILD_CACHE: oci://ghcr.io/${{ github.repository_owner }}/mgis-tbb-buildcache
+
 jobs:
   build:
 
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
         include:
@@ -21,30 +38,58 @@ jobs:
             fortran_support: 'OFF'
 
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      packages: write
 
     steps:
     - uses: actions/checkout@v4
     - name: Set up Spack
-      uses: spack/setup-spack@v2
+      uses: spack/setup-spack@v3
       with:
-        ref: develop      # Spack version (examples: develop, releases/v0.21)
-        buildcache: true  # Configure oci://ghcr.io/spack/github-actions-buildcache
-        color: true       # Force color output (SPACK_COLOR=always)
-        path: ${{github.workspace}}/spack       # Where to clone Spack
+        spack_ref: v1.2.2      # Spack version
+        packages_ref: develop  # Spack packages (builtin repository) version
+        buildcache: false      # our own build cache is configured below
+        color: true            # Force color output (SPACK_COLOR=always)
+        spack_path: ${{github.workspace}}/spack       # Where to clone Spack
+
+    - name: Set up the build cache
+      uses: ./.github/actions/setup-build-cache
 
     - name: Install TFEL
       shell: spack-sh {0}
+      env:
+        GITHUB_USER: ${{ github.actor }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        # spack install python py-numpy py-pybind11
         spack install tbb
-        spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
+        # pin the master commit, otherwise an older binary from the cache would be reused
+        tfel=$(git ls-remote https://github.com/thelfer/tfel.git refs/heads/master | cut -f1)
+        spack install tfel@master commit=$tfel ~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
+
+    - name: Push the dependencies to the build cache
+      if: github.ref == 'refs/heads/master'
+      uses: ./.github/actions/push-build-cache
+      env:
+        GITHUB_USER: ${{ github.actor }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        artifact: used-hashes-${{ matrix.os }}
+
+    - name: Set up ccache
+      id: ccache
+      uses: ./.github/actions/setup-ccache
+      with:
+        key: ${{ matrix.os }}
+
     - name: cmake
       shell: spack-sh {0}
       run: |
-        # spack load python py-numpy py-pybind11
         # loading TFEL
         spack load tfel
         spack load intel-tbb
+        # a portable build, without -march=native, whose compilations ccache can share
+        # between the runners, which have different processors (see setup-ccache)
         cmake -DCMAKE_BUILD_TYPE=Release .                            \
               -Denable-c-bindings=ON                                  \
               -Denable-fortran-bindings=${{ matrix.fortran_support }} \
@@ -52,18 +97,49 @@ jobs:
               -Denable-portable-build=ON                              \
               -Denable-julia-bindings=OFF                             \
               -DTFEL_DIR=`spack location -i tfel`/share/tfel/cmake    \
+              -DCMAKE_C_COMPILER_LAUNCHER=ccache                      \
+              -DCMAKE_CXX_COMPILER_LAUNCHER=ccache                    \
               -Denable-parallel-stl-algorithms=ON
     - name: make
       shell: spack-sh {0}
       run: |
-        # spack load python py-numpy py-pybind11
         spack load tfel
         spack load intel-tbb
         make ${{ matrix.jobs_flag }}
     - name: make check
       shell: spack-sh {0}
       run: |
-        # spack load python py-numpy py-pybind11 tfel
         spack load tfel
         spack load intel-tbb
         make check ${{ matrix.jobs_flag }}
+
+    # even when a test fails, so that the next run does not compile everything again
+    - name: Save ccache
+      if: ${{ !cancelled() && steps.ccache.outcome == 'success' }}
+      uses: ./.github/actions/save-ccache
+
+  # a single update of the build cache once all the jobs have pushed, only on master
+  update_build_cache:
+    needs: build
+    if: ${{ !cancelled() && github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Spack
+        uses: spack/setup-spack@v3
+        with:
+          spack_ref: v1.2.2
+          packages_ref: develop
+          buildcache: false
+          spack_path: spack
+      - name: Clean the build cache
+        uses: ./.github/actions/clean-build-cache
+        env:
+          GITHUB_USER: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          prune: ${{ needs.build.result == 'success' }}
