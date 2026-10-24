@@ -219,6 +219,7 @@ void declareMaterialStateManager(pybind11::module_& m) {
   // wrapping the MaterialStateManagerInitializer class
   pybind11::class_<MaterialStateManagerInitializer>(
       m, "MaterialStateManagerInitializer")
+      .def(pybind11::init<>())
       .def("bindGradients", &MaterialStateManagerInitializer_bindGradients,
            "use the given array to store the gradients")
       .def("bindThermodynamicForces",

@@ -165,5 +165,15 @@ class ExternalStateVariableTest(unittest.TestCase):
                 "invalid internal state variable value")
 
 
+    def test_strided_array(self):
+        h = mgis_bv.Hypothesis.Tridimensional
+        b = self.__get_behaviour(h)
+        d = mgis_bv.BehaviourData(b)
+        values = numpy.asarray([1, 0, 2, 0, 3, 0], dtype=numpy.float64)
+        # the values of values[::2] are not contiguous
+        with self.assertRaises(Exception):
+            mgis_bv.setExternalStateVariable(d.s1, "v_esv", values[::2])
+
+
 if __name__ == '__main__':
     unittest.main()
