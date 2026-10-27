@@ -209,6 +209,16 @@ static void check_material_data_manager(const mgis_bv_Behaviour* const b) {
     check(fabs(isvs[60 + i] - v2_esv1_values[i + 3]) < eps,
           "invalid internal state variable value");
   }
+  // time step scaling factor and mass density
+  mgis_real rdt, rho;
+  check_status(
+      mgis_bv_material_data_manager_get_time_step_scaling_factor(&rdt, d));
+  check(fabs(rdt - 10) < eps, "invalid time step scaling factor");
+  check_status(
+      mgis_bv_material_state_manager_set_uniform_scalar_mass_density(s1, 7850));
+  check_status(
+      mgis_bv_material_state_manager_get_uniform_mass_density(&rho, s1));
+  check(fabs(rho - 7850) < eps, "invalid mass density");
   // clean-up
   check_status(mgis_bv_free_material_data_manager(&d));
 }  // end of check_material_data_manager

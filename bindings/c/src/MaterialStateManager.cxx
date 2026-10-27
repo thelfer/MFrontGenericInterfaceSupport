@@ -446,6 +446,45 @@ mgis_status mgis_bv_material_state_manager_is_mass_density_uniform(
   return mgis_report_success();
 }  // end of mgis_bv_material_state_manager_is_mass_density_uniform
 
+mgis_status mgis_bv_material_state_manager_get_uniform_mass_density(
+    mgis_real* const v, mgis_bv_MaterialStateManager* const m) {
+  *v = mgis_real{};
+  if (m == nullptr) {
+    return mgis_report_failure("null state manager");
+  }
+  try {
+    if (!isMassDensityUniform(*m)) {
+      return mgis_report_failure("the mass density is not uniform");
+    }
+    *v = std::get<mgis::real>(m->mass_density->value);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_material_state_manager_get_uniform_mass_density
+
+mgis_status mgis_bv_material_state_manager_get_non_uniform_mass_density(
+    mgis_real** const v, mgis_bv_MaterialStateManager* const m) {
+  *v = nullptr;
+  if (m == nullptr) {
+    return mgis_report_failure("null state manager");
+  }
+  try {
+    if (isMassDensityUniform(*m)) {
+      return mgis_report_failure("the mass density is uniform");
+    }
+    auto& values = m->mass_density->value;
+    if (std::holds_alternative<std::span<mgis::real>>(values)) {
+      *v = std::get<std::span<mgis::real>>(values).data();
+    } else {
+      *v = std::get<std::vector<mgis::real>>(values).data();
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_material_state_manager_get_non_uniform_mass_density
+
 mgis_status
 mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable(
     mgis_bv_MaterialStateManager* const m,
