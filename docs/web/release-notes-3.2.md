@@ -132,6 +132,64 @@ setExternalStateVariable(m.s1, "Temperature", T1,
                          MaterialStateManager::UPDATE);
 ~~~~
 
+## Initialize functions and post-processings in the `C` and `fortran` bindings
+
+### `C` bindings
+
+The initialize functions of a behaviour are described by
+`mgis_bv_behaviour_get_number_of_initialize_functions`,
+`mgis_bv_behaviour_get_initialize_function_name`,
+`mgis_bv_behaviour_get_initialize_function_inputs_size`,
+`mgis_bv_behaviour_get_number_of_initialize_function_inputs`,
+`mgis_bv_behaviour_get_initialize_function_input_name`,
+`mgis_bv_behaviour_get_initialize_function_input_type` and
+`mgis_bv_behaviour_get_initialize_function_input_offset`, and executed
+by `mgis_bv_execute_initialize_function` (behaviour data view),
+`mgis_bv_execute_initialize_function_2` (behaviour data),
+`mgis_bv_execute_initialize_function_material_data_manager` (all
+integration points, using a thread pool) and
+`mgis_bv_execute_initialize_function_material_data_manager_part` (range
+of integration points). The inputs are passed as an array and its size.
+
+The post-processings are described by
+`mgis_bv_behaviour_get_number_of_post_processings`,
+`mgis_bv_behaviour_get_post_processing_name`,
+`mgis_bv_behaviour_get_post_processing_outputs_size`,
+`mgis_bv_behaviour_get_number_of_post_processing_outputs`,
+`mgis_bv_behaviour_get_post_processing_output_name`,
+`mgis_bv_behaviour_get_post_processing_output_type` and
+`mgis_bv_behaviour_get_post_processing_output_offset`, and executed by
+`mgis_bv_execute_post_processing`, `mgis_bv_execute_post_processing_2`,
+`mgis_bv_execute_post_processing_material_data_manager` and
+`mgis_bv_execute_post_processing_material_data_manager_part`. The
+outputs are passed as an array and its size.
+
+### `fortran` bindings
+
+The `mgis_behaviour` module now exposes the corresponding functions for
+the initialize functions: `behaviour_get_number_of_initialize_functions`,
+`behaviour_get_initialize_function_name`,
+`behaviour_get_initialize_function_inputs_size`,
+`behaviour_get_number_of_initialize_function_inputs`,
+`behaviour_get_initialize_function_input_name`,
+`behaviour_get_initialize_function_input_type`,
+`behaviour_get_initialize_function_input_offset`,
+`execute_initialize_function` (behaviour data),
+`execute_initialize_function_material_data_manager` and
+`execute_initialize_function_material_data_manager_part`, and for the
+post-processings: `behaviour_get_number_of_post_processings`,
+`behaviour_get_post_processing_name`,
+`behaviour_get_post_processing_outputs_size`,
+`behaviour_get_number_of_post_processing_outputs`,
+`behaviour_get_post_processing_output_name`,
+`behaviour_get_post_processing_output_type`,
+`behaviour_get_post_processing_output_offset`,
+`execute_post_processing` (behaviour data),
+`execute_post_processing_material_data_manager` and
+`execute_post_processing_material_data_manager_part`. As in the other
+functions of this module, indices, offsets and ranges of integration
+points start at 1.
+
 # New features of the `MGIS/Function` library
 
 ## Support for quantities
