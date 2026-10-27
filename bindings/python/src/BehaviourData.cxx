@@ -44,6 +44,7 @@ void declareBehaviourData(pybind11::module_& m) {
       .def_readonly("s0", &BehaviourData::s0)
       .def_readonly("s1", &BehaviourData::s1)
       .def_property_readonly("K", &BehaviourData_getK)
+      .def_readonly("speed_of_sound", &BehaviourData::speed_of_sound)
       .def("update", ptr_update)
       .def("revert", ptr_revert);
   // free functions

@@ -183,10 +183,11 @@ void declareIntegrate(pybind11::module_& m) {
 
   pybind11::class_<BehaviourIntegrationOptions>(m,
                                                 "BehaviourIntegrationOptions")
-      .def_readonly("integration_type",
-                    &BehaviourIntegrationOptions::integration_type)
-      .def_readonly("compute_speed_of_sound",
-                    &BehaviourIntegrationOptions::compute_speed_of_sound);
+      .def(pybind11::init<>())
+      .def_readwrite("integration_type",
+                     &BehaviourIntegrationOptions::integration_type)
+      .def_readwrite("compute_speed_of_sound",
+                     &BehaviourIntegrationOptions::compute_speed_of_sound);
 
   pybind11::class_<BehaviourIntegrationResult>(m, "BehaviourIntegrationResult")
       .def_readonly("exit_status", &BehaviourIntegrationResult::exit_status,
