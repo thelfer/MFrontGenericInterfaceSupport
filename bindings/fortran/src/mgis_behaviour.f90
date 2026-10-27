@@ -1591,7 +1591,6 @@ contains
        return
     end if
     s = behaviour_get_external_state_variable_offset_wrapper(offset, b%ptr, nc)
-    write(*,*) "c: ", nc, offset
     o = offset+1
   end function behaviour_get_external_state_variable_offset
   !
