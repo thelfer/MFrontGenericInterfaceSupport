@@ -637,6 +637,64 @@ mgis_status mgis_bv_behaviour_get_material_property_name(
   }
 }  // end of mgis_bv_behaviour_get_material_property_name
 
+namespace c_internals {
+
+  static mgis_status getVariableType(mgis_bv_VariableType& t,
+                                     const mgis::behaviour::Variable& v) {
+    switch (v.type) {
+      case mgis::behaviour::Variable::SCALAR:
+        t = MGIS_BV_SCALAR;
+        break;
+      case mgis::behaviour::Variable::VECTOR:
+        t = MGIS_BV_VECTOR;
+        break;
+      case mgis::behaviour::Variable::VECTOR_1D:
+        t = MGIS_BV_VECTOR_1D;
+        break;
+      case mgis::behaviour::Variable::VECTOR_2D:
+        t = MGIS_BV_VECTOR_2D;
+        break;
+      case mgis::behaviour::Variable::VECTOR_3D:
+        t = MGIS_BV_VECTOR_3D;
+        break;
+      case mgis::behaviour::Variable::STENSOR:
+        t = MGIS_BV_STENSOR;
+        break;
+      case mgis::behaviour::Variable::STENSOR_1D:
+        t = MGIS_BV_STENSOR_1D;
+        break;
+      case mgis::behaviour::Variable::STENSOR_2D:
+        t = MGIS_BV_STENSOR_2D;
+        break;
+      case mgis::behaviour::Variable::STENSOR_3D:
+        t = MGIS_BV_STENSOR_3D;
+        break;
+      case mgis::behaviour::Variable::TENSOR:
+        t = MGIS_BV_TENSOR;
+        break;
+      case mgis::behaviour::Variable::TENSOR_1D:
+        t = MGIS_BV_TENSOR_1D;
+        break;
+      case mgis::behaviour::Variable::TENSOR_2D:
+        t = MGIS_BV_TENSOR_2D;
+        break;
+      case mgis::behaviour::Variable::TENSOR_3D:
+        t = MGIS_BV_TENSOR_3D;
+        break;
+      case mgis::behaviour::Variable::HIGHER_ORDER_TENSOR:
+        t = MGIS_BV_HIGHER_ORDER_TENSOR;
+        break;
+      case mgis::behaviour::Variable::ARRAY:
+        t = MGIS_BV_ARRAY;
+        break;
+      default:
+        return mgis_report_failure("unsupported variable type");
+    }
+    return mgis_report_success();
+  }
+
+}  // end of namespace c_internals
+
 mgis_status mgis_bv_behaviour_get_material_property_type(
     mgis_bv_VariableType* const t,
     const mgis_bv_Behaviour* const b,
@@ -645,24 +703,7 @@ mgis_status mgis_bv_behaviour_get_material_property_type(
     return mgis_report_failure("invalid argument");
   }
   try {
-    const auto& ev = b->mps.at(i);
-    switch (ev.type) {
-      case mgis::behaviour::Variable::SCALAR:
-        *t = MGIS_BV_SCALAR;
-        break;
-      case mgis::behaviour::Variable::VECTOR:
-        *t = MGIS_BV_VECTOR;
-        break;
-      case mgis::behaviour::Variable::STENSOR:
-        *t = MGIS_BV_STENSOR;
-        break;
-      case mgis::behaviour::Variable::TENSOR:
-        *t = MGIS_BV_TENSOR;
-        break;
-      default:
-        return mgis_report_failure("unsupported variable type");
-    }
-    return mgis_report_success();
+    return c_internals::getVariableType(*t, b->mps.at(i));
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
@@ -696,31 +737,6 @@ mgis_status mgis_bv_behaviour_get_internal_state_variable_name(
     return mgis_handle_cxx_exception();
   }
 }  // end of mgis_bv_behaviour_get_internal_state_variable_name
-
-namespace c_internals {
-
-  static mgis_status getVariableType(mgis_bv_VariableType& t,
-                                     const mgis::behaviour::Variable& v) {
-    switch (v.type) {
-      case mgis::behaviour::Variable::SCALAR:
-        t = MGIS_BV_SCALAR;
-        break;
-      case mgis::behaviour::Variable::VECTOR:
-        t = MGIS_BV_VECTOR;
-        break;
-      case mgis::behaviour::Variable::STENSOR:
-        t = MGIS_BV_STENSOR;
-        break;
-      case mgis::behaviour::Variable::TENSOR:
-        t = MGIS_BV_TENSOR;
-        break;
-      default:
-        return mgis_report_failure("unsupported variable type");
-    }
-    return mgis_report_success();
-  }
-
-}  // end of namespace c_internals
 
 mgis_status mgis_bv_behaviour_get_internal_state_variable_type(
     mgis_bv_VariableType* const t,
