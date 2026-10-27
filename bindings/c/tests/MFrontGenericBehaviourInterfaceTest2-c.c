@@ -84,6 +84,7 @@ int main(const int argc, const char* const* argv) {
       check_string(mp, mps[i], "invalid name for the material property");
     }
   }
+  mgis_bv_free_finite_strain_behaviour_options(&o);
   mgis_bv_free_behaviour(&b);
   return test_status;
 }  // end of main
