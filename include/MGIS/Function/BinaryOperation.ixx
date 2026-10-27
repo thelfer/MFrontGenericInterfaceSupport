@@ -228,7 +228,7 @@ namespace mgis::function {
     auto modifier =
         internals::binary_operation_modifier<std::decay_t<CallableType>>(
             std::forward<CallableType>(c));
-    return modifier(std::forward<SecondEvaluatorType>(e1),
+    return modifier(std::forward<FirstEvaluatorType>(e1),
                     std::forward<SecondEvaluatorType>(e2));
   }  // end of binary_operation
 
