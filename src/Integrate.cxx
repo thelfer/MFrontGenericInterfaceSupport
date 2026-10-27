@@ -33,6 +33,13 @@ namespace mgis::behaviour::internals {
       m.allocateArrayOfTangentOperatorBlocks();
     }
     if (opts.compute_speed_of_sound) {
+      // the behaviour computes the speed of sound from the mass density at
+      // the beginning of the time step for a prediction, and from the mass
+      // density at the end of the time step otherwise
+      const auto prediction = static_cast<int>(opts.integration_type) < 0;
+      mgis::raise_if(!isMassDensityDefined(prediction ? m.s0 : m.s1),
+                     "integrate: the speed of sound is requested but the "
+                     "mass density is not defined");
       m.allocateArrayOfSpeedOfSounds();
     }
   }  // end of allocate
