@@ -264,6 +264,10 @@ assign(ctx, f | as_scalar, f2 | as_scalar);
 
 # Issues fixed
 
+## Issue 326: Debug builds with gcc fail, and the MGIS_TRY macros and the const operators of ThreadedTaskResult do not compile
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/326>
+
 ## Issue 255: Fix `InvokeTest` on `MacOS`
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/255>
