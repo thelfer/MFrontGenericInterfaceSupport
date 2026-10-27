@@ -45,7 +45,7 @@ function(test_fortran_bindings test)
 	"MGIS_TEST_BEHAVIOURS_LIBRARY=$<TARGET_FILE:BehaviourTest>"
 	"MGIS_TEST_MODELS_LIBRARY=$<TARGET_FILE:ModelTest>")
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-    add_dependencies(check ${test}_f)
+    add_dependencies(build-tests ${test}_f)
   endif(CMAKE_CONFIGURATION_TYPES)
 endfunction(test_fortran_bindings)
 
