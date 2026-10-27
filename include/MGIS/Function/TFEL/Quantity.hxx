@@ -96,7 +96,7 @@ namespace mgis::function {
                           (std::same_as<std::decay_t<T>, real>);
 
   template <typename T>
-  concept MutableScalarConcept = (ScalarConcept<T>) || (!std::is_const_v<T>);
+  concept MutableScalarConcept = (ScalarConcept<T>) && (!std::is_const_v<T>);
 
   namespace internals {
 
