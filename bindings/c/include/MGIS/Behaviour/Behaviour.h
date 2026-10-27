@@ -170,10 +170,8 @@ MGIS_C_EXPORT mgis_status mgis_bv_is_standard_finite_strain_behaviour(
 /*!
  * \brief load a behaviour
  *
- * \note This method can also be used to load a finite strain behaviour.
- * In this case, the default options are used (the stress measure is Cauchy,
- * the tangent operator is the derivative of the Cauchy stress with respect to
- * the deformation gradient).
+ * \note This function fails for a finite strain behaviour: use
+ * `mgis_bv_load_finite_strain_behaviour`.
  *
  * \param[out] ptr: behaviour
  * \param[in] l: library name

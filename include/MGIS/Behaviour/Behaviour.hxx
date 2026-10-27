@@ -156,12 +156,18 @@ namespace mgis::behaviour {
      *   is returned
      * - if 1.5<options[1]<2.5, the derivative of the first Piola-Kirchoff
      *   stress with respect to the deformation gradient is returned
+     * - if 2.5<options[1]<3.5, the derivative of the Kirchhoff stress with
+     *   respect to the spatial increment of the deformation gradient is
+     *   returned
      */
     std::vector<mgis::real> options;
   };  // end of struct Behaviour
 
   /*!
    * \brief load the description of a behaviour from a library
+   *
+   * \note This function fails for a finite strain behaviour: use the
+   * overload taking `FiniteStrainBehaviourOptions`.
    *
    * \param[in] ctx: execution context
    * \param[in] l: library name
@@ -176,11 +182,6 @@ namespace mgis::behaviour {
       const Hypothesis) noexcept;
   /*!
    * \brief load the description of a finite strain behaviour from a library
-   *
-   * \note This method can also be used to load a finite strain behaviour.
-   * In this case, the default options are used (the stress measure is Cauchy,
-   * the tangent operator is the derivative of the Cauchy stress with respect
-   * to the deformation gradient).
    *
    * \param[in] ctx: execution context
    * \param[in] o: options
@@ -200,6 +201,9 @@ namespace mgis::behaviour {
   /*!
    * \brief load the description of a behaviour from a library
    *
+   * \note This function raises for a finite strain behaviour: use the
+   * overload taking `FiniteStrainBehaviourOptions`.
+   *
    * \param[in] l: library name
    * \param[in] b: behaviour name
    * \param[in] h: modelling hypothesis
@@ -210,11 +214,6 @@ namespace mgis::behaviour {
                              const Hypothesis);
   /*!
    * \brief load the description of a finite strain behaviour from a library
-   *
-   * \note This method can also be used to load a finite strain behaviour.
-   * In this case, the default options are used (the stress measure is Cauchy,
-   * the tangent operator is the derivative of the Cauchy stress with respect
-   * to the deformation gradient).
    *
    * \param[in] o: options
    * \param[in] l: library name
