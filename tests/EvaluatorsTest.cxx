@@ -381,6 +381,14 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(
         !(TensorView<FunctionView<BasicLinearSpace>,
                      tfel::math::stensor<1>>::checkPreconditions(ctx, f)));
+    // evaluators defined on non matching spaces
+    const auto e1 =
+        FunctionEvaluator<BasicLinearSpace>(space, values, 1) | as_scalar;
+    const auto e2 =
+        FunctionEvaluator<BasicLinearSpace>(BasicLinearSpace{2}, values, 1) |
+        as_scalar;
+    const auto sum = [](const real a, const real b) { return a + b; };
+    TFEL_TESTS_ASSERT(!scalar_reduce(ctx, e1 | add(e2), sum, 0).has_value());
 #endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
   }
   void test7() {
