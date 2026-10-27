@@ -48,6 +48,9 @@ namespace mgis::function {
             ::tfel::math::unit::UnitConcept UnitType>
   constexpr bool QuantityModifier<EvaluatorType, UnitType>::check(
       AbstractErrorHandler& ctx) const {
+    if (!internals::disambiguateCheck(ctx, this->evaluator)) {
+      return false;
+    }
     return checkPreconditions(ctx, this->evaluator);
   }
 
