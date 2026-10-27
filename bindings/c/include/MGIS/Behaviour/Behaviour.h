@@ -206,6 +206,14 @@ MGIS_C_EXPORT mgis_status mgis_bv_load_finite_strain_behaviour(
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_tangent_operator_array_size(
     mgis_size_type* const, const mgis_bv_Behaviour* const);
 /*!
+ * \brief return the number of tangent operator blocks
+ * \param[out] c: number of tangent operator blocks
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_number_of_tangent_operator_blocks(
+    mgis_size_type* const, const mgis_bv_Behaviour* const);
+/*!
  * \brief rotate gradients from the global frame to the material frame
  * \param[in,out] g: gradients
  * \param[in] b: behaviour

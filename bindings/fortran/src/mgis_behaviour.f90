@@ -772,6 +772,31 @@ contains
     s = behaviour_get_tangent_operator_array_size_wrapper(ns, b%ptr)
     n = ns
   end function behaviour_get_tangent_operator_array_size
+  ! behaviour_get_number_of_tangent_operator_blocks
+  function behaviour_get_number_of_tangent_operator_blocks(n,b) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_number_of_tangent_operator_blocks_wrapper(l,b) &
+            bind(c,name = 'mgis_bv_behaviour_get_number_of_tangent_operator_blocks') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_number_of_tangent_operator_blocks_wrapper
+    end interface
+    integer :: n
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = behaviour_get_number_of_tangent_operator_blocks_wrapper(ns, b%ptr)
+    n = ns
+  end function behaviour_get_number_of_tangent_operator_blocks
   ! behaviour_get_library
   function behaviour_get_library(l,b) result(s)
     use mgis_fortran_utilities
@@ -2154,6 +2179,7 @@ contains
     integer gs
     integer ths
     integer nK
+    integer nb
     nullify(K)
     s = behaviour_data_get_behaviour(b, d)
     if( s%exit_status .ne. MGIS_SUCCESS) then
@@ -2169,6 +2195,17 @@ contains
     end if
     s = behaviour_get_tangent_operator_array_size(nK, b)
     if( s%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    s = behaviour_get_number_of_tangent_operator_blocks(nb, b)
+    if( s%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    ! the blocks are stored one after the other: several blocks are not the
+    ! ths x gs matrix, even when their sizes add up to ths * gs
+    if (nb .gt. 1) then
+       s = report_failure("behaviour_data_get_tangent_operator: " // &
+            "the tangent operator is not made of a single block")
        return
     end if
     if (nK .ne. ths * gs) then
@@ -3632,6 +3669,16 @@ contains
          type(c_ptr), intent(in), value :: m
          type(mgis_status) :: r
        end function material_data_manager_get_tangent_operator_stride_wrapper
+       function mdm_get_number_of_tangent_operator_blocks_wrapper(nb, m) &
+            bind(c,name = 'mgis_bv_material_data_manager_get_number_of_tangent_operator_blocks')&
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: nb
+         type(c_ptr), intent(in), value :: m
+         type(mgis_status) :: r
+       end function mdm_get_number_of_tangent_operator_blocks_wrapper
     end interface
     real(kind=8), dimension(:,:,:), pointer, intent(out) :: K
     type(MaterialDataManager), intent(in) :: m
@@ -3642,6 +3689,7 @@ contains
     integer gs
     integer ths
     integer(kind=c_size_t) nK
+    integer(kind=c_size_t) nb
     nullify(K)
     r = material_data_manager_get_state_0(s0, m)
     if( r%exit_status .ne. MGIS_SUCCESS) then
@@ -3665,6 +3713,17 @@ contains
     end if
     r = material_data_manager_get_tangent_operator_stride_wrapper(nK, m %ptr)
     if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = mdm_get_number_of_tangent_operator_blocks_wrapper(nb, m %ptr)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    ! the blocks are stored one after the other: several blocks are not the
+    ! ths x gs matrix, even when their sizes add up to ths * gs
+    if (nb .gt. 1) then
+       r = report_failure("material_data_manager_get_tangent_operator: " // &
+            "the tangent operator is not made of a single block")
        return
     end if
     if (nK .ne. ths * gs) then

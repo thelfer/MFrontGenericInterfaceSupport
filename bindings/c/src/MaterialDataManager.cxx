@@ -319,6 +319,17 @@ mgis_status mgis_bv_material_data_manager_get_tangent_operator_stride(
   return mgis_report_success();
 }  // end of mgis_bv_material_data_manager_get_tangent_operator_stride
 
+mgis_status mgis_bv_material_data_manager_get_number_of_tangent_operator_blocks(
+    mgis_size_type* const n, mgis_bv_MaterialDataManager* const d) {
+  if (d == nullptr) {
+    *n = mgis_size_type{};
+    return mgis_report_failure(
+        "invalid argument (material data manager is null)");
+  }
+  *n = d->b.to_blocks.size();
+  return mgis_report_success();
+}  // end of mgis_bv_material_data_manager_get_number_of_tangent_operator_blocks
+
 mgis_status mgis_bv_update_material_data_manager(
     mgis_bv_MaterialDataManager* const d) {
   try {

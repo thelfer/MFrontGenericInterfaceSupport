@@ -364,6 +364,20 @@ mgis_status mgis_bv_behaviour_get_tangent_operator_array_size(
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_get_tangent_operator_array_size
 
+mgis_status mgis_bv_behaviour_get_number_of_tangent_operator_blocks(
+    mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
+  *s = 0;
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *s = b->to_blocks.size();
+    return mgis_report_success();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+}  // end of mgis_bv_behaviour_get_number_of_tangent_operator_blocks
+
 mgis_status mgis_bv_behaviour_get_library(const char** l,
                                           const mgis_bv_Behaviour* const b) {
   if (b == nullptr) {
