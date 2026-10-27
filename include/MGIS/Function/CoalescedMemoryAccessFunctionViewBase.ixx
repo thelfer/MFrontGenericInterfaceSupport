@@ -265,7 +265,7 @@ namespace mgis::function {
       requires(LinearQuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
     return [ this, e, q ]<std::size_t... Is>(std::index_sequence<Is...>)
-        ->std::array<real*, N> {
+        ->std::array<const real*, N> {
       return {&this->function_components[Is](e, q)...};
     }
     (std::make_index_sequence<N>());
@@ -321,7 +321,7 @@ namespace mgis::function {
       requires((begin + size <= N) && LinearElementSpaceConcept<Space> &&
                (!hasElementWorkspace<Space>)) {
     return [ this, i ]<std::size_t... Is>(std::index_sequence<Is...>)
-        ->std::array<const real*, N> {
+        ->std::array<const real*, size> {
       return {&this->function_components[begin + Is](i)...};
     }
     (std::make_index_sequence<size>());
@@ -338,7 +338,7 @@ namespace mgis::function {
       requires((begin + size <= N) && LinearQuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
     return [ this, e, q ]<std::size_t... Is>(std::index_sequence<Is...>)
-        ->std::array<real*, size> {
+        ->std::array<const real*, size> {
       return {&this->function_components[begin + Is](e, q)...};
     }
     (std::make_index_sequence<size>());
