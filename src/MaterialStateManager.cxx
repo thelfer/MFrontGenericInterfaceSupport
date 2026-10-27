@@ -1106,7 +1106,7 @@ namespace mgis::behaviour {
         return ctx.registerErrorMessage("restoring mass density failed");
       }
     }
-    if (opts.restore_internal_state_variables) {
+    if ((opts.restore_internal_state_variables) && (!s.b.isvs.empty())) {
       if (!read(ctx, s.internal_state_variables, g,
                 "internal_state_variables")) {
         return ctx.registerErrorMessage(

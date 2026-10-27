@@ -598,6 +598,12 @@ namespace mgis::behaviour {
      * dissipated energy
      */
     const bool restore_dissipated_energies = true;
+    /*!
+     * \brief flag stating if the internal state variables shall be read
+     *
+     * \note this flag is ignored if the behaviour does not declare any
+     * internal state variable
+     */
     const bool restore_internal_state_variables = true;
     const bool restore_mass_densities = true;
     const bool restore_material_properties = true;
