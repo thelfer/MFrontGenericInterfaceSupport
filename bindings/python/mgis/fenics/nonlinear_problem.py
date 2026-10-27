@@ -313,6 +313,12 @@ class AbstractNonlinearProblem:
             self.material.data_manager.s0.gradients[:, buff:buff +
                                                     size] = grad_vals
             buff += size
+        if self.material.rotation_matrix is not None:
+            # all the gradients are rotated at once, from the global frame to
+            # the material frame, as in update_gradients
+            mgis_bv.rotateGradients(
+                self.material.data_manager.s0.gradients.reshape(-1),
+                self.material.behaviour, self.rotation_values)
 
     def initialize_fluxes(self):
         fluxes = []
