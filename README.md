@@ -73,6 +73,8 @@ The following bindings are under consideration:
 
 # Versions, branches
 
+- Version `3.2` is meant to be built against `TFEL` 5.2
+- Version `3.1.1` is meant to be built against `TFEL` 5.1.1
 - Version `3.1` is meant to be built against `TFEL` 5.1
 - Version `3.0.2` is meant to be built against `TFEL` 5.0.2
 - Version `3.0.1` is meant to be built against `TFEL` 5.0.1
