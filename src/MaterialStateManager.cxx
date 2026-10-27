@@ -1139,8 +1139,7 @@ namespace mgis::behaviour {
         }
         auto& f = s.material_properties[mp.name];
         if (std::holds_alternative<std::monostate>(f)) {
-          return ctx.registerErrorMessage("uninitialized material property '" +
-                                          mp.name + "'");
+          f = MutableFieldHolder{.value = real{}};
         }
         if (std::holds_alternative<MutableFieldHolder>(f)) {
           auto& mfh = std::get<MutableFieldHolder>(f);
@@ -1179,8 +1178,7 @@ namespace mgis::behaviour {
         }
         auto& f = s.external_state_variables[esv.name];
         if (std::holds_alternative<std::monostate>(f)) {
-          return ctx.registerErrorMessage(
-              "uninitialized external state variable'" + esv.name + "'");
+          f = MutableFieldHolder{.value = real{}};
         }
         if (std::holds_alternative<MutableFieldHolder>(f)) {
           auto& mfh = std::get<MutableFieldHolder>(f);
