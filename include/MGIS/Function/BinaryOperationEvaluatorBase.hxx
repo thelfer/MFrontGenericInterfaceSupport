@@ -17,7 +17,7 @@
 
 #include "MGIS/AbstractErrorHandler.hxx"
 #include "MGIS/Function/SpaceConcept.hxx"
-#include "MGIS/Function/Evaluator.hxx"
+#include "MGIS/Function/EvaluatorConcept.hxx"
 
 namespace mgis::function {
 
