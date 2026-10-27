@@ -262,8 +262,7 @@ namespace mgis {
     ~Context() noexcept override;
 
    private:
-    //! \brief printing the error message on the log stream and abort the
-    //! execution
+    //! \brief call the terminate handler with the error message
     [[noreturn]] void abort();
 
     //! \brief current log stream
