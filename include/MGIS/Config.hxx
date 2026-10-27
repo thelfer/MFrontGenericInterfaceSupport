@@ -56,7 +56,12 @@ namespace mgis::config {
    * registring an error message in a context
    *
    * If MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING is defined, registring
-   * an error message in a context, `mgis::raise` is called
+   * an error message in a context, `mgis::raise` is called. Since the
+   * methods registering an error message are declared `noexcept`,
+   * `std::terminate` is then called. For this reason, this macro is not
+   * defined by the `enable-exceptions` option, which only affects
+   * contract violations. The `RAISE` policy is kept for source
+   * compatibility.
    *
    * If MGIS_USE_ABORT_FOR_ERROR_REPORTING is defined, registring
    * an error message in a context, the error message is printed

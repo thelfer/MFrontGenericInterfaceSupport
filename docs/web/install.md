@@ -63,8 +63,9 @@ The simplest way to compile this package is:
 - `enable-mgis-function-precompiled-operations`: enable or disable compilation of
    some operations on basic functions. This options is only meaningful if `MGIS/Function`
    is enabled and if `TFEL` libraries are available.
-- `enable-exceptions`: use exceptions to report contract violation and error reporting.
-   By default, contract violation leads to abort the program.
+- `enable-exceptions`: use exceptions to report contract violations.
+   By default, contract violation leads to abort the program. This
+   option does not change how errors are reported through a `Context`.
 - `enable-parallel-stl-algorithms`: by default, STL algorithms are used if available
 - `enable-c-bindings`: compiles the `C` bindings (default=OFF)
 - `enable-fortran-bindings`: compiles bindings for the `Fortran2003`

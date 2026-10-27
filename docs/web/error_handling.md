@@ -142,9 +142,11 @@ described in the previous section.
 By default, the error messages are packed up to the moment when error(s)
 must be reported to the end-user. The error messages can then be
 retrieved by the `getErrorMessage` method (or `getRawErrorMessage`, see
-below). However, if `MGIS` is compiled with the flag
-`-Denable-exceptions=ON`, an exception is thrown instead using
-`mgis::raise`.
+below). The flag `-Denable-exceptions=ON` does not change this
+behaviour: the functions taking a `Context` are declared `noexcept`, so
+this flag only affects contract violations. The caller may turn a
+failure into an exception using the failure handler returned by
+`Context::getThrowingFailureHandler`.
 
 ### Source location
 
