@@ -55,6 +55,14 @@ int main(const int argc, const char* const* argv) {
           << "ComputeSpeedOfSoundTest: invalid value for the speed of sound\n";
       return EXIT_FAILURE;
     }
+    // the time step increase factor is bounded by the one given by the solver
+    m.rdt = 1.2;
+    const auto r = integrate(m, opts, dt, 0, m.n);
+    if (std::abs(r.time_step_increase_factor - 1.2) > 1.e-14) {
+      std::cerr
+          << "ComputeSpeedOfSoundTest: invalid time step increase factor\n";
+      return EXIT_FAILURE;
+    }
   } catch (std::exception& e) {
     std::cerr << e.what() << '\n';
     return EXIT_FAILURE;

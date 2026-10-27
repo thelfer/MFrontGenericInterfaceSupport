@@ -391,7 +391,8 @@ namespace mgis::behaviour::internals {
     auto behaviour_evaluators = internals::buildBehaviourEvaluators(ws, m);
     // loop over integration points
     auto r = BehaviourIntegrationResult{};
-    auto rdt0 = r.time_step_increase_factor;
+    r.time_step_increase_factor = m.rdt;
+    const auto rdt0 = m.rdt;
     const real Ke = encodeBehaviourIntegrationOptions(opts);
     real bopts[Behaviour::nopts + 1];  // option passed to the behaviour
     for (auto i = b; i != e; ++i) {
@@ -441,7 +442,8 @@ namespace mgis::behaviour::internals {
     auto behaviour_evaluators = internals::buildBehaviourEvaluators(ws, m);
     // loop over integration points
     auto r = BehaviourIntegrationResult{};
-    auto rdt0 = r.time_step_increase_factor;
+    r.time_step_increase_factor = m.rdt;
+    const auto rdt0 = m.rdt;
     const real Ke = encodeBehaviourIntegrationOptions(opts);
     real bopts[Behaviour::nopts + 1];  // option passed to the behaviour
     for (auto i = b; i != e; ++i) {
