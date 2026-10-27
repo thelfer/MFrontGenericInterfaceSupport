@@ -365,7 +365,7 @@ namespace mgis::behaviour {
     for (const auto& v : variables) {
       os << "- " << v.name << " (" << getVariableTypeAsString(v) << "): ";
       if (v.type == Variable::SCALAR) {
-        if (values.size() < o) {
+        if (values.size() <= o) {
           mgis::raise("print_variables: invalid state initialisation");
         }
         os << values[o] << '\n';
