@@ -28,7 +28,7 @@ namespace mgis {
         Args&&... args) {
       using result = std::invoke_result_t<F, Args...>;
       using apply = std::conditional_t<std::is_same_v<result, void>, GetVoid,
-                                       Get<result>>;
+                                       Get<result, Args...>>;
       ThreadedTaskResult<result> r;
       apply::exe(r, f, std::forward<Args>(args)...);
       return r;
