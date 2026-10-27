@@ -219,6 +219,12 @@ static void check_material_data_manager(const mgis_bv_Behaviour* const b) {
   check_status(
       mgis_bv_material_state_manager_get_uniform_mass_density(&rho, s1));
   check(fabs(rho - 7850) < eps, "invalid mass density");
+  // uniform material property given by a pointer
+  mgis_real E = 150e9;
+  check_status(mgis_bv_material_state_manager_set_uniform_material_property(
+      s1, "YoungModulus", &E, MGIS_BV_LOCAL_STORAGE));
+  check_status(mgis_bv_material_state_manager_set_uniform_material_property(
+      s1, "YoungModulus", &E, MGIS_BV_EXTERNAL_STORAGE));
   // clean-up
   check_status(mgis_bv_free_material_data_manager(&d));
 }  // end of check_material_data_manager

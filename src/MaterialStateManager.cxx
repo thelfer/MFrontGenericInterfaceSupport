@@ -224,10 +224,10 @@ namespace mgis::behaviour {
           "invalid material property (only scalar material property is "
           "supported)");
     }
-    if (static_cast<mgis::size_type>(v.size()) != m.n) {
+    if ((static_cast<mgis::size_type>(v.size()) != m.n) && (v.size() != 1u)) {
       return ctx.registerErrorMessage(
-          "invalid number of values (does not match the number of integration "
-          "points)");
+          "invalid number of values (expected one value or one value per "
+          "integration point)");
     }
     auto& fh = getFieldHolder(m.material_properties, n);
     if (s == MaterialStateManager::LOCAL_STORAGE) {
@@ -255,16 +255,22 @@ namespace mgis::behaviour {
           "invalid material property "
           "(only scalar material property is supported)");
     }
-    if (static_cast<mgis::size_type>(v.size()) != m.n) {
+    if ((static_cast<mgis::size_type>(v.size()) != m.n) && (v.size() != 1u)) {
       return ctx.registerErrorMessage(
-          "invalid number of values (does not match the number of integration "
-          "points)");
+          "invalid number of values (expected one value or one value per "
+          "integration point)");
     }
     auto& fh = getFieldHolder(m.material_properties, n);
     if (s == MaterialStateManager::LOCAL_STORAGE) {
-      fh = MaterialStateManager::MutableFieldHolder{
-          .value = std::vector<real>{v.begin(), v.end()},
-          .shall_be_updated = (p == MaterialStateManager::UPDATE)};
+      if (static_cast<mgis::size_type>(v.size()) != m.n) {
+        fh = MaterialStateManager::MutableFieldHolder{
+            .value = v[0],
+            .shall_be_updated = (p == MaterialStateManager::UPDATE)};
+      } else {
+        fh = MaterialStateManager::MutableFieldHolder{
+            .value = std::vector<real>{v.begin(), v.end()},
+            .shall_be_updated = (p == MaterialStateManager::UPDATE)};
+      }
     } else {
       if (p == MaterialStateManager::UPDATE) {
         return ctx.registerErrorMessage(
