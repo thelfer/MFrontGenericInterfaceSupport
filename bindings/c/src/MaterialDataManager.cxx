@@ -145,6 +145,11 @@ mgis_status mgis_bv_create_material_data_manager_with_initializer(
         "mgis_bv_create_material_data_manager_with_initializer: "
         "null behaviour");
   }
+  if (i == nullptr) {
+    return mgis_report_failure(
+        "mgis_bv_create_material_data_manager_with_initializer: "
+        "null initializer");
+  }
   try {
     *d = new mgis::behaviour::MaterialDataManager(*b, n, *i);
     if (*d == nullptr) {
@@ -322,6 +327,11 @@ mgis_status mgis_bv_material_data_manager_get_tangent_operator_stride(
 
 mgis_status mgis_bv_update_material_data_manager(
     mgis_bv_MaterialDataManager* const d) {
+  if (d == nullptr) {
+    return mgis_report_failure(
+        "mgis_bv_update_material_data_manager: "
+        "null material data manager");
+  }
   try {
     mgis::behaviour::update(*d);
   } catch (...) {
@@ -332,6 +342,11 @@ mgis_status mgis_bv_update_material_data_manager(
 
 mgis_status mgis_bv_revert_material_data_manager(
     mgis_bv_MaterialDataManager* const d) {
+  if (d == nullptr) {
+    return mgis_report_failure(
+        "mgis_bv_revert_material_data_manager: "
+        "null material data manager");
+  }
   try {
     mgis::behaviour::revert(*d);
   } catch (...) {

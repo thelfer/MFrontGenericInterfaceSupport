@@ -147,6 +147,9 @@ mgis_status mgis_bv_load_behaviour(mgis_bv_Behaviour** ptr,
                                    const char* const b,
                                    const char* const h) {
   *ptr = nullptr;
+  if ((l == nullptr) || (b == nullptr) || (h == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   try {
     const auto bv = mgis::behaviour::load(l, b, mgis::behaviour::fromString(h));
     *ptr = new mgis::behaviour::Behaviour(std::move(bv));
@@ -168,6 +171,9 @@ mgis_status mgis_bv_load_finite_strain_behaviour(
     const char* const b,
     const char* const h) {
   *ptr = nullptr;
+  if ((o == nullptr) || (l == nullptr) || (b == nullptr) || (h == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   try {
     const auto bv =
         mgis::behaviour::load(*o, l, b, mgis::behaviour::fromString(h));
@@ -187,6 +193,9 @@ mgis_status mgis_bv_behaviour_rotate_gradients_in_place(
     mgis_real* const g,
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
   if (b->rotate_gradients_ptr == nullptr) {
     return mgis_report_failure(
         "no function performing the rotation of the gradients defined");
@@ -200,6 +209,9 @@ mgis_status mgis_bv_behaviour_rotate_gradients_out_of_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const gg,
     const mgis_real* const r) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
   if (b->rotate_gradients_ptr == nullptr) {
     return mgis_report_failure(
         "no function performing the rotation of the gradients defined");
@@ -213,6 +225,9 @@ mgis_status mgis_bv_behaviour_rotate_array_of_gradients_in_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
   if (b->rotate_array_of_gradients_ptr == nullptr) {
     return mgis_report_failure(
         "no function performing the rotation of the gradients defined");
@@ -227,6 +242,9 @@ mgis_status mgis_bv_behaviour_rotate_array_of_gradients_out_of_place(
     const mgis_real* const gg,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
   if (b->rotate_array_of_gradients_ptr == nullptr) {
     return mgis_report_failure(
         "no function performing the rotation of the gradients defined");
@@ -239,6 +257,9 @@ mgis_status mgis_bv_behaviour_rotate_thermodynamic_forces_in_place(
     mgis_real* const th,
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
   if (b->rotate_thermodynamic_forces_ptr == nullptr) {
     return mgis_report_failure(
         "no function performing the rotation of the thermodynamic forces "
@@ -253,6 +274,9 @@ mgis_status mgis_bv_behaviour_rotate_thermodynamic_forces_out_of_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const gth,
     const mgis_real* const r) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
   if (b->rotate_thermodynamic_forces_ptr == nullptr) {
     return mgis_report_failure(
         "no function performing the rotation of the thermodynamic forces "
@@ -267,6 +291,9 @@ mgis_status mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_in_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
   if (b->rotate_array_of_thermodynamic_forces_ptr == nullptr) {
     return mgis_report_failure(
         "no function performing the rotation of the thermodynamic forces "
@@ -282,6 +309,9 @@ mgis_status mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_out_of_place(
     const mgis_real* const gth,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
   if (b->rotate_array_of_thermodynamic_forces_ptr == nullptr) {
     return mgis_report_failure(
         "no function performing the rotation of the thermodynamic forces "
@@ -296,6 +326,9 @@ mgis_status mgis_bv_behaviour_rotate_tangent_operator_blocks_in_place(
     mgis_real* const to,
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
   if (b->rotate_tangent_operator_blocks_ptr == nullptr) {
     return mgis_report_failure(
         "no function performing the rotation of the tangent operator blocks "
@@ -310,6 +343,9 @@ mgis_status mgis_bv_behaviour_rotate_tangent_operator_blocks_out_of_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const gto,
     const mgis_real* const r) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
   if (b->rotate_tangent_operator_blocks_ptr == nullptr) {
     return mgis_report_failure(
         "no function performing the rotation of the tangent operator blocks "
@@ -324,6 +360,9 @@ mgis_status mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_in_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
   if (b->rotate_array_of_tangent_operator_blocks_ptr == nullptr) {
     return mgis_report_failure(
         "no function performing the rotation of the tangent operator blocks "
@@ -340,6 +379,9 @@ mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_out_of_place(
     const mgis_real* const gto,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
   if (b->rotate_array_of_tangent_operator_blocks_ptr == nullptr) {
     return mgis_report_failure(
         "no function performing the rotation of the tangent operator blocks "

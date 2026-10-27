@@ -21,6 +21,9 @@ mgis_status mgis_model_load(mgis_model_Model** ptr,
                             const char* const m,
                             const char* const h) {
   *ptr = nullptr;
+  if ((l == nullptr) || (m == nullptr) || (h == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   try {
     const auto model = mgis::model::load(l, m, mgis::behaviour::fromString(h));
     *ptr = new mgis::model::Model(std::move(model));

@@ -184,6 +184,12 @@ mgis_status mgis_bv_state_get_thermodynamic_force_by_offset(
 mgis_status mgis_bv_state_set_material_property_by_name(mgis_bv_State* const s,
                                                         const char* const n,
                                                         const mgis_real v) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
   try {
     setMaterialProperty(*s, n, v);
   } catch (...) {
@@ -195,6 +201,15 @@ mgis_status mgis_bv_state_set_material_property_by_name(mgis_bv_State* const s,
 mgis_status mgis_bv_state_get_material_property_by_name(mgis_real** const v,
                                                         mgis_bv_State* const s,
                                                         const char* const n) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
+  if (v == nullptr) {
+    return mgis_report_failure("invalid argument (null values)");
+  }
   try {
     *v = getMaterialProperty(*s, n);
   } catch (...) {
@@ -205,6 +220,9 @@ mgis_status mgis_bv_state_get_material_property_by_name(mgis_real** const v,
 
 mgis_status mgis_bv_state_set_material_property_by_offset(
     mgis_bv_State* const s, const mgis_size_type o, const mgis_real v) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
   try {
     setMaterialProperty(*s, o, v);
   } catch (...) {
@@ -215,6 +233,12 @@ mgis_status mgis_bv_state_set_material_property_by_offset(
 
 mgis_status mgis_bv_state_get_material_property_by_offset(
     mgis_real** const v, mgis_bv_State* const s, const mgis_size_type o) {
+  if (v == nullptr) {
+    return mgis_report_failure("invalid argument (null values)");
+  }
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
   try {
     *v = getMaterialProperty(*s, o);
   } catch (...) {
@@ -317,6 +341,12 @@ mgis_status mgis_bv_state_get_internal_state_variable_by_offset(
 
 mgis_status mgis_bv_state_set_scalar_external_state_variable_by_name(
     mgis_bv_State* const s, const char* const n, const mgis_real v) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
   try {
     setExternalStateVariable(*s, n, v);
   } catch (...) {
@@ -327,6 +357,15 @@ mgis_status mgis_bv_state_set_scalar_external_state_variable_by_name(
 
 mgis_status mgis_bv_state_set_external_state_variable_by_name(
     mgis_bv_State* const s, const char* const n, const mgis_real* const v) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
+  if (v == nullptr) {
+    return mgis_report_failure("invalid argument (null values)");
+  }
   try {
     const auto& ev = getVariable(s->b.esvs, n);
     const auto es = getVariableSize(ev, s->b.hypothesis);
@@ -355,6 +394,15 @@ mgis_status mgis_bv_state_get_external_state_variables(mgis_real** v,
 
 mgis_status mgis_bv_state_get_external_state_variable_by_name(
     mgis_real** const v, mgis_bv_State* const s, const char* const n) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
+  if (v == nullptr) {
+    return mgis_report_failure("invalid argument (null values)");
+  }
   try {
     *v = getExternalStateVariable(*s, n);
   } catch (...) {
@@ -365,6 +413,9 @@ mgis_status mgis_bv_state_get_external_state_variable_by_name(
 
 mgis_status mgis_bv_state_set_scalar_external_state_variable_by_offset(
     mgis_bv_State* const s, const mgis_size_type o, const mgis_real v) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
   try {
     setExternalStateVariable(*s, o, v);
   } catch (...) {
@@ -378,6 +429,12 @@ mgis_status mgis_bv_state_set_external_state_variable_by_offset(
     const mgis_size_type o,
     const mgis_real* const v,
     const mgis_size_type vs) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if ((v == nullptr) && (vs != 0)) {
+    return mgis_report_failure("invalid argument (null values)");
+  }
   try {
     setExternalStateVariable(*s, o, std::span<const mgis::real>(v, vs));
   } catch (...) {
@@ -388,6 +445,12 @@ mgis_status mgis_bv_state_set_external_state_variable_by_offset(
 
 mgis_status mgis_bv_state_get_external_state_variable_by_offset(
     mgis_real** const v, mgis_bv_State* const s, const mgis_size_type o) {
+  if (v == nullptr) {
+    return mgis_report_failure("invalid argument (null values)");
+  }
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
   try {
     *v = getExternalStateVariable(*s, o);
   } catch (...) {
