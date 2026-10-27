@@ -264,6 +264,42 @@ assign(ctx, f | as_scalar, f2 | as_scalar);
 
 # Issues fixed
 
+## Issue 344: Documentation pages with wrong types, names and examples, and test slips leaving values unchecked
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/344>
+
+## Issue 342: MGIS/Function with TFEL: logarithmic strain, TensorialFunction copies, QuantityModifier check, finite strain stiffness conversion and MutableScalarConcept
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/342>
+
+## Issue 340: Build system: headers and CMake packages of the installation, environment scripts, Debug flags and test targets
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/340>
+
+## Issue 338: MGIS/Function: CUDA assign leaves multi-component values unassigned, parallel overloads depend on the include order, and other defects of the algorithms
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/338>
+
+## Issue 336: C bindings: null arguments and offsets out of range, headers not usable from C, DTAU_DDF and fixed-dimension types refused, messages and documentation
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/336>
+
+## Issue 334: States: mass density lost by update and revert, rejected external storage, print_markdown bound check, integrate_debug report names
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/334>
+
+## Issue 332: MGIS/Function: accessors, layout constructors, checkCompatibility and view<N> of FunctionView, coalesced views and binary_operation
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/332>
+
+## Issue 330: Loading of behaviours and models: error messages, eto-pk1 kinematic, documentation, exported and installed symbols
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/330>
+
+## Issue 328: Fortran bindings: status of the free functions, debug output, modules not installed and integration tests checking the first point twice
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/328>
+
 ## Issue 326: Debug builds with gcc fail, and the MGIS_TRY macros and the const operators of ThreadedTaskResult do not compile
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/326>
@@ -292,6 +328,14 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/290>
 
+## Issue 286: Scalar reductions return zero instead of failing
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/286>
+
+## Issue 284: `FixedSizeModifier` breaks the check chain
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/284>
+
 ## Issue 280: Restoring from HDF5 never creates a missing field
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/280>
@@ -299,6 +343,14 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 ## Issue 279: Saving a material data manager to HDF5 always fails
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/279>
+
+## Issue 268: Fortran array rotation functions pass the point count by reference
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/268>
+
+## Issue 267: Fortran rotation interfaces pass array descriptors instead of addresses
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/267>
 
 ## Issue 255: Fix `InvokeTest` on `MacOS`
 
