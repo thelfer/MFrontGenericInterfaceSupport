@@ -23,13 +23,25 @@ The page describes the new functionalities of Version 3.1.1 of the
 
 # Issues fixed
 
+## Issue 291: Division by zero when a behaviour declares no internal state variable
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/291>
+
 ## Issue 287: `TensorModifier` may map a temporary
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/287>
 
+## Issue 276: Dangling reference while collecting threaded integration results
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/276>
+
 ## Issue 263: `copy<N>` does not compile for `N ≥ 5` and loses the first value
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/263>
+
+## Issue 252: Fix conditional tests  using `math_errhandling`: this may is defined on MacOS by a macro calling an intrinsic which is not `constexpr`
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/252>
 
 ## Issue 243: [cmake] Fix `_TFEL_MODULE_PATH` when `TFELHOME` is defined
 
@@ -38,6 +50,10 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 ## Issue 242: [mgis-function] don't include execution if support for parallel STL algorithms is not requested, to avoid implicit dependeny to `TBB` with `gcc`
  
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/242>
+
+## Issue 212: StridedCoalescedMemoryAccessFunctionViewBase and CoalescedMemoryAccessFunctionViewBase tests fail to compile
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/212>
 
 ## Issue 208: [mgis-function] Fix `Algorithms.ixx`: some captures of the element space are missing
 
@@ -62,3 +78,7 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 ## Issue 197: [MGIS/Function] Fix `CoalescedMemoryAccessCompositeTensorsView` for scalar values 
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/197>
+
+## Issue 194: [python] `setExternalStateVariable` shall accept integers
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/194>
