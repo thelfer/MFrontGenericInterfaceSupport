@@ -89,6 +89,8 @@ mgis_status mgis_bv_finite_strain_behaviour_options_set_tangent_operator(
     tm = mgis::behaviour::FiniteStrainBehaviourOptions::DS_DEGL;
   } else if (t == MGIS_BV_DPK1_DF) {
     tm = mgis::behaviour::FiniteStrainBehaviourOptions::DPK1_DF;
+  } else if (t == MGIS_BV_DTAU_DDF) {
+    tm = mgis::behaviour::FiniteStrainBehaviourOptions::DTAU_DDF;
   } else {
     return mgis_report_failure("invalid tangent operator");
   }
@@ -109,6 +111,8 @@ mgis_bv_finite_strain_behaviour_options_set_tangent_operator_by_string(
     tm = mgis::behaviour::FiniteStrainBehaviourOptions::DS_DEGL;
   } else if (strcmp(t, "DPK1_DF") == 0) {
     tm = mgis::behaviour::FiniteStrainBehaviourOptions::DPK1_DF;
+  } else if (strcmp(t, "DTAU_DDF") == 0) {
+    tm = mgis::behaviour::FiniteStrainBehaviourOptions::DTAU_DDF;
   } else {
     return mgis_report_failure("invalid tangent operator");
   }

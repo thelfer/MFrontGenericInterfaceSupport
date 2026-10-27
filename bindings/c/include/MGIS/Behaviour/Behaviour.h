@@ -140,6 +140,7 @@ mgis_bv_finite_strain_behaviour_options_set_tangent_operator(
  * - `DSIG_DF` (or `DCAUCHY_DF`)
  * - `DS_DEGL`
  * - `DPK1_DF`
+ * - `DTAU_DDF`
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_finite_strain_behaviour_options_set_tangent_operator_by_string(
