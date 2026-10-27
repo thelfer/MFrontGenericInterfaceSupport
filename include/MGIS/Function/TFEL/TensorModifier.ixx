@@ -22,7 +22,7 @@ namespace mgis::function {
                                                   EvaluatorType>)  //
       constexpr size_type
       TensorModifier<TensorType,
-                     EvaluatorType>::getNumberOfComponents() noexcept {
+                     EvaluatorType>::getNumberOfComponents() const noexcept {
     return compile_time_size<TensorType>;
   }
 

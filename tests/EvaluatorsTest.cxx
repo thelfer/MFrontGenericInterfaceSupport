@@ -631,6 +631,8 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(e2.check(ctx));
     TFEL_TESTS_ASSERT(check(ctx, e) == false);
     TFEL_TESTS_ASSERT(check(ctx, e2));
+    auto f2 = Function<BasicLinearSpace, 4>(BasicLinearSpace{1});
+    TFEL_TESTS_ASSERT(assign(ctx, f2 | as_stensor<2>, e2));
   }
   void test18() {
     using namespace mgis;

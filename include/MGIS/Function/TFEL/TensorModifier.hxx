@@ -57,7 +57,7 @@ namespace mgis::function {
     //! \brief perform consistency checks
     [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
     //! \return the size of the tensorial object to be exposed
-    constexpr size_type getNumberOfComponents() noexcept;
+    constexpr size_type getNumberOfComponents() const noexcept;
     /*!
      * \brief apply the modifier
      * \param[in] values: values to be modified
