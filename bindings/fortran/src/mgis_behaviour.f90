@@ -336,6 +336,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_finite_strain_behaviour_options_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_finite_strain_behaviour_options
   !
@@ -2006,6 +2008,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_behaviour_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_behaviour
   !
@@ -2237,6 +2241,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_behaviour_data_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_behaviour_data
   !
@@ -2768,6 +2774,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_material_data_manager_initializer_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_material_data_manager_initializer
   !
@@ -2855,6 +2863,8 @@ contains
    type(mgis_status) :: r
    if (c_associated(ptr%ptr)) then
       r = free_behaviour_integration_options_wrapper(ptr%ptr)
+   else
+      r = report_success()
    end if
   end function free_behaviour_integration_options
   !
@@ -3695,6 +3705,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_material_data_manager_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_material_data_manager
   !
