@@ -29,6 +29,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
+        build_type: [Release]
         include:
           - os: ubuntu-latest
             jobs_flag: '-j $(nproc)'
@@ -38,6 +39,13 @@ jobs:
             jobs_flag: '-j $(sysctl -n hw.ncpu)'
             fortran_support: 'OFF'
             python_support: 'OFF'
+          # the only build that compiles the code of MGIS_DEBUG; enable-exceptions is not
+          # tested since every error then terminates the process (#283)
+          - os: ubuntu-latest
+            build_type: Debug
+            jobs_flag: '-j $(nproc)'
+            fortran_support: 'ON'
+            python_support: 'ON'
 
     runs-on: ${{ matrix.os }}
     permissions:
@@ -67,9 +75,12 @@ jobs:
         # pin the master commit, otherwise an older binary from the cache would be reused
         tfel=$(git ls-remote https://github.com/thelfer/tfel.git refs/heads/master | cut -f1)
         spack install tfel@master commit=$tfel ~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
+        # the HDF5 support, whose test (HDF5Test) needs TFEL
+        spack install hdf5+cxx~mpi
 
+    # the Debug job installs the same packages as the Release job
     - name: Push the dependencies to the build cache
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master' && matrix.build_type == 'Release'
       uses: ./.github/actions/push-build-cache
       env:
         GITHUB_USER: ${{ github.actor }}
@@ -81,7 +92,7 @@ jobs:
       id: ccache
       uses: ./.github/actions/setup-ccache
       with:
-        key: ${{ matrix.os }}
+        key: ${{ matrix.os }}-${{ matrix.build_type }}
 
     # the packages of the system, as in the workflows without TFEL: with TFEL, make check
     # also runs the tests of the Python bindings
@@ -96,12 +107,14 @@ jobs:
       run: |
         # loading TFEL
         spack load tfel
+        spack load hdf5
         # a portable build, without -march=native, whose compilations ccache can share
         # between the runners, which have different processors (see setup-ccache)
-        cmake -DCMAKE_BUILD_TYPE=Release .                            \
+        cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} .           \
               -Denable-c-bindings=ON                                  \
               -Denable-fortran-bindings=${{ matrix.fortran_support }} \
               -Denable-python-bindings=${{ matrix.python_support }}   \
+              -Denable-hdf5-support=ON                                \
               -Denable-portable-build=ON                              \
               -Denable-julia-bindings=OFF                             \
               -DTFEL_DIR=`spack location -i tfel`/share/tfel/cmake    \
@@ -112,11 +125,13 @@ jobs:
       shell: spack-sh {0}
       run: |
         spack load tfel
+        spack load hdf5
         make ${{ matrix.jobs_flag }}
     - name: make check
       shell: spack-sh {0}
       run: |
         spack load tfel
+        spack load hdf5
         make check ${{ matrix.jobs_flag }}
 
     # even when a test fails, so that the next run does not compile everything again
