@@ -174,16 +174,6 @@ namespace mgis::function {
     return e.check(eh);
   }  // end of check
 
-  template <typename Child,
-            EvaluatorConcept FirstEvaluatorType,
-            EvaluatorConcept SecondEvaluatorType>
-  constexpr void allocateWorkspace(
-      BinaryOperationEvaluatorBase<Child,
-                                   FirstEvaluatorType,
-                                   SecondEvaluatorType>& e) {
-    return e.allocateWorkspace();
-  }  // end of allocateWorkspace
-
 }  // end of namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_BINARYOPERATIONEVALUATORBASE_IXX */
