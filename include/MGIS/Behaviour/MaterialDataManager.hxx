@@ -222,7 +222,7 @@ namespace mgis::behaviour {
     //! \brief view of the stiffness matrices, if required.
     std::span<real> K;
     /*!
-     * \brief proposed time step increment increase factor
+     * \brief maximal time step increase factor that the behaviour may propose
      *
      * The calling solver shall set a suitable value on input
      * depending on its policy **before** each call to integrate.
@@ -230,8 +230,13 @@ namespace mgis::behaviour {
      * For instance, if the solver want to limit the increase to 20% at most, it
      * shall set it to 1.2. But setting it to 1, the solver won't allow the
      * behaviour to request an increase of the time step.
+     *
+     * By default, the behaviour may propose to increase the time step by a
+     * factor 10 at most. The integration functions do not modify this member:
+     * the factor proposed by the behaviour is returned in the
+     * `time_step_increase_factor` member of their result.
      */
-    real rdt = 1;
+    real rdt = 10;
     //! \brief view on the speed of sound.
     std::span<real> speed_of_sound;
     //! \brief number of integration points
