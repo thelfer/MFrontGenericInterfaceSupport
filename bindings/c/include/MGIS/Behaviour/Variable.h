@@ -15,6 +15,9 @@
 #ifndef LIB_MGIS_BEHAVIOUR_VARIABLE_H
 #define LIB_MGIS_BEHAVIOUR_VARIABLE_H
 
+#include "MGIS/Config.h"
+#include "MGIS/Status.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /*  __cplusplus */

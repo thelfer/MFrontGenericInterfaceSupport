@@ -12,7 +12,7 @@ module mgis
      type(c_ptr) :: msg = c_null_ptr
   end type mgis_status
   type :: ThreadPool
-     type(c_ptr) :: ptr
+     type(c_ptr) :: ptr = c_null_ptr
   end type ThreadPool
   interface
      function report_success() bind(c,name = 'mgis_report_success') result(r)
@@ -90,6 +90,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(p%ptr)) then
        r = free_thread_pool_wrapper(p%ptr)
+    else
+       r = report_success()
     end if
   end function free_thread_pool
 end module mgis

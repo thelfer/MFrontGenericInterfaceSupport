@@ -86,7 +86,7 @@ int main(const int argc, const char* const* argv) {
   // state at the beginning of the time step
   check_status(mgis_bv_behaviour_data_get_state_0(&s0, d));
   // state at the end of the time step
-  check_status(mgis_bv_behaviour_data_get_state_0(&s1, d));
+  check_status(mgis_bv_behaviour_data_get_state_1(&s1, d));
   // setting the temperature
   check_status(mgis_bv_state_set_scalar_external_state_variable_by_name(
       s0, "Temperature", 293.15));

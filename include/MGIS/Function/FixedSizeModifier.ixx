@@ -16,7 +16,6 @@
 #define LIB_MGIS_FUNCTION_FIXEDSIZEMODIFIER_IXX
 
 #include <array>
-#include <algorithm>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Function/DataViewConcept.hxx"
 
@@ -52,12 +51,16 @@ namespace mgis::function {
   requires(N > 0)  //
       constexpr bool FixedSizeModifier<EvaluatorType, N>::check(
           AbstractErrorHandler& ctx) const {
+    if (!internals::disambiguateCheck(ctx, this->evaluator)) {
+      return false;
+    }
     return checkPreconditions(ctx, this->evaluator);
   }
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0)  //
-      decltype(auto) FixedSizeModifier<EvaluatorType, N>::getSpace() const {
+      constexpr decltype(auto)
+      FixedSizeModifier<EvaluatorType, N>::getSpace() const {
     return internals::disambiguateGetSpace(this->evaluator);
   }
 
@@ -92,7 +95,10 @@ namespace mgis::function {
           return std::span<const real, N>(this->evaluator(i).data(), N);
         } else {
           auto r = std::array<real, N>{};
-          std::copy_n(this->evaluator(i).data(), N, r.begin());
+          const auto values = this->evaluator(i);
+          for (size_type k = 0; k != N; ++k) {
+            r[k] = values.data()[k];
+          }
           return r;
         }
       }
@@ -125,7 +131,10 @@ namespace mgis::function {
           return std::span<const real, N>(this->evaluator(wk, i).data(), N);
         } else {
           auto r = std::array<real, N>{};
-          std::copy_n(this->evaluator(wk, i).data(), N, r.begin());
+          const auto values = this->evaluator(wk, i);
+          for (size_type k = 0; k != N; ++k) {
+            r[k] = values.data()[k];
+          }
           return r;
         }
       }
@@ -158,7 +167,10 @@ namespace mgis::function {
           return std::span<const real, N>(this->evaluator(e, i).data(), N);
         } else {
           auto r = std::array<real, N>{};
-          std::copy_n(this->evaluator(e, i).data(), N, r.begin());
+          const auto values = this->evaluator(e, i);
+          for (size_type k = 0; k != N; ++k) {
+            r[k] = values.data()[k];
+          }
           return r;
         }
       }
@@ -193,7 +205,10 @@ namespace mgis::function {
           return std::span<const real, N>(this->evaluator(wk, e, i).data(), N);
         } else {
           auto r = std::array<real, N>{};
-          std::copy_n(this->evaluator(wk, e, i).data(), N, r.begin());
+          const auto values = this->evaluator(wk, e, i);
+          for (size_type k = 0; k != N; ++k) {
+            r[k] = values.data()[k];
+          }
           return r;
         }
       }
@@ -208,7 +223,8 @@ namespace mgis::function {
   }  // end of view
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  decltype(auto) getSpace(const FixedSizeModifier<EvaluatorType, N>& e) {
+  constexpr decltype(auto) getSpace(
+      const FixedSizeModifier<EvaluatorType, N>& e) {
     return e.getSpace();
   }  // end of getSpace
 

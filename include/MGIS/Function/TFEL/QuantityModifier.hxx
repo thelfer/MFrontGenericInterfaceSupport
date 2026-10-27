@@ -62,7 +62,7 @@ namespace mgis::function {
     //! \brief perform consistency checks
     [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
     //! \brief return the underlying  space
-    [[nodiscard]] decltype(auto) getSpace() const;
+    [[nodiscard]] constexpr decltype(auto) getSpace() const;
     //! \return the number of components
     [[nodiscard]] constexpr size_type getNumberOfComponents() const;
     /*!
@@ -108,7 +108,7 @@ namespace mgis::function {
 
   template <EvaluatorConcept EvaluatorType,
             ::tfel::math::unit::UnitConcept UnitType>
-  [[nodiscard]] decltype(auto) getSpace(
+  [[nodiscard]] constexpr decltype(auto) getSpace(
       const QuantityModifier<EvaluatorType, UnitType>&);
   //! \brief perform consistency checks
   template <EvaluatorConcept EvaluatorType,

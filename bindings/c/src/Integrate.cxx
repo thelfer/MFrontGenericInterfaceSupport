@@ -120,6 +120,9 @@ mgis_status mgis_bv_free_behaviour_integration_options(
 mgis_status mgis_bv_integrate(int* const r,
                               mgis_bv_BehaviourDataView* const d,
                               const mgis_bv_Behaviour* const b) {
+  if ((r == nullptr) || (d == nullptr) || (b == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   *r = mgis::behaviour::integrate(*d, *b);
   if ((*r != 1) && (*r != 0)) {
     return mgis_report_failure("behaviour integration failed");
@@ -130,6 +133,9 @@ mgis_status mgis_bv_integrate(int* const r,
 mgis_status mgis_bv_integrate_debug(int* const r,
                                     mgis_bv_BehaviourDataView* const d,
                                     const mgis_bv_Behaviour* const b) {
+  if ((r == nullptr) || (d == nullptr) || (b == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   try {
     *r = mgis::behaviour::integrate_debug(*d, *b);
   } catch (...) {
@@ -144,6 +150,9 @@ mgis_status mgis_bv_integrate_debug(int* const r,
 mgis_status mgis_bv_integrate_2(int* const r,
                                 mgis_bv_BehaviourData* const d,
                                 const mgis_bv_Behaviour* const b) {
+  if (d == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
   auto v = mgis::behaviour::make_view(*d);
   auto s = mgis_bv_integrate(r, &v, b);
   return s;
@@ -152,6 +161,9 @@ mgis_status mgis_bv_integrate_2(int* const r,
 mgis_status mgis_bv_integrate_debug_2(int* const r,
                                       mgis_bv_BehaviourData* const d,
                                       const mgis_bv_Behaviour* const b) {
+  if (d == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
   auto v = mgis::behaviour::make_view(*d);
   auto s = mgis_bv_integrate_debug(r, &v, b);
   return s;

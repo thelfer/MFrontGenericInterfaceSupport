@@ -105,7 +105,7 @@ subroutine test()
   do i = 1, 21
      r = check(abs(pi(i)-p_ref(i)) < 1.d-12, &
           'invalid value for the equivalent plastic strain ')
-     r = check(abs(pi(i)-p_ref(i)) < 1.d-12, &
+     r = check(abs(pe(i)-p_ref(i)) < 1.d-12, &
           'invalid value for the equivalent plastic strain ')
   end do
   ! free ressources

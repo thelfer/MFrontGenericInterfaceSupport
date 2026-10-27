@@ -80,6 +80,9 @@ mgis_status mgis_bv_state_set_gradient_by_offset(mgis_bv_State* const s,
   if (n == 0) {
     return mgis_report_failure("invalid argument (null size)");
   }
+  if ((o > s->gradients.size()) || (n > s->gradients.size() - o)) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     setGradient(*s, o, n, v);
   } catch (...) {
@@ -96,6 +99,9 @@ mgis_status mgis_bv_state_get_gradient_by_offset(mgis_real** v,
   }
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
+  }
+  if (o >= s->gradients.size()) {
+    return mgis_report_failure("invalid argument (offset out of range)");
   }
   try {
     *v = getGradient(*s, o);
@@ -157,6 +163,10 @@ mgis_status mgis_bv_state_set_thermodynamic_force_by_offset(
   if (n == 0) {
     return mgis_report_failure("invalid argument (null size)");
   }
+  if ((o > s->thermodynamic_forces.size()) ||
+      (n > s->thermodynamic_forces.size() - o)) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     setThermodynamicForce(*s, o, n, v);
   } catch (...) {
@@ -173,6 +183,9 @@ mgis_status mgis_bv_state_get_thermodynamic_force_by_offset(
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
   }
+  if (o >= s->thermodynamic_forces.size()) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     *v = getThermodynamicForce(*s, o);
   } catch (...) {
@@ -184,6 +197,12 @@ mgis_status mgis_bv_state_get_thermodynamic_force_by_offset(
 mgis_status mgis_bv_state_set_material_property_by_name(mgis_bv_State* const s,
                                                         const char* const n,
                                                         const mgis_real v) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
   try {
     setMaterialProperty(*s, n, v);
   } catch (...) {
@@ -195,6 +214,15 @@ mgis_status mgis_bv_state_set_material_property_by_name(mgis_bv_State* const s,
 mgis_status mgis_bv_state_get_material_property_by_name(mgis_real** const v,
                                                         mgis_bv_State* const s,
                                                         const char* const n) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
+  if (v == nullptr) {
+    return mgis_report_failure("invalid argument (null values)");
+  }
   try {
     *v = getMaterialProperty(*s, n);
   } catch (...) {
@@ -205,6 +233,12 @@ mgis_status mgis_bv_state_get_material_property_by_name(mgis_real** const v,
 
 mgis_status mgis_bv_state_set_material_property_by_offset(
     mgis_bv_State* const s, const mgis_size_type o, const mgis_real v) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if (o >= s->material_properties.size()) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     setMaterialProperty(*s, o, v);
   } catch (...) {
@@ -215,6 +249,15 @@ mgis_status mgis_bv_state_set_material_property_by_offset(
 
 mgis_status mgis_bv_state_get_material_property_by_offset(
     mgis_real** const v, mgis_bv_State* const s, const mgis_size_type o) {
+  if (v == nullptr) {
+    return mgis_report_failure("invalid argument (null values)");
+  }
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if (o >= s->material_properties.size()) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     *v = getMaterialProperty(*s, o);
   } catch (...) {
@@ -291,6 +334,10 @@ mgis_status mgis_bv_state_set_internal_state_variable_by_offset(
   if (n == 0) {
     return mgis_report_failure("invalid argument (null size)");
   }
+  if ((o > s->internal_state_variables.size()) ||
+      (n > s->internal_state_variables.size() - o)) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     setInternalStateVariable(*s, o, n, v);
   } catch (...) {
@@ -307,6 +354,9 @@ mgis_status mgis_bv_state_get_internal_state_variable_by_offset(
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
   }
+  if (o >= s->internal_state_variables.size()) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     *v = getInternalStateVariable(*s, o);
   } catch (...) {
@@ -317,6 +367,12 @@ mgis_status mgis_bv_state_get_internal_state_variable_by_offset(
 
 mgis_status mgis_bv_state_set_scalar_external_state_variable_by_name(
     mgis_bv_State* const s, const char* const n, const mgis_real v) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
   try {
     setExternalStateVariable(*s, n, v);
   } catch (...) {
@@ -327,6 +383,15 @@ mgis_status mgis_bv_state_set_scalar_external_state_variable_by_name(
 
 mgis_status mgis_bv_state_set_external_state_variable_by_name(
     mgis_bv_State* const s, const char* const n, const mgis_real* const v) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
+  if (v == nullptr) {
+    return mgis_report_failure("invalid argument (null values)");
+  }
   try {
     const auto& ev = getVariable(s->b.esvs, n);
     const auto es = getVariableSize(ev, s->b.hypothesis);
@@ -355,6 +420,15 @@ mgis_status mgis_bv_state_get_external_state_variables(mgis_real** v,
 
 mgis_status mgis_bv_state_get_external_state_variable_by_name(
     mgis_real** const v, mgis_bv_State* const s, const char* const n) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
+  if (v == nullptr) {
+    return mgis_report_failure("invalid argument (null values)");
+  }
   try {
     *v = getExternalStateVariable(*s, n);
   } catch (...) {
@@ -365,6 +439,12 @@ mgis_status mgis_bv_state_get_external_state_variable_by_name(
 
 mgis_status mgis_bv_state_set_scalar_external_state_variable_by_offset(
     mgis_bv_State* const s, const mgis_size_type o, const mgis_real v) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if (o >= s->external_state_variables.size()) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     setExternalStateVariable(*s, o, v);
   } catch (...) {
@@ -378,6 +458,16 @@ mgis_status mgis_bv_state_set_external_state_variable_by_offset(
     const mgis_size_type o,
     const mgis_real* const v,
     const mgis_size_type vs) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if ((v == nullptr) && (vs != 0)) {
+    return mgis_report_failure("invalid argument (null values)");
+  }
+  if ((o > s->external_state_variables.size()) ||
+      (vs > s->external_state_variables.size() - o)) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     setExternalStateVariable(*s, o, std::span<const mgis::real>(v, vs));
   } catch (...) {
@@ -388,6 +478,15 @@ mgis_status mgis_bv_state_set_external_state_variable_by_offset(
 
 mgis_status mgis_bv_state_get_external_state_variable_by_offset(
     mgis_real** const v, mgis_bv_State* const s, const mgis_size_type o) {
+  if (v == nullptr) {
+    return mgis_report_failure("invalid argument (null values)");
+  }
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  if (o >= s->external_state_variables.size()) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     *v = getExternalStateVariable(*s, o);
   } catch (...) {

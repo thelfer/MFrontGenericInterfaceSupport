@@ -48,12 +48,16 @@ namespace mgis::function {
             ::tfel::math::unit::UnitConcept UnitType>
   constexpr bool QuantityModifier<EvaluatorType, UnitType>::check(
       AbstractErrorHandler& ctx) const {
+    if (!internals::disambiguateCheck(ctx, this->evaluator)) {
+      return false;
+    }
     return checkPreconditions(ctx, this->evaluator);
   }
 
   template <EvaluatorConcept EvaluatorType,
             ::tfel::math::unit::UnitConcept UnitType>
-  decltype(auto) QuantityModifier<EvaluatorType, UnitType>::getSpace() const {
+  constexpr decltype(auto) QuantityModifier<EvaluatorType, UnitType>::getSpace()
+      const {
     return internals::disambiguateGetSpace(this->evaluator);
   }
 
@@ -164,7 +168,8 @@ namespace mgis::function {
 
   template <EvaluatorConcept EvaluatorType,
             ::tfel::math::unit::UnitConcept UnitType>
-  decltype(auto) getSpace(const QuantityModifier<EvaluatorType, UnitType>& e) {
+  constexpr decltype(auto) getSpace(
+      const QuantityModifier<EvaluatorType, UnitType>& e) {
     return e.getSpace();
   }  // end of getSpace
 
