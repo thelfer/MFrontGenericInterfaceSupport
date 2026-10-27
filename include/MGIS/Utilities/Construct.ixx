@@ -232,19 +232,17 @@ namespace mgis {
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
 
   template <typename Type, typename... ArgumentsTypes>
-  std::optional<std::remove_cvref_t<Type>> construct(
-      Context &ctx,
-      const std::source_location &l,
-      ArgumentsTypes &&...args) noexcept
-      requires ::mgis::internals::is_constructible<std::remove_cvref_t<Type>,
-                                                   ArgumentsTypes...> {
+  std::optional<Type> construct(Context &ctx,
+                                const std::source_location &l,
+                                ArgumentsTypes &&...args) noexcept
+      requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...> {
     if constexpr (::mgis::internals::is_constructible_with_context<
                       Type, ArgumentsTypes...>) {
       return ::mgis::internals::construct_impl<Type>(
           ctx, l, ctx, std::forward<ArgumentsTypes>(args)...);
     } else {
       return ::mgis::internals::construct_impl<Type>(
-          ctx, l, ctx, std::forward<ArgumentsTypes>(args)...);
+          ctx, l, std::forward<ArgumentsTypes>(args)...);
     }
   }  // end of construct
 
@@ -271,10 +269,10 @@ namespace mgis {
       ::mgis::internals::is_constructible<Type, ArgumentsTypes...> {
     if constexpr (::mgis::internals::is_constructible_with_context<
                       Type, ArgumentsTypes...>) {
-      return ::mgis::internals::make_unique_imp_asl<BaseType, Type>(
+      return ::mgis::internals::make_unique_as_impl<BaseType, Type>(
           ctx, l, ctx, std::forward<ArgumentsTypes>(args)...);
     } else {
-      return ::mgis::internals::make_unique_imp_asl<BaseType, Type>(
+      return ::mgis::internals::make_unique_as_impl<BaseType, Type>(
           ctx, l, std::forward<ArgumentsTypes>(args)...);
     }
   }  // end of make_unique_as
