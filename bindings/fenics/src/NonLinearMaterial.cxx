@@ -232,7 +232,19 @@ namespace mgis {
       const auto bc = cell_index * num_ip_per_cell;
       const auto ec = (cell_index + 1) * num_ip_per_cell;
       this->update_gradients(c, nc);
-      mgis::behaviour::integrate(*this, it, this->dt, bc, ec);
+      auto opts = mgis::behaviour::BehaviourIntegrationOptions{};
+      opts.integration_type = it;
+      const auto r = mgis::behaviour::integrate(*this, opts, this->dt, bc, ec);
+      if (r.exit_status == -1) {
+        auto msg =
+            "NonLinearMaterial::update: behaviour integration failed "
+            "at integration point " +
+            std::to_string(r.n);
+        if (!r.error_message.empty()) {
+          msg += " (" + r.error_message + ")";
+        }
+        mgis::raise(msg);
+      }
     }  // end of NonLinearMaterial::update
 
     NonLinearMaterial::~NonLinearMaterial() = default;
