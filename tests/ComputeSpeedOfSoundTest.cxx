@@ -39,6 +39,10 @@ int main(const int argc, const char* const* argv) {
     d.s1.mass_density = 7850;
     // copy d.s1 in d.s0
     update(d);
+    if (d.s0.mass_density != d.s1.mass_density) {
+      std::cerr << "IntegrateTest: mass density not copied by update\n";
+      return EXIT_FAILURE;
+    }
     d.s1.gradients[0] = de;
     // integration
     d.K[0] = 100;
