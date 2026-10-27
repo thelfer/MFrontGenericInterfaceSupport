@@ -837,7 +837,7 @@ namespace mgis::behaviour {
         return false;
       }
     }
-    if (s.mass_density.has_value()) {
+    if ((opts.save_mass_densities) && (s.mass_density.has_value())) {
       if (!save(ctx, g, "mass_density", *(s.mass_density), opts)) {
         return false;
       }
