@@ -169,6 +169,8 @@ int main() {
   constexpr const auto eps = 1.e-14;
   for (mgis::size_type i = 0; i != e.size(); ++i) {
     // check strain values
+    check(std::abs(e[i][1] - 1.e-3 * i * dt) < eps,
+          "invalid axial strain value");
     check(std::abs(e[i][0] + nu * e[i][1]) < eps,
           "invalid orthoradial strain value");
     check(std::abs(e[i][2] + nu * e[i][1]) < eps,

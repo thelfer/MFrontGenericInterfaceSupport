@@ -175,6 +175,8 @@ int main() {
   constexpr const auto mu = yg / (2 * (1 + nu));
   for (mgis::size_type i = 0; i != e.size(); ++i) {
     // check strain values
+    check(std::abs(e[i][5] - 1.e-3 * i * dt / std::sqrt(2)) < eps,
+          "invalid shear strain value");
     check(std::abs(e[i][0]) < eps, "invalid strain value");
     check(std::abs(e[i][1]) < eps, "invalid strain value");
     check(std::abs(e[i][2]) < eps, "invalid strain value");
