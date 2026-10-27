@@ -173,7 +173,7 @@ Behaviour_getPostProcessingOutputs(const mgis::behaviour::Behaviour &b,
   if (p == b.postprocessings.end()) {
     mgis::raise(
         "getPostProcessingOutputs: "
-        "no initialize function named '" +
+        "no post-processing named '" +
         n + "'");
   }
   return p->second.outputs;
