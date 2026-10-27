@@ -92,10 +92,12 @@ namespace mgis::function {
    * function is mapped in memory
    */
   template <FunctionDataLayoutDescription layout>
-  requires((layout.data_size > 0) &&
-           (layout.data_stride > 0)) struct FunctionDataLayout
-      : public FunctionDataSize<layout.data_size>,
-        public FunctionDataStride<layout.data_stride> {
+    requires((layout.data_size > 0) && (layout.data_stride > 0) &&
+             ((layout.data_size == dynamic_extent) ||
+              (layout.data_stride == dynamic_extent) ||
+              (layout.data_size <= layout.data_stride)))
+  struct FunctionDataLayout : public FunctionDataSize<layout.data_size>,
+                              public FunctionDataStride<layout.data_stride> {
     // \brief default constructor
     FunctionDataLayout() = default;
     // \brief move constructor

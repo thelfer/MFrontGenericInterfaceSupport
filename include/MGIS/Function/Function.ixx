@@ -62,7 +62,10 @@ namespace mgis::function {
   }  // end of has_dynamic_properties
 
   template <FunctionDataLayoutDescription layout>
-  requires((layout.data_size > 0) && (layout.data_stride > 0))  //
+  requires((layout.data_size > 0) && (layout.data_stride > 0) &&
+           ((layout.data_size == dynamic_extent) ||
+            (layout.data_stride == dynamic_extent) ||
+            (layout.data_size <= layout.data_stride)))  //
       constexpr size_type FunctionDataLayout<layout>::getDataOffset(
           const size_type i) const noexcept {
     if constexpr (layout.data_stride != dynamic_extent) {

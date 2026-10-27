@@ -214,10 +214,11 @@ namespace mgis::function {
    */
   template <typename SpaceType>
   concept LinearElementSpaceConcept =
-      ((ElementSpaceConcept<SpaceType>)&&                                  //
+      ((ElementSpaceConcept<SpaceType>) &&                                 //
        (requires { SpaceTraits<SpaceType>::linear_element_indexing; }) &&  //
+       (SpaceTraits<SpaceType>::linear_element_indexing) &&                //
        (std::integral<
-           typename SpaceTraits<SpaceType>::element_index_type>)&&  //
+           typename SpaceTraits<SpaceType>::element_index_type>) &&  //
        (std::same_as<typename SpaceTraits<SpaceType>::size_type,
                      typename SpaceTraits<SpaceType>::element_index_type>));
 
