@@ -170,6 +170,11 @@ class ExternalStateVariableTest(unittest.TestCase):
                 abs(d.s1.internal_state_variables[1, i + 6] -
                     v2_esv1_values[i + 3]) < eps,
                 "invalid internal state variable value")
+        # values converted into a temporary copy can not be stored externally
+        self.assertRaises(
+            RuntimeError, mgis_bv.setExternalStateVariable, d.s1, "v_esv",
+            [1., 2., 3.],
+            mgis_bv.MaterialStateManagerStorageMode.EXTERNAL_STORAGE)
 
 
     def test_strided_array(self):
