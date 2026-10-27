@@ -260,17 +260,18 @@ namespace mgis::behaviour {
           "invalid number of values (does not match the number of integration "
           "points)");
     }
+    if ((s == MaterialStateManager::EXTERNAL_STORAGE) &&
+        (p == MaterialStateManager::UPDATE)) {
+      return ctx.registerErrorMessage(
+          "update policy must be equal to `NOUPDATE` when using a "
+          "non-modifiable external storage");
+    }
     auto& fh = getFieldHolder(m.material_properties, n);
     if (s == MaterialStateManager::LOCAL_STORAGE) {
       fh = MaterialStateManager::MutableFieldHolder{
           .value = std::vector<real>{v.begin(), v.end()},
           .shall_be_updated = (p == MaterialStateManager::UPDATE)};
     } else {
-      if (p == MaterialStateManager::UPDATE) {
-        return ctx.registerErrorMessage(
-            "update policy must be equal to `NOUPDATE` when using a "
-            "non-modifiable external storage");
-      }
       fh = v;
     }
     return true;
@@ -451,6 +452,12 @@ namespace mgis::behaviour {
       return ctx.registerErrorMessage(
           "setExternalStateVariable: invalid number of values");
     }
+    if ((s == MaterialStateManager::EXTERNAL_STORAGE) &&
+        (p == MaterialStateManager::UPDATE)) {
+      return ctx.registerErrorMessage(
+          "update policy must be equal to `NOUPDATE` when using a "
+          "non-modifiable external storage");
+    }
     auto& fh = getFieldHolder(m.external_state_variables, n);
     if (s == MaterialStateManager::LOCAL_STORAGE) {
       if (v.size() == 1u) {
@@ -463,11 +470,6 @@ namespace mgis::behaviour {
             .shall_be_updated = (p == MaterialStateManager::UPDATE)};
       }
     } else {
-      if (p == MaterialStateManager::UPDATE) {
-        return ctx.registerErrorMessage(
-            "update policy must be equal to `NOUPDATE` when using a "
-            "non-modifiable external storage");
-      }
       fh = v;
     }
     return true;
