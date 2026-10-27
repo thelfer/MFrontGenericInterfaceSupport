@@ -65,6 +65,7 @@ void declareMaterialDataManager(pybind11::module_& m) {
   // exporting the MaterialDataManager class
   pybind11::class_<MaterialDataManagerInitializer>(
       m, "MaterialDataManagerInitializer")
+      .def(pybind11::init<>())
       .def_readonly("s0", &MaterialDataManagerInitializer::s0)
       .def_readonly("s1", &MaterialDataManagerInitializer::s1)
       .def("bindTangentOperator",

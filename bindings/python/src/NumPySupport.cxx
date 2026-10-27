@@ -96,6 +96,10 @@ namespace mgis::python {
     if (i.ndim != 1) {
       mgis::raise("convert_to_span: expected one dimensional array");
     }
+    if ((i.size > 1) &&
+        (i.strides[0] != static_cast<pybind11::ssize_t>(sizeof(double)))) {
+      mgis::raise("convert_to_span: expected a contiguous array");
+    }
     return {static_cast<double*>(i.ptr), static_cast<mgis_size_type>(i.size)};
   }  // end of mgis_convert_to_span
 
