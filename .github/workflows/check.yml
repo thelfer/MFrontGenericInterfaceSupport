@@ -61,7 +61,9 @@ jobs:
         packages_ref: develop  # Spack packages (builtin repository) version
         buildcache: false      # our own build cache is configured below
         color: true            # Force color output (SPACK_COLOR=always)
-        spack_path: ${{github.workspace}}/spack       # Where to clone Spack
+        # out of the source tree: CMake refuses to install a target whose include
+        # directories (those of HDF5, installed by Spack) are in its source tree
+        spack_path: ${{ runner.temp }}/spack
 
     - name: Set up the build cache
       uses: ./.github/actions/setup-build-cache
@@ -110,8 +112,6 @@ jobs:
         spack load hdf5
         # a portable build, without -march=native, whose compilations ccache can share
         # between the runners, which have different processors (see setup-ccache)
-        # out of the source tree: Spack, hence HDF5, is installed in the source tree,
-        # and an installed target may not refer to a directory of its build tree
         cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
               -Denable-c-bindings=ON                                  \
               -Denable-fortran-bindings=${{ matrix.fortran_support }} \
