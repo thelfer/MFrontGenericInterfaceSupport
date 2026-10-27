@@ -388,7 +388,11 @@ namespace mgis::function {
       const FunctionDataLayout<layout>& l)  //
       requires((layout.data_size == dynamic_extent) &&
                (layout.data_stride == dynamic_extent))
-      : FunctionView(pcheck, s, v, l.size, l.stride) {}  // end of FunctionView
+      : FunctionView(pcheck,
+                     s,
+                     v,
+                     l.getNumberOfComponents(),
+                     l.getDataStride()) {}  // end of FunctionView
 
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
@@ -400,7 +404,7 @@ namespace mgis::function {
       const FunctionDataLayout<layout>& l)  //
       requires((layout.data_size != dynamic_extent) &&
                (layout.data_stride == dynamic_extent))
-      : FunctionView(preconditions_check, s, v, l.stride) {}
+      : FunctionView(preconditions_check, s, v, l.getDataStride()) {}
 
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
@@ -414,7 +418,7 @@ namespace mgis::function {
       const FunctionDataLayout<layout>& l)  //
       requires((layout.data_size != dynamic_extent) &&
                (layout.data_stride == dynamic_extent))
-      : FunctionView(pcheck, s, v, l.stride) {}
+      : FunctionView(pcheck, s, v, l.getDataStride()) {}
 
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
@@ -426,7 +430,7 @@ namespace mgis::function {
       const FunctionDataLayout<layout>& l)  //
       requires((layout.data_size == dynamic_extent) &&
                (layout.data_stride != dynamic_extent))
-      : FunctionView(preconditions_check, s, v, l.size) {
+      : FunctionView(preconditions_check, s, v, l.getNumberOfComponents()) {
   }  // end of FunctionView
 
   template <LinearFunctionalSpaceConcept Space,
@@ -441,7 +445,8 @@ namespace mgis::function {
       const FunctionDataLayout<layout>& l)  //
       requires((layout.data_size == dynamic_extent) &&
                (layout.data_stride != dynamic_extent))
-      : FunctionView(pcheck, s, v, l.size) {}  // end of FunctionView
+      : FunctionView(pcheck, s, v, l.getNumberOfComponents()) {
+  }  // end of FunctionView
 
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
@@ -449,10 +454,10 @@ namespace mgis::function {
 
   constexpr bool FunctionView<Space, layout, is_mutable>::checkCompatibility(
       const FunctionView& v) const {
-    if (areEquivalent(this->getSpace(), v.getSpacePointer())) {
+    if (!areEquivalent(this->getSpace(), v.getSpace())) {
       return false;
     }
-    return this->data_size == v.getNumberOfComponents();
+    return this->getNumberOfComponents() == v.getNumberOfComponents();
   }  // end of checkCompatibility
 
   template <LinearFunctionalSpaceConcept Space,
@@ -486,7 +491,7 @@ namespace mgis::function {
       requires(is_mutable&& LinearQuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
     return this->values.data() +
-           this->getDataOffset(this->space->getQuadraturePointOffset(e, i));
+           this->getDataOffset(getQuadraturePointOffset(this->space, e, i));
   }  // end of data
 
   template <LinearFunctionalSpaceConcept Space,
@@ -540,7 +545,7 @@ namespace mgis::function {
           const size_type i)  //
       requires(is_mutable&& LinearQuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
-    return this->operator()(this->space->getQuadraturePointOffset(e, i));
+    return this->operator()(getQuadraturePointOffset(this->space, e, i));
   }  // end of operator()
 
   template <LinearFunctionalSpaceConcept Space,
@@ -569,7 +574,7 @@ namespace mgis::function {
       operator()(const size_type e, const size_type i) const
       requires(LinearQuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
-    return this->operator()(this->space->getQuadraturePointOffset(e, i));
+    return this->operator()(getQuadraturePointOffset(this->space, e, i));
   }  // end of operator()
 
   template <LinearFunctionalSpaceConcept Space,

@@ -631,7 +631,7 @@ namespace mgis::function {
     }
     //
     if (!check(ctx, e)) {
-      return false;
+      return std::nullopt;
     }
     if constexpr (std::same_as<ExecutionPolicy,
                                std::execution::sequenced_policy>) {
@@ -654,7 +654,7 @@ namespace mgis::function {
     }
     //
     if (!check(ctx, e)) {
-      return false;
+      return std::nullopt;
     }
     return internals::sequential_scalar_reduce(e, op, initial_value);
   }  // end of scalar_reduce
