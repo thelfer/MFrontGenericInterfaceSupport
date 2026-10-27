@@ -35,7 +35,7 @@ contains
     end interface
     character(len=*), intent(in) :: msg
     type(mgis_status) :: r
-    character(len=1,kind=c_char) :: s(len(msg)+1)
+    character(len=1,kind=c_char) :: s(len_trim(msg)+1)
     s = convert_fortran_string(msg)
     r = report_failure_wrapper(s)
   end function report_failure

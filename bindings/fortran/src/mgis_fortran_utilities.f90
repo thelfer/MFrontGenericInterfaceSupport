@@ -48,14 +48,14 @@ contains
        end do
     end if
   end function convert_c_string
-  ! convert fortran string to "c" string
+  ! convert fortran string to "c" string (trailing blanks are ignored)
   pure function convert_fortran_string (s) result (cs)
     use, intrinsic :: iso_c_binding, only: c_char, c_null_char
     implicit none
     character(len=*), intent(in) :: s
-    character(len=1,kind=c_char) :: cs(len(s)+1)
+    character(len=1,kind=c_char) :: cs(len_trim(s)+1)
     integer                      :: n, i
-    n = len(s)
+    n = len_trim(s)
     do i = 1, n
        cs(i) = s(i:i)
     end do
