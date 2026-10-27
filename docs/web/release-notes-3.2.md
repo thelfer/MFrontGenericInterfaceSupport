@@ -25,6 +25,13 @@ This version is meant to be used with `TFEL` Version 5.2.
 - Modifiers in `MGIS/Function` now creates a view from a temporary view
   rather than an evaluator. See below for details. In practice, most
   views are also evaluators, so this shall not impact existing user code.
+- The `FunctionDataLayout` class, and thus the `FunctionView` class
+  (mutable or not), now rejects at compile time a data layout whose
+  size and stride are both fixed and whose size is greater than the
+  stride, e.g. `FunctionDataLayoutDescription{.data_size = 4,
+  .data_stride = 2}`: with such a layout, the values of two consecutive
+  elements overlapped. The same layout given at runtime was already
+  rejected by `checkPreconditions`.
 
 # Documentation
 
