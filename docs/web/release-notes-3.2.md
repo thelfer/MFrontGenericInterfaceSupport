@@ -176,9 +176,19 @@ the initialize functions: `behaviour_get_number_of_initialize_functions`,
 `behaviour_get_initialize_function_input_offset`,
 `execute_initialize_function` (behaviour data),
 `execute_initialize_function_material_data_manager` and
-`execute_initialize_function_material_data_manager_part`. As in the
-other functions of this module, indices, offsets and ranges of
-integration points start at 1.
+`execute_initialize_function_material_data_manager_part`, and for the
+post-processings: `behaviour_get_number_of_post_processings`,
+`behaviour_get_post_processing_name`,
+`behaviour_get_post_processing_outputs_size`,
+`behaviour_get_number_of_post_processing_outputs`,
+`behaviour_get_post_processing_output_name`,
+`behaviour_get_post_processing_output_type`,
+`behaviour_get_post_processing_output_offset`,
+`execute_post_processing` (behaviour data),
+`execute_post_processing_material_data_manager` and
+`execute_post_processing_material_data_manager_part`. As in the other
+functions of this module, indices, offsets and ranges of integration
+points start at 1.
 
 # New features of the `MGIS/Function` library
 

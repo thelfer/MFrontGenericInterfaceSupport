@@ -60,9 +60,64 @@ subroutine test_initialize_function()
   call check_status(free_thread_pool(p))
 end subroutine test_initialize_function
 
+subroutine test_post_processing()
+  use mgis
+  use mgis_behaviour
+  use mgis_testing_utilities
+  implicit none
+  character(len=*), parameter :: pp = 'PrincipalStrain'
+  real(kind=8), dimension(3), parameter :: e2 = [1.2d-2, 1.3d-2, 1.4d-2]
+  real(kind=8), parameter :: eps = 10 * epsilon(1.d0)
+  type(Behaviour) b
+  type(BehaviourData) d
+  type(State) s0, s1
+  real(kind=8), dimension(6) :: e
+  real(kind=8), dimension(3) :: outputs
+  character(len=:), allocatable :: n
+  integer c, t, ri, i
+  logical :: r
+  call check_status(load_behaviour(b, &
+       get_mfront_behaviour_test_library_path(), &
+       'PostProcessingTest', 'Tridimensional'))
+  ! description
+  call check_status(behaviour_get_number_of_post_processings(c, b))
+  r = check(c == 1, 'invalid number of post-processings')
+  call check_status(behaviour_get_post_processing_name(n, b, 1))
+  r = check_string(n, pp, 'invalid post-processing name')
+  call check_status(behaviour_get_post_processing_outputs_size(c, b, pp))
+  r = check(c == 3, 'invalid size of the outputs')
+  call check_status(behaviour_get_number_of_post_processing_outputs(c, b, pp))
+  r = check(c == 1, 'invalid number of outputs')
+  call check_status(behaviour_get_post_processing_output_name(n, b, pp, 1))
+  r = check_string(n, 'PrincipalStrain', 'invalid output name')
+  call check_status(behaviour_get_post_processing_output_type(t, b, pp, 1))
+  r = check(t == VECTOR_3D, 'invalid output type')
+  call check_status(behaviour_get_post_processing_output_offset(c, b, pp, 1))
+  r = check(c == 1, 'invalid output offset')
+  ! execution on a behaviour data
+  call check_status(allocate_behaviour_data(d, b))
+  call check_status(behaviour_data_get_state_0(s0, d))
+  call check_status(behaviour_data_get_state_1(s1, d))
+  call check_status(state_set_scalar_external_state_variable_by_name( &
+       s0, 'Temperature', 293.15d0))
+  call check_status(state_set_scalar_external_state_variable_by_name( &
+       s1, 'Temperature', 293.15d0))
+  e = (/ 1.3d-2, 1.2d-2, 1.4d-2, 0d0, 0d0, 0d0 /)
+  call check_status(state_set_gradient_by_name(s1, 'Strain', e))
+  call check_status(execute_post_processing(ri, outputs, d, b, pp))
+  r = check(ri == 0, 'invalid result of the post-processing')
+  do i = 1, 3
+     r = check(abs(outputs(i) - e2(i)) < eps, 'invalid output value')
+  end do
+  ! free ressources
+  call check_status(free_behaviour_data(d))
+  call check_status(free_behaviour(b))
+end subroutine test_post_processing
+
 program main
   use mgis_testing_utilities
   call test_initialize_function()
+  call test_post_processing()
   call tests_summary()
   if(.not. status) then
      stop -1
