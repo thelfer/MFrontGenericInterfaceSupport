@@ -67,16 +67,23 @@ namespace mgis::function::algorithm {
 namespace mgis::function::internals {
 
   constexpr void assign_value(std::span<real> lhs, const auto& rhs) {
-    std::copy(rhs.begin(), rhs.end(), lhs.begin());
+    std::size_t i = 0;
+    for (const auto& v : rhs) {
+      lhs[i++] = v;
+    }
   }
 
   constexpr void assign_value(std::span<real> lhs,
                               const std::span<const real> rhs) {
-    std::copy(rhs.begin(), rhs.end(), lhs.begin());
+    for (std::size_t i = 0; i != rhs.size(); ++i) {
+      lhs[i] = rhs[i];
+    }
   }
 
   constexpr void assign_value(std::span<real> lhs, const std::span<real> rhs) {
-    std::copy(rhs.begin(), rhs.end(), lhs.begin());
+    for (std::size_t i = 0; i != rhs.size(); ++i) {
+      lhs[i] = rhs[i];
+    }
   }
 
   constexpr void assign_value(real& lhs, const std::span<real>& rhs) {

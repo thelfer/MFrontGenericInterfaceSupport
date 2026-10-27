@@ -204,6 +204,15 @@ struct CUDAFunctionTest final : public tfel::tests::TestCase {
     }
     {
       reset();
+      const auto ok = assign(ctx, conf, rview, view<2>(f | add(f2)));
+      TFEL_TESTS_ASSERT(ok);
+      TFEL_TESTS_ASSERT(std::abs(r(0)[0] - 2) < eps);
+      TFEL_TESTS_ASSERT(std::abs(r(0)[1] - 0) < eps);
+      TFEL_TESTS_ASSERT(std::abs(r(1)[0] - 6) < eps);
+      TFEL_TESTS_ASSERT(std::abs(r(1)[1] - 0) < eps);
+    }
+    {
+      reset();
       const auto ok = assign(ctx, conf, r, f | substract(f2));
       TFEL_TESTS_ASSERT(ok);
       TFEL_TESTS_ASSERT(std::abs(r(0)[0] - 0) < eps);
