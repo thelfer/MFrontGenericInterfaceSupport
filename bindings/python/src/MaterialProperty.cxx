@@ -31,6 +31,8 @@ void declareMaterialProperty(pybind11::module_& m) {
                     "name of the `MFront` source file")
       .def_readonly("tfel_version", &MaterialProperty::tfel_version,
                     "version of TFEL used to generate the material property")
+      .def_readonly("unit_system", &MaterialProperty::unit_system,
+                    "unit system used by the material property")
       .def_readonly("output", &MaterialProperty::output,
                     "output of the material property")
       .def_readonly("inputs", &MaterialProperty::inputs,
