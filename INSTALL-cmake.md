@@ -46,7 +46,8 @@ Options
 - `enable-fortran-bindings`: compiles bindings for the `Fortran2003`
   language (default=OFF)
 - `enable-python-bindings`: compiles the `Python` bindings. This requires
-  the `pybind11` library to be available (default=OFF)
+  the `pybind11` library and the `NumPy` headers to be available
+  (default=OFF)
 - `enable-fenics-bindings`: compiles the `FEniCS` bindings. Those
   bindings are experimental and very limited. To use `MGIS` with
   `FEniCS`, usage of the `Python` bindings are encouraged.
@@ -69,7 +70,9 @@ Options
    is enabled and if `TFEL` libraries are available.
 - `enable-exceptions`: use exceptions to report contract violation and error reporting.
    By default, contract violation leads to abort the program.
-- `enable-parallel-stl-algorithms`: by default, STL algorithms are used if available
+- `enable-parallel-stl-algorithms`: enable the overloads of the
+  `MGIS/Function` algorithms taking an execution policy of the standard
+  library (default=OFF). With `libstdc++`, this requires `TBB`.
 - `enable-cuda-algorithms`: add support for algorithms expressed in
   `CUDA` programming model.
 - `enable-hdf5-support`: enable HDF5 support for save/restore
@@ -84,13 +87,8 @@ Options
 =======================
 
 - `CMAKE_BUILD_TYPE`           : two values are supported `Release` and `Debug`
-- `CASTEM_INSTALL_PATH`        : specify where the castem has been installed
 - `CMAKE_TOOLCHAIN_FILE`       : specify a tool chain file
-- `Python_ADDITIONAL_VERSIONS` : select the `python` version to
-  			         use. Note that only the major and minor
-  			         version of python shall be passed, not
-  			         the revision version or the detection
-  			         fails.
+- `Python_EXECUTABLE`          : path to the `python` interpreter to use
 - `TFEL_DIR`                   : specify the directory where to find TFEL
 
 `cmake` typical usage
@@ -98,5 +96,5 @@ Options
 
 mkdir build
 cd build
-cmake ../MFrontGenericInterfaceSupport/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/MFrontGenericInterfaceSupport/master/install-python-3.7/ -Denable-c-bindings=ON -Denable-fortran-bindings=ON  -Denable-python-bindings=ON -DPython_ADDITIONAL_VERSIONS=3.7
-cmake ../MFrontGenericInterfaceSupport/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/MFrontGenericInterfaceSupport/master/install-python-3.7/ -Denable-c-bindings=ON -Denable-fortran-bindings=ON  -Denable-python-bindings=ON -Denable-website=ON -DPython_ADDITIONAL_VERSIONS=3.7
+cmake ../MFrontGenericInterfaceSupport/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/MFrontGenericInterfaceSupport/master/install-python-3.7/ -Denable-c-bindings=ON -Denable-fortran-bindings=ON  -Denable-python-bindings=ON -DPython_EXECUTABLE=/usr/bin/python3.7
+cmake ../MFrontGenericInterfaceSupport/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/MFrontGenericInterfaceSupport/master/install-python-3.7/ -Denable-c-bindings=ON -Denable-fortran-bindings=ON  -Denable-python-bindings=ON -Denable-website=ON -DPython_EXECUTABLE=/usr/bin/python3.7
