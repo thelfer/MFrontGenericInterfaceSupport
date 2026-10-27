@@ -134,8 +134,9 @@ static void MaterialStateManager_setMaterialProperty4(
     mgis::behaviour::MaterialStateManager& sm,
     const std::string& n,
     const pybind11::object& o,
-    const mgis::behaviour::MaterialStateManager::StorageMode s) {
-  setMaterialProperty(sm, n, mgis::python::mgis_convert_to_span(o), s);
+    const mgis::behaviour::MaterialStateManager::StorageMode s,
+    const mgis::behaviour::MaterialStateManager::UpdatePolicy b) {
+  setMaterialProperty(sm, n, mgis::python::mgis_convert_to_span(o), s, b);
 }  // end of MaterialStateManager_setMaterialProperty
 
 static void MaterialStateManager_setMassDensity(
