@@ -18,6 +18,7 @@ struct ThreadPoolTest final : public tfel::tests::TestCase {
   }  // end of ThreadPoolTest
   tfel::tests::TestResult execute() override {
     this->test1();
+    this->test2();
     return this->result;
   }
 
@@ -25,6 +26,16 @@ struct ThreadPoolTest final : public tfel::tests::TestCase {
   void test1() {
     TFEL_TESTS_CHECK_THROW(mgis::ThreadPool{0}, std::runtime_error);
   }  // end of test1
+  void test2() {
+    struct Task {
+      const Task* operator()() const { return this; }
+    };
+    mgis::ThreadPool p{1};
+    const auto task = Task{};
+    auto r = p.addTask(task).get();
+    // the task is executed on a copy of the given object
+    TFEL_TESTS_ASSERT(*r != &task);
+  }  // end of test2
 };
 
 TFEL_TESTS_GENERATE_PROXY(ThreadPoolTest, "ThreadPoolTest");
