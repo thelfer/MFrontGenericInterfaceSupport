@@ -41,6 +41,12 @@ class IntegrateTest(unittest.TestCase):
                         'invalid thermodynamic force  type')
         self.assertTrue(pk1.type == mgis_bv.VariableType.TENSOR,
                         'invalid thermodynamic force  type')
+        # non square tangent operator block: dsig/dF has 6 rows, 9 columns
+        o.stress_measure = stress_options.CAUCHY
+        o.tangent_operator = to_options.DSIG_DF
+        b2 = mgis_bv.load(o, lib, 'FiniteStrainSingleCrystal', h)
+        d = mgis_bv.BehaviourData(b2)
+        self.assertTrue(d.K.shape == (6, 9), 'invalid tangent operator shape')
 
 
 if __name__ == '__main__':

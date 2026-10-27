@@ -20,13 +20,14 @@
 
 void declareBehaviourData(pybind11::module_& m);
 
-static pybind11::object BehaviourData_getK(mgis::behaviour::BehaviourData& d) {
+static pybind11::object BehaviourData_getK(pybind11::object self) {
+  auto& d = self.cast<mgis::behaviour::BehaviourData&>();
   if (d.s0.b.to_blocks.size() == 1u) {
-    const auto s =
-        getVariableSize(d.s0.b.to_blocks.front().first, d.s0.b.hypothesis);
-    return mgis::python::wrapInNumPyArray(d.K, s);
+    const auto nc =
+        getVariableSize(d.s0.b.to_blocks.front().second, d.s0.b.hypothesis);
+    return mgis::python::wrapInNumPyArray(d.K, nc, self);
   }
-  return mgis::python::wrapInNumPyArray(d.K);
+  return mgis::python::wrapInNumPyArray(d.K, self);
 }  // end of MaterialStateManager_getK
 
 void declareBehaviourData(pybind11::module_& m) {
@@ -38,7 +39,7 @@ void declareBehaviourData(pybind11::module_& m) {
   void (*ptr_revert)(BehaviourData&) = &mgis::behaviour::revert;
   // exporting the BehaviourData class
   pybind11::class_<BehaviourData>(m, "BehaviourData")
-      .def(pybind11::init<const Behaviour&>())
+      .def(pybind11::init<const Behaviour&>(), pybind11::keep_alive<1, 2>())
       .def_readwrite("dt", &BehaviourData::dt)
       .def_readwrite("rdt", &BehaviourData::rdt)
       .def_readonly("s0", &BehaviourData::s0)

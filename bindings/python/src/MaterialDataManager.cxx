@@ -41,17 +41,17 @@ static void MaterialDataManager_useExternalArrayOfSpeedOfSounds(
   m.useExternalArrayOfSpeedOfSounds(mgis::python::mgis_convert_to_span(vs));
 }  // end of MaterialDataManager_useExternalArrayOfSpeedOfSounds
 
-static pybind11::object MaterialDataManager_getK(
-    mgis::behaviour::MaterialDataManager& d) {
+static pybind11::object MaterialDataManager_getK(pybind11::object self) {
+  auto& d = self.cast<mgis::behaviour::MaterialDataManager&>();
   if (d.b.to_blocks.size() == 1u) {
     const auto nl =
         getVariableSize(d.b.to_blocks.front().second, d.b.hypothesis);
     const auto nc =
         getVariableSize(d.b.to_blocks.front().first, d.b.hypothesis);
-    return mgis::python::wrapInNumPyArray(d.K, nc, nl);
+    return mgis::python::wrapInNumPyArray(d.K, nc, nl, self);
   }
   const auto s = getTangentOperatorArraySize(d.b);
-  return mgis::python::wrapInNumPyArray(d.K, s);
+  return mgis::python::wrapInNumPyArray(d.K, s, self);
 }  // end of MaterialDataManager_getK
 
 static pybind11::object MaterialDataManager_getSpeedOfSound(
@@ -80,9 +80,11 @@ void declareMaterialDataManager(pybind11::module_& m) {
            "use the given array to store the speed of sounds");
   // exporting the MaterialDataManager class
   pybind11::class_<MaterialDataManager>(m, "MaterialDataManager")
-      .def(pybind11::init<const Behaviour&, const size_type>())
+      .def(pybind11::init<const Behaviour&, const size_type>(),
+           pybind11::keep_alive<1, 2>())
       .def(pybind11::init<const Behaviour&, const size_type,
-                          const MaterialDataManagerInitializer&>())
+                          const MaterialDataManagerInitializer&>(),
+           pybind11::keep_alive<1, 2>())
       .def("setThreadSafe", &MaterialDataManager::setThreadSafe,
            "specify if various operations performed by the MaterialDataManager "
            "(memory allocations) shall be protected by a mutex")

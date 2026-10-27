@@ -52,6 +52,9 @@ namespace mgis::function {
   requires(N > 0)  //
       constexpr bool FixedSizeModifier<EvaluatorType, N>::check(
           AbstractErrorHandler& ctx) const {
+    if (!internals::disambiguateCheck(ctx, this->evaluator)) {
+      return false;
+    }
     return checkPreconditions(ctx, this->evaluator);
   }
 

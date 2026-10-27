@@ -20,27 +20,29 @@
 
 void declareState(pybind11::module_&);
 
-static pybind11::object State_getGradients(mgis::behaviour::State& s) {
-  return mgis::python::wrapInNumPyArray(s.gradients);
+static pybind11::object State_getGradients(pybind11::object self) {
+  auto& s = self.cast<mgis::behaviour::State&>();
+  return mgis::python::wrapInNumPyArray(s.gradients, self);
 }  // end of State_getGradients
 
-static pybind11::object State_getThermodynamicForces(
-    mgis::behaviour::State& s) {
-  return mgis::python::wrapInNumPyArray(s.thermodynamic_forces);
+static pybind11::object State_getThermodynamicForces(pybind11::object self) {
+  auto& s = self.cast<mgis::behaviour::State&>();
+  return mgis::python::wrapInNumPyArray(s.thermodynamic_forces, self);
 }  // end of State_getThermodynamicForces
 
-static pybind11::object State_getMaterialProperties(mgis::behaviour::State& s) {
-  return mgis::python::wrapInNumPyArray(s.material_properties);
+static pybind11::object State_getMaterialProperties(pybind11::object self) {
+  auto& s = self.cast<mgis::behaviour::State&>();
+  return mgis::python::wrapInNumPyArray(s.material_properties, self);
 }  // end of State_getMaterialProperties
 
-static pybind11::object State_getInternalStateVariables(
-    mgis::behaviour::State& s) {
-  return mgis::python::wrapInNumPyArray(s.internal_state_variables);
+static pybind11::object State_getInternalStateVariables(pybind11::object self) {
+  auto& s = self.cast<mgis::behaviour::State&>();
+  return mgis::python::wrapInNumPyArray(s.internal_state_variables, self);
 }  // end of State_getInternalStateVariables
 
-static pybind11::object State_getExternalStateVariables(
-    mgis::behaviour::State& s) {
-  return mgis::python::wrapInNumPyArray(s.external_state_variables);
+static pybind11::object State_getExternalStateVariables(pybind11::object self) {
+  auto& s = self.cast<mgis::behaviour::State&>();
+  return mgis::python::wrapInNumPyArray(s.external_state_variables, self);
 }  // end of State_getExternalStateVariables
 
 static void State_setMaterialProperty(mgis::behaviour::State& s,
