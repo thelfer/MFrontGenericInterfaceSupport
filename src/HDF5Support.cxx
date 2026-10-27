@@ -357,6 +357,10 @@ namespace mgis::utilities::hdf5 {
     }
     try {
       H5::DataSpace filespace = odataset->getSpace();
+      if (filespace.getSimpleExtentNdims() != 1) {
+        return ctx.registerErrorMessage("invalid rank of dataset '" + d +
+                                        "' (one-dimensional data expected)");
+      }
       hsize_t dims[1];
       filespace.getSimpleExtentDims(dims);
       o.resize(dims[0]);
@@ -379,6 +383,10 @@ namespace mgis::utilities::hdf5 {
     }
     try {
       H5::DataSpace filespace = odataset->getSpace();
+      if (filespace.getSimpleExtentNdims() != 1) {
+        return ctx.registerErrorMessage("invalid rank of dataset '" + n +
+                                        "' (one-dimensional data expected)");
+      }
       hsize_t dims[1];
       filespace.getSimpleExtentDims(dims);
       if (values.size() != dims[0]) {
