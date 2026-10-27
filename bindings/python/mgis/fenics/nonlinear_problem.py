@@ -10,7 +10,7 @@ Laboratoire Navier (ENPC,IFSTTAR,CNRS UMR 8205)
 from dolfin import *
 from .utils import *
 from .gradient_flux import *
-import mgis.behaviour as mgis_bv
+from .. import behaviour as mgis_bv
 from ufl import shape
 
 SymGrad = {
