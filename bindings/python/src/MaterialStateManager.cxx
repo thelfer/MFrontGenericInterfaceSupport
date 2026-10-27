@@ -49,55 +49,62 @@ static void MaterialStateManagerInitializer_bindDissipatedEnergies(
  * \param[in] values: values
  * \param[in] n: number of integration points
  * \param[in] stride: number of values per integration point
+ * \param[in] base: object owning the values, kept alive by the ndarray
  */
 static pybind11::object MaterialStateManager_wrapPerIntegrationPointValues(
     std::span<mgis::real>& values,
     const mgis::size_type n,
-    const mgis::size_type stride) {
+    const mgis::size_type stride,
+    pybind11::handle base) {
   if (stride == 0) {
     // one empty row per integration point
     return pybind11::array_t<double>(
         std::vector<pybind11::ssize_t>{static_cast<pybind11::ssize_t>(n), 0});
   }
-  return mgis::python::wrapInNumPyArray(values, stride);
+  return mgis::python::wrapInNumPyArray(values, stride, base);
 }  // end of MaterialStateManager_wrapPerIntegrationPointValues
 
 static pybind11::object MaterialStateManager_getGradients(
-    mgis::behaviour::MaterialStateManager& s) {
+    pybind11::object self) {
+  auto& s = self.cast<mgis::behaviour::MaterialStateManager&>();
   return MaterialStateManager_wrapPerIntegrationPointValues(
-      s.gradients, s.n, s.gradients_stride);
+      s.gradients, s.n, s.gradients_stride, self);
 }  // end of MaterialStateManager_getGradients
 
 static pybind11::object MaterialStateManager_getThermodynamicForces(
-    mgis::behaviour::MaterialStateManager& s) {
+    pybind11::object self) {
+  auto& s = self.cast<mgis::behaviour::MaterialStateManager&>();
   return MaterialStateManager_wrapPerIntegrationPointValues(
-      s.thermodynamic_forces, s.n, s.thermodynamic_forces_stride);
+      s.thermodynamic_forces, s.n, s.thermodynamic_forces_stride, self);
 }  // end of MaterialStateManager_getThermodynamicForces
 
 static pybind11::object MaterialStateManager_getInternalStateVariables(
-    mgis::behaviour::MaterialStateManager& s) {
+    pybind11::object self) {
+  auto& s = self.cast<mgis::behaviour::MaterialStateManager&>();
   return MaterialStateManager_wrapPerIntegrationPointValues(
-      s.internal_state_variables, s.n, s.internal_state_variables_stride);
+      s.internal_state_variables, s.n, s.internal_state_variables_stride, self);
 }  // end of MaterialStateManager_getInternalStateVariables
 
 static pybind11::object MaterialStateManager_getStoredEnergies(
-    mgis::behaviour::MaterialStateManager& s) {
+    pybind11::object self) {
+  auto& s = self.cast<mgis::behaviour::MaterialStateManager&>();
   if (!s.b.computesStoredEnergy) {
     mgis::raise(
         "MaterialStateManager_getStoredEnergies: "
         "the stored energy is not computed by the behaviour");
   }
-  return mgis::python::wrapInNumPyArray(s.stored_energies);
+  return mgis::python::wrapInNumPyArray(s.stored_energies, self);
 }  // end of MaterialStateManager_getStoredEnergy
 
 static pybind11::object MaterialStateManager_getDissipatedEnergies(
-    mgis::behaviour::MaterialStateManager& s) {
+    pybind11::object self) {
+  auto& s = self.cast<mgis::behaviour::MaterialStateManager&>();
   if (!s.b.computesDissipatedEnergy) {
     mgis::raise(
         "MaterialStateManager_getDissipatedEnergies: "
         "the dissipated energy is not computed by the behaviour");
   }
-  return mgis::python::wrapInNumPyArray(s.dissipated_energies);
+  return mgis::python::wrapInNumPyArray(s.dissipated_energies, self);
 }  // end of MaterialStateManager_getDissipatedEnergy
 
 static void MaterialStateManager_setMaterialProperty(
@@ -127,8 +134,9 @@ static void MaterialStateManager_setMaterialProperty4(
     mgis::behaviour::MaterialStateManager& sm,
     const std::string& n,
     const pybind11::object& o,
-    const mgis::behaviour::MaterialStateManager::StorageMode s) {
-  setMaterialProperty(sm, n, mgis::python::mgis_convert_to_span(o), s);
+    const mgis::behaviour::MaterialStateManager::StorageMode s,
+    const mgis::behaviour::MaterialStateManager::UpdatePolicy b) {
+  setMaterialProperty(sm, n, mgis::python::mgis_convert_to_span(o), s, b);
 }  // end of MaterialStateManager_setMaterialProperty
 
 static void MaterialStateManager_setMassDensity(
@@ -236,9 +244,11 @@ void declareMaterialStateManager(pybind11::module_& m) {
            "use the given array to store the dissipated energies");
   // wrapping the MaterialStateManager class
   pybind11::class_<MaterialStateManager>(m, "MaterialStateManager")
-      .def(pybind11::init<const Behaviour&, const size_type>())
+      .def(pybind11::init<const Behaviour&, const size_type>(),
+           pybind11::keep_alive<1, 2>())
       .def(pybind11::init<const Behaviour&, const size_type,
-                          const MaterialStateManagerInitializer&>())
+                          const MaterialStateManagerInitializer&>(),
+           pybind11::keep_alive<1, 2>())
       .def_readonly("n", &MaterialStateManager::n)
       .def_readonly("number_of_integration_points", &MaterialStateManager::n)
       .def_property_readonly("gradients", &MaterialStateManager_getGradients)
