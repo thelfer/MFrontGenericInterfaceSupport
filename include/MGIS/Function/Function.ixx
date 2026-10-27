@@ -388,7 +388,11 @@ namespace mgis::function {
       const FunctionDataLayout<layout>& l)  //
       requires((layout.data_size == dynamic_extent) &&
                (layout.data_stride == dynamic_extent))
-      : FunctionView(pcheck, s, v, l.size, l.stride) {}  // end of FunctionView
+      : FunctionView(pcheck,
+                     s,
+                     v,
+                     l.getNumberOfComponents(),
+                     l.getDataStride()) {}  // end of FunctionView
 
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
@@ -400,7 +404,7 @@ namespace mgis::function {
       const FunctionDataLayout<layout>& l)  //
       requires((layout.data_size != dynamic_extent) &&
                (layout.data_stride == dynamic_extent))
-      : FunctionView(preconditions_check, s, v, l.stride) {}
+      : FunctionView(preconditions_check, s, v, l.getDataStride()) {}
 
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
@@ -414,7 +418,7 @@ namespace mgis::function {
       const FunctionDataLayout<layout>& l)  //
       requires((layout.data_size != dynamic_extent) &&
                (layout.data_stride == dynamic_extent))
-      : FunctionView(pcheck, s, v, l.stride) {}
+      : FunctionView(pcheck, s, v, l.getDataStride()) {}
 
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
@@ -426,7 +430,7 @@ namespace mgis::function {
       const FunctionDataLayout<layout>& l)  //
       requires((layout.data_size == dynamic_extent) &&
                (layout.data_stride != dynamic_extent))
-      : FunctionView(preconditions_check, s, v, l.size) {
+      : FunctionView(preconditions_check, s, v, l.getNumberOfComponents()) {
   }  // end of FunctionView
 
   template <LinearFunctionalSpaceConcept Space,
@@ -441,7 +445,8 @@ namespace mgis::function {
       const FunctionDataLayout<layout>& l)  //
       requires((layout.data_size == dynamic_extent) &&
                (layout.data_stride != dynamic_extent))
-      : FunctionView(pcheck, s, v, l.size) {}  // end of FunctionView
+      : FunctionView(pcheck, s, v, l.getNumberOfComponents()) {
+  }  // end of FunctionView
 
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
