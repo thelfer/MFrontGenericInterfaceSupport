@@ -155,6 +155,14 @@ namespace mgis::behaviour {
   void convertFiniteStrainStress(std::span<real>& s,
                                  const MaterialDataManager& m,
                                  const FiniteStrainStress t) {
+    // check the stress measure (see Behaviour::options)
+    if ((m.b.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) &&
+        ((m.b.options.size() < 2) || (m.b.options[0] > 0.5))) {
+      mgis::raise(
+          "convertFiniteStrainStress: "
+          "the behaviour must be loaded with the Cauchy stress as "
+          "stress measure");
+    }
     const auto h = m.b.hypothesis;
     if (t == FiniteStrainStress::PK1) {
       if (h == Hypothesis::TRIDIMENSIONAL) {
@@ -218,6 +226,14 @@ namespace mgis::behaviour {
   void convertFiniteStrainStress(std::span<real>& s,
                                  const BehaviourData& d,
                                  const FiniteStrainStress t) {
+    // check the stress measure (see Behaviour::options)
+    if ((d.s1.b.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) &&
+        ((d.s1.b.options.size() < 2) || (d.s1.b.options[0] > 0.5))) {
+      mgis::raise(
+          "convertFiniteStrainStress: "
+          "the behaviour must be loaded with the Cauchy stress as "
+          "stress measure");
+    }
     const auto h = d.s1.b.hypothesis;
     if (t == FiniteStrainStress::PK1) {
       if (h == Hypothesis::TRIDIMENSIONAL) {
@@ -797,6 +813,15 @@ namespace mgis::behaviour {
   void convertFiniteStrainTangentOperator(std::span<mgis::real>& K,
                                           const MaterialDataManager& m,
                                           const FiniteStrainTangentOperator t) {
+    // check the stress measure and tangent operator (see Behaviour::options)
+    if ((m.b.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) &&
+        ((m.b.options.size() < 2) || (m.b.options[0] > 0.5) ||
+         (m.b.options[1] > 0.5))) {
+      mgis::raise(
+          "convertFiniteStrainTangentOperator: "
+          "the behaviour must be loaded with the Cauchy stress as "
+          "stress measure and DSIG_DF as tangent operator");
+    }
     const auto h = m.b.hypothesis;
     if (t == FiniteStrainTangentOperator::DPK1_DF) {
       if (h == Hypothesis::TRIDIMENSIONAL) {
@@ -866,6 +891,15 @@ namespace mgis::behaviour {
   void convertFiniteStrainTangentOperator(std::span<mgis::real>& K,
                                           const BehaviourData& d,
                                           const FiniteStrainTangentOperator t) {
+    // check the stress measure and tangent operator (see Behaviour::options)
+    if ((d.s1.b.btype == Behaviour::STANDARDFINITESTRAINBEHAVIOUR) &&
+        ((d.s1.b.options.size() < 2) || (d.s1.b.options[0] > 0.5) ||
+         (d.s1.b.options[1] > 0.5))) {
+      mgis::raise(
+          "convertFiniteStrainTangentOperator: "
+          "the behaviour must be loaded with the Cauchy stress as "
+          "stress measure and DSIG_DF as tangent operator");
+    }
     const auto h = d.s1.b.hypothesis;
     if (t == FiniteStrainTangentOperator::DPK1_DF) {
       if (h == Hypothesis::TRIDIMENSIONAL) {
