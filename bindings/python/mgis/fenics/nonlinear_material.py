@@ -7,7 +7,7 @@ MFrontNonlinearMaterial class
 Laboratoire Navier (ENPC,IFSTTAR,CNRS UMR 8205)
 @email: jeremy.bleyer@enpc.f
 """
-import mgis.behaviour as mgis_bv
+from .. import behaviour as mgis_bv
 from .gradient_flux import Var
 from .utils import compute_on_quadrature
 import dolfin

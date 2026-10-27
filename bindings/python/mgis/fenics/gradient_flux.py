@@ -17,7 +17,7 @@ from .utils import (
     get_quadrature_element,
     vector_to_tensor,
 )
-import mgis.behaviour as mgis_bv
+from .. import behaviour as mgis_bv
 
 
 class QuadratureFunction:
