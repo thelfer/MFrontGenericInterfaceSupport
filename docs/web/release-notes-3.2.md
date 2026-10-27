@@ -25,6 +25,12 @@ This version is meant to be used with `TFEL` Version 5.2.
 - Modifiers in `MGIS/Function` now creates a view from a temporary view
   rather than an evaluator. See below for details. In practice, most
   views are also evaluators, so this shall not impact existing user code.
+- The `enable-parallel-stl-algorithms` option is now `OFF` by default
+  (it was `ON` in Version 3.1): the overloads of the `MGIS/Function`
+  algorithms taking an execution policy of the standard library are only
+  available if `MGIS` is configured with
+  `-Denable-parallel-stl-algorithms=ON` (with `libstdc++`, this requires
+  `TBB`).
 
 # Documentation
 

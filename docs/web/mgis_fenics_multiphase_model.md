@@ -119,7 +119,7 @@ seen as an interaction stiffness between both phases.
 
 The `MFront` implementation expands upon the detailed `MFront`
 implementation of the [stationnary heat transfer
-demo](nonlinear_heat_transfer.html). Again, the
+demo](mgis_fenics_nonlinear_heat_transfer.html). Again, the
 `DefaultGenericBehaviour` is used here and specify that the following
 implementation will only handle the 2D plane strain case.
 

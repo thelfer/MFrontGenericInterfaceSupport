@@ -14,12 +14,16 @@
 
 #include <array>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
+#include <fstream>
+#include <sstream>
 #include <iostream>
 #include "MGIS/Behaviour/State.hxx"
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/BehaviourData.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
+#include "MGIS/Behaviour/BehaviourIntegrationFailureAnalyser.hxx"
 
 int main(const int argc, const char* const* argv) {
   using namespace mgis;
@@ -42,9 +46,22 @@ int main(const int argc, const char* const* argv) {
     d.K[0] = 0;
     d.rdt = 1;
     auto v = make_view(d);
+    // the failure report is written in a known file
+    debug::setBehaviourIntegrationFailureAnalysisFileNameGenerator(
+        [](std::string_view, std::string_view, std::string_view) {
+          return std::string{"IntegrateDebugTest-report.md"};
+        });
+    std::remove("IntegrateDebugTest-report.md");
     const auto r = integrate_debug(v, b);
     if ((r == 0) || (r == 1)) {
       std::cerr << "integration did not fail: " << r << "\n";
+      return EXIT_FAILURE;
+    }
+    std::ifstream report("IntegrateDebugTest-report.md");
+    std::ostringstream content;
+    content << report.rdbuf();
+    if (content.str().find("- behaviour: NortonFailure") == std::string::npos) {
+      std::cerr << "no integration failure report\n";
       return EXIT_FAILURE;
     }
   } catch (std::exception& e) {

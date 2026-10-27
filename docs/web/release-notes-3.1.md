@@ -55,7 +55,7 @@ from the first Piola-Kirchhoff stress known in the material frame.
 ~~~~{.cxx}
 const auto evaluator = pk1_function | as_tensor<3>                    |
                        from_pk1_to_cauchy (F_function | as_tensor<3>) |
-                       rotate_backwards (R_function | as_matrix<3,3>);
+                       rotate_backwards (R_function | as_tmatrix<3,3>);
 const auto ok = assign(ctx, sig | as_stensor<3>, evaluator);
 ~~~~
 
@@ -102,7 +102,7 @@ const auto r = integrate_debug(v, b);
 
 The `mgis::getDatabase` function returns a global instance of an
 `MFrontDatabase` object. See [this
-page](https://thelfer.github.iotfel/web/tfel-mfront-database.html) for
+page](https://thelfer.github.io/tfel/web/tfel-mfront-database.html) for
 more details. This instance can be populated using a library, a
 directory or a list of directories specified in an environment variable.
 

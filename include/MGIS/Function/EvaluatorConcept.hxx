@@ -18,15 +18,9 @@
 #include <concepts>
 #include <type_traits>
 #include "MGIS/Config.hxx"
+#include "MGIS/AbstractErrorHandler.hxx"
 #include "MGIS/Function/CompileTimeSize.hxx"
 #include "MGIS/Function/SpaceConcept.hxx"
-
-namespace mgis {
-
-  // forward declaration
-  struct AbstractErrorHandler;
-
-}  // end of namespace mgis
 
 namespace mgis::function {
 
@@ -219,6 +213,18 @@ namespace mgis::function {
   template <EvaluatorConcept EvaluatorType>
   using evaluator_result =
       typename internals::EvaluatorResultQuery<EvaluatorType>::type;
+
+  /*!
+   * \brief check if the given evaluators shares the same space
+   *
+   * \param[in] ctx: context
+   * \param[in] e1: first evaluator
+   * \param[in] e2: second evaluator
+   */
+  [[nodiscard]] constexpr bool checkMatchingSpaces(
+      AbstractErrorHandler&,
+      const EvaluatorConcept auto&,
+      const EvaluatorConcept auto&);
 
   namespace internals {
 
