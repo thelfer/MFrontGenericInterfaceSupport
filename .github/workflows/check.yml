@@ -110,7 +110,9 @@ jobs:
         spack load hdf5
         # a portable build, without -march=native, whose compilations ccache can share
         # between the runners, which have different processors (see setup-ccache)
-        cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} .           \
+        # out of the source tree: Spack, hence HDF5, is installed in the source tree,
+        # and an installed target may not refer to a directory of its build tree
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
               -Denable-c-bindings=ON                                  \
               -Denable-fortran-bindings=${{ matrix.fortran_support }} \
               -Denable-python-bindings=${{ matrix.python_support }}   \
@@ -126,13 +128,13 @@ jobs:
       run: |
         spack load tfel
         spack load hdf5
-        make ${{ matrix.jobs_flag }}
+        make -C build ${{ matrix.jobs_flag }}
     - name: make check
       shell: spack-sh {0}
       run: |
         spack load tfel
         spack load hdf5
-        make check ${{ matrix.jobs_flag }}
+        make -C build check ${{ matrix.jobs_flag }}
 
     # even when a test fails, so that the next run does not compile everything again
     - name: Save ccache
