@@ -236,9 +236,11 @@ void declareMaterialStateManager(pybind11::module_& m) {
            "use the given array to store the dissipated energies");
   // wrapping the MaterialStateManager class
   pybind11::class_<MaterialStateManager>(m, "MaterialStateManager")
-      .def(pybind11::init<const Behaviour&, const size_type>())
+      .def(pybind11::init<const Behaviour&, const size_type>(),
+           pybind11::keep_alive<1, 2>())
       .def(pybind11::init<const Behaviour&, const size_type,
-                          const MaterialStateManagerInitializer&>())
+                          const MaterialStateManagerInitializer&>(),
+           pybind11::keep_alive<1, 2>())
       .def_readonly("n", &MaterialStateManager::n)
       .def_readonly("number_of_integration_points", &MaterialStateManager::n)
       .def_property_readonly("gradients", &MaterialStateManager_getGradients)

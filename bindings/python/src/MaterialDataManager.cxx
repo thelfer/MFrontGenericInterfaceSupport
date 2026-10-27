@@ -75,9 +75,11 @@ void declareMaterialDataManager(pybind11::module_& m) {
            "use the given array to store the speed of sounds");
   // exporting the MaterialDataManager class
   pybind11::class_<MaterialDataManager>(m, "MaterialDataManager")
-      .def(pybind11::init<const Behaviour&, const size_type>())
+      .def(pybind11::init<const Behaviour&, const size_type>(),
+           pybind11::keep_alive<1, 2>())
       .def(pybind11::init<const Behaviour&, const size_type,
-                          const MaterialDataManagerInitializer&>())
+                          const MaterialDataManagerInitializer&>(),
+           pybind11::keep_alive<1, 2>())
       .def("setThreadSafe", &MaterialDataManager::setThreadSafe,
            "specify if various operations performed by the MaterialDataManager "
            "(memory allocations) shall be protected by a mutex")

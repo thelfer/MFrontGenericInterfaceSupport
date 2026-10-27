@@ -38,7 +38,7 @@ void declareBehaviourData(pybind11::module_& m) {
   void (*ptr_revert)(BehaviourData&) = &mgis::behaviour::revert;
   // exporting the BehaviourData class
   pybind11::class_<BehaviourData>(m, "BehaviourData")
-      .def(pybind11::init<const Behaviour&>())
+      .def(pybind11::init<const Behaviour&>(), pybind11::keep_alive<1, 2>())
       .def_readwrite("dt", &BehaviourData::dt)
       .def_readwrite("rdt", &BehaviourData::rdt)
       .def_readonly("s0", &BehaviourData::s0)
