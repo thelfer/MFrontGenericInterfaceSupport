@@ -629,6 +629,8 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
                            "invalid number of components");
     const auto e2 = f.view() | as_stensor<2>;
     TFEL_TESTS_ASSERT(e2.check(ctx));
+    TFEL_TESTS_ASSERT(check(ctx, e) == false);
+    TFEL_TESTS_ASSERT(check(ctx, e2));
   }
   void test18() {
     using namespace mgis;

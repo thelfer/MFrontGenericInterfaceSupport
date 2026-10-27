@@ -59,6 +59,12 @@ namespace mgis::function {
   }  // end of apply
 
   template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
+  constexpr bool check(AbstractErrorHandler& eh,
+                       const TensorModifier<TensorType, EvaluatorType>& e) {
+    return e.check(eh);
+  }  // end of check
+
+  template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
   constexpr mgis::size_type getNumberOfComponents(
       const TensorModifier<TensorType, EvaluatorType>& e) noexcept {
     return e.getNumberOfComponents();
