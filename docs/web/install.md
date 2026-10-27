@@ -21,7 +21,8 @@ bibliography: bibliography.bib
 # Installing from source
 
 These are generic installation instructions. Building from source
-requires `cmake` to be installed (<https://cmake.org/>).
+requires `cmake` (version 3.20 or later) to be installed
+(<https://cmake.org/>).
 
 ## Overview
 

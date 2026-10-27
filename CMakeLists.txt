@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 string(CONCAT MFrontGenericInterfaceSupportDescription
 	"The MFrontGenericInterfaceSupport project provides "
 	"useful feature for solvers' developpers to "
