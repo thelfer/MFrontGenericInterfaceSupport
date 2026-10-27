@@ -961,7 +961,12 @@ namespace mgis::behaviour {
         // uniform value
         auto value = real{};
         odataset->read(&value, getNativeType<real>());
-        f = value;
+        if (std::holds_alternative<std::span<real>>(f.value)) {
+          auto& values = std::get<std::span<real>>(f.value);
+          std::fill(values.begin(), values.end(), value);
+        } else {
+          f = value;
+        }
         return true;
       }
       if (dims[0] != ng) {
