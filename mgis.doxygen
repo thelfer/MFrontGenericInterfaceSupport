@@ -48,7 +48,7 @@
  * The library also supports handling a group of integration points though
  * the `mgis::behaviour::MaterialStateManager` class.
  * 
- * An introduction to the `C++` library may be found [here](bindings-cxx.html)
+ * An introduction to the `C++` library may be found [here](https://thelfer.github.io/mgis/web/bindings-cxx.html)
  * 
  * # Bindings
  * 
@@ -64,7 +64,7 @@
  *   by the `fenics-solid-mechanics` project. Those bindings are currently
  *   quite limited as mostly serve as a proof of concept. Note that `MGIS`
  *   can also be used in `FEniCS` through the `python` interface. This is
- *   discussed [here](FEniCSBindings.html).
+ *   discussed [here](https://thelfer.github.io/mgis/web/FEniCSBindings.html).
  * 
  * ## Future bindings (contributors are welcomed)
  * 

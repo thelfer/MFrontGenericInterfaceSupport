@@ -569,7 +569,6 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/244>
 
 ## Issue 236: [mgis-function] Allow "assignement" operator | and `assign` algorithm to work on temporary views
-￼
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/236>
 
@@ -623,7 +622,7 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 
 ## Issue 196: [MGIS/Function] Add function view with strided coalesent memory access
 
-For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/196>￼
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/196>
 
 ## Issue 195: [python] Expose `setMaterialProperty`
 
@@ -639,7 +638,7 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 
 ## Issue 158: Model implicite for LICOS software
 
-For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/158>￼
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/158>
 
 # Acknowledgements
 
