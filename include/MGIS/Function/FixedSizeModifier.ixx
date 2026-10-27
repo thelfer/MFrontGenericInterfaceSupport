@@ -57,7 +57,8 @@ namespace mgis::function {
 
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0)  //
-      decltype(auto) FixedSizeModifier<EvaluatorType, N>::getSpace() const {
+      constexpr decltype(auto)
+      FixedSizeModifier<EvaluatorType, N>::getSpace() const {
     return internals::disambiguateGetSpace(this->evaluator);
   }
 
@@ -208,7 +209,8 @@ namespace mgis::function {
   }  // end of view
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  decltype(auto) getSpace(const FixedSizeModifier<EvaluatorType, N>& e) {
+  constexpr decltype(auto) getSpace(
+      const FixedSizeModifier<EvaluatorType, N>& e) {
     return e.getSpace();
   }  // end of getSpace
 

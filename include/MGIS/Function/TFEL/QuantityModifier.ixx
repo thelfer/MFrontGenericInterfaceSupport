@@ -56,7 +56,8 @@ namespace mgis::function {
 
   template <EvaluatorConcept EvaluatorType,
             ::tfel::math::unit::UnitConcept UnitType>
-  decltype(auto) QuantityModifier<EvaluatorType, UnitType>::getSpace() const {
+  constexpr decltype(auto) QuantityModifier<EvaluatorType, UnitType>::getSpace()
+      const {
     return internals::disambiguateGetSpace(this->evaluator);
   }
 
@@ -167,7 +168,8 @@ namespace mgis::function {
 
   template <EvaluatorConcept EvaluatorType,
             ::tfel::math::unit::UnitConcept UnitType>
-  decltype(auto) getSpace(const QuantityModifier<EvaluatorType, UnitType>& e) {
+  constexpr decltype(auto) getSpace(
+      const QuantityModifier<EvaluatorType, UnitType>& e) {
     return e.getSpace();
   }  // end of getSpace
 
