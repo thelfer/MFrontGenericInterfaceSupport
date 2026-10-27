@@ -174,6 +174,10 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     const auto e3 = e | as_stensor<1> | trace;
     TFEL_TESTS_ASSERT(e3.check(ctx));
     TFEL_TESTS_ASSERT(std::abs(e3(0) - 6) < eps);
+    const auto e4 = e | as_tensor<1> | logarithmic_strain<>;
+    TFEL_TESTS_ASSERT(e4.check(ctx));
+    TFEL_TESTS_ASSERT(std::abs(e4(0)[1] - std::log(real{2})) < eps);
+    TFEL_TESTS_ASSERT(std::abs(e4(0)[2] - std::log(real{3})) < eps);
   }
   void test4() {
     using namespace mgis;

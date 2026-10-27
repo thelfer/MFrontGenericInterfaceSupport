@@ -502,7 +502,7 @@ namespace mgis::function {
             const auto [vp, m] = e.template computeEigenVectors<esolver>();
             const auto log_vp =
                 map([](const real x) { return std::log1p(2 * x) / 2; }, vp);
-            return stensor<N, real>::computeIsotropicFunction(e, m);
+            return stensor<N, real>::computeIsotropicFunction(log_vp, m);
           });
 
 }  // end of namespace mgis::function
