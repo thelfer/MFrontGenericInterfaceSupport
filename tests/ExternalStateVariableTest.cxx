@@ -137,6 +137,16 @@ static void check_material_data_manager(const mgis::behaviour::Behaviour& b) {
   };
   init(d.s0);
   init(d.s1);
+  check(isExternalStateVariableUniform(d.s0, "Temperature"),
+        "Temperature shall be uniform");
+  check(isExternalStateVariableUniform(d.s0, "v_esv"),
+        "v_esv shall be uniform");
+  check(isExternalStateVariableUniform(d.s1, "v_esv"),
+        "v_esv shall be uniform");
+  check(!isExternalStateVariableUniform(d.s1, "v2_esv[0]"),
+        "v2_esv[0] shall not be uniform");
+  check(!isExternalStateVariableUniform(d.s1, "v2_esv[1]"),
+        "v2_esv[1] shall not be uniform");
   // checking if the external storage do work as expected
   v2_esv1_values[3] = -1;
   //
