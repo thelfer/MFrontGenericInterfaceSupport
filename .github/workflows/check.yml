@@ -61,12 +61,15 @@ jobs:
         packages_ref: develop  # Spack packages (builtin repository) version
         buildcache: false      # our own build cache is configured below
         color: true            # Force color output (SPACK_COLOR=always)
-        # out of the source tree: CMake refuses to install a target whose include
-        # directories (those of HDF5, installed by Spack) are in its source tree
-        spack_path: ${{ runner.temp }}/spack
+        spack_path: ${{github.workspace}}/spack       # Where to clone Spack
 
     - name: Set up the build cache
       uses: ./.github/actions/setup-build-cache
+
+    # packages installed out of the source tree: CMake refuses to install a target
+    # whose include directories (those of HDF5) are in its source or build tree
+    - name: Set up the install tree
+      run: spack config add "config:install_tree:root:${{ runner.temp }}/spack-opt"
 
     - name: Install TFEL
       shell: spack-sh {0}
