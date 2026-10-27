@@ -7,6 +7,7 @@ subroutine test()
   type(FiniteStrainBehaviourOptions) o
   type(BehaviourData) d
   type(MaterialDataManager) m
+  real(kind=8), dimension (:), pointer :: K1 => null()
   real(kind=8), dimension (:,:), pointer :: K2 => null()
   real(kind=8), dimension (:,:,:), pointer :: K => null()
   integer :: nb
@@ -21,6 +22,8 @@ subroutine test()
   call check_status(behaviour_data_get_tangent_operator(K2, d))
   r = check((size(K2, 1) == 9) .and. (size(K2, 2) == 6), &
        'invalid shape of the tangent operator (behaviour data)')
+  call check_status(behaviour_data_get_tangent_operator_array(K1, d))
+  r = check(size(K1) == 54, 'invalid size of the tangent operator array')
   call check_status(create_material_data_manager(m, b, 2))
   call check_status(material_data_manager_allocate_array_of_tangent_operator_blocks(m))
   call check_status(material_data_manager_get_tangent_operator(K, m))

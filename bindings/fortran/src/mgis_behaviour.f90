@@ -2210,7 +2210,8 @@ contains
     end if
     if (nK .ne. ths * gs) then
        s = report_failure("behaviour_data_get_tangent_operator: " // &
-            "the tangent operator is not made of a single block")
+            "the tangent operator is not the derivative of the " // &
+            "thermodynamic forces with respect to the gradients")
        return
     end if
     s = behaviour_data_get_tangent_operator_wrapper(p, d%ptr)
@@ -2220,6 +2221,45 @@ contains
        call c_f_pointer(p,K,[gs,ths])
     end if
   end function behaviour_data_get_tangent_operator
+  ! \brief return the array of the tangent operator blocks, whatever their
+  ! layout. On input, its first value holds the type of integration.
+  function behaviour_data_get_tangent_operator_array(K, d) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_data_get_tangent_operator_wrapper(K, d) &
+            bind(c,name = 'mgis_bv_behaviour_data_get_tangent_operator')&
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: K
+         type(c_ptr), intent(in), value :: d
+         type(mgis_status) :: r
+       end function behaviour_data_get_tangent_operator_wrapper
+    end interface
+    real(kind=8), dimension(:), pointer, intent(out) :: K
+    type(BehaviourData), intent(in) :: d
+    type(mgis_status) :: s
+    type(c_ptr) :: p
+    type(Behaviour) :: b
+    integer nK
+    nullify(K)
+    s = behaviour_data_get_behaviour(b, d)
+    if( s%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    s = behaviour_get_tangent_operator_array_size(nK, b)
+    if( s%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    s = behaviour_data_get_tangent_operator_wrapper(p, d%ptr)
+    if( s%exit_status .eq. MGIS_SUCCESS) then
+       ! the array holds at least one value, the type of integration
+       call c_f_pointer(p,K,[max(nK,1)])
+    end if
+  end function behaviour_data_get_tangent_operator_array
   !
   function update_behaviour_data(d) result(r)
     use mgis
@@ -3728,7 +3768,8 @@ contains
     end if
     if (nK .ne. ths * gs) then
        r = report_failure("material_data_manager_get_tangent_operator: " // &
-            "the tangent operator is not made of a single block")
+            "the tangent operator is not the derivative of the " // &
+            "thermodynamic forces with respect to the gradients")
        return
     end if
     ! the blocks are stored row by row: the Fortran array, stored column by
