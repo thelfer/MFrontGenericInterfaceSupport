@@ -269,4 +269,93 @@ mgis_status mgis_bv_integrate_debug_material_data_manager_part(
   return mgis_report_success();
 }  // end of mgis_bv_integrate_debug_material_data_manager_part
 
+mgis_status mgis_bv_execute_initialize_function(
+    int* const r,
+    mgis_bv_BehaviourDataView* const d,
+    const mgis_bv_Behaviour* const b,
+    const char* const n,
+    const mgis_real* const i,
+    const mgis_size_type s) {
+  if ((r == nullptr) || (d == nullptr) || (b == nullptr) || (n == nullptr) ||
+      ((i == nullptr) && (s != 0))) {
+    return mgis_report_failure("invalid argument");
+  }
+  *r = -1;
+  try {
+    *r = mgis::behaviour::executeInitializeFunction(
+        *d, *b, n, std::span<const mgis_real>(i, s));
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  if (*r != 0) {
+    return mgis_report_failure("initialize function failed");
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_execute_initialize_function
+
+mgis_status mgis_bv_execute_initialize_function_2(
+    int* const r,
+    mgis_bv_BehaviourData* const d,
+    const mgis_bv_Behaviour* const b,
+    const char* const n,
+    const mgis_real* const i,
+    const mgis_size_type s) {
+  if (d == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  auto v = mgis::behaviour::make_view(*d);
+  return mgis_bv_execute_initialize_function(r, &v, b, n, i, s);
+}  // end of mgis_bv_execute_initialize_function_2
+
+mgis_status mgis_bv_execute_initialize_function_material_data_manager(
+    int* const r,
+    mgis_ThreadPool* const p,
+    mgis_bv_MaterialDataManager* const m,
+    const char* const n,
+    const mgis_real* const i,
+    const mgis_size_type s) {
+  if ((r == nullptr) || (p == nullptr) || (m == nullptr) || (n == nullptr) ||
+      ((i == nullptr) && (s != 0))) {
+    return mgis_report_failure("invalid argument");
+  }
+  *r = -1;
+  try {
+    *r = mgis::behaviour::executeInitializeFunction(
+             *p, *m, n, std::span<const mgis_real>(i, s))
+             .exit_status;
+    if ((*r != 1) && (*r != 0)) {
+      return mgis_report_failure("initialize function failed");
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_execute_initialize_function_material_data_manager
+
+mgis_status mgis_bv_execute_initialize_function_material_data_manager_part(
+    int* const r,
+    mgis_bv_MaterialDataManager* const m,
+    const char* const n,
+    const mgis_real* const i,
+    const mgis_size_type s,
+    const mgis_size_type b,
+    const mgis_size_type e) {
+  if ((r == nullptr) || (m == nullptr) || (n == nullptr) ||
+      ((i == nullptr) && (s != 0))) {
+    return mgis_report_failure("invalid argument");
+  }
+  *r = -1;
+  try {
+    *r = mgis::behaviour::executeInitializeFunction(
+             *m, n, std::span<const mgis_real>(i, s), b, e)
+             .exit_status;
+    if ((*r != 1) && (*r != 0)) {
+      return mgis_report_failure("initialize function failed");
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_execute_initialize_function_material_data_manager_part
+
 }  // end of extern "C"

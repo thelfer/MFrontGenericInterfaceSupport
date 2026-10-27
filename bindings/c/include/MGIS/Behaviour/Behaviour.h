@@ -807,6 +807,78 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_computes_stored_energy(
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_computes_dissipated_energy(
     int* const, const mgis_bv_Behaviour* const);
 /*!
+ * \brief return the number of initialize functions
+ * \param[out] c: number of the initialize functions
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_number_of_initialize_functions(
+    mgis_size_type* const, const mgis_bv_Behaviour* const);
+/*!
+ * \brief return the name of an initialize function
+ * \param[out] n: initialize function name
+ * \param[in] b: behaviour
+ * \param[in] i: initialize function index
+ * \note the initialize functions are sorted by name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_initialize_function_name(
+    const char**, const mgis_bv_Behaviour* const, const mgis_size_type);
+/*!
+ * \brief return the size of an array able to contain the inputs of an
+ * initialize function
+ * \param[out] s: size
+ * \param[in] b: behaviour
+ * \param[in] f: initialize function name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_initialize_function_inputs_size(
+    mgis_size_type* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return the number of inputs of an initialize function
+ * \param[out] c: number of the inputs
+ * \param[in] b: behaviour
+ * \param[in] f: initialize function name
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_number_of_initialize_function_inputs(
+    mgis_size_type* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return the name of an input of an initialize function
+ * \param[out] n: input name
+ * \param[in] b: behaviour
+ * \param[in] f: initialize function name
+ * \param[in] i: input index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_initialize_function_input_name(
+    const char**,
+    const mgis_bv_Behaviour* const,
+    const char* const,
+    const mgis_size_type);
+/*!
+ * \brief return the type of an input of an initialize function
+ * \param[out] t: input type
+ * \param[in] b: behaviour
+ * \param[in] f: initialize function name
+ * \param[in] i: input index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_initialize_function_input_type(
+    mgis_bv_VariableType* const,
+    const mgis_bv_Behaviour* const,
+    const char* const,
+    const mgis_size_type);
+/*!
+ * \brief return the offset of an input of an initialize function in the
+ * array of the inputs
+ * \param[out] o: input offset
+ * \param[in] b: behaviour
+ * \param[in] f: initialize function name
+ * \param[in] i: input index
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_initialize_function_input_offset(
+    mgis_size_type* const,
+    const mgis_bv_Behaviour* const,
+    const char* const,
+    const mgis_size_type);
+/*!
  * \brief free the memory associated with the given behaviour.
  * \param[in,out] b: behaviour
  */

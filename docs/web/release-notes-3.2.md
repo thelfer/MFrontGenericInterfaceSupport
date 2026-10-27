@@ -132,6 +132,25 @@ setExternalStateVariable(m.s1, "Temperature", T1,
                          MaterialStateManager::UPDATE);
 ~~~~
 
+## Initialize functions and post-processings in the `C` and `fortran` bindings
+
+### `C` bindings
+
+The initialize functions of a behaviour are described by
+`mgis_bv_behaviour_get_number_of_initialize_functions`,
+`mgis_bv_behaviour_get_initialize_function_name`,
+`mgis_bv_behaviour_get_initialize_function_inputs_size`,
+`mgis_bv_behaviour_get_number_of_initialize_function_inputs`,
+`mgis_bv_behaviour_get_initialize_function_input_name`,
+`mgis_bv_behaviour_get_initialize_function_input_type` and
+`mgis_bv_behaviour_get_initialize_function_input_offset`, and executed
+by `mgis_bv_execute_initialize_function` (behaviour data view),
+`mgis_bv_execute_initialize_function_2` (behaviour data),
+`mgis_bv_execute_initialize_function_material_data_manager` (all
+integration points, using a thread pool) and
+`mgis_bv_execute_initialize_function_material_data_manager_part` (range
+of integration points). The inputs are passed as an array and its size.
+
 # New features of the `MGIS/Function` library
 
 ## Support for quantities

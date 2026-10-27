@@ -15,7 +15,9 @@
 #include <limits>
 #include <cstring>
 #include <utility>
+#include <iterator>
 #include <stdexcept>
+#include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/Behaviour.h"
 
 extern "C" {
@@ -1242,6 +1244,122 @@ mgis_status mgis_bv_behaviour_computes_dissipated_energy(
   *v = static_cast<int>(b->computesDissipatedEnergy);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_computes_dissipated_energy
+
+namespace c_internals {
+
+  static const mgis::behaviour::BehaviourInitializeFunction&
+  getInitializeFunction(const mgis_bv_Behaviour& b, const char* const f) {
+    const auto p = b.initialize_functions.find(f);
+    if (p == b.initialize_functions.end()) {
+      mgis::raise("no initialize function named '" + std::string{f} + "'");
+    }
+    return p->second;
+  }  // end of getInitializeFunction
+
+}  // end of namespace c_internals
+
+mgis_status mgis_bv_behaviour_get_number_of_initialize_functions(
+    mgis_size_type* const c, const mgis_bv_Behaviour* const b) {
+  if ((c == nullptr) || (b == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *c = b->initialize_functions.size();
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_number_of_initialize_functions
+
+mgis_status mgis_bv_behaviour_get_initialize_function_name(
+    const char** n, const mgis_bv_Behaviour* const b, const mgis_size_type i) {
+  if ((n == nullptr) || (b == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *n = nullptr;
+  if (i >= b->initialize_functions.size()) {
+    return mgis_report_failure("invalid argument (index out of range)");
+  }
+  *n = std::next(b->initialize_functions.begin(), i)->first.c_str();
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_initialize_function_name
+
+mgis_status mgis_bv_behaviour_get_initialize_function_inputs_size(
+    mgis_size_type* const s,
+    const mgis_bv_Behaviour* const b,
+    const char* const f) {
+  if ((s == nullptr) || (b == nullptr) || (f == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *s = mgis::behaviour::getInitializeFunctionVariablesArraySize(*b, f);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_initialize_function_inputs_size
+
+mgis_status mgis_bv_behaviour_get_number_of_initialize_function_inputs(
+    mgis_size_type* const c,
+    const mgis_bv_Behaviour* const b,
+    const char* const f) {
+  if ((c == nullptr) || (b == nullptr) || (f == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *c = c_internals::getInitializeFunction(*b, f).inputs.size();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_number_of_initialize_function_inputs
+
+mgis_status mgis_bv_behaviour_get_initialize_function_input_name(
+    const char** n,
+    const mgis_bv_Behaviour* const b,
+    const char* const f,
+    const mgis_size_type i) {
+  if ((n == nullptr) || (b == nullptr) || (f == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *n = nullptr;
+  try {
+    const auto& v = c_internals::getInitializeFunction(*b, f).inputs.at(i);
+    *n = v.name.c_str();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_initialize_function_input_name
+
+mgis_status mgis_bv_behaviour_get_initialize_function_input_type(
+    mgis_bv_VariableType* const t,
+    const mgis_bv_Behaviour* const b,
+    const char* const f,
+    const mgis_size_type i) {
+  if ((t == nullptr) || (b == nullptr) || (f == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& v = c_internals::getInitializeFunction(*b, f).inputs.at(i);
+    return c_internals::getVariableType(*t, v);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+}  // end of mgis_bv_behaviour_get_initialize_function_input_type
+
+mgis_status mgis_bv_behaviour_get_initialize_function_input_offset(
+    mgis_size_type* const o,
+    const mgis_bv_Behaviour* const b,
+    const char* const f,
+    const mgis_size_type i) {
+  if ((o == nullptr) || (b == nullptr) || (f == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& inputs = c_internals::getInitializeFunction(*b, f).inputs;
+    *o = getVariableOffset(inputs, inputs.at(i).name, b->hypothesis);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_initialize_function_input_offset
 
 mgis_status mgis_bv_free_behaviour(mgis_bv_Behaviour** b) {
   try {
