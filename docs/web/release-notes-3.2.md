@@ -264,6 +264,18 @@ assign(ctx, f | as_scalar, f2 | as_scalar);
 
 # Issues fixed
 
+## Issue 324: HDF5 save/restore: mass density option, externally stored scalars, behaviours without internal state variables, rank checks and absolute paths
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/324>
+
+## Issue 280: Restoring from HDF5 never creates a missing field
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/280>
+
+## Issue 279: Saving a material data manager to HDF5 always fails
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/279>
+
 ## Issue 255: Fix `InvokeTest` on `MacOS`
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/255>
