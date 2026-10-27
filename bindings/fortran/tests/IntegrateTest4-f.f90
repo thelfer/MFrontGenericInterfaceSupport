@@ -48,7 +48,7 @@ subroutine test()
   call check_status(material_state_manager_get_internal_state_variables(isvs,s1))
   ! initial value of the x
   do i = 1, N
-     isvs(o, 1) = 1
+     isvs(o, i) = 1
   end do  
   ! copy s1 in s0
   call check_status(update_material_data_manager(m))
@@ -72,7 +72,7 @@ subroutine test()
      x_ref = exp(-A * t)
      r = check(abs(xi(i)-x_ref) < eps, &
           'invalid value for x')
-     r = check(abs(xi(i)-x_ref) < eps, &
+     r = check(abs(xe(i)-x_ref) < eps, &
           'invalid value for x')
      t = t + dt
   end do

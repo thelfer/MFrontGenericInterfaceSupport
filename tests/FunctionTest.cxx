@@ -114,6 +114,9 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(f.data(unsafe, 1)[1] - 4) < eps);
     TFEL_TESTS_ASSERT(std::abs(f.data(unsafe, 2)[0] - 5) < eps);
     TFEL_TESTS_ASSERT(std::abs(f.data(unsafe, 2)[1] - 6) < eps);
+    TFEL_TESTS_ASSERT(f.checkCompatibility(f));
+    TFEL_TESTS_ASSERT(!f.checkCompatibility(
+        FunctionEvaluator<SharedSpace<BasicLinearSpace>>(space, values, 1)));
   }
   void test4() {
     using namespace mgis;
@@ -209,6 +212,7 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
       for (size_type i = 0; i != getNumberOfQuadraturePoints(space, e); ++i) {
         const auto v = e * 3 + i + 1;
         TFEL_TESTS_ASSERT(std::abs(f.data(unsafe, e, i)[0] - v) < eps);
+        TFEL_TESTS_ASSERT(std::abs(f(e, i)[0] - v) < eps);
       }
     }
   }

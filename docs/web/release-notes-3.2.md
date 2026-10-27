@@ -268,6 +268,26 @@ assign(ctx, f | as_scalar, f2 | as_scalar);
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/326>
 
+## Issue 322: Python bindings: shape of BehaviourData.K, update policy of setMaterialProperty and other defects
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/322>
+
+## Issue 295: FEniCS binding mixes up the jacobian stride in two dimensions
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/295>
+
+## Issue 293: Python constructors do not keep the referenced behaviour alive
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/293>
+
+## Issue 292: Variable lookup returns a reference into a temporary vector
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/292>
+
+## Issue 290: NumPy arrays are exposed as non-owning views with no lifetime link
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/290>
+
 ## Issue 255: Fix `InvokeTest` on `MacOS`
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/255>
