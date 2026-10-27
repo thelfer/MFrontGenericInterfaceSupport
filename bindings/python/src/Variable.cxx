@@ -24,10 +24,32 @@ static const char* Variable_getType(const mgis::behaviour::Variable& v) {
       return "Scalar";
     case Variable::VECTOR:
       return "Vector";
+    case Variable::VECTOR_1D:
+      return "Vector1D";
+    case Variable::VECTOR_2D:
+      return "Vector2D";
+    case Variable::VECTOR_3D:
+      return "Vector3D";
     case Variable::STENSOR:
       return "Stensor";
+    case Variable::STENSOR_1D:
+      return "Stensor1D";
+    case Variable::STENSOR_2D:
+      return "Stensor2D";
+    case Variable::STENSOR_3D:
+      return "Stensor3D";
     case Variable::TENSOR:
       return "Tensor";
+    case Variable::TENSOR_1D:
+      return "Tensor1D";
+    case Variable::TENSOR_2D:
+      return "Tensor2D";
+    case Variable::TENSOR_3D:
+      return "Tensor3D";
+    case Variable::HIGHER_ORDER_TENSOR:
+      return "HigherOrderTensor";
+    case Variable::ARRAY:
+      return "Array";
     default:
       mgis::raise("Variable_getType: unsupported type");
   }
@@ -98,9 +120,14 @@ void declareVariable(pybind11::module_& m) {
   pybind11::class_<Variable>(m, "Variable")
       .def_readonly("name", &Variable::name, "the name of the variable")
       .def_readonly("type", &Variable::type, "the type of the variable.")
+      .def_readonly("type_identifier", &Variable::type_identifier,
+                    "identifier of the type of the variable")
       .def("getType", Variable_getType,
            "the type of the variable. "
-           "Possible values are `Scalar`, `Vector`, `Stensor`, `Tensor`");
+           "Possible values are `Scalar`, `Vector`, `Vector1D`, `Vector2D`, "
+           "`Vector3D`, `Stensor`, `Stensor1D`, `Stensor2D`, `Stensor3D`, "
+           "`Tensor`, `Tensor1D`, `Tensor2D`, `Tensor3D`, `HigherOrderTensor` "
+           "and `Array`");
   // free functions
   m.def("getVariable", getVariableByString,
         pybind11::return_value_policy::reference);

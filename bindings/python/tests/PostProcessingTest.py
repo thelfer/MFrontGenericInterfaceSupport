@@ -31,6 +31,11 @@ class PostProcessingTest(unittest.TestCase):
             len(postprocessings) == 1, "invalid number of post-processings")
         self.assertTrue("PrincipalStrain" in postprocessings,
                         "invalid post-processing names")
+        o = b.getPostProcessingOutputs("PrincipalStrain")[0]
+        self.assertTrue(o.getType() == "Vector3D", "invalid output type")
+        self.assertTrue(
+            mgis_bv.getVariableTypeSymbolicRepresentation(o.type_identifier)
+            == "tvector<3, real>", "invalid output type identifier")
         pass
 
     def test_behaviour_data(self):
