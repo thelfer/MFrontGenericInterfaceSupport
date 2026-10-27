@@ -2526,6 +2526,32 @@ contains
     r = state_set_scalar_external_state_variable_by_name_wrapper(&
          s%ptr, convert_fortran_string(n), v)
   end function state_set_scalar_external_state_variable_by_name
+  !
+  function state_set_external_state_variable_by_name(s, n, v) result(r)
+    use, intrinsic :: iso_c_binding, only: c_loc
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function state_set_external_state_variable_by_name_wrapper(s, n, v) &
+            bind(c,name = 'mgis_bv_state_set_external_state_variable_by_name') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_char
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(c_ptr), intent(in),value :: v
+         type(mgis_status) :: r
+       end function state_set_external_state_variable_by_name_wrapper
+    end interface
+    type(State), intent(in) :: s
+    character(len=*), intent(in) :: n
+    real(kind=8), dimension(*), target :: v
+    type(mgis_status) :: r
+    r = state_set_external_state_variable_by_name_wrapper( &
+         s%ptr, convert_fortran_string(n), c_loc(v(1)))
+  end function state_set_external_state_variable_by_name
   ! \note the C function returns a pointer to the variable, the
   !       fortran funtion returns the value
   function state_get_external_state_variable_by_name(v, s, n) result(r)
