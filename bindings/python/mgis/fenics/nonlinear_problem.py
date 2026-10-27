@@ -408,6 +408,16 @@ class AbstractNonlinearProblem:
         self._init = False
 
     def update_tangent_blocks(self):
+        K = self.material.data_manager.K
+        if self.material.rotation_matrix is not None:
+            # all the blocks are rotated at once, out of place, so that
+            # data_manager.K stays in the material frame
+            gK = np.empty_like(K)
+            mgis_bv.rotateTangentOperatorBlocks(gK.reshape(-1),
+                                                self.material.behaviour,
+                                                K.reshape(-1),
+                                                self.rotation_values)
+            K = gK
         buff = 0
         for (i, block) in enumerate(self.block_names):
             f, g = block
@@ -421,32 +431,27 @@ class AbstractNonlinearProblem:
                         "'{}' could not be found as a flux or an internal state variable."
                     )
             block_shape = self.flattened_block_shapes[i]
-            tang_block_vals = self.material.data_manager.K[:, buff:buff +
-                                                           block_shape].ravel(
-                                                           )
-            if self.material.rotation_matrix is not None:
-                mgis_bv.rotateTangentOperatorBlocks(tang_block_vals,
-                                                    self.material.behaviour,
-                                                    self.rotation_values)
+            tang_block_vals = K[:, buff:buff + block_shape].ravel()
             t.vector().set_local(tang_block_vals)
             t.vector().apply("insert")
             buff += block_shape
 
     def update_fluxes(self):
+        thf = self.material.data_manager.s1.thermodynamic_forces
+        if self.material.rotation_matrix is not None:
+            # all the fluxes are rotated at once, out of place, so that the
+            # state of the data manager stays in the material frame
+            gthf = np.empty_like(thf)
+            mgis_bv.rotateThermodynamicForces(gthf.reshape(-1),
+                                              self.material.behaviour,
+                                              thf.reshape(-1),
+                                              self.rotation_values)
+            thf = gthf
         buff = 0
         for (i, f) in enumerate(self.material.get_flux_names()):
             flux = self.fluxes[f]
             block_shape = self.material.get_flux_sizes()[i]
-            flux_vals = self.material.data_manager.s1.thermodynamic_forces[:,
-                                                                           buff:
-                                                                           buff
-                                                                           +
-                                                                           block_shape].ravel(
-                                                                           )
-            if self.material.rotation_matrix is not None:
-                mgis_bv.rotateThermodynamicForces(flux_vals,
-                                                  self.material.behaviour,
-                                                  self.rotation_values)
+            flux_vals = thf[:, buff:buff + block_shape].ravel()
             flux.function.vector().set_local(flux_vals)
             flux.function.vector().apply("insert")
             buff += block_shape
@@ -458,9 +463,6 @@ class AbstractNonlinearProblem:
             gradient.update()
             block_shape = self.material.get_gradient_sizes()[i]
             grad_vals = gradient.function.vector().get_local()
-            if self.material.rotation_matrix is not None:
-                mgis_bv.rotateGradients(grad_vals, self.material.behaviour,
-                                        self.rotation_values)
             if gradient.shape > 0:
                 grad_vals = grad_vals.reshape(
                     (self.material.data_manager.n, gradient.shape))
@@ -469,6 +471,12 @@ class AbstractNonlinearProblem:
             self.material.data_manager.s1.gradients[:, buff:buff +
                                                     block_shape] = grad_vals
             buff += block_shape
+        if self.material.rotation_matrix is not None:
+            # all the gradients are rotated at once, from the global frame to
+            # the material frame
+            mgis_bv.rotateGradients(
+                self.material.data_manager.s1.gradients.reshape(-1),
+                self.material.behaviour, self.rotation_values)
 
     def update_internal_state_variables(self):
         """Performs update of internal state variables"""
