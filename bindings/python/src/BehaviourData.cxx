@@ -20,13 +20,14 @@
 
 void declareBehaviourData(pybind11::module_& m);
 
-static pybind11::object BehaviourData_getK(mgis::behaviour::BehaviourData& d) {
+static pybind11::object BehaviourData_getK(pybind11::object self) {
+  auto& d = self.cast<mgis::behaviour::BehaviourData&>();
   if (d.s0.b.to_blocks.size() == 1u) {
     const auto s =
         getVariableSize(d.s0.b.to_blocks.front().first, d.s0.b.hypothesis);
-    return mgis::python::wrapInNumPyArray(d.K, s);
+    return mgis::python::wrapInNumPyArray(d.K, s, self);
   }
-  return mgis::python::wrapInNumPyArray(d.K);
+  return mgis::python::wrapInNumPyArray(d.K, self);
 }  // end of MaterialStateManager_getK
 
 void declareBehaviourData(pybind11::module_& m) {
