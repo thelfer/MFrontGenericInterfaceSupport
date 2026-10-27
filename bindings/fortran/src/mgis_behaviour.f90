@@ -336,6 +336,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_finite_strain_behaviour_options_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_finite_strain_behaviour_options
   !
@@ -447,7 +449,7 @@ contains
          type(mgis_status) :: res
        end function rotate_gradients_in_place_wrapper
     end interface
-    real(kind=8), dimension(:), intent(out), target :: g
+    real(kind=8), dimension(:), intent(inout), target :: g
     type(Behaviour), intent(in) :: b
     real(kind=8), dimension(9), intent(in) :: r
     type(mgis_status) :: res
@@ -465,9 +467,9 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: mg
+         real(c_double), dimension(*), intent(out) :: mg
          type(c_ptr), intent(in), value :: b
-         real(c_double), dimension(:), intent(in) :: gg
+         real(c_double), dimension(*), intent(in) :: gg
          real(c_double), dimension(9), intent(in) :: r
          type(mgis_status) :: res
        end function rotate_gradients_out_of_place_wrapper
@@ -492,14 +494,14 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: g
+         real(c_double), dimension(*), intent(inout) :: g
          type(c_ptr), intent(in), value :: b
          real(c_double), dimension(9), intent(in) :: r
-         integer(kind=c_size_t) :: s
+         integer(kind=c_size_t), intent(in), value :: s
          type(mgis_status) :: res
        end function rotate_array_of_gradients_in_place_wrapper
     end interface
-    real(kind=8), dimension(:), intent(out) :: g
+    real(kind=8), dimension(:), intent(inout) :: g
     type(Behaviour), intent(in) :: b
     real(kind=8), dimension(9), intent(in) :: r
     integer(kind=c_size_t) :: s
@@ -519,11 +521,11 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: mg
+         real(c_double), dimension(*), intent(out) :: mg
          type(c_ptr), intent(in), value :: b
-         real(c_double), dimension(:), intent(in) :: gg
+         real(c_double), dimension(*), intent(in) :: gg
          real(c_double), dimension(9), intent(in) :: r
-         integer(kind=c_size_t) :: s
+         integer(kind=c_size_t), intent(in), value :: s
          type(mgis_status) :: res
        end function rotate_array_of_gradients_out_of_place_wrapper
     end interface
@@ -547,13 +549,13 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: tf
+         real(c_double), dimension(*), intent(inout) :: tf
          type(c_ptr), intent(in), value :: b
          real(c_double), dimension(9), intent(in) :: r         
          type(mgis_status) :: res
        end function rotate_thermodynamic_forces_in_place_wrapper
     end interface
-    real(kind=8), dimension(:), intent(out) :: tf
+    real(kind=8), dimension(:), intent(inout) :: tf
     type(Behaviour), intent(in) :: b
     real(kind=8), dimension(9), intent(in) :: r
     type(mgis_status) :: res
@@ -571,9 +573,9 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: mtf
+         real(c_double), dimension(*), intent(out) :: mtf
          type(c_ptr), intent(in), value :: b
-         real(c_double), dimension(:), intent(in) :: gtf
+         real(c_double), dimension(*), intent(in) :: gtf
          real(c_double), dimension(9), intent(in) :: r
          type(mgis_status) :: ret
        end function rotate_thermodynamic_forces_out_of_place_wrapper
@@ -598,14 +600,14 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: tf
+         real(c_double), dimension(*), intent(inout) :: tf
          type(c_ptr), intent(in), value :: b
          real(c_double), dimension(9), intent(in) :: r
-         integer(kind=c_size_t) :: s
+         integer(kind=c_size_t), intent(in), value :: s
          type(mgis_status) :: ret
        end function rotate_array_of_thermodynamic_forces_in_place_wrapper
     end interface
-    real(kind=8), dimension(:), intent(out) :: tf
+    real(kind=8), dimension(:), intent(inout) :: tf
     type(Behaviour), intent(in) :: b
     real(kind=8), dimension(9), intent(in) :: r
     integer(kind=c_size_t) :: s
@@ -625,11 +627,11 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: mtf
+         real(c_double), dimension(*), intent(out) :: mtf
          type(c_ptr), intent(in), value :: b
-         real(c_double), dimension(:), intent(in) :: gtf
+         real(c_double), dimension(*), intent(in) :: gtf
          real(kind=8), dimension(9), intent(in) :: r
-         integer(kind=c_size_t) :: s
+         integer(kind=c_size_t), intent(in), value :: s
          type(mgis_status) :: ret
        end function rotate_array_of_thermodynamic_forces_out_of_place_wrapper
     end interface
@@ -653,13 +655,13 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: to
+         real(c_double), dimension(*), intent(inout) :: to
          type(c_ptr), intent(in), value :: b
          real(kind=8), dimension(9), intent(in) :: r         
          type(mgis_status) :: ret
        end function rotate_tangent_operator_blocks_in_place_wrapper
     end interface
-    real(kind=8), dimension(:), intent(out) :: to
+    real(kind=8), dimension(:), intent(inout) :: to
     type(Behaviour), intent(in) :: b
     real(kind=8), dimension(9), intent(in) :: r
     type(mgis_status) :: s
@@ -677,9 +679,9 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: mto
+         real(c_double), dimension(*), intent(out) :: mto
          type(c_ptr), intent(in), value :: b
-         real(c_double), dimension(:), intent(in) :: gto
+         real(c_double), dimension(*), intent(in) :: gto
          real(kind=8), dimension(9), intent(in) :: r         
          type(mgis_status) :: ret
        end function rotate_tangent_operator_blocks_out_of_place_wrapper
@@ -704,14 +706,14 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: to
+         real(c_double), dimension(*), intent(inout) :: to
          type(c_ptr), intent(in), value :: b
          real(c_double), dimension(9), intent(in) :: r
-         integer(kind=c_size_t) :: s
+         integer(kind=c_size_t), intent(in), value :: s
          type(mgis_status) :: res
        end function rotate_array_of_tangent_operator_blocks_in_place_wrapper
     end interface
-    real(kind=8), dimension(:), intent(out) :: to
+    real(kind=8), dimension(:), intent(inout) :: to
     type(Behaviour), intent(in) :: b
     real(kind=8), dimension(9), intent(in) :: r
     integer(kind=c_size_t) :: s
@@ -731,11 +733,11 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: mto
+         real(c_double), dimension(*), intent(out) :: mto
          type(c_ptr), intent(in), value :: b
-         real(c_double), dimension(:), intent(in) :: gto
+         real(c_double), dimension(*), intent(in) :: gto
          real(c_double), dimension(9), intent(in) :: r
-         integer(kind=c_size_t) :: s
+         integer(kind=c_size_t), intent(in), value :: s
          type(mgis_status) :: ret
        end function rotate_array_of_tangent_operator_blocks_out_of_place_wrapper
     end interface
@@ -1589,7 +1591,6 @@ contains
        return
     end if
     s = behaviour_get_external_state_variable_offset_wrapper(offset, b%ptr, nc)
-    write(*,*) "c: ", nc, offset
     o = offset+1
   end function behaviour_get_external_state_variable_offset
   !
@@ -2006,6 +2007,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_behaviour_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_behaviour
   !
@@ -2237,6 +2240,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_behaviour_data_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_behaviour_data
   !
@@ -2768,6 +2773,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_material_data_manager_initializer_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_material_data_manager_initializer
   !
@@ -2855,6 +2862,8 @@ contains
    type(mgis_status) :: r
    if (c_associated(ptr%ptr)) then
       r = free_behaviour_integration_options_wrapper(ptr%ptr)
+   else
+      r = report_success()
    end if
   end function free_behaviour_integration_options
   !
@@ -3695,6 +3704,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_material_data_manager_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_material_data_manager
   !
