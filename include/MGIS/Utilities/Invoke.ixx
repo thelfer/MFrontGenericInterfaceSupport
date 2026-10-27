@@ -13,7 +13,7 @@
 
 namespace mgis {
 
-#ifdef MANTA_USE_SOURCE_LOCATION_INFORMATION
+#ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
 
   template <typename F, typename... ArgumentsTypes>
   invoke_result_t<F, ArgumentsTypes...> invokeCheckErrno(
@@ -53,7 +53,7 @@ namespace mgis {
         }
         return r;
       } catch (...) {
-        registerExceptionInErrorBacktrace(ctx, l);
+        std::ignore = registerExceptionInErrorBacktrace(ctx, l);
       }
       return {};
     }
@@ -81,7 +81,7 @@ namespace mgis {
                         std::forward<ArgumentsTypes>(args)...);
         return r;
       } catch (...) {
-        registerExceptionInErrorBacktrace(ctx, l);
+        std::ignore = registerExceptionInErrorBacktrace(ctx, l);
       }
       return {};
     }
