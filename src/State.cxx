@@ -36,6 +36,7 @@ namespace mgis::behaviour {
       this->internal_state_variables = std::move(src.internal_state_variables);
       this->stored_energy = src.stored_energy;
       this->dissipated_energy = src.dissipated_energy;
+      this->mass_density = src.mass_density;
       this->external_state_variables = std::move(src.external_state_variables);
     }
     return *this;
@@ -52,6 +53,7 @@ namespace mgis::behaviour {
       this->internal_state_variables = src.internal_state_variables;
       this->stored_energy = src.stored_energy;
       this->dissipated_energy = src.dissipated_energy;
+      this->mass_density = src.mass_density;
       this->external_state_variables = src.external_state_variables;
     }
     return *this;
