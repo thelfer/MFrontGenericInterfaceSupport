@@ -26,7 +26,7 @@ namespace mgis::function::internals {
             StensorEvaluatorConcept CauchyStressEvaluatorType>
   requires(
       std::is_convertible_v<evaluator_result<StiffnessEvaluator>,
-                            tfel::material::tangent_operator<ResultFlag,
+                            tfel::material::tangent_operator<SourceFlag,
                                                              N,
                                                              ::mgis::real>>)  //
       struct ConvertFiniteStrainStiffnessEvaluator {
@@ -183,7 +183,7 @@ namespace mgis::function::internals {
           DeformationGradientEvaluatorType1,
           CauchyStressEvaluatorType>&) noexcept {
     const auto value =
-        tfel::material::tangent_operator<SourceFlag, N, ::mgis::real>{};
+        tfel::material::tangent_operator<ResultFlag, N, ::mgis::real>{};
     return value.size();
   }  // end of getNumberOfComments
 
@@ -209,7 +209,7 @@ namespace mgis::function::internals {
     operator()(const StiffnessEvaluator& K) const requires(
         std::is_convertible_v<
             evaluator_result<StiffnessEvaluator>,
-            tfel::material::tangent_operator<ResultFlag, N, ::mgis::real>>) {
+            tfel::material::tangent_operator<SourceFlag, N, ::mgis::real>>) {
       return ConvertFiniteStrainStiffnessEvaluator<
           N, ResultFlag, SourceFlag, StiffnessEvaluator,
           DeformationGradientEvaluatorType0, DeformationGradientEvaluatorType1,
