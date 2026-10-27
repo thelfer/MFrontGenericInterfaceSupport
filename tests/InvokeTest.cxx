@@ -29,6 +29,7 @@ struct InvokeTest final : public tfel::tests::TestCase {
     this->test1();
     this->test2();
     this->test3();
+    this->test4();
     return this->result;
   }
 
@@ -83,6 +84,23 @@ struct InvokeTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(!r4.has_value());
     }
   }  // end of test3
+
+  void test4() {
+    using namespace mgis;
+    auto f = [](const int x) {
+      if (x < 0) {
+        raise<std::range_error>("argument shall be positive");
+      }
+      return 2 * x;
+    };
+    auto try_invoke = [&f](const int x) -> bool {
+      auto ctx = Context{};
+      MGIS_TRY_INVOKE(v, ctx, f, x);
+      return v == 2 * x;
+    };
+    TFEL_TESTS_ASSERT(try_invoke(12));
+    TFEL_TESTS_ASSERT(!try_invoke(-12));
+  }  // end of test4
 };   // end of InvokeTest
 
 TFEL_TESTS_GENERATE_PROXY(InvokeTest, "InvokeTest");
