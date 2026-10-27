@@ -30,7 +30,7 @@ namespace mgis::function::cuda {
   }  // end of kernel
 
   template <typename CallableType, typename SpaceSizeType>
-  [[nodiscard]] bool call_kernel(Context& ctx,
+  [[nodiscard]] bool call_kernel(AbstractErrorHandler& ctx,
                                  const CUDAExecutionConfiguration& c,
                                  CallableType f,
                                  const SpaceSizeType s) {
@@ -42,13 +42,11 @@ namespace mgis::function::cuda {
     apply_kernel<<<nblocks, nthreads>>>(f, s);
     const auto cuda_launch_error = cudaGetLastError();
     if (cuda_launch_error != cudaSuccess) {
-      return ctx.registerErrorMessage(
-          std::string{cudaGetErrorString(cuda_launch_error)});
+      return ctx.registerErrorMessage(cudaGetErrorString(cuda_launch_error));
     }
     const auto cuda_kernel_error = cudaDeviceSynchronize();
     if (cuda_kernel_error != cudaSuccess) {
-      return ctx.registerErrorMessage(
-          std::string{cudaGetErrorString(cuda_kernel_error)});
+      return ctx.registerErrorMessage(cudaGetErrorString(cuda_kernel_error));
     }
     return true;
   }  // end of call_kernel
@@ -58,7 +56,7 @@ namespace mgis::function::cuda {
 namespace mgis::function {
 
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
-  bool assign(Context& ctx,
+  bool assign(AbstractErrorHandler& ctx,
               const CUDAExecutionConfiguration& c,
               FunctionType& f,
               const EvaluatorType e)  //

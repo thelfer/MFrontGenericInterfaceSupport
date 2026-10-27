@@ -48,8 +48,8 @@ struct CUDAFunctionTest final : public tfel::tests::TestCase {
     constexpr auto layout2 =
         FunctionDataLayoutDescription{.data_size = 2, .data_stride = 2};
     auto ctx = Context{};
-    auto a = thrust::universal_vector<real>{4};
-    auto b = thrust::universal_vector<real>{4};
+    auto a = thrust::universal_vector<real>(4);
+    auto b = thrust::universal_vector<real>(4);
     for (mgis::size_type i = 0; i != 4; ++i) {
       b[i] = 2 * i;
     }
@@ -98,7 +98,7 @@ struct CUDAFunctionTest final : public tfel::tests::TestCase {
       }
     }
     //
-    auto c = thrust::universal_vector<real>{4 * 2};
+    auto c = thrust::universal_vector<real>(4 * 2);
     for (mgis::size_type i = 0; i != 4; ++i) {
       c[i * 2] = 2 * i;
       c[i * 2 + 1] = -3 * static_cast<real>(i);
@@ -141,16 +141,16 @@ struct CUDAFunctionTest final : public tfel::tests::TestCase {
             2) |
         as_tvector<2>;
     TFEL_TESTS_ASSERT(f2.check(ctx));
-    auto results = thrust::universal_vector<real>{4};
+    auto results = thrust::universal_vector<real>(4);
     auto rview =
         FunctionView<BasicLinearSpace, FunctionDataLayoutDescription{}, true>(
             space, std::span<real>(thrust::raw_pointer_cast(results.data()), 4),
             2);
     auto r = rview | as_tvector<2>;
-    auto results2 = thrust::universal_vector<real>{2};
+    auto results2 = thrust::universal_vector<real>(2);
     auto r2 = FunctionView<BasicLinearSpace,
                            FunctionDataLayoutDescription{1, 1}, true>(
-        space, std::span<real>(thrust::raw_pointer_cast(results.data()), 4));
+        space, std::span<real>(thrust::raw_pointer_cast(results2.data()), 2));
     TFEL_TESTS_ASSERT(r.check(ctx));
     auto reset = [&results, &results2] {
       std::fill(results.begin(), results.end(), 0.);
@@ -196,6 +196,15 @@ struct CUDAFunctionTest final : public tfel::tests::TestCase {
     {
       reset();
       const auto ok = assign(ctx, conf, r, f | add(f2));
+      TFEL_TESTS_ASSERT(ok);
+      TFEL_TESTS_ASSERT(std::abs(r(0)[0] - 2) < eps);
+      TFEL_TESTS_ASSERT(std::abs(r(0)[1] - 0) < eps);
+      TFEL_TESTS_ASSERT(std::abs(r(1)[0] - 6) < eps);
+      TFEL_TESTS_ASSERT(std::abs(r(1)[1] - 0) < eps);
+    }
+    {
+      reset();
+      const auto ok = assign(ctx, conf, rview, view<2>(f | add(f2)));
       TFEL_TESTS_ASSERT(ok);
       TFEL_TESTS_ASSERT(std::abs(r(0)[0] - 2) < eps);
       TFEL_TESTS_ASSERT(std::abs(r(0)[1] - 0) < eps);
