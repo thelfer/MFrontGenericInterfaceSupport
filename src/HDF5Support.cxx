@@ -301,12 +301,14 @@ namespace mgis::utilities::hdf5 {
     try {
       const auto s = odataset->getSpace();
       if (s.getSimpleExtentNdims() != 1) {
-        return ctx.registerErrorMessage("madnex::read: invalid type size");
+        return ctx.registerErrorMessage("invalid rank of dataset '" + d +
+                                        "' (one-dimensional data expected)");
       }
       hsize_t dims[1];
       s.getSimpleExtentDims(dims);
       if (dims[0] != 1) {
-        return ctx.registerErrorMessage("madnex::read: invalid type");
+        return ctx.registerErrorMessage("invalid size of dataset '" + d +
+                                        "' (one value expected)");
       }
       odataset->read(&o, getNativeType<real>());
       return true;
