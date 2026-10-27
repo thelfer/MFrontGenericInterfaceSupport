@@ -454,10 +454,10 @@ namespace mgis::function {
 
   constexpr bool FunctionView<Space, layout, is_mutable>::checkCompatibility(
       const FunctionView& v) const {
-    if (areEquivalent(this->getSpace(), v.getSpacePointer())) {
+    if (!areEquivalent(this->getSpace(), v.getSpace())) {
       return false;
     }
-    return this->data_size == v.getNumberOfComponents();
+    return this->getNumberOfComponents() == v.getNumberOfComponents();
   }  // end of checkCompatibility
 
   template <LinearFunctionalSpaceConcept Space,
