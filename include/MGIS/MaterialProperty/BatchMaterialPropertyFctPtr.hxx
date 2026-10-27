@@ -40,7 +40,8 @@ extern "C" {
  * device only updates them when an event occurs at a point (the `stlpar`
  * backend merges the statuses of the points by a reduction on the host). They
  * are initialized by `mgis_mp_initializeBatchStatistics` and analysed by the
- * report function of the material property.
+ * report function of the material property, on the host: they must be
+ * accessible by the host and by the device (see `mgis_mp_BatchData`).
  */
 typedef struct mgis_mp_BatchStatistics {
   /*!
@@ -122,7 +123,10 @@ typedef struct mgis_mp_BatchData {
    * \brief statistics of the evaluation, or null. If given, the output
    * status only reports the errors of the batch, and the report function
    * gives the result once the computations are completed. Asynchronous
-   * evaluations require statistics.
+   * evaluations require statistics. The statistics must be accessible by
+   * the host and by the device where the computations are performed
+   * (managed or shared memory if the memory space of the library is
+   * `device`).
    */
   mgis_mp_BatchStatistics* statistics;
   /*!
