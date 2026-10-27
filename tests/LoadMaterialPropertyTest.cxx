@@ -133,9 +133,9 @@ static void test3(const std::string& library) {
     auto s = OutputStatus{};
     s.status = 2;
     const auto E = mp.fct(&s, &T, 1, op);
-    check(s.status == 1, "invalid output status");
     check(s.status == 1,
           "invalid output status ('" + std::to_string(s.status) + "')");
+    check(s.bounds_status == 1, "invalid bound status");
     check(std::abs(E - T) < T * eps, "invalid output value");
   }
 }

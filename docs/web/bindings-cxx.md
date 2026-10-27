@@ -102,7 +102,7 @@ The first overload of the `load` function takes three parameters:
 
 ~~~~{.cxx}
 const auto h = Hypothesis::TRIDIMENSIONAL;
-const auto b = load('src/libBehaviour.so', 'Norton', h);
+const auto b = load("src/libBehaviour.so", "Norton", h);
 ~~~~
 
 > **The `mgis::behaviour` namespace**
@@ -152,7 +152,7 @@ const auto h = Hypothesis::TRIDIMENSIONAL;
 auto o = FiniteStrainBehaviourOptions{};
 o.stress_measure = FiniteStrainBehaviourOptions::PK1;
 o.tangent_operator = FiniteStrainBehaviourOptions::DPK1_DF;
-const auto b = load(o, 'src/libBehaviour.so', 'Norton', h);
+const auto b = load(o, "src/libBehaviour.so", "Plasticity", h);
 ~~~~
 
 ## The `Behaviour` object
@@ -175,17 +175,37 @@ struct Variable {
   //! name of the variable
   std::string name;
   //! type of the variable
-  enum Type { SCALAR = 0, VECTOR = 1, STENSOR = 2, TENSOR = 3} type;
-};  // end of struct Description
+  enum Type {
+    SCALAR = 0,
+    VECTOR = 2,
+    VECTOR_1D = 10,
+    VECTOR_2D = 18,
+    VECTOR_3D = 26,
+    STENSOR = 1,
+    STENSOR_1D = 9,
+    STENSOR_2D = 17,
+    STENSOR_3D = 25,
+    TENSOR = 3,
+    TENSOR_1D = 11,
+    TENSOR_2D = 19,
+    TENSOR_3D = 27,
+    HIGHER_ORDER_TENSOR = 4,
+    ARRAY = 5
+  } type;
+  //! type identifier
+  int type_identifier = 0;
+};  // end of struct Variable
 ~~~~
 
-It contains two data members:
+It contains three data members:
 
 - the name
 - the type
+- the type identifier, which describes more precisely the type of the
+  variable
 
-For material properties (and external state variables), only scalar
-variables are allowed.
+For material properties, only scalar variables are allowed. External
+state variables may be scalars, vectors, symmetric tensors or tensors.
 
 With those informations, a solver developer is already able to check the
 validity of an input file.
@@ -254,7 +274,7 @@ following meaning:
   computed.
 - if K[0] is in [1.5:2.5]: the secant operator must be
   computed.
-- if K[0] is in [2.5:3.5]: the secant operator must be
+- if K[0] is in [2.5:3.5]: the tangent operator must be
   computed.
 - if K[0] is greater than 3.5, the consistent tangent operator
   must be computed.
@@ -279,6 +299,9 @@ tangent operator returned by the behaviour:
   is returned
 - if 1.5<K[2]<2.5, the derivative of the first Piola-Kirchoff
   stress with respect to the deformation gradient is returned
+- if 2.5<K[2]<3.5, the derivative of the Kirchhoff stress with
+  respect to the spatial increment of the deformation gradient
+  is returned
 
 It is important to note that, even if no stiffness matrix is requested,
 the `K` array must a least be big enough to store the kind of
@@ -306,9 +329,9 @@ the state of the material at one integration points at a given time:
   integration.
 - `internal_state_variables`: pointer to an array containing the values of
   the internal state variables.
-- `stored_enery`: pointer to the value of the stored energy (computed by
+- `stored_energy`: pointer to the value of the stored energy (computed by
   `@InternalEnergy` in `MFront` files) This output is optional.
-- `dissipated_enery`: pointer to the value of the dissipated energy (computed by
+- `dissipated_energy`: pointer to the value of the dissipated energy (computed by
   `@DissipatedEnergy` in `MFront` files) This output is optional.
 - `external_state_variables`: pointer to an array containing the values
   of the external state variables. This is left unmodified by the
