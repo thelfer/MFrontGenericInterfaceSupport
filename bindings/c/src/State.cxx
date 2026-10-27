@@ -80,6 +80,9 @@ mgis_status mgis_bv_state_set_gradient_by_offset(mgis_bv_State* const s,
   if (n == 0) {
     return mgis_report_failure("invalid argument (null size)");
   }
+  if ((o > s->gradients.size()) || (n > s->gradients.size() - o)) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     setGradient(*s, o, n, v);
   } catch (...) {
@@ -96,6 +99,9 @@ mgis_status mgis_bv_state_get_gradient_by_offset(mgis_real** v,
   }
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
+  }
+  if (o >= s->gradients.size()) {
+    return mgis_report_failure("invalid argument (offset out of range)");
   }
   try {
     *v = getGradient(*s, o);
@@ -157,6 +163,10 @@ mgis_status mgis_bv_state_set_thermodynamic_force_by_offset(
   if (n == 0) {
     return mgis_report_failure("invalid argument (null size)");
   }
+  if ((o > s->thermodynamic_forces.size()) ||
+      (n > s->thermodynamic_forces.size() - o)) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     setThermodynamicForce(*s, o, n, v);
   } catch (...) {
@@ -172,6 +182,9 @@ mgis_status mgis_bv_state_get_thermodynamic_force_by_offset(
   }
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
+  }
+  if (o >= s->thermodynamic_forces.size()) {
+    return mgis_report_failure("invalid argument (offset out of range)");
   }
   try {
     *v = getThermodynamicForce(*s, o);
@@ -223,6 +236,9 @@ mgis_status mgis_bv_state_set_material_property_by_offset(
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
   }
+  if (o >= s->material_properties.size()) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     setMaterialProperty(*s, o, v);
   } catch (...) {
@@ -238,6 +254,9 @@ mgis_status mgis_bv_state_get_material_property_by_offset(
   }
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
+  }
+  if (o >= s->material_properties.size()) {
+    return mgis_report_failure("invalid argument (offset out of range)");
   }
   try {
     *v = getMaterialProperty(*s, o);
@@ -315,6 +334,10 @@ mgis_status mgis_bv_state_set_internal_state_variable_by_offset(
   if (n == 0) {
     return mgis_report_failure("invalid argument (null size)");
   }
+  if ((o > s->internal_state_variables.size()) ||
+      (n > s->internal_state_variables.size() - o)) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     setInternalStateVariable(*s, o, n, v);
   } catch (...) {
@@ -330,6 +353,9 @@ mgis_status mgis_bv_state_get_internal_state_variable_by_offset(
   }
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
+  }
+  if (o >= s->internal_state_variables.size()) {
+    return mgis_report_failure("invalid argument (offset out of range)");
   }
   try {
     *v = getInternalStateVariable(*s, o);
@@ -416,6 +442,9 @@ mgis_status mgis_bv_state_set_scalar_external_state_variable_by_offset(
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
   }
+  if (o >= s->external_state_variables.size()) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     setExternalStateVariable(*s, o, v);
   } catch (...) {
@@ -435,6 +464,10 @@ mgis_status mgis_bv_state_set_external_state_variable_by_offset(
   if ((v == nullptr) && (vs != 0)) {
     return mgis_report_failure("invalid argument (null values)");
   }
+  if ((o > s->external_state_variables.size()) ||
+      (vs > s->external_state_variables.size() - o)) {
+    return mgis_report_failure("invalid argument (offset out of range)");
+  }
   try {
     setExternalStateVariable(*s, o, std::span<const mgis::real>(v, vs));
   } catch (...) {
@@ -450,6 +483,9 @@ mgis_status mgis_bv_state_get_external_state_variable_by_offset(
   }
   if (s == nullptr) {
     return mgis_report_failure("invalid argument (null state)");
+  }
+  if (o >= s->external_state_variables.size()) {
+    return mgis_report_failure("invalid argument (offset out of range)");
   }
   try {
     *v = getExternalStateVariable(*s, o);
