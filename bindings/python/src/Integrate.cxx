@@ -110,7 +110,7 @@ static int BehaviourDataView_executePostProcessing(
     mgis::behaviour::BehaviourDataView& v,
     const mgis::behaviour::Behaviour& b,
     const std::string& n) {
-  const auto output = mgis::python::mgis_convert_to_span(o);
+  const auto output = mgis::python::mgis_convert_to_mutable_span(o);
   return mgis::behaviour::executePostProcessing(output, v, b, n);
 }
 
@@ -119,7 +119,7 @@ MaterialDataManager_executePostProcessing(
     pybind11::object o,
     mgis::behaviour::MaterialDataManager& m,
     const std::string& n) {
-  const auto output = mgis::python::mgis_convert_to_span(o);
+  const auto output = mgis::python::mgis_convert_to_mutable_span(o);
   return mgis::behaviour::executePostProcessing(output, m, n);
 }
 
@@ -130,7 +130,7 @@ MaterialDataManager_executePostProcessing2(
     const std::string& n,
     const mgis::size_type b,
     const mgis::size_type e) {
-  const auto output = mgis::python::mgis_convert_to_span(o);
+  const auto output = mgis::python::mgis_convert_to_mutable_span(o);
   return mgis::behaviour::executePostProcessing(output, m, n, b, e);
 }
 
@@ -140,7 +140,7 @@ MaterialDataManager_executePostProcessing3(
     mgis::ThreadPool& t,
     mgis::behaviour::MaterialDataManager& m,
     const std::string& n) {
-  const auto output = mgis::python::mgis_convert_to_span(o);
+  const auto output = mgis::python::mgis_convert_to_mutable_span(o);
   return mgis::behaviour::executePostProcessing(output, t, m, n);
 }
 

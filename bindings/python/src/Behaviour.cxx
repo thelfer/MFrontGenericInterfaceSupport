@@ -25,15 +25,17 @@ static void rotate_gradients_in_place_member(
     const mgis::behaviour::Behaviour &b,
     pybind11::object &g,
     pybind11::object &r) {
-  mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(g), b,
-                                   mgis::python::mgis_convert_to_span(r));
+  mgis::behaviour::rotateGradients(
+      mgis::python::mgis_convert_to_mutable_span(g), b,
+      mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_gradients_in_place_member
 
 static void rotate_gradients_in_place(pybind11::object &g,
                                       const mgis::behaviour::Behaviour &b,
                                       pybind11::object &r) {
-  mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(g), b,
-                                   mgis::python::mgis_convert_to_span(r));
+  mgis::behaviour::rotateGradients(
+      mgis::python::mgis_convert_to_mutable_span(g), b,
+      mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_gradients_in_place
 
 static void rotate_gradients_out_of_place_member(
@@ -41,18 +43,20 @@ static void rotate_gradients_out_of_place_member(
     pybind11::object &mg,
     pybind11::object &gg,
     pybind11::object &r) {
-  mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(mg), b,
-                                   mgis::python::mgis_convert_to_span(gg),
-                                   mgis::python::mgis_convert_to_span(r));
+  mgis::behaviour::rotateGradients(
+      mgis::python::mgis_convert_to_mutable_span(mg), b,
+      mgis::python::mgis_convert_to_span(gg),
+      mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_gradients_out_of_place_member
 
 static void rotate_gradients_out_of_place(pybind11::object &mg,
                                           const mgis::behaviour::Behaviour &b,
                                           pybind11::object &gg,
                                           pybind11::object &r) {
-  mgis::behaviour::rotateGradients(mgis::python::mgis_convert_to_span(mg), b,
-                                   mgis::python::mgis_convert_to_span(gg),
-                                   mgis::python::mgis_convert_to_span(r));
+  mgis::behaviour::rotateGradients(
+      mgis::python::mgis_convert_to_mutable_span(mg), b,
+      mgis::python::mgis_convert_to_span(gg),
+      mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_gradients_out_of_place
 
 static void rotate_thermodynamic_forces_in_place_member(
@@ -60,7 +64,7 @@ static void rotate_thermodynamic_forces_in_place_member(
     pybind11::object &g,
     pybind11::object &r) {
   mgis::behaviour::rotateThermodynamicForces(
-      mgis::python::mgis_convert_to_span(g), b,
+      mgis::python::mgis_convert_to_mutable_span(g), b,
       mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_thermodynamic_forces_in_place_member
 
@@ -69,7 +73,7 @@ static void rotate_thermodynamic_forces_in_place(
     const mgis::behaviour::Behaviour &b,
     pybind11::object &r) {
   mgis::behaviour::rotateThermodynamicForces(
-      mgis::python::mgis_convert_to_span(g), b,
+      mgis::python::mgis_convert_to_mutable_span(g), b,
       mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_thermodynamic_forces_in_place
 
@@ -79,7 +83,7 @@ static void rotate_thermodynamic_forces_out_of_place_member(
     pybind11::object &gg,
     pybind11::object &r) {
   mgis::behaviour::rotateThermodynamicForces(
-      mgis::python::mgis_convert_to_span(mg), b,
+      mgis::python::mgis_convert_to_mutable_span(mg), b,
       mgis::python::mgis_convert_to_span(gg),
       mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_thermodynamic_forces_out_of_place_member
@@ -90,7 +94,7 @@ static void rotate_thermodynamic_forces_out_of_place(
     pybind11::object &gg,
     pybind11::object &r) {
   mgis::behaviour::rotateThermodynamicForces(
-      mgis::python::mgis_convert_to_span(mg), b,
+      mgis::python::mgis_convert_to_mutable_span(mg), b,
       mgis::python::mgis_convert_to_span(gg),
       mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_thermodynamic_forces_out_of_place
@@ -100,7 +104,7 @@ static void rotate_tangent_operator_blocks_in_place_member(
     pybind11::object &g,
     pybind11::object &r) {
   mgis::behaviour::rotateTangentOperatorBlocks(
-      mgis::python::mgis_convert_to_span(g), b,
+      mgis::python::mgis_convert_to_mutable_span(g), b,
       mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_tangent_operator_blocks_in_place_member
 
@@ -109,7 +113,7 @@ static void rotate_tangent_operator_blocks_in_place(
     const mgis::behaviour::Behaviour &b,
     pybind11::object &r) {
   mgis::behaviour::rotateTangentOperatorBlocks(
-      mgis::python::mgis_convert_to_span(g), b,
+      mgis::python::mgis_convert_to_mutable_span(g), b,
       mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_tangent_operator_blocks_in_place
 
@@ -119,7 +123,7 @@ static void rotate_tangent_operator_blocks_out_of_place_member(
     pybind11::object &gg,
     pybind11::object &r) {
   mgis::behaviour::rotateTangentOperatorBlocks(
-      mgis::python::mgis_convert_to_span(mg), b,
+      mgis::python::mgis_convert_to_mutable_span(mg), b,
       mgis::python::mgis_convert_to_span(gg),
       mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_tangent_operator_blocks_out_of_place_member
@@ -130,7 +134,7 @@ static void rotate_tangent_operator_blocks_out_of_place(
     pybind11::object &gg,
     pybind11::object &r) {
   mgis::behaviour::rotateTangentOperatorBlocks(
-      mgis::python::mgis_convert_to_span(mg), b,
+      mgis::python::mgis_convert_to_mutable_span(mg), b,
       mgis::python::mgis_convert_to_span(gg),
       mgis::python::mgis_convert_to_span(r));
 }  // end of rotate_tangent_operator_blocks_out_of_place

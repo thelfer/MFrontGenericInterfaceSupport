@@ -103,4 +103,21 @@ namespace mgis::python {
     return {static_cast<double*>(i.ptr), static_cast<mgis_size_type>(i.size)};
   }  // end of mgis_convert_to_span
 
+  std::span<mgis::real> mgis_convert_to_mutable_span(
+      const pybind11::object& o) {
+    const auto a = pybind11::array_t<double>(o);
+    // the values written in a converted copy would be lost
+    if ((!a.is(o)) && (!pybind11::module_::import("numpy")
+                            .attr("may_share_memory")(a, o)
+                            .cast<bool>())) {
+      mgis::raise(
+          "convert_to_span: expected an array of float64 values "
+          "(the values would be written in a converted copy)");
+    }
+    if (!a.writeable()) {
+      mgis::raise("convert_to_span: expected a writable array");
+    }
+    return mgis_convert_to_span(a);
+  }  // end of mgis_convert_to_mutable_span
+
 }  // end of namespace mgis::python

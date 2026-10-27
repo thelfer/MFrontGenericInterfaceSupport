@@ -110,6 +110,14 @@ namespace mgis::python {
                                              const mgis::size_type);
 
   std::span<mgis::real> mgis_convert_to_span(const pybind11::array_t<double>&);
+  /*!
+   * \brief convert an object in which values are written into a span.
+   * Contrary to `mgis_convert_to_span`, an exception is thrown if the object
+   * is converted into a copy, in which the written values would be lost, or
+   * if the object is read-only.
+   * \param[in] o: object
+   */
+  std::span<mgis::real> mgis_convert_to_mutable_span(const pybind11::object&);
 
 }  // end of namespace mgis::python
 
