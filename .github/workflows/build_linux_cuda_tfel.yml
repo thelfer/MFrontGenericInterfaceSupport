@@ -73,4 +73,5 @@ jobs:
       # There are currently no runners with GPU available,
       # so the only thing we can do is compile the tests
       run: |
+        source ${{github.workspace}}/install-tfel/share/tfel/env/env.sh
         cmake --build ${{github.workspace}}/build --target build-tests -j $(nproc)
