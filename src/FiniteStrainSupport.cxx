@@ -770,6 +770,12 @@ namespace mgis::behaviour {
           "convertFiniteStrainTangentOperator: "
           "invalid array size");
     }
+    // check that the tangent operator blocks are allocated
+    if (m.K.size() != m.n * m.K_stride) {
+      mgis::raise(
+          "convertFiniteStrainTangentOperator: "
+          "the array of tangent operator blocks has not been allocated");
+    }
     convertFiniteStrainTangentOperator_PK1_2D(K, m, 0, m.n);
   }  // end of convertFiniteStrainTangentOperator_PK1_2D
 
@@ -790,6 +796,12 @@ namespace mgis::behaviour {
       mgis::raise(
           "convertFiniteStrainTangentOperator: "
           "invalid array size");
+    }
+    // check that the tangent operator blocks are allocated
+    if (m.K.size() != m.n * m.K_stride) {
+      mgis::raise(
+          "convertFiniteStrainTangentOperator: "
+          "the array of tangent operator blocks has not been allocated");
     }
     convertFiniteStrainTangentOperator_PK1_3D(K, m, 0, m.n);
   }  // end of convertFiniteStrainTangentOperator_PK1_3D
