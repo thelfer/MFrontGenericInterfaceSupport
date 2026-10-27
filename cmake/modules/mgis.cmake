@@ -52,6 +52,23 @@ function(mgis_library name)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake"
                 "${CMAKE_CURRENT_BINARY_DIR}/${name}ConfigVersion.cmake"
           DESTINATION ${mgis_export_install_path})
+  # forwarding files installed where find_package looks for the package,
+  # including the previous ones by a relative path
+  if(MGIS_APPEND_SUFFIX)
+    set(_package_install_path "lib${LIB_SUFFIX}/cmake/${name}-${MGIS_SUFFIX}")
+  else(MGIS_APPEND_SUFFIX)
+    set(_package_install_path "lib${LIB_SUFFIX}/cmake/${name}")
+  endif(MGIS_APPEND_SUFFIX)
+  file(RELATIVE_PATH _export_relative_path
+       "${CMAKE_INSTALL_PREFIX}/${_package_install_path}"
+       "${CMAKE_INSTALL_PREFIX}/${mgis_export_install_path}")
+  foreach(_file ${name}Config.cmake ${name}ConfigVersion.cmake)
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/forwarding/${_file}"
+         "include(\"\${CMAKE_CURRENT_LIST_DIR}/${_export_relative_path}/${_file}\")\n")
+  endforeach()
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/forwarding/${name}Config.cmake"
+                "${CMAKE_CURRENT_BINARY_DIR}/forwarding/${name}ConfigVersion.cmake"
+          DESTINATION ${_package_install_path})
   if(enable-static)
     add_library(${name}-static STATIC ${ARGN})
     # set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}-static")
