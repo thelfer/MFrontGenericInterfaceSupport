@@ -55,7 +55,7 @@ from the first Piola-Kirchhoff stress known in the material frame.
 ~~~~{.cxx}
 const auto evaluator = pk1_function | as_tensor<3>                    |
                        from_pk1_to_cauchy (F_function | as_tensor<3>) |
-                       rotate_backwards (R_function | as_matrix<3,3>);
+                       rotate_backwards (R_function | as_tmatrix<3,3>);
 const auto ok = assign(ctx, sig | as_stensor<3>, evaluator);
 ~~~~
 

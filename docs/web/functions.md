@@ -110,43 +110,71 @@ A space must provide a way to iterate over its elements:
 In order to adapt to the structures used by as many solvers as possible,
 spaces in `mgis` are defined using a set of `C++` concepts:
 `SpaceConcept`, `ElementSpaceConcept`, `QuadratureSpaceConcept`,
-`FunctionalSpace`, `LinearElementSpaceConcept` and
+`FunctionalSpaceConcept`, `LinearElementSpaceConcept` and
 `LinearQuadratureSpaceConcept`.
 
-Let `SpaceType` be a type.
+The types and the indexing properties of a space are not read from the
+space itself but from a specialisation of the `mgis::function::SpaceTraits`
+class template. The other requirements are free functions taking the space
+as first argument. For instance, the `BasicLinearSpace` class
+(`MGIS/Function/BasicLinearSpace.hxx`) defines:
+
+~~~~{.cxx}
+template <>
+struct SpaceTraits<BasicLinearSpace> {
+  static constexpr bool linear_element_indexing = true;
+  using size_type = mgis::size_type;
+  using element_index_type = mgis::size_type;
+};
+
+constexpr size_type getSpaceSize(const BasicLinearSpace&) noexcept;
+
+constexpr bool areEquivalent(const BasicLinearSpace&,
+                             const BasicLinearSpace&) noexcept;
+~~~~
+
+The `BasicLinearQuadratureSpace` class
+(`MGIS/Function/BasicLinearQuadratureSpace.hxx`) is an example of a
+linear quadrature space.
+
+Let `SpaceType` be a type, `s` and `s2` two spaces of this type, `c` a
+cell index and `q` a quadrature point index.
 
 - `SpaceType` satisfies the `SpaceConcept` concept if:
-  - it exposes an integral type named `size_type` and a `size` method
-    (returning a `size_type`). This method shall return the total number
-    of elements in the discretization space.
+  - it is move constructible,
+  - `SpaceTraits<SpaceType>` exposes an integral type named `size_type`,
+  - `getSpaceSize(s)` returns a `size_type`. This function shall return
+    the total number of elements in the discretization space,
+  - `areEquivalent(s, s2)` returns a boolean stating if the two spaces
+    are equivalent.
 - `SpaceType` satisfies the `ElementSpaceConcept` concept if:
-  - it exposes an `element_index_type` type.
+  - it satisfies the `SpaceConcept`,
+  - `SpaceTraits<SpaceType>` exposes an `element_index_type` type.
 - `SpaceType` satisfies the `LinearElementSpaceConcept` concept if:
   - it satisfies the `ElementSpaceConcept`,
-  - it exposes a boolean value named `linear_element_indexing` which
-    must be `true`,
-  - elements of the space are indexed by integers ranging from from 0 to
-    `size()-1`. The `element_index_type` must be identical to
+  - `SpaceTraits<SpaceType>` exposes a `static constexpr` boolean data
+    member named `linear_element_indexing` which must be `true`,
+  - elements of the space are indexed by integers ranging from 0 to
+    `getSpaceSize(s)-1`. The `element_index_type` must be identical to
     `size_type`.
 - `SpaceType` satisfies the `QuadratureSpaceConcept` concept if:
   - it satisfies the `SpaceConcept`,
-  - it exposes a method named `getNumberOfCells` which returns a
-    `size_type`,
-  - it exposes an `cell_index_type` type,
-  - it exposes an `quadrature_point_index_type` type. In `MGIS/Function`,
-    this type must be an integer type,
-  - it exposes a method named `getNumberOfQuadraturePoints` which returns
-    the number of quadrature points of a given cell.
+  - `SpaceTraits<SpaceType>` exposes a `cell_index_type` type,
+  - `SpaceTraits<SpaceType>` exposes a `quadrature_point_index_type`
+    type. In `MGIS/Function`, this type must be an integer type,
+  - `getNumberOfCells(s)` returns the number of cells as a `size_type`,
+  - `getNumberOfQuadraturePoints(s, c)` returns the number of quadrature
+    points of the cell `c` as a `quadrature_point_index_type`.
 - `SpaceType` satisfies the `LinearQuadratureSpaceConcept` concept if:
   - it satisfies the `QuadratureSpaceConcept`,
-  - it exposes a boolean value named `cell_element_indexing` which
-    must be `true`,
-  - cells of the space are indexed by integers ranging from from 0 to
-    `getNumberOfCells()-1`. The `cell_index_type` must be identical to
-    `size_type`,
-  - it exposes a method `getQuadraturePointOffset` which must be a
-    bijection between all valid cell and quadrature points indices and
-    the range `[0:size()-1]`.
+  - `SpaceTraits<SpaceType>` exposes a `static constexpr` boolean data
+    member named `linear_cell_indexing` which must be `true`,
+  - cells of the space are indexed by integers ranging from 0 to
+    `getNumberOfCells(s)-1`. The `cell_index_type` must be an integer
+    type,
+  - `getQuadraturePointOffset(s, c, q)` returns a `size_type` and must
+    be a bijection between all valid cell and quadrature points indices
+    and the range `[0:getSpaceSize(s)-1]`.
 
 A functional space is either an element space and/or a quadrature space.
 
@@ -344,6 +372,9 @@ real values[8] = {1, 10,  // components XX
                   4, 40}; // components XY
 const auto ne = size_type { 2 };
 auto space = BasicLinearSpace{ne};
+using ScalarFunctionView =
+    FunctionView<BasicLinearSpace,
+                 FunctionDataLayoutDescription{.data_size = 1, .data_stride = 1}>;
 auto c_xx = ScalarFunctionView{space, std::span{values, ne}};
 auto c_yy = ScalarFunctionView{space, std::span{values + ne, ne}};
 auto c_zz = ScalarFunctionView{space, std::span{values + 2 * ne, ne}};

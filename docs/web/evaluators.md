@@ -89,7 +89,7 @@ This section is devoted to modifiers related to tensors.
 - `as_tvector`: create an evaluator which returns vectorial values. This
   modifier takes an integer as template parameter, the size of the
   vector.
-- `as_matrix`: create an evaluator which returns matrix values. This
+- `as_tmatrix`: create an evaluator which returns matrix values. This
   modifier takes two integers as template parameters: the number of rows
   and the number of columns.
 
