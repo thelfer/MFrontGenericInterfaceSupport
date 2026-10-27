@@ -12,9 +12,37 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <memory>
 #include <jlcxx/jlcxx.hpp>
 #include "MGIS/Behaviour/State.hxx"
 #include "MGIS/Julia/JuliaUtilities.hxx"
+
+namespace mgis::julia {
+
+  /*!
+   * \brief state created from Julia: it owns a copy of its behaviour, which
+   * is thus not destroyed if the Julia object of the behaviour is collected.
+   */
+  struct OwningState : mgis::behaviour::State {
+    OwningState(const mgis::behaviour::Behaviour& b)
+        : OwningState(std::make_shared<const mgis::behaviour::Behaviour>(b)) {}
+    OwningState(std::shared_ptr<const mgis::behaviour::Behaviour> p)
+        : mgis::behaviour::State(*p), behaviour(std::move(p)) {}
+    //! \brief behaviour, shared with the copies of this object
+    std::shared_ptr<const mgis::behaviour::Behaviour> behaviour;
+  };
+
+}  // end of namespace mgis::julia
+
+namespace jlcxx {
+
+  //! \brief
+  template <>
+  struct SuperType<mgis::julia::OwningState> {
+    using type = mgis::behaviour::State;
+  };
+
+}  // end of namespace jlcxx
 
 void declareState();
 
@@ -22,7 +50,6 @@ void declareState(jlcxx::Module& m) {
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::State;
   m.add_type<State>("State")
-      .constructor<const Behaviour&>()
       .method(
           "set_stored_energy!",
           [](State& s, const mgis::real v) noexcept { s.stored_energy = v; })
@@ -95,5 +122,10 @@ void declareState(jlcxx::Module& m) {
               [](State& s, const std::string& n, const mgis::real v) {
                 mgis::behaviour::setExternalStateVariable(s, n, v);
               });
+  // State(b) creates a state owning a copy of b
+  m.add_type<mgis::julia::OwningState>("OwningState",
+                                       jlcxx::julia_base_type<State>());
+  m.constructor<mgis::julia::OwningState, const Behaviour&>(
+      jlcxx::julia_base_type<State>());
 
 }  // end of declareState

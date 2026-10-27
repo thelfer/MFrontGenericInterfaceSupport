@@ -26,6 +26,12 @@ function(mgis_julia_module name)
   set(module "${name}-julia")
   add_library(${module} MODULE ${ARGN})
   set_target_properties(${module} PROPERTIES PREFIX "")
+  # the julia types are registered in static variables of templates
+  # shared with the CxxWrap library, which must thus be visible
+  if (COMPILER_DEFAULT_VISIBILITY_FLAG)
+    target_compile_options(${module}
+      PRIVATE "${COMPILER_DEFAULT_VISIBILITY_FLAG}")
+  endif(COMPILER_DEFAULT_VISIBILITY_FLAG)
   # include directories
   target_include_directories(${module}
     PRIVATE "${PROJECT_SOURCE_DIR}/bindings/julia/include")

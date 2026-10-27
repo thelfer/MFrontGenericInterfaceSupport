@@ -19,6 +19,7 @@
 #include <jlcxx/jlcxx.hpp>
 #include <jlcxx/array.hpp>
 #include <jlcxx/const_array.hpp>
+#include <jlcxx/stl.hpp>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/Variable.hxx"
 #include "MGIS/Behaviour/Hypothesis.hxx"
@@ -58,22 +59,16 @@ namespace jlcxx {
   //! \brief
   template <>
   struct IsMirroredType<mgis::behaviour::IntegrationType> : std::true_type {};
+  //! \brief
+  template <>
+  struct IsMirroredType<mgis::behaviour::BehaviourDataView> : std::false_type {
+  };
 
 }  // end of namespace jlcxx
 
 namespace mgis {
 
   namespace julia {
-
-    /*!
-     * \brief expose std::vector<T>
-     * \tparam T: underlying type
-     * \param[in,out] m: julia module
-     * \param[in] n: name of the exposed vector in Julia
-     * \note: the type T must be exposed in Julia
-     */
-    template <typename T>
-    void expose_std_vector(jlcxx::Module&, const char* const);
 
     template <typename T>
     jlcxx::ConstArray<T, 1u> make_view(const std::vector<T>&);
