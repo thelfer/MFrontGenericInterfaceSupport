@@ -55,8 +55,9 @@ static pybind11::object MaterialDataManager_getK(pybind11::object self) {
 }  // end of MaterialDataManager_getK
 
 static pybind11::object MaterialDataManager_getSpeedOfSound(
-    mgis::behaviour::MaterialDataManager& d) {
-  return mgis::python::wrapInNumPyArray(d.speed_of_sound);
+    pybind11::object self) {
+  auto& d = self.cast<mgis::behaviour::MaterialDataManager&>();
+  return mgis::python::wrapInNumPyArray(d.speed_of_sound, self);
 }  // end of MaterialDataManager_getSpeedOfSound
 
 void declareMaterialDataManager(pybind11::module_& m) {
