@@ -1361,6 +1361,122 @@ mgis_status mgis_bv_behaviour_get_initialize_function_input_offset(
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_get_initialize_function_input_offset
 
+namespace c_internals {
+
+  static const mgis::behaviour::BehaviourPostProcessing& getPostProcessing(
+      const mgis_bv_Behaviour& b, const char* const p) {
+    const auto pp = b.postprocessings.find(p);
+    if (pp == b.postprocessings.end()) {
+      mgis::raise("no post-processing named '" + std::string{p} + "'");
+    }
+    return pp->second;
+  }  // end of getPostProcessing
+
+}  // end of namespace c_internals
+
+mgis_status mgis_bv_behaviour_get_number_of_post_processings(
+    mgis_size_type* const c, const mgis_bv_Behaviour* const b) {
+  if ((c == nullptr) || (b == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *c = b->postprocessings.size();
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_number_of_post_processings
+
+mgis_status mgis_bv_behaviour_get_post_processing_name(
+    const char** n, const mgis_bv_Behaviour* const b, const mgis_size_type i) {
+  if ((n == nullptr) || (b == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *n = nullptr;
+  if (i >= b->postprocessings.size()) {
+    return mgis_report_failure("invalid argument (index out of range)");
+  }
+  *n = std::next(b->postprocessings.begin(), i)->first.c_str();
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_post_processing_name
+
+mgis_status mgis_bv_behaviour_get_post_processing_outputs_size(
+    mgis_size_type* const s,
+    const mgis_bv_Behaviour* const b,
+    const char* const p) {
+  if ((s == nullptr) || (b == nullptr) || (p == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *s = mgis::behaviour::getPostProcessingVariablesArraySize(*b, p);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_post_processing_outputs_size
+
+mgis_status mgis_bv_behaviour_get_number_of_post_processing_outputs(
+    mgis_size_type* const c,
+    const mgis_bv_Behaviour* const b,
+    const char* const p) {
+  if ((c == nullptr) || (b == nullptr) || (p == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *c = c_internals::getPostProcessing(*b, p).outputs.size();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_number_of_post_processing_outputs
+
+mgis_status mgis_bv_behaviour_get_post_processing_output_name(
+    const char** n,
+    const mgis_bv_Behaviour* const b,
+    const char* const p,
+    const mgis_size_type i) {
+  if ((n == nullptr) || (b == nullptr) || (p == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *n = nullptr;
+  try {
+    const auto& v = c_internals::getPostProcessing(*b, p).outputs.at(i);
+    *n = v.name.c_str();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_post_processing_output_name
+
+mgis_status mgis_bv_behaviour_get_post_processing_output_type(
+    mgis_bv_VariableType* const t,
+    const mgis_bv_Behaviour* const b,
+    const char* const p,
+    const mgis_size_type i) {
+  if ((t == nullptr) || (b == nullptr) || (p == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& v = c_internals::getPostProcessing(*b, p).outputs.at(i);
+    return c_internals::getVariableType(*t, v);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+}  // end of mgis_bv_behaviour_get_post_processing_output_type
+
+mgis_status mgis_bv_behaviour_get_post_processing_output_offset(
+    mgis_size_type* const o,
+    const mgis_bv_Behaviour* const b,
+    const char* const p,
+    const mgis_size_type i) {
+  if ((o == nullptr) || (b == nullptr) || (p == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& outputs = c_internals::getPostProcessing(*b, p).outputs;
+    *o = getVariableOffset(outputs, outputs.at(i).name, b->hypothesis);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_post_processing_output_offset
+
 mgis_status mgis_bv_free_behaviour(mgis_bv_Behaviour** b) {
   try {
     delete *b;

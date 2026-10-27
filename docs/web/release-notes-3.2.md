@@ -151,6 +151,19 @@ integration points, using a thread pool) and
 `mgis_bv_execute_initialize_function_material_data_manager_part` (range
 of integration points). The inputs are passed as an array and its size.
 
+The post-processings are described by
+`mgis_bv_behaviour_get_number_of_post_processings`,
+`mgis_bv_behaviour_get_post_processing_name`,
+`mgis_bv_behaviour_get_post_processing_outputs_size`,
+`mgis_bv_behaviour_get_number_of_post_processing_outputs`,
+`mgis_bv_behaviour_get_post_processing_output_name`,
+`mgis_bv_behaviour_get_post_processing_output_type` and
+`mgis_bv_behaviour_get_post_processing_output_offset`, and executed by
+`mgis_bv_execute_post_processing`, `mgis_bv_execute_post_processing_2`,
+`mgis_bv_execute_post_processing_material_data_manager` and
+`mgis_bv_execute_post_processing_material_data_manager_part`. The
+outputs are passed as an array and its size.
+
 # New features of the `MGIS/Function` library
 
 ## Support for quantities

@@ -308,6 +308,96 @@ mgis_bv_execute_initialize_function_material_data_manager_part(
     const mgis_size_type,
     const mgis_size_type,
     const mgis_size_type);
+/*!
+ * \brief execute the given post-processing. The returned value is the one
+ * of the post-processing: 0 on success, -1 on failure.
+ *
+ * \param[out] r: result
+ * \param[out] o: outputs of the post-processing
+ * \param[in] s: size of the outputs (`o` may be null if `s` is zero)
+ * \param[in,out] d: behaviour data view
+ * \param[in] b: behaviour
+ * \param[in] n: name of the post-processing
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_execute_post_processing(int* const,
+                                mgis_real* const,
+                                const mgis_size_type,
+                                mgis_bv_BehaviourDataView* const,
+                                const mgis_bv_Behaviour* const,
+                                const char* const);
+/*!
+ * \brief execute the given post-processing. The returned value is the one
+ * of the post-processing: 0 on success, -1 on failure.
+ *
+ * \note this version internally creates a view of the data and calls
+ * `mgis_bv_execute_post_processing`
+ * \note this function has been introduced mostly for bindings to
+ * languages where exposing `mgis_bv_BehaviourDataView` would be too
+ * difficult (see the `fortran` bindings for example).
+ * \param[out] r: result
+ * \param[out] o: outputs of the post-processing
+ * \param[in] s: size of the outputs (`o` may be null if `s` is zero)
+ * \param[in,out] d: behaviour data
+ * \param[in] b: behaviour
+ * \param[in] n: name of the post-processing
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_execute_post_processing_2(int* const,
+                                  mgis_real* const,
+                                  const mgis_size_type,
+                                  mgis_bv_BehaviourData* const,
+                                  const mgis_bv_Behaviour* const,
+                                  const char* const);
+/*!
+ * \brief execute the given post-processing over all integration points
+ * using a thread pool to parallelize the integration. The returned value has
+ * the following meaning:
+ * - -1: the post-processing failed for at least one integration point
+ * -  1: the post-processing succeeded for all integration points
+ *
+ * \param[out] r: result
+ * \param[out] o: outputs of the post-processing
+ * \param[in] s: size of the outputs, i.e. the size of the outputs of the
+ * post-processing times the number of integration points (`o` may be null if
+ * `s` is zero)
+ * \param[in,out] p: thread pool
+ * \param[in,out] m: material data manager
+ * \param[in] n: name of the post-processing
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_execute_post_processing_material_data_manager(
+    int* const,
+    mgis_real* const,
+    const mgis_size_type,
+    mgis_ThreadPool* const,
+    mgis_bv_MaterialDataManager* const,
+    const char* const);
+/*!
+ * \brief execute the given post-processing over a range of integration
+ * points. The returned value has the following meaning:
+ * - -1: the post-processing failed for at least one integration point
+ * -  1: the post-processing succeeded for all integration points
+ *
+ * \param[out] r: result
+ * \param[out] o: outputs of the post-processing
+ * \param[in] s: size of the outputs, i.e. the size of the outputs of the
+ * post-processing times the number of integration points (`o` may be null if
+ * `s` is zero)
+ * \param[in,out] m: material data manager
+ * \param[in] n: name of the post-processing
+ * \param[in] b: index of the first integration point of the range
+ * \param[in] e: index following the last integration point of the range
+ *               (the integration points of indices in [b, e) are treated)
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_execute_post_processing_material_data_manager_part(
+    int* const,
+    mgis_real* const,
+    const mgis_size_type,
+    mgis_bv_MaterialDataManager* const,
+    const char* const,
+    const mgis_size_type,
+    const mgis_size_type);
 
 #ifdef __cplusplus
 }

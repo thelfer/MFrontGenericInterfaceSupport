@@ -879,6 +879,77 @@ mgis_bv_behaviour_get_initialize_function_input_offset(
     const char* const,
     const mgis_size_type);
 /*!
+ * \brief return the number of post-processings
+ * \param[out] c: number of the post-processings
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_number_of_post_processings(
+    mgis_size_type* const, const mgis_bv_Behaviour* const);
+/*!
+ * \brief return the name of a post-processing
+ * \param[out] n: post-processing name
+ * \param[in] b: behaviour
+ * \param[in] i: post-processing index
+ * \note the post-processings are sorted by name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_post_processing_name(
+    const char**, const mgis_bv_Behaviour* const, const mgis_size_type);
+/*!
+ * \brief return the size of an array able to contain the outputs of a
+ * post-processing
+ * \param[out] s: size
+ * \param[in] b: behaviour
+ * \param[in] p: post-processing name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_post_processing_outputs_size(
+    mgis_size_type* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return the number of outputs of a post-processing
+ * \param[out] c: number of the outputs
+ * \param[in] b: behaviour
+ * \param[in] p: post-processing name
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_number_of_post_processing_outputs(
+    mgis_size_type* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return the name of an output of a post-processing
+ * \param[out] n: output name
+ * \param[in] b: behaviour
+ * \param[in] p: post-processing name
+ * \param[in] i: output index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_post_processing_output_name(
+    const char**,
+    const mgis_bv_Behaviour* const,
+    const char* const,
+    const mgis_size_type);
+/*!
+ * \brief return the type of an output of a post-processing
+ * \param[out] t: output type
+ * \param[in] b: behaviour
+ * \param[in] p: post-processing name
+ * \param[in] i: output index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_post_processing_output_type(
+    mgis_bv_VariableType* const,
+    const mgis_bv_Behaviour* const,
+    const char* const,
+    const mgis_size_type);
+/*!
+ * \brief return the offset of an output of a post-processing in the array of
+ * the outputs
+ * \param[out] o: output offset
+ * \param[in] b: behaviour
+ * \param[in] p: post-processing name
+ * \param[in] i: output index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_post_processing_output_offset(
+    mgis_size_type* const,
+    const mgis_bv_Behaviour* const,
+    const char* const,
+    const mgis_size_type);
+/*!
  * \brief free the memory associated with the given behaviour.
  * \param[in,out] b: behaviour
  */
