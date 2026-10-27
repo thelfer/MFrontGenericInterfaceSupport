@@ -68,9 +68,9 @@ namespace mgis {
     inline void setException(const std::exception_ptr&);
 //! \brief throw the catched exception
 #ifndef _MSC_VER
-    [[noreturn]] inline void rethrow();
+    [[noreturn]] inline void rethrow() const;
 #else  /* _MSC_VER */
-    inline void rethrow();
+    inline void rethrow() const;
 #endif /* _MSC_VER */
        //! \brief conversion to bool
     inline operator bool() const;

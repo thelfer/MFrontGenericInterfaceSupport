@@ -111,7 +111,7 @@ namespace mgis {
   }  // end of ThreadedTaskResult<T>::setException
 
   template <typename T>
-  void ThreadedTaskResult<T>::rethrow() {
+  void ThreadedTaskResult<T>::rethrow() const {
     if (this->eptr == nullptr) {
       ThreadedTaskResultBase::throwNullException();
     }
