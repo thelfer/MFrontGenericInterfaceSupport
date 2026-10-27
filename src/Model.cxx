@@ -23,12 +23,12 @@ namespace mgis::model {
     auto throw_if = [&m](const bool c, const char *const type) {
       if (c) {
         auto msg = std::string{
-            "mgis::model::loadModel: "
+            "mgis::model::load: "
             "model '" +
             m.function + "' in library '" + m.library +
             "' shall not declare any "};
         msg += type;
-        mgis::raise(type);
+        mgis::raise(msg);
       }
     };
     throw_if(!m.gradients.empty(), "gradient");
