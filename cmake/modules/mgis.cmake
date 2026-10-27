@@ -2,6 +2,9 @@ include(CMakePackageConfigHelpers)
 
 if(MGIS_APPEND_SUFFIX)
   set(mgis_export_install_path "share/mgis-${MGIS_SUFFIX}/cmake")
+  string(REPLACE "." "_" MGIS_SUFFIX_FOR_PYTHON_MODULES "${MGIS_SUFFIX}")
+  string(REPLACE "-" "_" MGIS_SUFFIX_FOR_PYTHON_MODULES "${MGIS_SUFFIX_FOR_PYTHON_MODULES}")
+  set(MGIS_SUFFIX_FOR_JULIA_MODULES "${MGIS_SUFFIX_FOR_PYTHON_MODULES}")
 else(MGIS_APPEND_SUFFIX)
   set(mgis_export_install_path "share/mgis/cmake")
 endif(MGIS_APPEND_SUFFIX)
@@ -42,7 +45,12 @@ function(mgis_library name)
                                 INSTALL_DESTINATION ${mgis_export_install_path}
                                 NO_SET_AND_CHECK_MACRO
                                 NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+  write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/${name}ConfigVersion.cmake"
+    VERSION "${PROJECT_VERSION}"
+    COMPATIBILITY SameMinorVersion)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake"
+                "${CMAKE_CURRENT_BINARY_DIR}/${name}ConfigVersion.cmake"
           DESTINATION ${mgis_export_install_path})
   if(enable-static)
     add_library(${name}-static STATIC ${ARGN})
