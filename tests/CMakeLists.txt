@@ -216,7 +216,6 @@ if(MGIS_HAVE_TFEL)
     add_executable(MaterialFunctionManagerTest EXCLUDE_FROM_ALL MaterialFunctionManagerTest.cxx)
     target_link_libraries(MaterialFunctionManagerTest PRIVATE MFrontGenericInterface tfel::TFELTests)
     add_dependencies(build-tests MaterialFunctionManagerTest)
-    set_test_environment(MaterialFunctionManagerTest)
 
     if(enable-cuda-algorithms)
       add_executable(FunctionTest-cuda EXCLUDE_FROM_ALL FunctionTest-cuda.cu)
@@ -230,6 +229,7 @@ if(MGIS_HAVE_TFEL)
     if(MGIS_HAVE_MFRONT_SUPPORT)
       add_test(NAME MaterialFunctionManagerTest
         COMMAND MaterialFunctionManagerTest "$<TARGET_FILE:BehaviourTest>")
+      set_test_environment(MaterialFunctionManagerTest)
     endif()
   endif(enable-mgis-function)
 
