@@ -31,25 +31,13 @@ function(test_fenics_bindings test)
   target_link_libraries(${test}_fenics
     PRIVATE MFrontGenericInterface-FEniCS
     PRIVATE MFrontGenericInterfaceFEniCSTestingUtilities)
-  if(CMAKE_CONFIGURATION_TYPES)
-    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-      add_test(NAME ${test}_${conf}_f
-	COMMAND ${test}_fenics CONFIGURATION ${conf})
-      set_tests_properties(${test}_${conf}_f
-    	PROPERTIES ENVIRONMENT
-        MGIS_FENICS_TEST_DATA="${CMAKE_CURRENT_BINARY_DIR}/data"
-	MGIS_TEST_BEHAVIOURS_LIBRARY="$<TARGET_FILE:BehaviourTest>"
-	MGIS_TEST_TFEL_VERSION=${TFEL_VERSION})
-    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-  else(CMAKE_CONFIGURATION_TYPES)
-    add_test(NAME ${test}_fenics COMMAND ${test}_fenics)
-    set_property(TEST ${test}_fenics
-      PROPERTY ENVIRONMENT
-      MGIS_FENICS_TEST_DATA=${PROJECT_SOURCE_DIR}/bindings/fenics/tests/data
-      MGIS_TEST_BEHAVIOURS_LIBRARY=$<TARGET_FILE:BehaviourTest>
-      MGIS_TEST_TFEL_VERSION=${TFEL_VERSION})
-    add_dependencies(build-tests ${test}_fenics)
-  endif(CMAKE_CONFIGURATION_TYPES)
+  add_test(NAME ${test}_fenics COMMAND ${test}_fenics)
+  set_property(TEST ${test}_fenics
+    PROPERTY ENVIRONMENT
+    MGIS_FENICS_TEST_DATA=${PROJECT_SOURCE_DIR}/bindings/fenics/tests/data
+    MGIS_TEST_BEHAVIOURS_LIBRARY=$<TARGET_FILE:BehaviourTest>
+    MGIS_TEST_TFEL_VERSION=${TFEL_VERSION})
+  add_dependencies(build-tests ${test}_fenics)
 endfunction(test_fenics_bindings)
 
 # test_fenics_bindings(ElasticityUniaxialTensileTestImposedStrainPlaneStress-exx)
