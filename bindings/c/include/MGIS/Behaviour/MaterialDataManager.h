@@ -186,6 +186,15 @@ mgis_bv_material_data_manager_get_time_step_scaling_factor(
 MGIS_C_EXPORT mgis_status mgis_bv_material_data_manager_get_tangent_operator(
     mgis_real * *const, mgis_bv_MaterialDataManager* const);
 /*!
+ * \brief return the number of values of the tangent operator at an
+ * integration point
+ * \param[out] s: stride
+ * \param[in]  d: material data manager
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_data_manager_get_tangent_operator_stride(
+    mgis_size_type* const, mgis_bv_MaterialDataManager* const);
+/*!
  * \brief update the material data manager
  * \param[in,out] d: data manager
  */
