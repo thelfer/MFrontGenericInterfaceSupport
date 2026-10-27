@@ -76,8 +76,9 @@ MACRO(MGIS_CHECK_CXX_SOURCE_COMPILES SOURCE VAR)
 ENDMACRO(MGIS_CHECK_CXX_SOURCE_COMPILES)
 
 MACRO (MGIS_CHECK_CXX_COMPILER_FLAG _FLAG _RESULT)
-   SET(SAFE_MGIS_CMAKE_REQUIRED_DEFINITIONS "${MGIS_CMAKE_REQUIRED_DEFINITIONS}")
-   SET(MGIS_CMAKE_REQUIRED_DEFINITIONS "${_FLAG}")
+   # passed as a flag, not as a definition, to be also used at link time
+   SET(SAFE_MGIS_CMAKE_REQUIRED_FLAGS "${MGIS_CMAKE_REQUIRED_FLAGS}")
+   SET(MGIS_CMAKE_REQUIRED_FLAGS "${_FLAG}")
    MGIS_CHECK_CXX_SOURCE_COMPILES("int main() { return 0;}" ${_RESULT}
      # Some compilers do not fail with a bad flag
      FAIL_REGEX "unrecognized .*option"                     # GNU
@@ -88,7 +89,7 @@ MACRO (MGIS_CHECK_CXX_COMPILER_FLAG _FLAG _RESULT)
      FAIL_REGEX "[Ww]arning: [Oo]ption"                     # SunPro
      FAIL_REGEX "command option .* is not recognized"       # XL
      )
-   SET (MGIS_CMAKE_REQUIRED_DEFINITIONS "${SAFE_MGIS_CMAKE_REQUIRED_DEFINITIONS}")
+   SET (MGIS_CMAKE_REQUIRED_FLAGS "${SAFE_MGIS_CMAKE_REQUIRED_FLAGS}")
 ENDMACRO (MGIS_CHECK_CXX_COMPILER_FLAG)
 
 MACRO(mgis_enable_cxx_compiler_flag2 out flag var)

@@ -22,6 +22,7 @@
 
 #include <memory>
 #include <vector>
+#include <dolfin/fem/SystemAssembler.h>
 #include <dolfin/nls/NonlinearProblem.h>
 #include <dolfin/parameter/Parameters.h>
 #include "MGIS/FEniCS/Config-FEniCS.hxx"

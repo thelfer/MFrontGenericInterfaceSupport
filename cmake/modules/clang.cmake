@@ -99,10 +99,12 @@ option(enable-sanitize-options "enable various clang sanitize options (undefined
 
 if(enable-sanitize-options)
   mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=address")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=thread")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=memory")
+  # thread, memory and safe-stack can't be combined with address,
+  # cfi requires -flto and -fvisibility
+  # mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=thread")
+  # mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=memory")
   # mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=undefined")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=cfi")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=safe-stack")
+  # mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=cfi")
+  # mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=safe-stack")
 endif(enable-sanitize-options)
 
