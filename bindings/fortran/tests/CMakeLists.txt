@@ -31,7 +31,6 @@ function(test_fortran_bindings test)
     add_test(NAME ${test}_f COMMAND ${test}_f)
     if((CMAKE_HOST_WIN32) AND (NOT MSYS))
       set_property(TEST ${test}_f
-        PROPERTY DEPENDS BehaviourTest
         PROPERTY ENVIRONMENT
 	"MGIS_TEST_TFEL_VERSION=${TFEL_VERSION}"
 	"PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;$<TARGET_FILE_DIR:MFrontGenericInterface-fortran>\;${MGIS_PATH_STRING}"
@@ -39,7 +38,6 @@ function(test_fortran_bindings test)
 	"MGIS_TEST_MODELS_LIBRARY=$<TARGET_FILE:ModelTest>")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
       set_property(TEST ${test}_f
-        PROPERTY DEPENDS BehaviourTest
 	PROPERTY ENVIRONMENT
 	"MGIS_TEST_TFEL_VERSION=${TFEL_VERSION}"
 	"MGIS_TEST_BEHAVIOURS_LIBRARY=$<TARGET_FILE:BehaviourTest>"
