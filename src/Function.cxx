@@ -57,4 +57,11 @@ namespace mgis::function {
                 FunctionView<BasicLinearSpace>&,
                 6>());
 
+  // view<N> shall not be callable on a temporary function
+  template <typename FunctionType>
+  constexpr bool isFixedSizeViewCallableOnRvalue =
+      requires(FunctionType&& f) { view<2>(std::move(f)); };
+  static_assert(
+      !isFixedSizeViewCallableOnRvalue<Function<BasicLinearSpace, 2>>);
+
 }  // end of namespace mgis::function
