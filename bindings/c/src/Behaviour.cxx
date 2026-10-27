@@ -187,6 +187,10 @@ mgis_status mgis_bv_behaviour_rotate_gradients_in_place(
     mgis_real* const g,
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r) {
+  if (b->rotate_gradients_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the gradients defined");
+  }
   b->rotate_gradients_ptr(g, g, r);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_gradients_in_place
@@ -196,6 +200,10 @@ mgis_status mgis_bv_behaviour_rotate_gradients_out_of_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const gg,
     const mgis_real* const r) {
+  if (b->rotate_gradients_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the gradients defined");
+  }
   b->rotate_gradients_ptr(mg, gg, r);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_gradients_out_of_place
@@ -205,6 +213,10 @@ mgis_status mgis_bv_behaviour_rotate_array_of_gradients_in_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b->rotate_array_of_gradients_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the gradients defined");
+  }
   b->rotate_array_of_gradients_ptr(g, g, r, s);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_array_of_gradients_in_place
@@ -215,6 +227,10 @@ mgis_status mgis_bv_behaviour_rotate_array_of_gradients_out_of_place(
     const mgis_real* const gg,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b->rotate_array_of_gradients_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the gradients defined");
+  }
   b->rotate_array_of_gradients_ptr(mg, gg, r, s);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_array_of_gradients_out_of_place
@@ -223,6 +239,11 @@ mgis_status mgis_bv_behaviour_rotate_thermodynamic_forces_in_place(
     mgis_real* const th,
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r) {
+  if (b->rotate_thermodynamic_forces_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the thermodynamic forces "
+        "defined");
+  }
   b->rotate_thermodynamic_forces_ptr(th, th, r);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_thermodynamic_forces_in_place
@@ -232,6 +253,11 @@ mgis_status mgis_bv_behaviour_rotate_thermodynamic_forces_out_of_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const gth,
     const mgis_real* const r) {
+  if (b->rotate_thermodynamic_forces_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the thermodynamic forces "
+        "defined");
+  }
   b->rotate_thermodynamic_forces_ptr(mth, gth, r);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_thermodynamic_forces_out_of_place
@@ -241,6 +267,11 @@ mgis_status mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_in_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b->rotate_array_of_thermodynamic_forces_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the thermodynamic forces "
+        "defined");
+  }
   b->rotate_array_of_thermodynamic_forces_ptr(th, th, r, s);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_in_place
@@ -251,6 +282,11 @@ mgis_status mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_out_of_place(
     const mgis_real* const gth,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b->rotate_array_of_thermodynamic_forces_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the thermodynamic forces "
+        "defined");
+  }
   b->rotate_array_of_thermodynamic_forces_ptr(mth, gth, r, s);
   return mgis_report_success();
 }  // end of
@@ -260,6 +296,11 @@ mgis_status mgis_bv_behaviour_rotate_tangent_operator_blocks_in_place(
     mgis_real* const to,
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r) {
+  if (b->rotate_tangent_operator_blocks_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the tangent operator blocks "
+        "defined");
+  }
   b->rotate_tangent_operator_blocks_ptr(to, to, r);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_tangent_operator_blocks_in_place
@@ -269,6 +310,11 @@ mgis_status mgis_bv_behaviour_rotate_tangent_operator_blocks_out_of_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const gto,
     const mgis_real* const r) {
+  if (b->rotate_tangent_operator_blocks_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the tangent operator blocks "
+        "defined");
+  }
   b->rotate_tangent_operator_blocks_ptr(mto, gto, r);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_tangent_operator_blocks_out_of_place
@@ -278,6 +324,11 @@ mgis_status mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_in_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b->rotate_array_of_tangent_operator_blocks_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the tangent operator blocks "
+        "defined");
+  }
   b->rotate_array_of_tangent_operator_blocks_ptr(to, to, r, s);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_in_place
@@ -289,6 +340,11 @@ mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_out_of_place(
     const mgis_real* const gto,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b->rotate_array_of_tangent_operator_blocks_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the tangent operator blocks "
+        "defined");
+  }
   b->rotate_array_of_tangent_operator_blocks_ptr(mto, gto, r, s);
   return mgis_report_success();
 }  // end of
