@@ -23,7 +23,7 @@ Grad = {
     mgis_bv.Hypothesis.Tridimensional: lambda u: grad(u),
     mgis_bv.Hypothesis.PlaneStrain: lambda u: grad(u),
     mgis_bv.Hypothesis.PlaneStress: lambda u: grad(u),
-    mgis_bv.Hypothesis.Axisymmetrical: lambda r, u: axi_grad(r, u),
+    mgis_bv.Hypothesis.Axisymmetrical: lambda r, u: grad(u),
 }
 Id_Grad = {
     mgis_bv.Hypothesis.Tridimensional: lambda u: Identity(3) + grad(u),
