@@ -97,7 +97,9 @@ namespace mgis::function::internals {
                 DeformationGradientEvaluatorType1>::b2) &&
             (internals::EvaluatorResultQuery<CauchyStressEvaluatorType>::b2)) {
       return tfel::material::convert<ResultFlag, SourceFlag, N>(
-          this->K(wk, i), this->F0(wk, i), this->F1(wk, i), this->s(wk, i));
+          this->K(wk, i), tfel::math::tensor<N, ::mgis::real>(this->F0(wk, i)),
+          tfel::math::tensor<N, ::mgis::real>(this->F1(wk, i)),
+          tfel::math::stensor<N, ::mgis::real>(this->s(wk, i)));
     }
     /*!
      * \brief call operator
@@ -115,7 +117,9 @@ namespace mgis::function::internals {
                 DeformationGradientEvaluatorType1>::b3) &&
             (internals::EvaluatorResultQuery<CauchyStressEvaluatorType>::b3)) {
       return tfel::material::convert<ResultFlag, SourceFlag, N>(
-          this->K(e, i), this->F0(e, i), this->F1(e, i), this->s(e, i));
+          this->K(e, i), tfel::math::tensor<N, ::mgis::real>(this->F0(e, i)),
+          tfel::math::tensor<N, ::mgis::real>(this->F1(e, i)),
+          tfel::math::stensor<N, ::mgis::real>(this->s(e, i)));
     }
     /*!
      * \brief call operator
@@ -135,8 +139,10 @@ namespace mgis::function::internals {
                 DeformationGradientEvaluatorType1>::b4) &&
             (internals::EvaluatorResultQuery<CauchyStressEvaluatorType>::b4)) {
       return tfel::material::convert<ResultFlag, SourceFlag, N>(
-          this->K(wk, e, i), this->F0(wk, e, i), this->F1(wk, e, i),
-          this->s(wk, e, i));
+          this->K(wk, e, i),
+          tfel::math::tensor<N, ::mgis::real>(this->F0(wk, e, i)),
+          tfel::math::tensor<N, ::mgis::real>(this->F1(wk, e, i)),
+          tfel::math::stensor<N, ::mgis::real>(this->s(wk, e, i)));
     }
 
    private:
