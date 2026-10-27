@@ -283,6 +283,16 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(a5(0)[1] + 2) < eps);
     TFEL_TESTS_ASSERT(std::abs(a5(1)[0] - 9) < eps);
     TFEL_TESTS_ASSERT(std::abs(a5(1)[1] + 4) < eps);
+    // evaluators of different types
+    const auto a6 =
+        binary_operation([](const tfel::math::VectorConcept auto& v1,
+                            const real s) { return eval(s * v1); },
+                         f, sp1);
+    TFEL_TESTS_ASSERT(a6.check(ctx));
+    TFEL_TESTS_ASSERT(std::abs(a6(0)[0] + 3) < eps);
+    TFEL_TESTS_ASSERT(std::abs(a6(0)[1] + 6) < eps);
+    TFEL_TESTS_ASSERT(std::abs(a6(1)[0] + 21) < eps);
+    TFEL_TESTS_ASSERT(std::abs(a6(1)[1] + 28) < eps);
   }
   template <typename T>
   static constexpr auto test5_shall_compile_test1 = requires(T& f3) {
