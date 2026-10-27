@@ -95,8 +95,8 @@ namespace mgis::function {
           checkPreconditions(
               AbstractErrorHandler& eh,
               const std::array<ScalarComponentFunctionView, N>& components) {
-    for (int i = 1; i != N; ++i) {
-      if (!areEquivalent(getSpace(components[0]), getSpace(components[1]))) {
+    for (size_type i = 1; i != N; ++i) {
+      if (!areEquivalent(getSpace(components[0]), getSpace(components[i]))) {
         return eh.registerErrorMessage("unmatched spaces");
       }
     }
