@@ -525,13 +525,15 @@ class AbstractNonlinearProblem:
             self.quadrature_degree, self.mesh,
             self.state_variables["external"])
         # integrate the behaviour
-        mgis_bv.integrate(
+        status = mgis_bv.integrate(
             self.material.data_manager,
             self.integration_type,
             self.dt,
             0,
             self.material.data_manager.n,
         )
+        if status == -1:
+            raise RuntimeError("behaviour integration failed")
         # getting the stress and consistent tangent operator back to
         # the FEniCS world.
         self.update_fluxes()
