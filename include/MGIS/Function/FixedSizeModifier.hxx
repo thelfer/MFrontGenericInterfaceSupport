@@ -57,7 +57,7 @@ namespace mgis::function {
     //! \brief perform consistency checks
     [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
     //! \brief return the underlying  space
-    [[nodiscard]] decltype(auto) getSpace() const;
+    [[nodiscard]] constexpr decltype(auto) getSpace() const;
     //! \return the number of components
     [[nodiscard]] constexpr size_type getNumberOfComponents() const;
     /*!
@@ -111,7 +111,7 @@ namespace mgis::function {
       (EvaluatorConcept<std::decay_t<EvaluatorType>>));
 
   template <EvaluatorConcept EvaluatorType, size_type N>
-  [[nodiscard]] decltype(auto) getSpace(
+  [[nodiscard]] constexpr decltype(auto) getSpace(
       const FixedSizeModifier<EvaluatorType, N>&);
   //! \brief perform consistency checks
   template <EvaluatorConcept EvaluatorType, size_type N>

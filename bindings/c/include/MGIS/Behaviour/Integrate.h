@@ -149,8 +149,9 @@ MGIS_C_EXPORT mgis_status mgis_bv_integrate_debug_2(
  * \param[in,out] m: material data manager
  * \param[in] i: type of integration to be performed
  * \param[in] dt: time step
- * \param[in] b: first index of the range
- * \param[in] e: last index of the range
+ * \param[in] b: index of the first integration point of the range
+ * \param[in] e: index following the last integration point of the range
+ *               (the integration points of indices in [b, e) are treated)
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_integrate_material_data_manager_part(int* const,

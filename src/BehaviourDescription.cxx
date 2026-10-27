@@ -258,7 +258,7 @@ namespace mgis::behaviour {
           checkGradientsAndThermodynamicForcesConsistency(
               raise, d.gradients, d.thermodynamic_forces,
               {"Strain", Variable::STENSOR, 1},
-              {"Stresss", Variable::STENSOR, 1});
+              {"Stress", Variable::STENSOR, 1});
         } else {
           raise(
               "invalid kinematic hypothesis for finite strain "

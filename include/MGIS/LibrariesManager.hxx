@@ -208,10 +208,10 @@ namespace mgis {
                                                          const std::string &,
                                                          const Hypothesis);
     /*!
-     * \return the initialize functions associated with a the behaviour
+     * \return the post-processing function `p` of the behaviour
      * \param[in] l: library
      * \param[in] b: behaviour name
-     * \param[in] f: initialize function name
+     * \param[in] p: post-processing name
      * \param[in] h: hypothesis
      */
     mgis::behaviour::BehaviourPostProcessingFctPtr getBehaviourPostProcessing(
@@ -417,8 +417,8 @@ namespace mgis {
     unsigned short getElasticStiffnessSymmetry(const std::string &,
                                                const std::string &);
     /*!
-     * \return true if a behaviour generated throught the aster
-     * interface requires a offset for the elastic properties
+     * \return true if the behaviour requires the stiffness tensor to be given
+     * by the calling code (`@RequireStiffnessTensor`)
      * \param[in] l: library name
      * \param[in] b: behaviour name
      * \param[in] h: modelling hypothesis
@@ -447,8 +447,9 @@ namespace mgis {
                                   const std::string &,
                                   const Hypothesis);
     /*!
-     * \return true if a behaviour generated throught the aster
-     * interface requires a offset for the elastic properties
+     * \return true if the behaviour requires the thermal expansion
+     * coefficient tensor to be given by the calling code
+     * (`@RequireThermalExpansionCoefficientTensor`)
      * \param[in] l: library
      * \param[in] b: behaviour name
      * \param[in] h: modelling hypothesis
@@ -564,7 +565,7 @@ namespace mgis {
                                         const std::string &,
                                         const Hypothesis);
     /*!
-     * \return the types of the internal state variables associated with
+     * \return the types of the external state variables associated with
      * a behaviour
      * \param[in] l: library name
      * \param[in] b: behaviour name

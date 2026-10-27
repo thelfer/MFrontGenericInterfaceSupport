@@ -141,8 +141,8 @@ namespace mgis {
     }
     auto r = std::string{n.cbegin(), p};
     ++p;
-    throw_if(p == pe, "unexpected end of string 'n'");
-    throw_if(!std::isdigit(*p), "unexpected a digit 'n'");
+    throw_if(p == pe, "unexpected end of string '" + n + "'");
+    throw_if(!std::isdigit(*p), "expected a digit after '[' in '" + n + "'");
     r += "__";
     while ((p != pe) && (std::isdigit(*p))) {
       r.push_back(*p);
@@ -170,8 +170,8 @@ namespace mgis {
     }
     auto r = std::string{n.cbegin(), p};
     ++p;
-    throw_if(p == pe, "unexpected end of string 'n'");
-    throw_if(!std::isdigit(*p), "unexpected a digit 'n'");
+    throw_if(p == pe, "unexpected end of string '" + n + "'");
+    throw_if(!std::isdigit(*p), "expected a digit after '[' in '" + n + "'");
     r += "_mfront_index_";
     while ((p != pe) && (std::isdigit(*p))) {
       r.push_back(*p);
@@ -427,7 +427,7 @@ namespace mgis {
     if (p == nullptr) {
       mgis::raise(
           "LibrariesManager::getRotateBehaviourThermodynamicForcesFunction: "
-          "can't load gradients' rotation function '" +
+          "can't load thermodynamic forces' rotation function '" +
           f + "' for behaviour '" + b + "' in library '" + l +
           "' for hypothesis '" + hn + "'");
     }
@@ -935,20 +935,20 @@ namespace mgis {
                                       const double v) {
     using fct_ptr_type = int (*)(const char *const, const double);
     const auto hn = toString(h);
-    const auto ptr = getSymbolAddress(l, b + "_" + hn + "_setParameter",
-                                      b + "_setParameter");
+    const auto s = b + "_setParameter";
+    const auto ptr = getSymbolAddress(l, b + "_" + hn + "_setParameter", s);
     if (ptr == nullptr) {
       mgis::raise(
           "LibrariesManager::setParameter: "
           "can't get the '" +
-          b + "_setParameter' function (" + getErrorMessage() + ")");
+          s + "' function (" + getErrorMessage() + ")");
     }
     const auto fct = reinterpret_cast<fct_ptr_type>(ptr);
     if (!fct(p.c_str(), v)) {
       mgis::raise(
           "LibrariesManager::setParameter: "
           "call to the '" +
-          b + "_setParameter' function failed");
+          s + "' function failed for parameter '" + p + "'");
     }
   }  // end of setParameter
 
@@ -959,20 +959,21 @@ namespace mgis {
                                       const int v) {
     using fct_ptr_type = int (*)(const char *const, const int);
     const auto hn = toString(h);
-    const auto ptr = getSymbolAddress(l, b + "_" + hn + "_setIntegerParameter",
-                                      b + "_setIntegerParameter");
+    const auto s = b + "_setIntegerParameter";
+    const auto ptr =
+        getSymbolAddress(l, b + "_" + hn + "_setIntegerParameter", s);
     if (ptr == nullptr) {
       mgis::raise(
           "LibrariesManager::setParameter: "
           "can't get the '" +
-          b + "_setParameter' function (" + getErrorMessage() + ")");
+          s + "' function (" + getErrorMessage() + ")");
     }
     const auto fct = reinterpret_cast<fct_ptr_type>(ptr);
     if (!fct(p.c_str(), v)) {
       mgis::raise(
           "LibrariesManager::setParameter: "
           "call to the '" +
-          b + "_setParameter' function failed");
+          s + "' function failed for parameter '" + p + "'");
     }
   }  // end of setParameter
 
@@ -983,21 +984,21 @@ namespace mgis {
                                       const unsigned short v) {
     using fct_ptr_type = int (*)(const char *const, const unsigned short);
     const auto hn = toString(h);
+    const auto s = b + "_setUnsignedShortParameter";
     const auto ptr =
-        getSymbolAddress(l, b + "_" + hn + "_setUnsignedShortParameter",
-                         b + "_setUnsignedShortParameter");
+        getSymbolAddress(l, b + "_" + hn + "_setUnsignedShortParameter", s);
     if (ptr == nullptr) {
       mgis::raise(
           "LibrariesManager::setParameter: "
           "can't get the '" +
-          b + "_setParameter' function (" + getErrorMessage() + ")");
+          s + "' function (" + getErrorMessage() + ")");
     }
     const auto fct = reinterpret_cast<fct_ptr_type>(ptr);
     if (!fct(p.c_str(), v)) {
       mgis::raise(
           "LibrariesManager::setParameter: "
           "call to the '" +
-          b + "_setParameter' function failed");
+          s + "' function failed for parameter '" + p + "'");
     }
   }  // end of setParameter
 

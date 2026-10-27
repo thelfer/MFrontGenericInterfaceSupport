@@ -839,7 +839,7 @@ namespace mgis::behaviour {
         return false;
       }
     }
-    if (s.mass_density.has_value()) {
+    if ((opts.save_mass_densities) && (s.mass_density.has_value())) {
       if (!save(ctx, g, "mass_density", *(s.mass_density), opts)) {
         return false;
       }
@@ -963,7 +963,12 @@ namespace mgis::behaviour {
         // uniform value
         auto value = real{};
         odataset->read(&value, getNativeType<real>());
-        f = value;
+        if (std::holds_alternative<std::span<real>>(f.value)) {
+          auto& values = std::get<std::span<real>>(f.value);
+          std::fill(values.begin(), values.end(), value);
+        } else {
+          f = value;
+        }
         return true;
       }
       if (dims[0] != ng) {
@@ -1103,7 +1108,7 @@ namespace mgis::behaviour {
         return ctx.registerErrorMessage("restoring mass density failed");
       }
     }
-    if (opts.restore_internal_state_variables) {
+    if ((opts.restore_internal_state_variables) && (!s.b.isvs.empty())) {
       if (!read(ctx, s.internal_state_variables, g,
                 "internal_state_variables")) {
         return ctx.registerErrorMessage(
@@ -1141,8 +1146,7 @@ namespace mgis::behaviour {
         }
         auto& f = s.material_properties[mp.name];
         if (std::holds_alternative<std::monostate>(f)) {
-          return ctx.registerErrorMessage("uninitialized material property '" +
-                                          mp.name + "'");
+          f = MutableFieldHolder{.value = real{}};
         }
         if (std::holds_alternative<MutableFieldHolder>(f)) {
           auto& mfh = std::get<MutableFieldHolder>(f);
@@ -1181,8 +1185,7 @@ namespace mgis::behaviour {
         }
         auto& f = s.external_state_variables[esv.name];
         if (std::holds_alternative<std::monostate>(f)) {
-          return ctx.registerErrorMessage(
-              "uninitialized external state variable'" + esv.name + "'");
+          f = MutableFieldHolder{.value = real{}};
         }
         if (std::holds_alternative<MutableFieldHolder>(f)) {
           auto& mfh = std::get<MutableFieldHolder>(f);

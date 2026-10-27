@@ -39,6 +39,12 @@ if(MGIS_Threads_FOUND)
   find_package(Threads REQUIRED)
 endif(MGIS_Threads_FOUND)
 
+set(MGIS_OPENMP_SUPPORT @enable-openmp@)
+if(MGIS_OPENMP_SUPPORT)
+  include(CMakeFindDependencyMacro)
+  find_dependency(OpenMP COMPONENTS CXX)
+endif(MGIS_OPENMP_SUPPORT)
+
 set(MGIS_HDF5_SUPPORT @MGIS_HDF5_SUPPORT@)
 if(MGIS_HDF5_SUPPORT)
   set(MGIS_HDF5_DIR "@HDF5_DIR@")

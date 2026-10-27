@@ -1,0 +1,7 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+find_dependency(MFrontGenericInterface HINTS "${CMAKE_CURRENT_LIST_DIR}")
+find_dependency(MFrontGenericInterface-c HINTS "${CMAKE_CURRENT_LIST_DIR}")
+
+include("${CMAKE_CURRENT_LIST_DIR}/MFrontGenericInterface-fortranTargets.cmake")

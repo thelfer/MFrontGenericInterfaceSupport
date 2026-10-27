@@ -58,6 +58,28 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>
   requires(LinearElementSpaceConcept<Space> ||
            LinearQuadratureSpaceConcept<Space>)  //
+      constexpr TensorialFunction<Space, TensorType>::TensorialFunction(
+          const TensorialFunction& src)
+      : PreconditionsChecker<TensorialFunction>(src),
+        UnderlyingFunctionType(static_cast<const UnderlyingFunctionType&>(src)),
+        UnderlyingTensorView(no_precondition_check,
+                             static_cast<UnderlyingFunctionType&>(*this)) {
+  }  // end of TensorialFunction
+
+  template <FunctionalSpaceConcept Space, TensorConcept TensorType>
+  requires(LinearElementSpaceConcept<Space> ||
+           LinearQuadratureSpaceConcept<Space>)  //
+      constexpr TensorialFunction<Space, TensorType>::TensorialFunction(
+          TensorialFunction&& src)
+      : PreconditionsChecker<TensorialFunction>(src),
+        UnderlyingFunctionType(static_cast<UnderlyingFunctionType&&>(src)),
+        UnderlyingTensorView(no_precondition_check,
+                             static_cast<UnderlyingFunctionType&>(*this)) {
+  }  // end of TensorialFunction
+
+  template <FunctionalSpaceConcept Space, TensorConcept TensorType>
+  requires(LinearElementSpaceConcept<Space> ||
+           LinearQuadratureSpaceConcept<Space>)  //
       constexpr TensorView<
           Function<Space,
                    tfel::math::getUnderlyingArrayMinimalSize<
