@@ -209,6 +209,7 @@ struct ImmutableFunctionTest final : public tfel::tests::TestCase {
       for (size_type i = 0; i != getNumberOfQuadraturePoints(space, e); ++i) {
         const auto v = e * 3 + i + 1;
         TFEL_TESTS_ASSERT(std::abs(f.data(unsafe, e, i)[0] - v) < eps);
+        TFEL_TESTS_ASSERT(std::abs(f(e, i)[0] - v) < eps);
       }
     }
   }

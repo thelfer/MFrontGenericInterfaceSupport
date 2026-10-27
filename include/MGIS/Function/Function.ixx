@@ -486,7 +486,7 @@ namespace mgis::function {
       requires(is_mutable&& LinearQuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
     return this->values.data() +
-           this->getDataOffset(this->space->getQuadraturePointOffset(e, i));
+           this->getDataOffset(getQuadraturePointOffset(this->space, e, i));
   }  // end of data
 
   template <LinearFunctionalSpaceConcept Space,
@@ -540,7 +540,7 @@ namespace mgis::function {
           const size_type i)  //
       requires(is_mutable&& LinearQuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
-    return this->operator()(this->space->getQuadraturePointOffset(e, i));
+    return this->operator()(getQuadraturePointOffset(this->space, e, i));
   }  // end of operator()
 
   template <LinearFunctionalSpaceConcept Space,
@@ -569,7 +569,7 @@ namespace mgis::function {
       operator()(const size_type e, const size_type i) const
       requires(LinearQuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
-    return this->operator()(this->space->getQuadraturePointOffset(e, i));
+    return this->operator()(getQuadraturePointOffset(this->space, e, i));
   }  // end of operator()
 
   template <LinearFunctionalSpaceConcept Space,
