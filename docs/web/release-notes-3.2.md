@@ -164,6 +164,22 @@ The post-processings are described by
 `mgis_bv_execute_post_processing_material_data_manager_part`. The
 outputs are passed as an array and its size.
 
+### `fortran` bindings
+
+The `mgis_behaviour` module now exposes the corresponding functions for
+the initialize functions: `behaviour_get_number_of_initialize_functions`,
+`behaviour_get_initialize_function_name`,
+`behaviour_get_initialize_function_inputs_size`,
+`behaviour_get_number_of_initialize_function_inputs`,
+`behaviour_get_initialize_function_input_name`,
+`behaviour_get_initialize_function_input_type`,
+`behaviour_get_initialize_function_input_offset`,
+`execute_initialize_function` (behaviour data),
+`execute_initialize_function_material_data_manager` and
+`execute_initialize_function_material_data_manager_part`. As in the
+other functions of this module, indices, offsets and ranges of
+integration points start at 1.
+
 # New features of the `MGIS/Function` library
 
 ## Support for quantities
