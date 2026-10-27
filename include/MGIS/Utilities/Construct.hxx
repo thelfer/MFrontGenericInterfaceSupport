@@ -103,7 +103,7 @@
   std::optional<Type> MGIS_TEMPORARY_VARIABLE(v) = \
       MGIS_CONSTRUCT(Type, e, __VA_ARGS__);        \
   if (!MGIS_TEMPORARY_VARIABLE(v).has_value()) {   \
-    return InvalidResult{};                        \
+    return ::mgis::InvalidResult{};                \
   }                                                \
   Type& v = *(MGIS_TEMPORARY_VARIABLE(v))
 
@@ -118,7 +118,7 @@
 #define MGIS_TRY_MAKE_UNIQUE(Type, v, e, ...)                       \
   std::unique_ptr<Type> v = MGIS_MAKE_UNIQUE(Type, e, __VA_ARGS__); \
   if (v.get() == nullptr) {                                         \
-    return InvalidResult{};                                         \
+    return ::mgis::InvalidResult{};                                 \
   }                                                                 \
   static_cast<void>(0)
 
@@ -135,7 +135,7 @@
   std::unique_ptr<BaseType> v =                            \
       MGIS_MAKE_UNIQUE_AS(BaseType, Type, e, __VA_ARGS__); \
   if (v.get() == nullptr) {                                \
-    return InvalidResult{};                                \
+    return ::mgis::InvalidResult{};                        \
   }                                                        \
   static_cast<void>(0)
 
@@ -150,7 +150,7 @@
 #define MGIS_TRY_MAKE_SHARED(Type, v, e, ...)                       \
   std::shared_ptr<Type> v = MGIS_MAKE_SHARED(Type, e, __VA_ARGS__); \
   if (v.get() == nullptr) {                                         \
-    return InvalidResult{};                                         \
+    return ::mgis::InvalidResult{};                                 \
   }                                                                 \
   static_cast<void>(0)
 
@@ -167,7 +167,7 @@
   std::shared_ptr<BaseType> v =                            \
       MGIS_MAKE_SHARED_AS(BaseType, Type, e, __VA_ARGS__); \
   if (v.get() == nullptr) {                                \
-    return InvalidResult{};                                \
+    return ::mgis::InvalidResult{};                        \
   }                                                        \
   static_cast<void>(0)
 
