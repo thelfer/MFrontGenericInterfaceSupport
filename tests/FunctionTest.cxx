@@ -769,7 +769,6 @@ struct FunctionTest final : public tfel::tests::TestCase {
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }    // end of test13
   void test14() {
-#ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
     using namespace mgis;
     using namespace mgis::function;
     auto check_value = [](const real& a, const real b) constexpr->bool {
@@ -791,7 +790,6 @@ struct FunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(check_value(f2(1)[0], 12));
     TFEL_TESTS_ASSERT(check_value(f3(0)[0], 5));
     TFEL_TESTS_ASSERT(check_value(f3(1)[0], 12));
-#endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }
 };
 
