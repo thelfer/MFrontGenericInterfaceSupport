@@ -54,6 +54,12 @@ static pybind11::object MaterialDataManager_getK(pybind11::object self) {
   return mgis::python::wrapInNumPyArray(d.K, s, self);
 }  // end of MaterialDataManager_getK
 
+static pybind11::object MaterialDataManager_getSpeedOfSound(
+    pybind11::object self) {
+  auto& d = self.cast<mgis::behaviour::MaterialDataManager&>();
+  return mgis::python::wrapInNumPyArray(d.speed_of_sound, self);
+}  // end of MaterialDataManager_getSpeedOfSound
+
 void declareMaterialDataManager(pybind11::module_& m) {
   using mgis::size_type;
   using mgis::behaviour::Behaviour;
@@ -107,6 +113,8 @@ void declareMaterialDataManager(pybind11::module_& m) {
       .def_readonly("s0", &MaterialDataManager::s0)
       .def_readonly("s1", &MaterialDataManager::s1)
       .def_property_readonly("K", &MaterialDataManager_getK)
+      .def_property_readonly("speed_of_sound",
+                             &MaterialDataManager_getSpeedOfSound)
       .def("update", ptr_update)
       .def("revert", ptr_revert);
   // free functions
