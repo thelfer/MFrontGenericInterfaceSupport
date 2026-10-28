@@ -21,27 +21,27 @@
 
 static void MaterialStateManagerInitializer_bindGradients(
     mgis::behaviour::MaterialStateManagerInitializer& i, pybind11::object K) {
-  i.gradients = mgis::python::mgis_convert_to_span(K);
+  i.gradients = mgis::python::mgis_convert_to_mutable_span(K);
 }  // end of MaterialStateManagerInitializer_bindGradients
 
 static void MaterialStateManagerInitializer_bindThermodynamicForces(
     mgis::behaviour::MaterialStateManagerInitializer& i, pybind11::object K) {
-  i.thermodynamic_forces = mgis::python::mgis_convert_to_span(K);
+  i.thermodynamic_forces = mgis::python::mgis_convert_to_mutable_span(K);
 }  // end of MaterialStateManagerInitializer_bindThermodynamicForces
 
 static void MaterialStateManagerInitializer_bindInternalStateVariables(
     mgis::behaviour::MaterialStateManagerInitializer& i, pybind11::object K) {
-  i.internal_state_variables = mgis::python::mgis_convert_to_span(K);
+  i.internal_state_variables = mgis::python::mgis_convert_to_mutable_span(K);
 }  // end of MaterialStateManagerInitializer_bindInternalStateVariables
 
 static void MaterialStateManagerInitializer_bindStoredEnergies(
     mgis::behaviour::MaterialStateManagerInitializer& i, pybind11::object K) {
-  i.stored_energies = mgis::python::mgis_convert_to_span(K);
+  i.stored_energies = mgis::python::mgis_convert_to_mutable_span(K);
 }  // end of MaterialStateManagerInitializer_bindStoredEnergies
 
 static void MaterialStateManagerInitializer_bindDissipatedEnergies(
     mgis::behaviour::MaterialStateManagerInitializer& i, pybind11::object K) {
-  i.dissipated_energies = mgis::python::mgis_convert_to_span(K);
+  i.dissipated_energies = mgis::python::mgis_convert_to_mutable_span(K);
 }  // end of MaterialStateManagerInitializer_bindDissipatedEnergies
 
 /*!
@@ -107,6 +107,26 @@ static pybind11::object MaterialStateManager_getDissipatedEnergies(
   return mgis::python::wrapInNumPyArray(s.dissipated_energies, self);
 }  // end of MaterialStateManager_getDissipatedEnergy
 
+/*!
+ * \brief convert values stored externally by a material state manager.
+ * The manager keeps the address of the values, so a conversion making a copy
+ * is refused. A read-only array is refused unless the values are not updated,
+ * since the `update` and `revert` functions write in them.
+ * \param[in] o: values
+ * \param[in] p: update policy
+ */
+static std::span<mgis::real> MaterialStateManager_convertExternalValues(
+    const pybind11::object& o,
+    const mgis::behaviour::MaterialStateManager::UpdatePolicy p) {
+  const auto a = pybind11::array_t<double>(o);
+  if ((p == mgis::behaviour::MaterialStateManager::NOUPDATE) &&
+      (!a.writeable())) {
+    // a converted copy is writable: a is o or a view of o
+    return mgis::python::mgis_convert_to_span(a);
+  }
+  return mgis::python::mgis_convert_to_mutable_span(o);
+}  // end of MaterialStateManager_convertExternalValues
+
 static void MaterialStateManager_setMaterialProperty(
     mgis::behaviour::MaterialStateManager& s,
     const std::string& n,
@@ -127,6 +147,13 @@ static void MaterialStateManager_setMaterialProperty3(
     const std::string& n,
     const pybind11::object& o,
     const mgis::behaviour::MaterialStateManager::StorageMode s) {
+  if (s == mgis::behaviour::MaterialStateManager::EXTERNAL_STORAGE) {
+    setMaterialProperty(sm, n,
+                        MaterialStateManager_convertExternalValues(
+                            o, mgis::behaviour::MaterialStateManager::UPDATE),
+                        s);
+    return;
+  }
   setMaterialProperty(sm, n, mgis::python::mgis_convert_to_span(o), s);
 }  // end of MaterialStateManager_setMaterialProperty
 
@@ -136,6 +163,11 @@ static void MaterialStateManager_setMaterialProperty4(
     const pybind11::object& o,
     const mgis::behaviour::MaterialStateManager::StorageMode s,
     const mgis::behaviour::MaterialStateManager::UpdatePolicy b) {
+  if (s == mgis::behaviour::MaterialStateManager::EXTERNAL_STORAGE) {
+    setMaterialProperty(sm, n, MaterialStateManager_convertExternalValues(o, b),
+                        s, b);
+    return;
+  }
   setMaterialProperty(sm, n, mgis::python::mgis_convert_to_span(o), s, b);
 }  // end of MaterialStateManager_setMaterialProperty
 
@@ -155,6 +187,13 @@ static void MaterialStateManager_setMassDensity3(
     mgis::behaviour::MaterialStateManager& sm,
     const pybind11::object& o,
     const mgis::behaviour::MaterialStateManager::StorageMode s) {
+  if (s == mgis::behaviour::MaterialStateManager::EXTERNAL_STORAGE) {
+    setMassDensity(sm,
+                   MaterialStateManager_convertExternalValues(
+                       o, mgis::behaviour::MaterialStateManager::UPDATE),
+                   s);
+    return;
+  }
   setMassDensity(sm, mgis::python::mgis_convert_to_span(o), s);
 }  // end of MaterialStateManager_setMassDensity3
 
@@ -163,6 +202,10 @@ static void MaterialStateManager_setMassDensity4(
     const pybind11::object& o,
     const mgis::behaviour::MaterialStateManager::StorageMode s,
     const mgis::behaviour::MaterialStateManager::UpdatePolicy b) {
+  if (s == mgis::behaviour::MaterialStateManager::EXTERNAL_STORAGE) {
+    setMassDensity(sm, MaterialStateManager_convertExternalValues(o, b), s, b);
+    return;
+  }
   setMassDensity(sm, mgis::python::mgis_convert_to_span(o), s, b);
 }  // end of MaterialStateManager_setMassDensity4
 
@@ -186,6 +229,14 @@ static void MaterialStateManager_setExternalStateVariable3(
     const std::string& n,
     const pybind11::object& o,
     const mgis::behaviour::MaterialStateManager::StorageMode s) {
+  if (s == mgis::behaviour::MaterialStateManager::EXTERNAL_STORAGE) {
+    setExternalStateVariable(
+        sm, n,
+        MaterialStateManager_convertExternalValues(
+            o, mgis::behaviour::MaterialStateManager::UPDATE),
+        s);
+    return;
+  }
   setExternalStateVariable(sm, n, mgis::python::mgis_convert_to_span(o), s);
 }  // end of MaterialStateManager_setExternalStateVariable3
 
@@ -195,6 +246,11 @@ static void MaterialStateManager_setExternalStateVariable4(
     const pybind11::object& o,
     const mgis::behaviour::MaterialStateManager::StorageMode s,
     const mgis::behaviour::MaterialStateManager::UpdatePolicy b) {
+  if (s == mgis::behaviour::MaterialStateManager::EXTERNAL_STORAGE) {
+    setExternalStateVariable(
+        sm, n, MaterialStateManager_convertExternalValues(o, b), s, b);
+    return;
+  }
   setExternalStateVariable(sm, n, mgis::python::mgis_convert_to_span(o), s, b);
 }  // end of MaterialStateManager_setExternalStateVariable4
 
@@ -205,6 +261,11 @@ void declareMaterialStateManager(pybind11::module_& m) {
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::MaterialStateManager;
   using mgis::behaviour::MaterialStateManagerInitializer;
+  // documentation of the overloads taking a storage mode
+  const auto* const storage_mode_doc =
+      "with EXTERNAL_STORAGE, the given array is used without copy: it must "
+      "be a contiguous array of float64 values, writable unless the update "
+      "policy is NOUPDATE, and kept alive by the caller";
   // wrapping the MaterialStateManager::UpdatePolicy enum
   pybind11::enum_<MaterialStateManager::UpdatePolicy>(
       m, "MaterialStateManagerUpdatePolicy")
@@ -229,26 +290,31 @@ void declareMaterialStateManager(pybind11::module_& m) {
       m, "MaterialStateManagerInitializer")
       .def(pybind11::init<>())
       .def("bindGradients", &MaterialStateManagerInitializer_bindGradients,
-           "use the given array to store the gradients")
+           "use the given array to store the gradients",
+           pybind11::keep_alive<1, 2>())
       .def("bindThermodynamicForces",
            &MaterialStateManagerInitializer_bindThermodynamicForces,
-           "use the given array to store the thermodynamic forces")
+           "use the given array to store the thermodynamic forces",
+           pybind11::keep_alive<1, 2>())
       .def("bindInternalStateVariables",
            &MaterialStateManagerInitializer_bindInternalStateVariables,
-           "use the given array to store the internal state variables")
+           "use the given array to store the internal state variables",
+           pybind11::keep_alive<1, 2>())
       .def("bindStoredEnergies",
            &MaterialStateManagerInitializer_bindStoredEnergies,
-           "use the given array to store the stored energies")
+           "use the given array to store the stored energies",
+           pybind11::keep_alive<1, 2>())
       .def("bindDissipatedEnergies",
            &MaterialStateManagerInitializer_bindDissipatedEnergies,
-           "use the given array to store the dissipated energies");
+           "use the given array to store the dissipated energies",
+           pybind11::keep_alive<1, 2>());
   // wrapping the MaterialStateManager class
   pybind11::class_<MaterialStateManager>(m, "MaterialStateManager")
       .def(pybind11::init<const Behaviour&, const size_type>(),
            pybind11::keep_alive<1, 2>())
       .def(pybind11::init<const Behaviour&, const size_type,
                           const MaterialStateManagerInitializer&>(),
-           pybind11::keep_alive<1, 2>())
+           pybind11::keep_alive<1, 2>(), pybind11::keep_alive<1, 4>())
       .def_readonly("n", &MaterialStateManager::n)
       .def_readonly("number_of_integration_points", &MaterialStateManager::n)
       .def_property_readonly("gradients", &MaterialStateManager_getGradients)
@@ -267,36 +333,44 @@ void declareMaterialStateManager(pybind11::module_& m) {
                              &MaterialStateManager_getInternalStateVariables)
       .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty)
       .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty2)
-      .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty3)
-      .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty4)
+      .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty3,
+           storage_mode_doc)
+      .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty4,
+           storage_mode_doc)
       .def("setMassDensity", &MaterialStateManager_setMassDensity)
       .def("setMassDensity", &MaterialStateManager_setMassDensity2)
-      .def("setMassDensity", &MaterialStateManager_setMassDensity3)
-      .def("setMassDensity", &MaterialStateManager_setMassDensity4)
+      .def("setMassDensity", &MaterialStateManager_setMassDensity3,
+           storage_mode_doc)
+      .def("setMassDensity", &MaterialStateManager_setMassDensity4,
+           storage_mode_doc)
       .def("setExternalStateVariable",
            &MaterialStateManager_setExternalStateVariable)
       .def("setExternalStateVariable",
            &MaterialStateManager_setExternalStateVariable2)
       .def("setExternalStateVariable",
-           &MaterialStateManager_setExternalStateVariable3)
+           &MaterialStateManager_setExternalStateVariable3, storage_mode_doc)
       .def("setExternalStateVariable",
-           &MaterialStateManager_setExternalStateVariable4);
+           &MaterialStateManager_setExternalStateVariable4, storage_mode_doc);
   // free functions
   m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty);
   m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty2);
-  m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty3);
-  m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty4);
+  m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty3,
+        storage_mode_doc);
+  m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty4,
+        storage_mode_doc);
   m.def("setMassDensity", &MaterialStateManager_setMassDensity);
   m.def("setMassDensity", &MaterialStateManager_setMassDensity2);
-  m.def("setMassDensity", &MaterialStateManager_setMassDensity3);
-  m.def("setMassDensity", &MaterialStateManager_setMassDensity4);
+  m.def("setMassDensity", &MaterialStateManager_setMassDensity3,
+        storage_mode_doc);
+  m.def("setMassDensity", &MaterialStateManager_setMassDensity4,
+        storage_mode_doc);
   m.def("setExternalStateVariable",
         &MaterialStateManager_setExternalStateVariable);
   m.def("setExternalStateVariable",
         &MaterialStateManager_setExternalStateVariable2);
   m.def("setExternalStateVariable",
-        &MaterialStateManager_setExternalStateVariable3);
+        &MaterialStateManager_setExternalStateVariable3, storage_mode_doc);
   m.def("setExternalStateVariable",
-        &MaterialStateManager_setExternalStateVariable4);
+        &MaterialStateManager_setExternalStateVariable4, storage_mode_doc);
 
 }  // end of declareMaterialStateManager
