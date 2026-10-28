@@ -32,6 +32,10 @@ namespace mgis {
     return result;
   }  // end of split
 
+  void ErrorBacktrace::abort(std::string_view msg) {
+    ::mgis::abort(msg);
+  }  // end of abort
+
   void ErrorBacktrace::setErrorReportingAsFatal() noexcept {
     ::mgis::internal::isErrorReportingFatal() = true;
   }  // end of setIfErrorReportingIsFatal
