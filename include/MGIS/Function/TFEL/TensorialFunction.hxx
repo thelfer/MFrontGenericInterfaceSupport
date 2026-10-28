@@ -140,6 +140,13 @@ namespace mgis::function {
   using T2toT2Function = TensorialFunction<Space, tfel::math::t2tot2<N, real>>;
 
   /*!
+   * \brief convert a tensorial function to a mutable view
+   * \param[in] f: function
+   */
+  template <FunctionalSpaceConcept Space, TensorConcept TensorType>
+  constexpr auto view(TensorialFunction<Space, TensorType>&);
+
+  /*!
    * \brief convert a tensorial function to a immutable view
    * \param[in] f: function
    */

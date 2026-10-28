@@ -114,8 +114,18 @@ namespace mgis::function {
   }
 
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>
-  constexpr auto view(const TensorialFunction<Space, TensorType>& f) {
+  constexpr auto view(TensorialFunction<Space, TensorType>& f) {
     return f.view();
+  }  // end of view
+
+  template <FunctionalSpaceConcept Space, TensorConcept TensorType>
+  constexpr auto view(const TensorialFunction<Space, TensorType>& f) {
+    constexpr auto N = tfel::math::getUnderlyingArrayMinimalSize<
+        typename TensorType::indexing_policy>();
+    using FunctionViewType =
+        FunctionView<Space, simple_data_layout_description<N>, false>;
+    return TensorModifier<TensorType, FunctionViewType>(
+        FunctionViewType(f.getSpace(), f.data()));
   }  // end of view
 
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>

@@ -57,7 +57,7 @@ namespace mgis::function {
     //! \brief perform consistency checks
     [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
     //! \return the size of the tensorial object to be exposed
-    constexpr size_type getNumberOfComponents() noexcept;
+    constexpr size_type getNumberOfComponents() const noexcept;
     /*!
      * \brief apply the modifier
      * \param[in] values: values to be modified
@@ -65,6 +65,10 @@ namespace mgis::function {
     constexpr auto apply(const evaluator_result<EvaluatorType>&) const;
   };
 
+  //! \brief perform consistency checks
+  template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
+  [[nodiscard]] constexpr bool check(
+      AbstractErrorHandler&, const TensorModifier<TensorType, EvaluatorType>&);
   template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
   constexpr mgis::size_type getNumberOfComponents(
       const TensorModifier<TensorType, EvaluatorType>&) noexcept;

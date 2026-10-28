@@ -22,7 +22,7 @@ namespace mgis::function {
                                                   EvaluatorType>)  //
       constexpr size_type
       TensorModifier<TensorType,
-                     EvaluatorType>::getNumberOfComponents() noexcept {
+                     EvaluatorType>::getNumberOfComponents() const noexcept {
     return compile_time_size<TensorType>;
   }
 
@@ -57,6 +57,12 @@ namespace mgis::function {
       return TensorType(tfel::math::map<const TensorType>(values.data()));
     }
   }  // end of apply
+
+  template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
+  constexpr bool check(AbstractErrorHandler& eh,
+                       const TensorModifier<TensorType, EvaluatorType>& e) {
+    return e.check(eh);
+  }  // end of check
 
   template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
   constexpr mgis::size_type getNumberOfComponents(
