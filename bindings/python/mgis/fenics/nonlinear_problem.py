@@ -11,7 +11,10 @@ from dolfin import *
 from .utils import *
 from .gradient_flux import *
 import mgis.behaviour as mgis_bv
-from ufl import shape
+try:
+    from ufl_legacy import shape
+except ImportError:
+    from ufl import shape
 
 SymGrad = {
     mgis_bv.Hypothesis.Tridimensional: lambda u: sym(grad(u)),

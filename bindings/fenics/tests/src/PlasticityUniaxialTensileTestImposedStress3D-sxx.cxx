@@ -22,6 +22,7 @@
 
 #include <memory>
 #include <cstdlib>
+#include <string_view>
 #include <dolfin/common/Array.h>
 #include <dolfin/fem/assemble.h>
 #include <dolfin/fem/DirichletBC.h>
@@ -170,6 +171,52 @@ int main() {
   for (mgis::size_type i = 0; i != disp.size(); ++i) {
     std::cout << disp[i] << " " << load[i] << " " << p[i] << '\n';
   }
-
-  return EXIT_SUCCESS;
+  /* tests */
+  auto status = EXIT_SUCCESS;
+  auto nb_tests = mgis::size_type{};
+  auto nb_failures = mgis::size_type{};
+  auto check = [&status, &nb_tests, &nb_failures](const bool c,
+                                                  const std::string_view msg) {
+    ++nb_tests;
+    if (!c) {
+      std::cerr << msg << '\n';
+      status = EXIT_FAILURE;
+      ++nb_failures;
+    }
+  };
+  // axial strain and equivalent plastic strain computed by mtest for
+  // the same loading
+  const auto exx_ref = std::array<double, 11>{0,
+                                              0.005,
+                                              0.01,
+                                              0.060000000000045,
+                                              0.11000000000009,
+                                              0.16000000000014,
+                                              0.21000000000018,
+                                              0.26000000000023,
+                                              0.31000000000027,
+                                              0.36000000000031,
+                                              0.41000000000036};
+  const auto p_ref = std::array<double, 11>{0,
+                                            0,
+                                            0,
+                                            0.045000000000045,
+                                            0.09000000000009,
+                                            0.13500000000013,
+                                            0.18000000000018,
+                                            0.22500000000023,
+                                            0.27000000000027,
+                                            0.31500000000032,
+                                            0.36000000000036};
+  constexpr const auto eps = 1.e-12;
+  for (mgis::size_type i = 0; i != disp.size(); ++i) {
+    // the average displacement of the loaded face is the axial strain
+    check(std::abs(disp[i] - exx_ref[i]) < eps, "invalid axial strain value");
+    check(std::abs(p[i] - p_ref[i]) < eps,
+          "invalid equivalent plastic strain value");
+  }
+  // reporting
+  std::cout << "Number of tests: " << nb_tests << '\n';
+  std::cout << "Number of failures: " << nb_failures << '\n';
+  return status;
 }

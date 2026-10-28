@@ -19,6 +19,7 @@
 
 #include <memory>
 #include <cstdlib>
+#include <string_view>
 #include <dolfin/common/Array.h>
 #include <dolfin/fem/assemble.h>
 #include <dolfin/fem/DirichletBC.h>
@@ -157,7 +158,7 @@ int main() {
   auto nb_tests = mgis::size_type{};
   auto nb_failures = mgis::size_type{};
   auto check = [&status, &nb_tests, &nb_failures](const bool c,
-                                                  const mgis::string_view msg) {
+                                                  const std::string_view msg) {
     ++nb_tests;
     if (!c) {
       std::cerr << msg << '\n';
@@ -168,6 +169,8 @@ int main() {
   constexpr const auto eps = 1.e-14;
   for (mgis::size_type i = 0; i != e.size(); ++i) {
     // check strain values
+    check(std::abs(e[i][1] - 1.e-3 * i * dt) < eps,
+          "invalid axial strain value");
     check(std::abs(e[i][0] + nu * e[i][1]) < eps,
           "invalid orthoradial strain value");
     check(std::abs(e[i][2] + nu * e[i][1]) < eps,
