@@ -50,6 +50,9 @@ struct ContextTest final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_THROW(std::optional<int>() | or_raise, std::runtime_error);
     //
     TFEL_TESTS_STATIC_ASSERT(!lvalue_assign<int>);
+    // a value is returned, not a reference into the temporary
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::is_same_v<decltype(f() | or_raise), std::vector<int>>));
   }  // end of test1
   void test2() {
     using namespace mgis;
@@ -85,6 +88,9 @@ struct ContextTest final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_EQUAL(v->at(2), 6);
     TFEL_TESTS_CHECK_THROW(std::unique_ptr<int>() | or_raise,
                            std::runtime_error);
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::is_same_v<decltype(f3() | or_raise),
+                        std::unique_ptr<std::vector<int>>>));
   }
 };
 

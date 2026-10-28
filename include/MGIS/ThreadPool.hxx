@@ -46,6 +46,9 @@ namespace mgis {
      * \brief add a new task
      * \param[in] f: task
      * \param[in] a: arguments passed to the the task
+     *
+     * \note the task and its arguments are copied (or moved) and stored by
+     * the pool, as by `std::thread`
      */
     template <typename F, typename... Args>
     [[nodiscard]] std::future<

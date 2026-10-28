@@ -25,8 +25,10 @@ namespace mgis {
 
   template <typename T>
   template <typename... Args>
-  ThreadedTaskResult<T>::ThreadedTaskResult(Args&&... args)
-      : result(args...) {}  // end of ThreadedTaskResult
+  ThreadedTaskResult<T>::ThreadedTaskResult(Args&&... args) requires(
+      !(std::is_same_v<std::remove_cvref_t<Args>, ThreadedTaskResult<T>> ||
+        ...))
+      : result(std::forward<Args>(args)...) {}  // end of ThreadedTaskResult
 
   template <typename T>
   ThreadedTaskResult<T>::ThreadedTaskResult(ThreadedTaskResult&&) = default;

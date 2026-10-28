@@ -56,8 +56,10 @@ namespace mgis::internal {
   template <typename T>
   struct OptionalTraits<std::optional<T>> {
     static constexpr bool isSpecialized = true;
-    static constexpr T &&deference(std::optional<T> &&v) noexcept
-        requires(!std::is_pointer_v<T>) {
+    static constexpr T deference(std::optional<T>&& v) noexcept(
+        std::is_nothrow_move_constructible_v<T>)
+      requires(!std::is_pointer_v<T>)
+    {
       assert(v.has_value());
       return std::move(*v);
     }
