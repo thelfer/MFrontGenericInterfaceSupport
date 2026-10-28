@@ -67,6 +67,8 @@ namespace mgis::behaviour {
    * \param[out] s: new stress
    * \param[in] m: material data manager
    * \param[in] t: expected finite strain stress type
+   * \pre the behaviour must be loaded with the Cauchy stress as stress
+   * measure (`FiniteStrainBehaviourOptions::CAUCHY`)
    */
   MGIS_EXPORT void convertFiniteStrainStress(std::span<real>&,
                                              const MaterialDataManager&,
@@ -75,6 +77,10 @@ namespace mgis::behaviour {
    * \param[out] K: new tangent operator
    * \param[in] m: material data manager
    * \param[in] t: expected finite strain operator type
+   * \pre the behaviour must be loaded with the Cauchy stress as stress
+   * measure (`FiniteStrainBehaviourOptions::CAUCHY`) and the derivative
+   * of the Cauchy stress with respect to the deformation gradient as
+   * tangent operator (`FiniteStrainBehaviourOptions::DSIG_DF`)
    */
   MGIS_EXPORT void convertFiniteStrainTangentOperator(
       std::span<real>&,
@@ -84,6 +90,8 @@ namespace mgis::behaviour {
    * \param[out] s: new stress
    * \param[in] d: behaviour data
    * \param[in] t: expected finite strain stress type
+   * \pre the behaviour must be loaded with the Cauchy stress as stress
+   * measure (`FiniteStrainBehaviourOptions::CAUCHY`)
    */
   MGIS_EXPORT void convertFiniteStrainStress(std::span<real>&,
                                              const BehaviourData&,
@@ -92,6 +100,10 @@ namespace mgis::behaviour {
    * \param[out] K: new tangent operator
    * \param[in] d: behaviour data
    * \param[in] t: expected finite strain operator type
+   * \pre the behaviour must be loaded with the Cauchy stress as stress
+   * measure (`FiniteStrainBehaviourOptions::CAUCHY`) and the derivative
+   * of the Cauchy stress with respect to the deformation gradient as
+   * tangent operator (`FiniteStrainBehaviourOptions::DSIG_DF`)
    */
   MGIS_EXPORT void convertFiniteStrainTangentOperator(
       std::span<real>&,

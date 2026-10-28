@@ -111,6 +111,12 @@ int main(const int argc, const char* const* argv) {
       check(d.esvs[0].type == Variable::SCALAR,
             "invalid type for the first external state variable");
     }
+    // the Kirchhoff stress is a symmetric tensor
+    o.stress_measure = FiniteStrainBehaviourOptions::CAUCHY;
+    o.tangent_operator = FiniteStrainBehaviourOptions::DTAU_DDF;
+    const auto d2 = load(o, argv[1], argv[2], h);
+    check(getTangentOperatorArraySize(d2) == 54,
+          "invalid tangent operator size (DTAU_DDF)");
   } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;

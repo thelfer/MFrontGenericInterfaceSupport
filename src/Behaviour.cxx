@@ -161,7 +161,7 @@ namespace mgis::behaviour {
     } else if (o.tangent_operator == FiniteStrainBehaviourOptions::DTAU_DDF) {
       d.options[1] = mgis::real{3};
       d.to_blocks[0] = {
-          {"KirchhoffStress", Variable::STENSOR, 3},
+          {"KirchhoffStress", Variable::STENSOR, 1},
           {"SpatialIncrementOfTheDeformationGradient", Variable::TENSOR, 3}};
     } else {
       mgis::raise(
