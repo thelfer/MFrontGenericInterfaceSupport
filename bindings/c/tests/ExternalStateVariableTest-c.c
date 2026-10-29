@@ -111,13 +111,14 @@ static void check_behaviour_data(const mgis_bv_Behaviour* const b){
   check_status(mgis_bv_behaviour_data_get_state_1(&s1, d));
   //
   const mgis_real v_esv_values[3] = {1, 2, 3};
-  mgis_bv_state_set_external_state_variable_by_name(s1, "v_esv", v_esv_values);
+  check_status(mgis_bv_state_set_external_state_variable_by_name(s1, "v_esv",
+                                                                 v_esv_values));
   // initializing the view
   check_status(mgis_bv_make_behaviour_data_view(&v, d));
   check_status(mgis_bv_integrate(&r, &v, b));
   //
-  mgis_bv_state_get_internal_state_variables(&isvs, s1);
-  mgis_bv_state_get_external_state_variables(&esvs, s1);
+  check_status(mgis_bv_state_get_internal_state_variables(&isvs, s1));
+  check_status(mgis_bv_state_get_external_state_variables(&esvs, s1));
   //
   for (i = 0; i != 3; ++i) {
     check(fabs(esvs[i + 1] - v_esv_values[i]) < eps,
@@ -137,20 +138,27 @@ static void initialize_state(mgis_bv_MaterialStateManager* s,
   check_status(
       mgis_bv_material_state_manager_set_uniform_scalar_material_property(
           s, "PoissonRatio", 0.3));
-  mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable(
-      s, "Temperature", 293.15);
-  mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
-      s, "s_esv", zeros, MGIS_BV_EXTERNAL_STORAGE);
-  mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
-      s, "s2_esv[0]", zeros, MGIS_BV_EXTERNAL_STORAGE);
-  mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
-      s, "s2_esv[1]", zeros, MGIS_BV_EXTERNAL_STORAGE);
-  mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
-      s, "t_esv", zeros, MGIS_BV_EXTERNAL_STORAGE);
-  mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
-      s, "t2_esv[0]", zeros, MGIS_BV_EXTERNAL_STORAGE);
-  mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
-      s, "t2_esv[1]", zeros, MGIS_BV_EXTERNAL_STORAGE);
+  check_status(
+      mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable(
+          s, "Temperature", 293.15));
+  check_status(
+      mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
+          s, "s_esv", zeros, MGIS_BV_EXTERNAL_STORAGE));
+  check_status(
+      mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
+          s, "s2_esv[0]", zeros, MGIS_BV_EXTERNAL_STORAGE));
+  check_status(
+      mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
+          s, "s2_esv[1]", zeros, MGIS_BV_EXTERNAL_STORAGE));
+  check_status(
+      mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
+          s, "t_esv", zeros, MGIS_BV_EXTERNAL_STORAGE));
+  check_status(
+      mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
+          s, "t2_esv[0]", zeros, MGIS_BV_EXTERNAL_STORAGE));
+  check_status(
+      mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
+          s, "t2_esv[1]", zeros, MGIS_BV_EXTERNAL_STORAGE));
 }
 
 static void check_material_data_manager(const mgis_bv_Behaviour* const b) {
@@ -166,7 +174,8 @@ static void check_material_data_manager(const mgis_bv_Behaviour* const b) {
   check_status(mgis_bv_material_data_manager_get_state_0(&s0, d));
   check_status(mgis_bv_material_data_manager_get_state_1(&s1, d));
   //
-  mgis_real zeros[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  // 2 integration points times 9 components (largest variable)
+  mgis_real zeros[18] = {0};
   mgis_real v_esv_values[3] = {1, 2, 3};
   mgis_real v2_esv0_values[9] = {1, 2, 3, 7, 6, 5};
   mgis_real v2_esv1_values[9] = {9, 8, 2, 3, 6, 4};
@@ -174,21 +183,28 @@ static void check_material_data_manager(const mgis_bv_Behaviour* const b) {
   initialize_state(s0, zeros);
   initialize_state(s1, zeros);
   //
-  mgis_bv_material_state_manager_get_internal_state_variables(&isvs, s1);
+  check_status(
+      mgis_bv_material_state_manager_get_internal_state_variables(&isvs, s1));
   // v_esv is uniform
-  mgis_bv_material_state_manager_set_uniform_external_state_variable(
-      s0, "v_esv", zeros, MGIS_BV_EXTERNAL_STORAGE);
-  mgis_bv_material_state_manager_set_uniform_external_state_variable(
-      s1, "v_esv", v_esv_values, MGIS_BV_LOCAL_STORAGE);
+  check_status(
+      mgis_bv_material_state_manager_set_uniform_external_state_variable(
+          s0, "v_esv", zeros, MGIS_BV_EXTERNAL_STORAGE));
+  check_status(
+      mgis_bv_material_state_manager_set_uniform_external_state_variable(
+          s1, "v_esv", v_esv_values, MGIS_BV_LOCAL_STORAGE));
   // v2_esv[0] and v2_esv[1] are not uniform
-  mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
-      s0, "v2_esv[0]", zeros, MGIS_BV_EXTERNAL_STORAGE);
-  mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
-      s1, "v2_esv[0]", v2_esv0_values, MGIS_BV_EXTERNAL_STORAGE);
-  mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
-      s0, "v2_esv[1]", zeros, MGIS_BV_EXTERNAL_STORAGE);
-  mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
-      s1, "v2_esv[1]", v2_esv1_values, MGIS_BV_EXTERNAL_STORAGE);
+  check_status(
+      mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
+          s0, "v2_esv[0]", zeros, MGIS_BV_EXTERNAL_STORAGE));
+  check_status(
+      mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
+          s1, "v2_esv[0]", v2_esv0_values, MGIS_BV_EXTERNAL_STORAGE));
+  check_status(
+      mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
+          s0, "v2_esv[1]", zeros, MGIS_BV_EXTERNAL_STORAGE));
+  check_status(
+      mgis_bv_material_state_manager_set_non_uniform_external_state_variable(
+          s1, "v2_esv[1]", v2_esv1_values, MGIS_BV_EXTERNAL_STORAGE));
   // checking if the external storage do work as expected
   v2_esv1_values[3] = -1;
   //

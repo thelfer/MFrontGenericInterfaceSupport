@@ -90,8 +90,16 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_EQUAL(pk1.getNumberOfComponents(), 9);
     TFEL_TESTS_ASSERT(F.check(ctx));
     TFEL_TESTS_CHECK_EQUAL(F.getNumberOfComponents(), 9);
-    pk1(0) = tfel::math::tensor<3u, real>::zero();
-    F(0) = tfel::math::tensor<3u, real>::Id();
+    // first Piola-Kirchhoff stress built from a Cauchy stress with shear
+    // components and a deformation gradient with off-diagonal terms and a
+    // determinant different from one
+    const auto sig_ref =
+        tfel::math::stensor<3u, real>{1.5, -0.8, 0.6, 0.3, -0.2, 0.1};
+    const auto F_ref = tfel::math::tensor<3u, real>{
+        1.1, 0.95, 1.02, 0.1, -0.05, 0.03, 0.07, -0.02, 0.04};
+    pk1(0) = tfel::math::convertCauchyStressToFirstPiolaKirchhoffStress(sig_ref,
+                                                                        F_ref);
+    F(0) = F_ref;
     // Cauchy stress in material frame
     const auto cauchy = pk1 | from_pk1_to_cauchy(F);
     TFEL_TESTS_STATIC_ASSERT(EvaluatorConcept<std::decay_t<decltype(cauchy)>>);
@@ -99,12 +107,12 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
         number_of_components<std::decay_t<decltype(cauchy)>> == 6);
     TFEL_TESTS_ASSERT(cauchy.check(ctx));
     TFEL_TESTS_CHECK_EQUAL(cauchy.getNumberOfComponents(), 6);
-    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[0] - 0) < eps);
-    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[1] - 0) < eps);
-    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[2] - 0) < eps);
-    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[3] - 0) < eps);
-    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[4] - 0) < eps);
-    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[5] - 0) < eps);
+    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[0] - sig_ref[0]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[1] - sig_ref[1]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[2] - sig_ref[2]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[3] - sig_ref[3]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[4] - sig_ref[4]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(cauchy(0)[5] - sig_ref[5]) < eps);
     // evaluator of the Cauchy stress in global frame
     const auto R = tfel::math::tmatrix<3, 3>{{0, 1, 0},  //
                                              {0, 0, 1},
@@ -116,20 +124,30 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     // evaluation of the Cauchy stress in global frame
     const auto ok = pk1 | from_pk1_to_cauchy(F) | rotate(R) | sig;
     TFEL_TESTS_ASSERT(ok);
-    TFEL_TESTS_ASSERT(std::abs(sig(0)[0] - 0) < eps);
-    TFEL_TESTS_ASSERT(std::abs(sig(0)[1] - 0) < eps);
-    TFEL_TESTS_ASSERT(std::abs(sig(0)[2] - 0) < eps);
-    TFEL_TESTS_ASSERT(std::abs(sig(0)[3] - 0) < eps);
-    TFEL_TESTS_ASSERT(std::abs(sig(0)[4] - 0) < eps);
-    TFEL_TESTS_ASSERT(std::abs(sig(0)[5] - 0) < eps);
+    // rotate(R) computes R^T sig R, i.e. here
+    // (xx, yy, zz, xy, xz, yz) -> (zz, xx, yy, xz, yz, xy)
+    TFEL_TESTS_ASSERT(std::abs(sig(0)[0] - sig_ref[2]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(sig(0)[1] - sig_ref[0]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(sig(0)[2] - sig_ref[1]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(sig(0)[3] - sig_ref[4]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(sig(0)[4] - sig_ref[5]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(sig(0)[5] - sig_ref[3]) < eps);
   }
   void test4() {
     using namespace mgis;
     using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
     Context ctx;
     auto space = BasicLinearSpace(1);
-    const auto pk1_values = std::vector<real>{0, 0, 0, 0, 0, 0, 0, 0, 0};
-    const auto F1_values = std::vector<real>{1, 1, 1, 0, 0, 0, 0, 0, 0};
+    const auto sig_ref =
+        tfel::math::stensor<3u, real>{1.5, -0.8, 0.6, 0.3, -0.2, 0.1};
+    const auto F_ref = tfel::math::tensor<3u, real>{
+        1.1, 0.95, 1.02, 0.1, -0.05, 0.03, 0.07, -0.02, 0.04};
+    const auto pk1_ref =
+        tfel::math::convertCauchyStressToFirstPiolaKirchhoffStress(sig_ref,
+                                                                   F_ref);
+    const auto pk1_values = std::vector<real>(pk1_ref.begin(), pk1_ref.end());
+    const auto F1_values = std::vector<real>(F_ref.begin(), F_ref.end());
     auto sig_values = std::vector<real>{0, 0, 0, 0, 0, 0, 0, 0, 0};
     const FunctionView<BasicLinearSpace, FunctionDataLayoutDescription{}, false>
         pk1_function(space, pk1_values, 9);
@@ -144,6 +162,14 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
                     from_pk1_to_cauchy(F_function | as_tensor<3>) |
                     rotate_backwards(R) | sig;
     TFEL_TESTS_ASSERT(ok);
+    // rotate_backwards(R) computes R sig R^T, i.e. here
+    // (xx, yy, zz, xy, xz, yz) -> (yy, zz, xx, yz, xy, xz)
+    TFEL_TESTS_ASSERT(std::abs(sig_values[0] - sig_ref[1]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(sig_values[1] - sig_ref[2]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(sig_values[2] - sig_ref[0]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(sig_values[3] - sig_ref[5]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(sig_values[4] - sig_ref[3]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(sig_values[5] - sig_ref[4]) < eps);
   }
   void test5() {
 #ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
@@ -162,6 +188,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
   void test6() {
     using namespace mgis;
     using namespace mgis::function;
+    constexpr auto eps = real{1e-14};
     auto ctx = Context{};
     auto space = BasicLinearSpace{2};
     auto dS_dEGL = Function<BasicLinearSpace>{space, 36};
@@ -169,6 +196,11 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     auto F0 = Function<BasicLinearSpace>{space, 9};
     auto F1 = Function<BasicLinearSpace>{space, 9};
     auto s = Function<BasicLinearSpace>{space, 6};
+    for (size_type i = 0; i != 2; ++i) {
+      for (size_type k = 0; k != 36; ++k) {
+        dS_dEGL(i)[k] = static_cast<real>(1 + k + 36 * i);
+      }
+    }
     const auto op =
         convert_finite_strain_stiffness<FiniteStrainStiffnessKind::DS_DC,
                                         FiniteStrainStiffnessKind::DS_DEGL>(
@@ -176,6 +208,12 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
 
     auto Kv = K | as_st2tost2<3>;
     const auto ok = assign(ctx, Kv, dS_dEGL | as_st2tost2<3> | op);
+    // dS_dC is dS_dEGL / 2 since EGL = (C - I) / 2
+    for (size_type i = 0; i != 2; ++i) {
+      for (size_type k = 0; k != 36; ++k) {
+        TFEL_TESTS_ASSERT(std::abs(K(i)[k] - dS_dEGL(i)[k] / 2) < eps);
+      }
+    }
     TFEL_TESTS_ASSERT(ok);
     // conversion to a tangent operator of another type
     auto dsig_dF = Function<BasicLinearSpace>{space, 54};
