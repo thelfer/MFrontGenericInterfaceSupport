@@ -1,0 +1,40 @@
+# Empties the Spack binary caches of check.yml and check-tbb.yml every month: the
+# next runs fill them again (see .github/actions/clean-build-cache)
+name: Clean the build caches
+
+on:
+  schedule:
+    - cron: 47 0 1 * *
+  workflow_dispatch:
+
+jobs:
+  clean:
+    strategy:
+      fail-fast: false
+      matrix:
+        build_cache: [mgis-buildcache, mgis-tbb-buildcache]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      BUILD_CACHE: oci://ghcr.io/${{ github.repository_owner }}/${{ matrix.build_cache }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Spack
+      uses: spack/setup-spack@v3
+      with:
+        spack_ref: v1.2.2
+        packages_ref: develop
+        buildcache: false
+        spack_path: ${{github.workspace}}/spack
+
+    - name: Remove all the packages
+      uses: ./.github/actions/clean-build-cache
+      env:
+        GITHUB_USER: ${{ github.actor }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        prune: false
+        wipe: true

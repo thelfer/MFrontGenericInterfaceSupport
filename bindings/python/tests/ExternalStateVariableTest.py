@@ -76,6 +76,13 @@ class ExternalStateVariableTest(unittest.TestCase):
             self.assertTrue(
                 abs(d.s1.internal_state_variables[i] - v_esv_values[i]) < eps,
                 "invalid internal state variable value")
+        # offsets out of range
+        self.assertRaises(RuntimeError, mgis_bv.setMaterialProperty, d.s1, 2,
+                          1.)
+        self.assertRaises(RuntimeError, mgis_bv.setExternalStateVariable,
+                          d.s1, 55, 1.)
+        self.assertRaises(RuntimeError, mgis_bv.setExternalStateVariable,
+                          d.s1, 54, v_esv_values)
         pass
 
     def test_material_data_manager(self):
@@ -163,6 +170,16 @@ class ExternalStateVariableTest(unittest.TestCase):
                 abs(d.s1.internal_state_variables[1, i + 6] -
                     v2_esv1_values[i + 3]) < eps,
                 "invalid internal state variable value")
+
+
+    def test_strided_array(self):
+        h = mgis_bv.Hypothesis.Tridimensional
+        b = self.__get_behaviour(h)
+        d = mgis_bv.BehaviourData(b)
+        values = numpy.asarray([1, 0, 2, 0, 3, 0], dtype=numpy.float64)
+        # the values of values[::2] are not contiguous
+        with self.assertRaises(Exception):
+            mgis_bv.setExternalStateVariable(d.s1, "v_esv", values[::2])
 
 
 if __name__ == '__main__':

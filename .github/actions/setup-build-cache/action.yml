@@ -1,0 +1,24 @@
+name: Set up the build cache
+description: >
+  Use the spack build cache given by the BUILD_CACHE environment variable, read and
+  written with the GITHUB_USER and GITHUB_TOKEN environment variables.
+runs:
+  using: composite
+  steps:
+  - shell: bash
+    run: |
+      spack mirror add --unsigned --oci-username-variable GITHUB_USER --oci-password-variable GITHUB_TOKEN \
+            buildcache $BUILD_CACHE
+      # binaries usable on all the runners, whatever their CPU and install path: a
+      # generic target, as in the build caches of Spack (x86_64_v3 for Linux, aarch64
+      # for Apple silicon), and x86_64 for the Intel Macs, some of which lack AVX2
+      case "$(uname -s)-$(uname -m)" in
+        Linux-x86_64) target=x86_64_v3 ;;
+        Darwin-x86_64) target=x86_64 ;;
+        *-arm64 | *-aarch64) target=aarch64 ;;
+        *) echo "unsupported system $(uname -s)-$(uname -m)"; exit 1 ;;
+      esac
+      spack config add "config:install_tree:padded_length:128"
+      spack config add "packages:all:require:[target=$target]"
+      # always the latest versions: binaries are only taken when their hash matches
+      spack config add "concretizer:reuse:false"

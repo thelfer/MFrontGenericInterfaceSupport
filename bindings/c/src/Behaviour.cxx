@@ -89,6 +89,8 @@ mgis_status mgis_bv_finite_strain_behaviour_options_set_tangent_operator(
     tm = mgis::behaviour::FiniteStrainBehaviourOptions::DS_DEGL;
   } else if (t == MGIS_BV_DPK1_DF) {
     tm = mgis::behaviour::FiniteStrainBehaviourOptions::DPK1_DF;
+  } else if (t == MGIS_BV_DTAU_DDF) {
+    tm = mgis::behaviour::FiniteStrainBehaviourOptions::DTAU_DDF;
   } else {
     return mgis_report_failure("invalid tangent operator");
   }
@@ -109,6 +111,8 @@ mgis_bv_finite_strain_behaviour_options_set_tangent_operator_by_string(
     tm = mgis::behaviour::FiniteStrainBehaviourOptions::DS_DEGL;
   } else if (strcmp(t, "DPK1_DF") == 0) {
     tm = mgis::behaviour::FiniteStrainBehaviourOptions::DPK1_DF;
+  } else if (strcmp(t, "DTAU_DDF") == 0) {
+    tm = mgis::behaviour::FiniteStrainBehaviourOptions::DTAU_DDF;
   } else {
     return mgis_report_failure("invalid tangent operator");
   }
@@ -147,6 +151,9 @@ mgis_status mgis_bv_load_behaviour(mgis_bv_Behaviour** ptr,
                                    const char* const b,
                                    const char* const h) {
   *ptr = nullptr;
+  if ((l == nullptr) || (b == nullptr) || (h == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   try {
     const auto bv = mgis::behaviour::load(l, b, mgis::behaviour::fromString(h));
     *ptr = new mgis::behaviour::Behaviour(std::move(bv));
@@ -168,6 +175,9 @@ mgis_status mgis_bv_load_finite_strain_behaviour(
     const char* const b,
     const char* const h) {
   *ptr = nullptr;
+  if ((o == nullptr) || (l == nullptr) || (b == nullptr) || (h == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   try {
     const auto bv =
         mgis::behaviour::load(*o, l, b, mgis::behaviour::fromString(h));
@@ -187,6 +197,13 @@ mgis_status mgis_bv_behaviour_rotate_gradients_in_place(
     mgis_real* const g,
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  if (b->rotate_gradients_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the gradients defined");
+  }
   b->rotate_gradients_ptr(g, g, r);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_gradients_in_place
@@ -196,6 +213,13 @@ mgis_status mgis_bv_behaviour_rotate_gradients_out_of_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const gg,
     const mgis_real* const r) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  if (b->rotate_gradients_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the gradients defined");
+  }
   b->rotate_gradients_ptr(mg, gg, r);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_gradients_out_of_place
@@ -205,6 +229,13 @@ mgis_status mgis_bv_behaviour_rotate_array_of_gradients_in_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  if (b->rotate_array_of_gradients_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the gradients defined");
+  }
   b->rotate_array_of_gradients_ptr(g, g, r, s);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_array_of_gradients_in_place
@@ -215,6 +246,13 @@ mgis_status mgis_bv_behaviour_rotate_array_of_gradients_out_of_place(
     const mgis_real* const gg,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  if (b->rotate_array_of_gradients_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the gradients defined");
+  }
   b->rotate_array_of_gradients_ptr(mg, gg, r, s);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_array_of_gradients_out_of_place
@@ -223,6 +261,14 @@ mgis_status mgis_bv_behaviour_rotate_thermodynamic_forces_in_place(
     mgis_real* const th,
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  if (b->rotate_thermodynamic_forces_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the thermodynamic forces "
+        "defined");
+  }
   b->rotate_thermodynamic_forces_ptr(th, th, r);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_thermodynamic_forces_in_place
@@ -232,6 +278,14 @@ mgis_status mgis_bv_behaviour_rotate_thermodynamic_forces_out_of_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const gth,
     const mgis_real* const r) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  if (b->rotate_thermodynamic_forces_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the thermodynamic forces "
+        "defined");
+  }
   b->rotate_thermodynamic_forces_ptr(mth, gth, r);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_thermodynamic_forces_out_of_place
@@ -241,6 +295,14 @@ mgis_status mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_in_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  if (b->rotate_array_of_thermodynamic_forces_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the thermodynamic forces "
+        "defined");
+  }
   b->rotate_array_of_thermodynamic_forces_ptr(th, th, r, s);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_in_place
@@ -251,6 +313,14 @@ mgis_status mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_out_of_place(
     const mgis_real* const gth,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  if (b->rotate_array_of_thermodynamic_forces_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the thermodynamic forces "
+        "defined");
+  }
   b->rotate_array_of_thermodynamic_forces_ptr(mth, gth, r, s);
   return mgis_report_success();
 }  // end of
@@ -260,6 +330,14 @@ mgis_status mgis_bv_behaviour_rotate_tangent_operator_blocks_in_place(
     mgis_real* const to,
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  if (b->rotate_tangent_operator_blocks_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the tangent operator blocks "
+        "defined");
+  }
   b->rotate_tangent_operator_blocks_ptr(to, to, r);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_tangent_operator_blocks_in_place
@@ -269,6 +347,14 @@ mgis_status mgis_bv_behaviour_rotate_tangent_operator_blocks_out_of_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const gto,
     const mgis_real* const r) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  if (b->rotate_tangent_operator_blocks_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the tangent operator blocks "
+        "defined");
+  }
   b->rotate_tangent_operator_blocks_ptr(mto, gto, r);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_tangent_operator_blocks_out_of_place
@@ -278,6 +364,14 @@ mgis_status mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_in_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  if (b->rotate_array_of_tangent_operator_blocks_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the tangent operator blocks "
+        "defined");
+  }
   b->rotate_array_of_tangent_operator_blocks_ptr(to, to, r, s);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_in_place
@@ -289,6 +383,14 @@ mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_out_of_place(
     const mgis_real* const gto,
     const mgis_real* const r,
     const mgis_size_type s) {
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  if (b->rotate_array_of_tangent_operator_blocks_ptr == nullptr) {
+    return mgis_report_failure(
+        "no function performing the rotation of the tangent operator blocks "
+        "defined");
+  }
   b->rotate_array_of_tangent_operator_blocks_ptr(mto, gto, r, s);
   return mgis_report_success();
 }  // end of
@@ -535,6 +637,64 @@ mgis_status mgis_bv_behaviour_get_material_property_name(
   }
 }  // end of mgis_bv_behaviour_get_material_property_name
 
+namespace c_internals {
+
+  static mgis_status getVariableType(mgis_bv_VariableType& t,
+                                     const mgis::behaviour::Variable& v) {
+    switch (v.type) {
+      case mgis::behaviour::Variable::SCALAR:
+        t = MGIS_BV_SCALAR;
+        break;
+      case mgis::behaviour::Variable::VECTOR:
+        t = MGIS_BV_VECTOR;
+        break;
+      case mgis::behaviour::Variable::VECTOR_1D:
+        t = MGIS_BV_VECTOR_1D;
+        break;
+      case mgis::behaviour::Variable::VECTOR_2D:
+        t = MGIS_BV_VECTOR_2D;
+        break;
+      case mgis::behaviour::Variable::VECTOR_3D:
+        t = MGIS_BV_VECTOR_3D;
+        break;
+      case mgis::behaviour::Variable::STENSOR:
+        t = MGIS_BV_STENSOR;
+        break;
+      case mgis::behaviour::Variable::STENSOR_1D:
+        t = MGIS_BV_STENSOR_1D;
+        break;
+      case mgis::behaviour::Variable::STENSOR_2D:
+        t = MGIS_BV_STENSOR_2D;
+        break;
+      case mgis::behaviour::Variable::STENSOR_3D:
+        t = MGIS_BV_STENSOR_3D;
+        break;
+      case mgis::behaviour::Variable::TENSOR:
+        t = MGIS_BV_TENSOR;
+        break;
+      case mgis::behaviour::Variable::TENSOR_1D:
+        t = MGIS_BV_TENSOR_1D;
+        break;
+      case mgis::behaviour::Variable::TENSOR_2D:
+        t = MGIS_BV_TENSOR_2D;
+        break;
+      case mgis::behaviour::Variable::TENSOR_3D:
+        t = MGIS_BV_TENSOR_3D;
+        break;
+      case mgis::behaviour::Variable::HIGHER_ORDER_TENSOR:
+        t = MGIS_BV_HIGHER_ORDER_TENSOR;
+        break;
+      case mgis::behaviour::Variable::ARRAY:
+        t = MGIS_BV_ARRAY;
+        break;
+      default:
+        return mgis_report_failure("unsupported variable type");
+    }
+    return mgis_report_success();
+  }
+
+}  // end of namespace c_internals
+
 mgis_status mgis_bv_behaviour_get_material_property_type(
     mgis_bv_VariableType* const t,
     const mgis_bv_Behaviour* const b,
@@ -543,24 +703,7 @@ mgis_status mgis_bv_behaviour_get_material_property_type(
     return mgis_report_failure("invalid argument");
   }
   try {
-    const auto& ev = b->mps.at(i);
-    switch (ev.type) {
-      case mgis::behaviour::Variable::SCALAR:
-        *t = MGIS_BV_SCALAR;
-        break;
-      case mgis::behaviour::Variable::VECTOR:
-        *t = MGIS_BV_VECTOR;
-        break;
-      case mgis::behaviour::Variable::STENSOR:
-        *t = MGIS_BV_STENSOR;
-        break;
-      case mgis::behaviour::Variable::TENSOR:
-        *t = MGIS_BV_TENSOR;
-        break;
-      default:
-        return mgis_report_failure("unsupported variable type");
-    }
-    return mgis_report_success();
+    return c_internals::getVariableType(*t, b->mps.at(i));
   } catch (...) {
     return mgis_handle_cxx_exception();
   }
@@ -594,31 +737,6 @@ mgis_status mgis_bv_behaviour_get_internal_state_variable_name(
     return mgis_handle_cxx_exception();
   }
 }  // end of mgis_bv_behaviour_get_internal_state_variable_name
-
-namespace c_internals {
-
-  static mgis_status getVariableType(mgis_bv_VariableType& t,
-                                     const mgis::behaviour::Variable& v) {
-    switch (v.type) {
-      case mgis::behaviour::Variable::SCALAR:
-        t = MGIS_BV_SCALAR;
-        break;
-      case mgis::behaviour::Variable::VECTOR:
-        t = MGIS_BV_VECTOR;
-        break;
-      case mgis::behaviour::Variable::STENSOR:
-        t = MGIS_BV_STENSOR;
-        break;
-      case mgis::behaviour::Variable::TENSOR:
-        t = MGIS_BV_TENSOR;
-        break;
-      default:
-        return mgis_report_failure("unsupported variable type");
-    }
-    return mgis_report_success();
-  }
-
-}  // end of namespace c_internals
 
 mgis_status mgis_bv_behaviour_get_internal_state_variable_type(
     mgis_bv_VariableType* const t,

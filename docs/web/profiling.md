@@ -31,8 +31,8 @@ The result of the profiling is not a flat list of timers, but a hierarchical tre
 
 - `name`: A `std::string` representing the name of the profiled section.
 - `time_in_seconds`: A `double` accumulating the total time spent in this section.
-- `calls`: An `unsigned int` counting the number of times this section was executed.
-- `children`: A `std::vector` of `std::shared_ptr<ProfilingData>`, representing the nested profiled sections called within the current one.
+- `calls`: A `std::size_t` counting the number of times this section was executed.
+- `children`: A `std::vector` of `std::unique_ptr<ProfilingData>` owned by the parent node, representing the nested profiled sections called within the current one. The tree is owned by the `Context` and destroyed with it.
 
 # Managing the Profiling State
 

@@ -21,7 +21,7 @@
 
 #define MGIS_CONCAT(a, b) MGIS_CONCAT_INNER(a, b)
 #define MGIS_CONCAT_INNER(a, b) a##b
-#define MGIS_VARNAME() MGIS_CONCAT(mgis_timer_, __COUNTER__)
+#define MGIS_VARNAME() MGIS_CONCAT(mgis_timer_, __LINE__)
 
 #define CatchTimeSection(CTX, NAME) \
   mgis::ProfilingSection MGIS_VARNAME()(CTX, NAME, (CTX).isProfilingEnabled())
