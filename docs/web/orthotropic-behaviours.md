@@ -74,7 +74,10 @@ All those functions take three arguments:
 - a pointer to the location where the original variables are stored.
 - a pointer to the rotation matrix from the global frame to the material
   frame. The rotation matrix has 9 components stored in column-major
-  format. For the function handling the thermodynamic forces and the
+  format. The rows of this matrix are the material axes expressed in the
+  global frame, so the 9 components are the first components of the
+  three material axes, then their second components, then their third
+  components. For the function handling the thermodynamic forces and the
   tangent operators blocks, this rotation matrix is transposed
   internally to get the rotation matrix from the material frame to the
   global frame.
