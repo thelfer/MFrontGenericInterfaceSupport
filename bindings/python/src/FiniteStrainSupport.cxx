@@ -25,7 +25,7 @@ static void py_convertFiniteStrainStress(
     pybind11::object o,
     const mgis::behaviour::MaterialDataManager& m,
     const mgis::behaviour::FiniteStrainStress t) {
-  auto s = mgis::python::mgis_convert_to_span(o);
+  auto s = mgis::python::mgis_convert_to_mutable_span(o);
   mgis::behaviour::convertFiniteStrainStress(s, m, t);
 }  // end of py_py_convertFiniteStrainStress
 
@@ -33,7 +33,7 @@ static void py_convertFiniteStrainTangentOperator(
     pybind11::object o,
     const mgis::behaviour::MaterialDataManager& m,
     const mgis::behaviour::FiniteStrainTangentOperator t) {
-  auto K = mgis::python::mgis_convert_to_span(o);
+  auto K = mgis::python::mgis_convert_to_mutable_span(o);
   mgis::behaviour::convertFiniteStrainTangentOperator(K, m, t);
 }  // end of py_py_convertFiniteStrainTangentOperator
 

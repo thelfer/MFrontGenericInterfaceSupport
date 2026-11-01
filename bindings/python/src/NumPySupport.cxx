@@ -18,76 +18,85 @@
 
 namespace mgis::python {
 
-  pybind11::array_t<double> wrapInNumPyArray(std::span<double>& v) {
+  pybind11::array_t<double> wrapInNumPyArray(std::span<double>& v,
+                                             pybind11::handle base) {
     return pybind11::array_t<double>({v.size()}, {sizeof(double)}, v.data(),
-                                     pybind11::none());
+                                     base);
   }  // end of wrapInNumPyArray
 
-  pybind11::array_t<double> wrapInNumPyArray(std::vector<double>& v) {
+  pybind11::array_t<double> wrapInNumPyArray(std::vector<double>& v,
+                                             pybind11::handle base) {
     auto view = std::span<double>(v);
-    return wrapInNumPyArray(view);
+    return wrapInNumPyArray(view, base);
   }  // end of wrapInNumPyArray
 
   pybind11::array_t<double> wrapInNumPyArray(
-      std::variant<std::span<double>, std::vector<double>>& v) {
+      std::variant<std::span<double>, std::vector<double>>& v,
+      pybind11::handle base) {
     if (std::holds_alternative<std::vector<double>>(v)) {
-      return wrapInNumPyArray(std::get<std::vector<double>>(v));
+      return wrapInNumPyArray(std::get<std::vector<double>>(v), base);
     }
-    return wrapInNumPyArray(std::get<std::span<double>>(v));
+    return wrapInNumPyArray(std::get<std::span<double>>(v), base);
   }  // end of wrapInNumPyArray
 
   pybind11::array_t<double> wrapInNumPyArray(std::span<double>& v,
-                                             const size_type nc) {
+                                             const size_type nc,
+                                             pybind11::handle base) {
     if (nc == 0) {
       return pybind11::array_t<double>();
     }
     return pybind11::array_t<double>(
         {v.size() / nc, nc}, /* Buffer dimensions */
-        {nc * sizeof(double), sizeof(double)}, v.data(), pybind11::none());
+        {nc * sizeof(double), sizeof(double)}, v.data(), base);
   }  // end of wrapInNumPyArray
 
   pybind11::array_t<double> wrapInNumPyArray(std::vector<double>& v,
-                                             const size_type nc) {
+                                             const size_type nc,
+                                             pybind11::handle base) {
     auto view = std::span<double>(v);
-    return wrapInNumPyArray(view, nc);
+    return wrapInNumPyArray(view, nc, base);
   }  // end of wrapInNumPyArray
 
   pybind11::array_t<double> wrapInNumPyArray(
       std::variant<std::span<double>, std::vector<double>>& v,
-      const size_type nc) {
+      const size_type nc,
+      pybind11::handle base) {
     if (std::holds_alternative<std::vector<double>>(v)) {
-      return wrapInNumPyArray(std::get<std::vector<double>>(v), nc);
+      return wrapInNumPyArray(std::get<std::vector<double>>(v), nc, base);
     }
-    return wrapInNumPyArray(std::get<std::span<double>>(v), nc);
+    return wrapInNumPyArray(std::get<std::span<double>>(v), nc, base);
   }  // end of wrapInNumPyArray
 
   pybind11::array_t<double> wrapInNumPyArray(std::span<double>& v,
                                              const size_type nl,
-                                             const size_type nc) {
+                                             const size_type nc,
+                                             pybind11::handle base) {
     if ((nc == 0) || (nl == 0)) {
       return pybind11::array_t<double>();
     }
     return pybind11::array_t<double>(
         {v.size() / (nc * nl), nl, nc},
         {(nc * nl) * sizeof(double), nc * sizeof(double), sizeof(double)},
-        v.data(), pybind11::none());
+        v.data(), base);
   }  // end of wrapInNumPyArray
 
   pybind11::array_t<double> wrapInNumPyArray(std::vector<double>& v,
                                              const size_type nl,
-                                             const size_type nc) {
+                                             const size_type nc,
+                                             pybind11::handle base) {
     auto view = std::span<double>(v);
-    return wrapInNumPyArray(view, nl, nc);
+    return wrapInNumPyArray(view, nl, nc, base);
   }  // end of wrapInNumPyArray
 
   pybind11::array_t<double> wrapInNumPyArray(
       std::variant<std::span<double>, std::vector<double>>& v,
       const size_type nl,
-      const size_type nc) {
+      const size_type nc,
+      pybind11::handle base) {
     if (std::holds_alternative<std::vector<double>>(v)) {
-      return wrapInNumPyArray(std::get<std::vector<double>>(v), nl, nc);
+      return wrapInNumPyArray(std::get<std::vector<double>>(v), nl, nc, base);
     }
-    return wrapInNumPyArray(std::get<std::span<double>>(v), nl, nc);
+    return wrapInNumPyArray(std::get<std::span<double>>(v), nl, nc, base);
   }  // end of wrapInNumPyArray
 
   std::span<mgis::real> mgis_convert_to_span(
@@ -102,5 +111,22 @@ namespace mgis::python {
     }
     return {static_cast<double*>(i.ptr), static_cast<mgis_size_type>(i.size)};
   }  // end of mgis_convert_to_span
+
+  std::span<mgis::real> mgis_convert_to_mutable_span(
+      const pybind11::object& o) {
+    const auto a = pybind11::array_t<double>(o);
+    // the values written in a converted copy would be lost
+    if ((!a.is(o)) && (!pybind11::module_::import("numpy")
+                            .attr("may_share_memory")(a, o)
+                            .cast<bool>())) {
+      mgis::raise(
+          "convert_to_span: expected an array of float64 values "
+          "(the values would be written in a converted copy)");
+    }
+    if (!a.writeable()) {
+      mgis::raise("convert_to_span: expected a writable array");
+    }
+    return mgis_convert_to_span(a);
+  }  // end of mgis_convert_to_mutable_span
 
 }  // end of namespace mgis::python

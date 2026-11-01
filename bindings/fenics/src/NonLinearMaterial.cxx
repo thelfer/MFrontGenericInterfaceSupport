@@ -161,7 +161,7 @@ namespace mgis {
                                           dofs.size(), dofs.data());
       // compute geometry mapping
       const auto gdim = m.geometry().dim();
-      double lJ[9], lK[9], lDetJ;
+      double lJ[9] = {}, lK[9] = {}, lDetJ = 0;
       if (gdim == 2) {
         compute_jacobian_triangle_2d(lJ, nc);
         compute_jacobian_inverse_triangle_2d(lK, lDetJ, lJ);
@@ -175,11 +175,13 @@ namespace mgis {
       }
       // duplicate data at each point
       auto num_points = this->dsf.shape()[0];
+      // size of the jacobian (gdim x tdim) and of its inverse (tdim x gdim)
+      const auto jsize = gdim * this->dsf.shape()[2];
       std::vector<double> gDetJ(num_points, lDetJ);
-      boost::multi_array<double, 2> gJ(boost::extents[num_points][9]);
-      boost::multi_array<double, 2> gK(boost::extents[num_points][9]);
+      boost::multi_array<double, 2> gJ(boost::extents[num_points][jsize]);
+      boost::multi_array<double, 2> gK(boost::extents[num_points][jsize]);
       for (std::size_t i = 0; i < num_points; ++i) {
-        for (std::size_t j = 0; j < 9; ++j) {
+        for (std::size_t j = 0; j < jsize; ++j) {
           gJ[i][j] = lJ[j];
           gK[i][j] = lK[j];
         }

@@ -1,3 +1,9 @@
+if(enable-python-bindings)
+  # directory containing the mgis package, added to PYTHONPATH
+  get_filename_component(MGIS_PYTHON_SITE_PACKAGES_DIRECTORY
+                         "${MGIS_PYTHON_MODULES_INSTALL_DIRECTORY}" DIRECTORY)
+endif(enable-python-bindings)
+
 if(UNIX)
   if(enable-python-bindings)
     configure_file(env-python.sh.in env.sh @ONLY)
@@ -23,7 +29,7 @@ endif(UNIX)
 
 if(WIN32)
   if(enable-python-bindings)
-    cmake_path(NATIVE_PATH MGIS_PYTHON_MODULES_INSTALL_DIRECTORY NATIVE_MGIS_PYTHON_MODULES_INSTALL_DIRECTORY)
+    cmake_path(NATIVE_PATH MGIS_PYTHON_SITE_PACKAGES_DIRECTORY NATIVE_MGIS_PYTHON_SITE_PACKAGES_DIRECTORY)
     configure_file(env-python.ps1.in env.ps1 @ONLY)
     configure_file(env-python.bat.in env.bat @ONLY)
   else(enable-python-bindings) 

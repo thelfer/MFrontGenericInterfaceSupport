@@ -25,8 +25,10 @@ namespace mgis {
 
   template <typename T>
   template <typename... Args>
-  ThreadedTaskResult<T>::ThreadedTaskResult(Args&&... args)
-      : result(args...) {}  // end of ThreadedTaskResult
+  ThreadedTaskResult<T>::ThreadedTaskResult(Args&&... args) requires(
+      !(std::is_same_v<std::remove_cvref_t<Args>, ThreadedTaskResult<T>> ||
+        ...))
+      : result(std::forward<Args>(args)...) {}  // end of ThreadedTaskResult
 
   template <typename T>
   ThreadedTaskResult<T>::ThreadedTaskResult(ThreadedTaskResult&&) = default;
@@ -111,7 +113,7 @@ namespace mgis {
   }  // end of ThreadedTaskResult<T>::setException
 
   template <typename T>
-  void ThreadedTaskResult<T>::rethrow() {
+  void ThreadedTaskResult<T>::rethrow() const {
     if (this->eptr == nullptr) {
       ThreadedTaskResultBase::throwNullException();
     }
