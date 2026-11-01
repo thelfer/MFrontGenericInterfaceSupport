@@ -154,6 +154,16 @@ class BoundsCheckTest(unittest.TestCase):
             abs(bound - ev_pmax) < eps * ev_pmax,
             "invalid value for the 'ExternalStateVariable' "
             "physical upper bound")
+        # methods of the behaviour
+        bound = b.getLowerBound(ev)
+        self.assertTrue(bound == mgis_bv.getLowerBound(b, ev),
+                        "invalid value returned by 'getLowerBound'")
+        bound = b.getLowerPhysicalBound(ev)
+        self.assertTrue(bound == mgis_bv.getLowerPhysicalBound(b, ev),
+                        "invalid value returned by 'getLowerPhysicalBound'")
+        bound = b.getUpperPhysicalBound(ev)
+        self.assertTrue(bound == mgis_bv.getUpperPhysicalBound(b, ev),
+                        "invalid value returned by 'getUpperPhysicalBound'")
 
 
 if __name__ == '__main__':

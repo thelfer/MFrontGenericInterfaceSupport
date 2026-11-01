@@ -260,17 +260,18 @@ namespace mgis::behaviour {
           "invalid number of values (does not match the number of integration "
           "points)");
     }
+    if ((s == MaterialStateManager::EXTERNAL_STORAGE) &&
+        (p == MaterialStateManager::UPDATE)) {
+      return ctx.registerErrorMessage(
+          "update policy must be equal to `NOUPDATE` when using a "
+          "non-modifiable external storage");
+    }
     auto& fh = getFieldHolder(m.material_properties, n);
     if (s == MaterialStateManager::LOCAL_STORAGE) {
       fh = MaterialStateManager::MutableFieldHolder{
           .value = std::vector<real>{v.begin(), v.end()},
           .shall_be_updated = (p == MaterialStateManager::UPDATE)};
     } else {
-      if (p == MaterialStateManager::UPDATE) {
-        return ctx.registerErrorMessage(
-            "update policy must be equal to `NOUPDATE` when using a "
-            "non-modifiable external storage");
-      }
       fh = v;
     }
     return true;
@@ -451,6 +452,12 @@ namespace mgis::behaviour {
       return ctx.registerErrorMessage(
           "setExternalStateVariable: invalid number of values");
     }
+    if ((s == MaterialStateManager::EXTERNAL_STORAGE) &&
+        (p == MaterialStateManager::UPDATE)) {
+      return ctx.registerErrorMessage(
+          "update policy must be equal to `NOUPDATE` when using a "
+          "non-modifiable external storage");
+    }
     auto& fh = getFieldHolder(m.external_state_variables, n);
     if (s == MaterialStateManager::LOCAL_STORAGE) {
       if (v.size() == 1u) {
@@ -463,11 +470,6 @@ namespace mgis::behaviour {
             .shall_be_updated = (p == MaterialStateManager::UPDATE)};
       }
     } else {
-      if (p == MaterialStateManager::UPDATE) {
-        return ctx.registerErrorMessage(
-            "update policy must be equal to `NOUPDATE` when using a "
-            "non-modifiable external storage");
-      }
       fh = v;
     }
     return true;
@@ -837,7 +839,7 @@ namespace mgis::behaviour {
         return false;
       }
     }
-    if (s.mass_density.has_value()) {
+    if ((opts.save_mass_densities) && (s.mass_density.has_value())) {
       if (!save(ctx, g, "mass_density", *(s.mass_density), opts)) {
         return false;
       }
@@ -961,7 +963,12 @@ namespace mgis::behaviour {
         // uniform value
         auto value = real{};
         odataset->read(&value, getNativeType<real>());
-        f = value;
+        if (std::holds_alternative<std::span<real>>(f.value)) {
+          auto& values = std::get<std::span<real>>(f.value);
+          std::fill(values.begin(), values.end(), value);
+        } else {
+          f = value;
+        }
         return true;
       }
       if (dims[0] != ng) {
@@ -1101,7 +1108,7 @@ namespace mgis::behaviour {
         return ctx.registerErrorMessage("restoring mass density failed");
       }
     }
-    if (opts.restore_internal_state_variables) {
+    if ((opts.restore_internal_state_variables) && (!s.b.isvs.empty())) {
       if (!read(ctx, s.internal_state_variables, g,
                 "internal_state_variables")) {
         return ctx.registerErrorMessage(
@@ -1139,8 +1146,7 @@ namespace mgis::behaviour {
         }
         auto& f = s.material_properties[mp.name];
         if (std::holds_alternative<std::monostate>(f)) {
-          return ctx.registerErrorMessage("uninitialized material property '" +
-                                          mp.name + "'");
+          f = MutableFieldHolder{.value = real{}};
         }
         if (std::holds_alternative<MutableFieldHolder>(f)) {
           auto& mfh = std::get<MutableFieldHolder>(f);
@@ -1179,8 +1185,7 @@ namespace mgis::behaviour {
         }
         auto& f = s.external_state_variables[esv.name];
         if (std::holds_alternative<std::monostate>(f)) {
-          return ctx.registerErrorMessage(
-              "uninitialized external state variable'" + esv.name + "'");
+          f = MutableFieldHolder{.value = real{}};
         }
         if (std::holds_alternative<MutableFieldHolder>(f)) {
           auto& mfh = std::get<MutableFieldHolder>(f);
