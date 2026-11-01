@@ -29,8 +29,10 @@ int main(const int argc, const char* const* argv) {
   try {
     const auto b = load(argv[1], "OrthotropicElasticity",
                         Hypothesis::GENERALISEDPLANESTRAIN);
-    // rotation of 30 degrees around z: r stores column-major the matrix
-    // R = {{c, s, 0}, {-s, c, 0}, {0, 0, 1}}, which is not symmetric
+    // rotation of 30 degrees around z: r stores row by row the matrix
+    // R = {{c, -s, 0}, {s, c, 0}, {0, 0, 1}}, which is not symmetric and whose
+    // columns are the material axes (c, s, 0) and (-s, c, 0), as the matrix of
+    // the @RotationMatrix keyword of MTest
     constexpr auto cste = std::numbers::sqrt2_v<real>;
     const auto c = std::cos(std::numbers::pi_v<real> / 6);
     const auto s = std::sin(std::numbers::pi_v<real> / 6);
@@ -39,7 +41,7 @@ int main(const int argc, const char* const* argv) {
     const std::array<real, 4> ge = {1, 2, 3, 4};
     std::array<real, 4> me;
     rotateGradients(me, b, ge, r);
-    // reference: R E R^T
+    // reference: R^T E R, the gradient in the material frame
     const auto exy = ge[3] / cste;
     assert_equal(me[0], c * c * ge[0] + 2 * c * s * exy + s * s * ge[1]);
     assert_equal(me[1], s * s * ge[0] - 2 * c * s * exy + c * c * ge[1]);
