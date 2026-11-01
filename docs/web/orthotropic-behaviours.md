@@ -82,9 +82,7 @@ All those functions take three arguments:
   `change_basis` function of `TFEL/Math`). For the function handling the
   thermodynamic forces and the tangent operators blocks, this rotation
   matrix is transposed internally to get the rotation matrix from the
-  material frame to the global frame. The documentation of the `generic`
-  interface of `MFront` describes the same 9 values as the column-major
-  storage of the transposed matrix, whose rows are the material axes.
+  material frame to the global frame.
 
 Note that, for efficiency reasons, those functions do no perform any
 consistency checks. In particular:
