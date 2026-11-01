@@ -62,7 +62,10 @@ jobs:
         GITHUB_USER: ${{ github.actor }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        spack install tbb
+        # intel-tbb@2023.2.0 (spack-packages, 2026-10-29) does not build on
+        # macOS: its thread composability manager passes --version-script
+        # to the Apple linker
+        spack install intel-tbb@2023.1.0
         # pin the master commit, otherwise an older binary from the cache would be reused
         tfel=$(git ls-remote https://github.com/thelfer/tfel.git refs/heads/master | cut -f1)
         spack install tfel@master commit=$tfel ~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea

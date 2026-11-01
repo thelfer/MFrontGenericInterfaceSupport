@@ -51,11 +51,11 @@
  */
 #define MGIS_TRY_INVOKE_VOID(e, ...)  \
   if (!MGIS_INVOKE(e, __VA_ARGS__)) { \
-    return InvalidResult{};           \
+    return ::mgis::InvalidResult{};   \
   }
 #define MGIS_TRY_INVOKE_VOID_CHECK_ERRNO(e, ...)  \
   if (!MGIS_INVOKE_CHECK_ERRNO(e, __VA_ARGS__)) { \
-    return InvalidResult{};                       \
+    return ::mgis::InvalidResult{};               \
   }
 
 /*!
@@ -75,16 +75,16 @@
  */
 #define MGIS_TRY_INVOKE(v, e, ...)                                     \
   const auto MGIS_TEMPORARY_VARIABLE(v) = MGIS_INVOKE(e, __VA_ARGS__); \
-  if (!MGIS_TEMPORARY_VARIABLE(v).hasValue()) {                        \
-    return InvalidResult{};                                            \
+  if (!MGIS_TEMPORARY_VARIABLE(v).has_value()) {                       \
+    return ::mgis::InvalidResult{};                                    \
   }                                                                    \
   auto &v = *(MGIS_TEMPORARY_VARIABLE(v));
-#define MGIS_TRY_INVOKE_CHECK_ERRNO(v, e, ...)  \
-  const auto MGIS_TEMPORARY_VARIABLE(v) =       \
-      MGIS_INVOKE_CHECK_ERRNO(e, __VA_ARGS__);  \
-  if (!MGIS_TEMPORARY_VARIABLE(v).hasValue()) { \
-    return InvalidResult{};                     \
-  }                                             \
+#define MGIS_TRY_INVOKE_CHECK_ERRNO(v, e, ...)   \
+  const auto MGIS_TEMPORARY_VARIABLE(v) =        \
+      MGIS_INVOKE_CHECK_ERRNO(e, __VA_ARGS__);   \
+  if (!MGIS_TEMPORARY_VARIABLE(v).has_value()) { \
+    return ::mgis::InvalidResult{};              \
+  }                                              \
   auto &v = *(MGIS_TEMPORARY_VARIABLE(v));
 
 namespace mgis {

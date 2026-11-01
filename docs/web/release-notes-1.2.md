@@ -70,7 +70,11 @@ responsible of the consistency of the data.
 > transposed internally to have the inverse transformation.
 >
 > The rotation matrix is given as a \(3\times3\) matrix, packed in
-> an \(9\) continuous array in `C`-like column-major storage.
+> an \(9\) continuous array in `C`-like column-major storage. The
+> rows of this matrix are the material axes expressed in the global
+> frame, so the array contains the first components of the three
+> material axes, then their second components, then their third
+> components.
 >
 > No checks are made to ensure that the columns of the matrix makes
 > and orthonormal basis of \(\mathcal{R}^{3}\). In \(1D\), this matrix

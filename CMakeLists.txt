@@ -113,9 +113,13 @@ endif(enable-python-bindings)
 # fenics-bindings (placed before compiler detection)
 option(enable-fenics-bindings "enable fenics bindings support" OFF)
 if(enable-fenics-bindings)
-  # Find DOLFIN
+  # Find DOLFIN. The DOLFIN use file overrides the
+  # CMAKE_CXX_STANDARD variable (C++11), so we reset it after
+  # including it to the current version
+  set(_CMAKE_CXX_STANDARD "${CMAKE_CXX_STANDARD}")
   find_package(DOLFIN REQUIRED)
   include(${DOLFIN_USE_FILE})
+  set(CMAKE_CXX_STANDARD "${_CMAKE_CXX_STANDARD}")
 endif(enable-fenics-bindings)
 
 # julia-bindings (placed before compiler detection)

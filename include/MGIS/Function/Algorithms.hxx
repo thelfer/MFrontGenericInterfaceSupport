@@ -15,6 +15,7 @@
 #ifndef LIB_MGIS_FUNCTION_ALGORITHMS_HXX
 #define LIB_MGIS_FUNCTION_ALGORITHMS_HXX
 
+#include <version>
 #ifdef MGIS_USE_STL_PARALLEL_ALGORITHMS
 #ifdef __cpp_lib_parallel_algorithm
 #define MGIS_HAS_STL_PARALLEL_ALGORITHMS

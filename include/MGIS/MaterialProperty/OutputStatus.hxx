@@ -79,11 +79,15 @@ typedef struct {
 }  // end of extern "C"
 #endif /* __cplusplus */
 
+#ifdef __cplusplus
+
 namespace mgis::material_property {
 
   //! \brief a simple alias
   using OutputStatus = ::mgis_mp_OutputStatus;
 
 }  // end of namespace mgis::material_property
+
+#endif /* __cplusplus */
 
 #endif /* LIB_MGIS_MATERIALPROPERTY_OUTPUTSTATUS_HXX */
