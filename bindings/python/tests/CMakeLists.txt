@@ -43,4 +43,5 @@ test_python_bindings(IntegrateTest6)
 test_python_bindings(ExternalStateVariableTest)
 test_python_bindings(InitializeFunctionTest)
 test_python_bindings(PostProcessingTest)
+test_python_bindings(ComputeSpeedOfSoundTest)
 

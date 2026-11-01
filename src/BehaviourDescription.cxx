@@ -25,14 +25,15 @@ namespace mgis::behaviour {
 
   template <typename ErrorHandler>
   static std::vector<Variable> buildVariablesList(
-      ErrorHandler &raise,
-      const std::vector<std::string> &names,
-      const std::vector<int> &types) {
+      ErrorHandler& raise,
+      const char* const what,
+      const std::vector<std::string>& names,
+      const std::vector<int>& types) {
     std::vector<Variable> vars;
     if (names.size() != types.size()) {
-      raise(
-          "the number of internal state variables names does not match "
-          "the number of internal state variables types");
+      raise("the number of " + std::string(what) +
+            " names does not match the number of " + std::string(what) +
+            " types");
     }
     for (decltype(names.size()) i = 0; i != names.size(); ++i) {
       vars.push_back({names[i], getVariableType(types[i]), types[i]});
@@ -212,11 +213,12 @@ namespace mgis::behaviour {
       raise("unsupported behaviour kinematic");
     }();
     // setting gradients and thermodynamic forces
-    d.gradients = buildVariablesList(raise, lm.getGradientsNames(l, b, h),
-                                     lm.getGradientsTypes(l, b, h));
-    d.thermodynamic_forces =
-        buildVariablesList(raise, lm.getThermodynamicForcesNames(l, b, h),
-                           lm.getThermodynamicForcesTypes(l, b, h));
+    d.gradients =
+        buildVariablesList(raise, "gradients", lm.getGradientsNames(l, b, h),
+                           lm.getGradientsTypes(l, b, h));
+    d.thermodynamic_forces = buildVariablesList(
+        raise, "thermodynamic forces", lm.getThermodynamicForcesNames(l, b, h),
+        lm.getThermodynamicForcesTypes(l, b, h));
     raise_if(d.gradients.size() != d.thermodynamic_forces.size(),
              "the number of the gradients does not match "
              "the number of thermodynamic forces");
@@ -282,7 +284,7 @@ namespace mgis::behaviour {
       } else {
         if (d.symmetry != BehaviourDescription::ORTHOTROPIC) {
           raise(
-              "load: the behaviour must be orthotropic "
+              "the behaviour must be orthotropic "
               "for the elastic stiffness symmetry to be orthotropic");
         }
         add_mp("YoungModulus1");
@@ -319,16 +321,17 @@ namespace mgis::behaviour {
       add_mp(mp);
     }
     // internal state variables
-    d.isvs =
-        buildVariablesList(raise, lm.getInternalStateVariablesNames(l, b, h),
-                           lm.getInternalStateVariablesTypes(l, b, h));
+    d.isvs = buildVariablesList(raise, "internal state variables",
+                                lm.getInternalStateVariablesNames(l, b, h),
+                                lm.getInternalStateVariablesTypes(l, b, h));
     // external state variables
     if (lm.hasTemperatureBeenRemovedFromExternalStateVariables(l, b)) {
       d.esvs.push_back({"Temperature", Variable::SCALAR});
     }
     if (lm.hasExternalStateVariablesTypes(l, b, h)) {
       const auto esvs =
-          buildVariablesList(raise, lm.getExternalStateVariablesNames(l, b, h),
+          buildVariablesList(raise, "external state variables",
+                             lm.getExternalStateVariablesNames(l, b, h),
                              lm.getExternalStateVariablesTypes(l, b, h));
       d.esvs.insert(d.esvs.end(), esvs.begin(), esvs.end());
     } else {
@@ -477,7 +480,8 @@ namespace mgis::behaviour {
                   b + "' in library '" + l + "'\n");
     };
     return buildVariablesList(
-        raise, lm.getBehaviourInitializeFunctionInputsNames(l, b, i, h),
+        raise, "initialize function inputs",
+        lm.getBehaviourInitializeFunctionInputsNames(l, b, i, h),
         lm.getBehaviourInitializeFunctionInputsTypes(l, b, i, h));
   }  // end of getBehaviourInitializeFunctionInputs
 
@@ -491,7 +495,8 @@ namespace mgis::behaviour {
                   b + "' in library '" + l + "'\n");
     };
     return buildVariablesList(
-        raise, lm.getBehaviourPostProcessingOutputsNames(l, b, i, h),
+        raise, "post-processing outputs",
+        lm.getBehaviourPostProcessingOutputsNames(l, b, i, h),
         lm.getBehaviourPostProcessingOutputsTypes(l, b, i, h));
   }  // end of getBehaviourPostProcessingOutputs
 
