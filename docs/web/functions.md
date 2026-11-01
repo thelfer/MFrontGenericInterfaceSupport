@@ -37,8 +37,13 @@ const auto sig_ev = pk1 | as_tensor<3> | from_pk1_to_cauchy(Ft) | rotate_backwar
 
 where `F` is an evaluator the deformation gradient in the material
 frame, `R` is the rotation matrix from the global frame to the material
-frame (a function returning a different rotation matrix for each element
-can also be used).
+frame, i.e. the matrix whose columns are the material axes expressed in
+the global frame (a function returning a different rotation matrix for
+each element can also be used). `R` is thus the transpose of the
+rotation matrix described in the page about [orthotropic
+behaviours](orthotropic-behaviours.html), whose rows are the material
+axes: stored row by row, `R` has the same 9 components as this matrix
+stored in column-major format.
 
 This evaluator, named `sig_ev`, only describes the operations to be
 performed to calculate the Cauchy stress and does not make any

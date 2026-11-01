@@ -64,7 +64,8 @@ namespace mgis::utilities::hdf5 {
                                            const char c,
                                            const bool keep_empty_strings) {
     std::vector<std::string> res;
-    auto b = std::string::size_type{};
+    auto b =
+        keep_empty_strings ? std::string::size_type{} : s.find_first_not_of(c);
     auto e = s.find_first_of(c, b);
     while (std::string::npos != e || std::string::npos != b) {
       // Found a token, add it to the vector.
@@ -85,9 +86,10 @@ namespace mgis::utilities::hdf5 {
     if (leafs.empty()) {
       return false;
     }
-    auto cpath = std::string{};
+    // an absolute path stays absolute
+    auto cpath = p.starts_with('/') ? std::string{"/"} : std::string{};
     for (const auto& l : leafs) {
-      if (!cpath.empty()) {
+      if ((!cpath.empty()) && (cpath.back() != '/')) {
         cpath += '/';
       }
       cpath += l;
@@ -299,12 +301,14 @@ namespace mgis::utilities::hdf5 {
     try {
       const auto s = odataset->getSpace();
       if (s.getSimpleExtentNdims() != 1) {
-        return ctx.registerErrorMessage("madnex::read: invalid type size");
+        return ctx.registerErrorMessage("invalid rank of dataset '" + d +
+                                        "' (one-dimensional data expected)");
       }
       hsize_t dims[1];
       s.getSimpleExtentDims(dims);
       if (dims[0] != 1) {
-        return ctx.registerErrorMessage("madnex::read: invalid type");
+        return ctx.registerErrorMessage("invalid size of dataset '" + d +
+                                        "' (one value expected)");
       }
       odataset->read(&o, getNativeType<real>());
       return true;
@@ -357,6 +361,10 @@ namespace mgis::utilities::hdf5 {
     }
     try {
       H5::DataSpace filespace = odataset->getSpace();
+      if (filespace.getSimpleExtentNdims() != 1) {
+        return ctx.registerErrorMessage("invalid rank of dataset '" + d +
+                                        "' (one-dimensional data expected)");
+      }
       hsize_t dims[1];
       filespace.getSimpleExtentDims(dims);
       o.resize(dims[0]);
@@ -379,6 +387,10 @@ namespace mgis::utilities::hdf5 {
     }
     try {
       H5::DataSpace filespace = odataset->getSpace();
+      if (filespace.getSimpleExtentNdims() != 1) {
+        return ctx.registerErrorMessage("invalid rank of dataset '" + n +
+                                        "' (one-dimensional data expected)");
+      }
       hsize_t dims[1];
       filespace.getSimpleExtentDims(dims);
       if (values.size() != dims[0]) {

@@ -49,32 +49,44 @@
 #if (defined __GNUC__) && (!defined __INTEL_COMPILER) && \
     (!defined __NVCOMPILER) && (!defined __clang__)
 #if __GNUC__ >= 4
+#ifdef __cplusplus
 #define MGIS_VISIBILITY_IMPORT [[gnu::visibility("default")]]
 #define MGIS_VISIBILITY_EXPORT [[gnu::visibility("default")]]
 #define MGIS_VISIBILITY_LOCAL [[gnu::visibility("hidden")]]
+#else /* __cplusplus */
+#define MGIS_VISIBILITY_IMPORT __attribute__((visibility("default")))
+#define MGIS_VISIBILITY_EXPORT __attribute__((visibility("default")))
+#define MGIS_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
+#endif /* __cplusplus */
 #else /*__GNUC__ >= 4 */
 #define MGIS_VISIBILITY_IMPORT
 #define MGIS_VISIBILITY_EXPORT
 #define MGIS_VISIBILITY_LOCAL
 #endif /* LIB_MGIS_CONFIG_HXX */
 #elif defined __INTEL_COMPILER
+#ifdef __cplusplus
 #define MGIS_VISIBILITY_IMPORT [[gnu::visibility("default")]]
 #define MGIS_VISIBILITY_EXPORT [[gnu::visibility("default")]]
 #define MGIS_VISIBILITY_LOCAL [[gnu::visibility("hidden")]]
+#else /* __cplusplus */
+#define MGIS_VISIBILITY_IMPORT __attribute__((visibility("default")))
+#define MGIS_VISIBILITY_EXPORT __attribute__((visibility("default")))
+#define MGIS_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
+#endif /* __cplusplus */
 #elif (defined __NVCOMPILER)
 #define MGIS_VISIBILITY_IMPORT __attribute__((visibility("default")))
 #define MGIS_VISIBILITY_EXPORT __attribute__((visibility("default")))
 #define MGIS_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
 #elif defined __clang__
-#if __clang_major__ >= 18
+#if (defined __cplusplus) && (__clang_major__ >= 18)
 #define MGIS_VISIBILITY_IMPORT [[gnu::visibility("default")]]
 #define MGIS_VISIBILITY_EXPORT [[gnu::visibility("default")]]
 #define MGIS_VISIBILITY_LOCAL [[gnu::visibility("hidden")]]
-#else /* __clang_major__ >= 18 */
+#else /* (defined __cplusplus) && (__clang_major__ >= 18) */
 #define MGIS_VISIBILITY_IMPORT __attribute__((visibility("default")))
 #define MGIS_VISIBILITY_EXPORT __attribute__((visibility("default")))
 #define MGIS_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
-#endif /* __clang_major__ >= 18 */
+#endif /* (defined __cplusplus) && (__clang_major__ >= 18) */
 #else
 #define MGIS_VISIBILITY_IMPORT
 #define MGIS_VISIBILITY_EXPORT

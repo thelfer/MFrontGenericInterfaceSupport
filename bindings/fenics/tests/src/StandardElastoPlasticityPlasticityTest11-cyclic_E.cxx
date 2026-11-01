@@ -19,6 +19,7 @@
 
 #include <memory>
 #include <cstdlib>
+#include <string_view>
 #include <algorithm>
 #include <dolfin/common/Array.h>
 #include <dolfin/fem/assemble.h>
@@ -181,7 +182,7 @@ int main() {
   auto nb_tests = mgis::size_type{};
   auto nb_failures = mgis::size_type{};
   auto check = [&status, &nb_tests, &nb_failures](const bool c,
-                                                  const mgis::string_view msg) {
+                                                  const std::string_view msg) {
     ++nb_tests;
     if (!c) {
       std::cerr << msg << '\n';
@@ -203,6 +204,22 @@ int main() {
     check(std::abs(s[i][4]) < eps * yg, "invalid stress value");
     check(std::abs(s[i][5]) < eps * yg, "invalid stress value");
     std::cout << e[i][0] << " " << s[i][0] << '\n';
+  }
+  // axial stress computed by mtest for the same loading, every ten steps
+  const auto sxx_ref = std::array<double, 11>{0,
+                                              130461538.46154,
+                                              141081931.17143,
+                                              144316416.10849,
+                                              -118025545.67481,
+                                              -140829316.6541,
+                                              -144843662.14377,
+                                              120697910.37648,
+                                              142959770.93496,
+                                              144948510.54378,
+                                              144998745.66101};
+  for (mgis::size_type i = 0; i != sxx_ref.size(); ++i) {
+    check(std::abs(s[10 * i][0] - sxx_ref[i]) < eps * yg,
+          "invalid axial stress value");
   }
   // reporting
   std::cout << "Number of tests: " << nb_tests << '\n';

@@ -49,9 +49,9 @@ namespace mgis::behaviour {
    * \param[in] F: deformation gradient
    * \param[in] s: Cauchy stress
    */
-  void convertFiniteStrainStress_PK1_2D(real* const,
-                                        const real* const,
-                                        const real* const);
+  MGIS_EXPORT void convertFiniteStrainStress_PK1_2D(real* const,
+                                                    const real* const,
+                                                    const real* const);
   /*!
    * \brief convert the Cauchy stress to the first Piola-Kirchhoff stress in
    * 3D. No bounds checks is made, use with care.
