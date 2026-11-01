@@ -48,6 +48,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_model_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_model
 end module  mgis_model

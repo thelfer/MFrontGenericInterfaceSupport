@@ -357,10 +357,11 @@ dissipated fracture energy density:
 @Integrator {
   // remove useless warnings, as we always compute the tangent operator
   static_cast<void>(computeTangentOperator_);
+  const auto H_tdt = H+dH;
   ∂q∕∂Δg = Gc*l₀* tmatrix<N, N, real>::Id();
-  ∂Y∕∂Δd = Gc/l₀+2*H;
+  ∂Y∕∂Δd = Gc/l₀+2*H_tdt;
   q = Gc*l₀*(g+Δg);
-  Y = ∂Y∕∂Δd ⋅ (d+Δd)-2*H;
+  Y = ∂Y∕∂Δd ⋅ (d+Δd)-2*H_tdt;
 }
 
 @DissipatedEnergy{
