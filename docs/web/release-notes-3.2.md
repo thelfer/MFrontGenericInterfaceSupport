@@ -364,6 +364,10 @@ assign(ctx, f | as_scalar, f2 | as_scalar);
 
 # Issues fixed
 
+## Issue 403: Rotation matrices: documentation describing the transpose of the matrix of MTest, rotate and rotate_backwards undocumented, frames inverted in a test comment
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/403>
+
 ## Issue 344: Documentation pages with wrong types, names and examples, and test slips leaving values unchecked
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/344>
