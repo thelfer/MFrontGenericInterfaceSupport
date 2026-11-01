@@ -200,8 +200,9 @@ namespace mgis::behaviour {
    * points
    * \param[in,out] d: material data manager
    * \param[in] n: name of the initialize function
-   * \param[in] b: first index of the range
-   * \param[in] e: last index of the range
+   * \param[in] b: index of the first integration point of the range
+   * \param[in] e: index following the last integration point of the range
+   *               (the integration points of indices in [b, e) are treated)
    */
   MGIS_EXPORT BehaviourIntegrationResult
   executeInitializeFunction(MaterialDataManager&,
@@ -214,8 +215,9 @@ namespace mgis::behaviour {
    * \param[in,out] d: material data manager
    * \param[in] n: name of the initialize function
    * \param[in] inputs: initialize function inputs
-   * \param[in] b: first index of the range
-   * \param[in] e: last index of the range
+   * \param[in] b: index of the first integration point of the range
+   * \param[in] e: index following the last integration point of the range
+   *               (the integration points of indices in [b, e) are treated)
    *
    * \note the inputs can be uniform or not.
    */
@@ -348,8 +350,9 @@ namespace mgis::behaviour {
    * \param[in,out] m: material data manager
    * \param[in] opts: description of the operation to be performed
    * \param[in] dt: time step
-   * \param[in] b: first index of the range
-   * \param[in] e: last index of the range
+   * \param[in] b: index of the first integration point of the range
+   * \param[in] e: index following the last integration point of the range
+   *               (the integration points of indices in [b, e) are treated)
    *
    * \note if required, the memory associated with the tangent operator blocks
    * is automatically allocated.
@@ -446,8 +449,9 @@ namespace mgis::behaviour {
    *
    * \param[in,out] m: material data manager
    * \param[in] dt: time step
-   * \param[in] b: first index of the range
-   * \param[in] e: last index of the range
+   * \param[in] b: index of the first integration point of the range
+   * \param[in] e: index following the last integration point of the range
+   *               (the integration points of indices in [b, e) are treated)
    *
    * \note if required, the memory associated with the tangent operator blocks
    * is automatically allocated.
@@ -495,8 +499,9 @@ namespace mgis::behaviour {
    * \param[out] outputs: post-processing results
    * \param[in,out] d: material data manager
    * \param[in] n: name of the post-processing
-   * \param[in] b: first index of the range
-   * \param[in] e: last index of the range
+   * \param[in] b: index of the first integration point of the range
+   * \param[in] e: index following the last integration point of the range
+   *               (the integration points of indices in [b, e) are treated)
    */
   MGIS_EXPORT BehaviourIntegrationResult
   executePostProcessing(std::span<real>,

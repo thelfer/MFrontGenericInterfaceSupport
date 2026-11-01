@@ -261,7 +261,7 @@ namespace mgis::function {
      */
     template <EvaluatorConcept EvaluatorType>
     [[nodiscard]] constexpr mgis::size_type disambiguateGetNumberOfComponents(
-        EvaluatorType&);
+        const EvaluatorType&);
 
     /*!
      * \brief number of components of a type when known at compile-time,

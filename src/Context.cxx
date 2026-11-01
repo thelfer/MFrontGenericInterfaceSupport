@@ -147,12 +147,7 @@ namespace mgis {
 
   void Context::abort() {
     const auto msg = this->getErrorMessage();
-    if (!msg.empty()) {
-      this->log() << msg << std::endl;
-    } else {
-      this->log() << "fatal error" << std::endl;
-    }
-    std::abort();
+    ::mgis::abort(msg.empty() ? "fatal error" : msg);
   }  // end of abort
 
   Context::~Context() noexcept = default;

@@ -140,6 +140,7 @@ mgis_bv_finite_strain_behaviour_options_set_tangent_operator(
  * - `DSIG_DF` (or `DCAUCHY_DF`)
  * - `DS_DEGL`
  * - `DPK1_DF`
+ * - `DTAU_DDF`
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_finite_strain_behaviour_options_set_tangent_operator_by_string(
@@ -169,10 +170,8 @@ MGIS_C_EXPORT mgis_status mgis_bv_is_standard_finite_strain_behaviour(
 /*!
  * \brief load a behaviour
  *
- * \note This method can also be used to load a finite strain behaviour.
- * In this case, the default options are used (the stress measure is Cauchy,
- * the tangent operator is the derivative of the Cauchy stress with respect to
- * the deformation gradient).
+ * \note This function fails for a finite strain behaviour: use
+ * `mgis_bv_load_finite_strain_behaviour`.
  *
  * \param[out] ptr: behaviour
  * \param[in] l: library name
@@ -495,17 +494,17 @@ mgis_bv_behaviour_get_material_property_type(mgis_bv_VariableType* const,
                                              const mgis_bv_Behaviour* const,
                                              const mgis_size_type);
 /*!
- * \brief return the number of internal state variables
- * \param[out] c: number of the internal state variables
+ * \brief return the size of an array able to contain all the internal state
+ * variables
+ * \param[out] s: size
  * \param[in] b: behaviour
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_internal_state_variables_size(
     mgis_size_type* const, const mgis_bv_Behaviour* const);
 /*!
- * \brief return the size of internal state variables global array
- * \param[out] c: internal state variables array size
+ * \brief return the number of internal state variables
+ * \param[out] c: number of the internal state variables
  * \param[in] b: behaviour
- * \param[in] i: internal state variable index
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_behaviour_get_number_of_internal_state_variables(
@@ -540,7 +539,8 @@ mgis_bv_behaviour_get_internal_state_variable_type_by_name(
     const mgis_bv_Behaviour* const,
     const char* const);
 /*!
- * \brief return the name of an internal state variable
+ * \brief return the offset of an internal state variable in the array of
+ * the internal state variables
  * \param[out] o: internal state variable offset
  * \param[in]  b: behaviour
  * \param[in]  i: internal state variable index
@@ -550,7 +550,8 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_internal_state_variable_offset(
     const mgis_bv_Behaviour* const,
     const mgis_size_type);
 /*!
- * \brief return the name of an internal state variable
+ * \brief return the offset of an internal state variable in the array of
+ * the internal state variables
  * \param[out] o: internal state variable offset
  * \param[in]  b: behaviour
  * \param[in]  n: internal state variable name
@@ -596,7 +597,8 @@ mgis_bv_behaviour_get_external_state_variable_type_by_name(
     const mgis_bv_Behaviour* const,
     const char* const);
 /*!
- * \brief return the name of an external state variable
+ * \brief return the offset of an external state variable in the array of
+ * the external state variables
  * \param[out] o: external state variable offset
  * \param[in]  b: behaviour
  * \param[in]  i: external state variable index
@@ -606,7 +608,8 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_external_state_variable_offset(
     const mgis_bv_Behaviour* const,
     const mgis_size_type);
 /*!
- * \brief return the name of an external state variable
+ * \brief return the offset of an external state variable in the array of
+ * the external state variables
  * \param[out] o: external state variable offset
  * \param[in]  b: behaviour
  * \param[in]  n: external state variable name

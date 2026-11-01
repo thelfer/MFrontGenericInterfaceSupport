@@ -119,6 +119,19 @@ int main(const int argc, const char* const* argv) {
       return EXIT_FAILURE;
     }
   }
+  // save a MaterialDataManager and restore it in a new one
+  auto m4 = MaterialDataManager{b, m.n};
+  auto og4 = createGroup(ctx, root, "MaterialDataManager");
+  if ((isInvalid(og4)) || (!save(ctx, *og4, m)) ||
+      (!restore(ctx, m4, *og4, {{.restore_mass_densities = false}}))) {
+    std::cerr << ctx.getErrorMessage() << '\n';
+    return EXIT_FAILURE;
+  }
+  if ((std::abs(m4.s0.internal_state_variables[ne] - p_ref[19]) > 1.e-12) ||
+      (std::abs(m4.s1.internal_state_variables[ne] - p_ref[19]) > 1.e-12)) {
+    std::cerr << "invalid values restored in a MaterialDataManager\n";
+    return EXIT_FAILURE;
+  }
   // external state variables which are not scalars, given at each
   // integration point
   const auto b2 = load(argv[1], "TensorialExternalStateVariableTest",

@@ -12,7 +12,7 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
     )
 endif(NOT CMAKE_CONFIGURATION_TYPES)
 add_dependencies(mgis_python_bindings_checkfiles py_mgis_behaviour)
-add_dependencies(check mgis_python_bindings_checkfiles)
+add_dependencies(build-tests mgis_python_bindings_checkfiles)
 
 # defining the tests
 
@@ -43,4 +43,5 @@ test_python_bindings(IntegrateTest6)
 test_python_bindings(ExternalStateVariableTest)
 test_python_bindings(InitializeFunctionTest)
 test_python_bindings(PostProcessingTest)
+test_python_bindings(ComputeSpeedOfSoundTest)
 
