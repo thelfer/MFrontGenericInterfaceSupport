@@ -2,6 +2,12 @@
 # Licensed under the GNU LGPL Version 3.
 
 from math import sqrt
+# the legacy FEniCS packages of Debian and Ubuntu (ufl_legacy) do
+# not import UFL in the namespace of .ufl files
+try:
+    from ufl_legacy import *
+except ImportError:
+    from ufl import *
 
 scheme= "default"
 degree = 1
