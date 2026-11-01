@@ -126,7 +126,7 @@ if(MGIS_HAVE_MFRONT_SUPPORT)
       GenericParallelInvalidMaterialProperties.cxx)
     target_link_libraries(GenericParallelInvalidMaterialProperties
       PRIVATE MFrontGenericInterface)
-    add_dependencies(check GenericParallelInvalidMaterialProperties)
+    add_dependencies(build-tests GenericParallelInvalidMaterialProperties)
   endif()
 
   mfront_behaviours_check_library(

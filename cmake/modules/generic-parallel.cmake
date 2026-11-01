@@ -34,7 +34,7 @@ function(mfront_generic_parallel_material_properties_check_library name
     list(APPEND _sources "${_output}")
   endforeach(source ${ARGN})
   add_library(${name} SHARED EXCLUDE_FROM_ALL ${_sources})
-  add_dependencies(check ${name})
+  add_dependencies(build-tests ${name})
   target_include_directories(${name}
     PRIVATE "${_directory}/include"
     PRIVATE "${TFEL_INCLUDE_PATH}")
