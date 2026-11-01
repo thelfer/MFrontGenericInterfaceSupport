@@ -58,6 +58,10 @@ class PostProcessingTest(unittest.TestCase):
             self.assertTrue(
                 abs(outputs[1, i] - e2[i]) < eps,
                 f"invalid output value ({outputs[1, i]} vs {e2[i]})")
+        # the results can not be written in a converted copy
+        self.assertRaises(RuntimeError, mgis_bv.executePostProcessing,
+                          numpy.empty(6, dtype=numpy.float32), m,
+                          "PrincipalStrain")
 
 
 if __name__ == '__main__':

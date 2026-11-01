@@ -17,9 +17,18 @@
  * For information about `MFront`, see <http://tfel.sourceforge.net>.
  * 
  * Those tools are meant to be used by (`FEM`, `FFT`, etc.) solver
- * developers. These tools are *not* linked to the `TFEL` libraries.
- * Permissive licences have been chosen to allow integration in open-source
- * and proprietary codes.
+ * developers. Permissive licences have been chosen to allow integration in
+ * open-source and proprietary codes: `MGIS` is distributed under either
+ * the `LGPL` v3 licence or the `CeCILL-C` licence.
+ *
+ * By default, `MGIS` looks for the `TFEL` libraries and, if they are
+ * found, is linked to the `TFELMath` and `TFELMFrontDatabase` libraries,
+ * which provide the `TFEL/Math` objects of `MGIS/Function` and the
+ * `MFront` database (`mgis::getDatabase` and
+ * `mgis::behaviour::loadFromDatabase`). Those libraries are distributed
+ * under either the `GPL` licence with a linking exception or the
+ * `CeCILL-A` licence. Passing `-Ddisable-tfel=ON` to `cmake` builds a
+ * library independent of `TFEL`.
  * 
  * # The MFrontGenericInterface C++ library
  * 
@@ -39,7 +48,7 @@
  * The library also supports handling a group of integration points though
  * the `mgis::behaviour::MaterialStateManager` class.
  * 
- * An introduction to the `C++` library may be found [here](bindings-cxx.html)
+ * An introduction to the `C++` library may be found [here](https://thelfer.github.io/mgis/web/bindings-cxx.html)
  * 
  * # Bindings
  * 
@@ -55,7 +64,7 @@
  *   by the `fenics-solid-mechanics` project. Those bindings are currently
  *   quite limited as mostly serve as a proof of concept. Note that `MGIS`
  *   can also be used in `FEniCS` through the `python` interface. This is
- *   discussed [here](FEniCSBindings.html).
+ *   discussed [here](https://thelfer.github.io/mgis/web/FEniCSBindings.html).
  * 
  * ## Future bindings (contributors are welcomed)
  * 
@@ -65,7 +74,10 @@
  * 
  * # Versions, branches
  * 
+ * - Version `3.2` is meant to be build against `TFEL` 5.2
+ * - Version `3.1.1` is meant to be build against `TFEL` 5.1.1
  * - Version `3.1.0` is meant to be build against `TFEL` 5.1
+ * - Version `3.0.2` is meant to be build against `TFEL` 5.0.2
  * - Version `3.0.1` is meant to be build against `TFEL` 5.0.1
  * - Version `3.0` is meant to be build against `TFEL` 5.0
  * - Version `2.2.1` is meant to be build against `TFEL` 4.2.3
@@ -100,14 +112,37 @@
  * - The `rliv-1.0` follows the evolution of the 3.2.x series of the `TFEL`
  *   project. Note that this branch is **not** compatible with
  *   `TFEL-3.2.0`.
- *  * 
+ * 
  * ## Release notes
  * 
- * - [Version 1.1](release-notes-1.1.html)
+ * - [Version 3.2](https://thelfer.github.io/mgis/web/release-notes-3.2.html)
+ * - [Version 3.1.1](https://thelfer.github.io/mgis/web/release-notes-3.1.1.html)
+ * - [Version 3.1](https://thelfer.github.io/mgis/web/release-notes-3.1.html)
+ * - [Version 3.0.3](https://thelfer.github.io/mgis/web/release-notes-3.0.3.html)
+ * - [Version 3.0.2](https://thelfer.github.io/mgis/web/release-notes-3.0.2.html)
+ * - [Version 3.0.1](https://thelfer.github.io/mgis/web/release-notes-3.0.1.html)
+ * - [Version 3.0](https://thelfer.github.io/mgis/web/release-notes-3.0.html)
+ * - [Version 2.2.2](https://thelfer.github.io/mgis/web/release-notes-2.2.2.html)
+ * - [Version 2.2.1](https://thelfer.github.io/mgis/web/release-notes-2.2.1.html)
+ * - [Version 2.2](https://thelfer.github.io/mgis/web/release-notes-2.2.html)
+ * - [Version 2.1.2](https://thelfer.github.io/mgis/web/release-notes-2.1.2.html)
+ * - [Version 2.1.1](https://thelfer.github.io/mgis/web/release-notes-2.1.1.html)
+ * - [Version 2.1](https://thelfer.github.io/mgis/web/release-notes-2.1.html)
+ * - [Version 2.0.1](https://thelfer.github.io/mgis/web/release-notes-2.0.1.html)
+ * - [Version 2.0](https://thelfer.github.io/mgis/web/release-notes-2.0.html)
+ * - [Version 1.2.3](https://thelfer.github.io/mgis/web/release-notes-1.2.3.html)
+ * - [Version 1.2.2](https://thelfer.github.io/mgis/web/release-notes-1.2.2.html)
+ * - [Version 1.2.1](https://thelfer.github.io/mgis/web/release-notes-1.2.1.html)
+ * - [Version 1.2](https://thelfer.github.io/mgis/web/release-notes-1.2.html)
+ * - [Version 1.1.2](https://thelfer.github.io/mgis/web/release-notes-1.1.2.html)
+ * - [Version 1.1.1](https://thelfer.github.io/mgis/web/release-notes-1.1.1.html)
+ * - [Version 1.1](https://thelfer.github.io/mgis/web/release-notes-1.1.html)
+ * - [Version 1.0.2](https://thelfer.github.io/mgis/web/release-notes-1.0.2.html)
  *
  * # License
  *
- * `MGIS` is published under the `LGPL`v3 licence.
+ * `MGIS` is published under either the `LGPL` v3 licence or the `CeCILL-C`
+ * licence.
  *
  * # Acknowledgement
  * 

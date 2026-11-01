@@ -1,7 +1,9 @@
 mgis_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-conversion")
 include(cmake/modules/common-compiler-flags.cmake)
 
-set(OPTIMISATION_FLAGS "-O2 -DNDEBUG ${OPTIMISATION_FLAGS}")
+if((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release"))
+  set(OPTIMISATION_FLAGS "-O2 -DNDEBUG ${OPTIMISATION_FLAGS}")
+endif((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release"))
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
 mgis_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wdisabled-optimization")

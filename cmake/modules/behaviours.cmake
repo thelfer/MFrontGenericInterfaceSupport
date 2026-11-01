@@ -72,7 +72,7 @@ function(mfront_behaviours_check_library name)
   if(nb_sources GREATER 0)
     message(STATUS "Adding library : ${name} (${${name}_SOURCES})")
     add_library(${name} SHARED EXCLUDE_FROM_ALL ${${name}_SOURCES})
-    add_dependencies(check ${name})
+    add_dependencies(build-tests ${name})
     target_include_directories(${name}
       PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/${interface}/include"
       PRIVATE "${TFEL_INCLUDE_PATH}")
