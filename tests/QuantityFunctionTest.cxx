@@ -132,6 +132,9 @@ struct QuantityFunctionsTest final : public tfel::tests::TestCase {
     const auto ok = assign(ctx, t2, t | vmis);
     TFEL_TESTS_ASSERT(ok);
     TFEL_TESTS_ASSERT(check_value(f2(0)[0], std::sqrt(51)));
+    TFEL_TESTS_STATIC_ASSERT(MutableScalarConcept<stress>);
+    TFEL_TESTS_STATIC_ASSERT(!MutableScalarConcept<const real>);
+    TFEL_TESTS_STATIC_ASSERT(!MutableScalarConcept<int>);
   }
   void test4() {
     using namespace mgis;

@@ -273,10 +273,11 @@ namespace mgis::behaviour {
   MGIS_EXPORT void update(MaterialDataManager&);
   /*!
    * \brief update the behaviour data by:
-   * - setting s1 equal to s0
-   * - filling the stiffness matrix with 0
+   * - setting s0 equal to s1
+   * - filling the tangent operator blocks with 0 if
+   *   `args.zero_tangent_operator_blocks` is true
    * \param[in,out] m: material data manager
-   * \param[in,out] args: additional arguments
+   * \param[in] args: additional arguments
    */
   MGIS_EXPORT void update(MaterialDataManager&, const UpdateArguments&);
   /*!

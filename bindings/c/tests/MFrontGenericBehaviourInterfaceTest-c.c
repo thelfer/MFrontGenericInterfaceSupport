@@ -123,7 +123,8 @@ int main(const int argc, const char* const* argv) {
     check_status(mgis_bv_behaviour_get_internal_state_variable_name(&f, b, 3));
     check_string(f, "Porosity", "invalid internal state variable name");
     mgis_bv_VariableType f_t;
-    check_status(mgis_bv_behaviour_get_internal_state_variable_type(&f_t, b, 2));
+    check_status(
+        mgis_bv_behaviour_get_internal_state_variable_type(&f_t, b, 3));
     check(f_t == MGIS_BV_SCALAR,
           "invalid type for internal state variable 'Porosity'");
   }

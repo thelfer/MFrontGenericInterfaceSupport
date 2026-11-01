@@ -149,7 +149,7 @@ below). However, if `MGIS` is compiled with the flag
 ### Source location
 
 In debug mode, the source location, as returned by the
-`std::source_location::current_location` method, is automatically added
+`std::source_location::current` method, is automatically added
 to the error message returned by the `getErrorMessage` method.
 
 Note that this feature is currently only supported by `gcc` compilers.
@@ -200,7 +200,7 @@ bool f2(Context &ctx)
 bool f1(Context &ctx)
 {
   if (!f2(ctx)) {
-    return e.registerErrorMessage("invalid call to f2");
+    return ctx.registerErrorMessage("invalid call to f2");
   }
   processNext();
   return true;
@@ -256,7 +256,7 @@ is required to avoid a potential undefined behaviour if the constructor
 of the exception throws.
 
 The type of the exception thrown is given by the first template argument
-of the `raise` function and defaults to `std::runtime_exception`.
+of the `raise` function and defaults to `std::runtime_error`.
 
 ## The `construct` function
 
