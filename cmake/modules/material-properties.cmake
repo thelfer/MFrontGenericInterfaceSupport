@@ -31,5 +31,5 @@ function(mfront_material_properties_check_library lib)
       PRIVATE "${TFEL_INCLUDE_PATH}")
   set_target_properties(${lib} PROPERTIES
       COMPILE_FLAGS "-DMFRONT_COMPILING")
-  add_dependencies(check ${lib})
+  add_dependencies(build-tests ${lib})
 endfunction(mfront_material_properties_check_library)

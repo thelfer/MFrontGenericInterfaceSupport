@@ -130,7 +130,7 @@ void declareVariable(pybind11::module_& m) {
            "and `Array`");
   // free functions
   m.def("getVariable", getVariableByString,
-        pybind11::return_value_policy::reference);
+        pybind11::return_value_policy::copy);
   m.def("getVariableSize",
         pybind11::overload_cast<const Variable&,
                                 const mgis::behaviour::Hypothesis>(

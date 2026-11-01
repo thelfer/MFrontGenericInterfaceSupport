@@ -748,8 +748,8 @@ namespace mgis::function {
   [[nodiscard]] constexpr auto view(const Function<Space, N2>&)  //
       requires((N > 0) && (N != dynamic_extent) && (N == N2));
 
-  template <LinearFunctionalSpaceConcept Space, size_type N, size_type N2>
-  auto view(Function<Space, N>&&) = delete;
+  template <size_type N, LinearFunctionalSpaceConcept Space, size_type N2>
+  auto view(Function<Space, N2>&&) = delete;
 
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
