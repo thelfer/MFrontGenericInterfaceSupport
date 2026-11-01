@@ -63,9 +63,10 @@ namespace mgis {
         return internal::OptionalTraits<T>::deference(std::move(v));
       }
       template <typename T>
-      decltype(auto) operator()(T &&v) const
-          requires((!internal::OptionalTraits<T>::isSpecialized) &&
-                   (std::is_rvalue_reference_v<decltype(v)>)) {
+      std::remove_cvref_t<T> operator()(T&& v) const
+        requires((!internal::OptionalTraits<T>::isSpecialized) &&
+                 (std::is_rvalue_reference_v<decltype(v)>))
+      {
         if (isInvalid(v)) {
           if (policy == FailureHandlerPolicy::RAISE) {
             raise(this->ctx.getErrorMessage());
@@ -261,8 +262,7 @@ namespace mgis {
     ~Context() noexcept override;
 
    private:
-    //! \brief printing the error message on the log stream and abort the
-    //! execution
+    //! \brief call the terminate handler with the error message
     [[noreturn]] void abort();
 
     //! \brief current log stream
