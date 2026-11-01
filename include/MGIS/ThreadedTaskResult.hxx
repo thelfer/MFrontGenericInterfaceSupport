@@ -45,9 +45,14 @@ namespace mgis {
     /*!
      * \brief constructor of T
      * \param[in] args: arguments to T constructor
+     *
+     * \note this constructor is never used to copy a `ThreadedTaskResult`
      */
     template <typename... Args>
-    inline ThreadedTaskResult(Args&&...);
+    inline ThreadedTaskResult(Args&&...)
+      requires(
+          !(std::is_same_v<std::remove_cvref_t<Args>, ThreadedTaskResult<T>> ||
+            ...));
     /*!
      * \brief constructor of T
      */

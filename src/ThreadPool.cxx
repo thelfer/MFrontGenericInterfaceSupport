@@ -14,11 +14,17 @@
 
 #include <memory>
 #include <stdexcept>
+#include "MGIS/Raise.hxx"
 #include "MGIS/ThreadPool.hxx"
 
 namespace mgis {
 
   ThreadPool::ThreadPool(const size_t n) {
+    if (n == 0) {
+      mgis::raise(
+          "ThreadPool::ThreadPool: "
+          "the number of threads must be positive");
+    }
     this->statuses.resize(n, ThreadPool::Status::IDLE);
     for (size_t i = 0; i < n; ++i) {
       auto f = [this, i] {
