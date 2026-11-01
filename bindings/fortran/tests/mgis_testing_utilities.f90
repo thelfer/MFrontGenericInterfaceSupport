@@ -99,7 +99,7 @@ contains
     write (*,*) "Total number of tests:",  number_of_tests
     if(.not. status) then
        write (*,*) "Number of succeeded tests:",  number_of_successes, &
-            '(',(number_of_failures*100.)/number_of_tests,'%)'
+            '(',(number_of_successes*100.)/number_of_tests,'%)'
        write (*,*) "Number of failed tests:",  number_of_failures, &
             '(',(number_of_failures*100.)/number_of_tests,'%)'
     end if

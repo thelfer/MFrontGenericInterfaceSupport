@@ -202,7 +202,7 @@ namespace mgis::behaviour {
     if (!unlinkIfExists(ctx, g, "s0")) {
       return false;
     }
-    auto og_s0 = openGroup(ctx, g, "s0");
+    auto og_s0 = createGroup(ctx, g, "s0");
     if (isInvalid(og_s0)) {
       return false;
     }
@@ -210,7 +210,7 @@ namespace mgis::behaviour {
     if (!unlinkIfExists(ctx, g, "s1")) {
       return false;
     }
-    auto og_s1 = openGroup(ctx, g, "s1");
+    auto og_s1 = createGroup(ctx, g, "s1");
     if (isInvalid(og_s1)) {
       return false;
     }

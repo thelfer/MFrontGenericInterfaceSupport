@@ -177,6 +177,14 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     auto Kv = K | as_st2tost2<3>;
     const auto ok = assign(ctx, Kv, dS_dEGL | as_st2tost2<3> | op);
     TFEL_TESTS_ASSERT(ok);
+    // conversion to a tangent operator of another type
+    auto dsig_dF = Function<BasicLinearSpace>{space, 54};
+    const auto op2 =
+        convert_finite_strain_stiffness<FiniteStrainStiffnessKind::DSIG_DF,
+                                        FiniteStrainStiffnessKind::DS_DEGL>(
+            F0 | as_tensor<3>, F1 | as_tensor<3>, s | as_stensor<3>);
+    TFEL_TESTS_ASSERT(
+        assign(ctx, dsig_dF | as_t2tost2<3>, dS_dEGL | as_st2tost2<3> | op2));
   }  // end of test6
 };
 

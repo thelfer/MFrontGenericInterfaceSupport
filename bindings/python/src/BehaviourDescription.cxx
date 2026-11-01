@@ -281,13 +281,13 @@ void declareBehaviourDescription(pybind11::module_ &m) {
       .def("hasBounds", hasBounds)
       .def("hasLowerBound", hasLowerBound)
       .def("hasUpperBound", hasUpperBound)
-      .def("getLowerBound ", getLowerBound)
+      .def("getLowerBound", getLowerBound)
       .def("getUpperBound", getUpperBound)
       .def("hasPhysicalBounds", hasPhysicalBounds)
       .def("hasLowerPhysicalBound", hasLowerPhysicalBound)
       .def("hasUpperPhysicalBound", hasUpperPhysicalBound)
-      .def("getLowerPhysicalBound ", getLowerPhysicalBound)
-      .def("getUpperPhysicalBound ", getUpperPhysicalBound);
+      .def("getLowerPhysicalBound", getLowerPhysicalBound)
+      .def("getUpperPhysicalBound", getUpperPhysicalBound);
 
   m.def("isStandardFiniteStrainBehaviour",
         mgis::behaviour::isStandardFiniteStrainBehaviour,

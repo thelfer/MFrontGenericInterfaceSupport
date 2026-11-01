@@ -5,6 +5,7 @@
  * \date   21/08/2025
  */
 
+#include <atomic>
 #include <cstddef>
 #include <fstream>
 #include "MGIS/Behaviour/Behaviour.hxx"
@@ -15,8 +16,8 @@
 namespace mgis::behaviour::debug {
 
   [[nodiscard]] static std::size_t getIdentifier() {
-    static auto id = std::size_t{};
-    return id++;
+    static auto id = std::atomic<std::size_t>{0};
+    return id.fetch_add(1);
   }
 
   BehaviourIntegrationFailureAnalyser::

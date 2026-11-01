@@ -67,7 +67,7 @@ mgis_status mgis_bv_material_data_manager_initializer_bind_speed_of_sound(
   if (p == nullptr) {
     return mgis_report_failure(
         "mgis_bv_material_data_manager_initializer_bind_speed_of_sound: "
-        "invalid tangent operator");
+        "invalid speed of sound");
   }
   try {
     d->speed_of_sound = std::span<mgis::real>(p, s);
@@ -146,6 +146,11 @@ mgis_status mgis_bv_create_material_data_manager_with_initializer(
         "mgis_bv_create_material_data_manager_with_initializer: "
         "null behaviour");
   }
+  if (i == nullptr) {
+    return mgis_report_failure(
+        "mgis_bv_create_material_data_manager_with_initializer: "
+        "null initializer");
+  }
   try {
     *d = new mgis::behaviour::MaterialDataManager(*b, n, *i);
     if (*d == nullptr) {
@@ -164,7 +169,7 @@ mgis_status mgis_bv_material_data_manager_set_thread_safe(
   if (d == nullptr) {
     return mgis_report_failure(
         "mgis_bv_material_data_manager_set_thread_safe: "
-        "null behaviour");
+        "null material data manager");
   }
   try {
     d->setThreadSafe(static_cast<bool>(b));
@@ -179,8 +184,8 @@ mgis_bv_material_data_manager_allocate_array_of_tangent_operator_blocks(
     mgis_bv_MaterialDataManager* const d) {
   if (d == nullptr) {
     return mgis_report_failure(
-        "mgis_bv_material_data_manager_set_thread_safe: "
-        "null behaviour");
+        "mgis_bv_material_data_manager_allocate_array_of_tangent_"
+        "operator_blocks: null material data manager");
   }
   try {
     d->allocateArrayOfTangentOperatorBlocks();
@@ -198,8 +203,8 @@ mgis_bv_material_data_manager_use_external_array_of_tangent_operator_blocks(
     const mgis_size_type n) {
   if (d == nullptr) {
     return mgis_report_failure(
-        "mgis_bv_material_data_manager_set_thread_safe: "
-        "null behaviour");
+        "mgis_bv_material_data_manager_use_external_array_of_tangent_"
+        "operator_blocks: null material data manager");
   }
   try {
     d->useExternalArrayOfTangentOperatorBlocks(std::span<mgis::real>(p, n));
@@ -215,8 +220,8 @@ mgis_bv_material_data_manager_release_array_of_tangent_operator_blocks(
     mgis_bv_MaterialDataManager* const d) {
   if (d == nullptr) {
     return mgis_report_failure(
-        "mgis_bv_material_data_manager_set_thread_safe: "
-        "null behaviour");
+        "mgis_bv_material_data_manager_release_array_of_tangent_"
+        "operator_blocks: null material data manager");
   }
   try {
     d->releaseArrayOfTangentOperatorBlocks();
@@ -231,8 +236,8 @@ mgis_status mgis_bv_material_data_manager_allocate_array_of_speed_of_sounds(
     mgis_bv_MaterialDataManager* const d) {
   if (d == nullptr) {
     return mgis_report_failure(
-        "mgis_bv_material_data_manager_set_thread_safe: "
-        "null behaviour");
+        "mgis_bv_material_data_manager_allocate_array_of_speed_of_sounds: "
+        "null material data manager");
   }
   try {
     d->allocateArrayOfSpeedOfSounds();
@@ -248,8 +253,8 @@ mgis_status mgis_bv_material_data_manager_use_external_array_of_speed_of_sounds(
     const mgis_size_type n) {
   if (d == nullptr) {
     return mgis_report_failure(
-        "mgis_bv_material_data_manager_set_thread_safe: "
-        "null behaviour");
+        "mgis_bv_material_data_manager_use_external_array_of_speed_of_sounds: "
+        "null material data manager");
   }
   try {
     d->useExternalArrayOfSpeedOfSounds(std::span<mgis::real>(p, n));
@@ -263,8 +268,8 @@ mgis_status mgis_bv_material_data_manager_release_array_of_speed_of_sounds(
     mgis_bv_MaterialDataManager* const d) {
   if (d == nullptr) {
     return mgis_report_failure(
-        "mgis_bv_material_data_manager_set_thread_safe: "
-        "null behaviour");
+        "mgis_bv_material_data_manager_release_array_of_speed_of_sounds: "
+        "null material data manager");
   }
   try {
     d->releaseArrayOfSpeedOfSounds();
@@ -309,7 +314,8 @@ mgis_status mgis_bv_material_data_manager_get_tangent_operator(
     mgis_real** const K, mgis_bv_MaterialDataManager* const d) {
   if (d == nullptr) {
     *K = nullptr;
-    return mgis_report_failure("invalid argument (behaviour data is null)");
+    return mgis_report_failure(
+        "invalid argument (material data manager is null)");
   }
   auto* const Kv = d->K.data();
   if (Kv == nullptr) {
@@ -333,6 +339,11 @@ mgis_status mgis_bv_material_data_manager_get_tangent_operator_stride(
 
 mgis_status mgis_bv_update_material_data_manager(
     mgis_bv_MaterialDataManager* const d) {
+  if (d == nullptr) {
+    return mgis_report_failure(
+        "mgis_bv_update_material_data_manager: "
+        "null material data manager");
+  }
   try {
     mgis::behaviour::update(*d);
   } catch (...) {
@@ -343,6 +354,11 @@ mgis_status mgis_bv_update_material_data_manager(
 
 mgis_status mgis_bv_revert_material_data_manager(
     mgis_bv_MaterialDataManager* const d) {
+  if (d == nullptr) {
+    return mgis_report_failure(
+        "mgis_bv_revert_material_data_manager: "
+        "null material data manager");
+  }
   try {
     mgis::behaviour::revert(*d);
   } catch (...) {
