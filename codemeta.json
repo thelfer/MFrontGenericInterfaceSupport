@@ -19,12 +19,15 @@
   ],
   "identifier": "",
   "codeRepository": "https://github.com/thelfer/MFrontGenericInterfaceSupport",
-  "datePublished": "2019-08-02",
-  "dateModified": "2019-08-02",
-  "dateCreated": "2019-08-02",
+  "datePublished": "2018-09-22",
+  "dateModified": "2026-10-27",
+  "dateCreated": "2018-06-20",
   "description": "This project aims at providing tools (functions, classes, bindings, etc...) to handle behaviours written using MFront generic interface.",
   "keywords": "Mechanical solvers, mechanical behaviours, MFront",
-  "license": "LGPL v3.0",
+  "license": [
+    "https://spdx.org/licenses/LGPL-3.0-only",
+    "https://spdx.org/licenses/CECILL-C"
+  ],
   "title": "MFrontGenericInterfaceSupport",
-  "version": "v1.0.1"
+  "version": "3.1.0"
 }

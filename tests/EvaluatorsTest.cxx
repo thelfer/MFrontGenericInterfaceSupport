@@ -174,6 +174,10 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     const auto e3 = e | as_stensor<1> | trace;
     TFEL_TESTS_ASSERT(e3.check(ctx));
     TFEL_TESTS_ASSERT(std::abs(e3(0) - 6) < eps);
+    const auto e4 = e | as_tensor<1> | logarithmic_strain<>;
+    TFEL_TESTS_ASSERT(e4.check(ctx));
+    TFEL_TESTS_ASSERT(std::abs(e4(0)[1] - std::log(real{2})) < eps);
+    TFEL_TESTS_ASSERT(std::abs(e4(0)[2] - std::log(real{3})) < eps);
   }
   void test4() {
     using namespace mgis;
@@ -648,6 +652,10 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
                            "invalid number of components");
     const auto e2 = f.view() | as_stensor<2>;
     TFEL_TESTS_ASSERT(e2.check(ctx));
+    TFEL_TESTS_ASSERT(check(ctx, e) == false);
+    TFEL_TESTS_ASSERT(check(ctx, e2));
+    auto f2 = Function<BasicLinearSpace, 4>(BasicLinearSpace{1});
+    TFEL_TESTS_ASSERT(assign(ctx, f2 | as_stensor<2>, e2));
   }
   void test18() {
     using namespace mgis;

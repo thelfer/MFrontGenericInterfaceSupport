@@ -140,7 +140,7 @@ namespace mgis {
      * \note for convenience, this method always return an invalid object
      */
     template <typename ReturnType>
-    [[nodiscard]] InvalidResult registerErrorMessage(
+    [[nodiscard]] ReturnType registerErrorMessage(
         const ErrorReport,
         const std::source_location & =
             std::source_location::current()) noexcept  //

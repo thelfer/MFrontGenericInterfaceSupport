@@ -96,14 +96,14 @@ In this paper, a limited number of classes and functions of the
   be used to set the value a material property or a state variable
   respectively.
 - the `update` function updates an instance of the
-  `MaterialStateManager` by copying the state `s1` at the end of the
+  `MaterialDataManager` by copying the state `s1` at the end of the
   time step in the state `s0` at the beginning of the time step.
 - the `revert` function reverts an instance of the
-  `MaterialStateManager` by copying the state `s0` at the beginning of
+  `MaterialDataManager` by copying the state `s0` at the beginning of
   the time step in the state `s1` at the end of the time step.
 - the `integrate` function triggers the behaviour integration at each
   integration points. Various overloads of this function exist. We will
-  use a version taking as argument a `MaterialStateManager`, the time
+  use a version taking as argument a `MaterialDataManager`, the time
   increment and a range of integration points.
 
 Those classes and functions are available in the `mgis.behaviour`
@@ -161,7 +161,7 @@ for (i, t) in enumerate(load_steps):
         # assigning the values in the material data manager
         m.s1.gradients[:, :] = deps.vector().get_local().reshape((m.n, m.s1.gradients_stride))
         # behaviour integration
-        it = mgis_bv.IntegrationType.IntegrationWithConsitentTangentOperator
+        it = mgis_bv.IntegrationType.IntegrationWithConsistentTangentOperator
         mgis_bv.integrate(m, it, 0, 0, m.n);
         # getting the thermodynamic forces and the consistent tangent operator for FEniCS
         sig.vector().set_local(m.s1.thermodynamic_forces.flatten())
