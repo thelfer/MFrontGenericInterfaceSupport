@@ -100,7 +100,8 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     pk1(0) = tfel::math::convertCauchyStressToFirstPiolaKirchhoffStress(sig_ref,
                                                                         F_ref);
     F(0) = F_ref;
-    // Cauchy stress in material frame
+    // pk1 and F are given in the global frame: Cauchy stress in the global
+    // frame
     const auto cauchy = pk1 | from_pk1_to_cauchy(F);
     TFEL_TESTS_STATIC_ASSERT(EvaluatorConcept<std::decay_t<decltype(cauchy)>>);
     TFEL_TESTS_STATIC_ASSERT(
@@ -113,18 +114,22 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(cauchy(0)[3] - sig_ref[3]) < eps);
     TFEL_TESTS_ASSERT(std::abs(cauchy(0)[4] - sig_ref[4]) < eps);
     TFEL_TESTS_ASSERT(std::abs(cauchy(0)[5] - sig_ref[5]) < eps);
-    // evaluator of the Cauchy stress in global frame
+    // rotation matrix whose columns are the material axes expressed in the
+    // global frame (here e_z, e_x and e_y), as the matrix of the
+    // `@RotationMatrix` keyword of MTest
     const auto R = tfel::math::tmatrix<3, 3>{{0, 1, 0},  //
                                              {0, 0, 1},
                                              {1, 0, 0}};
+    // evaluator of the Cauchy stress in the material frame
     const auto cauchy_r = pk1 | from_pk1_to_cauchy(F) | rotate(R);
     TFEL_TESTS_STATIC_ASSERT(
         EvaluatorConcept<std::decay_t<decltype(cauchy_r)>>);
     TFEL_TESTS_ASSERT(cauchy_r.check(ctx));
-    // evaluation of the Cauchy stress in global frame
+    // evaluation of the Cauchy stress in the material frame
     const auto ok = pk1 | from_pk1_to_cauchy(F) | rotate(R) | sig;
     TFEL_TESTS_ASSERT(ok);
-    // rotate(R) computes R^T sig R, i.e. here
+    // rotate(R) computes R^T sig R, whose components are the ones of sig in
+    // the material frame, i.e. here
     // (xx, yy, zz, xy, xz, yz) -> (zz, xx, yy, xz, yz, xy)
     TFEL_TESTS_ASSERT(std::abs(sig(0)[0] - sig_ref[2]) < eps);
     TFEL_TESTS_ASSERT(std::abs(sig(0)[1] - sig_ref[0]) < eps);
@@ -143,6 +148,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
         tfel::math::stensor<3u, real>{1.5, -0.8, 0.6, 0.3, -0.2, 0.1};
     const auto F_ref = tfel::math::tensor<3u, real>{
         1.1, 0.95, 1.02, 0.1, -0.05, 0.03, 0.07, -0.02, 0.04};
+    // pk1 and F are given in the material frame
     const auto pk1_ref =
         tfel::math::convertCauchyStressToFirstPiolaKirchhoffStress(sig_ref,
                                                                    F_ref);
@@ -154,6 +160,7 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     const FunctionView<BasicLinearSpace, FunctionDataLayoutDescription{}, false>
         F_function(space, F1_values, 9);
     FunctionView<BasicLinearSpace> sig_function(space, sig_values, 6);
+    // material axes e_z, e_x and e_y, as in test3
     const auto R = tfel::math::tmatrix<3, 3>{{0, 1, 0},  //
                                              {0, 0, 1},
                                              {1, 0, 0}};
@@ -162,7 +169,8 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
                     from_pk1_to_cauchy(F_function | as_tensor<3>) |
                     rotate_backwards(R) | sig;
     TFEL_TESTS_ASSERT(ok);
-    // rotate_backwards(R) computes R sig R^T, i.e. here
+    // rotate_backwards(R) computes R sig R^T, whose components are the ones
+    // of sig in the global frame, i.e. here
     // (xx, yy, zz, xy, xz, yz) -> (yy, zz, xx, yz, xy, xz)
     TFEL_TESTS_ASSERT(std::abs(sig_values[0] - sig_ref[1]) < eps);
     TFEL_TESTS_ASSERT(std::abs(sig_values[1] - sig_ref[2]) < eps);
