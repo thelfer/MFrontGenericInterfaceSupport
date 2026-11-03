@@ -1149,14 +1149,15 @@ namespace mgis::behaviour {
             "restoring thermodynamic forces failed");
       }
     }
-    if (opts.restore_mass_densities) {
-      if (!s.mass_density.has_value()) {
-        s.mass_density = MutableFieldHolder{.value = real{}};
-      }
-      if (!restoreScalarMutableFieldHolder(ctx, *(s.mass_density), g,
-                                           "mass_density", s.n)) {
+    if ((opts.restore_mass_densities) && (exists(g, "mass_density"))) {
+      // the mass density is only defined if its restoration succeeds
+      auto mass_density =
+          s.mass_density.value_or(MutableFieldHolder{.value = real{}});
+      if (!restoreScalarMutableFieldHolder(ctx, mass_density, g, "mass_density",
+                                           s.n)) {
         return ctx.registerErrorMessage("restoring mass density failed");
       }
+      s.mass_density = std::move(mass_density);
     }
     if ((opts.restore_internal_state_variables) && (!s.b.isvs.empty())) {
       if (!read(ctx, s.internal_state_variables, g,
