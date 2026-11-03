@@ -72,6 +72,7 @@ struct CoalescedMemoryAccessTensorViewTest final
   }  // end of CoalescedMemoryAccessTensorViewTest
   tfel::tests::TestResult execute() override {
     this->test1();
+    this->test2();
     return this->result;
   }
 
@@ -102,6 +103,19 @@ struct CoalescedMemoryAccessTensorViewTest final
     TFEL_TESTS_STATIC_ASSERT(local_abs(r[1] - 60) < 1e-14);
     TFEL_TESTS_STATIC_ASSERT(local_abs(r[2] - 42) < 1e-14);
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
+  }
+  void test2() {
+    using namespace mgis;
+    using namespace mgis::function;
+    // immutable view built from mutable values
+    auto space = BasicLinearSpace{2};
+    auto values = std::array<real, 8>{1, 10, 2, 20, 3, 30, 4, 40};
+    const auto f =
+        CoalescedMemoryAccessTensorView<BasicLinearSpace,
+                                        tfel::math::stensor<2, real>, false>{
+            space, std::span<real>{values}};
+    TFEL_TESTS_ASSERT(std::abs(tfel::math::trace(f(0)) - 6) < 1e-14);
+    TFEL_TESTS_ASSERT(std::abs(tfel::math::trace(f(1)) - 60) < 1e-14);
   }
 };
 
