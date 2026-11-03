@@ -92,6 +92,15 @@ Options
   			         the revision version or the detection
   			         fails.
 - `TFEL_DIR`                   : specify the directory where to find TFEL
+- `MGIS_APPEND_SUFFIX`         : if set, append `MGIS_SUFFIX` to the names
+                                 of the libraries, of the `python` and
+                                 `julia` modules and of the directories of
+                                 the `cmake` packages, of the environment
+                                 scripts and of the documentation, and
+                                 install the headers and the `fortran`
+                                 modules in `include/MGIS-${MGIS_SUFFIX}`,
+                                 so that several versions of `MGIS` can be
+                                 installed in the same prefix
 
 `cmake` typical usage
 =====================
