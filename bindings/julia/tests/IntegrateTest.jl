@@ -1,5 +1,6 @@
-# Julia version of IntegrateTest.py, followed by a check that behaviour
-# data remain valid when the Julia object of their behaviour is collected
+# Julia version of IntegrateTest.py, followed by checks that behaviour
+# data and material data managers remain valid when the Julia object of
+# their behaviour is collected
 
 module mgis
 module behaviour
@@ -62,3 +63,19 @@ d2 = make_data()
 GC.gc(true)
 mgis_bv.set_external_state_variable!(mgis_bv.get_s1(d2), "Temperature", 293.15)
 @test mgis_bv.get_external_state_variables(mgis_bv.get_s1(d2))[1] == 293.15
+
+# material data manager whose behaviour is collected: first time step of
+# the integration above, on the first of two integration points
+function make_manager()
+  b = mgis_bv.load(lib, "Norton", h)
+  return mgis_bv.MaterialDataManager(b, 2)
+end
+m = make_manager()
+GC.gc(true)
+mgis_bv.set_external_state_variable!(mgis_bv.get_s1(m), "Temperature", 293.15)
+mgis_bv.update(m)
+mgis_bv.get_gradients(mgis_bv.get_s1(m))[1] = de
+it = mgis_bv.IntegrationWithoutTangentOperator
+@test mgis_bv.integrate(m, it, 180, 0, 2) == 1
+p2 = mgis_bv.get_internal_state_variables(mgis_bv.get_s1(m))[o]
+@test abs(p2 - pref[2]) < eps

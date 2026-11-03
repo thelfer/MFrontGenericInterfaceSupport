@@ -78,8 +78,8 @@ namespace mgis {
 
     /*!
      * \brief behaviour returned by `load`. It is shared by the objects built
-     * from it (states and behaviour data), which thus keep it alive when the
-     * Julia object of the behaviour is collected.
+     * from it (states, behaviour data and material data managers), which
+     * thus keep it alive when the Julia object of the behaviour is collected.
      */
     struct SharedBehaviour {
       //! \brief constructor from a loaded behaviour, which is moved
@@ -91,8 +91,9 @@ namespace mgis {
     };
 
     /*!
-     * \brief object of type `T` (`State` or `BehaviourData`) built from a
-     * shared behaviour, which it keeps alive.
+     * \brief object of type `T` (`State`, `BehaviourData` or
+     * `MaterialDataManager`) built from a shared behaviour, which it keeps
+     * alive.
      */
     template <typename T>
     struct Wrapper {
