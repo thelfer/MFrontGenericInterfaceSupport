@@ -40,13 +40,13 @@ for instance.
 # Constitutive equations
 
 The constitutive equations are derived from the following expression of
-the Gibbs free energy:
+the Helmholtz free energy:
 
 $$
 \begin{aligned}
-\rho\,\Phi{\left(\beps^{\mathrm{to}},T\right)}&={{\displaystyle \frac{\displaystyle \lambda}{\displaystyle 2}}}\,{\left({\mathrm{tr}{\left(\beps^{\mathrm{to}}\right)}}-3\,\alpha\,{\left(T-T^{\mathrm{ref}}\right)}\right)}^2+
+\rho\,\psi{\left(\beps^{\mathrm{to}},T\right)}&={{\displaystyle \frac{\displaystyle \lambda}{\displaystyle 2}}}\,{\left({\mathrm{tr}{\left(\beps^{\mathrm{to}}\right)}}-3\,\alpha\,{\left(T-T^{\mathrm{ref}}\right)}\right)}^2+
 \mu\,{\left(\beps^{\mathrm{to}}-\alpha\,{\left(T-T^{\mathrm{ref}}\right)}\,\mathbf{I}\right)}\,\colon\,{\left(\beps^{\mathrm{to}}-\alpha\,{\left(T-T^{\mathrm{ref}}\right)}\,\mathbf{I}\right)}\\
-&+{{\displaystyle \frac{\displaystyle \rho\,C_{\varepsilon}}{\displaystyle 2\,T^{\mathrm{ref}}}}}\,{\left(T-T^{\mathrm{ref}}\right)}^2+s_{0}\,{\left(T-T^{\mathrm{ref}}\right)}
+&-{{\displaystyle \frac{\displaystyle \rho\,C_{\varepsilon}}{\displaystyle 2\,T^{\mathrm{ref}}}}}\,{\left(T-T^{\mathrm{ref}}\right)}^2
 \end{aligned}
 $$
 
@@ -63,12 +63,16 @@ $\bsig$ and entropy per unit of mass $s$:
 
 $$
 \begin{aligned}
-\bsig&=\rho \dfrac{\partial \Phi}{\partial \beps^{\mathrm{to}}}=\lambda\,{\mathrm{tr}{\left(\beps^{\mathrm{to}}\right)}}\,\mathbf{I}+2\,\mu\,\beps^{\mathrm{to}}-\kappa\,{\left(T-T^{\mathrm{ref}}\right)}\,\mathbf{I}\\
-s&={\displaystyle \frac{\displaystyle \partial \Phi}{\displaystyle \partial T}}={{\displaystyle \frac{\displaystyle C_{\varepsilon}}{\displaystyle T^{\mathrm{ref}}}}}\,{\left(T-T^{\mathrm{ref}}\right)}+{{\displaystyle \frac{\displaystyle \kappa}{\displaystyle \rho}}}\,{\mathrm{tr}{\left(\beps^{\mathrm{to}}\right)}}\\
+\bsig&=\rho \dfrac{\partial \psi}{\partial \beps^{\mathrm{to}}}=\lambda\,{\mathrm{tr}{\left(\beps^{\mathrm{to}}\right)}}\,\mathbf{I}+2\,\mu\,\beps^{\mathrm{to}}-\kappa\,{\left(T-T^{\mathrm{ref}}\right)}\,\mathbf{I}\\
+s&=-{\displaystyle \frac{\displaystyle \partial \psi}{\displaystyle \partial T}}\approx{{\displaystyle \frac{\displaystyle C_{\varepsilon}}{\displaystyle T^{\mathrm{ref}}}}}\,{\left(T-T^{\mathrm{ref}}\right)}+{{\displaystyle \frac{\displaystyle \kappa}{\displaystyle \rho}}}\,{\mathrm{tr}{\left(\beps^{\mathrm{to}}\right)}}\\
 \end{aligned}
 $${#eq:constitutive_equations}
 
-where $\kappa=\alpha\,{\left(3\,\lambda+2\,\mu\right)}$.
+where $\kappa=\alpha\,{\left(3\,\lambda+2\,\mu\right)}$. In the
+expression of the entropy, the term
+$-{{\displaystyle \frac{\displaystyle 3\,\alpha\,\kappa}{\displaystyle \rho}}}\,{\left(T-T^{\mathrm{ref}}\right)}$
+of $-{\displaystyle \frac{\displaystyle \partial \psi}{\displaystyle \partial T}}$,
+which is of second order in $\alpha$, is neglected.
 
 The heat flux $\bj$ is related to the temperature gradient
 $\nabla\, T$ by the linear Fourier law:
@@ -269,7 +273,7 @@ computations is straightforward [2]:
     ∂σ∕∂Δεᵗᵒ = λ ⋅ (I₂ ⊗ I₂) + 2 ⋅ μ ⋅ I₄;
     ∂σ∕∂ΔT = -κ ⋅ I₂;
     ∂s∕∂ΔT = Cₑ / Tʳᵉᶠ;
-    ∂s∕∂Δεᵗᵒ = κ ⋅ Cₑ / Tʳᵉᶠ ⋅ I₂;
+    ∂s∕∂Δεᵗᵒ = (κ / ρ) ⋅ I₂;
     ∂j∕∂Δ∇T = -k ⋅ tmatrix<N, N, real>::Id();
   }
 ```
