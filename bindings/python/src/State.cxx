@@ -90,7 +90,9 @@ static void State_setExternalStateVariable2(mgis::behaviour::State& s,
     }
     mgis::behaviour::setExternalStateVariable(s, o, pybind11::cast<double>(v));
   } else {
-    const auto values = mgis::python::mgis_convert_to_span(v);
+    // the converted array must outlive the span
+    const auto a = pybind11::array_t<double>(v);
+    const auto values = mgis::python::mgis_convert_to_span(a);
     if ((o > ne) || (values.size() > ne - o)) {
       mgis::raise(
           "setExternalStateVariable: invalid argument (offset out of range)");
