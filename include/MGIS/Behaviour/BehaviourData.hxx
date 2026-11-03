@@ -15,6 +15,7 @@
 #ifndef LIB_MGIS_BEHAVIOUR_BEHAVIOURDATA_HXX
 #define LIB_MGIS_BEHAVIOUR_BEHAVIOURDATA_HXX
 
+#include <array>
 #include <iosfwd>
 #include <vector>
 #include "MGIS/Config.hxx"
@@ -47,8 +48,9 @@ namespace mgis::behaviour {
     /*!
      * \brief a pointer to a buffer used to store error message
      *
-     * By default, this is initialised to an internal buffer. This is
-     * **not** thread-safe.
+     * By default, this is initialised to the buffer `error_message_buffer`
+     * of this object. The copies of an object using its own buffer use
+     * their own buffer.
      *
      * The user may use its own buffer by setting this pointer appropriately
      * or set it to the null pointer. If not null, the pointer must
@@ -110,6 +112,8 @@ namespace mgis::behaviour {
     State s0;
     //! \brief state at the end of the time step
     State s1;
+    //! \brief default buffer of the error messages (see `error_message`)
+    std::array<char, 512> error_message_buffer = {};
   };  // end of struct BehaviourData
 
   /*!
