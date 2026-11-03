@@ -581,6 +581,15 @@ namespace mgis::behaviour {
     if (std::holds_alternative<std::span<mgis::real>>(to)) {
       // reuse existing memory
       auto& to_v = std::get<std::span<mgis::real>>(to);
+      if ((values.size() != to_v.size()) &&
+          (values.size() * o.n == to_v.size())) {
+        // duplicate the uniform values
+        for (size_type idx = 0; idx != o.n; ++idx) {
+          std::copy(values.begin(), values.end(),
+                    to_v.begin() + idx * values.size());
+        }
+        return true;
+      }
       if (values.size() != to_v.size()) {
         return ctx.registerErrorMessage("arrays' size does not match");
       }
@@ -589,7 +598,8 @@ namespace mgis::behaviour {
       // reuse existing memory
       auto& to_v = std::get<std::vector<mgis::real>>(to);
       if (to_v.size() != values.size()) {
-        if (to_v.size() * o.n == values.size()) {
+        if ((to_v.size() * o.n == values.size()) ||
+            (values.size() * o.n == to_v.size())) {
           to_v.resize(values.size());
         }
       }
