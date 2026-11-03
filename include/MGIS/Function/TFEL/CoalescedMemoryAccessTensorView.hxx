@@ -26,6 +26,16 @@
 
 namespace mgis::function {
 
+  namespace internals {
+
+    //! \brief partial specialization for coalesced views
+    template <TensorConcept TensorType>
+    struct FunctionResultTypeTraits<::tfel::math::CoalescedView<TensorType>> {
+      static constexpr auto is_specialized = true;
+    };
+
+  }  // namespace internals
+
   /*!
    * \brief a coalescence view which acts as a tensorial function
    *
@@ -85,6 +95,40 @@ namespace mgis::function {
                  (!hasCellWorkspace<Space>));
 
   };  // end of CoalescedMemoryAccessTensorView
+
+  //! \brief partial specialisation
+  template <FunctionalSpaceConcept Space,
+            TensorConcept TensorType,
+            bool is_mutable>
+  struct LightweightViewTraits<
+      CoalescedMemoryAccessTensorView<Space, TensorType, is_mutable>>
+      : std::true_type {};
+
+  //! \return the underlying space
+  template <FunctionalSpaceConcept Space,
+            TensorConcept TensorType,
+            bool is_mutable>
+  [[nodiscard]] constexpr const Space& getSpace(
+      const CoalescedMemoryAccessTensorView<Space,
+                                            TensorType,
+                                            is_mutable>&) noexcept;
+  //! \brief a noop function to match the EvaluatorConcept concept
+  template <FunctionalSpaceConcept Space,
+            TensorConcept TensorType,
+            bool is_mutable>
+  [[nodiscard]] constexpr bool check(
+      AbstractErrorHandler&,
+      const CoalescedMemoryAccessTensorView<Space,
+                                            TensorType,
+                                            is_mutable>&) noexcept;
+  //! \return the number of components
+  template <FunctionalSpaceConcept Space,
+            TensorConcept TensorType,
+            bool is_mutable>
+  [[nodiscard]] constexpr size_type getNumberOfComponents(
+      const CoalescedMemoryAccessTensorView<Space,
+                                            TensorType,
+                                            is_mutable>&) noexcept;
 
 }  // namespace mgis::function
 

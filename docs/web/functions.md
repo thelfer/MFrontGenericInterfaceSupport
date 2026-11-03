@@ -370,3 +370,26 @@ auto f = CoalescedMemoryAccessTensorView<BasicLinearSpace,
                                          tfel::math::stensor<2, real>>{
             std::array{c_xx, c_yy, c_zz, c_xy}};
 ~~~~
+
+The `StridedCoalescedMemoryAccessTensorView` class provides the same
+view directly from the space and the values: the stride between two
+successive components is the size of the space.
+
+~~~~{.cxx}
+auto f2 = StridedCoalescedMemoryAccessTensorView<
+    BasicLinearSpace, tfel::math::stensor<2, real>>{space, values};
+~~~~
+
+Both classes are functions (when mutable) and evaluators: they can be
+assigned with `assign` and combined with the modifiers working on
+tensorial values, as follows:
+
+~~~~{.cxx}
+auto tr = Function<BasicLinearSpace, 1>{space};
+const auto ok = assign(ctx, tr, f | trace);
+~~~~
+
+Since the components are not contiguous in memory, the views and
+modifiers mapping the values of a function or an evaluator, such as
+`as_stensor`, `as_fsarray`, `as_qt` or `view<N>`, can not be applied to
+them.
