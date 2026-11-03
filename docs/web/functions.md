@@ -157,6 +157,15 @@ Let `SpaceType` be a type.
 
 A functional space is either an element space and/or a quadrature space.
 
+> **Note**
+>
+> The algorithms provided by `MGIS/Function` (`assign` and
+> `scalar_reduce`) require a space satisfying the
+> `LinearElementSpaceConcept` concept. Functions, evaluators and
+> modifiers can be defined on a linear quadrature space which is not an
+> element space, but the loops over its cells and their quadrature
+> points must then be written by the solver.
+
 # Functions
 
 ## `C++` Concepts defined `MGIS/Function`

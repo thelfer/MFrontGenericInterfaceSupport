@@ -44,8 +44,7 @@ namespace mgis::function {
                             FunctionType&,
                             const EvaluatorType)  //
       requires(
-          ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
-           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)) &&
+          (LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) &&
           std::same_as<function_space<FunctionType>,
                        evaluator_space<EvaluatorType>>);
 
