@@ -175,6 +175,20 @@ namespace mgis::function {
     return getQuadraturePointOffset(*s, e, i);
   }
 
+  template <ElementSpaceConcept SpaceType>
+  [[nodiscard]] decltype(auto) getElementWorkspace(
+      const SharedSpace<SpaceType>& s, const element_index<SpaceType>& i)  //
+      requires(hasElementWorkspace<SpaceType>) {
+    return getElementWorkspace(*s, i);
+  }
+
+  template <QuadratureSpaceConcept SpaceType>
+  [[nodiscard]] decltype(auto) getCellWorkspace(
+      const SharedSpace<SpaceType>& s, const cell_index<SpaceType>& e)  //
+      requires(hasCellWorkspace<SpaceType>) {
+    return getCellWorkspace(*s, e);
+  }
+
 }  // end of namespace mgis::function
 
 #endif /* LIB_MFEM_MGIS_SHAREDSPACE_HXX */
