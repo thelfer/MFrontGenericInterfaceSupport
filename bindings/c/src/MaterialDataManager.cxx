@@ -310,6 +310,16 @@ mgis_status mgis_bv_material_data_manager_get_time_step_scaling_factor(
   return mgis_report_success();
 }  // end of mgis_bv_material_data_manager_get_time_step_scaling_factor
 
+mgis_status mgis_bv_material_data_manager_set_time_step_scaling_factor(
+    mgis_bv_MaterialDataManager* const d, const mgis_real rdt) {
+  if (d == nullptr) {
+    return mgis_report_failure(
+        "invalid argument (material data manager is null)");
+  }
+  d->rdt = rdt;
+  return mgis_report_success();
+}  // end of mgis_bv_material_data_manager_set_time_step_scaling_factor
+
 mgis_status mgis_bv_material_data_manager_get_tangent_operator(
     mgis_real** const K, mgis_bv_MaterialDataManager* const d) {
   if (d == nullptr) {

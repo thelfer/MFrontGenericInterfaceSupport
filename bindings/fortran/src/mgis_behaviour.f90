@@ -2132,6 +2132,27 @@ contains
     type(mgis_status) :: s
     s = behaviour_data_get_time_step_scaling_factor_wrapper(rdt, d%ptr)
   end function behaviour_data_get_time_step_scaling_factor
+  !
+  function behaviour_data_set_time_step_scaling_factor(d, rdt) result(s)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_data_set_time_step_scaling_factor_wrapper(d, v) &
+            bind(c,name = 'mgis_bv_behaviour_data_set_time_step_scaling_factor')&
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: d
+         real(kind=c_double), intent(in), value :: v
+         type(mgis_status) :: r
+       end function behaviour_data_set_time_step_scaling_factor_wrapper
+    end interface
+    type(BehaviourData), intent(in) :: d
+    real(kind = 8) :: rdt
+    type(mgis_status) :: s
+    s = behaviour_data_set_time_step_scaling_factor_wrapper(d%ptr, rdt)
+  end function behaviour_data_set_time_step_scaling_factor
   ! \brief return the transpose of the tangent operator
   function behaviour_data_get_tangent_operator(K, d) result(s)
     use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer
@@ -3121,6 +3142,48 @@ contains
     type(mgis_status) :: s
     s = material_data_manager_get_state_1_wrapper(s1%ptr, d%ptr)
   end function material_data_manager_get_state_1
+  !
+  function material_data_manager_get_time_step_scaling_factor(rdt, d) result(s)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function material_data_manager_get_time_step_scaling_factor_wrapper(v, d) &
+            bind(c,name = 'mgis_bv_material_data_manager_get_time_step_scaling_factor')&
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double
+         use mgis, only: mgis_status
+         implicit none
+         real(kind=c_double), intent(out) :: v
+         type(c_ptr), intent(in), value :: d
+         type(mgis_status) :: r
+       end function material_data_manager_get_time_step_scaling_factor_wrapper
+    end interface
+    real(kind = 8) :: rdt
+    type(MaterialDataManager), intent(in) :: d
+    type(mgis_status) :: s
+    s = material_data_manager_get_time_step_scaling_factor_wrapper(rdt, d%ptr)
+  end function material_data_manager_get_time_step_scaling_factor
+  !
+  function material_data_manager_set_time_step_scaling_factor(d, rdt) result(s)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function material_data_manager_set_time_step_scaling_factor_wrapper(d, v) &
+            bind(c,name = 'mgis_bv_material_data_manager_set_time_step_scaling_factor')&
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in), value :: d
+         real(kind=c_double), intent(in), value :: v
+         type(mgis_status) :: r
+       end function material_data_manager_set_time_step_scaling_factor_wrapper
+    end interface
+    type(MaterialDataManager), intent(in) :: d
+    real(kind = 8) :: rdt
+    type(mgis_status) :: s
+    s = material_data_manager_set_time_step_scaling_factor_wrapper(d%ptr, rdt)
+  end function material_data_manager_set_time_step_scaling_factor
   !
   function material_state_manager_get_number_of_integration_points(n, s) &
        result(r)
