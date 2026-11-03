@@ -132,6 +132,13 @@ int main(const int argc, const char* const* argv) {
     std::cerr << "invalid values restored in a MaterialDataManager\n";
     return EXIT_FAILURE;
   }
+  // an existing checkpoint must not be overwritten if not allowed
+  auto ctx2 = Context{};
+  if (save(ctx2, *og4, m, {{.allow_overwrite = false}})) {
+    std::cerr << "a MaterialDataManager has been saved over an existing one "
+                 "although overwriting was not allowed\n";
+    return EXIT_FAILURE;
+  }
   // external state variables which are not scalars, given at each
   // integration point
   const auto b2 = load(argv[1], "TensorialExternalStateVariableTest",
