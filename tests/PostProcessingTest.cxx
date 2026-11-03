@@ -13,6 +13,7 @@
  */
 
 #include <cmath>
+#include <algorithm>
 #include <array>
 #include <cstdlib>
 #include <iostream>
@@ -86,26 +87,39 @@ static void call_postprocessing2(const mgis::behaviour::Behaviour& b) {
   constexpr auto e2 =
       std::array<mgis::real, 6u>{1.2e-2, 1.3e-2, 1.4e-2, 0., 0., 0.};
   constexpr auto eps = 10 * std::numeric_limits<mgis::real>::epsilon();
-  auto m = MaterialDataManager{b, 2u};
+  auto m = MaterialDataManager{b, 3u};
   // initialize the states
   setMaterialProperty(m.s1, "YoungModulus", 150e9);
   setMaterialProperty(m.s1, "PoissonRatio", 0.3);
   setExternalStateVariable(m.s1, "Temperature", 293.15);
   update(m);
-  //
-  for (mgis::size_type i = 0; i != 6; ++i) {
-    m.s1.gradients[i] = e[i];
-    m.s1.gradients[6 + i] = e[i];
+  // a different strain at each integration point
+  for (mgis::size_type j = 0; j != 3; ++j) {
+    for (mgis::size_type i = 0; i != 6; ++i) {
+      m.s1.gradients[6 * j + i] = (j + 1) * e[i];
+    }
   }
   //
   auto outputs = allocatePostProcessingVariables(m, "PrincipalStrain");
-  if (!check(outputs.size() == 6u, "invalid outputs initialisation")) {
+  if (!check(outputs.size() == 9u, "invalid outputs initialisation")) {
     return;
   }
   executePostProcessing(outputs, m, "PrincipalStrain");
-  for (mgis::size_type i = 0; i != 3; ++i) {
-    check(std::abs(outputs[i] - e2[i]) < eps, "invalid output value");
-    check(std::abs(outputs[3 + i] - e2[i]) < eps, "invalid output value");
+  for (mgis::size_type j = 0; j != 3; ++j) {
+    for (mgis::size_type i = 0; i != 3; ++i) {
+      check(std::abs(outputs[3 * j + i] - (j + 1) * e2[i]) < (j + 1) * eps,
+            "invalid output value");
+    }
+  }
+  // range excluding the first integration point
+  std::fill(outputs.begin(), outputs.end(), mgis::real{-1});
+  executePostProcessing(outputs, m, "PrincipalStrain", 1, 3);
+  for (mgis::size_type j = 0; j != 3; ++j) {
+    for (mgis::size_type i = 0; i != 3; ++i) {
+      const auto o = (j == 0) ? mgis::real{-1} : (j + 1) * e2[i];
+      check(std::abs(outputs[3 * j + i] - o) < (j + 1) * eps,
+            "invalid output value");
+    }
   }
 }  // end of call_postprocessing2
 
