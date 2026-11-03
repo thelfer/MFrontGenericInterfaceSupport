@@ -245,7 +245,13 @@ if(MGIS_HAVE_TFEL)
   endif()
 
   if(MGIS_HDF5_SUPPORT AND MGIS_HAVE_MFRONT_SUPPORT)
-    add_library_test(HDF5Test HDF5Test.cxx BehaviourTest)
+    # the second library is used to save and restore a model
+    add_executable(HDF5Test EXCLUDE_FROM_ALL HDF5Test.cxx)
+    target_link_libraries(HDF5Test PRIVATE MFrontGenericInterface)
+    add_test(NAME HDF5Test COMMAND HDF5Test
+      "$<TARGET_FILE:BehaviourTest>" "$<TARGET_FILE:ModelTest>")
+    add_dependencies(build-tests HDF5Test)
+    set_test_environment(HDF5Test)
   endif()
 
 endif(MGIS_HAVE_TFEL)

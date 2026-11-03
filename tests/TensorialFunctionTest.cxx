@@ -35,6 +35,14 @@
 #include "MGIS/Function/TFEL/Tensors.hxx"
 #include "MGIS/Function/TFEL/TensorialFunction.hxx"
 
+template <typename FunctionType>
+inline constexpr bool isViewableRvalue =
+    requires(FunctionType&& f) { mgis::function::view(std::move(f)); };
+
+template <typename FunctionType>
+inline constexpr bool hasRvalueViewMember =
+    requires(FunctionType&& f) { std::move(f).view(); };
+
 struct TensorialFunctionsTest final : public tfel::tests::TestCase {
   TensorialFunctionsTest()
       : tfel::tests::TestCase("MGIS/Function", "TensorialFunctionsTests") {
@@ -45,6 +53,8 @@ struct TensorialFunctionsTest final : public tfel::tests::TestCase {
     this->test3();
     this->test4();
     this->test5();
+    this->test6();
+    this->test7();
     return this->result;
   }
 
@@ -191,6 +201,28 @@ struct TensorialFunctionsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(check_value((*values)[14], 0, eps));
     TFEL_TESTS_STATIC_ASSERT(check_value((*values)[15], 2 * m, eps));
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
+  }
+  void test6() {
+    using namespace mgis;
+    using namespace mgis::function;
+    // fixed size and tensor views of a tensorial function
+    auto space = BasicLinearSpace{2};
+    auto sig = StensorFunction<BasicLinearSpace, 1u>{space};
+    auto sig_a = view<3>(sig);
+    auto sig_b = sig | as_fsarray<3>;
+    sig_a(1)[2] = 4;
+    sig_b(0)[1] = 2;
+    TFEL_TESTS_ASSERT(check_value(sig_b(1)[2], 4));
+    TFEL_TESTS_ASSERT(check_value(sig_a(0)[1], 2));
+    TFEL_TESTS_ASSERT(check_value(sig.data()[5], 4));
+    TFEL_TESTS_ASSERT(check_value(sig.data()[1], 2));
+  }
+  void test7() {
+    using namespace mgis::function;
+    // views of temporary tensorial functions are rejected
+    using Stensor1DFunction = StensorFunction<BasicLinearSpace, 1u>;
+    TFEL_TESTS_STATIC_ASSERT(!isViewableRvalue<Stensor1DFunction>);
+    TFEL_TESTS_STATIC_ASSERT(!hasRvalueViewMember<Stensor1DFunction>);
   }
 };
 
