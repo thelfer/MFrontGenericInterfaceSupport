@@ -90,6 +90,12 @@ subroutine check_behaviour_data(b)
      r = check(abs(isvs(i) - v_esv_values(i)) < 1.d-14, &
           "invalid internal state variable value")
   end do
+  call check_status(state_set_internal_state_variable_by_name( &
+       s1, "v_isv", (/ 4d0, 5d0, 6d0 /)))
+  do i = 1, 3
+     r = check(abs(isvs(i) - (3 + i)) < 1.d-14, &
+          "invalid internal state variable value")
+  end do
   ! free ressources
   call check_status(free_behaviour_data(d))
 endsubroutine check_behaviour_data

@@ -2845,6 +2845,114 @@ contains
     r = state_set_gradient_by_name_wrapper( &
          s%ptr, convert_fortran_string(n), c_loc(v(1)))
   end function state_set_gradient_by_name
+  ! \brief return a pointer to the values of the gradients
+  ! \note the pointer refers to the values stored in the state
+  function state_get_gradients(g, s) result(r)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer, c_size_t
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function state_get_gradient_by_offset_wrapper(v, s, o) &
+            bind(c,name = 'mgis_bv_state_get_gradient_by_offset') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: v
+         type(c_ptr), intent(in),value :: s
+         integer(kind=c_size_t), intent(in), value :: o
+         type(mgis_status) :: r
+       end function state_get_gradient_by_offset_wrapper
+    end interface
+    real(kind=8), dimension(:), pointer, intent(out) :: g
+    type(State), intent(in) :: s
+    type(mgis_status) :: r
+    type(Behaviour) :: b
+    type(c_ptr) :: g_ptr
+    integer :: n
+    nullify(g)
+    r = state_get_behaviour(b, s)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = behaviour_get_gradients_size(n, b)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    ! the first gradient is at offset 0
+    r = state_get_gradient_by_offset_wrapper(g_ptr, s%ptr, 0_c_size_t)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    call c_f_pointer(g_ptr, g, [n])
+  end function state_get_gradients
+  !
+  function state_set_thermodynamic_force_by_name(s, n, v) result(r)
+    use, intrinsic :: iso_c_binding, only: c_loc
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function state_set_thermodynamic_force_by_name_wrapper(s, n, v) &
+            bind(c,name = 'mgis_bv_state_set_thermodynamic_force_by_name') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(c_ptr), intent(in),value :: v
+         type(mgis_status) :: r
+       end function state_set_thermodynamic_force_by_name_wrapper
+    end interface
+    type(State), intent(in) :: s
+    character(len=*), intent(in) :: n
+    real(kind=8), dimension(*), target :: v
+    type(mgis_status) :: r
+    r = state_set_thermodynamic_force_by_name_wrapper( &
+         s%ptr, convert_fortran_string(n), c_loc(v(1)))
+  end function state_set_thermodynamic_force_by_name
+  ! \brief return a pointer to the values of the thermodynamic forces
+  ! \note the pointer refers to the values stored in the state
+  function state_get_thermodynamic_forces(tf, s) result(r)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer, c_size_t
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function state_get_thermodynamic_force_by_offset_wrapper(v, s, o) &
+            bind(c,name = 'mgis_bv_state_get_thermodynamic_force_by_offset') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: v
+         type(c_ptr), intent(in),value :: s
+         integer(kind=c_size_t), intent(in), value :: o
+         type(mgis_status) :: r
+       end function state_get_thermodynamic_force_by_offset_wrapper
+    end interface
+    real(kind=8), dimension(:), pointer, intent(out) :: tf
+    type(State), intent(in) :: s
+    type(mgis_status) :: r
+    type(Behaviour) :: b
+    type(c_ptr) :: tf_ptr
+    integer :: n
+    nullify(tf)
+    r = state_get_behaviour(b, s)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = behaviour_get_thermodynamic_forces_size(n, b)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    ! the first thermodynamic force is at offset 0
+    r = state_get_thermodynamic_force_by_offset_wrapper(tf_ptr, s%ptr, 0_c_size_t)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    call c_f_pointer(tf_ptr, tf, [n])
+  end function state_get_thermodynamic_forces
   !
   function state_set_material_property_by_name(s, n, v) result(r)
     use mgis_fortran_utilities
@@ -2906,6 +3014,32 @@ contains
        v = ieee_value(v, ieee_quiet_nan)
     endif
   end function state_get_material_property_by_name
+  !
+  function state_set_internal_state_variable_by_name(s, n, v) result(r)
+    use, intrinsic :: iso_c_binding, only: c_loc
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function state_set_internal_state_variable_by_name_wrapper(s, n, v) &
+            bind(c,name = 'mgis_bv_state_set_internal_state_variable_by_name') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(c_ptr), intent(in),value :: v
+         type(mgis_status) :: r
+       end function state_set_internal_state_variable_by_name_wrapper
+    end interface
+    type(State), intent(in) :: s
+    character(len=*), intent(in) :: n
+    real(kind=8), dimension(*), target :: v
+    type(mgis_status) :: r
+    r = state_set_internal_state_variable_by_name_wrapper( &
+         s%ptr, convert_fortran_string(n), c_loc(v(1)))
+  end function state_set_internal_state_variable_by_name
   ! \note the C function returns a pointer to the variable, the
   !       fortran funtion returns the value
   function state_get_internal_state_variable_by_offset(v, s, o) result(r)
