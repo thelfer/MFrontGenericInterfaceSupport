@@ -13,3 +13,10 @@ target_include_directories(MFrontGenericInterface-FEniCS
 target_link_libraries(MFrontGenericInterface-FEniCS
   PUBLIC MFrontGenericInterface
   PUBLIC ${DOLFIN_LIBRARIES})
+if(WIN32)
+  install(TARGETS MFrontGenericInterface-FEniCS
+          DESTINATION bin)
+else(WIN32)
+  install(TARGETS MFrontGenericInterface-FEniCS
+          DESTINATION lib${LIB_SUFFIX})
+endif(WIN32)
