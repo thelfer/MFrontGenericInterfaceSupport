@@ -77,7 +77,15 @@ Cauchy stress in the global frame.
 For spaces with very simple structure, `MGIS/Function` provides
 algorithms, such as the `assign` algorithm which allows to assign the
 values of an evaluator to a function. Let `sig` be a function, the
-following code assigns the values calculated by `sig_ev` 
+following code assigns the values calculated by `sig_ev` to `sig`:
+
+~~~~{.cxx}
+const auto ok = assign(ctx, sig | as_stensor<3>, sig_ev);
+~~~~
+
+where `ctx` is an execution context, i.e. an object of the `Context`
+class, which collects the error messages (see [this
+page](error_handling.html)).
 
 Those concepts now being defined, `MGIS/Function` can now be defined as
 set of algorithms, evaluators and modifiers used to operate and
