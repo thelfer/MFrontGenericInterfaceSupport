@@ -12,6 +12,9 @@ extern "C" {
 
 mgis_status mgis_bv_get_space_dimension(mgis_size_type* const s,
                                         const char* const h) {
+  if ((s == nullptr) || (h == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   if ((::strcmp(h, "AxisymmetricalGeneralisedPlaneStrain") == 0) ||
       (::strcmp(h, "AxisymmetricalGeneralisedPlaneStress") == 0)) {
     *s = 1u;
@@ -32,6 +35,9 @@ mgis_status mgis_bv_get_space_dimension(mgis_size_type* const s,
 
 mgis_status mgis_bv_get_stensor_size(mgis_size_type* const s,
                                      const char* const h) {
+  if ((s == nullptr) || (h == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   if ((::strcmp(h, "AxisymmetricalGeneralisedPlaneStrain") == 0) ||
       (::strcmp(h, "AxisymmetricalGeneralisedPlaneStress") == 0)) {
     *s = 3u;
@@ -52,6 +58,9 @@ mgis_status mgis_bv_get_stensor_size(mgis_size_type* const s,
 
 mgis_status mgis_bv_get_tensor_size(mgis_size_type* const s,
                                     const char* const h) {
+  if ((s == nullptr) || (h == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   if ((::strcmp(h, "AxisymmetricalGeneralisedPlaneStrain") == 0) ||
       (::strcmp(h, "AxisymmetricalGeneralisedPlaneStress") == 0)) {
     *s = 3u;

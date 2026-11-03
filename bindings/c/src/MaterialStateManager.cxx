@@ -240,6 +240,9 @@ mgis_bv_material_state_manager_set_uniform_scalar_material_property2(
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
   }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
   try {
     const auto b = mgis::behaviour::internals::convert(p);
     setMaterialProperty(*m, n, v, b);
@@ -266,6 +269,9 @@ mgis_status mgis_bv_material_state_manager_set_uniform_material_property2(
     const mgis_bv_MaterialStateManagerUpdatePolicy p) {
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
   }
   if (v == nullptr) {
     return mgis_report_failure("null state values");
@@ -307,6 +313,9 @@ mgis_status mgis_bv_material_state_manager_set_non_uniform_material_property2(
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
   }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
   if (v == nullptr) {
     return mgis_report_failure("null material property values");
   }
@@ -337,6 +346,9 @@ mgis_status mgis_bv_material_state_manager_is_material_property_defined(
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
   }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
   try {
     *b = isMaterialPropertyDefined(*m, n);
   } catch (...) {
@@ -352,6 +364,9 @@ mgis_status mgis_bv_material_state_manager_is_material_property_uniform(
   *b = 0;
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
   }
   try {
     *b = isMaterialPropertyUniform(*m, n);
@@ -465,6 +480,9 @@ mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable2(
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
   }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
   try {
     const auto b = mgis::behaviour::internals::convert(p);
     setExternalStateVariable(*m, n, v, b);
@@ -492,6 +510,9 @@ mgis_status mgis_bv_material_state_manager_set_uniform_external_state_variable2(
     const mgis_bv_MaterialStateManagerUpdatePolicy p) {
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
   }
   if (v == nullptr) {
     return mgis_report_failure("null state values");
@@ -535,6 +556,9 @@ mgis_bv_material_state_manager_set_non_uniform_external_state_variable2(
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
   }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
   if (v == nullptr) {
     return mgis_report_failure("null state values");
   }
@@ -566,6 +590,9 @@ mgis_status mgis_bv_material_state_manager_is_external_state_variable_defined(
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
   }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
   try {
     *b = isExternalStateVariableDefined(*m, n);
   } catch (...) {
@@ -581,6 +608,9 @@ mgis_status mgis_bv_material_state_manager_is_external_state_variable_uniform(
   *b = 0;
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
   }
   try {
     *b = isExternalStateVariableUniform(*m, n);

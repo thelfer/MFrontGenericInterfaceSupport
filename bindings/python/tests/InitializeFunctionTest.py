@@ -137,6 +137,26 @@ class InitalizeFunctionTest(unittest.TestCase):
                     abs(s1[n][i]) < eps,
                     "invalid stress value at the end of the time step")
 
+    def test_data_manager_list(self):
+        """
+        Call an initialize function with inputs given by a list, which is
+        converted to a temporary array
+        """
+        n = 20000
+        h = mgis_bv.Hypothesis.Tridimensional
+        b = self.__get_behaviour(h)
+        d = mgis_bv.MaterialDataManager(b, n)
+        mgis_bv.setExternalStateVariable(d.s0, "Temperature", 293.15)
+        mgis_bv.setExternalStateVariable(d.s1, "Temperature", 293.15)
+        pr = numpy.asarray([-1.e5 - i for i in range(n)])
+        inputs = [float(p) for p in pr]
+        mgis_bv.executeInitializeFunction(d, "StressFromInitialPressure",
+                                          inputs)
+        s1 = d.s1.thermodynamic_forces
+        self.assertTrue(
+            numpy.all(numpy.abs(s1[:, 0] - pr) <= -pr * 1.e-14),
+            "invalid stress value at the end of the time step")
+
     def test_data_manager2(self):
         """
         Call an initialize function with non uniform inputs
