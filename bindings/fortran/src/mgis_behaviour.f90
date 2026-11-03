@@ -3047,7 +3047,12 @@ contains
        v = ieee_value(v, ieee_quiet_nan)
     endif
   end function state_get_external_state_variable_by_name
-  !
+  ! \note the initializer stores the address of the array, not its
+  !       values: the actual argument must be contiguous, have the target
+  !       or pointer attribute, hold n values and outlive the material
+  !       data manager created with this initializer. A non contiguous
+  !       array section would be passed as a temporary copy, which no
+  !       longer exists when this function returns.
   function msm_initializer_bind_gradients(st,a,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis_fortran_utilities
@@ -3067,7 +3072,7 @@ contains
        end function msm_initializer_bind_gradients_wrapper
     end interface
     type(MaterialStateManagerInitializer), intent(in) :: st
-    real(kind=8), dimension(*), target, intent(out) :: a
+    real(kind=8), dimension(*), target :: a
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) a_ptr
@@ -3076,7 +3081,12 @@ contains
     a_ptr = c_loc(a)
     s = msm_initializer_bind_gradients_wrapper(st%ptr,a_ptr,nc)
   end function msm_initializer_bind_gradients
-  !
+  ! \note the initializer stores the address of the array, not its
+  !       values: the actual argument must be contiguous, have the target
+  !       or pointer attribute, hold n values and outlive the material
+  !       data manager created with this initializer. A non contiguous
+  !       array section would be passed as a temporary copy, which no
+  !       longer exists when this function returns.
   function msm_initializer_bind_thermodynamic_forces(st,a,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis_fortran_utilities
@@ -3096,7 +3106,7 @@ contains
        end function msm_initializer_bind_thermodynamic_forces_wrapper
     end interface
     type(MaterialStateManagerInitializer), intent(in) :: st
-    real(kind=8), dimension(*), target, intent(out) :: a
+    real(kind=8), dimension(*), target :: a
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) a_ptr
@@ -3105,7 +3115,12 @@ contains
     a_ptr = c_loc(a)
     s = msm_initializer_bind_thermodynamic_forces_wrapper(st%ptr,a_ptr,nc)
   end function msm_initializer_bind_thermodynamic_forces
-  !
+  ! \note the initializer stores the address of the array, not its
+  !       values: the actual argument must be contiguous, have the target
+  !       or pointer attribute, hold n values and outlive the material
+  !       data manager created with this initializer. A non contiguous
+  !       array section would be passed as a temporary copy, which no
+  !       longer exists when this function returns.
   function msm_initializer_bind_internal_state_variables(st,a,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis_fortran_utilities
@@ -3125,7 +3140,7 @@ contains
        end function msm_initializer_bind_internal_state_variables_wrapper
     end interface
     type(MaterialStateManagerInitializer), intent(in) :: st
-    real(kind=8), dimension(*), target, intent(out) :: a
+    real(kind=8), dimension(*), target :: a
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) a_ptr
@@ -3134,7 +3149,12 @@ contains
     a_ptr = c_loc(a)
     s = msm_initializer_bind_internal_state_variables_wrapper(st%ptr,a_ptr,nc)
   end function msm_initializer_bind_internal_state_variables
-  !
+  ! \note the initializer stores the address of the array, not its
+  !       values: the actual argument must be contiguous, have the target
+  !       or pointer attribute, hold n values and outlive the material
+  !       data manager created with this initializer. A non contiguous
+  !       array section would be passed as a temporary copy, which no
+  !       longer exists when this function returns.
   function msm_initializer_bind_stored_energies(st,a,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis_fortran_utilities
@@ -3154,7 +3174,7 @@ contains
        end function msm_initializer_bind_stored_energies_wrapper
     end interface
     type(MaterialStateManagerInitializer), intent(in) :: st
-    real(kind=8), dimension(*), target, intent(out) :: a
+    real(kind=8), dimension(*), target :: a
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) a_ptr
@@ -3163,7 +3183,12 @@ contains
     a_ptr = c_loc(a)
     s = msm_initializer_bind_stored_energies_wrapper(st%ptr,a_ptr,nc)
   end function msm_initializer_bind_stored_energies
-  !
+  ! \note the initializer stores the address of the array, not its
+  !       values: the actual argument must be contiguous, have the target
+  !       or pointer attribute, hold n values and outlive the material
+  !       data manager created with this initializer. A non contiguous
+  !       array section would be passed as a temporary copy, which no
+  !       longer exists when this function returns.
   function msm_initializer_bind_dissipated_energies(st,a,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis_fortran_utilities
@@ -3183,7 +3208,7 @@ contains
        end function msm_initializer_bind_dissipated_energies_wrapper
     end interface
     type(MaterialStateManagerInitializer), intent(in) :: st
-    real(kind=8), dimension(*), target, intent(out) :: a
+    real(kind=8), dimension(*), target :: a
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) a_ptr
@@ -3253,7 +3278,12 @@ contains
     type(mgis_status) :: s
     s = mdm_initializer_get_state_1_initializer_wrapper(s1%ptr, d%ptr)
   end function material_data_manager_initializer_get_state_1_initializer 
-  !
+  ! \note the initializer stores the address of the array, not its
+  !       values: the actual argument must be contiguous, have the target
+  !       or pointer attribute, hold n values and outlive the material
+  !       data manager created with this initializer. A non contiguous
+  !       array section would be passed as a temporary copy, which no
+  !       longer exists when this function returns.
   function material_data_manager_initializer_bind_tangent_operator(d,K,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis_fortran_utilities
@@ -3273,7 +3303,7 @@ contains
        end function material_data_manager_initializer_bind_tangent_operator_wrapper
     end interface
     type(MaterialDataManagerInitializer), intent(in) :: d
-    real(kind=8), dimension(*), target, intent(out) :: K
+    real(kind=8), dimension(*), target :: K
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) K_ptr
@@ -3282,7 +3312,12 @@ contains
     K_ptr = c_loc(K)
     s = material_data_manager_initializer_bind_tangent_operator_wrapper(d%ptr,K_ptr,nc)
   end function material_data_manager_initializer_bind_tangent_operator
-  !
+  ! \note the initializer stores the address of the array, not its
+  !       values: the actual argument must be contiguous, have the target
+  !       or pointer attribute, hold n values and outlive the material
+  !       data manager created with this initializer. A non contiguous
+  !       array section would be passed as a temporary copy, which no
+  !       longer exists when this function returns.
   function material_data_manager_initializer_bind_speed_of_sound(d,p,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis_fortran_utilities
@@ -3302,7 +3337,7 @@ contains
        end function material_data_manager_initializer_bind_speed_of_sound_wrapper
     end interface
     type(MaterialDataManagerInitializer), intent(in) :: d
-    real(kind=8), dimension(*), target, intent(out) :: p
+    real(kind=8), dimension(*), target :: p
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) p_ptr
@@ -3525,7 +3560,12 @@ contains
     type(mgis_status) :: r
     r = mdm_allocate_array_of_tangent_operator_blocks_wrapper(d%ptr)
   end function material_data_manager_allocate_array_of_tangent_operator_blocks
-  !
+  ! \note the material data manager stores the address of the array,
+  !       not its values: the actual argument must be contiguous, have
+  !       the target or pointer attribute, hold n values and remain
+  !       valid until the array is released or the manager is freed. A
+  !       non contiguous array section would be passed as a temporary
+  !       copy, which no longer exists when this function returns.
   function material_data_manager_use_array_of_tangent_operator_blocks(d, p , n) result(r)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis, only: mgis_status
@@ -3544,7 +3584,7 @@ contains
        end function mdm_use_array_of_tangent_operator_blocks_wrapper
     end interface
     type(MaterialDataManager), intent(in) :: d
-    real(kind=8), dimension(*), target, intent(out) :: p
+    real(kind=8), dimension(*), target :: p
     integer, intent(in) :: n
     type(mgis_status) :: r
     type(c_ptr) p_ptr
@@ -3591,7 +3631,12 @@ contains
     type(mgis_status) :: r
     r = mdm_allocate_array_of_speed_of_sounds_wrapper(d%ptr)
   end function material_data_manager_allocate_array_of_speed_of_sounds
-  !
+  ! \note the material data manager stores the address of the array,
+  !       not its values: the actual argument must be contiguous, have
+  !       the target or pointer attribute, hold n values and remain
+  !       valid until the array is released or the manager is freed. A
+  !       non contiguous array section would be passed as a temporary
+  !       copy, which no longer exists when this function returns.
   function material_data_manager_use_array_of_speed_of_sounds(d, p , n) result(r)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis, only: mgis_status
@@ -3610,7 +3655,7 @@ contains
        end function mdm_use_array_of_speed_of_sounds_wrapper
     end interface
     type(MaterialDataManager), intent(in) :: d
-    real(kind=8), dimension(*), target, intent(out) :: p
+    real(kind=8), dimension(*), target :: p
     integer, intent(in) :: n
     type(mgis_status) :: r
     type(c_ptr) p_ptr
