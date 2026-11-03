@@ -29,12 +29,6 @@ This version is meant to be used with `TFEL` Version 5.2.
   `external_state_variables` of the `MaterialStateManager` class have
   changed to allow the usage of immutable externally allocated memory.
   See below for details.
-- The `enable-parallel-stl-algorithms` option is now `OFF` by default
-  (it was `ON` in Version 3.1): the overloads of the `MGIS/Function`
-  algorithms taking an execution policy of the standard library are only
-  available if `MGIS` is configured with
-  `-Denable-parallel-stl-algorithms=ON` (with `libstdc++`, this requires
-  `TBB`).
 
 ## New definitions of the field holders of the `MaterialStateManager` class
 

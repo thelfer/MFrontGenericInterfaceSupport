@@ -67,7 +67,8 @@ The simplest way to compile this package is:
    By default, contract violation leads to abort the program.
 - `enable-parallel-stl-algorithms`: enable the overloads of the
   `MGIS/Function` algorithms taking an execution policy of the standard
-  library (default=OFF). With `libstdc++`, this requires `TBB`.
+  library (default=ON). With `libstdc++`, this requires `TBB`: if `TBB`
+  is not available, configure with `-Denable-parallel-stl-algorithms=OFF`.
 - `enable-c-bindings`: compiles the `C` bindings (default=OFF)
 - `enable-fortran-bindings`: compiles bindings for the `Fortran2003`
   language (default=OFF)

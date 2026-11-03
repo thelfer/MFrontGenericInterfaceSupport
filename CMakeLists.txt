@@ -42,7 +42,7 @@ option(enable-mgis-function-precompiled-operations
 option(enable-exceptions "use exceptions to report contract violation and error reporting" OFF)
 
 # support for STL parallel algorithms
-option(enable-parallel-stl-algorithms "enable STL parallel algorithms" OFF)
+option(enable-parallel-stl-algorithms "enable STL parallel algorithms" ON)
 
 # support for CUDA algorithms
 option(enable-cuda-algorithms "enable CUDA parallel algorithms" OFF)

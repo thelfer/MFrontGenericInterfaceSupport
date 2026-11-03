@@ -72,7 +72,8 @@ Options
    By default, contract violation leads to abort the program.
 - `enable-parallel-stl-algorithms`: enable the overloads of the
   `MGIS/Function` algorithms taking an execution policy of the standard
-  library (default=OFF). With `libstdc++`, this requires `TBB`.
+  library (default=ON). With `libstdc++`, this requires `TBB`: if `TBB`
+  is not available, configure with `-Denable-parallel-stl-algorithms=OFF`.
 - `enable-cuda-algorithms`: add support for algorithms expressed in
   `CUDA` programming model.
 - `enable-hdf5-support`: enable HDF5 support for save/restore
