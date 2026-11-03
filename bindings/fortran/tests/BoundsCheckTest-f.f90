@@ -53,7 +53,8 @@ subroutine test()
   r = check(abs(lowerPhysicalBound) < eps * yg_min, &
        "invalid physical lower bound for 'YoungModulus'")
   call check_status(behaviour_has_upper_physical_bound(hasUpperPhysicalBound, b, "YoungModulus"))
-  r = check(.not. hasUpperPhysicalBound, "'YoungModulus' shall have an upper bound")
+  r = check(.not. hasUpperPhysicalBound, &
+       "'YoungModulus' shall not have an upper physical bound")
   ! free ressources
   call check_status(free_behaviour(b))
 end subroutine test

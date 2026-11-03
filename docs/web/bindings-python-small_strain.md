@@ -517,7 +517,7 @@ for i, eps_imposed in enumerate(eps_list):
 
         niter += 1
 
-    assert niter <= niter_max, "Newton method did not converge within maximum number of iterations."
+    assert nres <= max(atol, rtol * nres0), "Newton method did not converge within maximum number of iterations."
 
     Sxx[i] = data.s1.thermodynamic_forces[0, 0]
 

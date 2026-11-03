@@ -67,7 +67,7 @@ MGIS_C_EXPORT
 mgis_status mgis_bv_material_data_manager_initializer_bind_speed_of_sound(
     mgis_bv_MaterialDataManagerInitializer*, mgis_real* const, mgis_size_type);
 /*!
- * \brief set the state at the beginning of the time step
+ * \brief get the initializer of the state at the beginning of the time step
  * \param[out] s: pointer to a pointer to the state initializer
  * \param[in]  d: material data manager initalizer
  */
@@ -76,7 +76,7 @@ mgis_bv_material_data_manager_initializer_get_state_0_initializer(
     mgis_bv_MaterialStateManagerInitializer**,
     mgis_bv_MaterialDataManagerInitializer* const);
 /*!
- * \brief set the state at the beginning of the time step
+ * \brief get the initializer of the state at the end of the time step
  * \param[out] s: pointer to a pointer to the state initializer
  * \param[in]  d: material data manager initalizer
  */
@@ -157,14 +157,14 @@ MGIS_C_EXPORT mgis_status
 mgis_bv_material_data_manager_release_array_of_speed_of_sounds(
     mgis_bv_MaterialDataManager*const);
 /*!
- * \brief set the state at the beginning of the time step
+ * \brief get the state at the beginning of the time step
  * \param[out] s: pointer to a pointer to the state
  * \param[in]  d: material data manager
  */
 MGIS_C_EXPORT mgis_status mgis_bv_material_data_manager_get_state_0(
     mgis_bv_MaterialStateManager**, mgis_bv_MaterialDataManager * const);
 /*!
- * \brief set the state at the end of the time step
+ * \brief get the state at the end of the time step
  * \param[out] s: pointer to a pointer to the state
  * \param[in]  d: material data manager
  */

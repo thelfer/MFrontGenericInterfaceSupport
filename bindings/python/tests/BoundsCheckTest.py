@@ -109,7 +109,7 @@ class BoundsCheckTest(unittest.TestCase):
             "physical lower bound")
         self.assertTrue(
             mgis_bv.hasUpperPhysicalBound(b, "StateVariable"),
-            "'StateVariable' shall not have an "
+            "'StateVariable' shall have an "
             "upper physical bound")
         bound = mgis_bv.getUpperPhysicalBound(b, "StateVariable")
         self.assertTrue(
@@ -147,7 +147,7 @@ class BoundsCheckTest(unittest.TestCase):
             "physical lower bound")
         self.assertTrue(
             mgis_bv.hasUpperPhysicalBound(b, ev),
-            "'ExternalStateVariable' shall not have an "
+            "'ExternalStateVariable' shall have an "
             "upper physical bound")
         bound = mgis_bv.getUpperPhysicalBound(b, ev)
         self.assertTrue(
