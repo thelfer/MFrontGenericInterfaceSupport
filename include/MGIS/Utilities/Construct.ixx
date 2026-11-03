@@ -64,11 +64,11 @@ namespace mgis::internals {
     using NonConstType = std::remove_const_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
                                                   ArgumentsTypes...>) {
-      auto *const p = new NonConstType{std::forward<ArgumentsTypes>(args)...};
+      auto *const p = new NonConstType(std::forward<ArgumentsTypes>(args)...);
       return std::unique_ptr<BaseType>{p};
     } else {
       try {
-        auto *const p = new NonConstType{std::forward<ArgumentsTypes>(args)...};
+        auto *const p = new NonConstType(std::forward<ArgumentsTypes>(args)...);
         return std::unique_ptr<BaseType>{p};
       } catch (...) {
         registerExceptionInErrorBacktrace(ctx, l);
@@ -107,11 +107,11 @@ namespace mgis::internals {
     using NonConstType = std::remove_const_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
                                                   ArgumentsTypes...>) {
-      auto *const p = new NonConstType{std::forward<ArgumentsTypes>(args)...};
+      auto *const p = new NonConstType(std::forward<ArgumentsTypes>(args)...);
       return std::shared_ptr<BaseType>{p};
     } else {
       try {
-        auto *const p = new NonConstType{std::forward<ArgumentsTypes>(args)...};
+        auto *const p = new NonConstType(std::forward<ArgumentsTypes>(args)...);
         return std::shared_ptr<BaseType>{p};
       } catch (...) {
         registerExceptionInErrorBacktrace(ctx, l);
@@ -170,11 +170,11 @@ namespace mgis::internals {
     using NonConstType = std::remove_const_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
                                                   ArgumentsTypes...>) {
-      auto *const p = new NonConstType{std::forward<ArgumentsTypes>(args)...};
+      auto *const p = new NonConstType(std::forward<ArgumentsTypes>(args)...);
       return std::unique_ptr<BaseType>{p};
     } else {
       try {
-        auto *const p = new NonConstType{std::forward<ArgumentsTypes>(args)...};
+        auto *const p = new NonConstType(std::forward<ArgumentsTypes>(args)...);
         return std::unique_ptr<BaseType>{p};
       } catch (...) {
         std::ignore =
@@ -211,11 +211,11 @@ namespace mgis::internals {
     using NonConstType = std::remove_const_t<Type>;
     if constexpr (std::is_nothrow_constructible_v<NonConstType,
                                                   ArgumentsTypes...>) {
-      auto *const p = new NonConstType{std::forward<ArgumentsTypes>(args)...};
+      auto *const p = new NonConstType(std::forward<ArgumentsTypes>(args)...);
       return std::shared_ptr<BaseType>{p};
     } else {
       try {
-        auto *const p = new NonConstType{std::forward<ArgumentsTypes>(args)...};
+        auto *const p = new NonConstType(std::forward<ArgumentsTypes>(args)...);
         return std::shared_ptr<BaseType>{p};
       } catch (...) {
         std::ignore =
