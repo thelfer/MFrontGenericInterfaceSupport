@@ -101,6 +101,16 @@ else(MSVC)
   target_link_libraries(InitializeFunctionAndPostProcessingTest-c
     PRIVATE MFrontGenericInterface-c MFrontGenericInterface m)
 endif(MSVC)
+add_executable(TimeStepScalingFactorTest-c
+  EXCLUDE_FROM_ALL
+  TimeStepScalingFactorTest-c.c)
+if(MSVC)
+  target_link_libraries(TimeStepScalingFactorTest-c
+    PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
+else(MSVC)
+  target_link_libraries(TimeStepScalingFactorTest-c
+    PRIVATE MFrontGenericInterface-c MFrontGenericInterface m)
+endif(MSVC)
 
 add_test(NAME MFrontGenericBehaviourInterfaceTest-c
  COMMAND MFrontGenericBehaviourInterfaceTest-c
@@ -234,5 +244,14 @@ add_test(NAME InitializeFunctionAndPostProcessingTest-c
 add_dependencies(build-tests InitializeFunctionAndPostProcessingTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST InitializeFunctionAndPostProcessingTest-c
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME TimeStepScalingFactorTest-c
+ COMMAND TimeStepScalingFactorTest-c
+ "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(build-tests TimeStepScalingFactorTest-c)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST TimeStepScalingFactorTest-c
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))

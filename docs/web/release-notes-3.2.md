@@ -307,6 +307,30 @@ post-processings: `behaviour_get_number_of_post_processings`,
 functions of this module, indices, offsets and ranges of integration
 points start at 1.
 
+## Time step scaling factor proposed by the behaviours in the `C` and `fortran` bindings
+
+The integrations of a material data manager in the `C` bindings only
+returned the exit status, whereas the `C++` functions also return the
+time step scaling factor proposed by the behaviour. The following
+functions also return this factor, i.e. the minimum of the factors
+proposed at the integration points, which is also meaningful if the
+integration failed:
+
+- `mgis_bv_integrate_material_data_manager_with_options_2` and
+  `mgis_bv_integrate_debug_material_data_manager_with_options_2` (all
+  the integration points, using a thread pool);
+- `mgis_bv_integrate_material_data_manager_part_2` and
+  `mgis_bv_integrate_debug_material_data_manager_part_2` (range of
+  integration points).
+
+They take the arguments of the functions without the `_2` suffix, with
+an additional output after the exit status. The `mgis_behaviour` module
+of the `fortran` bindings exposes them as
+`integrate_material_data_manager_with_options_2`,
+`integrate_debug_material_data_manager_with_options_2`,
+`integrate_material_data_manager_part_2` and
+`integrate_debug_material_data_manager_part_2`.
+
 # New features of the `MGIS/Function` library
 
 ## Support for quantities
@@ -438,6 +462,10 @@ assign(ctx, f | as_scalar, f2 | as_scalar);
 > ~~~~
 
 # Issues fixed
+
+## Issue 408: C and Fortran bindings: the time step increase factor proposed by the behaviours is not returned by the integrations of a material data manager
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/408>
 
 ## Issue 403: Rotation matrices: documentation describing the transpose of the matrix of MTest, rotate and rotate_backwards undocumented, frames inverted in a test comment
 

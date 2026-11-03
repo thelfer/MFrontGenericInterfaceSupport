@@ -129,7 +129,8 @@ if(MGIS_HAVE_MFRONT_SUPPORT)
     InitializeFunctionTest
     PostProcessingTest
     FiniteStrainPostProcessingTest
-    ComputeSpeedOfSound)
+    ComputeSpeedOfSound
+    TimeStepScalingFactorTest)
 
   mfront_behaviours_check_library(ModelTest ode_rk54)
 
