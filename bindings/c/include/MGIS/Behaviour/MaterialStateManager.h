@@ -239,14 +239,6 @@ MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_is_material_property_uniform(
     int* const, const mgis_bv_MaterialStateManager* const, const char* const);
 
-MGIS_C_EXPORT mgis_status
-mgis_bv_material_state_manager_get_uniform_material_property(
-    mgis_real* const, mgis_bv_MaterialStateManager* const, const char* const);
-
-MGIS_C_EXPORT mgis_status
-mgis_bv_material_state_manager_get_non_uniform_material_property(
-    mgis_real** const, mgis_bv_MaterialStateManager* const, const char* const);
-
 /*!
  * \brief set the value of an uniform scalar mass density
  * \param[in] s: state manager
@@ -357,14 +349,6 @@ mgis_bv_material_state_manager_is_external_state_variable_defined(
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_is_external_state_variable_uniform(
     int* const, const mgis_bv_MaterialStateManager* const, const char* const);
-
-MGIS_C_EXPORT mgis_status
-mgis_bv_material_state_manager_get_uniform_external_state_variable(
-    mgis_real* const, mgis_bv_MaterialStateManager* const, const char* const);
-
-MGIS_C_EXPORT mgis_status
-mgis_bv_material_state_manager_get_non_uniform_external_state_variable(
-    mgis_real** const, mgis_bv_MaterialStateManager* const, const char* const);
 
 #ifdef __cplusplus
 }  // end of extern "C"

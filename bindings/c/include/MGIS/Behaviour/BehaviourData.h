@@ -85,6 +85,15 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_get_state_1(
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_get_time_step_scaling_factor(
     mgis_real* const, const mgis_bv_BehaviourData* const);
 /*!
+ * \brief set the time step scaling factor, i.e. the maximal time step
+ * increase factor that the behaviour may propose. The behaviour replaces it
+ * by the factor it proposes.
+ * \param[out] d: behaviour data
+ * \param[in]  rdt: time step scaling factor
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_set_time_step_scaling_factor(
+    mgis_bv_BehaviourData* const, const mgis_real);
+/*!
  * \brief return the tangent operator
  * \param[out] K: tangent operator
  * \param[in]  d: behaviour data

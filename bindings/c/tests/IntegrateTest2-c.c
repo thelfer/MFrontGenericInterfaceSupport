@@ -83,6 +83,7 @@ int main(const int argc, const char* const* argv) {
   mgis_size_type ni,ne;
   mgis_size_type idx;
   mgis_size_type i;
+  mgis_real rdt; /* time step scaling factor */
   int r;
   check_status(mgis_bv_load_behaviour(&b, argv[1], "Norton", "Tridimensional"));
   check_status(mgis_bv_create_material_data_manager(&m,b,100));
@@ -98,6 +99,10 @@ int main(const int argc, const char* const* argv) {
           s1, "Temperature", 293.15));
   /* copy s1 in s0 */
   check_status(mgis_bv_update_material_data_manager(m));
+  /* maximal time step increase factor proposed by the behaviour */
+  check_status(mgis_bv_material_data_manager_set_time_step_scaling_factor(m, 1.5));
+  check_status(mgis_bv_material_data_manager_get_time_step_scaling_factor(&rdt, m));
+  check(fabs(rdt - 1.5) < 1.e-14, "invalid time step scaling factor");
   check_status(mgis_bv_material_state_manager_get_gradients(&g,s1));
   check_status(mgis_bv_material_state_manager_get_gradients_stride(&g_stride,s1));
   check_status(
