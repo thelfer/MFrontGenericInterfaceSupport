@@ -2777,6 +2777,26 @@ contains
        r = report_success()
     end if
   end function free_behaviour_data
+  ! \note the behaviour is the one of the state: it must not be freed
+  function state_get_behaviour(b, s) result(r)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function state_get_behaviour_wrapper(b, s) &
+            bind(c,name = 'mgis_bv_state_get_behaviour') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: b
+         type(c_ptr), intent(in), value :: s
+         type(mgis_status) :: r
+       end function state_get_behaviour_wrapper
+    end interface
+    type(Behaviour), intent(out) :: b
+    type(State), intent(in) :: s
+    type(mgis_status) :: r
+    r = state_get_behaviour_wrapper(b%ptr, s%ptr)
+  end function state_get_behaviour
   !
   function state_set_mass_density(s, v) result(r)
     use mgis_fortran_utilities
@@ -3014,12 +3034,14 @@ contains
          s%ptr, convert_fortran_string(n), c_loc(v(1)))
   end function state_set_external_state_variable_by_name
   ! \note the C function returns a pointer to the variable, the
-  !       fortran funtion returns the value
+  !       fortran funtion returns the value. The variable must have
+  !       one value: state_get_external_state_variable_values_by_name
+  !       gives access to the values of a variable of any type.
   function state_get_external_state_variable_by_name(v, s, n) result(r)
     use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer
     use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
     use mgis_fortran_utilities
-    use mgis, only: mgis_status, MGIS_SUCCESS
+    use mgis, only: mgis_status, report_failure, MGIS_SUCCESS
     implicit none
     interface
        function state_get_external_state_variable_by_name_wrapper(v, s1, n) &
@@ -3040,15 +3062,93 @@ contains
     type(mgis_status) :: r
     real(kind=8), pointer :: fptr => null()
     type(c_ptr) :: p
+    type(Behaviour) :: b
+    character(len=:), allocatable :: h
+    integer :: t
+    integer :: vs
+    v = ieee_value(v, ieee_quiet_nan)
+    r = state_get_behaviour(b, s)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = behaviour_get_hypothesis(h, b)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = behaviour_get_external_state_variable_type_by_name(t, b, n)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = get_variable_size(vs, h, t)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    if (vs .ne. 1) then
+       r = report_failure("state_get_external_state_variable_by_name: " // &
+            "external state variable '" // trim(n) // "' is not a scalar")
+       return
+    end if
     r = state_get_external_state_variable_by_name_wrapper(&
          p, s%ptr, convert_fortran_string(n))
     if (r % exit_status == MGIS_SUCCESS) then
        call c_f_pointer(p,fptr)
        v = fptr
-    else
-       v = ieee_value(v, ieee_quiet_nan)
     endif
   end function state_get_external_state_variable_by_name
+  ! \brief return a pointer to the values of an external state variable
+  ! \note the pointer refers to the values stored in the state
+  function state_get_external_state_variable_values_by_name(v, s, n) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
+    interface
+       function state_get_external_state_variable_by_name_wrapper(v, s1, n) &
+            bind(c,name = 'mgis_bv_state_get_external_state_variable_by_name') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: v
+         type(c_ptr), intent(in),value :: s1
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: r
+       end function state_get_external_state_variable_by_name_wrapper
+    end interface
+    real(kind=8), dimension(:), pointer, intent(out) :: v
+    type(State), intent(in) :: s
+    character(len=*), intent(in) :: n
+    type(mgis_status) :: r
+    type(c_ptr) :: p
+    type(Behaviour) :: b
+    character(len=:), allocatable :: h
+    integer :: t
+    integer :: vs
+    nullify(v)
+    r = state_get_behaviour(b, s)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = behaviour_get_hypothesis(h, b)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = behaviour_get_external_state_variable_type_by_name(t, b, n)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = get_variable_size(vs, h, t)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = state_get_external_state_variable_by_name_wrapper(&
+         p, s%ptr, convert_fortran_string(n))
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    call c_f_pointer(p, v, [vs])
+  end function state_get_external_state_variable_values_by_name
   !
   function msm_initializer_bind_gradients(st,a,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc

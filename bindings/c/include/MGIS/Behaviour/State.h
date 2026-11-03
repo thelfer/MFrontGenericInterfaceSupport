@@ -16,6 +16,7 @@
 #define LIB_MGIS_BEHAVIOUR_STATE_H
 
 #include "MGIS/Status.h"
+#include "MGIS/Behaviour/Behaviour.h"
 
 #ifdef __cplusplus
 #include "MGIS/Behaviour/State.hxx"
@@ -34,6 +35,13 @@ using mgis_bv_State = mgis::behaviour::State;
 typedef struct mgis_bv_State mgis_bv_State;
 #endif /*  __cplusplus */
 
+/*!
+ * \brief get the underlying behaviour
+ * \param[out] b: behaviour
+ * \param[in]  s: state
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_state_get_behaviour(
+    const mgis_bv_Behaviour** const, mgis_bv_State* const);
 /*!
  * \brief set the mass density
  * \param[out] s: state

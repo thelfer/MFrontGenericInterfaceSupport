@@ -61,6 +61,9 @@ subroutine check_behaviour_data(b)
   type(State) s1
   real(kind=8), dimension(3) ::v_esv_values
   real(kind=8), dimension(:), pointer :: isvs
+  real(kind=8), dimension(:), pointer :: esv
+  real(kind=8) :: x
+  type(mgis_status) :: st
   integer :: i
   integer :: ri
   logical :: r
@@ -71,6 +74,15 @@ subroutine check_behaviour_data(b)
   !
   call check_status(behaviour_data_get_state_1(s1, d))
   call check_status(state_set_external_state_variable_by_name(s1, "v_esv", v_esv_values))
+  call check_status(state_get_external_state_variable_values_by_name(esv, s1, "v_esv"))
+  r = check(size(esv) == 3, "invalid size of the external state variable")
+  do i = 1, 3
+     r = check(abs(esv(i) - v_esv_values(i)) < 1.d-14, &
+          "invalid external state variable value")
+  end do
+  st = state_get_external_state_variable_by_name(x, s1, "v_esv")
+  r = check(st % exit_status .ne. MGIS_SUCCESS, &
+       "the scalar getter shall refuse a vector")
   call check_status(integrate(ri, d, b))
   ! the behaviour copies the external state variables in the internal ones
   call check_status(state_get_internal_state_variables(isvs, s1, b))
