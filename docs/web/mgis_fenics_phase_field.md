@@ -204,7 +204,7 @@ $$
 \boldsymbol{\sigma}(\bvarepsilon,d)=((1-d)^2+k_\text{res})\left(\kappa \langle \tr(\bvarepsilon)\rangle_+\textbf{I} + 2\mu \dev(\bvarepsilon)\right)+\kappa \langle \tr(\bvarepsilon)\rangle_- \textbf{I}
 $$
 
-The stress is here explicitly computed from the strain (as in the [non-linear heat transfer demo](https://thelfer.github.io/mgis/web/mgis_fenics_nonlinear_heat_transfer.html)) so that we use the `DefaultDSL`. Material properties are defined, the history function and positive energy density are decleared as (internal) state variables whereas the damage field is declared as an external state variable.
+The stress is here explicitly computed from the strain (as in the [non-linear heat transfer demo](https://thelfer.github.io/mgis/web/mgis_fenics_nonlinear_heat_transfer.html)) so that we use the `DefaultDSL`. Material properties are defined, the history function and positive energy density are decleared as (internal) state variables whereas the damage field is declared as an external state variable. The compression modulus is declared as a local variable, so that it is also available when computing the stored energy.
 
 ```cpp
 @DSL DefaultDSL;
@@ -226,6 +226,8 @@ H.setEntryName("HistoryFunction");
 @StateVariable real Ψ₊;
 Ψ₊.setEntryName("PositiveEnergyDensity");
 
+@LocalVariable stress κ;
+
 @ExternalStateVariable real d;
 d.setGlossaryName("Damage");
 ```
@@ -241,7 +243,7 @@ We now write the behaviour and provide consistent tangent operators for the prob
   const auto λ = computeLambda(Yg, ν);
   const auto μ = computeMu(Yg, ν);
   // compression modulus
-  const auto κ = λ + 2 / 3 ⋅ μ;
+  κ = λ + (2 ⋅ μ) / 3;
   // computation of the stress, positive energy density and consistent
   // tangent operator
   const auto ε = eval(eto + deto);
@@ -270,12 +272,17 @@ We now write the behaviour and provide consistent tangent operators for the prob
 ```
 note that we used `Stensor4::K()` in the above definition, which correspond to $\mathbb{K} = \mathbb{I}-\dfrac{1}{3}\mathbf{I}\otimes\mathbf{I}$, the projection operator on the deviatoric space $\mathbb{K}:\bvarepsilon = \dev(\bvarepsilon)$.
 
-Finally, we compute the internal stored energy using `@InternalEnergy`:
+Finally, we compute the internal stored energy $g(d)\psi^+ + \psi^-$
+using `@InternalEnergy`. In this code block, the external state variable
+`d` and the strain `eto` still hold their values at the beginning of the
+time step, so their increments must be added:
 
 ```cpp
 @InternalEnergy {
-  const auto gᵈ = ((1 - d) ⋅ (1 - d)) + kres;
-  Psi_s = gᵈ ⋅ Ψ₊;
+  const auto d_ = d + dd;
+  const auto gᵈ = (1 - d_) ⋅ (1 - d_) + kres;
+  const auto tr_n = min(trace(eto + deto), strain(0));
+  Psi_s = gᵈ ⋅ Ψ₊ + (κ / 2) ⋅ tr_n ⋅ tr_n;
 }
 ```
 
@@ -350,7 +357,8 @@ H.setEntryName("HistoryFunction");
 
 Finally, the integrator writes the linear behaviour and defines the
 expressions for the tangent operator blocks and we also compute the
-dissipated fracture energy density:
+dissipated fracture energy density, using the values of the damage and
+of its gradient at the end of the time step:
 
 ```cpp
 @ProvidesTangentOperator;
@@ -365,7 +373,9 @@ dissipated fracture energy density:
 }
 
 @DissipatedEnergy{
-Psi_d = Gc/2/l₀*(d*d + l₀*l₀*(g|g));
+const auto d_ = d + Δd;
+const auto g_ = eval(g + Δg);
+Psi_d = Gc/2/l₀*(d_*d_ + l₀*l₀*(g_|g_));
 }
 ```
 
