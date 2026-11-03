@@ -120,6 +120,7 @@ if(MGIS_HAVE_MFRONT_SUPPORT)
     Norton
     NortonFailure
     Plasticity
+    TangentKind
     Gurson
     BoundsCheckTest
     ParameterTest
@@ -155,6 +156,7 @@ if(MGIS_HAVE_MFRONT_SUPPORT)
   add_library_test(IntegrateTest3b IntegrateTest3b.cxx BehaviourTest)
   add_library_test(IntegrateTest4 IntegrateTest4.cxx ModelTest)
   add_library_test(IntegrateTest5 IntegrateTest5.cxx ModelTest)
+  add_library_test(TangentOperatorTest TangentOperatorTest.cxx BehaviourTest)
   add_library_test(RotateFunctionsTest RotateFunctionsTest.cxx BehaviourTest)
   add_library_test(IntegrateDebugTest IntegrateDebugTest.cxx BehaviourTest)
   add_library_test(FiniteStrainPostProcessingTest
