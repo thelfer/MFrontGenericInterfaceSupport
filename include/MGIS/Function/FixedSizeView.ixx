@@ -284,8 +284,20 @@ namespace mgis::function {
   constexpr auto view(FunctionType& f) requires(
       (N > 0) && (N != dynamic_extent) &&              //
       (FunctionConcept<std::decay_t<FunctionType>>)&&  //
-      (!std::is_rvalue_reference_v<FunctionType>)) {
+      ((!std::is_const_v<FunctionType>) ||
+       (LightweightViewConcept<std::decay_t<FunctionType>>))) {
     return FixedSizeView<std::decay_t<FunctionType>, N>(f);
+  }  // end of view
+
+  template <size_type N, typename FunctionType>
+  constexpr auto view(FunctionType& f) requires(
+      (N > 0) && (N != dynamic_extent) &&                //
+      (FunctionConcept<std::decay_t<FunctionType>>)&&    //
+      (!EvaluatorConcept<std::decay_t<FunctionType>>)&&  //
+      (!LightweightViewConcept<std::decay_t<FunctionType>>)&&  //
+      (std::is_const_v<FunctionType>)&&                  //
+      (requires(FunctionType & rf) { view(rf); })) {
+    return view<N>(view(f));
   }  // end of view
 
   template <FunctionConcept FunctionType, size_type N>

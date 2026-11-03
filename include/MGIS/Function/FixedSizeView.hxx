@@ -156,14 +156,27 @@ namespace mgis::function {
       : std::true_type {};
 
   /*!
-   * \brief convert a function to a immutable view
+   * \brief convert a function to a fixed size view
    * \param[in] f: function
    */
   template <size_type N, typename FunctionType>
   [[nodiscard]] constexpr auto view(FunctionType&) requires(
       (N > 0) && (N != dynamic_extent) &&              //
       (FunctionConcept<std::decay_t<FunctionType>>)&&  //
-      (!std::is_rvalue_reference_v<FunctionType>));
+      ((!std::is_const_v<FunctionType>) ||
+       (LightweightViewConcept<std::decay_t<FunctionType>>)));
+  /*!
+   * \brief convert a const function to an immutable fixed size view
+   * \param[in] f: function
+   */
+  template <size_type N, typename FunctionType>
+  [[nodiscard]] constexpr auto view(FunctionType&) requires(
+      (N > 0) && (N != dynamic_extent) &&                //
+      (FunctionConcept<std::decay_t<FunctionType>>)&&    //
+      (!EvaluatorConcept<std::decay_t<FunctionType>>)&&  //
+      (!LightweightViewConcept<std::decay_t<FunctionType>>)&&  //
+      (std::is_const_v<FunctionType>)&&                  //
+      (requires(FunctionType & rf) { view(rf); }));
 
   //! \return the underlying space
   template <FunctionConcept FunctionType, size_type N>
