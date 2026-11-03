@@ -165,9 +165,6 @@ if(MGIS_HAVE_MFRONT_SUPPORT)
       "$<TARGET_FILE:MaterialPropertyTest>"
       "$<TARGET_FILE:GenericParallelInvalidMaterialProperties>")
     add_dependencies(build-tests LoadGenericParallelMaterialPropertyTest)
-    set_property(TEST LoadGenericParallelMaterialPropertyTest
-      PROPERTY DEPENDS GenericParallelMaterialPropertyTest MaterialPropertyTest
-      GenericParallelInvalidMaterialProperties)
     set_test_environment(LoadGenericParallelMaterialPropertyTest)
   endif()
 
