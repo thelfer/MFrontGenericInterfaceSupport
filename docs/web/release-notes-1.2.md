@@ -69,12 +69,12 @@ responsible of the consistency of the data.
 > thermodynamic forces and tangent operator blocks, this matrix is
 > transposed internally to have the inverse transformation.
 >
-> The rotation matrix is given as a \(3\times3\) matrix, packed in
-> an \(9\) continuous array in `C`-like column-major storage. The
-> rows of this matrix are the material axes expressed in the global
-> frame, so the array contains the first components of the three
-> material axes, then their second components, then their third
-> components.
+> The rotation matrix is the matrix of the `@RotationMatrix` keyword of
+> `MTest`, whose columns are the material axes expressed in the global
+> frame. It is given as a \(3\times3\) matrix, packed in an \(9\)
+> continuous array in `C`-like row-major storage, so the array contains
+> the first components of the three material axes, then their second
+> components, then their third components.
 >
 > No checks are made to ensure that the columns of the matrix makes
 > and orthonormal basis of \(\mathcal{R}^{3}\). In \(1D\), this matrix

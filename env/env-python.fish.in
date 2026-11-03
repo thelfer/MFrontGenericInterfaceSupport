@@ -2,7 +2,7 @@
 
 set -gx MGISHOME (dirname (dirname (dirname (realpath (dirname (status -f))))))
 set -gx PATH $MGISHOME/bin $PATH
-set -gx LD_LIBRARY_PATH $MGISHOME/lib $LD_LIBRARY_PATH
+set -gx LD_LIBRARY_PATH $MGISHOME/lib@LIB_SUFFIX@ $LD_LIBRARY_PATH
 set -gx PYTHONPATH $MGISHOME/@MGIS_PYTHON_SITE_PACKAGES_DIRECTORY@ $PYTHONPATH
 
 
