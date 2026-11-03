@@ -22,6 +22,7 @@
 #include "MGIS/Behaviour/State.hxx"
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/BehaviourData.hxx"
+#include "MGIS/Behaviour/MaterialDataManager.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
 #include "MGIS/Behaviour/BehaviourIntegrationFailureAnalyser.hxx"
 
@@ -51,17 +52,35 @@ int main(const int argc, const char* const* argv) {
         [](std::string_view, std::string_view, std::string_view) {
           return std::string{"IntegrateDebugTest-report.md"};
         });
+    // checks that the integration failed and that the report was written
+    auto check_failure_report = [](const int r) {
+      if ((r == 0) || (r == 1)) {
+        std::cerr << "integration did not fail: " << r << "\n";
+        return false;
+      }
+      std::ifstream report("IntegrateDebugTest-report.md");
+      std::ostringstream content;
+      content << report.rdbuf();
+      if (content.str().find("- behaviour: NortonFailure") ==
+          std::string::npos) {
+        std::cerr << "no integration failure report\n";
+        return false;
+      }
+      return true;
+    };
     std::remove("IntegrateDebugTest-report.md");
-    const auto r = integrate_debug(v, b);
-    if ((r == 0) || (r == 1)) {
-      std::cerr << "integration did not fail: " << r << "\n";
+    if (!check_failure_report(integrate_debug(v, b))) {
       return EXIT_FAILURE;
     }
-    std::ifstream report("IntegrateDebugTest-report.md");
-    std::ostringstream content;
-    content << report.rdbuf();
-    if (content.str().find("- behaviour: NortonFailure") == std::string::npos) {
-      std::cerr << "no integration failure report\n";
+    // same check on a range of the integration points of a material data
+    // manager
+    auto m = MaterialDataManager{b, 2};
+    setExternalStateVariable(m.s1, "Temperature", 293.15);
+    update(m);
+    m.s1.gradients[6] = de;
+    std::remove("IntegrateDebugTest-report.md");
+    if (!check_failure_report(integrate_debug(
+            m, IntegrationType::INTEGRATION_NO_TANGENT_OPERATOR, 180, 1, 2))) {
       return EXIT_FAILURE;
     }
   } catch (std::exception& e) {
