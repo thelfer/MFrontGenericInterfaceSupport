@@ -127,6 +127,20 @@ static std::span<mgis::real> MaterialStateManager_convertExternalValues(
   return mgis::python::mgis_convert_to_mutable_span(o);
 }  // end of MaterialStateManager_convertExternalValues
 
+/*!
+ * \return the clean-up hook of values stored externally by a material state
+ * manager: the hook holds a reference to the given object and releases it.
+ * \param[in] o: object owning the values
+ */
+static std::function<void()> MaterialStateManager_makeExternalStorageHook(
+    pybind11::object o) {
+  return [o = std::move(o)]() mutable {
+    // the hook may be called by a thread which does not hold the GIL
+    const pybind11::gil_scoped_acquire gil;
+    o = pybind11::object{};
+  };
+}  // end of MaterialStateManager_makeExternalStorageHook
+
 static void MaterialStateManager_setMaterialProperty(
     mgis::behaviour::MaterialStateManager& s,
     const std::string& n,
@@ -151,7 +165,8 @@ static void MaterialStateManager_setMaterialProperty3(
     setMaterialProperty(sm, n,
                         MaterialStateManager_convertExternalValues(
                             o, mgis::behaviour::MaterialStateManager::UPDATE),
-                        s);
+                        s, mgis::behaviour::MaterialStateManager::UPDATE,
+                        MaterialStateManager_makeExternalStorageHook(o));
     return;
   }
   setMaterialProperty(sm, n, mgis::python::mgis_convert_to_span(o), s);
@@ -165,7 +180,7 @@ static void MaterialStateManager_setMaterialProperty4(
     const mgis::behaviour::MaterialStateManager::UpdatePolicy b) {
   if (s == mgis::behaviour::MaterialStateManager::EXTERNAL_STORAGE) {
     setMaterialProperty(sm, n, MaterialStateManager_convertExternalValues(o, b),
-                        s, b);
+                        s, b, MaterialStateManager_makeExternalStorageHook(o));
     return;
   }
   setMaterialProperty(sm, n, mgis::python::mgis_convert_to_span(o), s, b);
@@ -191,7 +206,8 @@ static void MaterialStateManager_setMassDensity3(
     setMassDensity(sm,
                    MaterialStateManager_convertExternalValues(
                        o, mgis::behaviour::MaterialStateManager::UPDATE),
-                   s);
+                   s, mgis::behaviour::MaterialStateManager::UPDATE,
+                   MaterialStateManager_makeExternalStorageHook(o));
     return;
   }
   setMassDensity(sm, mgis::python::mgis_convert_to_span(o), s);
@@ -203,7 +219,8 @@ static void MaterialStateManager_setMassDensity4(
     const mgis::behaviour::MaterialStateManager::StorageMode s,
     const mgis::behaviour::MaterialStateManager::UpdatePolicy b) {
   if (s == mgis::behaviour::MaterialStateManager::EXTERNAL_STORAGE) {
-    setMassDensity(sm, MaterialStateManager_convertExternalValues(o, b), s, b);
+    setMassDensity(sm, MaterialStateManager_convertExternalValues(o, b), s, b,
+                   MaterialStateManager_makeExternalStorageHook(o));
     return;
   }
   setMassDensity(sm, mgis::python::mgis_convert_to_span(o), s, b);
@@ -234,7 +251,8 @@ static void MaterialStateManager_setExternalStateVariable3(
         sm, n,
         MaterialStateManager_convertExternalValues(
             o, mgis::behaviour::MaterialStateManager::UPDATE),
-        s);
+        s, mgis::behaviour::MaterialStateManager::UPDATE,
+        MaterialStateManager_makeExternalStorageHook(o));
     return;
   }
   setExternalStateVariable(sm, n, mgis::python::mgis_convert_to_span(o), s);
@@ -248,7 +266,8 @@ static void MaterialStateManager_setExternalStateVariable4(
     const mgis::behaviour::MaterialStateManager::UpdatePolicy b) {
   if (s == mgis::behaviour::MaterialStateManager::EXTERNAL_STORAGE) {
     setExternalStateVariable(
-        sm, n, MaterialStateManager_convertExternalValues(o, b), s, b);
+        sm, n, MaterialStateManager_convertExternalValues(o, b), s, b,
+        MaterialStateManager_makeExternalStorageHook(o));
     return;
   }
   setExternalStateVariable(sm, n, mgis::python::mgis_convert_to_span(o), s, b);
@@ -265,7 +284,8 @@ void declareMaterialStateManager(pybind11::module_& m) {
   const auto* const storage_mode_doc =
       "with EXTERNAL_STORAGE, the given array is used without copy: it must "
       "be a contiguous array of float64 values, writable unless the update "
-      "policy is NOUPDATE, and kept alive by the caller";
+      "policy is NOUPDATE, and the manager keeps a reference to it as long as "
+      "it uses it";
   // wrapping the MaterialStateManager::UpdatePolicy enum
   pybind11::enum_<MaterialStateManager::UpdatePolicy>(
       m, "MaterialStateManagerUpdatePolicy")

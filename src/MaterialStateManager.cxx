@@ -27,6 +27,7 @@ namespace mgis::behaviour {
   MaterialStateManager::MutableFieldHolder::operator=(
       const mgis::real v) noexcept {
     this->value = v;
+    this->external_storage_hook.reset();
     return *this;
   }  // end of value
 
@@ -165,6 +166,26 @@ namespace mgis::behaviour {
     // #endif /* __cplusplus > 201103L */
   }  // end of getFieldHolder
 
+  /*!
+   * \return the object calling the given clean-up hook when it is destroyed
+   * \param[in, out] ctx: execution context
+   * \param[in] h: clean-up hook
+   *
+   * \note the hook is called if the allocation of this object fails
+   */
+  [[nodiscard]] static std::optional<std::shared_ptr<void>>
+  makeExternalStorageHook(Context& ctx, std::function<void()> h) noexcept {
+    if (!h) {
+      return std::shared_ptr<void>{};
+    }
+    try {
+      return std::shared_ptr<void>(nullptr, [f = std::move(h)](void*) { f(); });
+    } catch (...) {
+      std::ignore = registerExceptionInErrorBacktrace(ctx);
+    }
+    return {};
+  }  // end of makeExternalStorageHook
+
   void setMaterialProperty(MaterialStateManager& m,
                            std::string_view n,
                            const real v,
@@ -201,19 +222,25 @@ namespace mgis::behaviour {
                            std::string_view n,
                            std::span<real> v,
                            const MaterialStateManager::StorageMode s,
-                           const MaterialStateManager::UpdatePolicy p) {
+                           const MaterialStateManager::UpdatePolicy p,
+                           std::function<void()> h) {
     auto ctx = Context{};
     auto or_raise = ctx.getThrowingFailureHandler();
-    setMaterialProperty(ctx, m, n, v, s, p) | or_raise;
+    setMaterialProperty(ctx, m, n, v, s, p, std::move(h)) | or_raise;
   }  // end of setMaterialProperty
 
-  bool setMaterialProperty(
-      Context& ctx,
-      MaterialStateManager& m,
-      std::string_view n,
-      std::span<real> v,
-      const MaterialStateManager::StorageMode s,
-      const MaterialStateManager::UpdatePolicy p) noexcept {
+  bool setMaterialProperty(Context& ctx,
+                           MaterialStateManager& m,
+                           std::string_view n,
+                           std::span<real> v,
+                           const MaterialStateManager::StorageMode s,
+                           const MaterialStateManager::UpdatePolicy p,
+                           std::function<void()> h) noexcept {
+    // created first, so that the hook is called if the values are not stored
+    auto hook = makeExternalStorageHook(ctx, std::move(h));
+    if (isInvalid(hook)) {
+      return false;
+    }
     const auto omp = getVariable(ctx, m.b.mps, n);
     if (isInvalid(omp)) {
       return false;
@@ -234,7 +261,9 @@ namespace mgis::behaviour {
       return setMaterialProperty(ctx, m, n, std::span<const real>{v}, s, p);
     }
     fh = MaterialStateManager::MutableFieldHolder{
-        .value = v, .shall_be_updated = (p == MaterialStateManager::UPDATE)};
+        .value = v,
+        .shall_be_updated = (p == MaterialStateManager::UPDATE),
+        .external_storage_hook = std::move(*hook)};
     return true;
   }  // end of setMaterialProperty
 
@@ -330,7 +359,12 @@ namespace mgis::behaviour {
   MGIS_EXPORT void setMassDensity(MaterialStateManager& m,
                                   std::span<real> v,
                                   const MaterialStateManager::StorageMode s,
-                                  const MaterialStateManager::UpdatePolicy p) {
+                                  const MaterialStateManager::UpdatePolicy p,
+                                  std::function<void()> h) {
+    auto ctx = Context{};
+    // created first, so that the hook is called if the values are not stored
+    auto hook = makeExternalStorageHook(ctx, std::move(h)) |
+                ctx.getThrowingFailureHandler();
     mgis::raise_if(static_cast<mgis::size_type>(v.size()) != m.n,
                    "setMassDensity: invalid number of values "
                    "(does not match the number of integration points)");
@@ -340,7 +374,9 @@ namespace mgis::behaviour {
           .shall_be_updated = (p == MaterialStateManager::UPDATE)};
     } else {
       m.mass_density = MaterialStateManager::MutableFieldHolder{
-          .value = v, .shall_be_updated = (p == MaterialStateManager::UPDATE)};
+          .value = v,
+          .shall_be_updated = (p == MaterialStateManager::UPDATE),
+          .external_storage_hook = std::move(hook)};
     }
   }  // end of setMassDensity
 
@@ -374,10 +410,11 @@ namespace mgis::behaviour {
                                 std::string_view n,
                                 std::span<real> v,
                                 const MaterialStateManager::StorageMode s,
-                                const MaterialStateManager::UpdatePolicy p) {
+                                const MaterialStateManager::UpdatePolicy p,
+                                std::function<void()> h) {
     auto ctx = Context{};
     auto or_raise = ctx.getThrowingFailureHandler();
-    setExternalStateVariable(ctx, m, n, v, s, p) | or_raise;
+    setExternalStateVariable(ctx, m, n, v, s, p, std::move(h)) | or_raise;
   }  // end of setExternalStateVariable
 
   bool setExternalStateVariable(
@@ -402,13 +439,18 @@ namespace mgis::behaviour {
     return true;
   }  // end of setExternalStateVariable
 
-  bool setExternalStateVariable(
-      Context& ctx,
-      MaterialStateManager& m,
-      std::string_view n,
-      std::span<real> v,
-      const MaterialStateManager::StorageMode s,
-      const MaterialStateManager::UpdatePolicy p) noexcept {
+  bool setExternalStateVariable(Context& ctx,
+                                MaterialStateManager& m,
+                                std::string_view n,
+                                std::span<real> v,
+                                const MaterialStateManager::StorageMode s,
+                                const MaterialStateManager::UpdatePolicy p,
+                                std::function<void()> h) noexcept {
+    // created first, so that the hook is called if the values are not stored
+    auto hook = makeExternalStorageHook(ctx, std::move(h));
+    if (isInvalid(hook)) {
+      return false;
+    }
     const auto oesv = getVariable(ctx, m.b.esvs, n);
     if (isInvalid(oesv)) {
       return false;
@@ -428,7 +470,9 @@ namespace mgis::behaviour {
                                       p);
     }
     fh = MaterialStateManager::MutableFieldHolder{
-        .value = v, .shall_be_updated = (p == MaterialStateManager::UPDATE)};
+        .value = v,
+        .shall_be_updated = (p == MaterialStateManager::UPDATE),
+        .external_storage_hook = std::move(*hook)};
     return true;
   }  // end of setExternalStateVariable
 
@@ -564,7 +608,7 @@ namespace mgis::behaviour {
     }
     const auto& from = src.value;
     if (std::holds_alternative<mgis::real>(from)) {
-      dest.value = std::get<mgis::real>(from);
+      dest = std::get<mgis::real>(from);
     } else if (std::holds_alternative<std::vector<mgis::real>>(from)) {
       return updateMutableFieldHolderFromSpan(
           ctx, o, dest, std::get<std::vector<mgis::real>>(from));
