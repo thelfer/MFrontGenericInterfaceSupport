@@ -12,6 +12,7 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <limits>
 #include "MGIS/Behaviour/MaterialDataManager.h"
 
 extern "C" {
@@ -298,6 +299,27 @@ mgis_status mgis_bv_material_data_manager_get_state_1(
   return mgis_report_success();
 }  // end of mgis_bv_material_data_manager_get_state_1
 
+mgis_status mgis_bv_material_data_manager_get_time_step_scaling_factor(
+    mgis_real* const rdt, const mgis_bv_MaterialDataManager* const d) {
+  if (d == nullptr) {
+    *rdt = std::numeric_limits<double>::quiet_NaN();
+    return mgis_report_failure(
+        "invalid argument (material data manager is null)");
+  }
+  *rdt = d->rdt;
+  return mgis_report_success();
+}  // end of mgis_bv_material_data_manager_get_time_step_scaling_factor
+
+mgis_status mgis_bv_material_data_manager_set_time_step_scaling_factor(
+    mgis_bv_MaterialDataManager* const d, const mgis_real rdt) {
+  if (d == nullptr) {
+    return mgis_report_failure(
+        "invalid argument (material data manager is null)");
+  }
+  d->rdt = rdt;
+  return mgis_report_success();
+}  // end of mgis_bv_material_data_manager_set_time_step_scaling_factor
+
 mgis_status mgis_bv_material_data_manager_get_tangent_operator(
     mgis_real** const K, mgis_bv_MaterialDataManager* const d) {
   if (d == nullptr) {
@@ -324,6 +346,17 @@ mgis_status mgis_bv_material_data_manager_get_tangent_operator_stride(
   *ts = d->K_stride;
   return mgis_report_success();
 }  // end of mgis_bv_material_data_manager_get_tangent_operator_stride
+
+mgis_status mgis_bv_material_data_manager_get_number_of_tangent_operator_blocks(
+    mgis_size_type* const n, mgis_bv_MaterialDataManager* const d) {
+  if (d == nullptr) {
+    *n = mgis_size_type{};
+    return mgis_report_failure(
+        "invalid argument (material data manager is null)");
+  }
+  *n = d->b.to_blocks.size();
+  return mgis_report_success();
+}  // end of mgis_bv_material_data_manager_get_number_of_tangent_operator_blocks
 
 mgis_status mgis_bv_update_material_data_manager(
     mgis_bv_MaterialDataManager* const d) {

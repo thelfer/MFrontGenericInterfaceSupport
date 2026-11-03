@@ -69,7 +69,7 @@ mgis_library(MFrontGenericInterface
 target_include_directories(MFrontGenericInterface
    PUBLIC 
    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-   $<INSTALL_INTERFACE:include>)
+   $<INSTALL_INTERFACE:${mgis_include_install_path}>)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_DEBUG)
 endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -88,13 +88,17 @@ if(enable-static)
   target_include_directories(MFrontGenericInterface-static
     PUBLIC 
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>)
+    $<INSTALL_INTERFACE:${mgis_include_install_path}>)
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_DEBUG)
   endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
   if(enable-mgis-function)
     target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_FUNCTION_SUPPORT)
   endif(enable-mgis-function)
+  if(enable-exceptions)
+    target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_USE_EXCEPTIONS_FOR_CONTRACT_VIOLATION)
+    target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING)
+  endif(enable-exceptions)
   if(enable-parallel-stl-algorithms)
     target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_USE_STL_PARALLEL_ALGORITHMS)
   endif(enable-parallel-stl-algorithms)
@@ -120,10 +124,16 @@ endif(MGIS_HAVE_TFEL)
 
 if(enable-openmp)
   target_link_libraries(MFrontGenericInterface PUBLIC OpenMP::OpenMP_CXX)
+  if(enable-static)
+    target_link_libraries(MFrontGenericInterface-static PUBLIC OpenMP::OpenMP_CXX)
+  endif(enable-static)
 endif(enable-openmp)
 
 if(MGIS_ADDITIONAL_LIBRARIES)
   target_link_libraries(MFrontGenericInterface PUBLIC ${MGIS_ADDITIONAL_LIBRARIES})
+  if(enable-static)
+    target_link_libraries(MFrontGenericInterface-static PUBLIC ${MGIS_ADDITIONAL_LIBRARIES})
+  endif(enable-static)
 endif(MGIS_ADDITIONAL_LIBRARIES)
 
 if(UNIX)
@@ -172,4 +182,7 @@ endif(MGIS_HDF5_SUPPORT)
 
 if(MGIS_ADDITIONAL_LINK_FLAGS)
   target_link_options(MFrontGenericInterface PUBLIC "${MGIS_ADDITIONAL_LINK_FLAGS}")
+  if(enable-static)
+    target_link_options(MFrontGenericInterface-static PUBLIC "${MGIS_ADDITIONAL_LINK_FLAGS}")
+  endif(enable-static)
 endif(MGIS_ADDITIONAL_LINK_FLAGS)

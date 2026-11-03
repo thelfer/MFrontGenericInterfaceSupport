@@ -22,7 +22,7 @@ class IntegrateTest(unittest.TestCase):
         self.assertTrue(b.source == "Gurson.mfront", "invalid source")
         self.assertTrue(b.author == "Sebastien Melin", "invalid author");
         self.assertTrue(b.date == "11 / 05 / 2015", "invalid date");
-        self.assertTrue(b.validator == "dummy validator", "invalid date");
+        self.assertTrue(b.validator == "dummy validator", "invalid validator");
         self.assertTrue(b.build_identifier == "dummy build identifier", "invalid build identifier");
         self.assertTrue(b.tfel_version == version, "invalid TFEL version")
         self.assertTrue(
@@ -79,7 +79,7 @@ class IntegrateTest(unittest.TestCase):
         self.assertTrue(b.isvs[2].type == mgis_bv.VariableType.SCALAR,
                         "invalid type for the third internal state variable")
         self.assertTrue(b.isvs[3].name == "Porosity",
-                        "invalid name for the third internal state variable")
+                        "invalid name for the fourth internal state variable")
         self.assertTrue(b.isvs[3].type == mgis_bv.VariableType.SCALAR,
                         "invalid type for the fourth internal state variable")
         # external state variables

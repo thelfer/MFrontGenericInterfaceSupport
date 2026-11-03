@@ -43,6 +43,28 @@ class ComputeSpeedOfSoundTest(unittest.TestCase):
 
         pass
 
+    def test_behaviour_data(self):
+        lib = os.environ['MGIS_TEST_BEHAVIOURS_LIBRARY']
+        yg = 150e9
+        rho = 7850
+        h = mgis_bv.Hypothesis.Tridimensional
+        b = mgis_bv.load(lib, 'ComputeSpeedOfSound', h)
+        d = mgis_bv.BehaviourData(b)
+        d.s1.mass_density = rho
+        d.s0.external_state_variables[:] = 293.15
+        d.s1.external_state_variables[:] = 293.15
+        d.s1.gradients[0] = 5.e-5
+        d.dt = 180
+        # integration without tangent operator, with the speed of sound
+        d.K[0] = 100
+        v = mgis_bv.make_view(d)
+        r = mgis_bv.integrate(v, b)
+        self.assertTrue(r == 1, 'integration failed')
+        v_ref = math.sqrt(yg / rho)
+        self.assertTrue(
+            abs(d.speed_of_sound - v_ref) < 1.e-12 * v_ref,
+            'invalid value for the speed of sound')
+
 
 if __name__ == '__main__':
     unittest.main()

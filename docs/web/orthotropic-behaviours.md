@@ -72,15 +72,17 @@ All those functions take three arguments:
 
 - a pointer to the location where the rotated variables will be stored.
 - a pointer to the location where the original variables are stored.
-- a pointer to the rotation matrix from the global frame to the material
-  frame. The rotation matrix has 9 components stored in column-major
-  format. The rows of this matrix are the material axes expressed in the
-  global frame, so the 9 components are the first components of the
-  three material axes, then their second components, then their third
-  components. For the function handling the thermodynamic forces and the
-  tangent operators blocks, this rotation matrix is transposed
-  internally to get the rotation matrix from the material frame to the
-  global frame.
+- a pointer to the rotation matrix \(R\) from the global frame to the
+  material frame. This matrix is the one of the `@RotationMatrix`
+  keyword of `MTest`: its columns are the material axes expressed in the
+  global frame, and its 9 components are stored row by row, so they are
+  the first components of the three material axes, then their second
+  components, then their third components. The gradients are rotated to
+  the material frame by \(R^{T}\,.\,\epsilon\,.\,R\) (the
+  `change_basis` function of `TFEL/Math`). For the function handling the
+  thermodynamic forces and the tangent operators blocks, this rotation
+  matrix is transposed internally to get the rotation matrix from the
+  material frame to the global frame.
 
 Note that, for efficiency reasons, those functions do no perform any
 consistency checks. In particular:
@@ -115,36 +117,44 @@ Here is the list of the generated functions:
 
 -
   `<behaviour_function_name>_<hypothesis>_rotateThermodynamicForces_CauchyStress`.
-  This function assumes that its first argument is the Cauchy stress in
-  the material frame.
+  This function assumes that its second argument (the source) is the
+  Cauchy stress in the material frame.
 -
   `<behaviour_function_name>_<hypothesis>_rotateThermodynamicForces_PK1Stress`.
-  This function assumes that its first argument is the first
-  Piola-Kirchhoff stress in the material frame.
+  This function assumes that its second argument (the source) is the
+  first Piola-Kirchhoff stress in the material frame.
 -
   `<behaviour_function_name>_<hypothesis>_rotateThermodynamicForces_PK2Stress`.
-  This function assumes that its first argument is the second
-  Piola-Kirchhoff stress in the material frame.
+  This function assumes that its second argument (the source) is the
+  second Piola-Kirchhoff stress in the material frame.
 -
   `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_dsig_dF`.
-  This function assumes that its first argument is the derivative of the
-  Cauchy stress with respect to the deformation gradient in the material
-  frame.
+  This function assumes that its second argument (the source) is the
+  derivative of the Cauchy stress with respect to the deformation
+  gradient in the material frame.
 -
   `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_dPK1_dF`.
-  This function assumes that its first argument is the derivative of the
-  first Piola-Kirchhoff stress with respect to the deformation gradient
-  in the material frame.
+  This function assumes that its second argument (the source) is the
+  derivative of the first Piola-Kirchhoff stress with respect to the
+  deformation gradient in the material frame.
 -
   `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_dPK2_dEGL`.
-  This function assumes that its first argument is the derivative of the
-  second Piola-Kirchhoff stress with respect to the Green-Lagrange
-  strain in the material frame.
+  This function assumes that its second argument (the source) is the
+  derivative of the second Piola-Kirchhoff stress with respect to the
+  Green-Lagrange strain in the material frame.
 -
   `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_dtau_ddF`.
-  This function assumes that its first argument is the derivative of the
-  Kirchhoff stress with respect to the spatial increment of the
-  deformation gradient in the material frame.
+  This function assumes that its second argument (the source) is the
+  derivative of the Kirchhoff stress with respect to the spatial
+  increment of the deformation gradient in the material frame.
+
+Those functions take the same arguments as the previous ones: a pointer
+to the location where the rotated variables will be stored, a pointer
+to the location where the original variables are stored and a pointer
+to the rotation matrix. A function treating an array of integration
+points, which takes the number of integration points as an additional
+argument, is also generated for each of them, for instance
+`<behaviour_function_name>_<hypothesis>_rotateArrayOfThermodynamicForces_CauchyStress`.
 
 # Features of `MGIS` related to orthotropic behaviours {#sec:mgis:orthotropic_behaviours:mgis_support}
 

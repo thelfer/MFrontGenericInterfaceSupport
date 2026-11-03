@@ -110,6 +110,9 @@ void declareMaterialDataManager(pybind11::module_& m) {
            "release the array of speed of sounds")
       .def_readonly("n", &MaterialDataManager::n)
       .def_readonly("number_of_integration_points", &MaterialDataManager::n)
+      .def_readwrite("rdt", &MaterialDataManager::rdt,
+                     "maximal time step increase factor that the behaviour\n"
+                     "may propose")
       .def_readonly("s0", &MaterialDataManager::s0)
       .def_readonly("s1", &MaterialDataManager::s1)
       .def_property_readonly("K", &MaterialDataManager_getK)

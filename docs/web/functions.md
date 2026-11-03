@@ -39,11 +39,13 @@ where `F` is an evaluator the deformation gradient in the material
 frame, `R` is the rotation matrix from the global frame to the material
 frame, i.e. the matrix whose columns are the material axes expressed in
 the global frame (a function returning a different rotation matrix for
-each element can also be used). `R` is thus the transpose of the
-rotation matrix described in the page about [orthotropic
-behaviours](orthotropic-behaviours.html), whose rows are the material
-axes: stored row by row, `R` has the same 9 components as this matrix
-stored in column-major format.
+each element can also be used). This is the matrix of the
+`@RotationMatrix` keyword of `MTest` and of the rotation functions
+described in the page about [orthotropic
+behaviours](orthotropic-behaviours.html): `rotate(R)` computes
+\(R^{T}\,.\,t\,.\,R\), i.e. the components of `t` in the material frame,
+and `rotate_backwards(R)` computes \(R\,.\,t\,.\,R^{T}\), i.e. the
+components of `t` in the global frame.
 
 This evaluator, named `sig_ev`, only describes the operations to be
 performed to calculate the Cauchy stress and does not make any
