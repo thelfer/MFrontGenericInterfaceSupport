@@ -6,7 +6,7 @@
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of those§s licences are delivered
+ * or the CECILL-A licence. A copy of thoses licences are delivered
  * with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
@@ -33,6 +33,13 @@ namespace mgis::behaviour::internals {
       m.allocateArrayOfTangentOperatorBlocks();
     }
     if (opts.compute_speed_of_sound) {
+      // the behaviour computes the speed of sound from the mass density at
+      // the beginning of the time step for a prediction, and from the mass
+      // density at the end of the time step otherwise
+      const auto prediction = static_cast<int>(opts.integration_type) < 0;
+      mgis::raise_if(!isMassDensityDefined(prediction ? m.s0 : m.s1),
+                     "integrate: the speed of sound is requested but the "
+                     "mass density is not defined");
       m.allocateArrayOfSpeedOfSounds();
     }
   }  // end of allocate
@@ -391,7 +398,8 @@ namespace mgis::behaviour::internals {
     auto behaviour_evaluators = internals::buildBehaviourEvaluators(ws, m);
     // loop over integration points
     auto r = BehaviourIntegrationResult{};
-    auto rdt0 = r.time_step_increase_factor;
+    r.time_step_increase_factor = m.rdt;
+    const auto rdt0 = m.rdt;
     const real Ke = encodeBehaviourIntegrationOptions(opts);
     real bopts[Behaviour::nopts + 1];  // option passed to the behaviour
     for (auto i = b; i != e; ++i) {
@@ -441,7 +449,8 @@ namespace mgis::behaviour::internals {
     auto behaviour_evaluators = internals::buildBehaviourEvaluators(ws, m);
     // loop over integration points
     auto r = BehaviourIntegrationResult{};
-    auto rdt0 = r.time_step_increase_factor;
+    r.time_step_increase_factor = m.rdt;
+    const auto rdt0 = m.rdt;
     const real Ke = encodeBehaviourIntegrationOptions(opts);
     real bopts[Behaviour::nopts + 1];  // option passed to the behaviour
     for (auto i = b; i != e; ++i) {

@@ -74,7 +74,7 @@ struct mgis_bv_BehaviourDataView {
    *   computed.
    * - if Ke is in [1.5:2.5]: the secant operator must be
    *   computed.
-   * - if Ke is in [2.5:3.5]: the secant operator must be
+   * - if Ke is in [2.5:3.5]: the tangent operator must be
    *   computed.
    * - if Ke is greater than 3.5, the consistent tangent operator
    *   must be computed.
@@ -97,6 +97,9 @@ struct mgis_bv_BehaviourDataView {
    *   is returned
    * - if 1.5<K[2]<2.5, the derivative of the first Piola-Kirchoff
    *   stress with respect to the deformation gradient is returned
+   * - if 2.5<K[2]<3.5, the derivative of the Kirchhoff stress with
+   *   respect to the spatial increment of the deformation gradient
+   *   is returned
    */
   mgis_real* K;
   /*!

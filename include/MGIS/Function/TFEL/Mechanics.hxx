@@ -42,9 +42,14 @@ namespace mgis::function::internals {
   };
 
   struct FirstPiolaKirchhoffStressToCauchyStressOperator {
-    template <tfel::math::TensorConcept TensorType>
+    template <tfel::math::TensorConcept FirstPiolaKirchhoffStressType,
+              tfel::math::TensorConcept DeformationGradientType>
     MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
-        const TensorType& pk1, const TensorType& F) noexcept {
+        const FirstPiolaKirchhoffStressType& pk1,
+        const DeformationGradientType& F) const noexcept
+        requires(
+            tfel::math::getSpaceDimension<FirstPiolaKirchhoffStressType>() ==
+            tfel::math::getSpaceDimension<DeformationGradientType>()) {
       return tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress(pk1, F);
     }
   };

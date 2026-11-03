@@ -113,7 +113,7 @@ the time step.
 
 ## Tangent operator blocks
 
-By default, the derivatives of the gradients with respect to the fluxes
+By default, the derivatives of the fluxes with respect to the gradients
 are declared. Thus the variable `∂j∕∂Δ∇T` is automatically declared.
 
 However, as discussed in the next section, the consistent linearisation

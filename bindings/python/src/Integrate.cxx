@@ -48,7 +48,9 @@ static int BehaviourDataView_executeInitializeFunction2(
     const mgis::behaviour::Behaviour& b,
     const std::string& n,
     pybind11::object i) {
-  const auto inputs = mgis::python::mgis_convert_to_span(i);
+  // the converted array must outlive the span
+  const auto a = pybind11::array_t<double>(i);
+  const auto inputs = mgis::python::mgis_convert_to_span(a);
   return mgis::behaviour::executeInitializeFunction(v, b, n, inputs);
 }
 
@@ -80,7 +82,9 @@ MaterialDataManager_executeInitializeFunction3(
     mgis::behaviour::MaterialDataManager& m,
     const std::string& n,
     pybind11::object i) {
-  const auto inputs = mgis::python::mgis_convert_to_span(i);
+  // the converted array must outlive the span
+  const auto a = pybind11::array_t<double>(i);
+  const auto inputs = mgis::python::mgis_convert_to_span(a);
   return mgis::behaviour::executeInitializeFunction(m, n, inputs);
 }
 
@@ -91,7 +95,9 @@ MaterialDataManager_executeInitializeFunction4(
     pybind11::object i,
     const mgis::size_type b,
     const mgis::size_type e) {
-  const auto inputs = mgis::python::mgis_convert_to_span(i);
+  // the converted array must outlive the span
+  const auto a = pybind11::array_t<double>(i);
+  const auto inputs = mgis::python::mgis_convert_to_span(a);
   return mgis::behaviour::executeInitializeFunction(m, n, inputs, b, e);
 }
 
@@ -101,7 +107,9 @@ MaterialDataManager_executeInitializeFunction5(
     mgis::behaviour::MaterialDataManager& m,
     const std::string& n,
     pybind11::object i) {
-  const auto inputs = mgis::python::mgis_convert_to_span(i);
+  // the converted array must outlive the span
+  const auto a = pybind11::array_t<double>(i);
+  const auto inputs = mgis::python::mgis_convert_to_span(a);
   return mgis::behaviour::executeInitializeFunction(t, m, n, inputs);
 }
 
