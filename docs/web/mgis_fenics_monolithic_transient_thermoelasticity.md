@@ -179,9 +179,15 @@ In this case, this is not appropriate as:
     ${\displaystyle \frac{\displaystyle \partial s}{\displaystyle \partial \Delta\,T}}$
     of the entropy with respect to the temperature are also required.
 
-The required tangent operator blocks are therefore explicitly requested:
+The required tangent operator blocks are therefore explicitly requested.
+Since those blocks are computed in the `@Integrator` code block (see
+below), the `@ProvidesTangentOperator` keyword states that the
+behaviour computes the tangent operator. Without it, every integration
+requesting a tangent operator fails with the message "tangent operator
+is not implemented":
 
 ``` cxx
+@ProvidesTangentOperator;
 @TangentOperatorBlocks{∂σ∕∂Δεᵗᵒ, ∂σ∕∂ΔT, ∂s∕∂ΔT, ∂s∕∂Δεᵗᵒ, ∂j∕∂Δ∇T};
 ```
 
