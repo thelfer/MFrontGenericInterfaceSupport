@@ -161,6 +161,7 @@ static void check_material_data_manager(const mgis_bv_Behaviour* const b) {
   mgis_real dt = 2;
   mgis_size_type i;
   int r;
+  int u;  // uniformity of a material property
   //
   check_status(mgis_bv_create_material_data_manager(&d, b, 2));
   check_status(mgis_bv_material_data_manager_get_state_0(&s0, d));
@@ -225,6 +226,9 @@ static void check_material_data_manager(const mgis_bv_Behaviour* const b) {
       s1, "YoungModulus", &E, MGIS_BV_LOCAL_STORAGE));
   check_status(mgis_bv_material_state_manager_set_uniform_material_property(
       s1, "YoungModulus", &E, MGIS_BV_EXTERNAL_STORAGE));
+  check_status(mgis_bv_material_state_manager_is_material_property_uniform(
+      &u, s1, "YoungModulus"));
+  check(u, "the material property shall be uniform");
   // clean-up
   check_status(mgis_bv_free_material_data_manager(&d));
 }  // end of check_material_data_manager

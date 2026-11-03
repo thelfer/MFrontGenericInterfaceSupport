@@ -319,11 +319,33 @@ namespace mgis::behaviour {
       return ctx.registerErrorMessage("no material property named '" +
                                       std::string{n} + "' defined");
     }
+    const auto omp = getVariable(ctx, m.b.mps, n);
+    if (isInvalid(omp)) {
+      return {};
+    }
+    const auto ovs = getVariableSize(ctx, *omp, m.b.hypothesis);
+    if (isInvalid(ovs)) {
+      return {};
+    }
+    // a uniform value given by an array holds the values of the variable
+    // once (see setMaterialProperty and buildEvaluators)
+    auto is_uniform = [&ovs](const auto& values) {
+      return static_cast<mgis::size_type>(values.size()) == *ovs;
+    };
+    if (std::holds_alternative<std::span<const real>>(p->second)) {
+      return is_uniform(std::get<std::span<const real>>(p->second));
+    }
     if (!std::holds_alternative<MutableFieldHolder>(p->second)) {
       return false;
     }
-    return std::holds_alternative<real>(
-        std::get<MutableFieldHolder>(p->second).value);
+    const auto& v = std::get<MutableFieldHolder>(p->second).value;
+    if (std::holds_alternative<real>(v)) {
+      return true;
+    }
+    if (std::holds_alternative<std::span<real>>(v)) {
+      return is_uniform(std::get<std::span<real>>(v));
+    }
+    return is_uniform(std::get<std::vector<real>>(v));
   }  // end of isMaterialPropertyUniform
 
   void setMassDensity(MaterialStateManager& m,
