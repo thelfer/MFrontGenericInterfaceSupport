@@ -614,7 +614,13 @@ namespace mgis::behaviour {
     }
     const auto& from = src.value;
     if (std::holds_alternative<mgis::real>(from)) {
-      dest.value = std::get<mgis::real>(from);
+      if (std::holds_alternative<std::span<mgis::real>>(dest.value)) {
+        // reuse existing memory
+        auto& to_v = std::get<std::span<mgis::real>>(dest.value);
+        std::fill(to_v.begin(), to_v.end(), std::get<mgis::real>(from));
+      } else {
+        dest.value = std::get<mgis::real>(from);
+      }
     } else if (std::holds_alternative<std::vector<mgis::real>>(from)) {
       return updateMutableFieldHolderFromSpan(
           ctx, o, dest, std::get<std::vector<mgis::real>>(from));
