@@ -2,6 +2,9 @@ include(CMakePackageConfigHelpers)
 
 if(MGIS_APPEND_SUFFIX)
   set(mgis_export_install_path "share/mgis-${MGIS_SUFFIX}/cmake")
+  string(REPLACE "." "_" MGIS_SUFFIX_FOR_PYTHON_MODULES "${MGIS_SUFFIX}")
+  string(REPLACE "-" "_" MGIS_SUFFIX_FOR_PYTHON_MODULES "${MGIS_SUFFIX_FOR_PYTHON_MODULES}")
+  set(MGIS_SUFFIX_FOR_JULIA_MODULES "${MGIS_SUFFIX_FOR_PYTHON_MODULES}")
 else(MGIS_APPEND_SUFFIX)
   set(mgis_export_install_path "share/mgis/cmake")
 endif(MGIS_APPEND_SUFFIX)
@@ -42,8 +45,30 @@ function(mgis_library name)
                                 INSTALL_DESTINATION ${mgis_export_install_path}
                                 NO_SET_AND_CHECK_MACRO
                                 NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+  write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/${name}ConfigVersion.cmake"
+    VERSION "${PROJECT_VERSION}"
+    COMPATIBILITY SameMinorVersion)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake"
+                "${CMAKE_CURRENT_BINARY_DIR}/${name}ConfigVersion.cmake"
           DESTINATION ${mgis_export_install_path})
+  # forwarding files installed where find_package looks for the package,
+  # including the previous ones by a relative path
+  if(MGIS_APPEND_SUFFIX)
+    set(_package_install_path "lib${LIB_SUFFIX}/cmake/${name}-${MGIS_SUFFIX}")
+  else(MGIS_APPEND_SUFFIX)
+    set(_package_install_path "lib${LIB_SUFFIX}/cmake/${name}")
+  endif(MGIS_APPEND_SUFFIX)
+  file(RELATIVE_PATH _export_relative_path
+       "${CMAKE_INSTALL_PREFIX}/${_package_install_path}"
+       "${CMAKE_INSTALL_PREFIX}/${mgis_export_install_path}")
+  foreach(_file ${name}Config.cmake ${name}ConfigVersion.cmake)
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/forwarding/${_file}"
+         "include(\"\${CMAKE_CURRENT_LIST_DIR}/${_export_relative_path}/${_file}\")\n")
+  endforeach()
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/forwarding/${name}Config.cmake"
+                "${CMAKE_CURRENT_BINARY_DIR}/forwarding/${name}ConfigVersion.cmake"
+          DESTINATION ${_package_install_path})
   if(enable-static)
     add_library(${name}-static STATIC ${ARGN})
     # set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}-static")
