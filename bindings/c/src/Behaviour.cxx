@@ -199,7 +199,7 @@ mgis_status mgis_bv_behaviour_rotate_gradients_in_place(
     mgis_real* const g,
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r) {
-  if (b == nullptr) {
+  if ((g == nullptr) || (b == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_gradients_ptr == nullptr) {
@@ -215,7 +215,7 @@ mgis_status mgis_bv_behaviour_rotate_gradients_out_of_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const gg,
     const mgis_real* const r) {
-  if (b == nullptr) {
+  if ((mg == nullptr) || (b == nullptr) || (gg == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_gradients_ptr == nullptr) {
@@ -231,7 +231,7 @@ mgis_status mgis_bv_behaviour_rotate_array_of_gradients_in_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r,
     const mgis_size_type s) {
-  if (b == nullptr) {
+  if ((g == nullptr) || (b == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_array_of_gradients_ptr == nullptr) {
@@ -248,7 +248,7 @@ mgis_status mgis_bv_behaviour_rotate_array_of_gradients_out_of_place(
     const mgis_real* const gg,
     const mgis_real* const r,
     const mgis_size_type s) {
-  if (b == nullptr) {
+  if ((mg == nullptr) || (b == nullptr) || (gg == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_array_of_gradients_ptr == nullptr) {
@@ -263,7 +263,7 @@ mgis_status mgis_bv_behaviour_rotate_thermodynamic_forces_in_place(
     mgis_real* const th,
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r) {
-  if (b == nullptr) {
+  if ((th == nullptr) || (b == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_thermodynamic_forces_ptr == nullptr) {
@@ -280,7 +280,8 @@ mgis_status mgis_bv_behaviour_rotate_thermodynamic_forces_out_of_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const gth,
     const mgis_real* const r) {
-  if (b == nullptr) {
+  if ((mth == nullptr) || (b == nullptr) || (gth == nullptr) ||
+      (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_thermodynamic_forces_ptr == nullptr) {
@@ -297,7 +298,7 @@ mgis_status mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_in_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r,
     const mgis_size_type s) {
-  if (b == nullptr) {
+  if ((th == nullptr) || (b == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_array_of_thermodynamic_forces_ptr == nullptr) {
@@ -315,7 +316,8 @@ mgis_status mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_out_of_place(
     const mgis_real* const gth,
     const mgis_real* const r,
     const mgis_size_type s) {
-  if (b == nullptr) {
+  if ((mth == nullptr) || (b == nullptr) || (gth == nullptr) ||
+      (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_array_of_thermodynamic_forces_ptr == nullptr) {
@@ -332,7 +334,7 @@ mgis_status mgis_bv_behaviour_rotate_tangent_operator_blocks_in_place(
     mgis_real* const to,
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r) {
-  if (b == nullptr) {
+  if ((to == nullptr) || (b == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_tangent_operator_blocks_ptr == nullptr) {
@@ -349,7 +351,8 @@ mgis_status mgis_bv_behaviour_rotate_tangent_operator_blocks_out_of_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const gto,
     const mgis_real* const r) {
-  if (b == nullptr) {
+  if ((mto == nullptr) || (b == nullptr) || (gto == nullptr) ||
+      (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_tangent_operator_blocks_ptr == nullptr) {
@@ -366,7 +369,7 @@ mgis_status mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_in_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r,
     const mgis_size_type s) {
-  if (b == nullptr) {
+  if ((to == nullptr) || (b == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_array_of_tangent_operator_blocks_ptr == nullptr) {
@@ -385,7 +388,8 @@ mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_out_of_place(
     const mgis_real* const gto,
     const mgis_real* const r,
     const mgis_size_type s) {
-  if (b == nullptr) {
+  if ((mto == nullptr) || (b == nullptr) || (gto == nullptr) ||
+      (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_array_of_tangent_operator_blocks_ptr == nullptr) {
@@ -758,7 +762,7 @@ mgis_status mgis_bv_behaviour_get_internal_state_variable_type_by_name(
     mgis_bv_VariableType* const t,
     const mgis_bv_Behaviour* const b,
     const char* const n) {
-  if (b == nullptr) {
+  if ((t == nullptr) || (b == nullptr) || (n == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -789,7 +793,7 @@ mgis_status mgis_bv_behaviour_get_internal_state_variable_offset_by_name(
     mgis_size_type* const o,
     const mgis_bv_Behaviour* const b,
     const char* const n) {
-  if (b == nullptr) {
+  if ((o == nullptr) || (b == nullptr) || (n == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -863,7 +867,7 @@ mgis_status mgis_bv_behaviour_get_external_state_variable_offset_by_name(
     mgis_size_type* const o,
     const mgis_bv_Behaviour* const b,
     const char* const n) {
-  if (b == nullptr) {
+  if ((o == nullptr) || (b == nullptr) || (n == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -894,7 +898,7 @@ mgis_status mgis_bv_behaviour_get_external_state_variable_type_by_name(
     mgis_bv_VariableType* const t,
     const mgis_bv_Behaviour* const b,
     const char* const n) {
-  if (b == nullptr) {
+  if ((t == nullptr) || (b == nullptr) || (n == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   try {

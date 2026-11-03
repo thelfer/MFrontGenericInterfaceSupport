@@ -175,6 +175,9 @@ mgis_status mgis_bv_integrate_material_data_manager(
     mgis_bv_MaterialDataManager* const m,
     const mgis_bv_IntegrationType i,
     const mgis_real dt) {
+  if ((r == nullptr) || (p == nullptr) || (m == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   *r = -1;
   try {
     *r = mgis::behaviour::integrate(*p, *m, convertIntegrationType(i), dt);
@@ -193,6 +196,9 @@ mgis_status mgis_bv_integrate_debug_material_data_manager(
     mgis_bv_MaterialDataManager* const m,
     const mgis_bv_IntegrationType i,
     const mgis_real dt) {
+  if ((r == nullptr) || (p == nullptr) || (m == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   *r = -1;
   try {
     *r =
@@ -212,6 +218,9 @@ mgis_status mgis_bv_integrate_material_data_manager_with_options(
     mgis_bv_MaterialDataManager* const m,
     mgis_bv_BehaviourIntegrationOptions* const o,
     const mgis_real dt) {
+  if ((r == nullptr) || (p == nullptr) || (m == nullptr) || (o == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   *r = -1;
   try {
     const auto res = mgis::behaviour::integrate(*p, *m, *o, dt);
@@ -231,6 +240,9 @@ mgis_status mgis_bv_integrate_debug_material_data_manager_with_options(
     mgis_bv_MaterialDataManager* const m,
     mgis_bv_BehaviourIntegrationOptions* const o,
     const mgis_real dt) {
+  if ((r == nullptr) || (p == nullptr) || (m == nullptr) || (o == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   *r = -1;
   try {
     const auto res = mgis::behaviour::integrate_debug(*p, *m, *o, dt);
@@ -251,6 +263,9 @@ mgis_status mgis_bv_integrate_material_data_manager_part(
     const mgis_real dt,
     const mgis_size_type b,
     const mgis_size_type e) {
+  if ((r == nullptr) || (m == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   *r = -1;
   try {
     *r = mgis::behaviour::integrate(*m, convertIntegrationType(i), dt, b, e);
@@ -270,6 +285,9 @@ mgis_status mgis_bv_integrate_debug_material_data_manager_part(
     const mgis_real dt,
     const mgis_size_type b,
     const mgis_size_type e) {
+  if ((r == nullptr) || (m == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
   *r = -1;
   try {
     *r = mgis::behaviour::integrate_debug(*m, convertIntegrationType(i), dt, b,
