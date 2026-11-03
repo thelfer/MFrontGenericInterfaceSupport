@@ -819,9 +819,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_library_wrapper(lp,b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_library
   ! behaviour_get_behaviour_name
@@ -845,9 +845,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_behaviour_name_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_behaviour_name
   ! behaviour_get_function_name
@@ -871,9 +871,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_function_name_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_function_name
   ! behaviour_get_source
@@ -897,9 +897,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_source_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_source
   ! behaviour_get_author
@@ -923,9 +923,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_author_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_author
   ! behaviour_get_date
@@ -949,9 +949,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_date_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_date
   ! behaviour_get_validator
@@ -975,9 +975,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_validator_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_validator
   ! behaviour_get_build_id
@@ -1001,9 +1001,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_build_id_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_build_id
   ! behaviour_get_hypothesis
@@ -1027,9 +1027,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_hypothesis_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_hypothesis
   ! behaviour_get_tfel_version
@@ -1053,9 +1053,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_tfel_version_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_tfel_version
   !
@@ -1161,9 +1161,9 @@ contains
     end if
     s = behaviour_get_parameter_name_wrapper(lp, b%ptr, nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_parameter_name
   !
@@ -1245,9 +1245,9 @@ contains
     end if
     s = behaviour_get_material_property_name_wrapper(lp, b%ptr, nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_material_property_name
   !
@@ -1358,9 +1358,9 @@ contains
     end if
     s = behaviour_get_internal_state_variable_name_wrapper(lp, b%ptr, nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_internal_state_variable_name
   !
@@ -1528,9 +1528,9 @@ contains
     end if
     s = behaviour_get_external_state_variable_name_wrapper(lp, b%ptr, nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_external_state_variable_name
   !
@@ -2067,9 +2067,9 @@ contains
     end if
     s = behaviour_get_initialize_function_name_wrapper(lp, b%ptr, nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_initialize_function_name
   !
@@ -2159,9 +2159,9 @@ contains
     s = behaviour_get_initialize_function_input_name_wrapper( &
          lp, b%ptr, convert_fortran_string(f), nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_initialize_function_input_name
   !
@@ -2284,9 +2284,9 @@ contains
     end if
     s = behaviour_get_post_processing_name_wrapper(lp, b%ptr, nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_post_processing_name
   !
@@ -2376,9 +2376,9 @@ contains
     s = behaviour_get_post_processing_output_name_wrapper( &
          lp, b%ptr, convert_fortran_string(p), nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_post_processing_output_name
   !
@@ -2873,7 +2873,7 @@ contains
     type(State), intent(in) :: s
     character(len=*), intent(in) :: n
     type(mgis_status) :: r
-    real(kind=8), pointer :: fptr => null()
+    real(kind=8), pointer :: fptr
     type(c_ptr) :: p
     r = state_get_material_property_by_name_wrapper(&
          p, s%ptr, convert_fortran_string(n))
@@ -2909,7 +2909,7 @@ contains
     type(State), intent(in) :: s
     integer, intent(in) :: o
     type(mgis_status) :: r
-    real(kind=8), pointer :: fptr => null()
+    real(kind=8), pointer :: fptr
     type(c_ptr) :: p
     integer(kind=c_size_t) offset
     if(.not. convert_to_c_index(offset, o)) then
@@ -3036,7 +3036,7 @@ contains
     type(State), intent(in) :: s
     character(len=*), intent(in) :: n
     type(mgis_status) :: r
-    real(kind=8), pointer :: fptr => null()
+    real(kind=8), pointer :: fptr
     type(c_ptr) :: p
     r = state_get_external_state_variable_by_name_wrapper(&
          p, s%ptr, convert_fortran_string(n))
