@@ -100,6 +100,80 @@ subroutine check_behaviour_data(b)
   call check_status(free_behaviour_data(d))
 endsubroutine check_behaviour_data
 
+subroutine check_material_data_manager(b)
+  use mgis
+  use mgis_behaviour
+  use mgis_testing_utilities
+  implicit none
+  type(Behaviour) b
+  type(MaterialDataManager) m
+  type(MaterialStateManager) s0, s1
+  ! a Young modulus and values of v_esv per integration point
+  real(kind=8), dimension(2) :: E = (/ 100d9, 200d9 /)
+  real(kind=8), dimension(6) :: v_esv = (/ 1d0, 2d0, 3d0, 4d0, 5d0, 6d0 /)
+  real(kind=8), dimension(9) :: zeros = 0d0
+  real(kind=8), dimension(:,:), pointer :: g => null()
+  real(kind=8), dimension(:,:), pointer :: sig => null()
+  real(kind=8), dimension(:,:), pointer :: isvs => null()
+  character(len=:), allocatable :: h
+  character(len=:), allocatable :: n
+  type(mgis_status) :: st
+  integer :: i, j, t, vs, nesv, ri
+  logical :: r, u
+  call check_status(create_material_data_manager(m, b, 2))
+  call check_status(material_data_manager_get_state_0(s0, m))
+  call check_status(material_data_manager_get_state_1(s1, m))
+  call check_status(material_state_manager_set_non_uniform_material_property( &
+       s0, 'YoungModulus', E, LOCAL_STORAGE))
+  call check_status(material_state_manager_set_uniform_scalar_material_property( &
+       s0, 'PoissonRatio', 0d0))
+  ! null external state variables of any type
+  call check_status(behaviour_get_hypothesis(h, b))
+  call check_status(behaviour_get_number_of_external_state_variables(nesv, b))
+  do i = 1, nesv
+     call check_status(behaviour_get_external_state_variable_name(n, b, i))
+     call check_status(behaviour_get_external_state_variable_type(t, b, i))
+     call check_status(get_variable_size(vs, h, t))
+     call check_status(material_state_manager_set_uniform_external_state_variable( &
+          s0, n, zeros(1:vs), LOCAL_STORAGE))
+     call check_status(material_state_manager_set_uniform_external_state_variable( &
+          s1, n, zeros(1:vs), LOCAL_STORAGE))
+  end do
+  ! values of v_esv kept by revert
+  call check_status(material_state_manager_set_non_uniform_external_state_variable2( &
+       s1, 'v_esv', v_esv, LOCAL_STORAGE, NOUPDATE))
+  st = material_state_manager_set_non_uniform_external_state_variable( &
+       s1, 'v_esv', v_esv(1:3), LOCAL_STORAGE)
+  r = check(st % exit_status .ne. MGIS_SUCCESS, 'invalid number of values accepted')
+  st = material_state_manager_set_uniform_external_state_variable( &
+       s1, 'v_esv', v_esv(1:6:2), LOCAL_STORAGE)
+  r = check(st % exit_status .ne. MGIS_SUCCESS, 'non contiguous array accepted')
+  call check_status(revert_material_data_manager(m))
+  ! integration: v_isv is equal to v_esv and sig_xx to E eto_xx
+  call check_status(material_state_manager_get_gradients(g, s1))
+  g(1, :) = 1d-3
+  call check_status(integrate_material_data_manager_part( &
+       ri, m, INTEGRATION_NO_TANGENT_OPERATOR, 1d0, 1, 2))
+  r = check(ri == 1, 'integration failed')
+  call check_status(material_state_manager_get_thermodynamic_forces(sig, s1))
+  call check_status(material_state_manager_get_internal_state_variables(isvs, s1))
+  do j = 1, 2
+     r = check(abs(sig(1, j) - E(j) * 1d-3) < 1d-8 * E(j) * 1d-3, &
+          'invalid stress value')
+     do i = 1, 3
+        r = check(abs(isvs(i, j) - v_esv(3 * (j - 1) + i)) < 1.d-14, &
+             'invalid internal state variable value')
+     end do
+  end do
+  ! mass density per integration point
+  call check_status(material_state_manager_set_non_uniform_mass_density( &
+       s1, (/ 7800d0, 7900d0 /), LOCAL_STORAGE))
+  call check_status(material_state_manager_is_mass_density_uniform(u, s1))
+  r = check(.not. u, 'the mass density shall not be uniform')
+  ! free ressources
+  call check_status(free_material_data_manager(m))
+end subroutine check_material_data_manager
+
 program main
   use mgis_behaviour
   use mgis_testing_utilities
@@ -111,6 +185,7 @@ program main
        'TensorialExternalStateVariableTest', 'Tridimensional'))
   call check_behaviour(b)
   call check_behaviour_data(b)
+  call check_material_data_manager(b)
   call tests_summary()
   ! free ressources
   call check_status(free_behaviour(b))

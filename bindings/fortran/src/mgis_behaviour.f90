@@ -3956,6 +3956,26 @@ contains
     type(mgis_status) :: s
     s = material_data_manager_set_time_step_scaling_factor_wrapper(d%ptr, rdt)
   end function material_data_manager_set_time_step_scaling_factor
+  ! \note the behaviour is the one of the state manager: it must not be freed
+  function material_state_manager_get_behaviour(b, s) result(r)
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function material_state_manager_get_behaviour_wrapper(b, s) &
+            bind(c,name = 'mgis_bv_material_state_manager_get_behaviour') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: b
+         type(c_ptr), intent(in), value :: s
+         type(mgis_status) :: r
+       end function material_state_manager_get_behaviour_wrapper
+    end interface
+    type(Behaviour), intent(out) :: b
+    type(MaterialStateManager), intent(in) :: s
+    type(mgis_status) :: r
+    r = material_state_manager_get_behaviour_wrapper(b%ptr, s%ptr)
+  end function material_state_manager_get_behaviour
   !
   function material_state_manager_get_number_of_integration_points(n, s) &
        result(r)
@@ -4176,6 +4196,69 @@ contains
     r = msm_set_uniform_scalar_material_property2_wrapper(s %ptr, &
          convert_fortran_string(n), v, p)
   end function material_state_manager_set_uniform_scalar_material_property2
+  ! \param[in] v: values of the material property at the integration points
+  ! \param[in] sm: storage mode (LOCAL_STORAGE or EXTERNAL_STORAGE)
+  ! \note with EXTERNAL_STORAGE, the material state manager uses the
+  !       array given in argument, which must have the TARGET (or
+  !       POINTER) attribute and outlive the material state manager
+  function material_state_manager_set_non_uniform_material_property(s, n, v, sm) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis, only: mgis_status
+    implicit none
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    real(kind=8), dimension(:), target :: v
+    integer(kind=c_int), intent(in) :: sm
+    type(mgis_status) :: r
+    r = material_state_manager_set_non_uniform_material_property2(s, n, v, sm, UPDATE)
+  end function material_state_manager_set_non_uniform_material_property
+  ! \param[in] p: update policy (UPDATE or NOUPDATE)
+  function material_state_manager_set_non_uniform_material_property2(s, n, v, sm, p) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_int, c_loc
+    use mgis, only: mgis_status, report_failure, MGIS_SUCCESS
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function msm_set_non_uniform_material_property2_wrapper(s, n, v, sm, p) &
+            bind(c,name = 'mgis_bv_material_state_manager_set_non_uniform_material_property2') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(c_ptr), intent(in),value :: v
+         integer(kind=c_int), intent(in), value :: sm
+         integer(kind=c_int), intent(in), value :: p
+         type(mgis_status) :: r
+       end function msm_set_non_uniform_material_property2_wrapper
+    end interface
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    real(kind=8), dimension(:), target :: v
+    integer(kind=c_int), intent(in) :: sm
+    integer(kind=c_int), intent(in) :: p
+    type(mgis_status) :: r
+    integer :: nip
+    r = material_state_manager_get_number_of_integration_points(nip, s)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    if (size(v) .ne. nip) then
+       r = report_failure("material_state_manager_set_non_uniform_material_property: " // &
+            "invalid number of values")
+       return
+    end if
+    if (.not. is_contiguous(v)) then
+       r = report_failure("material_state_manager_set_non_uniform_material_property: " // &
+            "the array must be contiguous")
+       return
+    end if
+    r = msm_set_non_uniform_material_property2_wrapper(s %ptr, &
+         convert_fortran_string(n), c_loc(v), sm, p)
+  end function material_state_manager_set_non_uniform_material_property2
   !
   function material_state_manager_is_material_property_defined(b, s, n)&
        result(r)
@@ -4289,6 +4372,66 @@ contains
     type(mgis_status) :: r
     r = msm_set_uniform_scalar_mass_density2_wrapper(s %ptr, v, p)
   end function material_state_manager_set_uniform_scalar_mass_density2
+  ! \param[in] v: values of the mass density at the integration points
+  ! \param[in] sm: storage mode (LOCAL_STORAGE or EXTERNAL_STORAGE)
+  ! \note with EXTERNAL_STORAGE, the material state manager uses the
+  !       array given in argument, which must have the TARGET (or
+  !       POINTER) attribute and outlive the material state manager
+  function material_state_manager_set_non_uniform_mass_density(s, v, sm) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis, only: mgis_status
+    implicit none
+    type(MaterialStateManager), intent(in) :: s
+    real(kind=8), dimension(:), target :: v
+    integer(kind=c_int), intent(in) :: sm
+    type(mgis_status) :: r
+    r = material_state_manager_set_non_uniform_mass_density2(s, v, sm, UPDATE)
+  end function material_state_manager_set_non_uniform_mass_density
+  ! \param[in] p: update policy (UPDATE or NOUPDATE)
+  function material_state_manager_set_non_uniform_mass_density2(s, v, sm, p) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_int, c_loc
+    use mgis, only: mgis_status, report_failure, MGIS_SUCCESS
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function msm_set_non_uniform_mass_density2_wrapper(s, v, sm, p) &
+            bind(c,name = 'mgis_bv_material_state_manager_set_non_uniform_mass_density2') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in),value :: s
+         type(c_ptr), intent(in),value :: v
+         integer(kind=c_int), intent(in), value :: sm
+         integer(kind=c_int), intent(in), value :: p
+         type(mgis_status) :: r
+       end function msm_set_non_uniform_mass_density2_wrapper
+    end interface
+    type(MaterialStateManager), intent(in) :: s
+    real(kind=8), dimension(:), target :: v
+    integer(kind=c_int), intent(in) :: sm
+    integer(kind=c_int), intent(in) :: p
+    type(mgis_status) :: r
+    integer :: nip
+    r = material_state_manager_get_number_of_integration_points(nip, s)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    if (size(v) .ne. nip) then
+       r = report_failure("material_state_manager_set_non_uniform_mass_density: " // &
+            "invalid number of values")
+       return
+    end if
+    if (.not. is_contiguous(v)) then
+       r = report_failure("material_state_manager_set_non_uniform_mass_density: " // &
+            "the array must be contiguous")
+       return
+    end if
+    r = msm_set_non_uniform_mass_density2_wrapper(s %ptr, &
+         c_loc(v), sm, p)
+  end function material_state_manager_set_non_uniform_mass_density2
   !
   function material_state_manager_is_mass_density_defined(b, s)&
        result(r)
@@ -4470,6 +4613,167 @@ contains
     r = msm_set_uniform_scalar_external_state_variable2_wrapper(s %ptr, &
          convert_fortran_string(n), v, p)
   end function material_state_manager_set_us_external_state_variable2
+  ! \param[in] v: values of the external state variable
+  ! \param[in] sm: storage mode (LOCAL_STORAGE or EXTERNAL_STORAGE)
+  ! \note with EXTERNAL_STORAGE, the material state manager uses the
+  !       array given in argument, which must have the TARGET (or
+  !       POINTER) attribute and outlive the material state manager
+  function material_state_manager_set_uniform_external_state_variable(s, n, v, sm) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis, only: mgis_status
+    implicit none
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    real(kind=8), dimension(:), target :: v
+    integer(kind=c_int), intent(in) :: sm
+    type(mgis_status) :: r
+    r = material_state_manager_set_uniform_external_state_variable2(s, n, v, sm, UPDATE)
+  end function material_state_manager_set_uniform_external_state_variable
+  ! \param[in] p: update policy (UPDATE or NOUPDATE)
+  function material_state_manager_set_uniform_external_state_variable2(s, n, v, sm, p) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_int, c_loc
+    use mgis, only: mgis_status, report_failure, MGIS_SUCCESS
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function msm_set_uniform_external_state_variable2_wrapper(s, n, v, sm, p) &
+            bind(c,name = 'mgis_bv_material_state_manager_set_uniform_external_state_variable2') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(c_ptr), intent(in),value :: v
+         integer(kind=c_int), intent(in), value :: sm
+         integer(kind=c_int), intent(in), value :: p
+         type(mgis_status) :: r
+       end function msm_set_uniform_external_state_variable2_wrapper
+    end interface
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    real(kind=8), dimension(:), target :: v
+    integer(kind=c_int), intent(in) :: sm
+    integer(kind=c_int), intent(in) :: p
+    type(mgis_status) :: r
+    type(Behaviour) :: b
+    character(len=:), allocatable :: h
+    integer :: t
+    integer :: vs
+    r = material_state_manager_get_behaviour(b, s)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = behaviour_get_hypothesis(h, b)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = behaviour_get_external_state_variable_type_by_name(t, b, n)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = get_variable_size(vs, h, t)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    if (size(v) .ne. vs) then
+       r = report_failure("material_state_manager_set_uniform_external_state_variable: " // &
+            "invalid number of values")
+       return
+    end if
+    if (.not. is_contiguous(v)) then
+       r = report_failure("material_state_manager_set_uniform_external_state_variable: " // &
+            "the array must be contiguous")
+       return
+    end if
+    r = msm_set_uniform_external_state_variable2_wrapper(s %ptr, &
+         convert_fortran_string(n), c_loc(v), sm, p)
+  end function material_state_manager_set_uniform_external_state_variable2
+  ! \param[in] v: values of the external state variable at the integration points
+  ! \param[in] sm: storage mode (LOCAL_STORAGE or EXTERNAL_STORAGE)
+  ! \note with EXTERNAL_STORAGE, the material state manager uses the
+  !       array given in argument, which must have the TARGET (or
+  !       POINTER) attribute and outlive the material state manager
+  function material_state_manager_set_non_uniform_external_state_variable(s, n, v, sm) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis, only: mgis_status
+    implicit none
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    real(kind=8), dimension(:), target :: v
+    integer(kind=c_int), intent(in) :: sm
+    type(mgis_status) :: r
+    r = material_state_manager_set_non_uniform_external_state_variable2(s, n, v, sm, UPDATE)
+  end function material_state_manager_set_non_uniform_external_state_variable
+  ! \param[in] p: update policy (UPDATE or NOUPDATE)
+  function material_state_manager_set_non_uniform_external_state_variable2(s, n, v, sm, p) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_int, c_loc
+    use mgis, only: mgis_status, report_failure, MGIS_SUCCESS
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function msm_set_nu_external_state_variable2_wrapper(s, n, v, sm, p) &
+            bind(c,name = 'mgis_bv_material_state_manager_set_non_uniform_external_state_variable2') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(c_ptr), intent(in),value :: v
+         integer(kind=c_int), intent(in), value :: sm
+         integer(kind=c_int), intent(in), value :: p
+         type(mgis_status) :: r
+       end function msm_set_nu_external_state_variable2_wrapper
+    end interface
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    real(kind=8), dimension(:), target :: v
+    integer(kind=c_int), intent(in) :: sm
+    integer(kind=c_int), intent(in) :: p
+    type(mgis_status) :: r
+    type(Behaviour) :: b
+    character(len=:), allocatable :: h
+    integer :: t
+    integer :: vs
+    integer :: nip
+    r = material_state_manager_get_number_of_integration_points(nip, s)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = material_state_manager_get_behaviour(b, s)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = behaviour_get_hypothesis(h, b)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = behaviour_get_external_state_variable_type_by_name(t, b, n)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    r = get_variable_size(vs, h, t)
+    if (r % exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    if (size(v) .ne. nip * vs) then
+       r = report_failure("material_state_manager_set_non_uniform_external_state_variable: " // &
+            "invalid number of values")
+       return
+    end if
+    if (.not. is_contiguous(v)) then
+       r = report_failure("material_state_manager_set_non_uniform_external_state_variable: " // &
+            "the array must be contiguous")
+       return
+    end if
+    r = msm_set_nu_external_state_variable2_wrapper(s %ptr, &
+         convert_fortran_string(n), c_loc(v), sm, p)
+  end function material_state_manager_set_non_uniform_external_state_variable2
   !
   function material_state_manager_is_external_state_variable_defined(b, s, n)&
        result(r)
