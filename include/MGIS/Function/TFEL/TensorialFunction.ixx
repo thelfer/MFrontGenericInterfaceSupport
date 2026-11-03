@@ -85,7 +85,7 @@ namespace mgis::function {
                    tfel::math::getUnderlyingArrayMinimalSize<
                        typename TensorType::indexing_policy>()>,
           TensorType>&  //
-      TensorialFunction<Space, TensorType>::view() noexcept {
+      TensorialFunction<Space, TensorType>::view() & noexcept {
     return *this;
   }  // end of view
 
@@ -97,7 +97,7 @@ namespace mgis::function {
                           tfel::math::getUnderlyingArrayMinimalSize<
                               typename TensorType::indexing_policy>()>,
                  TensorType>&  //
-      TensorialFunction<Space, TensorType>::view() const noexcept {
+      TensorialFunction<Space, TensorType>::view() const& noexcept {
     return *this;
   }  // end of view
 

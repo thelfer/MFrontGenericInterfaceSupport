@@ -136,9 +136,11 @@ if(MGIS_HAVE_MFRONT_SUPPORT)
     Norton
     NortonFailure
     Plasticity
+    TangentKind
     Gurson
     BoundsCheckTest
     ParameterTest
+    EnergiesTest
     FiniteStrainSingleCrystal
     StandardElastoViscoPlasticityPlasticityTest11
     TensorialExternalStateVariableTest
@@ -187,10 +189,14 @@ if(MGIS_HAVE_MFRONT_SUPPORT)
   add_library_test(IntegrateTest3b IntegrateTest3b.cxx BehaviourTest)
   add_library_test(IntegrateTest4 IntegrateTest4.cxx ModelTest)
   add_library_test(IntegrateTest5 IntegrateTest5.cxx ModelTest)
+  add_library_test(TangentOperatorTest TangentOperatorTest.cxx BehaviourTest)
   add_library_test(RotateFunctionsTest RotateFunctionsTest.cxx BehaviourTest)
   add_library_test(IntegrateDebugTest IntegrateDebugTest.cxx BehaviourTest)
+  add_library_test(EnergiesTest EnergiesTest.cxx BehaviourTest)
   add_library_test(FiniteStrainPostProcessingTest
     FiniteStrainPostProcessingTest.cxx BehaviourTest)
+  add_library_test(FiniteStrainConversionTest
+    FiniteStrainConversionTest.cxx BehaviourTest)
   add_tfel_version_test(ExternalStateVariableTest ExternalStateVariableTest.cxx
     BehaviourTest TensorialExternalStateVariableTest)
   add_tfel_version_test(InitializeFunctionTest InitializeFunctionTest.cxx
@@ -266,8 +272,18 @@ if(MGIS_HAVE_TFEL)
     endif()
   endif(enable-mgis-function)
 
+  if(MGIS_HAVE_MFRONT_SUPPORT)
+    add_library_test(LoadFromDatabaseTest LoadFromDatabaseTest.cxx BehaviourTest)
+  endif()
+
   if(MGIS_HDF5_SUPPORT AND MGIS_HAVE_MFRONT_SUPPORT)
-    add_library_test(HDF5Test HDF5Test.cxx BehaviourTest)
+    # the second library is used to save and restore a model
+    add_executable(HDF5Test EXCLUDE_FROM_ALL HDF5Test.cxx)
+    target_link_libraries(HDF5Test PRIVATE MFrontGenericInterface)
+    add_test(NAME HDF5Test COMMAND HDF5Test
+      "$<TARGET_FILE:BehaviourTest>" "$<TARGET_FILE:ModelTest>")
+    add_dependencies(build-tests HDF5Test)
+    set_test_environment(HDF5Test)
   endif()
 
 endif(MGIS_HAVE_TFEL)

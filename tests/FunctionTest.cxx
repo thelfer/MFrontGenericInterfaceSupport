@@ -397,6 +397,12 @@ struct FunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(f2(0)[1] - 5) < eps);
     TFEL_TESTS_ASSERT(std::abs(f2(1)[0] - 6) < eps);
     TFEL_TESTS_ASSERT(std::abs(f2(1)[1] - 9) < eps);
+    // immutable view of a const function
+    const auto& cf2 = f2;
+    const auto cf3 = view<2>(cf2);
+    TFEL_TESTS_ASSERT(cf3.check(ctx));
+    TFEL_TESTS_ASSERT(std::abs(cf3(0)[0] - 4) < eps);
+    TFEL_TESTS_ASSERT(std::abs(cf3(1)[1] - 9) < eps);
     // scalar case
     auto f4 = [&space] {
       auto f = Function<SharedSpace<BasicLinearSpace>>(space, 1);
@@ -773,7 +779,6 @@ struct FunctionTest final : public tfel::tests::TestCase {
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }    // end of test13
   void test14() {
-#ifndef MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS
     using namespace mgis;
     using namespace mgis::function;
     auto check_value = [](const real& a, const real b) constexpr->bool {
@@ -795,7 +800,6 @@ struct FunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(check_value(f2(1)[0], 12));
     TFEL_TESTS_ASSERT(check_value(f3(0)[0], 5));
     TFEL_TESTS_ASSERT(check_value(f3(1)[0], 12));
-#endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
   }
 };
 

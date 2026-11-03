@@ -1,0 +1,25 @@
+@DSL Default;
+@Behaviour EnergiesTest;
+@Description {
+  "Elasticity computing a stored energy and a dissipated energy: the stored "
+  "energy is sig : eto / 2 and the dissipated energy is increased by "
+  "100 k at each time step."
+}
+
+@MaterialProperty real k;
+
+@ProvidesSymmetricTangentOperator;
+@Integrator {
+  sig = k * (eto + deto);
+  if (computeTangentOperator_) {
+    Dt = k * Stensor4::Id();
+  }
+}
+
+@InternalEnergy {
+  Psi_s = (sig | (eto + deto)) / 2;
+}
+
+@DissipatedEnergy {
+  Psi_d += 100 * k;
+}

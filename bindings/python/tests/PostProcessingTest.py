@@ -41,23 +41,31 @@ class PostProcessingTest(unittest.TestCase):
                            dtype=numpy.float64)
         h = mgis_bv.Hypothesis.Tridimensional
         b = self.__get_behaviour(h)
-        m = mgis_bv.MaterialDataManager(b, 2)
+        m = mgis_bv.MaterialDataManager(b, 3)
         mgis_bv.setMaterialProperty(m.s1, "YoungModulus", 150e9)
         mgis_bv.setMaterialProperty(m.s1, "PoissonRatio", 0.3)
         mgis_bv.setExternalStateVariable(m.s1, "Temperature", 293.15)
         mgis_bv.update(m)
-        m.s1.gradients[0:] = e
-        m.s1.gradients[1:] = e
-        print(m.s1.gradients)
-        outputs = numpy.empty(shape=(2, 3), dtype=numpy.float64)
-        mgis_bv.executePostProcessing(outputs.reshape(6), m, "PrincipalStrain")
-        for i in range(0, 3):
-            self.assertTrue(
-                abs(outputs[0, i] - e2[i]) < eps,
-                f"invalid output value ({outputs[0, i]} vs {e2[i]})")
-            self.assertTrue(
-                abs(outputs[1, i] - e2[i]) < eps,
-                f"invalid output value ({outputs[1, i]} vs {e2[i]})")
+        # a different strain at each integration point
+        for j in range(0, 3):
+            m.s1.gradients[j, :] = (j + 1) * e
+        outputs = numpy.empty(shape=(3, 3), dtype=numpy.float64)
+        mgis_bv.executePostProcessing(outputs.reshape(9), m, "PrincipalStrain")
+        for j in range(0, 3):
+            for i in range(0, 3):
+                self.assertTrue(
+                    abs(outputs[j, i] - (j + 1) * e2[i]) < (j + 1) * eps,
+                    f"invalid output value ({outputs[j, i]})")
+        # range excluding the first integration point
+        outputs[:] = -1
+        mgis_bv.executePostProcessing(outputs.reshape(9), m, "PrincipalStrain",
+                                      1, 3)
+        for j in range(0, 3):
+            for i in range(0, 3):
+                o = -1 if j == 0 else (j + 1) * e2[i]
+                self.assertTrue(
+                    abs(outputs[j, i] - o) < (j + 1) * eps,
+                    f"invalid output value ({outputs[j, i]})")
         # the results can not be written in a converted copy
         self.assertRaises(RuntimeError, mgis_bv.executePostProcessing,
                           numpy.empty(6, dtype=numpy.float32), m,

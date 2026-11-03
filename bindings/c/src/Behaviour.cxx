@@ -15,7 +15,9 @@
 #include <limits>
 #include <cstring>
 #include <utility>
+#include <iterator>
 #include <stdexcept>
+#include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/Behaviour.h"
 
 extern "C" {
@@ -197,7 +199,7 @@ mgis_status mgis_bv_behaviour_rotate_gradients_in_place(
     mgis_real* const g,
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r) {
-  if (b == nullptr) {
+  if ((g == nullptr) || (b == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_gradients_ptr == nullptr) {
@@ -213,7 +215,7 @@ mgis_status mgis_bv_behaviour_rotate_gradients_out_of_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const gg,
     const mgis_real* const r) {
-  if (b == nullptr) {
+  if ((mg == nullptr) || (b == nullptr) || (gg == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_gradients_ptr == nullptr) {
@@ -229,7 +231,7 @@ mgis_status mgis_bv_behaviour_rotate_array_of_gradients_in_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r,
     const mgis_size_type s) {
-  if (b == nullptr) {
+  if ((g == nullptr) || (b == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_array_of_gradients_ptr == nullptr) {
@@ -246,7 +248,7 @@ mgis_status mgis_bv_behaviour_rotate_array_of_gradients_out_of_place(
     const mgis_real* const gg,
     const mgis_real* const r,
     const mgis_size_type s) {
-  if (b == nullptr) {
+  if ((mg == nullptr) || (b == nullptr) || (gg == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_array_of_gradients_ptr == nullptr) {
@@ -261,7 +263,7 @@ mgis_status mgis_bv_behaviour_rotate_thermodynamic_forces_in_place(
     mgis_real* const th,
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r) {
-  if (b == nullptr) {
+  if ((th == nullptr) || (b == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_thermodynamic_forces_ptr == nullptr) {
@@ -278,7 +280,8 @@ mgis_status mgis_bv_behaviour_rotate_thermodynamic_forces_out_of_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const gth,
     const mgis_real* const r) {
-  if (b == nullptr) {
+  if ((mth == nullptr) || (b == nullptr) || (gth == nullptr) ||
+      (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_thermodynamic_forces_ptr == nullptr) {
@@ -295,7 +298,7 @@ mgis_status mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_in_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r,
     const mgis_size_type s) {
-  if (b == nullptr) {
+  if ((th == nullptr) || (b == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_array_of_thermodynamic_forces_ptr == nullptr) {
@@ -313,7 +316,8 @@ mgis_status mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_out_of_place(
     const mgis_real* const gth,
     const mgis_real* const r,
     const mgis_size_type s) {
-  if (b == nullptr) {
+  if ((mth == nullptr) || (b == nullptr) || (gth == nullptr) ||
+      (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_array_of_thermodynamic_forces_ptr == nullptr) {
@@ -330,7 +334,7 @@ mgis_status mgis_bv_behaviour_rotate_tangent_operator_blocks_in_place(
     mgis_real* const to,
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r) {
-  if (b == nullptr) {
+  if ((to == nullptr) || (b == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_tangent_operator_blocks_ptr == nullptr) {
@@ -347,7 +351,8 @@ mgis_status mgis_bv_behaviour_rotate_tangent_operator_blocks_out_of_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const gto,
     const mgis_real* const r) {
-  if (b == nullptr) {
+  if ((mto == nullptr) || (b == nullptr) || (gto == nullptr) ||
+      (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_tangent_operator_blocks_ptr == nullptr) {
@@ -364,7 +369,7 @@ mgis_status mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_in_place(
     const mgis_bv_Behaviour* const b,
     const mgis_real* const r,
     const mgis_size_type s) {
-  if (b == nullptr) {
+  if ((to == nullptr) || (b == nullptr) || (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_array_of_tangent_operator_blocks_ptr == nullptr) {
@@ -383,7 +388,8 @@ mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_out_of_place(
     const mgis_real* const gto,
     const mgis_real* const r,
     const mgis_size_type s) {
-  if (b == nullptr) {
+  if ((mto == nullptr) || (b == nullptr) || (gto == nullptr) ||
+      (r == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   if (b->rotate_array_of_tangent_operator_blocks_ptr == nullptr) {
@@ -409,6 +415,20 @@ mgis_status mgis_bv_behaviour_get_tangent_operator_array_size(
   }
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_get_tangent_operator_array_size
+
+mgis_status mgis_bv_behaviour_get_number_of_tangent_operator_blocks(
+    mgis_size_type* const s, const mgis_bv_Behaviour* const b) {
+  *s = 0;
+  if (b == nullptr) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *s = b->to_blocks.size();
+    return mgis_report_success();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+}  // end of mgis_bv_behaviour_get_number_of_tangent_operator_blocks
 
 mgis_status mgis_bv_behaviour_get_library(const char** l,
                                           const mgis_bv_Behaviour* const b) {
@@ -756,7 +776,7 @@ mgis_status mgis_bv_behaviour_get_internal_state_variable_type_by_name(
     mgis_bv_VariableType* const t,
     const mgis_bv_Behaviour* const b,
     const char* const n) {
-  if (b == nullptr) {
+  if ((t == nullptr) || (b == nullptr) || (n == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -787,7 +807,7 @@ mgis_status mgis_bv_behaviour_get_internal_state_variable_offset_by_name(
     mgis_size_type* const o,
     const mgis_bv_Behaviour* const b,
     const char* const n) {
-  if (b == nullptr) {
+  if ((o == nullptr) || (b == nullptr) || (n == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -861,7 +881,7 @@ mgis_status mgis_bv_behaviour_get_external_state_variable_offset_by_name(
     mgis_size_type* const o,
     const mgis_bv_Behaviour* const b,
     const char* const n) {
-  if (b == nullptr) {
+  if ((o == nullptr) || (b == nullptr) || (n == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -892,7 +912,7 @@ mgis_status mgis_bv_behaviour_get_external_state_variable_type_by_name(
     mgis_bv_VariableType* const t,
     const mgis_bv_Behaviour* const b,
     const char* const n) {
-  if (b == nullptr) {
+  if ((t == nullptr) || (b == nullptr) || (n == nullptr)) {
     return mgis_report_failure("invalid argument");
   }
   try {
@@ -1242,6 +1262,238 @@ mgis_status mgis_bv_behaviour_computes_dissipated_energy(
   *v = static_cast<int>(b->computesDissipatedEnergy);
   return mgis_report_success();
 }  // end of mgis_bv_behaviour_computes_dissipated_energy
+
+namespace c_internals {
+
+  static const mgis::behaviour::BehaviourInitializeFunction&
+  getInitializeFunction(const mgis_bv_Behaviour& b, const char* const f) {
+    const auto p = b.initialize_functions.find(f);
+    if (p == b.initialize_functions.end()) {
+      mgis::raise("no initialize function named '" + std::string{f} + "'");
+    }
+    return p->second;
+  }  // end of getInitializeFunction
+
+}  // end of namespace c_internals
+
+mgis_status mgis_bv_behaviour_get_number_of_initialize_functions(
+    mgis_size_type* const c, const mgis_bv_Behaviour* const b) {
+  if ((c == nullptr) || (b == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *c = b->initialize_functions.size();
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_number_of_initialize_functions
+
+mgis_status mgis_bv_behaviour_get_initialize_function_name(
+    const char** n, const mgis_bv_Behaviour* const b, const mgis_size_type i) {
+  if ((n == nullptr) || (b == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *n = nullptr;
+  if (i >= b->initialize_functions.size()) {
+    return mgis_report_failure("invalid argument (index out of range)");
+  }
+  *n = std::next(b->initialize_functions.begin(), i)->first.c_str();
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_initialize_function_name
+
+mgis_status mgis_bv_behaviour_get_initialize_function_inputs_size(
+    mgis_size_type* const s,
+    const mgis_bv_Behaviour* const b,
+    const char* const f) {
+  if ((s == nullptr) || (b == nullptr) || (f == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *s = mgis::behaviour::getInitializeFunctionVariablesArraySize(*b, f);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_initialize_function_inputs_size
+
+mgis_status mgis_bv_behaviour_get_number_of_initialize_function_inputs(
+    mgis_size_type* const c,
+    const mgis_bv_Behaviour* const b,
+    const char* const f) {
+  if ((c == nullptr) || (b == nullptr) || (f == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *c = c_internals::getInitializeFunction(*b, f).inputs.size();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_number_of_initialize_function_inputs
+
+mgis_status mgis_bv_behaviour_get_initialize_function_input_name(
+    const char** n,
+    const mgis_bv_Behaviour* const b,
+    const char* const f,
+    const mgis_size_type i) {
+  if ((n == nullptr) || (b == nullptr) || (f == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *n = nullptr;
+  try {
+    const auto& v = c_internals::getInitializeFunction(*b, f).inputs.at(i);
+    *n = v.name.c_str();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_initialize_function_input_name
+
+mgis_status mgis_bv_behaviour_get_initialize_function_input_type(
+    mgis_bv_VariableType* const t,
+    const mgis_bv_Behaviour* const b,
+    const char* const f,
+    const mgis_size_type i) {
+  if ((t == nullptr) || (b == nullptr) || (f == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& v = c_internals::getInitializeFunction(*b, f).inputs.at(i);
+    return c_internals::getVariableType(*t, v);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+}  // end of mgis_bv_behaviour_get_initialize_function_input_type
+
+mgis_status mgis_bv_behaviour_get_initialize_function_input_offset(
+    mgis_size_type* const o,
+    const mgis_bv_Behaviour* const b,
+    const char* const f,
+    const mgis_size_type i) {
+  if ((o == nullptr) || (b == nullptr) || (f == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& inputs = c_internals::getInitializeFunction(*b, f).inputs;
+    *o = getVariableOffset(inputs, inputs.at(i).name, b->hypothesis);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_initialize_function_input_offset
+
+namespace c_internals {
+
+  static const mgis::behaviour::BehaviourPostProcessing& getPostProcessing(
+      const mgis_bv_Behaviour& b, const char* const p) {
+    const auto pp = b.postprocessings.find(p);
+    if (pp == b.postprocessings.end()) {
+      mgis::raise("no post-processing named '" + std::string{p} + "'");
+    }
+    return pp->second;
+  }  // end of getPostProcessing
+
+}  // end of namespace c_internals
+
+mgis_status mgis_bv_behaviour_get_number_of_post_processings(
+    mgis_size_type* const c, const mgis_bv_Behaviour* const b) {
+  if ((c == nullptr) || (b == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *c = b->postprocessings.size();
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_number_of_post_processings
+
+mgis_status mgis_bv_behaviour_get_post_processing_name(
+    const char** n, const mgis_bv_Behaviour* const b, const mgis_size_type i) {
+  if ((n == nullptr) || (b == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *n = nullptr;
+  if (i >= b->postprocessings.size()) {
+    return mgis_report_failure("invalid argument (index out of range)");
+  }
+  *n = std::next(b->postprocessings.begin(), i)->first.c_str();
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_post_processing_name
+
+mgis_status mgis_bv_behaviour_get_post_processing_outputs_size(
+    mgis_size_type* const s,
+    const mgis_bv_Behaviour* const b,
+    const char* const p) {
+  if ((s == nullptr) || (b == nullptr) || (p == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *s = mgis::behaviour::getPostProcessingVariablesArraySize(*b, p);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_post_processing_outputs_size
+
+mgis_status mgis_bv_behaviour_get_number_of_post_processing_outputs(
+    mgis_size_type* const c,
+    const mgis_bv_Behaviour* const b,
+    const char* const p) {
+  if ((c == nullptr) || (b == nullptr) || (p == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    *c = c_internals::getPostProcessing(*b, p).outputs.size();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_number_of_post_processing_outputs
+
+mgis_status mgis_bv_behaviour_get_post_processing_output_name(
+    const char** n,
+    const mgis_bv_Behaviour* const b,
+    const char* const p,
+    const mgis_size_type i) {
+  if ((n == nullptr) || (b == nullptr) || (p == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *n = nullptr;
+  try {
+    const auto& v = c_internals::getPostProcessing(*b, p).outputs.at(i);
+    *n = v.name.c_str();
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_post_processing_output_name
+
+mgis_status mgis_bv_behaviour_get_post_processing_output_type(
+    mgis_bv_VariableType* const t,
+    const mgis_bv_Behaviour* const b,
+    const char* const p,
+    const mgis_size_type i) {
+  if ((t == nullptr) || (b == nullptr) || (p == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& v = c_internals::getPostProcessing(*b, p).outputs.at(i);
+    return c_internals::getVariableType(*t, v);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+}  // end of mgis_bv_behaviour_get_post_processing_output_type
+
+mgis_status mgis_bv_behaviour_get_post_processing_output_offset(
+    mgis_size_type* const o,
+    const mgis_bv_Behaviour* const b,
+    const char* const p,
+    const mgis_size_type i) {
+  if ((o == nullptr) || (b == nullptr) || (p == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  try {
+    const auto& outputs = c_internals::getPostProcessing(*b, p).outputs;
+    *o = getVariableOffset(outputs, outputs.at(i).name, b->hypothesis);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_behaviour_get_post_processing_output_offset
 
 mgis_status mgis_bv_free_behaviour(mgis_bv_Behaviour** b) {
   try {

@@ -203,7 +203,7 @@ mgis_bv_material_state_manager_set_uniform_material_property2(
     const mgis_bv_MaterialStateManagerStorageMode,
     const mgis_bv_MaterialStateManagerUpdatePolicy);
 /*!
- * \brief set the value of an uniform material property
+ * \brief set the values of a non-uniform material property
  * \param[in] s: state manager
  * \param[in] n: name of the material property
  * \param[in] v: values of the material property
@@ -216,7 +216,7 @@ mgis_bv_material_state_manager_set_non_uniform_material_property(
     mgis_real* const,
     const mgis_bv_MaterialStateManagerStorageMode);
 /*!
- * \brief set the value of an uniform material property
+ * \brief set the values of a non-uniform material property
  * \param[in] s: state manager
  * \param[in] n: name of the material property
  * \param[in] v: values of the material property
@@ -239,14 +239,6 @@ MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_is_material_property_uniform(
     int* const, const mgis_bv_MaterialStateManager* const, const char* const);
 
-MGIS_C_EXPORT mgis_status
-mgis_bv_material_state_manager_get_uniform_material_property(
-    mgis_real* const, mgis_bv_MaterialStateManager* const, const char* const);
-
-MGIS_C_EXPORT mgis_status
-mgis_bv_material_state_manager_get_non_uniform_material_property(
-    mgis_real** const, mgis_bv_MaterialStateManager* const, const char* const);
-
 /*!
  * \brief set the value of an uniform scalar mass density
  * \param[in] s: state manager
@@ -267,7 +259,7 @@ mgis_bv_material_state_manager_set_uniform_scalar_mass_density2(
     const mgis_real,
     const mgis_bv_MaterialStateManagerUpdatePolicy);
 /*!
- * \brief set the value of an uniform mass density
+ * \brief set the values of a non-uniform mass density
  * \param[in] s: state manager
  * \param[in] v: values of the mass density
  * \param[in] sm: storage mode
@@ -278,7 +270,7 @@ mgis_bv_material_state_manager_set_non_uniform_mass_density(
     mgis_real* const,
     const mgis_bv_MaterialStateManagerStorageMode);
 /*!
- * \brief set the value of an uniform mass density
+ * \brief set the values of a non-uniform mass density
  * \param[in] s: state manager
  * \param[in] v: values of the mass density
  * \param[in] sm: storage mode
@@ -357,14 +349,6 @@ mgis_bv_material_state_manager_is_external_state_variable_defined(
 MGIS_C_EXPORT mgis_status
 mgis_bv_material_state_manager_is_external_state_variable_uniform(
     int* const, const mgis_bv_MaterialStateManager* const, const char* const);
-
-MGIS_C_EXPORT mgis_status
-mgis_bv_material_state_manager_get_uniform_external_state_variable(
-    mgis_real* const, mgis_bv_MaterialStateManager* const, const char* const);
-
-MGIS_C_EXPORT mgis_status
-mgis_bv_material_state_manager_get_non_uniform_external_state_variable(
-    mgis_real** const, mgis_bv_MaterialStateManager* const, const char* const);
 
 #ifdef __cplusplus
 }  // end of extern "C"

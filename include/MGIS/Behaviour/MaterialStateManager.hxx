@@ -72,9 +72,9 @@ namespace mgis::behaviour {
      * required memory internally, if the behaviour computes the stored
      * energy.
      *
-     * \note for backward compatibililty, the user may allocate memory for the
-     * stored energies even if the behaviour don't compute the stored
-     * energy.
+     * \note the memory must not be provided if the behaviour does not compute
+     * the stored energy: the constructor of the material state manager
+     * reports an error.
      */
     std::span<mgis::real> stored_energies;
     /*!
@@ -83,9 +83,9 @@ namespace mgis::behaviour {
      * initialize the required memory internally, if the behaviour computes
      * the dissipated energy.
      *
-     * \note for backward compatibililty, the user may allocate memory for the
-     * dissipated energies even if the behaviour don't compute the dissipated
-     * energy.
+     * \note the memory must not be provided if the behaviour does not compute
+     * the dissipated energy: the constructor of the material state manager
+     * reports an error.
      */
     std::span<mgis::real> dissipated_energies;
   };  // end of MaterialStateManagerInitializer

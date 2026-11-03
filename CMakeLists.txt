@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 string(CONCAT MFrontGenericInterfaceSupportDescription
 	"The MFrontGenericInterfaceSupport project provides "
 	"useful feature for solvers' developpers to "
@@ -11,15 +11,21 @@ project("mfront-generic-interface"
         DESCRIPTION  "${MFrontGenericInterfaceSupportDescription}"
         HOMEPAGE_URL "https://thelfer.github.io/mgis/web/index.html")
 
-write_basic_package_version_file(
-  "${PROJECT_BINARY_DIR}/mgis-config-version.cmake"
-  VERSION "${VERSION}"
-  COMPATIBILITY SameMinorVersion)
-install(FILES "${PROJECT_BINARY_DIR}/mgis-config-version.cmake"
-  DESTINATION "${mgis_export_install_path}")
-
 set(CMAKE_CXX_STANDARD 20)
-set(CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# rpath of the installed libraries and python modules, so that they find
+# the MGIS libraries and their dependencies (TFEL, HDF5) without setting
+# LD_LIBRARY_PATH (as TFEL does on macOS). Values given by the user are
+# kept. CMAKE_SKIP_INSTALL_RPATH disables it.
+if(NOT DEFINED CMAKE_INSTALL_RPATH_USE_LINK_PATH)
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+endif(NOT DEFINED CMAKE_INSTALL_RPATH_USE_LINK_PATH)
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES
+     "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" isSystemDir)
+if((NOT DEFINED CMAKE_INSTALL_RPATH) AND ("${isSystemDir}" STREQUAL "-1"))
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
+endif()
 
 # enable tests
 option(enable-testing "" ON)

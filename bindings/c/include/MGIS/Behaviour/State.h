@@ -76,7 +76,7 @@ mgis_bv_state_set_gradient_by_offset(mgis_bv_State* const,
  * \brief get a gradient' value in a state
  * \param[out] v: pointer to gradient' value(s)
  * \param[in] s: state
- * \param[in] n: name
+ * \param[in] o: offset
  */
 MGIS_C_EXPORT mgis_status mgis_bv_state_get_gradient_by_offset(
     mgis_real**, mgis_bv_State* const, const mgis_size_type);
@@ -116,7 +116,7 @@ mgis_bv_state_set_thermodynamic_force_by_offset(mgis_bv_State* const,
  * \brief get a thermodynamic force' value in a state
  * \param[out] v: pointer to thermodynamic force' value(s)
  * \param[in] s: state
- * \param[in] n: name
+ * \param[in] o: offset
  */
 MGIS_C_EXPORT mgis_status mgis_bv_state_get_thermodynamic_force_by_offset(
     mgis_real**, mgis_bv_State* const, const mgis_size_type);
@@ -152,7 +152,7 @@ MGIS_C_EXPORT mgis_status mgis_bv_state_set_material_property_by_offset(
  * \brief get a material property' value in a state
  * \param[out] v: material property' value
  * \param[in] s: state
- * \param[in] n: name
+ * \param[in] o: offset
  */
 MGIS_C_EXPORT mgis_status mgis_bv_state_get_material_property_by_offset(
     mgis_real** const, mgis_bv_State* const, const mgis_size_type);
@@ -200,7 +200,7 @@ mgis_bv_state_set_internal_state_variable_by_offset(mgis_bv_State* const,
  * \brief get a internal state variable' value in a state
  * \param[out] v: pointer to internal state variable' value(s)
  * \param[in] s: state
- * \param[in] n: name
+ * \param[in] o: offset
  */
 MGIS_C_EXPORT mgis_status mgis_bv_state_get_internal_state_variable_by_offset(
     mgis_real**, mgis_bv_State* const, const mgis_size_type);

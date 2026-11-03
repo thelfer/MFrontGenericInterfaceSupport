@@ -17,7 +17,6 @@ subroutine check_external_state_variable(b, expected_name, expected_type, expect
   call check_status(behaviour_get_external_state_variable_type(type, b, position))
   r = check(type == expected_type, "invalid external state variable type")
   call check_status(behaviour_get_external_state_variable_offset(offset, b, position))
-  write(*,*) offset, expected_offset
   r = check(offset == expected_offset, "invalid external state variable offset")
 end subroutine check_external_state_variable
 
@@ -61,6 +60,9 @@ subroutine check_behaviour_data(b)
   type(BehaviourData) d
   type(State) s1
   real(kind=8), dimension(3) ::v_esv_values
+  real(kind=8), dimension(:), pointer :: isvs
+  integer :: i
+  integer :: ri
   logical :: r
   !
   v_esv_values = (/ 1, 2, 3 /)
@@ -68,8 +70,14 @@ subroutine check_behaviour_data(b)
   call check_status(allocate_behaviour_data(d, b))
   !
   call check_status(behaviour_data_get_state_1(s1, d))
-  !  call check_status(state_set_external_state_variable_by_name(s1, "v_esv", v_esv_values));
-
+  call check_status(state_set_external_state_variable_by_name(s1, "v_esv", v_esv_values))
+  call check_status(integrate(ri, d, b))
+  ! the behaviour copies the external state variables in the internal ones
+  call check_status(state_get_internal_state_variables(isvs, s1, b))
+  do i = 1, 3
+     r = check(abs(isvs(i) - v_esv_values(i)) < 1.d-14, &
+          "invalid internal state variable value")
+  end do
   ! free ressources
   call check_status(free_behaviour_data(d))
 endsubroutine check_behaviour_data
@@ -84,6 +92,7 @@ program main
        get_mfront_behaviour_test_library_path(), &
        'TensorialExternalStateVariableTest', 'Tridimensional'))
   call check_behaviour(b)
+  call check_behaviour_data(b)
   call tests_summary()
   ! free ressources
   call check_status(free_behaviour(b))

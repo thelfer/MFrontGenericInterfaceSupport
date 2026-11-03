@@ -93,6 +93,21 @@ namespace mgis {
           tangent_operator_elements(t),
           thf_elements(e),
           dt(0) {
+      // only small strain behaviours are supported, in a modelling hypothesis
+      // matching the dimension of the mesh (the hoop strain of the
+      // axisymmetrical hypothesis is not computed)
+      const auto h = this->b.hypothesis;
+      const auto gdim = u->function_space()->mesh()->geometry().dim();
+      if ((this->b.btype !=
+           mgis::behaviour::Behaviour::STANDARDSTRAINBASEDBEHAVIOUR) ||
+          (h == mgis::behaviour::Hypothesis::AXISYMMETRICAL) ||
+          (mgis::behaviour::getSpaceDimension(h) != gdim)) {
+        mgis::raise(
+            "NonLinearMaterial::NonLinearMaterial: unsupported behaviour "
+            "(a small strain behaviour is expected, in plane strain, "
+            "generalised plane strain or plane stress for a 2D mesh and in "
+            "tridimensional for a 3D mesh)");
+      }
       const auto s =
           this->unknowns->function_space()->dofmap()->max_cell_dimension();
       this->expansion_coefficients.resize(s);
@@ -202,18 +217,19 @@ namespace mgis {
       const std::size_t num_ip_dofs = this->thf_elements->value_dimension(0);
       const std::size_t num_ip_per_cell =
           this->thf_elements->space_dimension() / num_ip_dofs;
+      const auto gs = this->s1.gradients_stride;
       if (gdim == 2) {
-        const auto o = cell_index * num_ip_per_cell * 4;
+        const auto o = cell_index * num_ip_per_cell * gs;
         auto* const e = this->s1.gradients.data() + o;
         for (std::size_t ip = 0; ip != num_ip_per_cell; ++ip) {
-          compute_strain2D(e + 4 * ip, derivs_physical[ip],
+          compute_strain2D(e + gs * ip, derivs_physical[ip],
                            this->expansion_coefficients);
         }
       } else if (gdim == 3) {
-        const auto o = cell_index * num_ip_per_cell * 6;
+        const auto o = cell_index * num_ip_per_cell * gs;
         auto* const e = this->s1.gradients.data() + o;
         for (std::size_t ip = 0; ip != num_ip_per_cell; ++ip) {
-          const auto strain = e + 6 * ip;
+          const auto strain = e + gs * ip;
           compute_strain3D(strain, derivs_physical[ip],
                            this->expansion_coefficients);
         }
@@ -234,7 +250,19 @@ namespace mgis {
       const auto bc = cell_index * num_ip_per_cell;
       const auto ec = (cell_index + 1) * num_ip_per_cell;
       this->update_gradients(c, nc);
-      mgis::behaviour::integrate(*this, it, this->dt, bc, ec);
+      auto opts = mgis::behaviour::BehaviourIntegrationOptions{};
+      opts.integration_type = it;
+      const auto r = mgis::behaviour::integrate(*this, opts, this->dt, bc, ec);
+      if (r.exit_status == -1) {
+        auto msg =
+            "NonLinearMaterial::update: behaviour integration failed "
+            "at integration point " +
+            std::to_string(r.n);
+        if (!r.error_message.empty()) {
+          msg += " (" + r.error_message + ")";
+        }
+        mgis::raise(msg);
+      }
     }  // end of NonLinearMaterial::update
 
     NonLinearMaterial::~NonLinearMaterial() = default;
