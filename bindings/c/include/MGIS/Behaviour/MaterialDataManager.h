@@ -195,6 +195,14 @@ MGIS_C_EXPORT mgis_status
 mgis_bv_material_data_manager_get_tangent_operator_stride(
     mgis_size_type* const, mgis_bv_MaterialDataManager* const);
 /*!
+ * \brief return the number of tangent operator blocks
+ * \param[out] n: number of tangent operator blocks
+ * \param[in]  d: material data manager
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_material_data_manager_get_number_of_tangent_operator_blocks(
+    mgis_size_type* const, mgis_bv_MaterialDataManager* const);
+/*!
  * \brief update the material data manager
  * \param[in,out] d: data manager
  */
