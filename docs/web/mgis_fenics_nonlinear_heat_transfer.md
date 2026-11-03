@@ -252,10 +252,12 @@ Automatic registration of 'Temperature' as an external state variable.
 ```
 For problems in which the temperature only acts as a parameter (no jacobian blocks with respect to the temperature), the temperature can be automatically registered as a constant value ($293.15 \text{ K}$ by default) or to any other (`dolfin.Constant`, `float` or `dolfin.Function`) value using the `register_external_state_variable` method.
 
-In the `FEniCS` interface, we instantiate the main mechanical unknown, here the temperature field `T` which has to be named `"Temperature"` in order to match `MFront`'s predefined name. Using another name than this will later result in an error saying:
+In the `FEniCS` interface, we instantiate the main mechanical unknown, here the temperature field `T` which has to be named `"Temperature"` in order to match `MFront`'s predefined name. Using another name than this does not result in an error: the external state variable `"Temperature"` is then automatically registered as the constant value $293.15 \text{ K}$, and the following message is printed:
 ```
-ValueError: 'Temperature' could not be associated with a registered gradient or a known state variable.
+Automatic registration of 'Temperature' as a Constant value = 293.15.
 ```
+The behaviour is then evaluated at $293.15 \text{ K}$ at every point and the tangent block with respect to the temperature vanishes, so that another problem is solved. A temperature field with another name must therefore be registered explicitly, using `problem.register_external_state_variable("Temperature", T)`.
+
 Finally, we need to associate to `MFront` gradient object the corresponding UFL expression as a function of the unknown field `T`. To do so, we use the `register_gradient` method linking `MFront` `"TemperatureGradient"` object to the UFL expression `grad(T)`.
 
 
