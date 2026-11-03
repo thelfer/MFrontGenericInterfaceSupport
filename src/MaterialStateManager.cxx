@@ -894,12 +894,13 @@ namespace mgis::behaviour {
             const MaterialStateManager& s,
             const MaterialStateManagerSavingOptions& opts) noexcept {
     using namespace mgis::utilities::hdf5;
-    if (opts.save_gradients) {
+    if ((opts.save_gradients) && (!s.b.gradients.empty())) {
       if (!write(ctx, g, "gradients", s.gradients, opts.allow_overwrite)) {
         return false;
       }
     }
-    if (opts.save_thermodynamic_forces) {
+    if ((opts.save_thermodynamic_forces) &&
+        (!s.b.thermodynamic_forces.empty())) {
       if (!write(ctx, g, "thermodynamic_forces", s.thermodynamic_forces,
                  opts.allow_overwrite)) {
         return false;
@@ -1154,12 +1155,13 @@ namespace mgis::behaviour {
                const MaterialStateManagerRestoreOptions& opts) noexcept {
     using namespace mgis::utilities::hdf5;
     using MutableFieldHolder = MaterialStateManager::MutableFieldHolder;
-    if (opts.restore_gradients) {
+    if ((opts.restore_gradients) && (!s.b.gradients.empty())) {
       if (!read(ctx, s.gradients, g, "gradients")) {
         return ctx.registerErrorMessage("restoring gradients failed");
       }
     }
-    if (opts.restore_thermodynamic_forces) {
+    if ((opts.restore_thermodynamic_forces) &&
+        (!s.b.thermodynamic_forces.empty())) {
       if (!read(ctx, s.thermodynamic_forces, g, "thermodynamic_forces")) {
         return ctx.registerErrorMessage(
             "restoring thermodynamic forces failed");
