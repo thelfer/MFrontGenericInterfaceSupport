@@ -414,7 +414,7 @@ dold = Function(Vd, name="Previous damage")
 bcd = DirichletBC(Vd, Constant(0.), internal)
 ```
 
-We now define the displacement $u$-problem by loading the `PhaseFieldDisplacement` behaviour. Since the damage variable has been declared as an external state variable for this problem, we must register it with the damage field `d`. We also retrieve the `HistoryFunction` internal state variable `H` which will then be used as an external state variable for the damage problem. We finally recall that automatic registration of the strain is used here.
+We now define the displacement $u$-problem by loading the `PhaseFieldDisplacementDeviatoricSplit` behaviour. Since the damage variable has been declared as an external state variable for this problem, we must register it with the damage field `d`. We also retrieve the `HistoryFunction` internal state variable `H` which will then be used as an external state variable for the damage problem. We finally recall that automatic registration of the strain is used here.
 
 
 ```python
@@ -460,8 +460,9 @@ previously defined a function `v` with a vertical component equal to 1
 on the top boundary and zero everywhere. The action of the residual form
 in this field is precisely the resulting vertical force of the imposed
 boundary conditions. We also compute the total stored and dissipated
-energy. The former has been defined in `PhaseFieldDisplacement.mfront`
-and the second in `PhaseFieldDamage.mfront`.
+energy. The former has been defined in
+`PhaseFieldDisplacementDeviatoricSplit.mfront` and the second in
+`PhaseFieldDamage.mfront`.
 
 
 ```python

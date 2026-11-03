@@ -176,7 +176,8 @@ In this case, this is not appropriate as:
 -   some derivatives are known to be null, such as
     ${\displaystyle \frac{\displaystyle \partial \bsig}{\displaystyle \partial \Delta\,\nabla\,T}}$
     and
-    ${\displaystyle \frac{\displaystyle \partial \bj}{\displaystyle \partial \Delta\,\beps^{\mathrm{to}}}}$.
+    ${\displaystyle \frac{\displaystyle \partial \bj}{\displaystyle \partial \Delta\,\beps^{\mathrm{to}}}}$
+    [1].
 -   the derivative
     ${\displaystyle \frac{\displaystyle \partial s}{\displaystyle \partial \Delta\,\beps^{\mathrm{to}}}}$
     of the entropy with respect to strain and the derivative
@@ -217,7 +218,7 @@ E.setGlossaryName("YoungModulus");
 ν.setGlossaryName("PoissonRatio");
 @Parameter massdensity ρ = 2700.;
 ρ.setGlossaryName("MassDensity");
-@Parameter thermalconductivity α = 2.31e-5 ;
+@Parameter thermalexpansion α = 2.31e-5 ;
 α.setGlossaryName("ThermalExpansion");
 @Parameter real Cₑ = 910e-6;
 Cₑ.setEntryName("SpecificHeatAtConstantStrainPerUnitOfMass");
