@@ -12,39 +12,9 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <memory>
 #include <jlcxx/jlcxx.hpp>
 #include "MGIS/Behaviour/BehaviourData.hxx"
 #include "MGIS/Julia/JuliaUtilities.hxx"
-
-namespace mgis::julia {
-
-  /*!
-   * \brief behaviour data created from Julia: they own a copy of their
-   * behaviour, which is thus not destroyed if the Julia object of the
-   * behaviour is collected.
-   */
-  struct OwningBehaviourData : mgis::behaviour::BehaviourData {
-    OwningBehaviourData(const mgis::behaviour::Behaviour& b)
-        : OwningBehaviourData(
-              std::make_shared<const mgis::behaviour::Behaviour>(b)) {}
-    OwningBehaviourData(std::shared_ptr<const mgis::behaviour::Behaviour> p)
-        : mgis::behaviour::BehaviourData(*p), behaviour(std::move(p)) {}
-    //! \brief behaviour, shared with the copies of this object
-    std::shared_ptr<const mgis::behaviour::Behaviour> behaviour;
-  };
-
-}  // end of namespace mgis::julia
-
-namespace jlcxx {
-
-  //! \brief
-  template <>
-  struct SuperType<mgis::julia::OwningBehaviourData> {
-    using type = mgis::behaviour::BehaviourData;
-  };
-
-}  // end of namespace jlcxx
 
 void declareBehaviourData();
 
@@ -85,10 +55,10 @@ void declareBehaviourData(jlcxx::Module& m) {
       .method("make_view", [](BehaviourData& d) -> BehaviourDataView {
         return make_view(d);
       });
-  // BehaviourData(b) creates behaviour data owning a copy of b
-  m.add_type<mgis::julia::OwningBehaviourData>(
-      "OwningBehaviourData", jlcxx::julia_base_type<BehaviourData>());
-  m.constructor<mgis::julia::OwningBehaviourData,
-                const mgis::behaviour::Behaviour&>(
+  // BehaviourData(b) creates behaviour data which keep b alive
+  m.add_type<mgis::julia::Wrapper<BehaviourData>>(
+      "BehaviourDataWrapper", jlcxx::julia_base_type<BehaviourData>());
+  m.constructor<mgis::julia::Wrapper<BehaviourData>,
+                const mgis::julia::SharedBehaviour&>(
       jlcxx::julia_base_type<BehaviourData>());
 }  // end of declareBehaviourData

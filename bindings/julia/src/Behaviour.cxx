@@ -32,12 +32,8 @@ void declareBehaviour(jlcxx::Module &m) {
   using mgis::behaviour::BehaviourDescription;
   using mgis::behaviour::FiniteStrainBehaviourOptions;
   using mgis::behaviour::Hypothesis;
+  using mgis::julia::SharedBehaviour;
   //
-  Behaviour (*load)(const std::string &, const std::string &,
-                    const Hypothesis) = &mgis::behaviour::load;
-  Behaviour (*load2)(const FiniteStrainBehaviourOptions &, const std::string &,
-                     const std::string &, const Hypothesis) =
-      &mgis::behaviour::load;
   void (*setParameter1)(const Behaviour &, const std::string &, const double) =
       &mgis::behaviour::setParameter;
   void (*setParameter2)(const Behaviour &, const std::string &, const int) =
@@ -171,8 +167,18 @@ void declareBehaviour(jlcxx::Module &m) {
               [](const Behaviour &b) { return b.esvs; })
       .method("get_parameters", [](const Behaviour &b) { return b.params; });
   //
-  m.method("load", load);
-  m.method("load", load2);
+  // the loaded behaviour is shared by the objects built from it
+  m.add_type<SharedBehaviour>("SharedBehaviour",
+                              jlcxx::julia_base_type<Behaviour>());
+  m.method("load",
+           [](const std::string& l, const std::string& b, const Hypothesis h) {
+             return SharedBehaviour(mgis::behaviour::load(l, b, h));
+           });
+  m.method("load",
+           [](const FiniteStrainBehaviourOptions& o, const std::string& l,
+              const std::string& b, const Hypothesis h) {
+             return SharedBehaviour(mgis::behaviour::load(o, l, b, h));
+           });
   m.method("set_parameter!", setParameter1);
   m.method("set_integer_parameter!", setParameter2);
   m.method("set_unsigned_short_parameter!",
