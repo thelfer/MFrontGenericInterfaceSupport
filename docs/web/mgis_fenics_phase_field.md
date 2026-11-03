@@ -489,6 +489,8 @@ for (i, t) in enumerate(loading[1:]):
         print("   Iteration {}: {}".format(j, res))
         j += 1
 
+    assert res <= tol, "Alternate minimization did not converge within maximum number of iterations."
+
     results[i+1, 0] = assemble(action(problem_u.residual, v))
     results[i+1, 1] = problem_u.get_stored_energy()
     results[i+1, 2] = problem_d.get_dissipated_energy()
