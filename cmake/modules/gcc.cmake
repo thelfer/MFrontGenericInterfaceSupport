@@ -99,6 +99,13 @@ if(enable-sanitize-options)
   mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=object-size")
   mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=vptr")
   mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=address")
+  if(fsanitize=address_AVAILABLE)
+    # the Fortran executables (tests of the Fortran bindings) link libraries
+    # instrumented by AddressSanitizer, whose runtime must come first: it is
+    # given to the links of gfortran
+    add_link_options(
+      "$<$<AND:$<LINK_LANGUAGE:Fortran>,$<Fortran_COMPILER_ID:GNU>>:-fsanitize=address>")
+  endif(fsanitize=address_AVAILABLE)
   mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=null")
   mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=return")
   mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=signed-integer-overflow")
