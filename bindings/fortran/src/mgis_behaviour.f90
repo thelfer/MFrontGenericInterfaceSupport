@@ -38,9 +38,11 @@ module mgis_behaviour
      enumerator :: LOCAL_STORAGE    = 0
      enumerator :: EXTERNAL_STORAGE = 1
   end enum
+  ! update policies, with the values of the enumeration
+  ! mgis_bv_MaterialStateManagerUpdatePolicy of the C bindings
   enum, bind(C)
-     enumerator :: UPDATE = 0
-     enumerator :: NOUPDATE = 1
+     enumerator :: NOUPDATE = 0
+     enumerator :: UPDATE = 1
   end enum
   enum, bind(C)
      enumerator :: PREDICTION_TANGENT_OPERATOR = -3
@@ -3911,6 +3913,35 @@ contains
     r = msm_set_uniform_scalar_material_property_wrapper(s %ptr, &
          convert_fortran_string(n), v)
   end function material_state_manager_set_uniform_scalar_material_property
+  ! \param[in] p: update policy (UPDATE or NOUPDATE)
+  function material_state_manager_set_uniform_scalar_material_property2(s, n, v, p) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis, only: mgis_status
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function msm_set_uniform_scalar_material_property2_wrapper(s, n, v, p) &
+            bind(c,name = 'mgis_bv_material_state_manager_set_uniform_scalar_material_property2') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_char, c_int
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         real(kind=c_double), intent(in), value :: v
+         integer(kind=c_int), intent(in), value :: p
+         type(mgis_status) :: r
+       end function msm_set_uniform_scalar_material_property2_wrapper
+    end interface
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    real(kind=8),     intent(in) :: v
+    integer(kind=c_int), intent(in) :: p
+    type(mgis_status) :: r
+    r = msm_set_uniform_scalar_material_property2_wrapper(s %ptr, &
+         convert_fortran_string(n), v, p)
+  end function material_state_manager_set_uniform_scalar_material_property2
   !
   function material_state_manager_is_material_property_defined(b, s, n)&
        result(r)
@@ -3998,6 +4029,32 @@ contains
     type(mgis_status) :: r
     r = msm_set_uniform_scalar_mass_density_wrapper(s %ptr, v)
   end function material_state_manager_set_uniform_scalar_mass_density
+  ! \param[in] p: update policy (UPDATE or NOUPDATE)
+  function material_state_manager_set_uniform_scalar_mass_density2(s, v, p) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis, only: mgis_status
+    use mgis_fortran_utilities
+    implicit none
+    interface
+       function msm_set_uniform_scalar_mass_density2_wrapper(s, v, p) &
+            bind(c,name = 'mgis_bv_material_state_manager_set_uniform_scalar_mass_density2') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_int
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in),value :: s
+         real(kind=c_double), intent(in), value :: v
+         integer(kind=c_int), intent(in), value :: p
+         type(mgis_status) :: r
+       end function msm_set_uniform_scalar_mass_density2_wrapper
+    end interface
+    type(MaterialStateManager), intent(in) :: s
+    real(kind=8),     intent(in) :: v
+    integer(kind=c_int), intent(in) :: p
+    type(mgis_status) :: r
+    r = msm_set_uniform_scalar_mass_density2_wrapper(s %ptr, v, p)
+  end function material_state_manager_set_uniform_scalar_mass_density2
   !
   function material_state_manager_is_mass_density_defined(b, s)&
        result(r)
@@ -4150,6 +4207,35 @@ contains
     r = msm_set_uniform_scalar_external_state_variable_wrapper(s %ptr, &
          convert_fortran_string(n), v)
   end function material_state_manager_set_us_external_state_variable
+  ! \param[in] p: update policy (UPDATE or NOUPDATE)
+  function material_state_manager_set_us_external_state_variable2(s, n, v, p) &
+       result(r)
+    use, intrinsic :: iso_c_binding, only: c_int
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function msm_set_uniform_scalar_external_state_variable2_wrapper(s, n, v, p) &
+            bind(c,name = 'mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable2') &
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_double, c_char, c_int
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(in),value :: s
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         real(kind=c_double), intent(in), value :: v
+         integer(kind=c_int), intent(in), value :: p
+         type(mgis_status) :: r
+       end function msm_set_uniform_scalar_external_state_variable2_wrapper
+    end interface
+    type(MaterialStateManager), intent(in) :: s
+    character(len=*), intent(in) :: n
+    real(kind=8),     intent(in) :: v
+    integer(kind=c_int), intent(in) :: p
+    type(mgis_status) :: r
+    r = msm_set_uniform_scalar_external_state_variable2_wrapper(s %ptr, &
+         convert_fortran_string(n), v, p)
+  end function material_state_manager_set_us_external_state_variable2
   !
   function material_state_manager_is_external_state_variable_defined(b, s, n)&
        result(r)
