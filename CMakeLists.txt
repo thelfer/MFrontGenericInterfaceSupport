@@ -12,7 +12,7 @@ project("mfront-generic-interface"
         HOMEPAGE_URL "https://thelfer.github.io/mgis/web/index.html")
 
 set(CMAKE_CXX_STANDARD 20)
-set(CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # rpath of the installed libraries and python modules, so that they find
 # the MGIS libraries and their dependencies (TFEL, HDF5) without setting
