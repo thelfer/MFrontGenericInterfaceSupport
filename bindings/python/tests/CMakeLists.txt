@@ -16,19 +16,6 @@ add_dependencies(build-tests mgis_python_bindings_checkfiles)
 
 # defining the tests
 
-# with the AddressSanitizer of gcc, the runtime must be loaded before the
-# libraries, which the Python interpreter is not: it is preloaded, and the
-# leaks of the interpreter are not reported
-set(MGIS_PYTHON_TESTS_SANITIZER_ENVIRONMENT)
-if(enable-sanitize-options AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU") AND
-   fsanitize=address_AVAILABLE)
-  execute_process(COMMAND ${CMAKE_CXX_COMPILER} -print-file-name=libasan.so
-    OUTPUT_VARIABLE MGIS_ASAN_RUNTIME
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
-  set(MGIS_PYTHON_TESTS_SANITIZER_ENVIRONMENT
-    "LD_PRELOAD=${MGIS_ASAN_RUNTIME}" "ASAN_OPTIONS=detect_leaks=0")
-endif()
-
 function(test_python_bindings test)
   if(NOT CMAKE_CONFIGURATION_TYPES)
     add_test(NAME ${test}_py
@@ -38,8 +25,7 @@ function(test_python_bindings test)
       PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python/tests:$ENV{PYTHONPATH}
       MGIS_TEST_BEHAVIOURS_LIBRARY=$<TARGET_FILE:BehaviourTest>
       MGIS_TEST_MODELS_LIBRARY=$<TARGET_FILE:ModelTest>
-      MGIS_TEST_TFEL_VERSION=${TFEL_VERSION}
-      ${MGIS_PYTHON_TESTS_SANITIZER_ENVIRONMENT})
+      MGIS_TEST_TFEL_VERSION=${TFEL_VERSION})
   endif(NOT CMAKE_CONFIGURATION_TYPES)
 endfunction(test_python_bindings)
 
