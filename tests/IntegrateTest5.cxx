@@ -57,7 +57,7 @@ int main(const int argc, const char* const* argv) {
     }
     std::cerr.precision(14);
     auto t = mgis::real{};
-    for (size_type i = 0; i != 10; ++i) {
+    for (size_type i = 0; i != 11; ++i) {
       constexpr auto eps = mgis::real{1e-10};
       const auto x_ref = exp(-A * t);
       if (std::abs(xvalues[i] - x_ref) > eps) {

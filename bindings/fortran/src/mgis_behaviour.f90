@@ -336,6 +336,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_finite_strain_behaviour_options_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_finite_strain_behaviour_options
   !
@@ -447,7 +449,7 @@ contains
          type(mgis_status) :: res
        end function rotate_gradients_in_place_wrapper
     end interface
-    real(kind=8), dimension(:), intent(out), target :: g
+    real(kind=8), dimension(:), intent(inout), target :: g
     type(Behaviour), intent(in) :: b
     real(kind=8), dimension(9), intent(in) :: r
     type(mgis_status) :: res
@@ -465,9 +467,9 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: mg
+         real(c_double), dimension(*), intent(out) :: mg
          type(c_ptr), intent(in), value :: b
-         real(c_double), dimension(:), intent(in) :: gg
+         real(c_double), dimension(*), intent(in) :: gg
          real(c_double), dimension(9), intent(in) :: r
          type(mgis_status) :: res
        end function rotate_gradients_out_of_place_wrapper
@@ -492,14 +494,14 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: g
+         real(c_double), dimension(*), intent(inout) :: g
          type(c_ptr), intent(in), value :: b
          real(c_double), dimension(9), intent(in) :: r
-         integer(kind=c_size_t) :: s
+         integer(kind=c_size_t), intent(in), value :: s
          type(mgis_status) :: res
        end function rotate_array_of_gradients_in_place_wrapper
     end interface
-    real(kind=8), dimension(:), intent(out) :: g
+    real(kind=8), dimension(:), intent(inout) :: g
     type(Behaviour), intent(in) :: b
     real(kind=8), dimension(9), intent(in) :: r
     integer(kind=c_size_t) :: s
@@ -519,11 +521,11 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: mg
+         real(c_double), dimension(*), intent(out) :: mg
          type(c_ptr), intent(in), value :: b
-         real(c_double), dimension(:), intent(in) :: gg
+         real(c_double), dimension(*), intent(in) :: gg
          real(c_double), dimension(9), intent(in) :: r
-         integer(kind=c_size_t) :: s
+         integer(kind=c_size_t), intent(in), value :: s
          type(mgis_status) :: res
        end function rotate_array_of_gradients_out_of_place_wrapper
     end interface
@@ -547,13 +549,13 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: tf
+         real(c_double), dimension(*), intent(inout) :: tf
          type(c_ptr), intent(in), value :: b
          real(c_double), dimension(9), intent(in) :: r         
          type(mgis_status) :: res
        end function rotate_thermodynamic_forces_in_place_wrapper
     end interface
-    real(kind=8), dimension(:), intent(out) :: tf
+    real(kind=8), dimension(:), intent(inout) :: tf
     type(Behaviour), intent(in) :: b
     real(kind=8), dimension(9), intent(in) :: r
     type(mgis_status) :: res
@@ -571,9 +573,9 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: mtf
+         real(c_double), dimension(*), intent(out) :: mtf
          type(c_ptr), intent(in), value :: b
-         real(c_double), dimension(:), intent(in) :: gtf
+         real(c_double), dimension(*), intent(in) :: gtf
          real(c_double), dimension(9), intent(in) :: r
          type(mgis_status) :: ret
        end function rotate_thermodynamic_forces_out_of_place_wrapper
@@ -598,14 +600,14 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: tf
+         real(c_double), dimension(*), intent(inout) :: tf
          type(c_ptr), intent(in), value :: b
          real(c_double), dimension(9), intent(in) :: r
-         integer(kind=c_size_t) :: s
+         integer(kind=c_size_t), intent(in), value :: s
          type(mgis_status) :: ret
        end function rotate_array_of_thermodynamic_forces_in_place_wrapper
     end interface
-    real(kind=8), dimension(:), intent(out) :: tf
+    real(kind=8), dimension(:), intent(inout) :: tf
     type(Behaviour), intent(in) :: b
     real(kind=8), dimension(9), intent(in) :: r
     integer(kind=c_size_t) :: s
@@ -625,11 +627,11 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: mtf
+         real(c_double), dimension(*), intent(out) :: mtf
          type(c_ptr), intent(in), value :: b
-         real(c_double), dimension(:), intent(in) :: gtf
+         real(c_double), dimension(*), intent(in) :: gtf
          real(kind=8), dimension(9), intent(in) :: r
-         integer(kind=c_size_t) :: s
+         integer(kind=c_size_t), intent(in), value :: s
          type(mgis_status) :: ret
        end function rotate_array_of_thermodynamic_forces_out_of_place_wrapper
     end interface
@@ -653,13 +655,13 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: to
+         real(c_double), dimension(*), intent(inout) :: to
          type(c_ptr), intent(in), value :: b
          real(kind=8), dimension(9), intent(in) :: r         
          type(mgis_status) :: ret
        end function rotate_tangent_operator_blocks_in_place_wrapper
     end interface
-    real(kind=8), dimension(:), intent(out) :: to
+    real(kind=8), dimension(:), intent(inout) :: to
     type(Behaviour), intent(in) :: b
     real(kind=8), dimension(9), intent(in) :: r
     type(mgis_status) :: s
@@ -677,9 +679,9 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: mto
+         real(c_double), dimension(*), intent(out) :: mto
          type(c_ptr), intent(in), value :: b
-         real(c_double), dimension(:), intent(in) :: gto
+         real(c_double), dimension(*), intent(in) :: gto
          real(kind=8), dimension(9), intent(in) :: r         
          type(mgis_status) :: ret
        end function rotate_tangent_operator_blocks_out_of_place_wrapper
@@ -704,14 +706,14 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: to
+         real(c_double), dimension(*), intent(inout) :: to
          type(c_ptr), intent(in), value :: b
          real(c_double), dimension(9), intent(in) :: r
-         integer(kind=c_size_t) :: s
+         integer(kind=c_size_t), intent(in), value :: s
          type(mgis_status) :: res
        end function rotate_array_of_tangent_operator_blocks_in_place_wrapper
     end interface
-    real(kind=8), dimension(:), intent(out) :: to
+    real(kind=8), dimension(:), intent(inout) :: to
     type(Behaviour), intent(in) :: b
     real(kind=8), dimension(9), intent(in) :: r
     integer(kind=c_size_t) :: s
@@ -731,11 +733,11 @@ contains
          use, intrinsic :: iso_c_binding, only: c_double, c_ptr, c_size_t
          use mgis, only: mgis_status
          implicit none
-         real(c_double), dimension(:), intent(out) :: mto
+         real(c_double), dimension(*), intent(out) :: mto
          type(c_ptr), intent(in), value :: b
-         real(c_double), dimension(:), intent(in) :: gto
+         real(c_double), dimension(*), intent(in) :: gto
          real(c_double), dimension(9), intent(in) :: r
-         integer(kind=c_size_t) :: s
+         integer(kind=c_size_t), intent(in), value :: s
          type(mgis_status) :: ret
        end function rotate_array_of_tangent_operator_blocks_out_of_place_wrapper
     end interface
@@ -1589,7 +1591,6 @@ contains
        return
     end if
     s = behaviour_get_external_state_variable_offset_wrapper(offset, b%ptr, nc)
-    write(*,*) "c: ", nc, offset
     o = offset+1
   end function behaviour_get_external_state_variable_offset
   !
@@ -1931,7 +1932,8 @@ contains
   function behaviour_has_upper_physical_bound(r, b, n) result(s)
     use, intrinsic :: iso_c_binding, only: c_int
     use mgis_fortran_utilities
-    use mgis, only: mgis_status
+    use mgis, only: mgis_status, MGIS_SUCCESS
+    implicit none
     interface
        function behaviour_has_upper_physical_bound_wrapper(r, b, n) &
             bind(c,name='mgis_bv_behaviour_has_upper_physical_bound') result(s)
@@ -1987,6 +1989,440 @@ contains
        v = ieee_value(v, ieee_quiet_nan)
     end if
   end function behaviour_get_upper_physical_bound
+  !
+  function behaviour_get_number_of_initialize_functions(n,b) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_number_of_initialize_functions_wrapper(l,b) &
+            bind(c,name = 'mgis_bv_behaviour_get_number_of_initialize_functions') result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_number_of_initialize_functions_wrapper
+    end interface
+    integer :: n
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = behaviour_get_number_of_initialize_functions_wrapper(ns, b%ptr)
+    n = ns
+  end function behaviour_get_number_of_initialize_functions
+  !
+  function behaviour_get_initialize_function_name(l, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_get_initialize_function_name_wrapper(l, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_initialize_function_name') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_initialize_function_name_wrapper
+    end interface
+    character(len=:), allocatable, intent(out) :: l
+    type(behaviour), intent(in) :: b
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    type(c_ptr) :: lp
+    integer(kind = c_size_t) :: nc
+    if(.not. convert_to_c_index(nc, n)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    s = behaviour_get_initialize_function_name_wrapper(lp, b%ptr, nc)
+    if (s % exit_status == MGIS_SUCCESS) then
+       l = convert_c_string(lp)
+    else
+       l = get_empty_string();
+    end if
+  end function behaviour_get_initialize_function_name
+  !
+  function behaviour_get_initialize_function_inputs_size(n, b, f) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_initialize_function_inputs_size_wrapper(l, b, f) &
+            bind(c,name = 'mgis_bv_behaviour_get_initialize_function_inputs_size') result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_ptr, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: f
+         type(mgis_status) :: r
+       end function behaviour_get_initialize_function_inputs_size_wrapper
+    end interface
+    integer :: n
+    type(behaviour), intent(in) :: b
+    character(len=*), intent(in) :: f
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = behaviour_get_initialize_function_inputs_size_wrapper( &
+         ns, b%ptr, convert_fortran_string(f))
+    n = ns
+  end function behaviour_get_initialize_function_inputs_size
+  !
+  function behaviour_get_number_of_initialize_function_inputs(n, b, f) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_number_of_initialize_function_inputs_wrapper(l, b, f) &
+            bind(c,name = 'mgis_bv_behaviour_get_number_of_initialize_function_inputs') result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_ptr, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: f
+         type(mgis_status) :: r
+       end function behaviour_get_number_of_initialize_function_inputs_wrapper
+    end interface
+    integer :: n
+    type(behaviour), intent(in) :: b
+    character(len=*), intent(in) :: f
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = behaviour_get_number_of_initialize_function_inputs_wrapper( &
+         ns, b%ptr, convert_fortran_string(f))
+    n = ns
+  end function behaviour_get_number_of_initialize_function_inputs
+  !
+  function behaviour_get_initialize_function_input_name(l, b, f, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_get_initialize_function_input_name_wrapper(l, b, f, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_initialize_function_input_name') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t, c_char
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: f
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_initialize_function_input_name_wrapper
+    end interface
+    character(len=:), allocatable, intent(out) :: l
+    type(behaviour), intent(in) :: b
+    character(len=*), intent(in) :: f
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    type(c_ptr) :: lp
+    integer(kind = c_size_t) :: nc
+    if(.not. convert_to_c_index(nc, n)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    s = behaviour_get_initialize_function_input_name_wrapper( &
+         lp, b%ptr, convert_fortran_string(f), nc)
+    if (s % exit_status == MGIS_SUCCESS) then
+       l = convert_c_string(lp)
+    else
+       l = get_empty_string();
+    end if
+  end function behaviour_get_initialize_function_input_name
+  !
+  function behaviour_get_initialize_function_input_type(t, b, f, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function behaviour_get_initialize_function_input_type_wrapper(t, b, f, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_initialize_function_input_type') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer t
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: f
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_initialize_function_input_type_wrapper
+    end interface
+    integer, intent (out) :: t
+    type(behaviour), intent(in) :: b
+    character(len=*), intent(in) :: f
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    integer(kind = c_size_t) :: nc
+    if(.not. convert_to_c_index(nc, n)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    s = behaviour_get_initialize_function_input_type_wrapper( &
+         t, b%ptr, convert_fortran_string(f), nc)
+  end function behaviour_get_initialize_function_input_type
+  !
+  function behaviour_get_initialize_function_input_offset(o, b, f, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function behaviour_get_initialize_function_input_offset_wrapper(o, b, f, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_initialize_function_input_offset') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: o
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: f
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_initialize_function_input_offset_wrapper
+    end interface
+    integer, intent (out) :: o
+    type(behaviour), intent(in) :: b
+    character(len=*), intent(in) :: f
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    integer(kind=c_size_t) offset
+    integer(kind = c_size_t) :: nc
+    if(.not. convert_to_c_index(nc, n)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    s = behaviour_get_initialize_function_input_offset_wrapper( &
+         offset, b%ptr, convert_fortran_string(f), nc)
+    o = offset + 1
+  end function behaviour_get_initialize_function_input_offset
+  !
+  function behaviour_get_number_of_post_processings(n,b) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_number_of_post_processings_wrapper(l,b) &
+            bind(c,name = 'mgis_bv_behaviour_get_number_of_post_processings') result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_ptr
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         type(mgis_status) :: r
+       end function behaviour_get_number_of_post_processings_wrapper
+    end interface
+    integer :: n
+    type(behaviour), intent(in) :: b
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = behaviour_get_number_of_post_processings_wrapper(ns, b%ptr)
+    n = ns
+  end function behaviour_get_number_of_post_processings
+  !
+  function behaviour_get_post_processing_name(l, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_get_post_processing_name_wrapper(l, b, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_post_processing_name') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_post_processing_name_wrapper
+    end interface
+    character(len=:), allocatable, intent(out) :: l
+    type(behaviour), intent(in) :: b
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    type(c_ptr) :: lp
+    integer(kind = c_size_t) :: nc
+    if(.not. convert_to_c_index(nc, n)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    s = behaviour_get_post_processing_name_wrapper(lp, b%ptr, nc)
+    if (s % exit_status == MGIS_SUCCESS) then
+       l = convert_c_string(lp)
+    else
+       l = get_empty_string();
+    end if
+  end function behaviour_get_post_processing_name
+  !
+  function behaviour_get_post_processing_outputs_size(n, b, p) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_post_processing_outputs_size_wrapper(l, b, p) &
+            bind(c,name = 'mgis_bv_behaviour_get_post_processing_outputs_size') result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_ptr, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: p
+         type(mgis_status) :: r
+       end function behaviour_get_post_processing_outputs_size_wrapper
+    end interface
+    integer :: n
+    type(behaviour), intent(in) :: b
+    character(len=*), intent(in) :: p
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = behaviour_get_post_processing_outputs_size_wrapper( &
+         ns, b%ptr, convert_fortran_string(p))
+    n = ns
+  end function behaviour_get_post_processing_outputs_size
+  !
+  function behaviour_get_number_of_post_processing_outputs(n, b, p) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function behaviour_get_number_of_post_processing_outputs_wrapper(l, b, p) &
+            bind(c,name = 'mgis_bv_behaviour_get_number_of_post_processing_outputs') result(r)
+         use, intrinsic :: iso_c_binding, only: c_size_t, c_ptr, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: p
+         type(mgis_status) :: r
+       end function behaviour_get_number_of_post_processing_outputs_wrapper
+    end interface
+    integer :: n
+    type(behaviour), intent(in) :: b
+    character(len=*), intent(in) :: p
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: ns
+    s = behaviour_get_number_of_post_processing_outputs_wrapper( &
+         ns, b%ptr, convert_fortran_string(p))
+    n = ns
+  end function behaviour_get_number_of_post_processing_outputs
+  !
+  function behaviour_get_post_processing_output_name(l, b, p, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure, MGIS_SUCCESS
+    implicit none
+    interface
+       function behaviour_get_post_processing_output_name_wrapper(l, b, p, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_post_processing_output_name') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t, c_char
+         use mgis, only: mgis_status
+         implicit none
+         type(c_ptr), intent(out) :: l
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: p
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_post_processing_output_name_wrapper
+    end interface
+    character(len=:), allocatable, intent(out) :: l
+    type(behaviour), intent(in) :: b
+    character(len=*), intent(in) :: p
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    type(c_ptr) :: lp
+    integer(kind = c_size_t) :: nc
+    if(.not. convert_to_c_index(nc, n)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    s = behaviour_get_post_processing_output_name_wrapper( &
+         lp, b%ptr, convert_fortran_string(p), nc)
+    if (s % exit_status == MGIS_SUCCESS) then
+       l = convert_c_string(lp)
+    else
+       l = get_empty_string();
+    end if
+  end function behaviour_get_post_processing_output_name
+  !
+  function behaviour_get_post_processing_output_type(t, b, p, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function behaviour_get_post_processing_output_type_wrapper(t, b, p, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_post_processing_output_type') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer t
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: p
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_post_processing_output_type_wrapper
+    end interface
+    integer, intent (out) :: t
+    type(behaviour), intent(in) :: b
+    character(len=*), intent(in) :: p
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    integer(kind = c_size_t) :: nc
+    if(.not. convert_to_c_index(nc, n)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    s = behaviour_get_post_processing_output_type_wrapper( &
+         t, b%ptr, convert_fortran_string(p), nc)
+  end function behaviour_get_post_processing_output_type
+  !
+  function behaviour_get_post_processing_output_offset(o, b, p, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function behaviour_get_post_processing_output_offset_wrapper(o, b, p, n) &
+            bind(c,name = 'mgis_bv_behaviour_get_post_processing_output_offset') result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t, c_char
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: o
+         type(c_ptr), intent(in), value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: p
+         integer(kind=c_size_t), intent(in), value :: n
+         type(mgis_status) :: r
+       end function behaviour_get_post_processing_output_offset_wrapper
+    end interface
+    integer, intent (out) :: o
+    type(behaviour), intent(in) :: b
+    character(len=*), intent(in) :: p
+    integer, intent (in) :: n
+    type(mgis_status) :: s
+    integer(kind=c_size_t) offset
+    integer(kind = c_size_t) :: nc
+    if(.not. convert_to_c_index(nc, n)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    s = behaviour_get_post_processing_output_offset_wrapper( &
+         offset, b%ptr, convert_fortran_string(p), nc)
+    o = offset + 1
+  end function behaviour_get_post_processing_output_offset
   ! free behaviour
   function free_behaviour(ptr) result(r)
     use, intrinsic :: iso_c_binding, only: c_associated
@@ -2005,6 +2441,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_behaviour_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_behaviour
   !
@@ -2131,7 +2569,7 @@ contains
   ! \brief return the transpose of the tangent operator
   function behaviour_data_get_tangent_operator(K, d) result(s)
     use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer
-    use mgis, only: mgis_status, MGIS_SUCCESS
+    use mgis, only: mgis_status, MGIS_SUCCESS, report_failure
     implicit none
     interface
        function behaviour_data_get_tangent_operator_wrapper(K, d) &
@@ -2152,6 +2590,7 @@ contains
     type(Behaviour) :: b
     integer gs
     integer ths
+    integer nK
     nullify(K)
     s = behaviour_data_get_behaviour(b, d)
     if( s%exit_status .ne. MGIS_SUCCESS) then
@@ -2165,9 +2604,20 @@ contains
     if( s%exit_status .ne. MGIS_SUCCESS) then
        return
     end if
+    s = behaviour_get_tangent_operator_array_size(nK, b)
+    if( s%exit_status .ne. MGIS_SUCCESS) then
+       return
+    end if
+    if (nK .ne. ths * gs) then
+       s = report_failure("behaviour_data_get_tangent_operator: " // &
+            "the tangent operator is not made of a single block")
+       return
+    end if
     s = behaviour_data_get_tangent_operator_wrapper(p, d%ptr)
     if( s%exit_status .eq. MGIS_SUCCESS) then
-       call c_f_pointer(p,K,[ths,gs])
+       ! the blocks are stored row by row: the Fortran array, stored column
+       ! by column, is the transpose of the tangent operator
+       call c_f_pointer(p,K,[gs,ths])
     end if
   end function behaviour_data_get_tangent_operator
   !
@@ -2224,6 +2674,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_behaviour_data_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_behaviour_data
   !
@@ -2405,7 +2857,7 @@ contains
     if( r%exit_status .ne. MGIS_SUCCESS) then
        return
     end if
-    r = behaviour_get_number_of_internal_state_variables(n, b)
+    r = behaviour_get_internal_state_variables_size(n, b)
     if( r%exit_status .ne. MGIS_SUCCESS) then
        return
     end if
@@ -2755,6 +3207,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_material_data_manager_initializer_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_material_data_manager_initializer
   !
@@ -2842,6 +3296,8 @@ contains
    type(mgis_status) :: r
    if (c_associated(ptr%ptr)) then
       r = free_behaviour_integration_options_wrapper(ptr%ptr)
+   else
+      r = report_success()
    end if
   end function free_behaviour_integration_options
   !
@@ -3595,8 +4051,8 @@ contains
   end function material_state_manager_is_external_state_variable_uniform
   ! \brief return the transpose of the tangent operator
   function material_data_manager_get_tangent_operator(K, m) result(r)
-    use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer
-    use mgis, only: mgis_status, MGIS_SUCCESS
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer, c_size_t
+    use mgis, only: mgis_status, MGIS_SUCCESS, report_failure
     implicit none
     interface
        function material_data_manager_get_tangent_operator_wrapper(K, m) &
@@ -3609,6 +4065,16 @@ contains
          type(c_ptr), intent(in), value :: m
          type(mgis_status) :: r
        end function material_data_manager_get_tangent_operator_wrapper
+       function material_data_manager_get_tangent_operator_stride_wrapper(s, m) &
+            bind(c,name = 'mgis_bv_material_data_manager_get_tangent_operator_stride')&
+            result(r)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_size_t), intent(out) :: s
+         type(c_ptr), intent(in), value :: m
+         type(mgis_status) :: r
+       end function material_data_manager_get_tangent_operator_stride_wrapper
     end interface
     real(kind=8), dimension(:,:,:), pointer, intent(out) :: K
     type(MaterialDataManager), intent(in) :: m
@@ -3618,6 +4084,7 @@ contains
     integer n
     integer gs
     integer ths
+    integer(kind=c_size_t) nK
     nullify(K)
     r = material_data_manager_get_state_0(s0, m)
     if( r%exit_status .ne. MGIS_SUCCESS) then
@@ -3631,7 +4098,7 @@ contains
     if( r%exit_status .ne. MGIS_SUCCESS) then
        return
     end if
-    r = material_state_manager_get_thermodynamic_forces_stride(gs, s0)
+    r = material_state_manager_get_thermodynamic_forces_stride(ths, s0)
     if( r%exit_status .ne. MGIS_SUCCESS) then
        return
     end if
@@ -3639,9 +4106,18 @@ contains
     if( r%exit_status .ne. MGIS_SUCCESS) then
        return
     end if
-    if( r%exit_status .eq. MGIS_SUCCESS) then
-       call c_f_pointer(p,K,[ths,gs, n])
+    r = material_data_manager_get_tangent_operator_stride_wrapper(nK, m %ptr)
+    if( r%exit_status .ne. MGIS_SUCCESS) then
+       return
     end if
+    if (nK .ne. ths * gs) then
+       r = report_failure("material_data_manager_get_tangent_operator: " // &
+            "the tangent operator is not made of a single block")
+       return
+    end if
+    ! the blocks are stored row by row: the Fortran array, stored column by
+    ! column, is the transpose of the tangent operator at each point
+    call c_f_pointer(p,K,[gs, ths, n])
   end function material_data_manager_get_tangent_operator
   !
   function free_material_data_manager(ptr) result(r)
@@ -3662,6 +4138,8 @@ contains
     type(mgis_status) :: r
     if (c_associated(ptr%ptr)) then
        r = free_material_data_manager_wrapper(ptr%ptr)
+    else
+       r = report_success()
     end if
   end function free_material_data_manager
   !
@@ -3944,4 +4422,214 @@ contains
     nec = nec + 1
     s = integrate_debug_material_data_manager_part_wrapper(r, m%ptr, i, dt, nic, nec)
   end function integrate_debug_material_data_manager_part
+  ! execute_initialize_function
+  function execute_initialize_function(r, d, b, n, inputs) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function execute_initialize_function_wrapper(r, d, b, n, i, ns) &
+            bind(c,name = 'mgis_bv_execute_initialize_function_2') result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_char, c_double, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: r
+         type(c_ptr), intent(in),value :: d
+         type(c_ptr), intent(in),value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         real(kind=c_double), dimension(*), intent(in) :: i
+         integer(kind=c_size_t), intent(in),value :: ns
+         type(mgis_status) :: s
+       end function execute_initialize_function_wrapper
+    end interface
+    integer, intent(out) :: r
+    type(BehaviourData), intent(in) :: d
+    type(Behaviour),     intent(in) :: b
+    character(len=*),    intent(in) :: n
+    real(kind=8), dimension(:), intent(in) :: inputs
+    type(mgis_status) :: s
+    s = execute_initialize_function_wrapper(r, d%ptr, b%ptr, &
+         convert_fortran_string(n), inputs, size(inputs, kind=c_size_t))
+  end function execute_initialize_function
+  !
+  function execute_initialize_function_material_data_manager(r, p, m, n, inputs) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: ThreadPool, mgis_status
+    implicit none
+    interface
+       function execute_initialize_function_material_data_manager_wrapper(r, p, m, n, i, ns) &
+            bind(c,name = 'mgis_bv_execute_initialize_function_material_data_manager') &
+            result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_char, c_double, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: r
+         type(c_ptr), intent(in),value :: p
+         type(c_ptr), intent(in),value :: m
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         real(kind=c_double), dimension(*), intent(in) :: i
+         integer(kind=c_size_t), intent(in),value :: ns
+         type(mgis_status) :: s
+       end function execute_initialize_function_material_data_manager_wrapper
+    end interface
+    integer, intent(out) :: r
+    type(ThreadPool),          intent(in) :: p
+    type(MaterialDataManager), intent(in) :: m
+    character(len=*),          intent(in) :: n
+    real(kind=8), dimension(:), intent(in) :: inputs
+    type(mgis_status) :: s
+    s = execute_initialize_function_material_data_manager_wrapper(r, p%ptr, m%ptr, &
+         convert_fortran_string(n), inputs, size(inputs, kind=c_size_t))
+  end function execute_initialize_function_material_data_manager
+  !
+  function execute_initialize_function_material_data_manager_part(r, m, n, inputs, ni, ne) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function execute_initialize_function_material_data_manager_part_wrapper(r, m, n, i, ns, ni, ne) &
+            bind(c,name = 'mgis_bv_execute_initialize_function_material_data_manager_part') &
+            result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_char, c_double, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: r
+         type(c_ptr), intent(in),value :: m
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         real(kind=c_double), dimension(*), intent(in) :: i
+         integer(kind = c_size_t), intent(in),value :: ns
+         integer(kind = c_size_t), intent(in),value :: ni
+         integer(kind = c_size_t), intent(in),value :: ne
+         type(mgis_status) :: s
+       end function execute_initialize_function_material_data_manager_part_wrapper
+    end interface
+    integer, intent(out) :: r
+    type(MaterialDataManager), intent(in) :: m
+    character(len=*),          intent(in) :: n
+    real(kind=8), dimension(:), intent(in) :: inputs
+    integer :: ni
+    integer :: ne
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: nic
+    integer(kind=c_size_t) :: nec
+    if(.not. convert_to_c_index(nic, ni)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    if(.not. convert_to_c_index(nec, ne)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    nec = nec + 1
+    s = execute_initialize_function_material_data_manager_part_wrapper(r, m%ptr, &
+         convert_fortran_string(n), inputs, size(inputs, kind=c_size_t), nic, nec)
+  end function execute_initialize_function_material_data_manager_part
+  ! execute_post_processing
+  function execute_post_processing(r, outputs, d, b, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status
+    implicit none
+    interface
+       function execute_post_processing_wrapper(r, o, ns, d, b, n) &
+            bind(c,name = 'mgis_bv_execute_post_processing_2') result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_char, c_double, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: r
+         real(kind=c_double), dimension(*), intent(out) :: o
+         integer(kind=c_size_t), intent(in),value :: ns
+         type(c_ptr), intent(in),value :: d
+         type(c_ptr), intent(in),value :: b
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: s
+       end function execute_post_processing_wrapper
+    end interface
+    integer, intent(out) :: r
+    real(kind=8), dimension(:), intent(out) :: outputs
+    type(BehaviourData), intent(in) :: d
+    type(Behaviour),     intent(in) :: b
+    character(len=*),    intent(in) :: n
+    type(mgis_status) :: s
+    s = execute_post_processing_wrapper(r, outputs, size(outputs, kind=c_size_t), &
+         d%ptr, b%ptr, convert_fortran_string(n))
+  end function execute_post_processing
+  !
+  function execute_post_processing_material_data_manager(r, outputs, p, m, n) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: ThreadPool, mgis_status
+    implicit none
+    interface
+       function execute_post_processing_material_data_manager_wrapper(r, o, ns, p, m, n) &
+            bind(c,name = 'mgis_bv_execute_post_processing_material_data_manager') &
+            result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_char, c_double, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: r
+         real(kind=c_double), dimension(*), intent(out) :: o
+         integer(kind=c_size_t), intent(in),value :: ns
+         type(c_ptr), intent(in),value :: p
+         type(c_ptr), intent(in),value :: m
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         type(mgis_status) :: s
+       end function execute_post_processing_material_data_manager_wrapper
+    end interface
+    integer, intent(out) :: r
+    real(kind=8), dimension(:), intent(out) :: outputs
+    type(ThreadPool),          intent(in) :: p
+    type(MaterialDataManager), intent(in) :: m
+    character(len=*),          intent(in) :: n
+    type(mgis_status) :: s
+    s = execute_post_processing_material_data_manager_wrapper(r, outputs, &
+         size(outputs, kind=c_size_t), p%ptr, m%ptr, convert_fortran_string(n))
+  end function execute_post_processing_material_data_manager
+  !
+  function execute_post_processing_material_data_manager_part(r, outputs, m, n, ni, ne) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function execute_post_processing_material_data_manager_part_wrapper(r, o, ns, m, n, ni, ne) &
+            bind(c,name = 'mgis_bv_execute_post_processing_material_data_manager_part') &
+            result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_char, c_double, c_size_t
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: r
+         real(kind=c_double), dimension(*), intent(inout) :: o
+         integer(kind = c_size_t), intent(in),value :: ns
+         type(c_ptr), intent(in),value :: m
+         character(len=1,kind=c_char), dimension(*), intent(in) :: n
+         integer(kind = c_size_t), intent(in),value :: ni
+         integer(kind = c_size_t), intent(in),value :: ne
+         type(mgis_status) :: s
+       end function execute_post_processing_material_data_manager_part_wrapper
+    end interface
+    integer, intent(out) :: r
+    real(kind=8), dimension(:), intent(inout) :: outputs
+    type(MaterialDataManager), intent(in) :: m
+    character(len=*),          intent(in) :: n
+    integer :: ni
+    integer :: ne
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: nic
+    integer(kind=c_size_t) :: nec
+    if(.not. convert_to_c_index(nic, ni)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    if(.not. convert_to_c_index(nec, ne)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    nec = nec + 1
+    s = execute_post_processing_material_data_manager_part_wrapper(r, outputs, &
+         size(outputs, kind=c_size_t), m%ptr, convert_fortran_string(n), nic, nec)
+  end function execute_post_processing_material_data_manager_part
 end module  mgis_behaviour

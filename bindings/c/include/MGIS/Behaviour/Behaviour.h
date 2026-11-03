@@ -140,6 +140,7 @@ mgis_bv_finite_strain_behaviour_options_set_tangent_operator(
  * - `DSIG_DF` (or `DCAUCHY_DF`)
  * - `DS_DEGL`
  * - `DPK1_DF`
+ * - `DTAU_DDF`
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_finite_strain_behaviour_options_set_tangent_operator_by_string(
@@ -169,10 +170,8 @@ MGIS_C_EXPORT mgis_status mgis_bv_is_standard_finite_strain_behaviour(
 /*!
  * \brief load a behaviour
  *
- * \note This method can also be used to load a finite strain behaviour.
- * In this case, the default options are used (the stress measure is Cauchy,
- * the tangent operator is the derivative of the Cauchy stress with respect to
- * the deformation gradient).
+ * \note This function fails for a finite strain behaviour: use
+ * `mgis_bv_load_finite_strain_behaviour`.
  *
  * \param[out] ptr: behaviour
  * \param[in] l: library name
@@ -495,17 +494,17 @@ mgis_bv_behaviour_get_material_property_type(mgis_bv_VariableType* const,
                                              const mgis_bv_Behaviour* const,
                                              const mgis_size_type);
 /*!
- * \brief return the number of internal state variables
- * \param[out] c: number of the internal state variables
+ * \brief return the size of an array able to contain all the internal state
+ * variables
+ * \param[out] s: size
  * \param[in] b: behaviour
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_internal_state_variables_size(
     mgis_size_type* const, const mgis_bv_Behaviour* const);
 /*!
- * \brief return the size of internal state variables global array
- * \param[out] c: internal state variables array size
+ * \brief return the number of internal state variables
+ * \param[out] c: number of the internal state variables
  * \param[in] b: behaviour
- * \param[in] i: internal state variable index
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_behaviour_get_number_of_internal_state_variables(
@@ -540,7 +539,8 @@ mgis_bv_behaviour_get_internal_state_variable_type_by_name(
     const mgis_bv_Behaviour* const,
     const char* const);
 /*!
- * \brief return the name of an internal state variable
+ * \brief return the offset of an internal state variable in the array of
+ * the internal state variables
  * \param[out] o: internal state variable offset
  * \param[in]  b: behaviour
  * \param[in]  i: internal state variable index
@@ -550,7 +550,8 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_internal_state_variable_offset(
     const mgis_bv_Behaviour* const,
     const mgis_size_type);
 /*!
- * \brief return the name of an internal state variable
+ * \brief return the offset of an internal state variable in the array of
+ * the internal state variables
  * \param[out] o: internal state variable offset
  * \param[in]  b: behaviour
  * \param[in]  n: internal state variable name
@@ -596,7 +597,8 @@ mgis_bv_behaviour_get_external_state_variable_type_by_name(
     const mgis_bv_Behaviour* const,
     const char* const);
 /*!
- * \brief return the name of an external state variable
+ * \brief return the offset of an external state variable in the array of
+ * the external state variables
  * \param[out] o: external state variable offset
  * \param[in]  b: behaviour
  * \param[in]  i: external state variable index
@@ -606,7 +608,8 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_external_state_variable_offset(
     const mgis_bv_Behaviour* const,
     const mgis_size_type);
 /*!
- * \brief return the name of an external state variable
+ * \brief return the offset of an external state variable in the array of
+ * the external state variables
  * \param[out] o: external state variable offset
  * \param[in]  b: behaviour
  * \param[in]  n: external state variable name
@@ -803,6 +806,149 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_computes_stored_energy(
  */
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_computes_dissipated_energy(
     int* const, const mgis_bv_Behaviour* const);
+/*!
+ * \brief return the number of initialize functions
+ * \param[out] c: number of the initialize functions
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_number_of_initialize_functions(
+    mgis_size_type* const, const mgis_bv_Behaviour* const);
+/*!
+ * \brief return the name of an initialize function
+ * \param[out] n: initialize function name
+ * \param[in] b: behaviour
+ * \param[in] i: initialize function index
+ * \note the initialize functions are sorted by name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_initialize_function_name(
+    const char**, const mgis_bv_Behaviour* const, const mgis_size_type);
+/*!
+ * \brief return the size of an array able to contain the inputs of an
+ * initialize function
+ * \param[out] s: size
+ * \param[in] b: behaviour
+ * \param[in] f: initialize function name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_initialize_function_inputs_size(
+    mgis_size_type* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return the number of inputs of an initialize function
+ * \param[out] c: number of the inputs
+ * \param[in] b: behaviour
+ * \param[in] f: initialize function name
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_number_of_initialize_function_inputs(
+    mgis_size_type* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return the name of an input of an initialize function
+ * \param[out] n: input name
+ * \param[in] b: behaviour
+ * \param[in] f: initialize function name
+ * \param[in] i: input index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_initialize_function_input_name(
+    const char**,
+    const mgis_bv_Behaviour* const,
+    const char* const,
+    const mgis_size_type);
+/*!
+ * \brief return the type of an input of an initialize function
+ * \param[out] t: input type
+ * \param[in] b: behaviour
+ * \param[in] f: initialize function name
+ * \param[in] i: input index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_initialize_function_input_type(
+    mgis_bv_VariableType* const,
+    const mgis_bv_Behaviour* const,
+    const char* const,
+    const mgis_size_type);
+/*!
+ * \brief return the offset of an input of an initialize function in the
+ * array of the inputs
+ * \param[out] o: input offset
+ * \param[in] b: behaviour
+ * \param[in] f: initialize function name
+ * \param[in] i: input index
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_initialize_function_input_offset(
+    mgis_size_type* const,
+    const mgis_bv_Behaviour* const,
+    const char* const,
+    const mgis_size_type);
+/*!
+ * \brief return the number of post-processings
+ * \param[out] c: number of the post-processings
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_number_of_post_processings(
+    mgis_size_type* const, const mgis_bv_Behaviour* const);
+/*!
+ * \brief return the name of a post-processing
+ * \param[out] n: post-processing name
+ * \param[in] b: behaviour
+ * \param[in] i: post-processing index
+ * \note the post-processings are sorted by name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_post_processing_name(
+    const char**, const mgis_bv_Behaviour* const, const mgis_size_type);
+/*!
+ * \brief return the size of an array able to contain the outputs of a
+ * post-processing
+ * \param[out] s: size
+ * \param[in] b: behaviour
+ * \param[in] p: post-processing name
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_post_processing_outputs_size(
+    mgis_size_type* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return the number of outputs of a post-processing
+ * \param[out] c: number of the outputs
+ * \param[in] b: behaviour
+ * \param[in] p: post-processing name
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_number_of_post_processing_outputs(
+    mgis_size_type* const, const mgis_bv_Behaviour* const, const char* const);
+/*!
+ * \brief return the name of an output of a post-processing
+ * \param[out] n: output name
+ * \param[in] b: behaviour
+ * \param[in] p: post-processing name
+ * \param[in] i: output index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_post_processing_output_name(
+    const char**,
+    const mgis_bv_Behaviour* const,
+    const char* const,
+    const mgis_size_type);
+/*!
+ * \brief return the type of an output of a post-processing
+ * \param[out] t: output type
+ * \param[in] b: behaviour
+ * \param[in] p: post-processing name
+ * \param[in] i: output index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_post_processing_output_type(
+    mgis_bv_VariableType* const,
+    const mgis_bv_Behaviour* const,
+    const char* const,
+    const mgis_size_type);
+/*!
+ * \brief return the offset of an output of a post-processing in the array of
+ * the outputs
+ * \param[out] o: output offset
+ * \param[in] b: behaviour
+ * \param[in] p: post-processing name
+ * \param[in] i: output index
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_post_processing_output_offset(
+    mgis_size_type* const,
+    const mgis_bv_Behaviour* const,
+    const char* const,
+    const mgis_size_type);
 /*!
  * \brief free the memory associated with the given behaviour.
  * \param[in,out] b: behaviour

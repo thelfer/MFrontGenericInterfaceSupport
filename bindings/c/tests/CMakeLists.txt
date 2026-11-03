@@ -91,6 +91,16 @@ else(MSVC)
   target_link_libraries(IntegrateTest5-c
     PRIVATE MFrontGenericInterface-c MFrontGenericInterface m)
 endif(MSVC)
+add_executable(InitializeFunctionAndPostProcessingTest-c
+  EXCLUDE_FROM_ALL
+  InitializeFunctionAndPostProcessingTest-c.c)
+if(MSVC)
+  target_link_libraries(InitializeFunctionAndPostProcessingTest-c
+    PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
+else(MSVC)
+  target_link_libraries(InitializeFunctionAndPostProcessingTest-c
+    PRIVATE MFrontGenericInterface-c MFrontGenericInterface m)
+endif(MSVC)
 
 add_test(NAME MFrontGenericBehaviourInterfaceTest-c
  COMMAND MFrontGenericBehaviourInterfaceTest-c
@@ -98,11 +108,7 @@ add_test(NAME MFrontGenericBehaviourInterfaceTest-c
 add_dependencies(build-tests MFrontGenericBehaviourInterfaceTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST MFrontGenericBehaviourInterfaceTest-c
-    PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST MFrontGenericBehaviourInterfaceTest-c
-    PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME MFrontGenericBehaviourInterfaceTest2-c
@@ -111,11 +117,7 @@ add_test(NAME MFrontGenericBehaviourInterfaceTest2-c
 add_dependencies(build-tests MFrontGenericBehaviourInterfaceTest2-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST MFrontGenericBehaviourInterfaceTest2-c
-    PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST MFrontGenericBehaviourInterfaceTest2-c
-    PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME MFrontGenericBehaviourInterfaceTest3-c
@@ -124,11 +126,7 @@ add_test(NAME MFrontGenericBehaviourInterfaceTest3-c
 add_dependencies(build-tests MFrontGenericBehaviourInterfaceTest3-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST MFrontGenericBehaviourInterfaceTest3-c
-    PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST MFrontGenericBehaviourInterfaceTest3-c
-    PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME BehaviourDataTest-c
@@ -137,11 +135,7 @@ add_test(NAME BehaviourDataTest-c
 add_dependencies(build-tests BehaviourDataTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST BehaviourDataTest-c
-    PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST BehaviourDataTest-c
-    PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME StateTest-c
@@ -150,11 +144,7 @@ add_test(NAME StateTest-c
 add_dependencies(build-tests StateTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST StateTest-c
-    PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST StateTest-c
-    PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME StateTest2-c
@@ -163,11 +153,7 @@ add_test(NAME StateTest2-c
 add_dependencies(build-tests StateTest2-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST StateTest2-c
-    PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST StateTest2-c
-    PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME BoundsCheckTest-c
@@ -176,11 +162,7 @@ add_test(NAME BoundsCheckTest-c
 add_dependencies(build-tests BoundsCheckTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST BoundsCheckTest-c
-    PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST BoundsCheckTest-c
-    PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME ParameterTest-c
@@ -189,11 +171,7 @@ add_test(NAME ParameterTest-c
 add_dependencies(build-tests ParameterTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ParameterTest-c
-    PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ParameterTest-c
-    PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME ExternalStateVariableTest-c
@@ -202,11 +180,7 @@ add_test(NAME ExternalStateVariableTest-c
 add_dependencies(build-tests ExternalStateVariableTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST ExternalStateVariableTest-c
-    PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST ExternalStateVariableTest-c
-    PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME IntegrateTest-c
@@ -215,11 +189,7 @@ add_test(NAME IntegrateTest-c
 add_dependencies(build-tests IntegrateTest-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest-c
-    PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest-c
-    PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME IntegrateTest2-c
@@ -228,11 +198,7 @@ add_test(NAME IntegrateTest2-c
 add_dependencies(build-tests IntegrateTest2-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest2-c
-    PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest2-c
-    PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME IntegrateTest3-c
@@ -241,11 +207,7 @@ add_test(NAME IntegrateTest3-c
 add_dependencies(build-tests IntegrateTest3-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest3-c
-    PROPERTY DEPENDS BehaviourTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest3-c
-    PROPERTY DEPENDS BehaviourTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME IntegrateTest4-c
@@ -254,11 +216,7 @@ add_test(NAME IntegrateTest4-c
 add_dependencies(build-tests IntegrateTest4-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest4-c
-    PROPERTY DEPENDS ModelTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest4-c
-    PROPERTY DEPENDS ModelTest)
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 add_test(NAME IntegrateTest5-c
@@ -267,9 +225,14 @@ add_test(NAME IntegrateTest5-c
 add_dependencies(build-tests IntegrateTest5-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest5-c
-    PROPERTY DEPENDS ModelTest
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
-else((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set_property(TEST IntegrateTest5-c
-    PROPERTY DEPENDS ModelTest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME InitializeFunctionAndPostProcessingTest-c
+ COMMAND InitializeFunctionAndPostProcessingTest-c
+ "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(build-tests InitializeFunctionAndPostProcessingTest-c)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST InitializeFunctionAndPostProcessingTest-c
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
