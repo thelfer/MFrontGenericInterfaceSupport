@@ -228,10 +228,36 @@ namespace mgis::function {
 
   }  // end of   namespace internals
 
+  /*!
+   * \return a pointer to the values held by an object with a `data` method,
+   * such as `std::span`, `std::array` or the tensorial objects of `TFEL/Math`
+   * \param[in] r: object
+   *
+   * \note `getDataPointer` is used by the views and modifiers to map the
+   * results of functions and evaluators. It can be overloaded to support other
+   * result types.
+   */
+  template <typename ResultType>
+  [[nodiscard]] constexpr auto getDataPointer(ResultType&& r) requires(
+      requires(ResultType & rr) {
+        { rr.data() } -> internals::is_pointer_to_real;
+      }) {
+    return r.data();
+  }
+  /*!
+   * \return a pointer to a scalar value
+   * \param[in] r: scalar value
+   */
+  template <typename ScalarType>
+  [[nodiscard]] constexpr auto getDataPointer(ScalarType&& r) noexcept
+      requires(std::same_as<std::remove_cvref_t<ScalarType>, real>) {
+    return &r;
+  }
+
   template <EvaluatorConcept EvaluatorType>
   inline constexpr auto isEvaluatorResultTypeMappable =
       requires(evaluator_result<EvaluatorType> rf) {
-    { rf.data() } -> internals::is_pointer_to_real;
+    { getDataPointer(rf) } -> internals::is_pointer_to_real;
   };
 
   namespace internals {

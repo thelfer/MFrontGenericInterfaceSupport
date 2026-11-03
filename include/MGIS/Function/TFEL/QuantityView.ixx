@@ -81,7 +81,7 @@ namespace mgis::function {
           *(this->function.data(unsafe, i)));
     } else {
       return ::tfel::math::const_qt_ref<UnitType, real>(
-          *(this->function(i).data()));
+          *(getDataPointer(this->function(i))));
     }
   }
 
@@ -101,7 +101,7 @@ namespace mgis::function {
           *(this->function.data(unsafe, wk, i)));
     } else {
       return ::tfel::math::const_qt_ref<UnitType, real>(
-          *(this->function(wk, i).data()));
+          *(getDataPointer(this->function(wk, i))));
     }
   }
 
@@ -121,7 +121,7 @@ namespace mgis::function {
           *(this->function.data(unsafe, e, i)));
     } else {
       return ::tfel::math::const_qt_ref<UnitType, real>(
-          *(this->function(e, i).data()));
+          *(getDataPointer(this->function(e, i))));
     }
   }
 
@@ -143,7 +143,7 @@ namespace mgis::function {
           *(this->function.data(unsafe, wk, e, i)));
     } else {
       return ::tfel::math::const_qt_ref<UnitType, real>(
-          *(this->function(wk, e, i).data()));
+          *(getDataPointer(this->function(wk, e, i))));
     }
   }
 
@@ -161,7 +161,8 @@ namespace mgis::function {
       return ::tfel::math::qt_ref<UnitType, real>(
           *(this->function.data(unsafe, i)));
     } else {
-      return ::tfel::math::qt_ref<UnitType, real>(*(this->function(i).data()));
+      return ::tfel::math::qt_ref<UnitType, real>(
+          *(getDataPointer(this->function(i))));
     }
   }
 
@@ -182,7 +183,7 @@ namespace mgis::function {
           *(this->function.data(unsafe, wk, i)));
     } else {
       return ::tfel::math::qt_ref<UnitType, real>(
-          *(this->function(wk, i).data()));
+          *(getDataPointer(this->function(wk, i))));
     }
   }
 
@@ -203,7 +204,7 @@ namespace mgis::function {
           *(this->function.data(unsafe, e, i)));
     } else {
       return ::tfel::math::qt_ref<UnitType, real>(
-          *(this->function(e, i).data()));
+          *(getDataPointer(this->function(e, i))));
     }
   }
 
@@ -225,7 +226,7 @@ namespace mgis::function {
           *(this->function.data(unsafe, wk, e, i)));
     } else {
       return ::tfel::math::qt_ref<UnitType, real>(
-          *(this->function(wk, e, i).data()));
+          *(getDataPointer(this->function(wk, e, i))));
     }
   }
 

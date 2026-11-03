@@ -52,9 +52,10 @@ namespace mgis::function {
       constexpr auto TensorModifier<TensorType, EvaluatorType>::apply(
           const evaluator_result<EvaluatorType>& values) const {
     if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
-      return tfel::math::map<const TensorType>(values.data());
+      return tfel::math::map<const TensorType>(getDataPointer(values));
     } else {
-      return TensorType(tfel::math::map<const TensorType>(values.data()));
+      return TensorType(
+          tfel::math::map<const TensorType>(getDataPointer(values)));
     }
   }  // end of apply
 

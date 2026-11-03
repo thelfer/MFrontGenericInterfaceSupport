@@ -287,6 +287,17 @@ details).
 
 ## Views
 
+The views described in this section, and the modifiers of the same name
+applied to evaluators, map the values returned by the underlying
+function or evaluator. The address of these values is obtained by the
+free function `getDataPointer`, which is provided for objects having a
+`data` method (such as `std::span`, `std::array` or the tensorial
+objects of `TFEL/Math`) and for scalar values (`real`, `real&` or
+`const real&`). Hence, a function returning a scalar, such as
+`Function<Space, 1>`, or a scalar evaluator, such as the von Mises
+stress, can be viewed as a quantity or as a scalar. `getDataPointer`
+can be overloaded to support other result types.
+
 ### Fixed-size Array functions
 
 The `view` function has a template overload taking the a size as
