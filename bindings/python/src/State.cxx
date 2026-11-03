@@ -105,9 +105,9 @@ void declareState(pybind11::module_& m) {
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::State;
   pybind11::class_<State>(m, "State")
-      .def_readonly("mass_density", &State::mass_density)
-      .def_readonly("stored_energy", &State::stored_energy)
-      .def_readonly("dissipated_energy", &State::dissipated_energy)
+      .def_readwrite("mass_density", &State::mass_density)
+      .def_readwrite("stored_energy", &State::stored_energy)
+      .def_readwrite("dissipated_energy", &State::dissipated_energy)
       .def_property_readonly("gradients", &State_getGradients)
       .def_property_readonly("thermodynamic_forces",
                              &State_getThermodynamicForces)
