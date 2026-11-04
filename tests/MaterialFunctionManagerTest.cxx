@@ -57,17 +57,18 @@ struct MaterialFunctionManagerTest final : public tfel::tests::TestCase {
     auto ctx = Context{};
     /* gradients */
     auto oeto = getGradient(ctx, m, "Strain");
-    auto oeto2 = getGradient(ctx, m, "Strain2");
     auto osig = getThermodynamicForce(ctx, m, "Stress");
-    auto osig2 = getThermodynamicForce(ctx, m, "Stress2");
     TFEL_TESTS_ASSERT(isValid(oeto));
     TFEL_TESTS_CHECK_EQUAL(&(*(oeto->getSpace())), qspace.get());
     TFEL_TESTS_CHECK_EQUAL(oeto->getNumberOfComponents(), 6);
-    TFEL_TESTS_ASSERT(isInvalid(oeto2));
     TFEL_TESTS_ASSERT(isValid(osig));
     TFEL_TESTS_CHECK_EQUAL(&(*(osig->getSpace())), qspace.get());
     TFEL_TESTS_CHECK_EQUAL(osig->getNumberOfComponents(), 6);
-    TFEL_TESTS_ASSERT(isInvalid(osig2));
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
+    // inexistant gradient and thermodynamic force
+    TFEL_TESTS_ASSERT(isInvalid(getGradient(ctx, m, "Strain2")));
+    TFEL_TESTS_ASSERT(isInvalid(getThermodynamicForce(ctx, m, "Stress2")));
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     /* internal state variables */
     auto oeel = getInternalStateVariable(ctx, m, "ElasticStrain");
     TFEL_TESTS_ASSERT(isValid(oeel));
@@ -85,9 +86,11 @@ struct MaterialFunctionManagerTest final : public tfel::tests::TestCase {
         TFEL_TESTS_ASSERT(std::abs(isvs[i * 7 + 6] - value(i)) < eps);
       }
     }
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     // inexistant internal state variabe variable
     auto op2 = getInternalStateVariable(ctx, m, "EquivalentPlasticStrain");
     TFEL_TESTS_ASSERT(isInvalid(op2));
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     // access with known size
     auto op3 =
         getInternalStateVariable<1>(ctx, m, "EquivalentViscoplasticStrain");
@@ -105,10 +108,12 @@ struct MaterialFunctionManagerTest final : public tfel::tests::TestCase {
         TFEL_TESTS_ASSERT(std::abs(isvs[i * 7 + 6] - value(i)) < eps);
       }
     }
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     // invalid size
     auto op4 =
         getInternalStateVariable<4>(ctx, m, "EquivalentViscoplasticStrain");
     TFEL_TESTS_ASSERT(isInvalid(op4));
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
   }
 };
 
