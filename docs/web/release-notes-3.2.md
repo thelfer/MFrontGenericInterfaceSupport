@@ -114,12 +114,6 @@ This version is meant to be used with `TFEL` Version 5.2.
   and writes past the storage of each integration point. Those
   behaviours must be generated again with `TFEL` Version 5.2. The
   identifiers of all other variables are unchanged.
-- The `enable-exceptions` option now only affects contract violations,
-  which are still reported by exceptions. Errors reported through a
-  `Context` return an invalid result and register an error message, as
-  in the default build: the exception previously thrown from `noexcept`
-  functions terminated the program. See
-  <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/283>.
 
 ## New definitions of the field holders of the `MaterialStateManager` class
 

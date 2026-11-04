@@ -69,9 +69,8 @@ Options
 - `enable-mgis-function-precompiled-operations`: enable or disable compilation of
    some operations on basic functions. This options is only meaningful if `MGIS/Function`
    is enabled and if `TFEL` libraries are available.
-- `enable-exceptions`: use exceptions to report contract violations.
-   By default, contract violation leads to abort the program. This
-   option does not change how errors are reported through a `Context`.
+- `enable-exceptions`: use exceptions to report contract violation and error reporting.
+   By default, contract violation leads to abort the program.
 - `enable-parallel-stl-algorithms`: enable the overloads of the
   `MGIS/Function` algorithms taking an execution policy of the standard
   library (default=ON). With `libstdc++`, this requires `TBB`: if `TBB`

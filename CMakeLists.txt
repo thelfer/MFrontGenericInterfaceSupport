@@ -45,7 +45,7 @@ option(enable-mgis-function-precompiled-operations
        "enable compilations of some tensorial operations of basic functions. \
         This requires mgis-functions to be handled **and** TFEL support" ON)
 # enable exceptions usage
-option(enable-exceptions "use exceptions to report contract violations" OFF)
+option(enable-exceptions "use exceptions to report contract violation and error reporting" OFF)
 
 # support for STL parallel algorithms
 option(enable-parallel-stl-algorithms "enable STL parallel algorithms" ON)
