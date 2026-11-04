@@ -120,7 +120,7 @@ int main(const int argc, const char* const* argv) {
     if (fabs(xe[i] - x_ref) > eps) {
       fprintf(stderr,
               "IntegrateTest: invalid value for x "
-              "at the first integration point"
+              "at the last integration point"
               "(expected '%g', computed '%g')\n",
               x_ref, xe[i]);
       return EXIT_FAILURE;

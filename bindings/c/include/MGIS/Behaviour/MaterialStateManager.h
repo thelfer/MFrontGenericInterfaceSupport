@@ -210,7 +210,7 @@ mgis_bv_material_state_manager_set_uniform_material_property2(
     const mgis_bv_MaterialStateManagerStorageMode,
     const mgis_bv_MaterialStateManagerUpdatePolicy);
 /*!
- * \brief set the value of an uniform material property
+ * \brief set the values of a non-uniform material property
  * \param[in] s: state manager
  * \param[in] n: name of the material property
  * \param[in] v: values of the material property
@@ -223,7 +223,7 @@ mgis_bv_material_state_manager_set_non_uniform_material_property(
     mgis_real* const,
     const mgis_bv_MaterialStateManagerStorageMode);
 /*!
- * \brief set the value of an uniform material property
+ * \brief set the values of a non-uniform material property
  * \param[in] s: state manager
  * \param[in] n: name of the material property
  * \param[in] v: values of the material property
@@ -266,7 +266,7 @@ mgis_bv_material_state_manager_set_uniform_scalar_mass_density2(
     const mgis_real,
     const mgis_bv_MaterialStateManagerUpdatePolicy);
 /*!
- * \brief set the value of an uniform mass density
+ * \brief set the values of a non-uniform mass density
  * \param[in] s: state manager
  * \param[in] v: values of the mass density
  * \param[in] sm: storage mode
@@ -277,7 +277,7 @@ mgis_bv_material_state_manager_set_non_uniform_mass_density(
     mgis_real* const,
     const mgis_bv_MaterialStateManagerStorageMode);
 /*!
- * \brief set the value of an uniform mass density
+ * \brief set the values of a non-uniform mass density
  * \param[in] s: state manager
  * \param[in] v: values of the mass density
  * \param[in] sm: storage mode

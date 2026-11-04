@@ -201,7 +201,13 @@ namespace mgis::function {
               std::span<real> values)
       : PreconditionsChecker<CoalescedMemoryAccessFunctionViewBase>(
             pcheck, space, values),
-        function_components(splitValues(space, values)) {
+        function_components(splitValues(space, [&values] {
+          if constexpr (is_mutable) {
+            return values;
+          } else {
+            return std::span<const real>{values};
+          }
+        }())) {
   }  // end of CoalescedMemoryAccessFunctionViewBase
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>

@@ -552,6 +552,8 @@ for i, lamb_imposed in enumerate(lambda_list):
 
         niter += 1
 
+    assert nres <= max(atol, rtol*nres0), "Newton method did not converge within maximum number of iterations."
+
     Sxx[i] = data.s1.thermodynamic_forces[0, 0]
     
     mgis_bv.update(data)

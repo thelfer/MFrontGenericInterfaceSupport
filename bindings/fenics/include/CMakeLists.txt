@@ -1,0 +1,7 @@
+mgis_header(MGIS/FEniCS Config-FEniCS.hxx)
+mgis_header(MGIS/FEniCS Utils.hxx)
+mgis_header(MGIS/FEniCS NonLinearMaterial.hxx)
+mgis_header(MGIS/FEniCS NonLinearMaterialFunctionBase.hxx)
+mgis_header(MGIS/FEniCS NonLinearMaterialThermodynamicForcesFunction.hxx)
+mgis_header(MGIS/FEniCS NonLinearMaterialTangentOperatorFunction.hxx)
+mgis_header(MGIS/FEniCS NonLinearMechanicalProblem.hxx)

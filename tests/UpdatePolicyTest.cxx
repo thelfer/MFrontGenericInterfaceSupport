@@ -147,5 +147,44 @@ int main(const int argc, const char* const* argv) {
     std::cerr << e.what() << '\n';
     return EXIT_FAILURE;
   }
+  try {
+    // a temperature bound to an external storage keeps its binding when
+    // updated or reverted from a uniform value
+    const auto b = load(argv[1], "Norton", Hypothesis::TRIDIMENSIONAL);
+    auto check = [](const MaterialStateManager& s,
+                    const std::array<real, 2>& values, const real v) {
+      const auto& T = std::get<MaterialStateManager::MutableFieldHolder>(
+          s.external_state_variables.at("Temperature"));
+      return (std::holds_alternative<std::span<real>>(T.value)) &&
+             (std::get<std::span<real>>(T.value).data() == values.data()) &&
+             (std::abs(values[0] - v) < 1.e-12) &&
+             (std::abs(values[1] - v) < 1.e-12);
+    };
+    MaterialDataManager m{b, 2};
+    auto T0_values = std::array<real, 2>{T0, T0};
+    setExternalStateVariable(m.s0, "Temperature", T0_values,
+                             MaterialStateManager::EXTERNAL_STORAGE);
+    setExternalStateVariable(m.s1, "Temperature", T1);
+    update(m);
+    if (!check(m.s0, T0_values, T1)) {
+      std::cerr << "UpdatePolicyTest: externally stored temperature "
+                   "not updated\n";
+      return EXIT_FAILURE;
+    }
+    MaterialDataManager m2{b, 2};
+    auto T1_values = std::array<real, 2>{T1, T1};
+    setExternalStateVariable(m2.s0, "Temperature", T0);
+    setExternalStateVariable(m2.s1, "Temperature", T1_values,
+                             MaterialStateManager::EXTERNAL_STORAGE);
+    revert(m2);
+    if (!check(m2.s1, T1_values, T0)) {
+      std::cerr << "UpdatePolicyTest: externally stored temperature "
+                   "not reverted\n";
+      return EXIT_FAILURE;
+    }
+  } catch (std::exception& e) {
+    std::cerr << e.what() << '\n';
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }
