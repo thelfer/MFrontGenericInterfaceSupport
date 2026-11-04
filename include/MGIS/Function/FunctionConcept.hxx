@@ -438,8 +438,8 @@ namespace mgis::function {
 
     template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType,
               size_type N>
-    [[nodiscard]] constexpr bool
-    checkNumberOfComponentsCompatibility() noexcept {
+    [[nodiscard]] constexpr bool checkNumberOfComponentsCompatibility()
+        MGIS_NOEXCEPT {
       constexpr auto Nc =
           number_of_components<std::decay_t<QualifiedFunctionArgumentType>>;
       if constexpr (Nc == dynamic_extent) {

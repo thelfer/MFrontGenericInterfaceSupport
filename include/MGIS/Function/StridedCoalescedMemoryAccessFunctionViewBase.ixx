@@ -108,7 +108,7 @@ namespace mgis::function {
       constexpr const Space& StridedCoalescedMemoryAccessFunctionViewBase<
           Space,
           N,
-          is_mutable>::getSpace() const noexcept {
+          is_mutable>::getSpace() const MGIS_NOEXCEPT {
     return this->space;
   }  // end of getSpace
 

@@ -259,7 +259,7 @@ namespace mgis::function {
    * \param[in] r: scalar value
    */
   template <internals::is_real ScalarType>
-  [[nodiscard]] constexpr auto getDataPointer(ScalarType&& r) noexcept {
+  [[nodiscard]] constexpr auto getDataPointer(ScalarType&& r) MGIS_NOEXCEPT {
     return &r;
   }
 
@@ -303,8 +303,8 @@ namespace mgis::function {
     };
 
     template <EvaluatorConcept EvaluatorType, size_type N>
-    [[nodiscard]] constexpr bool
-    checkEvaluatorNumberOfComponentsCompatibility() noexcept {
+    [[nodiscard]] constexpr bool checkEvaluatorNumberOfComponentsCompatibility()
+        MGIS_NOEXCEPT {
       constexpr auto Nc = number_of_components<EvaluatorType>;
       if constexpr (Nc == dynamic_extent) {
         return true;

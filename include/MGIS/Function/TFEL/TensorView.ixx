@@ -62,7 +62,7 @@ namespace mgis::function {
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr size_type
-  TensorView<FunctionType, TensorType>::getNumberOfComponents() const noexcept {
+  TensorView<FunctionType, TensorType>::getNumberOfComponents() const MGIS_NOEXCEPT {
     return compile_time_size<TensorType>;
   }
 
@@ -228,7 +228,7 @@ namespace mgis::function {
 
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr size_type getNumberOfComponents(
-      const TensorView<FunctionType, TensorType>& v) noexcept {
+      const TensorView<FunctionType, TensorType>& v) MGIS_NOEXCEPT {
     return v.getNumberOfComponents();
   }  // end of getNumberOfComponents
 

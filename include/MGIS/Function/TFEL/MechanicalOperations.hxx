@@ -30,41 +30,41 @@ namespace mgis::function {
       FunctionView<BasicLinearSpace, FunctionDataLayoutDescription{}, false>;
 
   MGIS_EXPORT std::optional<Function<BasicLinearSpace>> computeTrace(
-      Context&, const BasicImmutableFunctionView&) noexcept;
+      Context&, const BasicImmutableFunctionView&) MGIS_NOEXCEPT;
 
   MGIS_EXPORT std::optional<Function<BasicLinearSpace>> computeVonMisesStress(
-      Context&, const BasicImmutableFunctionView&) noexcept;
+      Context&, const BasicImmutableFunctionView&) MGIS_NOEXCEPT;
 
   MGIS_EXPORT std::optional<Function<BasicLinearSpace>>
   computeHydrostraticPressure(Context&,
-                              const BasicImmutableFunctionView&) noexcept;
+                              const BasicImmutableFunctionView&) MGIS_NOEXCEPT;
 
   MGIS_EXPORT std::optional<Function<BasicLinearSpace>> computeEigenValues(
-      Context&, const BasicImmutableFunctionView&) noexcept;
+      Context&, const BasicImmutableFunctionView&) MGIS_NOEXCEPT;
 
   MGIS_EXPORT std::optional<Function<BasicLinearSpace>>
   computeCauchyStressFromFirstPiolaKirchhoffStress(
       Context&,
       const BasicImmutableFunctionView&,
-      const BasicImmutableFunctionView&) noexcept;
+      const BasicImmutableFunctionView&) MGIS_NOEXCEPT;
 
   MGIS_EXPORT std::optional<Function<BasicLinearSpace>>
   computeCauchyStressHydrostraticPressureFromFirstPiolaKirchhoffStress(
       Context&,
       const BasicImmutableFunctionView&,
-      const BasicImmutableFunctionView&) noexcept;
+      const BasicImmutableFunctionView&) MGIS_NOEXCEPT;
 
   MGIS_EXPORT std::optional<Function<BasicLinearSpace>>
   computeCauchyStressVonMisesStressFromFirstPiolaKirchhoffStress(
       Context&,
       const BasicImmutableFunctionView&,
-      const BasicImmutableFunctionView&) noexcept;
+      const BasicImmutableFunctionView&) MGIS_NOEXCEPT;
 
   MGIS_EXPORT std::optional<Function<BasicLinearSpace>>
   computeCauchyStressEigenValuesFromFirstPiolaKirchhoffStress(
       Context&,
       const BasicImmutableFunctionView&,
-      const BasicImmutableFunctionView&) noexcept;
+      const BasicImmutableFunctionView&) MGIS_NOEXCEPT;
 
 }  // namespace mgis::function
 

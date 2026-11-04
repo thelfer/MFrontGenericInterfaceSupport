@@ -36,11 +36,11 @@ namespace mgis {
     ::mgis::abort(msg);
   }  // end of abort
 
-  void ErrorBacktrace::setErrorReportingAsFatal() noexcept {
+  void ErrorBacktrace::setErrorReportingAsFatal() MGIS_NOEXCEPT {
     ::mgis::internal::isErrorReportingFatal() = true;
   }  // end of setIfErrorReportingIsFatal
 
-  void ErrorBacktrace::unsetErrorReportingAsFatal() noexcept {
+  void ErrorBacktrace::unsetErrorReportingAsFatal() MGIS_NOEXCEPT {
     ::mgis::internal::isErrorReportingFatal() = false;
   }  // end of setIfErrorReportingIsFatal
 
@@ -64,7 +64,7 @@ namespace mgis {
   }  // end of registerErrorMessage
 
   InvalidResult ErrorBacktrace::registerErrorMessage(
-      const ErrorReport e, const std::source_location &l) noexcept {
+      const ErrorReport e, const std::source_location& l) MGIS_NOEXCEPT {
     try {
       this->error_messages.push_back(
           {l.file_name(), l.function_name(), l.line(), e});
@@ -90,15 +90,15 @@ namespace mgis {
     return this->registerErrorMessage(ErrorReport{msg});
   }  // end of registerErrorMessage
 
-  InvalidResult ErrorBacktrace::registerErrorMessage(
-      const ErrorReport e) noexcept {
+  InvalidResult ErrorBacktrace::registerErrorMessage(const ErrorReport e)
+      MGIS_NOEXCEPT {
     return this->registerErrorMessageWithoutSourceLocation(e);
   }  // end of registerErrorMessage
 
 #endif
 
   InvalidResult ErrorBacktrace::registerErrorMessageWithoutSourceLocation(
-      const ErrorReport e) noexcept {
+      const ErrorReport e) MGIS_NOEXCEPT {
     try {
       auto em = ErrorMessage{};
       em.e = e;
@@ -109,7 +109,8 @@ namespace mgis {
     return {};
   }  // end of registerErrorMessage
 
-  std::string ErrorBacktrace::getErrorMessage(const ErrorReport &e) noexcept {
+  std::string ErrorBacktrace::getErrorMessage(const ErrorReport& e)
+      MGIS_NOEXCEPT {
     if (std::holds_alternative<const char *>(e)) {
       return std::get<const char *>(e);
     }
@@ -120,7 +121,7 @@ namespace mgis {
     return er.second(er.first);
   }  // end of ErrorBacktrace::getErrorMessage
 
-  std::string ErrorBacktrace::getErrorMessage(const bool b) noexcept {
+  std::string ErrorBacktrace::getErrorMessage(const bool b) MGIS_NOEXCEPT {
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
     auto msg = this->getErrorMessage_();
     if (b) {
@@ -132,7 +133,7 @@ namespace mgis {
 #endif
   }  // end of getErrorMessage
 
-  std::string ErrorBacktrace::getRawErrorMessage(const bool b) noexcept {
+  std::string ErrorBacktrace::getRawErrorMessage(const bool b) MGIS_NOEXCEPT {
     auto msg = this->getRawErrorMessage_();
     if (b) {
       this->clearErrorMessages();
@@ -140,7 +141,7 @@ namespace mgis {
     return msg;
   }  // end of getRawErrorMessage
 
-  std::string ErrorBacktrace::getErrorMessage_() const noexcept {
+  std::string ErrorBacktrace::getErrorMessage_() const MGIS_NOEXCEPT {
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
     auto msg = std::string{};
     auto prefix = std::string{};
@@ -178,7 +179,7 @@ namespace mgis {
 #endif
   }  // end of getErrorMessage_
 
-  std::string ErrorBacktrace::getRawErrorMessage_() const noexcept {
+  std::string ErrorBacktrace::getRawErrorMessage_() const MGIS_NOEXCEPT {
     auto msg = std::string{};
     auto prefix = std::string{};
     try {
@@ -202,11 +203,11 @@ namespace mgis {
     return msg;
   }  // end of getRawErrorMessage_
 
-  bool ErrorBacktrace::empty() const noexcept {
+  bool ErrorBacktrace::empty() const MGIS_NOEXCEPT {
     return this->error_messages.empty();
   }  // end of empty
 
-  void ErrorBacktrace::clearErrorMessages() noexcept {
+  void ErrorBacktrace::clearErrorMessages() MGIS_NOEXCEPT {
     return this->error_messages.clear();
   }  // end of clearErrorMessages
 
@@ -231,7 +232,7 @@ namespace mgis {
 
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
   InvalidResult registerExceptionInErrorBacktrace(
-      ErrorBacktrace &e, const std::source_location &l) noexcept {
+      ErrorBacktrace& e, const std::source_location& l) MGIS_NOEXCEPT {
     try {
       throw;
     } catch (std::exception &exception) {
@@ -242,13 +243,14 @@ namespace mgis {
     return {};
   }
 #else
-  InvalidResult registerExceptionInErrorBacktrace(ErrorBacktrace &e) noexcept {
+  InvalidResult registerExceptionInErrorBacktrace(ErrorBacktrace& e)
+      MGIS_NOEXCEPT {
     return registerExceptionInErrorBacktraceWithoutSourceLocation(e);
   }
 #endif
 
   InvalidResult registerExceptionInErrorBacktraceWithoutSourceLocation(
-      ErrorBacktrace &e) noexcept {
+      ErrorBacktrace& e) MGIS_NOEXCEPT {
     try {
       throw;
     } catch (std::exception &exception) {

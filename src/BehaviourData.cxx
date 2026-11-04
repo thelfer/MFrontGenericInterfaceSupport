@@ -29,7 +29,7 @@ namespace mgis::behaviour {
    * \param[in] src: copied object
    */
   static void setErrorMessageBuffer(BehaviourData& d,
-                                    const BehaviourData& src) noexcept {
+                                    const BehaviourData& src) MGIS_NOEXCEPT {
     if (src.error_message == src.error_message_buffer.data()) {
       d.error_message = d.error_message_buffer.data();
     }

@@ -24,14 +24,15 @@
 namespace mgis::behaviour {
 
   MaterialStateManager::MutableFieldHolder&
-  MaterialStateManager::MutableFieldHolder::operator=(
-      const mgis::real v) noexcept {
+  MaterialStateManager::MutableFieldHolder::operator=(const mgis::real v)
+      MGIS_NOEXCEPT {
     this->value = v;
     return *this;
   }  // end of value
 
   MaterialStateManager::FieldHolder&
-  MaterialStateManager::FieldHolder::operator=(const mgis::real v) noexcept {
+  MaterialStateManager::FieldHolder::operator=(const mgis::real v)
+      MGIS_NOEXCEPT {
     this->operator=(MutableFieldHolder{.value = v});
     return *this;
   }  // end of value
@@ -148,7 +149,7 @@ namespace mgis::behaviour {
 
   [[nodiscard]] static MaterialStateManager::FieldHolder& getFieldHolder(
       std::map<std::string, MaterialStateManager::FieldHolder, std::less<>>& m,
-      std::string_view n) noexcept {
+      std::string_view n) MGIS_NOEXCEPT {
     return m[std::string{n}];
   }  // end of getFieldHolder
 
@@ -174,12 +175,12 @@ namespace mgis::behaviour {
     setMaterialProperty(ctx, m, n, v, p) | or_raise;
   }  // end of setMaterialProperty
 
-  bool setMaterialProperty(
-      Context& ctx,
-      MaterialStateManager& m,
-      std::string_view n,
-      const real v,
-      const MaterialStateManager::UpdatePolicy p) noexcept {
+  bool setMaterialProperty(Context& ctx,
+                           MaterialStateManager& m,
+                           std::string_view n,
+                           const real v,
+                           const MaterialStateManager::UpdatePolicy p)
+      MGIS_NOEXCEPT {
     const auto omp = getVariable(ctx, m.b.mps, n);
     if (isInvalid(omp)) {
       return false;
@@ -207,13 +208,13 @@ namespace mgis::behaviour {
     setMaterialProperty(ctx, m, n, v, s, p) | or_raise;
   }  // end of setMaterialProperty
 
-  bool setMaterialProperty(
-      Context& ctx,
-      MaterialStateManager& m,
-      std::string_view n,
-      std::span<real> v,
-      const MaterialStateManager::StorageMode s,
-      const MaterialStateManager::UpdatePolicy p) noexcept {
+  bool setMaterialProperty(Context& ctx,
+                           MaterialStateManager& m,
+                           std::string_view n,
+                           std::span<real> v,
+                           const MaterialStateManager::StorageMode s,
+                           const MaterialStateManager::UpdatePolicy p)
+      MGIS_NOEXCEPT {
     const auto omp = getVariable(ctx, m.b.mps, n);
     if (isInvalid(omp)) {
       return false;
@@ -238,13 +239,13 @@ namespace mgis::behaviour {
     return true;
   }  // end of setMaterialProperty
 
-  bool setMaterialProperty(
-      Context& ctx,
-      MaterialStateManager& m,
-      std::string_view n,
-      std::span<const real> v,
-      const MaterialStateManager::StorageMode s,
-      const MaterialStateManager::UpdatePolicy p) noexcept {
+  bool setMaterialProperty(Context& ctx,
+                           MaterialStateManager& m,
+                           std::string_view n,
+                           std::span<const real> v,
+                           const MaterialStateManager::StorageMode s,
+                           const MaterialStateManager::UpdatePolicy p)
+      MGIS_NOEXCEPT {
     const auto omp = getVariable(ctx, m.b.mps, n);
     if (isInvalid(omp)) {
       return false;
@@ -285,7 +286,7 @@ namespace mgis::behaviour {
 
   bool unsetMaterialProperty(Context& ctx,
                              MaterialStateManager& m,
-                             std::string_view n) noexcept {
+                             std::string_view n) MGIS_NOEXCEPT {
     const auto omp = getVariable(ctx, m.b.mps, n);
     if (isInvalid(omp)) {
       return false;
@@ -312,7 +313,8 @@ namespace mgis::behaviour {
 
   std::optional<bool> isMaterialPropertyUniform(Context& ctx,
                                                 const MaterialStateManager& m,
-                                                std::string_view n) noexcept {
+                                                std::string_view n)
+      MGIS_NOEXCEPT {
     using MutableFieldHolder = MaterialStateManager::MutableFieldHolder;
     const auto p = getFieldHolderIterator(m.material_properties, n);
     if (p == m.material_properties.end()) {
@@ -350,7 +352,8 @@ namespace mgis::behaviour {
 
   void setMassDensity(MaterialStateManager& m,
                       const real v,
-                      const MaterialStateManager::UpdatePolicy p) noexcept {
+                      const MaterialStateManager::UpdatePolicy p)
+      MGIS_NOEXCEPT {
     m.mass_density = MaterialStateManager::MutableFieldHolder{
         .value = v, .shall_be_updated = (p == MaterialStateManager::UPDATE)};
   }  // end of setMassDensity
@@ -372,7 +375,7 @@ namespace mgis::behaviour {
     }
   }  // end of setMassDensity
 
-  bool isMassDensityDefined(const MaterialStateManager& m) noexcept {
+  bool isMassDensityDefined(const MaterialStateManager& m) MGIS_NOEXCEPT {
     return m.mass_density.has_value();
   }  // end of isMassDensityDefined
 
@@ -382,7 +385,7 @@ namespace mgis::behaviour {
   }  // end of isMassDensityUniform
 
   std::optional<bool> isMassDensityUniform(
-      Context& ctx, const MaterialStateManager& m) noexcept {
+      Context& ctx, const MaterialStateManager& m) MGIS_NOEXCEPT {
     if (!isMassDensityDefined(m)) {
       return ctx.registerErrorMessage("the mass density is undefined");
     }
@@ -408,12 +411,12 @@ namespace mgis::behaviour {
     setExternalStateVariable(ctx, m, n, v, s, p) | or_raise;
   }  // end of setExternalStateVariable
 
-  bool setExternalStateVariable(
-      Context& ctx,
-      MaterialStateManager& m,
-      std::string_view n,
-      const real v,
-      const MaterialStateManager::UpdatePolicy p) noexcept {
+  bool setExternalStateVariable(Context& ctx,
+                                MaterialStateManager& m,
+                                std::string_view n,
+                                const real v,
+                                const MaterialStateManager::UpdatePolicy p)
+      MGIS_NOEXCEPT {
     const auto oesv = getVariable(ctx, m.b.esvs, n);
     if (isInvalid(oesv)) {
       return false;
@@ -430,13 +433,13 @@ namespace mgis::behaviour {
     return true;
   }  // end of setExternalStateVariable
 
-  bool setExternalStateVariable(
-      Context& ctx,
-      MaterialStateManager& m,
-      std::string_view n,
-      std::span<real> v,
-      const MaterialStateManager::StorageMode s,
-      const MaterialStateManager::UpdatePolicy p) noexcept {
+  bool setExternalStateVariable(Context& ctx,
+                                MaterialStateManager& m,
+                                std::string_view n,
+                                std::span<real> v,
+                                const MaterialStateManager::StorageMode s,
+                                const MaterialStateManager::UpdatePolicy p)
+      MGIS_NOEXCEPT {
     const auto oesv = getVariable(ctx, m.b.esvs, n);
     if (isInvalid(oesv)) {
       return false;
@@ -460,13 +463,13 @@ namespace mgis::behaviour {
     return true;
   }  // end of setExternalStateVariable
 
-  bool setExternalStateVariable(
-      Context& ctx,
-      MaterialStateManager& m,
-      std::string_view n,
-      std::span<const real> v,
-      const MaterialStateManager::StorageMode s,
-      const MaterialStateManager::UpdatePolicy p) noexcept {
+  bool setExternalStateVariable(Context& ctx,
+                                MaterialStateManager& m,
+                                std::string_view n,
+                                std::span<const real> v,
+                                const MaterialStateManager::StorageMode s,
+                                const MaterialStateManager::UpdatePolicy p)
+      MGIS_NOEXCEPT {
     const auto oesv = getVariable(ctx, m.b.esvs, n);
     if (isInvalid(oesv)) {
       return false;
@@ -505,7 +508,7 @@ namespace mgis::behaviour {
 
   bool unsetExternalStateVariable(Context& ctx,
                                   MaterialStateManager& m,
-                                  std::string_view n) noexcept {
+                                  std::string_view n) MGIS_NOEXCEPT {
     const auto oesv = getVariable(ctx, m.b.esvs, n);
     if (isInvalid(oesv)) {
       return false;
@@ -533,7 +536,7 @@ namespace mgis::behaviour {
   std::optional<bool> isExternalStateVariableUniform(
       Context& ctx,
       const MaterialStateManager& m,
-      std::string_view n) noexcept {
+      std::string_view n) MGIS_NOEXCEPT {
     using MutableFieldHolder = MaterialStateManager::MutableFieldHolder;
     const auto p = getFieldHolderIterator(m.external_state_variables, n);
     if (p == m.external_state_variables.end()) {
@@ -573,7 +576,7 @@ namespace mgis::behaviour {
       Context& ctx,
       MaterialStateManager& o,
       MaterialStateManager::MutableFieldHolder& dest,
-      std::span<const real> values) noexcept {
+      std::span<const real> values) MGIS_NOEXCEPT {
     if (!dest.shall_be_updated) {
       return true;
     }
@@ -618,7 +621,7 @@ namespace mgis::behaviour {
       Context& ctx,
       MaterialStateManager& o,
       MaterialStateManager::MutableFieldHolder& dest,
-      const MaterialStateManager::MutableFieldHolder& src) noexcept {
+      const MaterialStateManager::MutableFieldHolder& src) MGIS_NOEXCEPT {
     if (!dest.shall_be_updated) {
       return true;
     }
@@ -645,7 +648,7 @@ namespace mgis::behaviour {
       Context& ctx,
       MaterialStateManager& o,
       MaterialStateManager::FieldHolder& dest,
-      const MaterialStateManager::FieldHolder& src) noexcept {
+      const MaterialStateManager::FieldHolder& src) MGIS_NOEXCEPT {
     using MutableFieldHolder = MaterialStateManager::MutableFieldHolder;
     if (std::holds_alternative<std::monostate>(dest)) {
       return ctx.registerErrorMessage("uninitialized field holder given");
@@ -673,7 +676,7 @@ namespace mgis::behaviour {
       MaterialStateManager& o,
       MaterialStateManager::FieldHolder& dest,
       const std::string& n,
-      const MaterialStateManager::FieldHolder& src) noexcept {
+      const MaterialStateManager::FieldHolder& src) MGIS_NOEXCEPT {
     if (!updateFieldHolder(ctx, o, dest, src)) {
       return ctx.registerErrorMessage("updating field holder '" + n +
                                       "' failed");
@@ -683,12 +686,12 @@ namespace mgis::behaviour {
 
   bool updateValues(Context& ctx,
                     MaterialStateManager& o,
-                    const MaterialStateManager& i) noexcept {
+                    const MaterialStateManager& i) MGIS_NOEXCEPT {
     using FieldHolder = MaterialStateManager::FieldHolder;
     using MutableFieldHolder = MaterialStateManager::MutableFieldHolder;
-    auto update_span = [&ctx](
-                           std::span<real>& to,
-                           const std::span<const real>& from) noexcept -> bool {
+    auto update_span =
+        [&ctx](std::span<real>& to, const std::span<const real>& from)
+            MGIS_NOEXCEPT -> bool {
       if (from.size() != to.size()) {
         return ctx.registerErrorMessage("arrays' size does not match");
       }
@@ -697,10 +700,9 @@ namespace mgis::behaviour {
     };  // end update_span
 
     auto check_mps =
-        [&ctx](
-            const Behaviour& b,
-            const std::map<std::string, FieldHolder, std::less<>>& mps) noexcept
-        -> bool {
+        [&ctx](const Behaviour& b,
+               const std::map<std::string, FieldHolder, std::less<>>& mps)
+            MGIS_NOEXCEPT -> bool {
       for (const auto& mp : mps) {
         if (!contains(b.mps, mp.first)) {
           return ctx.registerErrorMessage(
@@ -859,7 +861,7 @@ namespace mgis::behaviour {
       H5::Group& g,
       const std::string& n,
       const MaterialStateManager::MutableFieldHolder& f,
-      const MaterialStateManagerSavingOptions& opts) noexcept {
+      const MaterialStateManagerSavingOptions& opts) MGIS_NOEXCEPT {
     using namespace mgis::utilities::hdf5;
     if (std::holds_alternative<real>(f.value)) {
       return write(ctx, g, n, std::get<real>(f.value), opts.allow_overwrite);
@@ -871,12 +873,12 @@ namespace mgis::behaviour {
                  opts.allow_overwrite);
   }  // end of save
 
-  [[nodiscard]] static bool save(
-      Context& ctx,
-      H5::Group& g,
-      const std::string& n,
-      const MaterialStateManager::FieldHolder& f,
-      const MaterialStateManagerSavingOptions& opts) noexcept {
+  [[nodiscard]] static bool save(Context& ctx,
+                                 H5::Group& g,
+                                 const std::string& n,
+                                 const MaterialStateManager::FieldHolder& f,
+                                 const MaterialStateManagerSavingOptions& opts)
+      MGIS_NOEXCEPT {
     using namespace mgis::utilities::hdf5;
     if (std::holds_alternative<std::monostate>(f)) {
       return ctx.registerErrorMessage("uninitialized field holder '" + n + "'");
@@ -892,7 +894,7 @@ namespace mgis::behaviour {
   bool save(Context& ctx,
             H5::Group& g,
             const MaterialStateManager& s,
-            const MaterialStateManagerSavingOptions& opts) noexcept {
+            const MaterialStateManagerSavingOptions& opts) MGIS_NOEXCEPT {
     using namespace mgis::utilities::hdf5;
     if ((opts.save_gradients) && (!s.b.gradients.empty())) {
       if (!write(ctx, g, "gradients", s.gradients, opts.allow_overwrite)) {
@@ -958,15 +960,14 @@ namespace mgis::behaviour {
   }  // end of save
 
   std::optional<MaterialStateManagerRestoreOptions>
-  getGreedyMaterialStateManagerRestoreOptions(Context& ctx,
-                                              const Behaviour& b,
-                                              const H5::Group& g) noexcept {
+  getGreedyMaterialStateManagerRestoreOptions(
+      Context& ctx, const Behaviour& b, const H5::Group& g) MGIS_NOEXCEPT {
     using namespace mgis::utilities::hdf5;
     const auto odatasets = getDataSetNames(ctx, g);
     if (isInvalid(odatasets)) {
       return {};
     }
-    auto contains = [odatasets](std::string_view n) noexcept {
+    auto contains = [odatasets](std::string_view n) MGIS_NOEXCEPT {
       return std::find(odatasets->begin(), odatasets->end(), n) !=
              odatasets->end();
     };
@@ -1013,7 +1014,7 @@ namespace mgis::behaviour {
       MaterialStateManager::MutableFieldHolder& f,
       const H5::Group& g,
       const std::string& n,
-      const size_type ng) noexcept {
+      const size_type ng) MGIS_NOEXCEPT {
     using namespace mgis::utilities::hdf5;
     auto odataset = openDataSet(ctx, g, n);
     if (isInvalid(odataset)) {
@@ -1074,7 +1075,7 @@ namespace mgis::behaviour {
       const H5::Group& g,
       const std::string& n,
       const size_type ng,
-      const size_type vsize) noexcept {
+      const size_type vsize) MGIS_NOEXCEPT {
     using namespace mgis::utilities::hdf5;
     if (vsize == 1) {
       return restoreScalarMutableFieldHolder(ctx, f, g, n, ng);
@@ -1152,7 +1153,7 @@ namespace mgis::behaviour {
   bool restore(Context& ctx,
                MaterialStateManager& s,
                const H5::Group& g,
-               const MaterialStateManagerRestoreOptions& opts) noexcept {
+               const MaterialStateManagerRestoreOptions& opts) MGIS_NOEXCEPT {
     using namespace mgis::utilities::hdf5;
     using MutableFieldHolder = MaterialStateManager::MutableFieldHolder;
     if ((opts.restore_gradients) && (!s.b.gradients.empty())) {

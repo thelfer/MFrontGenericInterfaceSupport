@@ -85,7 +85,7 @@ namespace mgis::function {
                    tfel::math::getUnderlyingArrayMinimalSize<
                        typename TensorType::indexing_policy>()>,
           TensorType>&  //
-      TensorialFunction<Space, TensorType>::view() & noexcept {
+      TensorialFunction<Space, TensorType>::view() & MGIS_NOEXCEPT {
     return *this;
   }  // end of view
 
@@ -97,7 +97,7 @@ namespace mgis::function {
                           tfel::math::getUnderlyingArrayMinimalSize<
                               typename TensorType::indexing_policy>()>,
                  TensorType>&  //
-      TensorialFunction<Space, TensorType>::view() const& noexcept {
+      TensorialFunction<Space, TensorType>::view() const& MGIS_NOEXCEPT {
     return *this;
   }  // end of view
 
@@ -130,7 +130,7 @@ namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>
   constexpr mgis::size_type getNumberOfComponents(
-      const TensorialFunction<Space, TensorType>& f) noexcept {
+      const TensorialFunction<Space, TensorType>& f) MGIS_NOEXCEPT {
     return f.getNumberOfComponents();
   }  // end of getNumberOfComponents
 

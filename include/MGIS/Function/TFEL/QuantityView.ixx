@@ -62,7 +62,7 @@ namespace mgis::function {
   template <FunctionConcept FunctionType,
             ::tfel::math::unit::UnitConcept UnitType>
   constexpr size_type
-  QuantityView<FunctionType, UnitType>::getNumberOfComponents() const noexcept {
+  QuantityView<FunctionType, UnitType>::getNumberOfComponents() const MGIS_NOEXCEPT {
     return 1;
   }  // end of getNumberOfComponents
 
@@ -247,7 +247,7 @@ namespace mgis::function {
   template <FunctionConcept FunctionType,
             ::tfel::math::unit::UnitConcept UnitType>
   constexpr mgis::size_type getNumberOfComponents(
-      const QuantityView<FunctionType, UnitType>& v) noexcept {
+      const QuantityView<FunctionType, UnitType>& v) MGIS_NOEXCEPT {
     return v.getNumberOfComponents();
   }  // end of getNumberOfComponents
 

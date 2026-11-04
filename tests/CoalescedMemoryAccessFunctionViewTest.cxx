@@ -221,11 +221,13 @@ struct CoalescedMemoryAccessCompositeTensorsViewTest final
         CoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4>;
     auto space = BasicLinearSpace{2};
     std::array<real, 6> out_values = {0, 0, 0, 0, 0, 0};
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     auto ctx = Context{};
     TFEL_TESTS_ASSERT(
         !CompositeView::checkPreconditions(ctx, space, out_values));
     TFEL_TESTS_CHECK_EQUAL(ctx.getRawErrorMessage(),
                            "invalid number of values");
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     if constexpr (config::contract_violation_policy ==
                   config::ContractViolationPolicy::RAISE) {
       bool has_thrown = false;

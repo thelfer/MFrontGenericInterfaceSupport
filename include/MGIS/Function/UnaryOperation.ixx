@@ -51,13 +51,13 @@ namespace mgis::function {
   //! \return the number of components
   template <typename CallableType, EvaluatorConcept EvaluatorType>
   constexpr mgis::size_type getNumberOfComponents(
-      const UnaryOperation<CallableType, EvaluatorType>& e) noexcept {
+      const UnaryOperation<CallableType, EvaluatorType>& e) MGIS_NOEXCEPT {
     return e.getNumberOfComponents();
   }
 
   template <typename CallableType, EvaluatorConcept EvaluatorType>
   constexpr mgis::size_type getNumberOfComponents(
-      const UnaryOperation2<CallableType, EvaluatorType>& e) noexcept {
+      const UnaryOperation2<CallableType, EvaluatorType>& e) MGIS_NOEXCEPT {
     return e.getNumberOfComponents();
   }
 

@@ -18,7 +18,7 @@
 namespace mgis::utilities::hdf5 {
 
   InvalidResult registerH5ExceptionInErrorBacktraceWithoutSourceLocation(
-      ErrorBacktrace& e) noexcept {
+      ErrorBacktrace& e) MGIS_NOEXCEPT {
     try {
       throw;
     } catch (H5::GroupIException& exception) {
@@ -39,7 +39,7 @@ namespace mgis::utilities::hdf5 {
 
 #ifdef MGIS_USE_SOURCE_LOCATION_INFORMATION
   InvalidResult registerH5ExceptionInErrorBacktrace(
-      ErrorBacktrace& e, const std::source_location& l) noexcept {
+      ErrorBacktrace& e, const std::source_location& l) MGIS_NOEXCEPT {
     try {
       throw;
     } catch (H5::GroupIException& exception) {
@@ -54,8 +54,8 @@ namespace mgis::utilities::hdf5 {
     return {};
   }
 #else
-  InvalidResult registerH5ExceptionInErrorBacktrace(
-      ErrorBacktrace& e) noexcept {
+  InvalidResult registerH5ExceptionInErrorBacktrace(ErrorBacktrace& e)
+      MGIS_NOEXCEPT {
     return registerH5ExceptionInErrorBacktraceWithoutSourceLocation(e);
   }
 #endif
@@ -80,7 +80,7 @@ namespace mgis::utilities::hdf5 {
     return res;
   }  // end of tokenize
 
-  bool exists(const H5::Group& g, const std::string& p) noexcept {
+  bool exists(const H5::Group& g, const std::string& p) MGIS_NOEXCEPT {
     // break paths
     const auto leafs = tokenize(p, '/', false);
     if (leafs.empty()) {
@@ -101,7 +101,7 @@ namespace mgis::utilities::hdf5 {
     return true;
   }
 
-  bool subGroupExists(const H5::Group& g, const std::string& p) noexcept {
+  bool subGroupExists(const H5::Group& g, const std::string& p) MGIS_NOEXCEPT {
     if (!exists(g, p)) {
       return false;
     }
@@ -123,7 +123,7 @@ namespace mgis::utilities::hdf5 {
 
   std::optional<H5::Group> createGroup(Context& ctx,
                                        const H5::Group& g,
-                                       const std::string& n) noexcept {
+                                       const std::string& n) MGIS_NOEXCEPT {
     if (subGroupExists(g, n)) {
       return openGroup(ctx, g, n);
     }
@@ -138,7 +138,7 @@ namespace mgis::utilities::hdf5 {
 
   std::optional<H5::Group> openGroup(Context& ctx,
                                      const H5::Group& g,
-                                     const std::string& n) noexcept {
+                                     const std::string& n) MGIS_NOEXCEPT {
     try {
       H5::Group gr = g.openGroup(n);
       return gr;
@@ -150,7 +150,7 @@ namespace mgis::utilities::hdf5 {
 
   bool removeDataSet(Context& ctx,
                      const H5::Group& g,
-                     const std::string& n) noexcept {
+                     const std::string& n) MGIS_NOEXCEPT {
     try {
       g.unlink(n);
       return true;
@@ -162,7 +162,7 @@ namespace mgis::utilities::hdf5 {
 
   std::optional<H5::DataSet> openDataSet(Context& ctx,
                                          const H5::Group& g,
-                                         const std::string& n) noexcept {
+                                         const std::string& n) MGIS_NOEXCEPT {
     try {
       H5::DataSet d = g.openDataSet(n);
       return d;
@@ -173,7 +173,7 @@ namespace mgis::utilities::hdf5 {
   }  // end of openDataSet
 
   std::optional<std::vector<std::string>> getSubGroupNames(
-      Context& ctx, const H5::Group& g, const bool b) noexcept {
+      Context& ctx, const H5::Group& g, const bool b) MGIS_NOEXCEPT {
     std::vector<std::string> names;
     if (!getSubGroupNames(ctx, names, g, b)) {
       return {};
@@ -184,7 +184,7 @@ namespace mgis::utilities::hdf5 {
   bool getSubGroupNames(Context& ctx,
                         std::vector<std::string>& n,
                         const H5::Group& g,
-                        const bool b) noexcept {
+                        const bool b) MGIS_NOEXCEPT {
     n.clear();
     try {
       const hsize_t s = g.getNumObjs();
@@ -205,7 +205,7 @@ namespace mgis::utilities::hdf5 {
   }  // end of getSubGroupNames
 
   std::optional<std::vector<std::string>> getDataSetNames(
-      Context& ctx, const H5::Group& g) noexcept {
+      Context& ctx, const H5::Group& g) MGIS_NOEXCEPT {
     try {
       std::vector<std::string> names;
       const hsize_t s = g.getNumObjs();
@@ -223,7 +223,7 @@ namespace mgis::utilities::hdf5 {
 
   std::optional<bool> contains(Context& ctx,
                                const H5::Group& g,
-                               const std::string& n) noexcept {
+                               const std::string& n) MGIS_NOEXCEPT {
     try {
       bool found = false;
       const hsize_t s = g.getNumObjs();
@@ -241,7 +241,7 @@ namespace mgis::utilities::hdf5 {
 
   bool unlinkIfExists(Context& ctx,
                       const H5::Group& g,
-                      const std::string& n) noexcept {
+                      const std::string& n) MGIS_NOEXCEPT {
     try {
       if (exists(g, n)) {
         g.unlink(n);
@@ -254,17 +254,17 @@ namespace mgis::utilities::hdf5 {
   }
 
   template <>
-  [[nodiscard]] H5::PredType getNativeType<float>() noexcept {
+  [[nodiscard]] H5::PredType getNativeType<float>() MGIS_NOEXCEPT {
     return H5::PredType::NATIVE_FLOAT;
   }  // end of getNativeType
 
   template <>
-  [[nodiscard]] H5::PredType getNativeType<double>() noexcept {
+  [[nodiscard]] H5::PredType getNativeType<double>() MGIS_NOEXCEPT {
     return H5::PredType::NATIVE_DOUBLE;
   }  // end of getNativeType
 
   template <>
-  [[nodiscard]] H5::PredType getNativeType<long double>() noexcept {
+  [[nodiscard]] H5::PredType getNativeType<long double>() MGIS_NOEXCEPT {
     return H5::PredType::NATIVE_LDOUBLE;
   }  // end of getNativeType
 
@@ -272,7 +272,7 @@ namespace mgis::utilities::hdf5 {
                                        H5::Group& g,
                                        const std::string& d,
                                        const real& o,
-                                       const bool b) noexcept {
+                                       const bool b) MGIS_NOEXCEPT {
     if (b) {
       if (!unlinkIfExists(ctx, g, d)) {
         return false;
@@ -293,7 +293,7 @@ namespace mgis::utilities::hdf5 {
   MGIS_EXPORT [[nodiscard]] bool read(Context& ctx,
                                       real& o,
                                       const H5::Group& g,
-                                      const std::string& d) noexcept {
+                                      const std::string& d) MGIS_NOEXCEPT {
     auto odataset = openDataSet(ctx, g, d);
     if (isInvalid(odataset)) {
       return false;
@@ -322,7 +322,7 @@ namespace mgis::utilities::hdf5 {
              H5::Group& g,
              const std::string& d,
              std::span<const real> o,
-             const bool b) noexcept {
+             const bool b) MGIS_NOEXCEPT {
     if (b) {
       if (!unlinkIfExists(ctx, g, d)) {
         return false;
@@ -354,7 +354,7 @@ namespace mgis::utilities::hdf5 {
   bool read(Context& ctx,
             std::vector<real>& o,
             const H5::Group& g,
-            const std::string& d) noexcept {
+            const std::string& d) MGIS_NOEXCEPT {
     auto odataset = openDataSet(ctx, g, d);
     if (isInvalid(odataset)) {
       return false;
@@ -379,7 +379,7 @@ namespace mgis::utilities::hdf5 {
   bool read(Context& ctx,
             std::span<real> values,
             const H5::Group& g,
-            const std::string& n) noexcept {
+            const std::string& n) MGIS_NOEXCEPT {
     using namespace mgis::utilities::hdf5;
     const auto odataset = openDataSet(ctx, g, n);
     if (isInvalid(odataset)) {

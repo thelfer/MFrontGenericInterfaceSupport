@@ -51,11 +51,11 @@ namespace mgis::model {
    * \note: use of `std::string` rather than `mgis::string_view` is
    * meaningfull here
    */
-  MGIS_EXPORT std::optional<Model> load(
-      Context &,
-      const std::string &,
-      const std::string &,
-      const mgis::behaviour::Hypothesis) noexcept;
+  MGIS_EXPORT std::optional<Model> load(Context&,
+                                        const std::string&,
+                                        const std::string&,
+                                        const mgis::behaviour::Hypothesis)
+      MGIS_NOEXCEPT;
   /*!
    * \brief load a model from the database
    *
@@ -71,7 +71,7 @@ namespace mgis::model {
    * \return the model description
    */
   MGIS_EXPORT std::optional<Model> loadFromDatabase(
-      Context &, const mgis::behaviour::LoadFromDatabaseOptions &) noexcept;
+      Context&, const mgis::behaviour::LoadFromDatabaseOptions&) MGIS_NOEXCEPT;
 
 }  // namespace mgis::model
 

@@ -45,7 +45,8 @@ recognizable as follows:
   function should be interpreted according to the rule below.
 - It returns a value that can be invalid. The most common return type is
   a boolean which indicates success (`true`) or failure (`false`).
-- It must be declared `noexcept`.
+- It must be declared `MGIS_NOEXCEPT`, which is equal to `noexcept` unless
+  `MGIS` is compiled with the flag `-Denable-exceptions=ON`.
 
 # Returned value of functions (or methods) that may fail
 
@@ -144,7 +145,15 @@ must be reported to the end-user. The error messages can then be
 retrieved by the `getErrorMessage` method (or `getRawErrorMessage`, see
 below). However, if `MGIS` is compiled with the flag
 `-Denable-exceptions=ON`, an exception is thrown instead using
-`mgis::raise`.
+`mgis::raise`. The `MGIS_NOEXCEPT` macro is then empty, so that this
+exception reaches the caller. An exception escaping an element access of
+a parallel algorithm of the standard library still calls `std::terminate`.
+
+The `CMake` targets of `MGIS` export the associated definition,
+`MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING`. Code which does not use these
+targets must define it when compiling against such a build of `MGIS`:
+otherwise it sees `noexcept` functions that throw, which is undefined
+behaviour.
 
 ### Source location
 

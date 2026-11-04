@@ -22,7 +22,7 @@ namespace mgis::function {
                                                   EvaluatorType>)  //
       constexpr size_type
       TensorModifier<TensorType,
-                     EvaluatorType>::getNumberOfComponents() const noexcept {
+                     EvaluatorType>::getNumberOfComponents() const MGIS_NOEXCEPT {
     return compile_time_size<TensorType>;
   }
 
@@ -67,7 +67,7 @@ namespace mgis::function {
 
   template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
   constexpr mgis::size_type getNumberOfComponents(
-      const TensorModifier<TensorType, EvaluatorType>& e) noexcept {
+      const TensorModifier<TensorType, EvaluatorType>& e) MGIS_NOEXCEPT {
     return e.getNumberOfComponents();
   }
 
