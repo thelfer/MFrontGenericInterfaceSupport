@@ -16,14 +16,16 @@ extern "C" {
 #endif /*  __cplusplus */
 
 /*!
- * \brief get the size of a tensor for the given modelling hypothesis
- * \param [out] s: size
+ * \brief get the space dimension associated with the given modelling
+ * hypothesis
+ * \param [out] s: space dimension
  * \param [in] h: modelling hypothesis
  */
 MGIS_C_EXPORT mgis_status mgis_bv_get_space_dimension(mgis_size_type* const,
                                                       const char* const);
 /*!
- * \brief get the size of a tensor for the given modelling hypothesis
+ * \brief get the size of a symmetric tensor for the given modelling
+ * hypothesis
  * \param [out] s: size
  * \param [in] h: modelling hypothesis
  */

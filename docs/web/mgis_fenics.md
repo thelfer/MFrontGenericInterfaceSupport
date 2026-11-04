@@ -171,8 +171,8 @@ but it does not necessarily encompass all possible situations. In
 particular, evolution equations such as transient heat transfer cannot
 be expressed in this form. However, this is not a limitation since the
 residual can also be redefined explicitly by the user (see [Transient
-non-linear heat
-equation](mgis_fenics_nonlinear_heat_transfer.html)).
+heat equation with phase
+change](mgis_fenics_heat_equation_phase_change.html)).
 
 Either for the default or a user-defined one, the tangent operator
 associated with the residual is computed automatically using either the

@@ -53,5 +53,5 @@ void declareBehaviourData(pybind11::module_& m) {
       &mgis::behaviour::make_view;
   m.def("update", ptr_update);
   m.def("revert", ptr_revert);
-  m.def("make_view", ptr_make_view);
+  m.def("make_view", ptr_make_view, pybind11::keep_alive<0, 1>());
 }  // end of declareBehaviourData

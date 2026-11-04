@@ -80,9 +80,11 @@ namespace mgis::function {
     //! \brief copy constructor
     constexpr TensorialFunction(const TensorialFunction&);
     //! \brief return a view of the function
-    constexpr UnderlyingTensorView& view() noexcept;
+    constexpr UnderlyingTensorView& view() & noexcept;
     //! \brief return a view of the function
-    constexpr const UnderlyingTensorView& view() const noexcept;
+    constexpr const UnderlyingTensorView& view() const& noexcept;
+    //
+    auto view() && = delete;
     //
     using UnderlyingFunctionType::getNumberOfComponents;
     using UnderlyingFunctionType::getSpace;
@@ -152,6 +154,9 @@ namespace mgis::function {
    */
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>
   constexpr auto view(const TensorialFunction<Space, TensorType>&);
+
+  template <FunctionalSpaceConcept Space, TensorConcept TensorType>
+  auto view(TensorialFunction<Space, TensorType>&&) = delete;
 
   //! \return the number of components
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>

@@ -1,6 +1,6 @@
 macro(mgis_fortran_module file)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${file}"
-    DESTINATION "include")
+    DESTINATION "${mgis_include_install_path}")
 endmacro(mgis_fortran_module)
 
 mgis_fortran_module(mgis_fortran_utilities.mod)

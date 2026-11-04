@@ -1,0 +1,46 @@
+@DSL Default;
+@Behaviour TangentKind;
+@Description {
+  "Behaviour whose operator identifies the type of integration requested: "
+  "the operator is c k I, where c is the value of the type of integration, "
+  "i.e. 1, 2, 3 and 4 for the elastic, secant, tangent and consistent "
+  "tangent operators, and -1, -2 and -3 for the elastic, secant and tangent "
+  "prediction operators. k / 2 is added to the component (0, 1) of the "
+  "operators computed after the integration, so that a transposition can be "
+  "detected. The speed of sound is k rho."
+}
+
+@MaterialProperty real k;
+@StateVariable real a;
+
+@Integrator {
+  sig = k * (eto + deto);
+  da = 1;
+}
+
+@TangentOperator {
+  if (smt == ELASTIC) {
+    Dt = k * Stensor4::Id();
+  } else if (smt == SECANTOPERATOR) {
+    Dt = 2 * k * Stensor4::Id();
+  } else if (smt == TANGENTOPERATOR) {
+    Dt = 3 * k * Stensor4::Id();
+  } else {
+    Dt = 4 * k * Stensor4::Id();
+  }
+  Dt(0, 1) += k / 2;
+}
+
+@PredictionOperator {
+  if (smt == ELASTIC) {
+    Dt = -k * Stensor4::Id();
+  } else if (smt == SECANTOPERATOR) {
+    Dt = -2 * k * Stensor4::Id();
+  } else {
+    Dt = -3 * k * Stensor4::Id();
+  }
+}
+
+@SpeedOfSound {
+  v_sound = k * rho_m0;
+}

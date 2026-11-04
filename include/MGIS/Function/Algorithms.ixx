@@ -367,8 +367,12 @@ namespace mgis::function::internals {
           hasElementWorkspace<std::decay_t<decltype(getSpace(f))>>)) {
     using Space = std::decay_t<decltype(getSpace(f))>;
     using space_size_type = typename SpaceTraits<Space>::size_type;
-    using value_type = std::invoke_result_t<FunctionType, size_type>;
-    using result_type = std::invoke_result_t<const EvaluatorType, size_type>;
+    using value_type =
+        std::invoke_result_t<FunctionType&, const element_workspace<Space>&,
+                             size_type>;
+    using result_type =
+        std::invoke_result_t<const EvaluatorType&,
+                             const element_workspace<Space>&, size_type>;
     constexpr auto use_direct_assignement =
         requires(value_type & v1, const result_type& v2) {
       v1 = v2;
@@ -404,8 +408,12 @@ namespace mgis::function::internals {
     } else {
       using Space = std::decay_t<decltype(getSpace(f))>;
       using space_size_type = typename SpaceTraits<Space>::size_type;
-      using value_type = std::invoke_result_t<FunctionType, size_type>;
-      using result_type = std::invoke_result_t<const EvaluatorType, size_type>;
+      using value_type =
+          std::invoke_result_t<FunctionType&, const element_workspace<Space>&,
+                               size_type>;
+      using result_type =
+          std::invoke_result_t<const EvaluatorType&,
+                               const element_workspace<Space>&, size_type>;
       constexpr auto use_direct_assignement =
           requires(value_type & v1, const result_type& v2) {
         v1 = v2;

@@ -16,13 +16,14 @@
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
+#include "MGIS/Model/Model.hxx"
 #include "MGIS/Utilities/HDF5Support.hxx"
 
 int main(const int argc, const char* const* argv) {
   using namespace mgis;
   using namespace mgis::behaviour;
   using namespace mgis::utilities::hdf5;
-  if (argc != 2) {
+  if (argc != 3) {
     std::cerr << "HDF5Test: invalid number of arguments\n";
     std::exit(-1);
   }
@@ -136,6 +137,13 @@ int main(const int argc, const char* const* argv) {
     std::cerr << "unexpected mass density restored in a MaterialDataManager\n";
     return EXIT_FAILURE;
   }
+  // an existing checkpoint must not be overwritten if not allowed
+  auto ctx2 = Context{};
+  if (save(ctx2, *og4, m, {{.allow_overwrite = false}})) {
+    std::cerr << "a MaterialDataManager has been saved over an existing one "
+                 "although overwriting was not allowed\n";
+    return EXIT_FAILURE;
+  }
   // external state variables which are not scalars, given at each
   // integration point
   const auto b2 = load(argv[1], "TensorialExternalStateVariableTest",
@@ -169,6 +177,26 @@ int main(const int argc, const char* const* argv) {
                 << "'\n";
       return EXIT_FAILURE;
     }
+  }
+  // a model has neither gradients nor thermodynamic forces
+  const auto model =
+      mgis::model::load(argv[2], "ode_rk54", Hypothesis::TRIDIMENSIONAL);
+  auto m5 = MaterialDataManager{model, 2};
+  auto m6 = MaterialDataManager{model, 2};
+  setExternalStateVariable(m5.s0, "Temperature", 293.15);
+  setExternalStateVariable(m5.s1, "Temperature", 293.15);
+  m5.s0.internal_state_variables[1] = 0.25;
+  m5.s1.internal_state_variables[1] = 0.5;
+  auto og5 = createGroup(ctx, root, "Model");
+  if ((isInvalid(og5)) || (!save(ctx, *og5, m5)) ||
+      (!restore(ctx, m6, *og5, {{.restore_mass_densities = false}}))) {
+    std::cerr << ctx.getErrorMessage() << '\n';
+    return EXIT_FAILURE;
+  }
+  if ((std::abs(m6.s0.internal_state_variables[1] - 0.25) > 1.e-14) ||
+      (std::abs(m6.s1.internal_state_variables[1] - 0.5) > 1.e-14)) {
+    std::cerr << "invalid values restored for a model\n";
+    return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
 }  // end of main

@@ -17,6 +17,7 @@ subroutine test_initialize_function()
   type(MaterialStateManager) s0, s1
   real(kind=8) :: pe
   real(kind=8), dimension(:,:), pointer :: sig => null()
+  real(kind=8), dimension(:), pointer :: dsig => null()
   character(len=:), allocatable :: n
   integer c, t, ri, i, j
   logical :: r
@@ -46,8 +47,22 @@ subroutine test_initialize_function()
        ds0, 'Temperature', 293.15d0))
   call check_status(state_set_scalar_external_state_variable_by_name( &
        ds1, 'Temperature', 293.15d0))
+  call check_status(state_set_thermodynamic_force_by_name( &
+       ds1, 'Stress', [1d0, 2d0, 3d0, 4d0, 5d0, 6d0]))
+  call check_status(state_get_thermodynamic_forces(dsig, ds1))
+  r = check(size(dsig) == 6, 'invalid number of thermodynamic forces')
+  do i = 1, 6
+     r = check(abs(dsig(i) - i) < eps, 'invalid stress value')
+  end do
   call check_status(execute_initialize_function(ri, d, b, f, [pr2]))
   r = check(ri == 0, 'invalid result of the initialize function')
+  do i = 1, 6
+     if (i <= 3) then
+        r = check(abs(dsig(i) - pr2) < eps, 'invalid stress value')
+     else
+        r = check(abs(dsig(i)) < eps, 'invalid stress value')
+     end if
+  end do
   ! execution on a material data manager, with an input per integration
   ! point, using a thread pool
   call check_status(create_thread_pool(p, 2))
@@ -114,6 +129,7 @@ subroutine test_post_processing()
   real(kind=8), dimension(3) :: outputs
   real(kind=8), dimension(9) :: outputs3
   real(kind=8), dimension(:,:), pointer :: g => null()
+  real(kind=8), dimension(:), pointer :: dg => null()
   real(kind=8) :: oe
   character(len=:), allocatable :: n
   integer c, t, ri, i, j
@@ -146,6 +162,11 @@ subroutine test_post_processing()
        s1, 'Temperature', 293.15d0))
   e = (/ 1.3d-2, 1.2d-2, 1.4d-2, 0d0, 0d0, 0d0 /)
   call check_status(state_set_gradient_by_name(s1, 'Strain', e))
+  call check_status(state_get_gradients(dg, s1))
+  r = check(size(dg) == 6, 'invalid number of gradients')
+  do i = 1, 6
+     r = check(abs(dg(i) - e(i)) < eps, 'invalid strain value')
+  end do
   call check_status(execute_post_processing(ri, outputs, d, b, pp))
   r = check(ri == 0, 'invalid result of the post-processing')
   do i = 1, 3

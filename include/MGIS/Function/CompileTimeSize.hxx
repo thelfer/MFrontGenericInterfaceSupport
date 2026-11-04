@@ -17,6 +17,7 @@
 
 #include <span>
 #include <array>
+#include "MGIS/Config.hxx"
 
 namespace mgis::function::internals {
 
