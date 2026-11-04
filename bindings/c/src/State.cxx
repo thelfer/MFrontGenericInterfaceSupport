@@ -18,6 +18,15 @@
 
 extern "C" {
 
+mgis_status mgis_bv_state_get_behaviour(const mgis_bv_Behaviour** const b,
+                                        mgis_bv_State* const s) {
+  if (s == nullptr) {
+    return mgis_report_failure("invalid argument (null state)");
+  }
+  *b = &(s->b);
+  return mgis_report_success();
+}  // end of mgis_bv_state_get_behaviour
+
 mgis_status mgis_bv_state_set_mass_density(mgis_bv_State* const s,
                                            const mgis_real v) {
   if (s == nullptr) {
