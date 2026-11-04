@@ -226,7 +226,7 @@ computing the heat flux.
     k = kₛ + (kₗ-kₛ)*(T_-Tₛ)/Tₛₘₒₒₜₕ;
     h = cₛ*Tₛ+((cₛ+cₗ)/2+Δhₛₗ/Tₛₘₒₒₜₕ)*(T_-Tₛ);
     c = Δhₛₗ/(Tₗ-Tₛ);
-    ∂k∕∂T = -(kₗ-kₛ)/Tₛₘₒₒₜₕ;
+    ∂k∕∂T = (kₗ-kₛ)/Tₛₘₒₒₜₕ;
   }
   // heat flux
   j = -k ⋅ (∇T + Δ∇T);
@@ -239,7 +239,7 @@ The computation of the tangent operator blocks is then straightforward:
 ```cpp
 @TangentOperator {
   ∂j∕∂Δ∇T = -k * tmatrix<N, N, real>::Id();
-  ∂j∕∂ΔT = ∂k∕∂T * (∇T + Δ∇T);
+  ∂j∕∂ΔT = -∂k∕∂T * (∇T + Δ∇T);
   ∂h∕∂ΔT = c;
 }  // end of @TangentOperator
 ```

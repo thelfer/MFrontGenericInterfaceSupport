@@ -107,7 +107,8 @@ int main(const int argc, const char* const* argv) {
         "invalid physical lower bound for 'YoungModulus'");
   int hasUpperPhysicalBound;
   check_status(mgis_bv_behaviour_has_upper_physical_bound(&hasUpperPhysicalBound, b, "YoungModulus"));
-  check(!hasUpperPhysicalBound, "'YoungModulus' shall have an upper bound");
+  check(!hasUpperPhysicalBound,
+        "'YoungModulus' shall not have an upper physical bound");
   // clean-up
   check_status(mgis_bv_free_behaviour(&b));
   return test_status;

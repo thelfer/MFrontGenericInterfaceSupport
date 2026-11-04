@@ -163,7 +163,8 @@ measure.
 In particular, the `ElasticStrain` is still a symmetric tensor (vector
 of dimension 6). Note that it has not been explicitly defined as a state
 variable in the `MFront` behaviour file since this is done automatically
-when using the `IsotropicPlasticMisesFlow` domain specific language.
+by the `StandardElastoViscoPlasticity` brick of the `Implicit` domain
+specific language.
 
 Finally, we setup a few parameters of the Newton non-linear solver.
 

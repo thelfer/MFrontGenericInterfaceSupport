@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <string>
 #include <limits>
 #include <algorithm>
 #include "MGIS/Raise.hxx"
@@ -48,24 +49,26 @@ static mgis::behaviour::IntegrationType convertIntegrationType(
 }  // end of convertIntegrationType
 
 static mgis_status reportBehaviourIntegrationFailure(
-    const mgis::behaviour::MultiThreadedBehaviourIntegrationResult& r) {
+    const mgis::behaviour::MultiThreadedBehaviourIntegrationResult& r,
+    const char* const what = "behaviour integration failed") {
   // report the error message of the first failing thread, if any
   for (const auto& ri : r.results) {
     if ((ri.exit_status == -1) && (!ri.error_message.empty())) {
-      const auto msg = "behaviour integration failed: " + ri.error_message;
+      const auto msg = std::string{what} + ": " + ri.error_message;
       return mgis_report_failure(msg.c_str());
     }
   }
-  return mgis_report_failure("behaviour integration failed");
+  return mgis_report_failure(what);
 }  // end of reportBehaviourIntegrationFailure
 
 static mgis_status reportBehaviourIntegrationFailureOnRange(
-    const mgis::behaviour::BehaviourIntegrationResult& r) {
+    const mgis::behaviour::BehaviourIntegrationResult& r,
+    const char* const what = "behaviour integration failed") {
   if ((r.exit_status == -1) && (!r.error_message.empty())) {
-    const auto msg = "behaviour integration failed: " + r.error_message;
+    const auto msg = std::string{what} + ": " + r.error_message;
     return mgis_report_failure(msg.c_str());
   }
-  return mgis_report_failure("behaviour integration failed");
+  return mgis_report_failure(what);
 }  // end of reportBehaviourIntegrationFailureOnRange
 
 /*!
@@ -81,6 +84,32 @@ static mgis_real getTimeStepScalingFactor(
   }
   return tsf;
 }  // end of getTimeStepScalingFactor
+
+/*!
+ * \brief clear the error message of a behaviour data before a call
+ * \param[in,out] d: behaviour data
+ */
+static void clearErrorMessage(mgis_bv_BehaviourData& d) {
+  if (d.error_message != nullptr) {
+    d.error_message[0] = '\0';
+  }
+}  // end of clearErrorMessage
+
+/*!
+ * \return the status of a call on a behaviour data, completed by the error
+ * message written by the behaviour, if any, in case of failure
+ * \param[in] s: status of the call
+ * \param[in] d: behaviour data
+ */
+static mgis_status addErrorMessage(const mgis_status s,
+                                   const mgis_bv_BehaviourData& d) {
+  if ((s.exit_status == MGIS_SUCCESS) || (d.error_message == nullptr) ||
+      (d.error_message[0] == '\0')) {
+    return s;
+  }
+  const auto msg = std::string{s.msg} + ": " + d.error_message;
+  return mgis_report_failure(msg.c_str());
+}  // end of addErrorMessage
 
 mgis_status mgis_bv_create_behaviour_integration_options(
     mgis_bv_BehaviourIntegrationOptions** o) {
@@ -178,9 +207,9 @@ mgis_status mgis_bv_integrate_2(int* const r,
   if (d == nullptr) {
     return mgis_report_failure("invalid argument");
   }
+  clearErrorMessage(*d);
   auto v = mgis::behaviour::make_view(*d);
-  auto s = mgis_bv_integrate(r, &v, b);
-  return s;
+  return addErrorMessage(mgis_bv_integrate(r, &v, b), *d);
 }  // end of mgis_bv_integrate_2
 
 mgis_status mgis_bv_integrate_debug_2(int* const r,
@@ -189,9 +218,9 @@ mgis_status mgis_bv_integrate_debug_2(int* const r,
   if (d == nullptr) {
     return mgis_report_failure("invalid argument");
   }
+  clearErrorMessage(*d);
   auto v = mgis::behaviour::make_view(*d);
-  auto s = mgis_bv_integrate_debug(r, &v, b);
-  return s;
+  return addErrorMessage(mgis_bv_integrate_debug(r, &v, b), *d);
 }  // end of mgis_bv_integrate_debug_2
 
 mgis_status mgis_bv_integrate_material_data_manager(
@@ -205,9 +234,12 @@ mgis_status mgis_bv_integrate_material_data_manager(
   }
   *r = -1;
   try {
-    *r = mgis::behaviour::integrate(*p, *m, convertIntegrationType(i), dt);
+    auto opts = mgis::behaviour::BehaviourIntegrationOptions{};
+    opts.integration_type = convertIntegrationType(i);
+    const auto res = mgis::behaviour::integrate(*p, *m, opts, dt);
+    *r = res.exit_status;
     if ((*r != 1) && (*r != 0)) {
-      return mgis_report_failure("behaviour integration failed");
+      return reportBehaviourIntegrationFailure(res);
     }
   } catch (...) {
     return mgis_handle_cxx_exception();
@@ -226,10 +258,12 @@ mgis_status mgis_bv_integrate_debug_material_data_manager(
   }
   *r = -1;
   try {
-    *r =
-        mgis::behaviour::integrate_debug(*p, *m, convertIntegrationType(i), dt);
+    auto opts = mgis::behaviour::BehaviourIntegrationOptions{};
+    opts.integration_type = convertIntegrationType(i);
+    const auto res = mgis::behaviour::integrate_debug(*p, *m, opts, dt);
+    *r = res.exit_status;
     if ((*r != 1) && (*r != 0)) {
-      return mgis_report_failure("behaviour integration failed");
+      return reportBehaviourIntegrationFailure(res);
     }
   } catch (...) {
     return mgis_handle_cxx_exception();
@@ -343,9 +377,12 @@ mgis_status mgis_bv_integrate_material_data_manager_part(
   }
   *r = -1;
   try {
-    *r = mgis::behaviour::integrate(*m, convertIntegrationType(i), dt, b, e);
+    auto opts = mgis::behaviour::BehaviourIntegrationOptions{};
+    opts.integration_type = convertIntegrationType(i);
+    const auto res = mgis::behaviour::integrate(*m, opts, dt, b, e);
+    *r = res.exit_status;
     if ((*r != 1) && (*r != 0)) {
-      return mgis_report_failure("behaviour integration failed");
+      return reportBehaviourIntegrationFailureOnRange(res);
     }
   } catch (...) {
     return mgis_handle_cxx_exception();
@@ -365,10 +402,12 @@ mgis_status mgis_bv_integrate_debug_material_data_manager_part(
   }
   *r = -1;
   try {
-    *r = mgis::behaviour::integrate_debug(*m, convertIntegrationType(i), dt, b,
-                                          e);
+    auto opts = mgis::behaviour::BehaviourIntegrationOptions{};
+    opts.integration_type = convertIntegrationType(i);
+    const auto res = mgis::behaviour::integrate_debug(*m, opts, dt, b, e);
+    *r = res.exit_status;
     if ((*r != 1) && (*r != 0)) {
-      return mgis_report_failure("behaviour integration failed");
+      return reportBehaviourIntegrationFailureOnRange(res);
     }
   } catch (...) {
     return mgis_handle_cxx_exception();
@@ -464,8 +503,10 @@ mgis_status mgis_bv_execute_initialize_function_2(
   if (d == nullptr) {
     return mgis_report_failure("invalid argument");
   }
+  clearErrorMessage(*d);
   auto v = mgis::behaviour::make_view(*d);
-  return mgis_bv_execute_initialize_function(r, &v, b, n, i, s);
+  return addErrorMessage(mgis_bv_execute_initialize_function(r, &v, b, n, i, s),
+                         *d);
 }  // end of mgis_bv_execute_initialize_function_2
 
 mgis_status mgis_bv_execute_initialize_function_material_data_manager(
@@ -481,11 +522,12 @@ mgis_status mgis_bv_execute_initialize_function_material_data_manager(
   }
   *r = -1;
   try {
-    *r = mgis::behaviour::executeInitializeFunction(
-             *p, *m, n, std::span<const mgis_real>(i, s))
-             .exit_status;
+    const auto res = mgis::behaviour::executeInitializeFunction(
+        *p, *m, n, std::span<const mgis_real>(i, s));
+    *r = res.exit_status;
     if ((*r != 1) && (*r != 0)) {
-      return mgis_report_failure("initialize function failed");
+      return reportBehaviourIntegrationFailure(res,
+                                               "initialize function failed");
     }
   } catch (...) {
     return mgis_handle_cxx_exception();
@@ -507,11 +549,12 @@ mgis_status mgis_bv_execute_initialize_function_material_data_manager_part(
   }
   *r = -1;
   try {
-    *r = mgis::behaviour::executeInitializeFunction(
-             *m, n, std::span<const mgis_real>(i, s), b, e)
-             .exit_status;
+    const auto res = mgis::behaviour::executeInitializeFunction(
+        *m, n, std::span<const mgis_real>(i, s), b, e);
+    *r = res.exit_status;
     if ((*r != 1) && (*r != 0)) {
-      return mgis_report_failure("initialize function failed");
+      return reportBehaviourIntegrationFailureOnRange(
+          res, "initialize function failed");
     }
   } catch (...) {
     return mgis_handle_cxx_exception();
@@ -551,8 +594,10 @@ mgis_status mgis_bv_execute_post_processing_2(int* const r,
   if (d == nullptr) {
     return mgis_report_failure("invalid argument");
   }
+  clearErrorMessage(*d);
   auto v = mgis::behaviour::make_view(*d);
-  return mgis_bv_execute_post_processing(r, o, s, &v, b, n);
+  return addErrorMessage(mgis_bv_execute_post_processing(r, o, s, &v, b, n),
+                         *d);
 }  // end of mgis_bv_execute_post_processing_2
 
 mgis_status mgis_bv_execute_post_processing_material_data_manager(
@@ -568,11 +613,11 @@ mgis_status mgis_bv_execute_post_processing_material_data_manager(
   }
   *r = -1;
   try {
-    *r = mgis::behaviour::executePostProcessing(std::span<mgis_real>(o, s), *p,
-                                                *m, n)
-             .exit_status;
+    const auto res = mgis::behaviour::executePostProcessing(
+        std::span<mgis_real>(o, s), *p, *m, n);
+    *r = res.exit_status;
     if ((*r != 1) && (*r != 0)) {
-      return mgis_report_failure("post-processing failed");
+      return reportBehaviourIntegrationFailure(res, "post-processing failed");
     }
   } catch (...) {
     return mgis_handle_cxx_exception();
@@ -594,11 +639,12 @@ mgis_status mgis_bv_execute_post_processing_material_data_manager_part(
   }
   *r = -1;
   try {
-    *r = mgis::behaviour::executePostProcessing(std::span<mgis_real>(o, s), *m,
-                                                n, b, e)
-             .exit_status;
+    const auto res = mgis::behaviour::executePostProcessing(
+        std::span<mgis_real>(o, s), *m, n, b, e);
+    *r = res.exit_status;
     if ((*r != 1) && (*r != 0)) {
-      return mgis_report_failure("post-processing failed");
+      return reportBehaviourIntegrationFailureOnRange(res,
+                                                      "post-processing failed");
     }
   } catch (...) {
     return mgis_handle_cxx_exception();

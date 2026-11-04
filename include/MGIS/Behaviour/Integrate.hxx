@@ -295,8 +295,8 @@ namespace mgis::behaviour {
    */
   int integrate(BehaviourDataView&, const Behaviour&);
   /*!
-   * \brief integrate the behaviour. In case of non convergence, an
-   * mtest file is generated.
+   * \brief integrate the behaviour. In case of integration failure, the
+   * default analyser is called (a Markdown report is written).
    *
    * The returned value has the following meaning:
    * - -1: integration failed
@@ -308,8 +308,8 @@ namespace mgis::behaviour {
    */
   MGIS_EXPORT int integrate_debug(BehaviourDataView&, const Behaviour&);
   /*!
-   * \brief integrate the behaviour. In case of non convergence, an
-   * mtest file is generated.
+   * \brief integrate the behaviour. In case of integration failure, the
+   * given analyser is called.
    *
    * The returned value has the following meaning:
    * - -1: integration failed

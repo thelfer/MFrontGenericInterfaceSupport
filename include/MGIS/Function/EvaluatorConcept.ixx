@@ -15,6 +15,21 @@
 #ifndef LIB_MGIS_FUNCTION_EVALUATORCONCEPT_IXX
 #define LIB_MGIS_FUNCTION_EVALUATORCONCEPT_IXX
 
+namespace mgis::function {
+
+  constexpr bool checkMatchingSpaces(AbstractErrorHandler& ctx,
+                                     const EvaluatorConcept auto& e1,
+                                     const EvaluatorConcept auto& e2) {
+    const auto& qspace1 = getSpace(e1);
+    const auto& qspace2 = getSpace(e2);
+    if (!areEquivalent(qspace1, qspace2)) {
+      return ctx.registerErrorMessage("unmatched quadrature spaces");
+    }
+    return true;
+  }  // end of checkMatchingSpaces
+
+}  // end of namespace mgis::function
+
 namespace mgis::function::internals {
 
   template <EvaluatorConcept EvaluatorType>

@@ -52,7 +52,21 @@ namespace mgis {
           }
         }
       };
-      this->workers.emplace_back(f);
+      try {
+        this->workers.emplace_back(f);
+      } catch (...) {
+        // the destructor is not called if the constructor throws: the
+        // threads already created must be stopped and joined here
+        {
+          std::unique_lock<std::mutex> lock(this->m);
+          this->stop = true;
+        }
+        this->c.notify_all();
+        for (auto& w : this->workers) {
+          w.join();
+        }
+        throw;
+      }
     }
   }
 
