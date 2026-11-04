@@ -131,7 +131,8 @@ if(MGIS_HAVE_MFRONT_SUPPORT)
     InitializeFunctionTest
     PostProcessingTest
     FiniteStrainPostProcessingTest
-    ComputeSpeedOfSound)
+    ComputeSpeedOfSound
+    DerivativeTypeVariableTest)
 
   mfront_behaviours_check_library(ModelTest ode_rk54)
 
@@ -173,6 +174,8 @@ if(MGIS_HAVE_MFRONT_SUPPORT)
     BehaviourTest PostProcessingTest)
   add_library_test(ComputeSpeedOfSoundTest ComputeSpeedOfSoundTest.cxx BehaviourTest)
   add_library_test(ComputeSpeedOfSoundTest2 ComputeSpeedOfSoundTest2.cxx BehaviourTest)
+  add_library_test(DerivativeTypeVariableTest
+    DerivativeTypeVariableTest.cxx BehaviourTest)
 
 endif(MGIS_HAVE_MFRONT_SUPPORT)
 
