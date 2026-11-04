@@ -747,6 +747,10 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/284>
 
+## Issue 283: With the exception policy enabled, every error terminates the process
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/283>
+
 ## Issue 282: Restoring a non-scalar per-point field overflows the buffer
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/282>
