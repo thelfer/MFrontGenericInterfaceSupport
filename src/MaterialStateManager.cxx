@@ -273,8 +273,13 @@ namespace mgis::behaviour {
                            std::string_view n,
                            std::span<const real> v,
                            const MaterialStateManager::StorageMode s,
-                           const MaterialStateManager::UpdatePolicy p)
-      MGIS_NOEXCEPT {
+                           const MaterialStateManager::UpdatePolicy p,
+                           std::function<void()> h) MGIS_NOEXCEPT {
+    // created first, so that the hook is called if the values are not stored
+    auto hook = makeExternalStorageHook(ctx, std::move(h));
+    if (isInvalid(hook)) {
+      return false;
+    }
     const auto omp = getVariable(ctx, m.b.mps, n);
     if (isInvalid(omp)) {
       return false;
@@ -309,6 +314,7 @@ namespace mgis::behaviour {
       }
     } else {
       fh = v;
+      fh.external_storage_hook = std::move(*hook);
     }
     return true;
   }  // end of setMaterialProperty
@@ -512,8 +518,13 @@ namespace mgis::behaviour {
                                 std::string_view n,
                                 std::span<const real> v,
                                 const MaterialStateManager::StorageMode s,
-                                const MaterialStateManager::UpdatePolicy p)
-      MGIS_NOEXCEPT {
+                                const MaterialStateManager::UpdatePolicy p,
+                                std::function<void()> h) MGIS_NOEXCEPT {
+    // created first, so that the hook is called if the values are not stored
+    auto hook = makeExternalStorageHook(ctx, std::move(h));
+    if (isInvalid(hook)) {
+      return false;
+    }
     const auto oesv = getVariable(ctx, m.b.esvs, n);
     if (isInvalid(oesv)) {
       return false;
@@ -546,6 +557,7 @@ namespace mgis::behaviour {
       }
     } else {
       fh = v;
+      fh.external_storage_hook = std::move(*hook);
     }
     return true;
   }  // end of setExternalStateVariable
