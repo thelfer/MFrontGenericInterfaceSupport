@@ -104,6 +104,13 @@ MGIS_C_EXPORT
 mgis_status mgis_bv_material_state_manager_initializer_bind_dissipated_energies(
     mgis_bv_MaterialStateManagerInitializer*, mgis_real* const, mgis_size_type);
 /*!
+ * \brief get the underlying behaviour
+ * \param[out] b: behaviour
+ * \param[in]  s: state manager
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_material_state_manager_get_behaviour(
+    const mgis_bv_Behaviour** const, mgis_bv_MaterialStateManager* const);
+/*!
  * \param[out] n: number of integration points
  * \param[in]  s: state manager
  */
