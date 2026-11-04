@@ -169,6 +169,39 @@ mgis_bv_integrate_debug_material_data_manager_part(int* const,
                                              const mgis_size_type,
                                              const mgis_size_type);
 /*!
+ * \brief integrate the behaviour for a range of integration points, as
+ * `mgis_bv_integrate_material_data_manager_part`, and return the time step
+ * scaling factor proposed by the behaviour, i.e. the minimum of the factors
+ * proposed at the integration points of the range. This factor is also
+ * meaningful if the integration failed.
+ *
+ * \param[out] r: result
+ * \param[out] tsf: time step scaling factor proposed by the behaviour
+ * \param[in,out] m: material data manager
+ * \param[in] i: type of integration to be performed
+ * \param[in] dt: time step
+ * \param[in] b: index of the first integration point of the range
+ * \param[in] e: index following the last integration point of the range
+ *               (the integration points of indices in [b, e) are treated)
+ */
+MGIS_C_EXPORT mgis_status mgis_bv_integrate_material_data_manager_part_2(
+    int* const,
+    mgis_real* const,
+    mgis_bv_MaterialDataManager* const,
+    const mgis_bv_IntegrationType,
+    const mgis_real,
+    const mgis_size_type,
+    const mgis_size_type);
+//! \brief debugging version
+MGIS_C_EXPORT mgis_status mgis_bv_integrate_debug_material_data_manager_part_2(
+    int* const,
+    mgis_real* const,
+    mgis_bv_MaterialDataManager* const,
+    const mgis_bv_IntegrationType,
+    const mgis_real,
+    const mgis_size_type,
+    const mgis_size_type);
+/*!
  * \brief integrate the behaviour for a range of integration points. The
  * returned value has the following meaning:
  * - -1: integration failed for at least one Gauss point
@@ -206,6 +239,37 @@ mgis_bv_integrate_material_data_manager_with_options(int* const,
 MGIS_C_EXPORT mgis_status
 mgis_bv_integrate_debug_material_data_manager_with_options(
     int* const,
+    mgis_ThreadPool* const,
+    mgis_bv_MaterialDataManager* const,
+    mgis_bv_BehaviourIntegrationOptions* const,
+    const mgis_real);
+/*!
+ * \brief integrate the behaviour over all the integration points using a
+ * thread pool, as `mgis_bv_integrate_material_data_manager_with_options`,
+ * and return the time step scaling factor proposed by the behaviour, i.e. the
+ * minimum of the factors proposed at the integration points. This factor is
+ * also meaningful if the integration failed.
+ *
+ * \param[out] r: result
+ * \param[out] tsf: time step scaling factor proposed by the behaviour
+ * \param[in,out] p: thread pool
+ * \param[in,out] m: material data manager
+ * \param[in] o: integration options
+ * \param[in] dt: time step
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_integrate_material_data_manager_with_options_2(
+    int* const,
+    mgis_real* const,
+    mgis_ThreadPool* const,
+    mgis_bv_MaterialDataManager* const,
+    mgis_bv_BehaviourIntegrationOptions* const,
+    const mgis_real);
+//! \brief debugging version
+MGIS_C_EXPORT mgis_status
+mgis_bv_integrate_debug_material_data_manager_with_options_2(
+    int* const,
+    mgis_real* const,
     mgis_ThreadPool* const,
     mgis_bv_MaterialDataManager* const,
     mgis_bv_BehaviourIntegrationOptions* const,

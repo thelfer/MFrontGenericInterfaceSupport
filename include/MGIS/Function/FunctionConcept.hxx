@@ -397,13 +397,13 @@ namespace mgis::function {
   template <FunctionConcept FunctionType>
   inline constexpr auto isFunctionResultTypeMappable =
       requires(function_result<FunctionType> rf) {
-    { rf.data() } -> std::same_as<real*>;
+    { getDataPointer(rf) } -> std::same_as<real*>;
   };
 
   template <FunctionConcept FunctionType>
   inline constexpr auto isFunctionConstResultTypeMappable =
       requires(function_const_result<FunctionType> rf) {
-    { rf.data() } -> std::same_as<const real*>;
+    { getDataPointer(rf) } -> std::same_as<const real*>;
   };
 
   namespace internals {

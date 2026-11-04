@@ -739,7 +739,6 @@ class MFrontOptimisationProblem(OptimisationProblem, AbstractNonlinearProblem):
         """Objective function"""
         self.u.vector()[:] = x
         self.update_constitutive_law()
-        mgis_bv.update(self.material.data_manager)
         return self.get_total_energy()
 
     def F(self, b, x):
@@ -780,4 +779,10 @@ class MFrontOptimisationProblem(OptimisationProblem, AbstractNonlinearProblem):
         """
         if self._init:
             self.initialize()
-        self.solver.solve(self, x, lx, ux)
+        solv_out = self.solver.solve(self, x, lx, ux)
+        # the objective may have been evaluated last at another point
+        # than the solution: the state is updated at the solution
+        self.u.vector()[:] = x
+        self.update_constitutive_law()
+        mgis_bv.update(self.material.data_manager)
+        return solv_out

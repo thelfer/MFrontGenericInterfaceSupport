@@ -4,15 +4,20 @@ subroutine test()
   implicit none
   type(mgis_status) :: s
   logical :: b
+  character(len=:), allocatable :: m
   character(len=30) :: msg = 'failure generated from fortran'
   ! test of successful status
   s = report_success()
   b = check(s%exit_status .eq. MGIS_SUCCESS,'invalid status')
   b = check(get_error_message(s) .eq. '','invalid error message')
+  call get_error_message_to(s, m)
+  b = check(len(m) .eq. 0,'invalid error message')
   ! test of failed status
   s = report_failure(msg)
   b = check(s%exit_status .eq. MGIS_FAILURE,'invalid status')
   b = check(get_error_message(s) .eq. msg,'invalid error message')
+  call get_error_message_to(s, m)
+  b = check(m .eq. msg,'invalid error message')
 end subroutine test
 
 program main

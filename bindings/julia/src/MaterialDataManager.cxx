@@ -19,5 +19,25 @@
 void declareMaterialDataManager();
 
 void declareMaterialDataManager(jlcxx::Module& m) {
-  m.add_type<mgis::behaviour::MaterialDataManager>("MaterialDataManager");
+  using mgis::behaviour::MaterialDataManager;
+  using mgis::behaviour::MaterialStateManager;
+  m.add_type<MaterialDataManager>("MaterialDataManager")
+      .method("get_s0",
+              [](MaterialDataManager& d) noexcept -> MaterialStateManager& {
+                return d.s0;
+              })
+      .method("get_s1",
+              [](MaterialDataManager& d) noexcept -> MaterialStateManager& {
+                return d.s1;
+              })
+      .method("update", [](MaterialDataManager& d) { update(d); })
+      .method("revert", [](MaterialDataManager& d) { revert(d); });
+  // MaterialDataManager(b, n) creates a material data manager which keeps b
+  // alive
+  m.add_type<mgis::julia::Wrapper<MaterialDataManager>>(
+      "MaterialDataManagerWrapper",
+      jlcxx::julia_base_type<MaterialDataManager>());
+  m.constructor<mgis::julia::Wrapper<MaterialDataManager>,
+                const mgis::julia::SharedBehaviour&, mgis::size_type>(
+      jlcxx::julia_base_type<MaterialDataManager>());
 }  // end of declareMaterialDataManager

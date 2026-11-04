@@ -1,0 +1,29 @@
+@DSL Default;
+@Behaviour TimeStepScalingFactorTest;
+@Description {
+  "Elasticity proposing the time step scaling factor "
+  "given by a material property"
+}
+
+@ProvidesSymmetricTangentOperator;
+
+//! \brief time step scaling factor proposed by the behaviour
+@MaterialProperty real proposed_factor;
+proposed_factor.setEntryName("ProposedTimeStepScalingFactor");
+
+@Integrator{
+  constexpr auto id = Stensor::Id();
+  constexpr auto yg = stress{150e9};
+  constexpr auto nu = real{0.3};
+  constexpr auto l = computeLambda(yg, nu);
+  constexpr auto mu = computeMu(yg, nu);
+  const auto e = eto + deto;
+  sig = l * trace(e) * id + 2 * mu * e;
+  if (computeTangentOperator_) {
+    Dt = l * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+  }
+}
+
+@APosterioriTimeStepScalingFactor {
+  return {true, proposed_factor};
+}

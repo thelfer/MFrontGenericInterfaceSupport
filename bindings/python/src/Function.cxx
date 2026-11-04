@@ -17,14 +17,10 @@ static mgis::function::FunctionView<
     false>
 mgis_convert_to_span(const pybind11::array_t<double> &o) {
   using namespace mgis::function;
-  const auto i = o.request();
-  if (i.ndim != 1) {
-    const auto s = static_cast<mgis::size_type>(i.size);
-    const auto values = std::span{static_cast<const double *>(i.ptr), s};
-    return FunctionView<BasicLinearSpace, FunctionDataLayoutDescription{},
-                        false>{BasicLinearSpace{s}, values, 1};
-  }
-  mgis::raise("convert_to_span: expected one dimensional array");
+  const auto values = mgis::python::mgis_convert_to_span(o);
+  const auto s = static_cast<mgis::size_type>(values.size());
+  return FunctionView<BasicLinearSpace, FunctionDataLayoutDescription{}, false>{
+      BasicLinearSpace{s}, values, 1};
 }  // end of mgis_convert_to_span
 
 void declareFunction(pybind11::module_ &);

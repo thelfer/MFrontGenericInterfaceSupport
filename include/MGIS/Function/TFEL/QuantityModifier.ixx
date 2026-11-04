@@ -84,9 +84,10 @@ namespace mgis::function {
     } else {
       if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
         return tfel::math::const_qt_ref<UnitType, real>(
-            *(this->evaluator(i).data()));
+            *(getDataPointer(this->evaluator(i))));
       } else {
-        return tfel::math::qt<UnitType, real>(*(this->evaluator(i).data()));
+        return tfel::math::qt<UnitType, real>(
+            *(getDataPointer(this->evaluator(i))));
       }
     }
   }
@@ -108,9 +109,10 @@ namespace mgis::function {
     } else {
       if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
         return tfel::math::const_qt_ref<UnitType, real>(
-            *(this->evaluator(wk, i).data()));
+            *(getDataPointer(this->evaluator(wk, i))));
       } else {
-        return tfel::math::qt<UnitType, real>(*(this->evaluator(wk, i).data()));
+        return tfel::math::qt<UnitType, real>(
+            *(getDataPointer(this->evaluator(wk, i))));
       }
     }
   }
@@ -132,9 +134,10 @@ namespace mgis::function {
     } else {
       if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
         return tfel::math::const_qt_ref<UnitType, real>(
-            *(this->evaluator(e, i).data()));
+            *(getDataPointer(this->evaluator(e, i))));
       } else {
-        return tfel::math::qt<UnitType, real>(*(this->evaluator(e, i).data()));
+        return tfel::math::qt<UnitType, real>(
+            *(getDataPointer(this->evaluator(e, i))));
       }
     }
   }
@@ -158,10 +161,10 @@ namespace mgis::function {
     } else {
       if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
         return tfel::math::const_qt_ref<UnitType, real>(
-            *(this->evaluator(wk, e, i).data()));
+            *(getDataPointer(this->evaluator(wk, e, i))));
       } else {
         return tfel::math::qt<UnitType, real>(
-            *(this->evaluator(wk, e, i).data()));
+            *(getDataPointer(this->evaluator(wk, e, i))));
       }
     }
   }

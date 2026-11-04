@@ -137,8 +137,7 @@ namespace mgis::function {
           (internals::isEvaluatorAssignableToFunction<
               EvaluatorType,
               std::decay_t<FunctionType>>)&&  //
-          ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
-           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)));
+          (LinearElementSpaceConcept<evaluator_space<EvaluatorType>>));
   /*!
    * \brief assign the evaluator to a function
    * \param[in] ctx: execution context
@@ -174,8 +173,7 @@ namespace mgis::function {
           (internals::isEvaluatorAssignableToFunction<
               EvaluatorType,
               std::decay_t<FunctionType>>)&&  //
-          ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
-           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)));
+          (LinearElementSpaceConcept<evaluator_space<EvaluatorType>>));
   /*!
    * \brief assign the evaluator to a function
    * \param[in] ctx: execution context
