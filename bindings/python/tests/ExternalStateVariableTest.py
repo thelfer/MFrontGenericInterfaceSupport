@@ -199,13 +199,17 @@ class ExternalStateVariableTest(unittest.TestCase):
         mgis_bv.setExternalStateVariable(d.s1, "Temperature", T, ls)
         self.assertEqual(sys.getrefcount(T), r)
         # with EXTERNAL_STORAGE, a reference is kept until the value is
-        # replaced by a scalar or by update
+        # replaced by a scalar: update writes the uniform value into the array
         mgis_bv.setExternalStateVariable(d.s0, "Temperature", T, es)
         mgis_bv.setExternalStateVariable(d.s1, "Temperature", T, es)
         self.assertEqual(sys.getrefcount(T), r + 2)
         mgis_bv.setExternalStateVariable(d.s1, "Temperature", 293.15)
         self.assertEqual(sys.getrefcount(T), r + 1)
+        T[:] = 0.
         mgis_bv.update(d)
+        self.assertEqual(sys.getrefcount(T), r + 1)
+        self.assertTrue(numpy.all(T == 293.15))
+        mgis_bv.setExternalStateVariable(d.s0, "Temperature", 293.15)
         self.assertEqual(sys.getrefcount(T), r)
         # material property and mass density replaced by another array
         E = numpy.full(2, 150e9)
