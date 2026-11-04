@@ -605,6 +605,11 @@ namespace mgis::behaviour {
      * internal state variable
      */
     const bool restore_internal_state_variables = true;
+    /*!
+     * \brief flag stating if the mass density shall be read
+     *
+     * \note this flag is ignored if no mass density has been saved
+     */
     const bool restore_mass_densities = true;
     const bool restore_material_properties = true;
     /*!
