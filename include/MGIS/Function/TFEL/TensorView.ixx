@@ -78,7 +78,8 @@ namespace mgis::function {
     if constexpr (has_data_method) {
       return tfel::math::map<const TensorType>(this->function.data(unsafe, i));
     } else {
-      return tfel::math::map<const TensorType>(this->function(i).data());
+      return tfel::math::map<const TensorType>(
+          getDataPointer(this->function(i)));
     }
   }
 
@@ -96,7 +97,8 @@ namespace mgis::function {
       return tfel::math::map<const TensorType>(
           this->function.data(unsafe, wk, i));
     } else {
-      return tfel::math::map<const TensorType>(this->function(wk, i).data());
+      return tfel::math::map<const TensorType>(
+          getDataPointer(this->function(wk, i)));
     }
   }
 
@@ -114,7 +116,8 @@ namespace mgis::function {
       return tfel::math::map<const TensorType>(
           this->function.data(unsafe, e, i));
     } else {
-      return tfel::math::map<const TensorType>(this->function(e, i).data());
+      return tfel::math::map<const TensorType>(
+          getDataPointer(this->function(e, i)));
     }
   }
 
@@ -134,7 +137,8 @@ namespace mgis::function {
       return tfel::math::map<const TensorType>(
           this->function.data(unsafe, wk, e, i));
     } else {
-      return tfel::math::map<const TensorType>(this->function(wk, e, i).data());
+      return tfel::math::map<const TensorType>(
+          getDataPointer(this->function(wk, e, i)));
     }
   }
 
@@ -150,7 +154,7 @@ namespace mgis::function {
     if constexpr (has_data_method) {
       return tfel::math::map<TensorType>(this->function.data(unsafe, i));
     } else {
-      return tfel::math::map<TensorType>(this->function(i).data());
+      return tfel::math::map<TensorType>(getDataPointer(this->function(i)));
     }
   }
 
@@ -168,7 +172,7 @@ namespace mgis::function {
     if constexpr (has_data_method) {
       return tfel::math::map<TensorType>(this->function.data(unsafe, wk, i));
     } else {
-      return tfel::math::map<TensorType>(this->function(wk, i).data());
+      return tfel::math::map<TensorType>(getDataPointer(this->function(wk, i)));
     }
   }
 
@@ -186,7 +190,7 @@ namespace mgis::function {
     if constexpr (has_data_method) {
       return tfel::math::map<TensorType>(this->function.data(unsafe, e, i));
     } else {
-      return tfel::math::map<TensorType>(this->function(e, i).data());
+      return tfel::math::map<TensorType>(getDataPointer(this->function(e, i)));
     }
   }
 
@@ -205,7 +209,8 @@ namespace mgis::function {
     if constexpr (has_data_method) {
       return tfel::math::map<TensorType>(this->function.data(unsafe, wk, e, i));
     } else {
-      return tfel::math::map<TensorType>(this->function(wk, e, i).data());
+      return tfel::math::map<TensorType>(
+          getDataPointer(this->function(wk, e, i)));
     }
   }
 

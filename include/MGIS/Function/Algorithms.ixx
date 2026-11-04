@@ -452,8 +452,7 @@ namespace mgis::function::internals {
   constexpr void assign_sequential(FunctionType& f,
                                    const EvaluatorType e)  //
       requires(
-          ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
-           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)) &&
+          (LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) &&
           same_decay_type<function_space<FunctionType>,
                           evaluator_space<EvaluatorType>>) {
     using function_result_type = function_result<FunctionType>;
@@ -474,10 +473,7 @@ namespace mgis::function::internals {
   void assign_parallel(FunctionType& f,
                        const ExecutionPolicy policy,
                        const EvaluatorType e)  //
-      requires(((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
-                (LinearQuadratureSpaceConcept<std::decay_t<
-
-                     evaluator_space<EvaluatorType>>>)) &&
+      requires((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>)&&  //
                same_decay_type<function_space<FunctionType>,
                                evaluator_space<EvaluatorType>>) {
     using function_result_type = function_result<FunctionType>;
@@ -582,8 +578,7 @@ namespace mgis::function {
           (internals::isEvaluatorAssignableToFunction<
               EvaluatorType,
               std::decay_t<FunctionType>>)&&  //
-          ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
-           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>))) {
+          (LinearElementSpaceConcept<evaluator_space<EvaluatorType>>)) {
     if (!areEquivalent(getSpace(f), getSpace(e))) {
       return ctx.registerErrorMessage("unmatched spaces");
     }
@@ -614,8 +609,7 @@ namespace mgis::function {
           (internals::isEvaluatorAssignableToFunction<
               EvaluatorType,
               std::decay_t<FunctionType>>)&&  //
-          ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
-           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>))) {
+          (LinearElementSpaceConcept<evaluator_space<EvaluatorType>>)) {
     if (!areEquivalent(getSpace(f), getSpace(e))) {
       return ctx.registerErrorMessage("unmatched spaces");
     }

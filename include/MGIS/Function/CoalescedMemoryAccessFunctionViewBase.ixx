@@ -96,7 +96,7 @@ namespace mgis::function {
               AbstractErrorHandler& eh,
               const std::array<ScalarComponentFunctionView, N>& components) {
     for (size_type i = 1; i != N; ++i) {
-      if (!areEquivalent(getSpace(components[0]), getSpace(components[i]))) {
+      if (!areEquivalent(components[0].getSpace(), components[i].getSpace())) {
         return eh.registerErrorMessage("unmatched spaces");
       }
     }
@@ -209,6 +209,15 @@ namespace mgis::function {
           }
         }())) {
   }  // end of CoalescedMemoryAccessFunctionViewBase
+
+  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
+  requires(N > 0)  //
+      constexpr const Space& CoalescedMemoryAccessFunctionViewBase<
+          Space,
+          N,
+          is_mutable>::getSpace() const noexcept {
+    return this->function_components[0].getSpace();
+  }  // end of getSpace
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //

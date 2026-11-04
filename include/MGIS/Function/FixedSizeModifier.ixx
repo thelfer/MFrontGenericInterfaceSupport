@@ -85,19 +85,20 @@ namespace mgis::function {
       if constexpr (has_data_method) {
         return *(this->evaluator.data(unsafe, i));
       } else {
-        return *(this->evaluator(i).data());
+        return *(getDataPointer(this->evaluator(i)));
       }
     } else {
       if constexpr (has_data_method) {
         return std::span<const real, N>(this->evaluator.data(unsafe, i), N);
       } else {
         if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
-          return std::span<const real, N>(this->evaluator(i).data(), N);
+          return std::span<const real, N>(getDataPointer(this->evaluator(i)),
+                                          N);
         } else {
           auto r = std::array<real, N>{};
           const auto values = this->evaluator(i);
           for (size_type k = 0; k != N; ++k) {
-            r[k] = values.data()[k];
+            r[k] = getDataPointer(values)[k];
           }
           return r;
         }
@@ -121,19 +122,20 @@ namespace mgis::function {
       if constexpr (has_data_method) {
         return *(this->evaluator.data(unsafe, wk, i));
       } else {
-        return *(this->evaluator(wk, i).data());
+        return *(getDataPointer(this->evaluator(wk, i)));
       }
     } else {
       if constexpr (has_data_method) {
         return std::span<const real, N>(this->evaluator.data(unsafe, wk, i), N);
       } else {
         if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
-          return std::span<const real, N>(this->evaluator(wk, i).data(), N);
+          return std::span<const real, N>(
+              getDataPointer(this->evaluator(wk, i)), N);
         } else {
           auto r = std::array<real, N>{};
           const auto values = this->evaluator(wk, i);
           for (size_type k = 0; k != N; ++k) {
-            r[k] = values.data()[k];
+            r[k] = getDataPointer(values)[k];
           }
           return r;
         }
@@ -157,19 +159,20 @@ namespace mgis::function {
       if constexpr (has_data_method) {
         return *(this->evaluator.data(unsafe, e, i));
       } else {
-        return *(this->evaluator(e, i).data());
+        return *(getDataPointer(this->evaluator(e, i)));
       }
     } else {
       if constexpr (has_data_method) {
         return std::span<const real, N>(this->evaluator.data(unsafe, e, i), N);
       } else {
         if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
-          return std::span<const real, N>(this->evaluator(e, i).data(), N);
+          return std::span<const real, N>(getDataPointer(this->evaluator(e, i)),
+                                          N);
         } else {
           auto r = std::array<real, N>{};
           const auto values = this->evaluator(e, i);
           for (size_type k = 0; k != N; ++k) {
-            r[k] = values.data()[k];
+            r[k] = getDataPointer(values)[k];
           }
           return r;
         }
@@ -194,7 +197,7 @@ namespace mgis::function {
       if constexpr (has_data_method) {
         return *(this->evaluator.data(unsafe, wk, e, i));
       } else {
-        return *(this->evaluator(wk, e, i).data());
+        return *(getDataPointer(this->evaluator(wk, e, i)));
       }
     } else {
       if constexpr (has_data_method) {
@@ -202,12 +205,13 @@ namespace mgis::function {
                                         N);
       } else {
         if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
-          return std::span<const real, N>(this->evaluator(wk, e, i).data(), N);
+          return std::span<const real, N>(
+              getDataPointer(this->evaluator(wk, e, i)), N);
         } else {
           auto r = std::array<real, N>{};
           const auto values = this->evaluator(wk, e, i);
           for (size_type k = 0; k != N; ++k) {
-            r[k] = values.data()[k];
+            r[k] = getDataPointer(values)[k];
           }
           return r;
         }

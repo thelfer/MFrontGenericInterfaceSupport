@@ -75,13 +75,13 @@ namespace mgis::function {
       if constexpr (has_data_method) {
         return *(this->function.data(unsafe, i));
       } else {
-        return *(this->function(i).data());
+        return *(getDataPointer(this->function(i)));
       }
     } else {
       if constexpr (has_data_method) {
         return std::span<const real, N>(this->function.data(unsafe, i), N);
       } else {
-        return std::span<const real, N>(this->function(i).data(), N);
+        return std::span<const real, N>(getDataPointer(this->function(i)), N);
       }
     }
   }
@@ -102,13 +102,14 @@ namespace mgis::function {
       if constexpr (has_data_method) {
         return *(this->function.data(unsafe, wk, i));
       } else {
-        return *(this->function(wk, i).data());
+        return *(getDataPointer(this->function(wk, i)));
       }
     } else {
       if constexpr (has_data_method) {
         return std::span<const real, N>(this->function.data(unsafe, wk, i), N);
       } else {
-        return std::span<const real, N>(this->function(wk, i).data(), N);
+        return std::span<const real, N>(getDataPointer(this->function(wk, i)),
+                                        N);
       }
     }
   }
@@ -129,13 +130,14 @@ namespace mgis::function {
       if constexpr (has_data_method) {
         return *(this->function.data(unsafe, e, i));
       } else {
-        return *(this->function(e, i).data());
+        return *(getDataPointer(this->function(e, i)));
       }
     } else {
       if constexpr (has_data_method) {
         return std::span<const real, N>(this->function.data(unsafe, e, i), N);
       } else {
-        return std::span<const real, N>(this->function(e, i).data(), N);
+        return std::span<const real, N>(getDataPointer(this->function(e, i)),
+                                        N);
       }
     }
   }
@@ -157,14 +159,15 @@ namespace mgis::function {
       if constexpr (has_data_method) {
         return *(this->function.data(unsafe, wk, e, i));
       } else {
-        return *(this->function(wk, e, i).data());
+        return *(getDataPointer(this->function(wk, e, i)));
       }
     } else {
       if constexpr (has_data_method) {
         return std::span<const real, N>(this->function.data(unsafe, wk, e, i),
                                         N);
       } else {
-        return std::span<const real, N>(this->function(wk, e, i).data(), N);
+        return std::span<const real, N>(
+            getDataPointer(this->function(wk, e, i)), N);
       }
     }
   }
@@ -184,13 +187,13 @@ namespace mgis::function {
       if constexpr (has_data_method) {
         return *(this->function.data(unsafe, i));
       } else {
-        return *(this->function(i).data());
+        return *(getDataPointer(this->function(i)));
       }
     } else {
       if constexpr (has_data_method) {
         return std::span<real, N>(this->function.data(unsafe, i), N);
       } else {
-        return std::span<real, N>(this->function(i).data(), N);
+        return std::span<real, N>(getDataPointer(this->function(i)), N);
       }
     }
   }
@@ -212,13 +215,13 @@ namespace mgis::function {
       if constexpr (has_data_method) {
         return *(this->function.data(unsafe, wk, i));
       } else {
-        return *(this->function(wk, i).data());
+        return *(getDataPointer(this->function(wk, i)));
       }
     } else {
       if constexpr (has_data_method) {
         return std::span<real, N>(this->function.data(unsafe, wk, i), N);
       } else {
-        return std::span<real, N>(this->function(wk, i).data(), N);
+        return std::span<real, N>(getDataPointer(this->function(wk, i)), N);
       }
     }
   }
@@ -240,13 +243,13 @@ namespace mgis::function {
       if constexpr (has_data_method) {
         return *(this->function.data(unsafe, e, i));
       } else {
-        return *(this->function(e, i).data());
+        return *(getDataPointer(this->function(e, i)));
       }
     } else {
       if constexpr (has_data_method) {
         return std::span<real, N>(this->function.data(unsafe, e, i), N);
       } else {
-        return std::span<real, N>(this->function(e, i).data(), N);
+        return std::span<real, N>(getDataPointer(this->function(e, i)), N);
       }
     }
   }
@@ -269,13 +272,13 @@ namespace mgis::function {
       if constexpr (has_data_method) {
         return *(this->function.data(unsafe, wk, e, i));
       } else {
-        return *(this->function(wk, e, i).data());
+        return *(getDataPointer(this->function(wk, e, i)));
       }
     } else {
       if constexpr (has_data_method) {
         return std::span<real, N>(this->function.data(unsafe, wk, e, i), N);
       } else {
-        return std::span<real, N>(this->function(wk, e, i).data(), N);
+        return std::span<real, N>(getDataPointer(this->function(wk, e, i)), N);
       }
     }
   }
