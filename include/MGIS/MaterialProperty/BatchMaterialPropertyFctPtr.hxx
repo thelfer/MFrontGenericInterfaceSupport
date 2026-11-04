@@ -14,6 +14,7 @@
 #ifndef LIB_MGIS_MATERIALPROPERTY_BATCHMATERIALPROPERTYFCTPTR_HXX
 #define LIB_MGIS_MATERIALPROPERTY_BATCHMATERIALPROPERTYFCTPTR_HXX
 
+#include "MGIS/Config.hxx"
 #include "MGIS/MaterialProperty/MaterialPropertyFctPtr.hxx"
 #include "MGIS/BackendExecutionPolicy.h"
 
@@ -227,7 +228,7 @@ namespace mgis::material_property {
    * `mgis_mp_initializeBatchStatistics`)
    * \param[out] s: statistics
    */
-  inline void initializeBatchStatistics(BatchStatistics& s) noexcept {
+  inline void initializeBatchStatistics(BatchStatistics& s) MGIS_NOEXCEPT {
     mgis_mp_initializeBatchStatistics(&s);
   }  // end of initializeBatchStatistics
 
