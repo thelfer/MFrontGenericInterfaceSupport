@@ -144,6 +144,15 @@ mgis_status mgis_bv_material_state_manager_initializer_bind_dissipated_energies(
 }  // end of
    // mgis_bv_material_state_manager_initializer_bind_dissipated_energies
 
+mgis_status mgis_bv_material_state_manager_get_behaviour(
+    const mgis_bv_Behaviour** const b, mgis_bv_MaterialStateManager* const s) {
+  if (s == nullptr) {
+    return mgis_report_failure("null state manager");
+  }
+  *b = &(s->b);
+  return mgis_report_success();
+}  // end of mgis_bv_material_state_manager_get_behaviour
+
 mgis_status mgis_bv_material_state_manager_get_number_of_integration_points(
     mgis_size_type* n, mgis_bv_MaterialStateManager* const s) {
   if (s == nullptr) {
@@ -240,6 +249,9 @@ mgis_bv_material_state_manager_set_uniform_scalar_material_property2(
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
   }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
   try {
     const auto b = mgis::behaviour::internals::convert(p);
     setMaterialProperty(*m, n, v, b);
@@ -266,6 +278,9 @@ mgis_status mgis_bv_material_state_manager_set_uniform_material_property2(
     const mgis_bv_MaterialStateManagerUpdatePolicy p) {
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
   }
   if (v == nullptr) {
     return mgis_report_failure("null state values");
@@ -307,6 +322,9 @@ mgis_status mgis_bv_material_state_manager_set_non_uniform_material_property2(
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
   }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
   if (v == nullptr) {
     return mgis_report_failure("null material property values");
   }
@@ -337,6 +355,9 @@ mgis_status mgis_bv_material_state_manager_is_material_property_defined(
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
   }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
   try {
     *b = isMaterialPropertyDefined(*m, n);
   } catch (...) {
@@ -352,6 +373,9 @@ mgis_status mgis_bv_material_state_manager_is_material_property_uniform(
   *b = 0;
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
   }
   try {
     *b = isMaterialPropertyUniform(*m, n);
@@ -446,6 +470,45 @@ mgis_status mgis_bv_material_state_manager_is_mass_density_uniform(
   return mgis_report_success();
 }  // end of mgis_bv_material_state_manager_is_mass_density_uniform
 
+mgis_status mgis_bv_material_state_manager_get_uniform_mass_density(
+    mgis_real* const v, mgis_bv_MaterialStateManager* const m) {
+  *v = mgis_real{};
+  if (m == nullptr) {
+    return mgis_report_failure("null state manager");
+  }
+  try {
+    if (!isMassDensityUniform(*m)) {
+      return mgis_report_failure("the mass density is not uniform");
+    }
+    *v = std::get<mgis::real>(m->mass_density->value);
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_material_state_manager_get_uniform_mass_density
+
+mgis_status mgis_bv_material_state_manager_get_non_uniform_mass_density(
+    mgis_real** const v, mgis_bv_MaterialStateManager* const m) {
+  *v = nullptr;
+  if (m == nullptr) {
+    return mgis_report_failure("null state manager");
+  }
+  try {
+    if (isMassDensityUniform(*m)) {
+      return mgis_report_failure("the mass density is uniform");
+    }
+    auto& values = m->mass_density->value;
+    if (std::holds_alternative<std::span<mgis::real>>(values)) {
+      *v = std::get<std::span<mgis::real>>(values).data();
+    } else {
+      *v = std::get<std::vector<mgis::real>>(values).data();
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_material_state_manager_get_non_uniform_mass_density
+
 mgis_status
 mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable(
     mgis_bv_MaterialStateManager* const m,
@@ -464,6 +527,9 @@ mgis_bv_material_state_manager_set_uniform_scalar_external_state_variable2(
     const mgis_bv_MaterialStateManagerUpdatePolicy p) {
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
   }
   try {
     const auto b = mgis::behaviour::internals::convert(p);
@@ -492,6 +558,9 @@ mgis_status mgis_bv_material_state_manager_set_uniform_external_state_variable2(
     const mgis_bv_MaterialStateManagerUpdatePolicy p) {
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
   }
   if (v == nullptr) {
     return mgis_report_failure("null state values");
@@ -535,6 +604,9 @@ mgis_bv_material_state_manager_set_non_uniform_external_state_variable2(
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
   }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
   if (v == nullptr) {
     return mgis_report_failure("null state values");
   }
@@ -566,6 +638,9 @@ mgis_status mgis_bv_material_state_manager_is_external_state_variable_defined(
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
   }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
+  }
   try {
     *b = isExternalStateVariableDefined(*m, n);
   } catch (...) {
@@ -581,6 +656,9 @@ mgis_status mgis_bv_material_state_manager_is_external_state_variable_uniform(
   *b = 0;
   if (m == nullptr) {
     return mgis_report_failure("null state manager");
+  }
+  if (n == nullptr) {
+    return mgis_report_failure("invalid argument (null name)");
   }
   try {
     *b = isExternalStateVariableUniform(*m, n);

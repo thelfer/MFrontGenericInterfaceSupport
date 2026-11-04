@@ -251,10 +251,10 @@ namespace mgis::behaviour {
           "invalid material property (only scalar material property is "
           "supported)");
     }
-    if (static_cast<mgis::size_type>(v.size()) != m.n) {
+    if ((static_cast<mgis::size_type>(v.size()) != m.n) && (v.size() != 1u)) {
       return ctx.registerErrorMessage(
-          "invalid number of values (does not match the number of integration "
-          "points)");
+          "invalid number of values (expected one value or one value per "
+          "integration point)");
     }
     auto& fh = getFieldHolder(m.material_properties, n);
     if (s == MaterialStateManager::LOCAL_STORAGE) {
@@ -284,10 +284,10 @@ namespace mgis::behaviour {
           "invalid material property "
           "(only scalar material property is supported)");
     }
-    if (static_cast<mgis::size_type>(v.size()) != m.n) {
+    if ((static_cast<mgis::size_type>(v.size()) != m.n) && (v.size() != 1u)) {
       return ctx.registerErrorMessage(
-          "invalid number of values (does not match the number of integration "
-          "points)");
+          "invalid number of values (expected one value or one value per "
+          "integration point)");
     }
     if ((s == MaterialStateManager::EXTERNAL_STORAGE) &&
         (p == MaterialStateManager::UPDATE)) {
@@ -297,9 +297,15 @@ namespace mgis::behaviour {
     }
     auto& fh = getFieldHolder(m.material_properties, n);
     if (s == MaterialStateManager::LOCAL_STORAGE) {
-      fh = MaterialStateManager::MutableFieldHolder{
-          .value = std::vector<real>{v.begin(), v.end()},
-          .shall_be_updated = (p == MaterialStateManager::UPDATE)};
+      if (static_cast<mgis::size_type>(v.size()) != m.n) {
+        fh = MaterialStateManager::MutableFieldHolder{
+            .value = v[0],
+            .shall_be_updated = (p == MaterialStateManager::UPDATE)};
+      } else {
+        fh = MaterialStateManager::MutableFieldHolder{
+            .value = std::vector<real>{v.begin(), v.end()},
+            .shall_be_updated = (p == MaterialStateManager::UPDATE)};
+      }
     } else {
       fh = v;
     }
@@ -342,11 +348,33 @@ namespace mgis::behaviour {
       return ctx.registerErrorMessage("no material property named '" +
                                       std::string{n} + "' defined");
     }
+    const auto omp = getVariable(ctx, m.b.mps, n);
+    if (isInvalid(omp)) {
+      return {};
+    }
+    const auto ovs = getVariableSize(ctx, *omp, m.b.hypothesis);
+    if (isInvalid(ovs)) {
+      return {};
+    }
+    // a uniform value given by an array holds the values of the variable
+    // once (see setMaterialProperty and buildEvaluators)
+    auto is_uniform = [&ovs](const auto& values) {
+      return static_cast<mgis::size_type>(values.size()) == *ovs;
+    };
+    if (std::holds_alternative<std::span<const real>>(p->second)) {
+      return is_uniform(std::get<std::span<const real>>(p->second));
+    }
     if (!std::holds_alternative<MutableFieldHolder>(p->second)) {
       return false;
     }
-    return std::holds_alternative<real>(
-        std::get<MutableFieldHolder>(p->second).value);
+    const auto& v = std::get<MutableFieldHolder>(p->second).value;
+    if (std::holds_alternative<real>(v)) {
+      return true;
+    }
+    if (std::holds_alternative<std::span<real>>(v)) {
+      return is_uniform(std::get<std::span<real>>(v));
+    }
+    return is_uniform(std::get<std::vector<real>>(v));
   }  // end of isMaterialPropertyUniform
 
   void setMassDensity(MaterialStateManager& m,
@@ -556,11 +584,33 @@ namespace mgis::behaviour {
       return ctx.registerErrorMessage("no external state variable named '" +
                                       std::string{n} + "' defined");
     }
+    const auto oesv = getVariable(ctx, m.b.esvs, n);
+    if (isInvalid(oesv)) {
+      return {};
+    }
+    const auto ovs = getVariableSize(ctx, *oesv, m.b.hypothesis);
+    if (isInvalid(ovs)) {
+      return {};
+    }
+    // a uniform value given by an array holds the values of the variable
+    // once (see setExternalStateVariable and buildEvaluators)
+    auto is_uniform = [&ovs](const auto& values) {
+      return static_cast<mgis::size_type>(values.size()) == *ovs;
+    };
+    if (std::holds_alternative<std::span<const real>>(p->second)) {
+      return is_uniform(std::get<std::span<const real>>(p->second));
+    }
     if (!std::holds_alternative<MutableFieldHolder>(p->second)) {
       return false;
     }
-    return std::holds_alternative<real>(
-        std::get<MutableFieldHolder>(p->second).value);
+    const auto& v = std::get<MutableFieldHolder>(p->second).value;
+    if (std::holds_alternative<real>(v)) {
+      return true;
+    }
+    if (std::holds_alternative<std::span<real>>(v)) {
+      return is_uniform(std::get<std::span<real>>(v));
+    }
+    return is_uniform(std::get<std::vector<real>>(v));
   }  // end of isExternalStateVariableUniform
 
   [[nodiscard]] static bool updateMutableFieldHolderFromSpan(
@@ -575,6 +625,15 @@ namespace mgis::behaviour {
     if (std::holds_alternative<std::span<mgis::real>>(to)) {
       // reuse existing memory
       auto& to_v = std::get<std::span<mgis::real>>(to);
+      if ((values.size() != to_v.size()) &&
+          (values.size() * o.n == to_v.size())) {
+        // duplicate the uniform values
+        for (size_type idx = 0; idx != o.n; ++idx) {
+          std::copy(values.begin(), values.end(),
+                    to_v.begin() + idx * values.size());
+        }
+        return true;
+      }
       if (values.size() != to_v.size()) {
         return ctx.registerErrorMessage("arrays' size does not match");
       }
@@ -583,7 +642,8 @@ namespace mgis::behaviour {
       // reuse existing memory
       auto& to_v = std::get<std::vector<mgis::real>>(to);
       if (to_v.size() != values.size()) {
-        if (to_v.size() * o.n == values.size()) {
+        if ((to_v.size() * o.n == values.size()) ||
+            (values.size() * o.n == to_v.size())) {
           to_v.resize(values.size());
         }
       }
@@ -608,7 +668,13 @@ namespace mgis::behaviour {
     }
     const auto& from = src.value;
     if (std::holds_alternative<mgis::real>(from)) {
-      dest = std::get<mgis::real>(from);
+      if (std::holds_alternative<std::span<mgis::real>>(dest.value)) {
+        // reuse existing memory
+        auto& to_v = std::get<std::span<mgis::real>>(dest.value);
+        std::fill(to_v.begin(), to_v.end(), std::get<mgis::real>(from));
+      } else {
+        dest = std::get<mgis::real>(from);
+      }
     } else if (std::holds_alternative<std::vector<mgis::real>>(from)) {
       return updateMutableFieldHolderFromSpan(
           ctx, o, dest, std::get<std::vector<mgis::real>>(from));
@@ -872,12 +938,13 @@ namespace mgis::behaviour {
             const MaterialStateManager& s,
             const MaterialStateManagerSavingOptions& opts) noexcept {
     using namespace mgis::utilities::hdf5;
-    if (opts.save_gradients) {
+    if ((opts.save_gradients) && (!s.b.gradients.empty())) {
       if (!write(ctx, g, "gradients", s.gradients, opts.allow_overwrite)) {
         return false;
       }
     }
-    if (opts.save_thermodynamic_forces) {
+    if ((opts.save_thermodynamic_forces) &&
+        (!s.b.thermodynamic_forces.empty())) {
       if (!write(ctx, g, "thermodynamic_forces", s.thermodynamic_forces,
                  opts.allow_overwrite)) {
         return false;
@@ -1132,12 +1199,13 @@ namespace mgis::behaviour {
                const MaterialStateManagerRestoreOptions& opts) noexcept {
     using namespace mgis::utilities::hdf5;
     using MutableFieldHolder = MaterialStateManager::MutableFieldHolder;
-    if (opts.restore_gradients) {
+    if ((opts.restore_gradients) && (!s.b.gradients.empty())) {
       if (!read(ctx, s.gradients, g, "gradients")) {
         return ctx.registerErrorMessage("restoring gradients failed");
       }
     }
-    if (opts.restore_thermodynamic_forces) {
+    if ((opts.restore_thermodynamic_forces) &&
+        (!s.b.thermodynamic_forces.empty())) {
       if (!read(ctx, s.thermodynamic_forces, g, "thermodynamic_forces")) {
         return ctx.registerErrorMessage(
             "restoring thermodynamic forces failed");

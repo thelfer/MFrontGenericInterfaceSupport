@@ -7,7 +7,7 @@ MFrontNonlinearMaterial class
 Laboratoire Navier (ENPC,IFSTTAR,CNRS UMR 8205)
 @email: jeremy.bleyer@enpc.f
 """
-import mgis.behaviour as mgis_bv
+from .. import behaviour as mgis_bv
 from .gradient_flux import Var
 from .utils import compute_on_quadrature
 import dolfin
@@ -51,9 +51,14 @@ class MFrontNonlinearMaterial:
             a dictionary of parameters. The dictionary keys must match the parameter
             names declared in the MFront behaviour. Values must be constants.
         rotation_matrix : Numpy array, list of list, UFL matrix
-            a 3D rotation matrix expressing the rotation from the global
-            frame to the material frame. The matrix can be spatially variable
-            (either UFL matrix or function of Tensor type)
+            a 3D rotation matrix R whose columns are the material axes
+            expressed in the global frame, as the matrix of the
+            @RotationMatrix keyword of MTest and of the rotation functions of
+            MGIS: the components in the material frame of a vector v and of a
+            second order tensor A given in the global frame are R^T.v and
+            R^T.A.R. The components of R are passed row by row to MGIS. The
+            matrix can be spatially variable (either UFL matrix or function of
+            Tensor type)
         """
         self.path = path
         self.name = name

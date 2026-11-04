@@ -19,7 +19,7 @@ subroutine test()
   call check_status(behaviour_data_get_state_1(s1, d))
   call check_status(state_set_scalar_external_state_variable_by_name( &
         s1, "Temperature", 293.15d0))
-  ! s0 is copied in s1
+  ! s1 is copied in s0
   call check_status(update_behaviour_data(d))
   call check_status(state_get_external_state_variable_by_name(T, s0, &
        "Temperature"))

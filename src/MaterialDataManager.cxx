@@ -199,7 +199,7 @@ namespace mgis::behaviour {
             const MaterialDataManagerSavingOptions& opts) noexcept {
     using namespace mgis::utilities::hdf5;
     // group for the state at the beginning of the time step
-    if (!unlinkIfExists(ctx, g, "s0")) {
+    if ((opts.allow_overwrite) && (!unlinkIfExists(ctx, g, "s0"))) {
       return false;
     }
     auto og_s0 = createGroup(ctx, g, "s0");
@@ -207,7 +207,7 @@ namespace mgis::behaviour {
       return false;
     }
     // group for the state at the end of the time step
-    if (!unlinkIfExists(ctx, g, "s1")) {
+    if ((opts.allow_overwrite) && (!unlinkIfExists(ctx, g, "s1"))) {
       return false;
     }
     auto og_s1 = createGroup(ctx, g, "s1");

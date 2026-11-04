@@ -107,13 +107,17 @@ namespace mgis::behaviour {
   /*!
    * \brief an helper function to build a 2D rotation matrix for an in-plane
    * unit vector.
+   * \return the matrix whose columns are the material axes, stored row by
+   * row, as the matrix of the `@RotationMatrix` keyword of `MTest`
    * \param[in] a: material axis
    */
   std::array<mgis::real, 9u> buildRotationMatrix(
       const std::span<const mgis::real, 2u> &);
   /*!
-   * \brief an helper function to build a 3D rotation matrix for an in-plane
-   * unit vector.
+   * \brief an helper function to build a 3D rotation matrix from the first
+   * two material axes.
+   * \return the matrix whose columns are the material axes, stored row by
+   * row, as the matrix of the `@RotationMatrix` keyword of `MTest`
    * \param[in] a1: first material axis
    * \param[in] a2: second material axis
    */

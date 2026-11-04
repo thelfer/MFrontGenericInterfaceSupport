@@ -91,6 +91,26 @@ else(MSVC)
   target_link_libraries(IntegrateTest5-c
     PRIVATE MFrontGenericInterface-c MFrontGenericInterface m)
 endif(MSVC)
+add_executable(TangentOperatorTest-c
+  EXCLUDE_FROM_ALL
+  TangentOperatorTest-c.c)
+if(MSVC)
+  target_link_libraries(TangentOperatorTest-c
+    PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
+else(MSVC)
+  target_link_libraries(TangentOperatorTest-c
+    PRIVATE MFrontGenericInterface-c MFrontGenericInterface m)
+endif(MSVC)
+add_executable(InitializeFunctionAndPostProcessingTest-c
+  EXCLUDE_FROM_ALL
+  InitializeFunctionAndPostProcessingTest-c.c)
+if(MSVC)
+  target_link_libraries(InitializeFunctionAndPostProcessingTest-c
+    PRIVATE MFrontGenericInterface-c MFrontGenericInterface)
+else(MSVC)
+  target_link_libraries(InitializeFunctionAndPostProcessingTest-c
+    PRIVATE MFrontGenericInterface-c MFrontGenericInterface m)
+endif(MSVC)
 
 add_test(NAME MFrontGenericBehaviourInterfaceTest-c
  COMMAND MFrontGenericBehaviourInterfaceTest-c
@@ -215,5 +235,23 @@ add_test(NAME IntegrateTest5-c
 add_dependencies(build-tests IntegrateTest5-c)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST IntegrateTest5-c
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME TangentOperatorTest-c
+ COMMAND TangentOperatorTest-c
+ "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(build-tests TangentOperatorTest-c)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST TangentOperatorTest-c
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
+add_test(NAME InitializeFunctionAndPostProcessingTest-c
+ COMMAND InitializeFunctionAndPostProcessingTest-c
+ "$<TARGET_FILE:BehaviourTest>")
+add_dependencies(build-tests InitializeFunctionAndPostProcessingTest-c)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST InitializeFunctionAndPostProcessingTest-c
     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontGenericInterface>\;$<TARGET_FILE_DIR:MFrontGenericInterface-c>\;${MGIS_PATH_STRING}")
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))

@@ -16,6 +16,8 @@
 #include <cstdlib>
 #include <iostream>
 #include "MGIS/Behaviour/Behaviour.hxx"
+#include "MGIS/Behaviour/BehaviourData.hxx"
+#include "MGIS/Behaviour/Integrate.hxx"
 
 int main(const int argc, const char* const* argv) {
   using namespace mgis::behaviour;
@@ -62,6 +64,23 @@ int main(const int argc, const char* const* argv) {
       check(std::abs(getParameterDefaultValue<double>(d, "ParametersArray[1]") -
                      A[1]) < eps,
             "invalid 'ParametersArray[1]' default value");
+    }
+    // a new value of the Young modulus changes the stress
+    setParameter(d, "YoungModulus", 2 * yg);
+    BehaviourData bd(d);
+    setExternalStateVariable(bd.s0, "Temperature", 293.15);
+    setExternalStateVariable(bd.s1, "Temperature", 293.15);
+    bd.s1.gradients[0] = 1.e-3;
+    bd.dt = 1;
+    bd.K[0] = 0;
+    auto v = make_view(bd);
+    if (check(integrate(v, d) == 1, "integration failed")) {
+      const auto syy = 2 * yg * nu / ((1 + nu) * (1 - 2 * nu)) * 1.e-3;
+      const auto sxx = syy * (1 - nu) / nu;
+      check(std::abs(bd.s1.thermodynamic_forces[0] - sxx) < eps * sxx,
+            "invalid stress after the modification of the Young modulus");
+      check(std::abs(bd.s1.thermodynamic_forces[1] - syy) < eps * syy,
+            "invalid stress after the modification of the Young modulus");
     }
   } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
