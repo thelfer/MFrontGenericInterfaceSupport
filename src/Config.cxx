@@ -25,7 +25,7 @@ namespace mgis::internal {
 
 namespace mgis {
 
-  void setTerminateHandler(TerminateHandler &h) noexcept {
+  void setTerminateHandler(const TerminateHandler h) noexcept {
     if (h == nullptr) {
       return;
     }

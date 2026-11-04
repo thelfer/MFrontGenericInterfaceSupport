@@ -134,7 +134,7 @@ namespace mgis {
    * \brief specify a new terminate handler
    * \param[in] h: handler
    */
-  void setTerminateHandler(TerminateHandler &) noexcept;
+  MGIS_EXPORT void setTerminateHandler(const TerminateHandler) noexcept;
   /*!
    * \brief call the terminate handler
    * \param[in] msg: message

@@ -104,7 +104,7 @@ The `Context` class is used for standard error management.
 `Context::terminate` allows to terminate the program. This shall only be
 used when an internal error is detected, for instance when an invariant
 of the code is not respected. This method calls the terminal handler
-registred by `Context::setTerminateHandler`. The default terminate
+registred by `mgis::setTerminateHandler`. The default terminate
 handler prints the current error stack on `std::cerr` and calls
 `std::terminate`.
 
