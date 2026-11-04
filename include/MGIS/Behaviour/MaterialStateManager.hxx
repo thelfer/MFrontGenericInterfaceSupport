@@ -111,7 +111,7 @@ namespace mgis::behaviour {
      * (`std::vector` case).
      */
     struct MGIS_EXPORT MutableFieldHolder {
-      MutableFieldHolder& operator=(const mgis::real) noexcept;
+      MutableFieldHolder& operator=(const mgis::real) MGIS_NOEXCEPT;
       //! \brief pointer to the values of the field
       std::variant<real, std::span<mgis::real>, std::vector<mgis::real>> value;
       /*!
@@ -150,7 +150,7 @@ namespace mgis::behaviour {
       using std::variant<std::monostate,
                          std::span<const mgis::real>,
                          MutableFieldHolder>::operator=;
-      FieldHolder& operator=(const mgis::real) noexcept;
+      FieldHolder& operator=(const mgis::real) MGIS_NOEXCEPT;
     };
     /*!
      * \brief enum used to express if a variable (material property, external
@@ -299,8 +299,8 @@ namespace mgis::behaviour {
       MaterialStateManager&,
       std::string_view,
       const real,
-      const MaterialStateManager::UpdatePolicy =
-          MaterialStateManager::UPDATE) noexcept;
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE)
+      MGIS_NOEXCEPT;
   /*!
    * \brief set the given material property from a modifiable memory region
    *
@@ -322,7 +322,7 @@ namespace mgis::behaviour {
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE,
       const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE,
-      std::function<void()> = {}) noexcept;
+      std::function<void()> = {}) MGIS_NOEXCEPT;
   /*!
    * \brief set the given material property from an immutable memory region
    *
@@ -344,8 +344,8 @@ namespace mgis::behaviour {
       std::span<const mgis::real>,
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE,
-      const MaterialStateManager::UpdatePolicy =
-          MaterialStateManager::UPDATE) noexcept;
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE)
+      MGIS_NOEXCEPT;
   /*!
    * \brief remove the field holder associated with the given material property,
    * if defined
@@ -355,7 +355,7 @@ namespace mgis::behaviour {
    * \param[in] n: name
    */
   MGIS_EXPORT MGIS_NODISCARD bool unsetMaterialProperty(
-      Context&, MaterialStateManager&, std::string_view) noexcept;
+      Context&, MaterialStateManager&, std::string_view) MGIS_NOEXCEPT;
   /*!
    * \return true if the given external state variable is defined.
    * \param[in] m: material state manager
@@ -378,17 +378,18 @@ namespace mgis::behaviour {
    * \param[in] n: name
    */
   MGIS_EXPORT MGIS_NODISCARD std::optional<bool> isMaterialPropertyUniform(
-      Context&, const MaterialStateManager&, std::string_view) noexcept;
+      Context&, const MaterialStateManager&, std::string_view) MGIS_NOEXCEPT;
   /*!
    * \brief set the mass density
    * \param[out] m: material state manager
    * \param[in] v: value
    * \param[in] p: update policy
    */
-  MGIS_EXPORT void setMassDensity(MaterialStateManager&,
-                                  const real,
-                                  const MaterialStateManager::UpdatePolicy =
-                                      MaterialStateManager::UPDATE) noexcept;
+  MGIS_EXPORT void setMassDensity(
+      MaterialStateManager&,
+      const real,
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE)
+      MGIS_NOEXCEPT;
   /*!
    * \brief set the mass density
    * \param[in] m: material state manager
@@ -410,7 +411,8 @@ namespace mgis::behaviour {
    * \return true if the given external state variable is defined.
    * \param[out] m: material state manager
    */
-  MGIS_EXPORT bool isMassDensityDefined(const MaterialStateManager&) noexcept;
+  MGIS_EXPORT bool isMassDensityDefined(const MaterialStateManager&)
+      MGIS_NOEXCEPT;
   /*!
    * \return true if the mass density is uniform
    * \param[in] m: material state manager
@@ -423,7 +425,7 @@ namespace mgis::behaviour {
    * \param[in] m: material state manager
    */
   MGIS_EXPORT MGIS_NODISCARD std::optional<bool> isMassDensityUniform(
-      Context&, const MaterialStateManager&) noexcept;
+      Context&, const MaterialStateManager&) MGIS_NOEXCEPT;
   /*!
    * \brief set the given external state variable
    * \param[out] m: material state manager
@@ -469,8 +471,8 @@ namespace mgis::behaviour {
       MaterialStateManager&,
       std::string_view,
       const real,
-      const MaterialStateManager::UpdatePolicy =
-          MaterialStateManager::UPDATE) noexcept;
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE)
+      MGIS_NOEXCEPT;
   /*!
    * \brief set the given external state variable
    *
@@ -492,7 +494,7 @@ namespace mgis::behaviour {
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE,
       const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE,
-      std::function<void()> = {}) noexcept;
+      std::function<void()> = {}) MGIS_NOEXCEPT;
   /*!
    * \brief set the given external state variable from a non-modifiable memory
    * region
@@ -515,8 +517,8 @@ namespace mgis::behaviour {
       std::span<const mgis::real>,
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE,
-      const MaterialStateManager::UpdatePolicy =
-          MaterialStateManager::UPDATE) noexcept;
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE)
+      MGIS_NOEXCEPT;
   /*!
    * \brief remove the field holder associated with the given external state
    * variable, if defined
@@ -526,7 +528,7 @@ namespace mgis::behaviour {
    * \param[in] n: name
    */
   MGIS_EXPORT MGIS_NODISCARD bool unsetExternalStateVariable(
-      Context&, MaterialStateManager&, std::string_view) noexcept;
+      Context&, MaterialStateManager&, std::string_view) MGIS_NOEXCEPT;
   /*!
    * \return true if the given external state variable is defined.
    * \param[in] m: material state manager
@@ -549,7 +551,7 @@ namespace mgis::behaviour {
    * \param[in] n: name
    */
   MGIS_EXPORT MGIS_NODISCARD std::optional<bool> isExternalStateVariableUniform(
-      Context&, const MaterialStateManager&, std::string_view) noexcept;
+      Context&, const MaterialStateManager&, std::string_view) MGIS_NOEXCEPT;
   /*!
    * \brief update the values of a state from another state
    * \param[out] o: output state
@@ -562,8 +564,10 @@ namespace mgis::behaviour {
    * \param[out] o: output state
    * \param[out] i: input state
    */
-  MGIS_EXPORT MGIS_NODISCARD bool updateValues(
-      Context&, MaterialStateManager&, const MaterialStateManager&) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD bool updateValues(Context&,
+                                               MaterialStateManager&,
+                                               const MaterialStateManager&)
+      MGIS_NOEXCEPT;
   /*!
    * \brief extract an internal state variable
    *
@@ -606,7 +610,7 @@ namespace mgis::behaviour {
       Context&,
       H5::Group&,
       const MaterialStateManager&,
-      const MaterialStateManagerSavingOptions& = {}) noexcept;
+      const MaterialStateManagerSavingOptions& = {}) MGIS_NOEXCEPT;
 
   /*!
    * \brief structure used to customize how to restore a `MaterialStateManager`
@@ -635,6 +639,11 @@ namespace mgis::behaviour {
      * internal state variable
      */
     const bool restore_internal_state_variables = true;
+    /*!
+     * \brief flag stating if the mass density shall be read
+     *
+     * \note this flag is ignored if no mass density has been saved
+     */
     const bool restore_mass_densities = true;
     const bool restore_material_properties = true;
     /*!
@@ -659,7 +668,7 @@ namespace mgis::behaviour {
   MGIS_EXPORT MGIS_NODISCARD std::optional<MaterialStateManagerRestoreOptions>
   getGreedyMaterialStateManagerRestoreOptions(Context&,
                                               const Behaviour&,
-                                              const H5::Group&) noexcept;
+                                              const H5::Group&) MGIS_NOEXCEPT;
   /*!
    * \brief restore a `MaterialStateManager` from a HDF5 group
    *
@@ -675,7 +684,7 @@ namespace mgis::behaviour {
       Context&,
       MaterialStateManager&,
       const H5::Group&,
-      const MaterialStateManagerRestoreOptions&) noexcept;
+      const MaterialStateManagerRestoreOptions&) MGIS_NOEXCEPT;
 
 #endif /* MGIS_HAVE_HDF5 */
 

@@ -302,9 +302,9 @@ namespace mgis::behaviour {
     return s;
   }  // end of getVariableSize
 
-  std::optional<size_type> getVariableSize(Context &ctx,
-                                           const Variable &v,
-                                           const Hypothesis h) noexcept {
+  std::optional<size_type> getVariableSize(Context& ctx,
+                                           const Variable& v,
+                                           const Hypothesis h) MGIS_NOEXCEPT {
     try {
       return getVariableSize(v, h);
     } catch (...) {
@@ -313,8 +313,8 @@ namespace mgis::behaviour {
     return {};
   }  // end of getVariableSize
 
-  bool contains(const std::vector<Variable> &vs,
-                const std::string_view n) noexcept {
+  bool contains(const std::vector<Variable>& vs,
+                const std::string_view n) MGIS_NOEXCEPT {
     return std::find_if(vs.begin(), vs.end(), [&n](const Variable &v) {
              return v.name == n;
            }) != vs.end();
@@ -330,10 +330,10 @@ namespace mgis::behaviour {
     return *p;
   }  // end of getVariable
 
-  OptionalReference<const Variable> getVariable(
-      Context &ctx,
-      const std::vector<Variable> &vs,
-      const std::string_view n) noexcept {
+  OptionalReference<const Variable> getVariable(Context& ctx,
+                                                const std::vector<Variable>& vs,
+                                                const std::string_view n)
+      MGIS_NOEXCEPT {
     const auto p = std::find_if(
         vs.begin(), vs.end(), [&n](const Variable &v) { return v.name == n; });
     if (p == vs.end()) {
@@ -351,9 +351,9 @@ namespace mgis::behaviour {
     return s;
   }  // end of getArraySize
 
-  std::optional<size_type> getArraySize(Context &ctx,
-                                        const std::vector<Variable> &vs,
-                                        const Hypothesis h) noexcept {
+  std::optional<size_type> getArraySize(Context& ctx,
+                                        const std::vector<Variable>& vs,
+                                        const Hypothesis h) MGIS_NOEXCEPT {
     auto s = size_type{};
     for (const auto &v : vs) {
       const auto os2 = getVariableSize(ctx, v, h);
@@ -372,10 +372,10 @@ namespace mgis::behaviour {
     return getVariableOffset(ctx, vs, n, h) | ctx.getThrowingFailureHandler();
   }  // end of getVariableOffset
 
-  std::optional<size_type> getVariableOffset(Context &ctx,
-                                             const std::vector<Variable> &vs,
+  std::optional<size_type> getVariableOffset(Context& ctx,
+                                             const std::vector<Variable>& vs,
                                              const std::string_view n,
-                                             const Hypothesis h) noexcept {
+                                             const Hypothesis h) MGIS_NOEXCEPT {
     auto o = size_type{};
     for (const auto &v : vs) {
       if (v.name == n) {

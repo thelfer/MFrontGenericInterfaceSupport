@@ -25,33 +25,33 @@ namespace mgis::function {
 
   template <size_type data_size>
   requires(data_size > 0) constexpr bool FunctionDataSize<data_size>::isScalar()
-      const noexcept {
+      const MGIS_NOEXCEPT {
     return data_size == 1;
   }  // end of isScalar
 
   template <size_type data_size>
   requires(data_size > 0) constexpr size_type
-      FunctionDataSize<data_size>::getNumberOfComponents() const noexcept {
+      FunctionDataSize<data_size>::getNumberOfComponents() const MGIS_NOEXCEPT {
     return data_size;
   }  // end of FunctionDataSize<dynamic_extent>::getNumberOfComponents
 
-  constexpr bool FunctionDataSize<dynamic_extent>::isScalar() const noexcept {
+  constexpr bool FunctionDataSize<dynamic_extent>::isScalar() const MGIS_NOEXCEPT {
     return this->getNumberOfComponents() == 1;
   }  // end of isScalar
 
   constexpr size_type FunctionDataSize<dynamic_extent>::getNumberOfComponents()
-      const noexcept {
+      const MGIS_NOEXCEPT {
     return this->data_size;
   }  // end of FunctionDataSize<dynamic_extent>::getNumberOfComponents
 
   template <size_type data_stride>
   requires(data_stride > 0) constexpr size_type
-      FunctionDataStride<data_stride>::getDataStride() const noexcept {
+      FunctionDataStride<data_stride>::getDataStride() const MGIS_NOEXCEPT {
     return data_stride;
   }  // end of getDataStride
 
   constexpr size_type FunctionDataStride<dynamic_extent>::getDataStride()
-      const noexcept {
+      const MGIS_NOEXCEPT {
     return this->data_stride;
   }  // end of getDataStride
 
@@ -67,7 +67,7 @@ namespace mgis::function {
             (layout.data_stride == dynamic_extent) ||
             (layout.data_size <= layout.data_stride)))  //
       constexpr size_type FunctionDataLayout<layout>::getDataOffset(
-          const size_type i) const noexcept {
+          const size_type i) const MGIS_NOEXCEPT {
     if constexpr (layout.data_stride != dynamic_extent) {
       return i * layout.data_stride;
     } else {
@@ -468,7 +468,7 @@ namespace mgis::function {
             bool is_mutable>
 
   constexpr const Space& FunctionView<Space, layout, is_mutable>::getSpace()
-      const noexcept {
+      const MGIS_NOEXCEPT {
     return this->space;
   }  // end of getSpace
 
@@ -548,7 +548,13 @@ namespace mgis::function {
           const size_type i)  //
       requires(is_mutable&& LinearQuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
-    return this->operator()(getQuadraturePointOffset(this->space, e, i));
+    const auto o = getQuadraturePointOffset(this->space, e, i);
+    if constexpr (layout.data_size == 1) {
+      return *(this->values.data() + this->getDataOffset(o));
+    } else {
+      return ValuesView(this->values.data() + this->getDataOffset(o),
+                        this->getNumberOfComponents());
+    }
   }  // end of operator()
 
   template <LinearFunctionalSpaceConcept Space,
@@ -577,7 +583,13 @@ namespace mgis::function {
       operator()(const size_type e, const size_type i) const
       requires(LinearQuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
-    return this->operator()(getQuadraturePointOffset(this->space, e, i));
+    const auto o = getQuadraturePointOffset(this->space, e, i);
+    if constexpr (layout.data_size == 1) {
+      return *(this->values.data() + this->getDataOffset(o));
+    } else {
+      return ConstValuesView(this->values.data() + this->getDataOffset(o),
+                             this->getNumberOfComponents());
+    }
   }  // end of operator()
 
   template <LinearFunctionalSpaceConcept Space,
@@ -601,7 +613,7 @@ namespace mgis::function {
             bool is_mutable>
   constexpr bool check(
       AbstractErrorHandler&,
-      const FunctionView<Space, layout, is_mutable>&) noexcept {
+      const FunctionView<Space, layout, is_mutable>&) MGIS_NOEXCEPT {
     return true;
   }  // end of check
 
@@ -609,7 +621,7 @@ namespace mgis::function {
             FunctionDataLayoutDescription layout,
             bool is_mutable>
   constexpr mgis::size_type getNumberOfComponents(
-      const FunctionView<Space, layout, is_mutable>& e) noexcept {
+      const FunctionView<Space, layout, is_mutable>& e) MGIS_NOEXCEPT {
     return e.getNumberOfComponents();
   }  // end of  getNumberOfComponents
 
@@ -730,7 +742,7 @@ namespace mgis::function {
 
   template <LinearFunctionalSpaceConcept Space, size_type N>
   requires(N > 0) constexpr bool Function<Space, N>::fill(
-      AbstractErrorHandler& eh, std::span<const real> values) noexcept {
+      AbstractErrorHandler& eh, std::span<const real> values) MGIS_NOEXCEPT {
     auto dest = this->data();
     if (dest.size() != values.size()) {
       return eh.registerErrorMessage("unmatched size");
@@ -741,7 +753,7 @@ namespace mgis::function {
 
   template <LinearFunctionalSpaceConcept Space, size_type N>
   requires(N > 0) constexpr bool Function<Space, N>::fill(
-      AbstractErrorHandler& eh, std::initializer_list<real> values) noexcept {
+      AbstractErrorHandler& eh, std::initializer_list<real> values) MGIS_NOEXCEPT {
     auto dest = this->data();
     if (dest.size() != values.size()) {
       return eh.registerErrorMessage("unmatched size");

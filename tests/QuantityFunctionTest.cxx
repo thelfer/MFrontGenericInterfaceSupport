@@ -43,6 +43,7 @@ struct QuantityFunctionsTest final : public tfel::tests::TestCase {
     this->test2();
     this->test3();
     this->test4();
+    this->test5();
     return this->result;
   }
 
@@ -149,6 +150,23 @@ struct QuantityFunctionsTest final : public tfel::tests::TestCase {
                    as_quantity<::tfel::math::unit::Stress>;
     TFEL_TESTS_STATIC_ASSERT(
         (std::same_as<evaluator_result<std::decay_t<decltype(q)>>, stress>));
+  }
+  void test5() {
+    using namespace mgis;
+    using namespace mgis::function;
+    using stress = ::tfel::math::qt<::tfel::math::unit::Stress, real>;
+    // scalar results (real& and real) can be viewed as quantities
+    auto ctx = ContractViolationHandler{};
+    auto space = BasicLinearSpace{1};
+    Function f(space, 4);
+    Function<BasicLinearSpace, 1> f2(space);
+    auto t = f | as_stensor<2>;
+    auto t2 = f2 | as_qt<stress>;
+    t(0) = {1, -2, -5, 4};
+    const auto ok = assign(ctx, t2, t | vmis | as_qt<stress>);
+    TFEL_TESTS_ASSERT(ok);
+    TFEL_TESTS_ASSERT(check_value(f2(0), std::sqrt(51)));
+    TFEL_TESTS_ASSERT(check_value((f2 | as_scalar)(0), std::sqrt(51)));
   }
 };
 

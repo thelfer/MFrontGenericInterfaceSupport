@@ -17,6 +17,7 @@
 #include "MGIS/Function/BasicLinearSpace.hxx"
 #include "MGIS/Function/BasicLinearQuadratureSpace.hxx"
 #include "MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.hxx"
+#include "MGIS/Function/Algorithms.hxx"
 #include "MGIS/Function/TFEL/Tensors.hxx"
 
 namespace mgis::function {}  // end of namespace mgis::function
@@ -67,6 +68,7 @@ struct StridedCoalescedMemoryAccessTensorViewTest final
   }  // end of StridedCoalescedMemoryAccessTensorViewTest
   tfel::tests::TestResult execute() override {
     this->test1();
+    this->test2();
     return this->result;
   }
 
@@ -90,6 +92,25 @@ struct StridedCoalescedMemoryAccessTensorViewTest final
     TFEL_TESTS_STATIC_ASSERT(local_abs(r[1] - 60) < 1e-14);
     TFEL_TESTS_STATIC_ASSERT(local_abs(r[2] - 42) < 1e-14);
 #endif /* MGIS_DISABLE_CONSTEXPR_FUNCTION_TESTS */
+  }
+  void test2() {
+    using namespace mgis;
+    using namespace mgis::function;
+    // the view is a function and an evaluator
+    auto ctx = ContractViolationHandler{};
+    auto space = BasicLinearSpace{2};
+    auto values = std::array<real, 8>{1, 10, 2, 20, 3, 30, 4, 40};
+    auto f =
+        StridedCoalescedMemoryAccessTensorView<BasicLinearSpace,
+                                               tfel::math::stensor<2, real>>{
+            space, values};
+    auto tr = Function<BasicLinearSpace, 1>{space};
+    TFEL_TESTS_ASSERT(assign(ctx, tr, f | trace));
+    TFEL_TESTS_ASSERT(std::abs(tr(1) - 60) < 1e-14);
+    auto g = Function<BasicLinearSpace, 4>{space};
+    g(1)[0] = 5;
+    TFEL_TESTS_ASSERT(assign(ctx, f, g | as_stensor<2>));
+    TFEL_TESTS_ASSERT(std::abs(values[1] - 5) < 1e-14);
   }
 };
 
@@ -177,11 +198,13 @@ struct StridedCoalescedMemoryAccessCompositeTensorsViewTest final
         StridedCoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4>;
     auto space = BasicLinearSpace{2};
     std::array<real, 6> out_values = {0, 0, 0, 0, 0, 0};
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     auto ctx = Context{};
     TFEL_TESTS_ASSERT(
         !CompositeView::checkPreconditions(ctx, space, out_values));
     TFEL_TESTS_CHECK_EQUAL(ctx.getRawErrorMessage(),
                            "invalid number of values");
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     if constexpr (config::contract_violation_policy ==
                   config::ContractViolationPolicy::RAISE) {
       bool has_thrown = false;

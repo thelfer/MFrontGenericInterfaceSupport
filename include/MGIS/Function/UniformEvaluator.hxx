@@ -37,27 +37,28 @@ namespace mgis::function {
      * \param[in] s: space
      * \param[in] v: value
      */
-    constexpr UniformEvaluator(const Space&, const ValueType&) noexcept;
+    constexpr UniformEvaluator(const Space&, const ValueType&) MGIS_NOEXCEPT;
     //! \brief move constructor
     constexpr UniformEvaluator(UniformEvaluator&&) noexcept;
     //! \brief copy constructor
-    constexpr UniformEvaluator(const UniformEvaluator&) noexcept;
+    constexpr UniformEvaluator(const UniformEvaluator&) MGIS_NOEXCEPT;
     //! \brief return the underlying space
-    [[nodiscard]] constexpr const Space& getSpace() const noexcept;
+    [[nodiscard]] constexpr const Space& getSpace() const MGIS_NOEXCEPT;
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
-    [[nodiscard]] constexpr ValueType operator()(const element_index<Space>&)
-        const noexcept requires(ElementSpaceConcept<Space>);
+    [[nodiscard]] constexpr ValueType operator()(
+        const element_index<Space>&) const MGIS_NOEXCEPT
+      requires(ElementSpaceConcept<Space>);
     /*!
      * \brief call operator
      * \param[in] i: integration point index
      */
     [[nodiscard]] constexpr ValueType operator()(
         const element_workspace<Space>&,
-        const element_index<Space>&) const noexcept
-        requires(ElementSpaceConcept<Space>&& hasElementWorkspace<Space>);
+        const element_index<Space>&) const MGIS_NOEXCEPT
+      requires(ElementSpaceConcept<Space> && hasElementWorkspace<Space>);
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -65,8 +66,8 @@ namespace mgis::function {
      */
     [[nodiscard]] constexpr ValueType operator()(
         const cell_index<Space>&,
-        const quadrature_point_index<Space>&) const noexcept
-        requires(QuadratureSpaceConcept<Space>);
+        const quadrature_point_index<Space>&) const MGIS_NOEXCEPT
+      requires(QuadratureSpaceConcept<Space>);
     /*!
      * \brief call operator
      * \param[in] e: cell index
@@ -75,8 +76,8 @@ namespace mgis::function {
     [[nodiscard]] constexpr ValueType operator()(
         const cell_workspace<Space>&,
         const cell_index<Space>&,
-        const quadrature_point_index<Space>&) const noexcept
-        requires(QuadratureSpaceConcept<Space>&& hasCellWorkspace<Space>);
+        const quadrature_point_index<Space>&) const MGIS_NOEXCEPT
+      requires(QuadratureSpaceConcept<Space> && hasCellWorkspace<Space>);
     //! \brief destructor
     constexpr ~UniformEvaluator() noexcept;
 
@@ -84,10 +85,10 @@ namespace mgis::function {
     //
     static_assert(N > 0);
     //
-    [[nodiscard]] static constexpr real buildValues(const real) noexcept;
+    [[nodiscard]] static constexpr real buildValues(const real) MGIS_NOEXCEPT;
     //
     [[nodiscard]] static constexpr std::array<real, N> buildValues(
-        const std::span<const real>&) noexcept;
+        const std::span<const real>&) MGIS_NOEXCEPT;
     //! \brief underlying discretization space
     const Space space;
     //! \brief values
@@ -118,14 +119,15 @@ namespace mgis::function {
 
   template <SpaceConcept Space, std::size_t N>
   constexpr bool check(AbstractErrorHandler&,
-                       const UniformEvaluator<Space, N>&) noexcept;
+                       const UniformEvaluator<Space, N>&) MGIS_NOEXCEPT;
 
   template <SpaceConcept Space, std::size_t N>
-  constexpr const Space& getSpace(const UniformEvaluator<Space, N>&) noexcept;
+  constexpr const Space& getSpace(const UniformEvaluator<Space, N>&)
+      MGIS_NOEXCEPT;
 
   template <SpaceConcept Space, std::size_t N>
   constexpr mgis::size_type getNumberOfComponents(
-      const UniformEvaluator<Space, N>&) noexcept;
+      const UniformEvaluator<Space, N>&) MGIS_NOEXCEPT;
 
 }  // end of namespace mgis::function
 

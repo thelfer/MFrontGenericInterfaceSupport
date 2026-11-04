@@ -76,7 +76,8 @@ namespace mgis::function {
     //! \brief return the underlying  space
     [[nodiscard]] constexpr const Space& getSpace() const;
     //! \return the number of components
-    [[nodiscard]] constexpr size_type getNumberOfComponents() const noexcept;
+    [[nodiscard]] constexpr size_type getNumberOfComponents() const
+        MGIS_NOEXCEPT;
     /*!
      * \brief call operator
      * \param[in] i: integration point index
@@ -169,7 +170,7 @@ namespace mgis::function {
   //! \return the number of components
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   [[nodiscard]] constexpr size_type getNumberOfComponents(
-      const TensorView<FunctionType, TensorType>&) noexcept;
+      const TensorView<FunctionType, TensorType>&) MGIS_NOEXCEPT;
 
 }  // end of namespace mgis::function
 

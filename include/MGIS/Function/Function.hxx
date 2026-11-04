@@ -33,18 +33,20 @@ namespace mgis::function {
   template <size_type data_size>
   requires(data_size > 0) struct FunctionDataSize {
     //! \return the number of components
-    [[nodiscard]] constexpr bool isScalar() const noexcept;
+    [[nodiscard]] constexpr bool isScalar() const MGIS_NOEXCEPT;
     //! \return the number of components
-    [[nodiscard]] constexpr size_type getNumberOfComponents() const noexcept;
+    [[nodiscard]] constexpr size_type getNumberOfComponents() const
+        MGIS_NOEXCEPT;
   };
 
   //! \brief partial specialisation in the dynamic_extent case
   template <>
   struct FunctionDataSize<dynamic_extent> {
     //! \return the number of components
-    [[nodiscard]] constexpr bool isScalar() const noexcept;
+    [[nodiscard]] constexpr bool isScalar() const MGIS_NOEXCEPT;
     //! \return the number of components
-    [[nodiscard]] constexpr size_type getNumberOfComponents() const noexcept;
+    [[nodiscard]] constexpr size_type getNumberOfComponents() const
+        MGIS_NOEXCEPT;
 
    protected:
     //! \brief data size
@@ -61,7 +63,7 @@ namespace mgis::function {
      * \return the stride of data, i.e. the distance between the values of two
      * successive integration points.
      */
-    [[nodiscard]] constexpr size_type getDataStride() const noexcept;
+    [[nodiscard]] constexpr size_type getDataStride() const MGIS_NOEXCEPT;
   };
 
   //! \brief partial specialisation in the dynamic_extent case
@@ -71,7 +73,7 @@ namespace mgis::function {
      * \return the stride of data, i.e. the distance between the values of two
      * successive integration points.
      */
-    [[nodiscard]] constexpr size_type getDataStride() const noexcept;
+    [[nodiscard]] constexpr size_type getDataStride() const MGIS_NOEXCEPT;
 
    protected:
     //! \brief data size
@@ -116,8 +118,8 @@ namespace mgis::function {
      * \return the data offset associated with the given integration point.
      * \param[in] i: integration point
      */
-    [[nodiscard]] constexpr size_type getDataOffset(
-        const size_type) const noexcept;
+    [[nodiscard]] constexpr size_type getDataOffset(const size_type) const
+        MGIS_NOEXCEPT;
   };  // end of struct FunctionDataLayout
 
   /*!
@@ -457,7 +459,7 @@ namespace mgis::function {
     constexpr FunctionView(FunctionView&&) = default;
     constexpr FunctionView(const FunctionView&) = default;
     //! \return the underlying quadrature space
-    [[nodiscard]] constexpr const Space& getSpace() const noexcept;
+    [[nodiscard]] constexpr const Space& getSpace() const MGIS_NOEXCEPT;
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point
@@ -565,7 +567,7 @@ namespace mgis::function {
             bool is_mutable>
   [[nodiscard]] constexpr bool check(
       AbstractErrorHandler&,
-      const FunctionView<Space, layout, is_mutable>&) noexcept;
+      const FunctionView<Space, layout, is_mutable>&) MGIS_NOEXCEPT;
   /*!
    * \return the number of components of a view
    * \param[in] v: view
@@ -574,7 +576,7 @@ namespace mgis::function {
             FunctionDataLayoutDescription layout,
             bool is_mutable>
   [[nodiscard]] constexpr mgis::size_type getNumberOfComponents(
-      const FunctionView<Space, layout, is_mutable>&) noexcept;
+      const FunctionView<Space, layout, is_mutable>&) MGIS_NOEXCEPT;
 
   /*!
    * \brief an helper class storing the values of a function
@@ -699,15 +701,15 @@ namespace mgis::function {
      * \param[in] values: raw data
      */
     [[nodiscard]] constexpr bool fill(AbstractErrorHandler&,
-                                      std::span<const real>) noexcept;
+                                      std::span<const real>) MGIS_NOEXCEPT;
     /*!
      * \brief fill the structure using raw data
      *
      * \param[in] eh: error handler
      * \param[in] values: raw data
      */
-    [[nodiscard]] constexpr bool fill(AbstractErrorHandler&,
-                                      std::initializer_list<real>) noexcept;
+    [[nodiscard]] constexpr bool fill(
+        AbstractErrorHandler&, std::initializer_list<real>) MGIS_NOEXCEPT;
     //! \brief destructor
     constexpr ~Function();
   };

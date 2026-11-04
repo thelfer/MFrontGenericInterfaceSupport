@@ -23,6 +23,51 @@
 #include "MGIS/Function/Function.hxx"
 #include "MGIS/Function/FixedSizeView.hxx"
 
+namespace mgis_test {
+
+  //! \brief a linear quadrature space which is not an element space
+  struct QuadratureSpace {
+    mgis::size_type number_of_cells;
+    mgis::size_type number_of_quadrature_points;
+  };
+
+  constexpr mgis::size_type getSpaceSize(const QuadratureSpace& s) noexcept {
+    return s.number_of_cells * s.number_of_quadrature_points;
+  }
+
+  constexpr bool areEquivalent(const QuadratureSpace& s,
+                               const QuadratureSpace& s2) noexcept {
+    return (s.number_of_cells == s2.number_of_cells) &&
+           (s.number_of_quadrature_points == s2.number_of_quadrature_points);
+  }
+
+  constexpr mgis::size_type getNumberOfCells(
+      const QuadratureSpace& s) noexcept {
+    return s.number_of_cells;
+  }
+
+  constexpr mgis::size_type getNumberOfQuadraturePoints(
+      const QuadratureSpace& s, const mgis::size_type) noexcept {
+    return s.number_of_quadrature_points;
+  }
+
+  constexpr mgis::size_type getQuadraturePointOffset(
+      const QuadratureSpace& s,
+      const mgis::size_type c,
+      const mgis::size_type q) noexcept {
+    return c * s.number_of_quadrature_points + q;
+  }
+
+}  // end of namespace mgis_test
+
+template <>
+struct mgis::function::SpaceTraits<mgis_test::QuadratureSpace> {
+  using size_type = mgis::size_type;
+  using cell_index_type = mgis::size_type;
+  using quadrature_point_index_type = mgis::size_type;
+  static constexpr bool linear_cell_indexing = true;
+};
+
 struct ImmutableFunctionTest final : public tfel::tests::TestCase {
   ImmutableFunctionTest()
       : tfel::tests::TestCase("MGIS/Function", "ImmutableFunctionTests") {
@@ -239,6 +284,7 @@ struct FunctionTest final : public tfel::tests::TestCase {
     this->test12();
     this->test13();
     this->test14();
+    this->test15();
     return this->result;
   }
 
@@ -800,6 +846,19 @@ struct FunctionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(check_value(f2(1)[0], 12));
     TFEL_TESTS_ASSERT(check_value(f3(0)[0], 5));
     TFEL_TESTS_ASSERT(check_value(f3(1)[0], 12));
+  }
+  void test15() {
+    using namespace mgis;
+    using namespace mgis::function;
+    using Space = mgis_test::QuadratureSpace;
+    // function on a linear quadrature space which is not an element space
+    TFEL_TESTS_STATIC_ASSERT(LinearQuadratureSpaceConcept<Space>);
+    TFEL_TESTS_STATIC_ASSERT(!ElementSpaceConcept<Space>);
+    TFEL_TESTS_STATIC_ASSERT(QuadratureFunctionConcept<FunctionView<Space>>);
+    auto values = std::vector<real>(12, real{0});
+    auto f = FunctionView<Space>(Space{2, 3}, values, 2);
+    f(1, 2)[1] = 42;
+    TFEL_TESTS_ASSERT(std::abs(values[11] - 42) < 1e-14);
   }
 };
 

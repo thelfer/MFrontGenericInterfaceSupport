@@ -44,10 +44,10 @@ namespace mgis::model {
     return model;
   }  // end of load
 
-  std::optional<Model> load(Context &ctx,
-                            const std::string &l,
-                            const std::string &m,
-                            const mgis::behaviour::Hypothesis h) noexcept {
+  std::optional<Model> load(Context& ctx,
+                            const std::string& l,
+                            const std::string& m,
+                            const mgis::behaviour::Hypothesis h) MGIS_NOEXCEPT {
     try {
       return ::mgis::model::load(l, m, h);
     } catch (...) {
@@ -63,8 +63,8 @@ namespace mgis::model {
   }  // end of load
 
   std::optional<Model> loadFromDatabase(
-      Context &ctx,
-      const mgis::behaviour::LoadFromDatabaseOptions &opts) noexcept {
+      Context& ctx,
+      const mgis::behaviour::LoadFromDatabaseOptions& opts) MGIS_NOEXCEPT {
     try {
       return ::mgis::model::loadFromDatabase(opts);
     } catch (...) {

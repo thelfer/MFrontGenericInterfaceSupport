@@ -72,6 +72,36 @@ namespace mgis::function {
         this->getValuesPointers(e, q));
   }  // end of operator()
 
+  template <FunctionalSpaceConcept Space,
+            TensorConcept TensorType,
+            bool is_mutable>
+  constexpr const Space& getSpace(
+      const CoalescedMemoryAccessTensorView<Space, TensorType, is_mutable>&
+          v) MGIS_NOEXCEPT {
+    return v.getSpace();
+  }  // end of getSpace
+
+  template <FunctionalSpaceConcept Space,
+            TensorConcept TensorType,
+            bool is_mutable>
+  constexpr bool check(
+      AbstractErrorHandler&,
+      const CoalescedMemoryAccessTensorView<Space,
+                                            TensorType,
+                                            is_mutable>&) MGIS_NOEXCEPT {
+    return true;
+  }  // end of check
+
+  template <FunctionalSpaceConcept Space,
+            TensorConcept TensorType,
+            bool is_mutable>
+  constexpr size_type getNumberOfComponents(
+      const CoalescedMemoryAccessTensorView<Space,
+                                            TensorType,
+                                            is_mutable>&) MGIS_NOEXCEPT {
+    return compile_time_size<TensorType>;
+  }  // end of getNumberOfComponents
+
 }  // namespace mgis::function
 
 #endif /* LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSTENSORVIEW_IXX */

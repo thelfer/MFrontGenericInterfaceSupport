@@ -53,54 +53,54 @@ namespace mgis::function {
       const BasicImmutableFunctionView&,
       const BasicImmutableFunctionView&,
       const TensorType = TensorType::STENSOR,
-      const RotationOperation = RotationOperation::FORWARD) noexcept;
+      const RotationOperation = RotationOperation::FORWARD) MGIS_NOEXCEPT;
 
   MGIS_EXPORT std::optional<Function<BasicLinearSpace>> computeRotatedTensor(
       Context&,
       const BasicImmutableFunctionView&,
       const std::span<real>&,
       const TensorType = TensorType::STENSOR,
-      const RotationOperation = RotationOperation::FORWARD) noexcept;
+      const RotationOperation = RotationOperation::FORWARD) MGIS_NOEXCEPT;
 
   MGIS_EXPORT std::optional<Function<BasicLinearSpace>>
   computeRotatedSymmetricTensor(
       Context&,
       const BasicImmutableFunctionView&,
       const BasicImmutableFunctionView&,
-      const RotationOperation = RotationOperation::FORWARD) noexcept;
+      const RotationOperation = RotationOperation::FORWARD) MGIS_NOEXCEPT;
 
   MGIS_EXPORT std::optional<Function<BasicLinearSpace>>
   computeRotatedSymmetricTensor(
       Context&,
       const BasicImmutableFunctionView&,
       const std::span<real>&,
-      const RotationOperation = RotationOperation::FORWARD) noexcept;
+      const RotationOperation = RotationOperation::FORWARD) MGIS_NOEXCEPT;
 
   MGIS_EXPORT std::optional<Function<BasicLinearSpace>>
   computeRotatedUnsymmetricTensor(
       Context&,
       const BasicImmutableFunctionView&,
       const BasicImmutableFunctionView&,
-      const RotationOperation = RotationOperation::FORWARD) noexcept;
+      const RotationOperation = RotationOperation::FORWARD) MGIS_NOEXCEPT;
 
   MGIS_EXPORT std::optional<Function<BasicLinearSpace>>
   computeRotatedUnsymmetricTensor(
       Context&,
       const BasicImmutableFunctionView&,
       const std::span<real>&,
-      const RotationOperation = RotationOperation::FORWARD) noexcept;
+      const RotationOperation = RotationOperation::FORWARD) MGIS_NOEXCEPT;
 
   MGIS_EXPORT std::optional<Function<BasicLinearSpace>> computeRotatedST2toST2(
       Context&,
       const BasicImmutableFunctionView&,
       const BasicImmutableFunctionView&,
-      const RotationOperation = RotationOperation::FORWARD) noexcept;
+      const RotationOperation = RotationOperation::FORWARD) MGIS_NOEXCEPT;
 
   MGIS_EXPORT std::optional<Function<BasicLinearSpace>> computeRotatedST2toST2(
       Context&,
       const BasicImmutableFunctionView&,
       const std::span<real>&,
-      const RotationOperation = RotationOperation::FORWARD) noexcept;
+      const RotationOperation = RotationOperation::FORWARD) MGIS_NOEXCEPT;
 
 }  // namespace mgis::function
 

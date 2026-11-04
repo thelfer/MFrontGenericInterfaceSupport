@@ -397,13 +397,13 @@ namespace mgis::function {
   template <FunctionConcept FunctionType>
   inline constexpr auto isFunctionResultTypeMappable =
       requires(function_result<FunctionType> rf) {
-    { rf.data() } -> std::same_as<real*>;
+    { getDataPointer(rf) } -> std::same_as<real*>;
   };
 
   template <FunctionConcept FunctionType>
   inline constexpr auto isFunctionConstResultTypeMappable =
       requires(function_const_result<FunctionType> rf) {
-    { rf.data() } -> std::same_as<const real*>;
+    { getDataPointer(rf) } -> std::same_as<const real*>;
   };
 
   namespace internals {
@@ -438,8 +438,8 @@ namespace mgis::function {
 
     template <ViewableFunctionArgumentConcept QualifiedFunctionArgumentType,
               size_type N>
-    [[nodiscard]] constexpr bool
-    checkNumberOfComponentsCompatibility() noexcept {
+    [[nodiscard]] constexpr bool checkNumberOfComponentsCompatibility()
+        MGIS_NOEXCEPT {
       constexpr auto Nc =
           number_of_components<std::decay_t<QualifiedFunctionArgumentType>>;
       if constexpr (Nc == dynamic_extent) {

@@ -24,7 +24,7 @@ namespace mgis::function::internals {
 
   template <EvaluatorConcept EvaluatorType>
   static std::optional<Function<BasicLinearSpace>> evaluate(
-      Context& ctx, const EvaluatorType& e) noexcept {
+      Context& ctx, const EvaluatorType& e) MGIS_NOEXCEPT {
     const auto& s = getSpace(e);
     const auto nc = getNumberOfComponents(e);
     if (!Function<BasicLinearSpace>::checkPreconditions(ctx, s, nc)) {
@@ -42,7 +42,7 @@ namespace mgis::function::internals {
       Context& ctx,
       const TensorFunctionView& t,
       const BasicImmutableFunctionView& r,
-      const RotationOperation ro) noexcept {
+      const RotationOperation ro) MGIS_NOEXCEPT {
     const auto rm = r | as_tmatrix<3, 3>;
     if (!rm.check(ctx)) {
       return {};
@@ -58,7 +58,7 @@ namespace mgis::function::internals {
       Context& ctx,
       const TensorFunctionView& t,
       const std::span<real>& r,
-      const RotationOperation ro) noexcept {
+      const RotationOperation ro) MGIS_NOEXCEPT {
     const auto rm = tfel::math::tmatrix<3u, 3u, real>{r.data()};
     if (ro == RotationOperation::FORWARD) {
       return internals::evaluate(ctx, t | rotate(rm));
@@ -75,7 +75,7 @@ namespace mgis::function {
       const BasicImmutableFunctionView& t,
       const BasicImmutableFunctionView& r,
       const TensorType type,
-      const RotationOperation ro) noexcept {
+      const RotationOperation ro) MGIS_NOEXCEPT {
     if (type == TensorType::STENSOR) {
       return computeRotatedSymmetricTensor(ctx, t, r, ro);
     } else if (type == TensorType::TENSOR) {
@@ -92,7 +92,7 @@ namespace mgis::function {
       const BasicImmutableFunctionView& t,
       const std::span<real>& r,
       const TensorType type,
-      const RotationOperation ro) noexcept {
+      const RotationOperation ro) MGIS_NOEXCEPT {
     if (type == TensorType::STENSOR) {
       return computeRotatedSymmetricTensor(ctx, t, r, ro);
     } else if (type == TensorType::TENSOR) {
@@ -108,7 +108,7 @@ namespace mgis::function {
       Context& ctx,
       const BasicImmutableFunctionView& s,
       const BasicImmutableFunctionView& r,
-      const RotationOperation ro) noexcept {
+      const RotationOperation ro) MGIS_NOEXCEPT {
     if (getNumberOfComponents(s) == 3) {
       return internals::evaluate(ctx, s);
     } else if (getNumberOfComponents(s) == 4) {
@@ -123,7 +123,7 @@ namespace mgis::function {
       Context& ctx,
       const BasicImmutableFunctionView& s,
       const std::span<real>& r,
-      const RotationOperation ro) noexcept {
+      const RotationOperation ro) MGIS_NOEXCEPT {
     if (r.size() != 9u) {
       return ctx.registerErrorMessage(
           "computeRotatedSymmetricTensor: invalid number of values for the "
@@ -143,7 +143,7 @@ namespace mgis::function {
       Context& ctx,
       const BasicImmutableFunctionView& s,
       const BasicImmutableFunctionView& r,
-      const RotationOperation ro) noexcept {
+      const RotationOperation ro) MGIS_NOEXCEPT {
     if (getNumberOfComponents(s) == 3) {
       return internals::evaluate(ctx, s);
     } else if (getNumberOfComponents(s) == 5) {
@@ -158,7 +158,7 @@ namespace mgis::function {
       Context& ctx,
       const BasicImmutableFunctionView& s,
       const std::span<real>& r,
-      const RotationOperation ro) noexcept {
+      const RotationOperation ro) MGIS_NOEXCEPT {
     if (r.size() != 9u) {
       return ctx.registerErrorMessage(
           "computeRotatedUnsymmetricTensor: invalid number of values for the "
@@ -178,7 +178,7 @@ namespace mgis::function {
       Context& ctx,
       const BasicImmutableFunctionView& s,
       const BasicImmutableFunctionView& r,
-      const RotationOperation ro) noexcept {
+      const RotationOperation ro) MGIS_NOEXCEPT {
     if (getNumberOfComponents(s) == 9) {
       return internals::evaluate(ctx, s);
     } else if (getNumberOfComponents(s) == 16) {
@@ -193,7 +193,7 @@ namespace mgis::function {
       Context& ctx,
       const BasicImmutableFunctionView& s,
       const std::span<real>& r,
-      const RotationOperation ro) noexcept {
+      const RotationOperation ro) MGIS_NOEXCEPT {
     if (r.size() != 9u) {
       return ctx.registerErrorMessage(
           "computeRotatedST2toST2: invalid number of values for the "

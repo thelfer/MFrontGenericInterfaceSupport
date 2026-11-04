@@ -46,8 +46,10 @@ struct InvokeTest final : public tfel::tests::TestCase {
     auto r1 = invoke(ctx, f, 12);
     TFEL_TESTS_ASSERT(r1.has_value());
     TFEL_TESTS_CHECK_EQUAL(*r1, 24);
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     auto r2 = invoke(ctx, f, -12);
     TFEL_TESTS_ASSERT(!r2.has_value());
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
   }  // end of InvokeTest
 
   void test2() {
@@ -60,8 +62,10 @@ struct InvokeTest final : public tfel::tests::TestCase {
     Context ctx;
     auto r1 = invoke(ctx, f, 12);
     TFEL_TESTS_ASSERT(r1);
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     auto r2 = invoke(ctx, f, -12);
     TFEL_TESTS_ASSERT(!r2);
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
   }  // end of InvokeTest
 
   void test3() {
@@ -72,16 +76,20 @@ struct InvokeTest final : public tfel::tests::TestCase {
           invokeCheckErrno(ctx, static_cast<double (*)(double)>(std::log), 1);
       TFEL_TESTS_ASSERT(r1.has_value());
       TFEL_TESTS_ASSERT(std::abs(*r1) < 1e-14);
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
       const auto r2 =
           invokeCheckErrno(ctx, static_cast<double (*)(double)>(std::log), -1);
       TFEL_TESTS_ASSERT(!r2.has_value());
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
       const auto r3 = MGIS_INVOKE_CHECK_ERRNO(
           ctx, static_cast<double (*)(double)>(std::log), 1);
       TFEL_TESTS_ASSERT(r3.has_value());
       TFEL_TESTS_ASSERT(std::abs(*r3) < 1e-14);
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
       const auto r4 = MGIS_INVOKE_CHECK_ERRNO(
           ctx, static_cast<double (*)(double)>(std::log), -1);
       TFEL_TESTS_ASSERT(!r4.has_value());
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     }
   }  // end of test3
 
@@ -99,7 +107,9 @@ struct InvokeTest final : public tfel::tests::TestCase {
       return v == 2 * x;
     };
     TFEL_TESTS_ASSERT(try_invoke(12));
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     TFEL_TESTS_ASSERT(!try_invoke(-12));
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
   }  // end of test4
 };   // end of InvokeTest
 

@@ -11,14 +11,15 @@
 
 namespace mgis {
 
-  Context::Context() noexcept : verbosity(mgis::getDefaultVerbosityLevel()) {
+  Context::Context() MGIS_NOEXCEPT
+      : verbosity(mgis::getDefaultVerbosityLevel()) {
     // Initialisation de la racine du profilage
     this->root_profiling_data.name = "root";
     this->root_profiling_data.calls = 1;
     this->profiling_stack.push_back(&this->root_profiling_data);
   }  // end of Context
 
-  Context::Context(const ContextInitializer &i) noexcept
+  Context::Context(const ContextInitializer& i) MGIS_NOEXCEPT
       : verbosity(i.verbosity) {
     // Initialisation de la racine du profilage
     this->root_profiling_data.name = "root";
@@ -26,28 +27,28 @@ namespace mgis {
     this->profiling_stack.push_back(&this->root_profiling_data);
   }  // end of Context
 
-  const VerbosityLevel &Context::getVerbosityLevel() const noexcept {
+  const VerbosityLevel& Context::getVerbosityLevel() const MGIS_NOEXCEPT {
     return this->verbosity;
   }  // end of getVerbosityLevel
 
-  void Context::setVerbosityLevel(const VerbosityLevel l) noexcept {
+  void Context::setVerbosityLevel(const VerbosityLevel l) MGIS_NOEXCEPT {
     this->verbosity = l;
   }  // end of setVerbosityLevel
 
-  void Context::enableProfiling(const bool b) noexcept {
+  void Context::enableProfiling(const bool b) MGIS_NOEXCEPT {
     this->profiling_enabled = b;
   }  // end of enableProfiling
 
-  bool Context::isProfilingEnabled() const noexcept {
+  bool Context::isProfilingEnabled() const MGIS_NOEXCEPT {
     return this->profiling_enabled;
   }  // end of isProfilingEnabled
 
   ProfilingSection Context::startNewProfiling(std::string name,
-                                              bool enabled) noexcept {
+                                              bool enabled) MGIS_NOEXCEPT {
     return ProfilingSection{*this, std::move(name), enabled};
   }  // end of startNewProfiling
 
-  void Context::pushProfilingNode(std::string name) noexcept {
+  void Context::pushProfilingNode(std::string name) MGIS_NOEXCEPT {
     if (this->profiling_stack.empty()) return;
 
     ProfilingData *current = this->profiling_stack.back();
@@ -70,7 +71,7 @@ namespace mgis {
     }
   }  // end of pushProfilingNode
 
-  void Context::popProfilingNode(double dt) noexcept {
+  void Context::popProfilingNode(double dt) MGIS_NOEXCEPT {
     if (this->profiling_stack.size() > 1) {
       ProfilingData *current = this->profiling_stack.back();
       current->time_in_seconds += dt;
@@ -82,15 +83,15 @@ namespace mgis {
     }
   }  // end of popProfilingNode
 
-  const ProfilingData &Context::getProfilingResultTree() const noexcept {
+  const ProfilingData& Context::getProfilingResultTree() const MGIS_NOEXCEPT {
     return this->root_profiling_data;
   }  // end of getProfilingResultTree
 
-  void Context::setLogStream(std::ostream &s) noexcept {
+  void Context::setLogStream(std::ostream& s) MGIS_NOEXCEPT {
     this->log_stream = &s;
   }  // end of setLogStream
 
-  void Context::setLogStream(std::shared_ptr<std::ostream> s) noexcept {
+  void Context::setLogStream(std::shared_ptr<std::ostream> s) MGIS_NOEXCEPT {
     if (s.get() == nullptr) {
       this->resetLogStream();
       return;
@@ -98,7 +99,8 @@ namespace mgis {
     this->log_stream = s;
   }  // end of setLogStream
 
-  std::shared_ptr<std::ostream> Context::getLogStreamPointer() const noexcept {
+  std::shared_ptr<std::ostream> Context::getLogStreamPointer() const
+      MGIS_NOEXCEPT {
     if (std::holds_alternative<std::shared_ptr<std::ostream>>(
             this->log_stream)) {
       return std::get<std::shared_ptr<std::ostream>>(this->log_stream);
@@ -106,11 +108,11 @@ namespace mgis {
     return {};
   }  // end of getLogStreamPointer
 
-  void Context::resetLogStream() noexcept {
+  void Context::resetLogStream() MGIS_NOEXCEPT {
     this->log_stream = std::monostate{};
   }
 
-  void Context::disableLogStream() noexcept {
+  void Context::disableLogStream() MGIS_NOEXCEPT {
     /*!
      * \brief a buffer which allows to create no-op output streams, i.e. streams
      * that does not nothing.
@@ -127,7 +129,7 @@ namespace mgis {
     this->setLogStream(null_stream);
   }
 
-  std::ostream &Context::log() noexcept {
+  std::ostream& Context::log() MGIS_NOEXCEPT {
     if (std::holds_alternative<std::ostream *>(this->log_stream)) {
       auto *const ptr = std::get<std::ostream *>(this->log_stream);
       if (ptr == nullptr) {

@@ -821,9 +821,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_library_wrapper(lp,b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_library
   ! behaviour_get_behaviour_name
@@ -847,9 +847,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_behaviour_name_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_behaviour_name
   ! behaviour_get_function_name
@@ -873,9 +873,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_function_name_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_function_name
   ! behaviour_get_source
@@ -899,9 +899,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_source_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_source
   ! behaviour_get_author
@@ -925,9 +925,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_author_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_author
   ! behaviour_get_date
@@ -951,9 +951,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_date_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_date
   ! behaviour_get_validator
@@ -977,9 +977,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_validator_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_validator
   ! behaviour_get_build_id
@@ -1003,9 +1003,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_build_id_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_build_id
   ! behaviour_get_hypothesis
@@ -1029,9 +1029,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_hypothesis_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_hypothesis
   ! behaviour_get_tfel_version
@@ -1055,9 +1055,9 @@ contains
     type(c_ptr) :: lp
     s = behaviour_get_tfel_version_wrapper(lp, b%ptr)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_tfel_version
   !
@@ -1163,9 +1163,9 @@ contains
     end if
     s = behaviour_get_parameter_name_wrapper(lp, b%ptr, nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_parameter_name
   !
@@ -1247,9 +1247,9 @@ contains
     end if
     s = behaviour_get_material_property_name_wrapper(lp, b%ptr, nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_material_property_name
   !
@@ -1360,9 +1360,9 @@ contains
     end if
     s = behaviour_get_internal_state_variable_name_wrapper(lp, b%ptr, nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_internal_state_variable_name
   !
@@ -1530,9 +1530,9 @@ contains
     end if
     s = behaviour_get_external_state_variable_name_wrapper(lp, b%ptr, nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_external_state_variable_name
   !
@@ -2069,9 +2069,9 @@ contains
     end if
     s = behaviour_get_initialize_function_name_wrapper(lp, b%ptr, nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_initialize_function_name
   !
@@ -2161,9 +2161,9 @@ contains
     s = behaviour_get_initialize_function_input_name_wrapper( &
          lp, b%ptr, convert_fortran_string(f), nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_initialize_function_input_name
   !
@@ -2286,9 +2286,9 @@ contains
     end if
     s = behaviour_get_post_processing_name_wrapper(lp, b%ptr, nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_post_processing_name
   !
@@ -2378,9 +2378,9 @@ contains
     s = behaviour_get_post_processing_output_name_wrapper( &
          lp, b%ptr, convert_fortran_string(p), nc)
     if (s % exit_status == MGIS_SUCCESS) then
-       l = convert_c_string(lp)
+       call convert_c_string_to(lp, l)
     else
-       l = get_empty_string();
+       allocate(character(len=0)::l)
     end if
   end function behaviour_get_post_processing_output_name
   !
@@ -3003,7 +3003,7 @@ contains
     type(State), intent(in) :: s
     character(len=*), intent(in) :: n
     type(mgis_status) :: r
-    real(kind=8), pointer :: fptr => null()
+    real(kind=8), pointer :: fptr
     type(c_ptr) :: p
     r = state_get_material_property_by_name_wrapper(&
          p, s%ptr, convert_fortran_string(n))
@@ -3065,7 +3065,7 @@ contains
     type(State), intent(in) :: s
     integer, intent(in) :: o
     type(mgis_status) :: r
-    real(kind=8), pointer :: fptr => null()
+    real(kind=8), pointer :: fptr
     type(c_ptr) :: p
     integer(kind=c_size_t) offset
     if(.not. convert_to_c_index(offset, o)) then
@@ -3194,7 +3194,7 @@ contains
     type(State), intent(in) :: s
     character(len=*), intent(in) :: n
     type(mgis_status) :: r
-    real(kind=8), pointer :: fptr => null()
+    real(kind=8), pointer :: fptr
     type(c_ptr) :: p
     type(Behaviour) :: b
     character(len=:), allocatable :: h
@@ -3284,6 +3284,12 @@ contains
     call c_f_pointer(p, v, [vs])
   end function state_get_external_state_variable_values_by_name
   !
+  ! \note the initializer stores the address of the array, not its
+  !       values: the actual argument must be contiguous, have the target
+  !       or pointer attribute, hold n values and outlive the material
+  !       data manager created with this initializer. A non contiguous
+  !       array section would be passed as a temporary copy, which no
+  !       longer exists when this function returns.
   function msm_initializer_bind_gradients(st,a,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis_fortran_utilities
@@ -3303,7 +3309,7 @@ contains
        end function msm_initializer_bind_gradients_wrapper
     end interface
     type(MaterialStateManagerInitializer), intent(in) :: st
-    real(kind=8), dimension(*), target, intent(out) :: a
+    real(kind=8), dimension(*), target :: a
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) a_ptr
@@ -3312,7 +3318,12 @@ contains
     a_ptr = c_loc(a)
     s = msm_initializer_bind_gradients_wrapper(st%ptr,a_ptr,nc)
   end function msm_initializer_bind_gradients
-  !
+  ! \note the initializer stores the address of the array, not its
+  !       values: the actual argument must be contiguous, have the target
+  !       or pointer attribute, hold n values and outlive the material
+  !       data manager created with this initializer. A non contiguous
+  !       array section would be passed as a temporary copy, which no
+  !       longer exists when this function returns.
   function msm_initializer_bind_thermodynamic_forces(st,a,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis_fortran_utilities
@@ -3332,7 +3343,7 @@ contains
        end function msm_initializer_bind_thermodynamic_forces_wrapper
     end interface
     type(MaterialStateManagerInitializer), intent(in) :: st
-    real(kind=8), dimension(*), target, intent(out) :: a
+    real(kind=8), dimension(*), target :: a
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) a_ptr
@@ -3341,7 +3352,12 @@ contains
     a_ptr = c_loc(a)
     s = msm_initializer_bind_thermodynamic_forces_wrapper(st%ptr,a_ptr,nc)
   end function msm_initializer_bind_thermodynamic_forces
-  !
+  ! \note the initializer stores the address of the array, not its
+  !       values: the actual argument must be contiguous, have the target
+  !       or pointer attribute, hold n values and outlive the material
+  !       data manager created with this initializer. A non contiguous
+  !       array section would be passed as a temporary copy, which no
+  !       longer exists when this function returns.
   function msm_initializer_bind_internal_state_variables(st,a,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis_fortran_utilities
@@ -3361,7 +3377,7 @@ contains
        end function msm_initializer_bind_internal_state_variables_wrapper
     end interface
     type(MaterialStateManagerInitializer), intent(in) :: st
-    real(kind=8), dimension(*), target, intent(out) :: a
+    real(kind=8), dimension(*), target :: a
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) a_ptr
@@ -3370,7 +3386,12 @@ contains
     a_ptr = c_loc(a)
     s = msm_initializer_bind_internal_state_variables_wrapper(st%ptr,a_ptr,nc)
   end function msm_initializer_bind_internal_state_variables
-  !
+  ! \note the initializer stores the address of the array, not its
+  !       values: the actual argument must be contiguous, have the target
+  !       or pointer attribute, hold n values and outlive the material
+  !       data manager created with this initializer. A non contiguous
+  !       array section would be passed as a temporary copy, which no
+  !       longer exists when this function returns.
   function msm_initializer_bind_stored_energies(st,a,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis_fortran_utilities
@@ -3390,7 +3411,7 @@ contains
        end function msm_initializer_bind_stored_energies_wrapper
     end interface
     type(MaterialStateManagerInitializer), intent(in) :: st
-    real(kind=8), dimension(*), target, intent(out) :: a
+    real(kind=8), dimension(*), target :: a
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) a_ptr
@@ -3399,7 +3420,12 @@ contains
     a_ptr = c_loc(a)
     s = msm_initializer_bind_stored_energies_wrapper(st%ptr,a_ptr,nc)
   end function msm_initializer_bind_stored_energies
-  !
+  ! \note the initializer stores the address of the array, not its
+  !       values: the actual argument must be contiguous, have the target
+  !       or pointer attribute, hold n values and outlive the material
+  !       data manager created with this initializer. A non contiguous
+  !       array section would be passed as a temporary copy, which no
+  !       longer exists when this function returns.
   function msm_initializer_bind_dissipated_energies(st,a,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis_fortran_utilities
@@ -3419,7 +3445,7 @@ contains
        end function msm_initializer_bind_dissipated_energies_wrapper
     end interface
     type(MaterialStateManagerInitializer), intent(in) :: st
-    real(kind=8), dimension(*), target, intent(out) :: a
+    real(kind=8), dimension(*), target :: a
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) a_ptr
@@ -3489,7 +3515,12 @@ contains
     type(mgis_status) :: s
     s = mdm_initializer_get_state_1_initializer_wrapper(s1%ptr, d%ptr)
   end function material_data_manager_initializer_get_state_1_initializer 
-  !
+  ! \note the initializer stores the address of the array, not its
+  !       values: the actual argument must be contiguous, have the target
+  !       or pointer attribute, hold n values and outlive the material
+  !       data manager created with this initializer. A non contiguous
+  !       array section would be passed as a temporary copy, which no
+  !       longer exists when this function returns.
   function material_data_manager_initializer_bind_tangent_operator(d,K,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis_fortran_utilities
@@ -3509,7 +3540,7 @@ contains
        end function material_data_manager_initializer_bind_tangent_operator_wrapper
     end interface
     type(MaterialDataManagerInitializer), intent(in) :: d
-    real(kind=8), dimension(*), target, intent(out) :: K
+    real(kind=8), dimension(*), target :: K
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) K_ptr
@@ -3518,7 +3549,12 @@ contains
     K_ptr = c_loc(K)
     s = material_data_manager_initializer_bind_tangent_operator_wrapper(d%ptr,K_ptr,nc)
   end function material_data_manager_initializer_bind_tangent_operator
-  !
+  ! \note the initializer stores the address of the array, not its
+  !       values: the actual argument must be contiguous, have the target
+  !       or pointer attribute, hold n values and outlive the material
+  !       data manager created with this initializer. A non contiguous
+  !       array section would be passed as a temporary copy, which no
+  !       longer exists when this function returns.
   function material_data_manager_initializer_bind_speed_of_sound(d,p,n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis_fortran_utilities
@@ -3538,7 +3574,7 @@ contains
        end function material_data_manager_initializer_bind_speed_of_sound_wrapper
     end interface
     type(MaterialDataManagerInitializer), intent(in) :: d
-    real(kind=8), dimension(*), target, intent(out) :: p
+    real(kind=8), dimension(*), target :: p
     integer, intent(in) :: n
     type(mgis_status) :: s
     type(c_ptr) p_ptr
@@ -3761,7 +3797,12 @@ contains
     type(mgis_status) :: r
     r = mdm_allocate_array_of_tangent_operator_blocks_wrapper(d%ptr)
   end function material_data_manager_allocate_array_of_tangent_operator_blocks
-  !
+  ! \note the material data manager stores the address of the array,
+  !       not its values: the actual argument must be contiguous, have
+  !       the target or pointer attribute, hold n values and remain
+  !       valid until the array is released or the manager is freed. A
+  !       non contiguous array section would be passed as a temporary
+  !       copy, which no longer exists when this function returns.
   function material_data_manager_use_array_of_tangent_operator_blocks(d, p , n) result(r)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis, only: mgis_status
@@ -3780,7 +3821,7 @@ contains
        end function mdm_use_array_of_tangent_operator_blocks_wrapper
     end interface
     type(MaterialDataManager), intent(in) :: d
-    real(kind=8), dimension(*), target, intent(out) :: p
+    real(kind=8), dimension(*), target :: p
     integer, intent(in) :: n
     type(mgis_status) :: r
     type(c_ptr) p_ptr
@@ -3827,7 +3868,12 @@ contains
     type(mgis_status) :: r
     r = mdm_allocate_array_of_speed_of_sounds_wrapper(d%ptr)
   end function material_data_manager_allocate_array_of_speed_of_sounds
-  !
+  ! \note the material data manager stores the address of the array,
+  !       not its values: the actual argument must be contiguous, have
+  !       the target or pointer attribute, hold n values and remain
+  !       valid until the array is released or the manager is freed. A
+  !       non contiguous array section would be passed as a temporary
+  !       copy, which no longer exists when this function returns.
   function material_data_manager_use_array_of_speed_of_sounds(d, p , n) result(r)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_loc
     use mgis, only: mgis_status
@@ -3846,7 +3892,7 @@ contains
        end function mdm_use_array_of_speed_of_sounds_wrapper
     end interface
     type(MaterialDataManager), intent(in) :: d
-    real(kind=8), dimension(*), target, intent(out) :: p
+    real(kind=8), dimension(*), target :: p
     integer, intent(in) :: n
     type(mgis_status) :: r
     type(c_ptr) p_ptr
@@ -5151,6 +5197,64 @@ contains
    s = integrate_debug_material_data_manager_with_options_wrapper(r, p%ptr, m%ptr, i%ptr, dt)
   end function integrate_debug_material_data_manager_with_options
   !
+  function integrate_material_data_manager_with_options_2(r, tsf, p, m, i, dt) result(s)
+   use mgis, only: ThreadPool, mgis_status
+   implicit none
+   interface
+      function integrate_material_data_manager_with_options_2_wrapper(r, tsf, p, m, i, dt) &
+           bind(c,name = 'mgis_bv_integrate_material_data_manager_with_options_2') &
+           result(s)
+        use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_double
+        use mgis, only: mgis_status
+        implicit none
+        integer(kind=c_int), intent(out) :: r
+        real(kind = c_double), intent(out) :: tsf
+        type(c_ptr), intent(in),value :: p
+        type(c_ptr), intent(in),value :: m
+        type(c_ptr), intent(in),value :: i
+        real(kind = c_double), intent(in),value :: dt
+        type(mgis_status) :: s
+      end function integrate_material_data_manager_with_options_2_wrapper
+   end interface
+   integer,                           intent(out) :: r
+   real(kind = 8),                    intent(out) :: tsf
+   type(ThreadPool),                  intent(in) :: p
+   type(MaterialDataManager),         intent(in) :: m
+   type(BehaviourIntegrationOptions), intent(in) :: i
+   real(kind = 8), intent(in) :: dt
+   type(mgis_status) :: s
+   s = integrate_material_data_manager_with_options_2_wrapper(r, tsf, p%ptr, m%ptr, i%ptr, dt)
+  end function integrate_material_data_manager_with_options_2
+  !
+  function integrate_debug_material_data_manager_with_options_2(r, tsf, p, m, i, dt) result(s)
+   use mgis, only: ThreadPool, mgis_status
+   implicit none
+   interface
+      function integrate_debug_material_data_manager_with_options_2_wrapper(r, tsf, p, m, i, dt) &
+           bind(c,name = 'mgis_bv_integrate_debug_material_data_manager_with_options_2') &
+           result(s)
+        use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_double
+        use mgis, only: mgis_status
+        implicit none
+        integer(kind=c_int), intent(out) :: r
+        real(kind = c_double), intent(out) :: tsf
+        type(c_ptr), intent(in),value :: p
+        type(c_ptr), intent(in),value :: m
+        type(c_ptr), intent(in),value :: i
+        real(kind = c_double), intent(in),value :: dt
+        type(mgis_status) :: s
+      end function integrate_debug_material_data_manager_with_options_2_wrapper
+   end interface
+   integer,                           intent(out) :: r
+   real(kind = 8),                    intent(out) :: tsf
+   type(ThreadPool),                  intent(in) :: p
+   type(MaterialDataManager),         intent(in) :: m
+   type(BehaviourIntegrationOptions), intent(in) :: i
+   real(kind = 8), intent(in) :: dt
+   type(mgis_status) :: s
+   s = integrate_debug_material_data_manager_with_options_2_wrapper(r, tsf, p%ptr, m%ptr, i%ptr, dt)
+  end function integrate_debug_material_data_manager_with_options_2
+  !
   function integrate_material_data_manager_part(r, m, i, dt, ni, ne) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t
     use mgis_fortran_utilities, only: convert_to_c_index
@@ -5234,6 +5338,94 @@ contains
     nec = nec + 1
     s = integrate_debug_material_data_manager_part_wrapper(r, m%ptr, i, dt, nic, nec)
   end function integrate_debug_material_data_manager_part
+  !
+  function integrate_material_data_manager_part_2(r, tsf, m, i, dt, ni, ne) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities, only: convert_to_c_index
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function integrate_material_data_manager_part_2_wrapper(r, tsf, m, i, dt, ni, ne) &
+            bind(c,name = 'mgis_bv_integrate_material_data_manager_part_2') &
+            result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t, c_int, c_double
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: r
+         real(kind = c_double), intent(out) :: tsf
+         type(c_ptr), intent(in),value :: m
+         integer,     intent(in),value :: i
+         real(kind = c_double), intent(in),value :: dt
+         integer(kind = c_size_t), intent(in),value :: ni
+         integer(kind = c_size_t), intent(in),value :: ne
+         type(mgis_status) :: s
+       end function integrate_material_data_manager_part_2_wrapper
+    end interface
+    integer, intent(out) :: r
+    real(kind = 8), intent(out) :: tsf
+    type(MaterialDataManager), intent(in) :: m
+    integer,     intent(in),value :: i
+    real(kind = 8),            intent(in) :: dt
+    integer :: ni
+    integer :: ne
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: nic
+    integer(kind=c_size_t) :: nec
+    if(.not. convert_to_c_index(nic, ni)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    if(.not. convert_to_c_index(nec, ne)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    nec = nec + 1
+    s = integrate_material_data_manager_part_2_wrapper(r, tsf, m%ptr, i, dt, nic, nec)
+  end function integrate_material_data_manager_part_2
+  !
+  function integrate_debug_material_data_manager_part_2(r, tsf, m, i, dt, ni, ne) result(s)
+    use, intrinsic :: iso_c_binding, only: c_size_t
+    use mgis_fortran_utilities, only: convert_to_c_index
+    use mgis, only: mgis_status, report_failure
+    implicit none
+    interface
+       function integrate_debug_material_data_manager_part_2_wrapper(r, tsf, m, i, dt, ni, ne) &
+            bind(c,name = 'mgis_bv_integrate_debug_material_data_manager_part_2') &
+            result(s)
+         use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t, c_int, c_double
+         use mgis, only: mgis_status
+         implicit none
+         integer(kind=c_int), intent(out) :: r
+         real(kind = c_double), intent(out) :: tsf
+         type(c_ptr), intent(in),value :: m
+         integer,     intent(in),value :: i
+         real(kind = c_double), intent(in),value :: dt
+         integer(kind = c_size_t), intent(in),value :: ni
+         integer(kind = c_size_t), intent(in),value :: ne
+         type(mgis_status) :: s
+       end function integrate_debug_material_data_manager_part_2_wrapper
+    end interface
+    integer, intent(out) :: r
+    real(kind = 8), intent(out) :: tsf
+    type(MaterialDataManager), intent(in) :: m
+    integer,     intent(in),value :: i
+    real(kind = 8),            intent(in) :: dt
+    integer :: ni
+    integer :: ne
+    type(mgis_status) :: s
+    integer(kind=c_size_t) :: nic
+    integer(kind=c_size_t) :: nec
+    if(.not. convert_to_c_index(nic, ni)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    if(.not. convert_to_c_index(nec, ne)) then
+       s = report_failure("invalid index")
+       return
+    end if
+    nec = nec + 1
+    s = integrate_debug_material_data_manager_part_2_wrapper(r, tsf, m%ptr, i, dt, nic, nec)
+  end function integrate_debug_material_data_manager_part_2
   ! execute_initialize_function
   function execute_initialize_function(r, d, b, n, inputs) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t

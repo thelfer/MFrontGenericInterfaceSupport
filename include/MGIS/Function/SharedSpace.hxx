@@ -116,8 +116,8 @@ namespace mgis::function {
     SharedSpace(SharedSpace&&) = default;
     SharedSpace(const SharedSpace&) = default;
 
-    const SpaceType& operator*() const noexcept { return *(this->space); }
-    const SpaceType* get() const noexcept { return this->space.get(); }
+    const SpaceType& operator*() const MGIS_NOEXCEPT { return *(this->space); }
+    const SpaceType* get() const MGIS_NOEXCEPT { return this->space.get(); }
 
    private:
     std::shared_ptr<const SpaceType> space;
@@ -147,7 +147,8 @@ namespace mgis::function {
 
   template <SpaceConcept SpaceType>
   [[nodiscard]] bool areEquivalent(const SharedSpace<SpaceType>& s,
-                                   const SharedSpace<SpaceType>& s2) noexcept {
+                                   const SharedSpace<SpaceType>& s2)
+      MGIS_NOEXCEPT {
     return s.get() == s2.get();
   }
 

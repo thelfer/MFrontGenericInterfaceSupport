@@ -10,6 +10,7 @@
 #include <memory>
 #include <cassert>
 #include <optional>
+#include "MGIS/Config.hxx"
 
 namespace mgis::internal {
 
@@ -49,7 +50,7 @@ namespace mgis::internal {
   template <>
   struct OptionalTraits<bool> {
     static constexpr bool isSpecialized = true;
-    static constexpr void deference(const bool) noexcept {}
+    static constexpr void deference(const bool) MGIS_NOEXCEPT {}
   };
 
   //! \brief partial specialisation for std::optional values
@@ -63,8 +64,9 @@ namespace mgis::internal {
       assert(v.has_value());
       return std::move(*v);
     }
-    static constexpr T deference(std::optional<T> &&v) noexcept
-        requires(std::is_pointer_v<T>) {
+    static constexpr T deference(std::optional<T>&& v) MGIS_NOEXCEPT
+      requires(std::is_pointer_v<T>)
+    {
       assert(v.has_value());
       return *v;
     }
@@ -92,61 +94,63 @@ namespace mgis {
      * a specialisation of the InvalidValue class exists
      */
     template <typename Type>
-    [[nodiscard]] constexpr operator Type() &&noexcept
-        requires(internal::InvalidValueTraits<Type>::isSpecialized);
+        [[nodiscard]] constexpr operator Type() && MGIS_NOEXCEPT
+          requires(internal::InvalidValueTraits<Type>::isSpecialized);
     //! \brief implicit conversion to std::optional<bool>
-    [[nodiscard]] constexpr operator std::optional<bool>() &&noexcept;
+    [[nodiscard]] constexpr operator std::optional<bool>() && MGIS_NOEXCEPT;
 
   };  // end of struct InvalidResult
   /*!
    * \return false
    * \param[in] v: value
    */
-  [[nodiscard]] constexpr bool isInvalid(const InvalidResult &) noexcept;
+  [[nodiscard]] constexpr bool isInvalid(const InvalidResult&) MGIS_NOEXCEPT;
   /*!
    * \return if the given boolean is true
    * \param[in] b: value
    */
-  [[nodiscard]] constexpr bool isInvalid(const bool) noexcept;
+  [[nodiscard]] constexpr bool isInvalid(const bool) MGIS_NOEXCEPT;
   /*!
    * \return if the given optional is invalid (does not contain an object)
    * \param[in] o: optional value
    */
   template <typename T>
-  [[nodiscard]] constexpr bool isInvalid(const std::optional<T> &) noexcept;
+  [[nodiscard]] constexpr bool isInvalid(const std::optional<T>&) MGIS_NOEXCEPT;
   /*!
    * \return if the given pointer is null (i.e. is empty)
    * \param[in] p: pointer
    */
   template <typename T>
-  [[nodiscard]] constexpr bool isInvalid(T *const) noexcept;
+  [[nodiscard]] constexpr bool isInvalid(T* const) MGIS_NOEXCEPT;
   /*!
    * \return if the given std::unique_ptr is invalid (i.e. is empty)
    * \param[in] p: pointer
    */
   template <typename T>
-  [[nodiscard]] constexpr bool isInvalid(const std::unique_ptr<T> &) noexcept;
+  [[nodiscard]] constexpr bool isInvalid(const std::unique_ptr<T>&)
+      MGIS_NOEXCEPT;
   /*!
    * \return if the given std::shared_ptr is invalid (i.e. is empty)
    * \param[in] p: pointer
    */
   template <typename T>
-  [[nodiscard]] constexpr bool isInvalid(const std::shared_ptr<T> &) noexcept;
+  [[nodiscard]] constexpr bool isInvalid(const std::shared_ptr<T>&)
+      MGIS_NOEXCEPT;
   /*!
    * \return if one of the given objects is invalid
    * \param[in] o: objects tested
    */
-  [[nodiscard]] constexpr bool areInvalid(const auto &...) noexcept;
+  [[nodiscard]] constexpr bool areInvalid(const auto&...) MGIS_NOEXCEPT;
   /*!
    * \return if the given object is valid
    * \param[in] o: object tested
    */
-  [[nodiscard]] constexpr bool isValid(const auto &) noexcept;
+  [[nodiscard]] constexpr bool isValid(const auto&) MGIS_NOEXCEPT;
   /*!
    * \return if all the given objects are valid
    * \param[in] o: objects tested
    */
-  [[nodiscard]] constexpr bool areValid(const auto &...) noexcept;
+  [[nodiscard]] constexpr bool areValid(const auto&...) MGIS_NOEXCEPT;
 
 }  // end of namespace mgis
 

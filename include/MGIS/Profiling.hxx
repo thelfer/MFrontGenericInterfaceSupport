@@ -35,10 +35,10 @@ namespace mgis {
   struct MGIS_EXPORT ProfilingSection {
     //! \brief Standard constructor (active or inactive depending on the
     //! 'enabled' flag)
-    ProfilingSection(Context& ctx, std::string, bool) noexcept;
+    ProfilingSection(Context& ctx, std::string, bool) MGIS_NOEXCEPT;
 
     //! \brief Default constructor (fallback, always inactive)
-    ProfilingSection() noexcept : ctx_ptr(nullptr), active(false) {}
+    ProfilingSection() MGIS_NOEXCEPT : ctx_ptr(nullptr), active(false) {}
 
     ~ProfilingSection() noexcept;
 

@@ -17,17 +17,23 @@
 #include "MGIS/Behaviour/Behaviour.hxx"
 #include "MGIS/Julia/JuliaUtilities.hxx"
 
+namespace jlcxx {
+
+  //! \brief
+  template <>
+  struct SuperType<mgis::behaviour::Behaviour> {
+    using type = mgis::behaviour::BehaviourDescription;
+  };
+
+}  // end of namespace jlcxx
+
 void declareBehaviour(jlcxx::Module &m) {
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::BehaviourDescription;
   using mgis::behaviour::FiniteStrainBehaviourOptions;
   using mgis::behaviour::Hypothesis;
+  using mgis::julia::SharedBehaviour;
   //
-  Behaviour (*load)(const std::string &, const std::string &,
-                    const Hypothesis) = &mgis::behaviour::load;
-  Behaviour (*load2)(const FiniteStrainBehaviourOptions &, const std::string &,
-                     const std::string &, const Hypothesis) =
-      &mgis::behaviour::load;
   void (*setParameter1)(const Behaviour &, const std::string &, const double) =
       &mgis::behaviour::setParameter;
   void (*setParameter2)(const Behaviour &, const std::string &, const int) =
@@ -47,12 +53,6 @@ void declareBehaviour(jlcxx::Module &m) {
       mgis::behaviour::hasLowerBound;
   bool (*hasUpperBound)(const BehaviourDescription &, const std::string &) =
       mgis::behaviour::hasUpperBound;
-  long double (*getLowerBound)(const BehaviourDescription &,
-                               const std::string &) =
-      mgis::behaviour::getLowerBound;
-  long double (*getUpperBound)(const BehaviourDescription &,
-                               const std::string &) =
-      mgis::behaviour::getUpperBound;
   bool (*hasPhysicalBounds)(const BehaviourDescription &, const std::string &) =
       mgis::behaviour::hasPhysicalBounds;
   bool (*hasLowerPhysicalBound)(const BehaviourDescription &,
@@ -61,12 +61,6 @@ void declareBehaviour(jlcxx::Module &m) {
   bool (*hasUpperPhysicalBound)(const BehaviourDescription &,
                                 const std::string &) =
       mgis::behaviour::hasUpperPhysicalBound;
-  long double (*getLowerPhysicalBound)(const BehaviourDescription &,
-                                       const std::string &) =
-      mgis::behaviour::getLowerPhysicalBound;
-  long double (*getUpperPhysicalBound)(const BehaviourDescription &,
-                                       const std::string &) =
-      mgis::behaviour::getUpperPhysicalBound;
   //!
   m.add_bits<FiniteStrainBehaviourOptions::StressMeasure>(
       "FiniteStrainBehaviourOptionsStressMeasure");
@@ -144,7 +138,9 @@ void declareBehaviour(jlcxx::Module &m) {
   m.set_const("FiniteStrainKinematic_F_CAUCHY",
               Behaviour::FINITESTRAINKINEMATIC_F_CAUCHY);
   //
-  m.add_type<Behaviour>("Behaviour")
+  m.add_type<BehaviourDescription>("BehaviourDescription");
+  m.add_type<Behaviour>("Behaviour",
+                        jlcxx::julia_base_type<BehaviourDescription>())
       .method("get_library",
               [](const Behaviour &b) noexcept { return b.library; })
       .method("get_behaviour",
@@ -171,8 +167,18 @@ void declareBehaviour(jlcxx::Module &m) {
               [](const Behaviour &b) { return b.esvs; })
       .method("get_parameters", [](const Behaviour &b) { return b.params; });
   //
-  m.method("load", load);
-  m.method("load", load2);
+  // the loaded behaviour is shared by the objects built from it
+  m.add_type<SharedBehaviour>("SharedBehaviour",
+                              jlcxx::julia_base_type<Behaviour>());
+  m.method("load",
+           [](const std::string& l, const std::string& b, const Hypothesis h) {
+             return SharedBehaviour(mgis::behaviour::load(l, b, h));
+           });
+  m.method("load",
+           [](const FiniteStrainBehaviourOptions& o, const std::string& l,
+              const std::string& b, const Hypothesis h) {
+             return SharedBehaviour(mgis::behaviour::load(o, l, b, h));
+           });
   m.method("set_parameter!", setParameter1);
   m.method("set_integer_parameter!", setParameter2);
   m.method("set_unsigned_short_parameter!",
@@ -187,12 +193,24 @@ void declareBehaviour(jlcxx::Module &m) {
   m.method("has_bounds", hasBounds);
   m.method("has_lower_bound", hasLowerBound);
   m.method("has_upper_bound", hasUpperBound);
-  m.method("get_lower_bound", getLowerBound);
-  m.method("get_upper_bound", getUpperBound);
+  m.method("get_lower_bound",
+           [](const BehaviourDescription &d, const std::string &n) {
+             return static_cast<double>(mgis::behaviour::getLowerBound(d, n));
+           });
+  m.method("get_upper_bound",
+           [](const BehaviourDescription &d, const std::string &n) {
+             return static_cast<double>(mgis::behaviour::getUpperBound(d, n));
+           });
   m.method("has_physical_bounds", hasPhysicalBounds);
   m.method("has_lower_physical_bound", hasLowerPhysicalBound);
   m.method("has_upper_physical_bound", hasUpperPhysicalBound);
-  m.method("get_lower_physical_bound", getLowerPhysicalBound);
-  m.method("get_upper_physical_bound", getUpperPhysicalBound);
+  m.method("get_lower_physical_bound", [](const BehaviourDescription &d,
+                                          const std::string &n) {
+    return static_cast<double>(mgis::behaviour::getLowerPhysicalBound(d, n));
+  });
+  m.method("get_upper_physical_bound", [](const BehaviourDescription &d,
+                                          const std::string &n) {
+    return static_cast<double>(mgis::behaviour::getUpperPhysicalBound(d, n));
+  });
 
 }  // end of declareBehaviour

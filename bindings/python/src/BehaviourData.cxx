@@ -30,6 +30,14 @@ static pybind11::object BehaviourData_getK(pybind11::object self) {
   return mgis::python::wrapInNumPyArray(d.K, self);
 }  // end of MaterialStateManager_getK
 
+static std::string BehaviourData_getErrorMessage(
+    const mgis::behaviour::BehaviourData& d) {
+  if (d.error_message == nullptr) {
+    return {};
+  }
+  return d.error_message;
+}  // end of BehaviourData_getErrorMessage
+
 void declareBehaviourData(pybind11::module_& m) {
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::BehaviourData;
@@ -42,6 +50,10 @@ void declareBehaviourData(pybind11::module_& m) {
       .def(pybind11::init<const Behaviour&>(), pybind11::keep_alive<1, 2>())
       .def_readwrite("dt", &BehaviourData::dt)
       .def_readwrite("rdt", &BehaviourData::rdt)
+      .def_property_readonly("error_message", &BehaviourData_getErrorMessage,
+                             "message written by the behaviour when the\n"
+                             "integration fails (only meaningful if the\n"
+                             "last integration returned -1)")
       .def_readonly("s0", &BehaviourData::s0)
       .def_readonly("s1", &BehaviourData::s1)
       .def_property_readonly("K", &BehaviourData_getK)
