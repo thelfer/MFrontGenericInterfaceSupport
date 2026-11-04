@@ -226,6 +226,10 @@ namespace mgis::function {
     concept is_pointer_to_real = (std::same_as<real*, T>) ||
                                  (std::same_as<const real*, T>);
 
+    //! \brief concept satisfied by `real`, possibly const or a reference
+    template <typename T>
+    concept is_real = std::same_as<std::remove_cvref_t<T>, real>;
+
   }  // end of   namespace internals
 
   /*!
@@ -248,9 +252,8 @@ namespace mgis::function {
    * \return a pointer to a scalar value
    * \param[in] r: scalar value
    */
-  template <typename ScalarType>
-  [[nodiscard]] constexpr auto getDataPointer(ScalarType&& r) noexcept
-      requires(std::same_as<std::remove_cvref_t<ScalarType>, real>) {
+  template <internals::is_real ScalarType>
+  [[nodiscard]] constexpr auto getDataPointer(ScalarType&& r) noexcept {
     return &r;
   }
 
