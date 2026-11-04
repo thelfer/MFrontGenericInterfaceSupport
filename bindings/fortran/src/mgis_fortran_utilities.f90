@@ -29,16 +29,27 @@ contains
     allocate(character(len=0)::s)
   end function get_empty_string
   ! convert C string to fortran string
+  ! \note with gfortran, the length of the result is kept in static
+  !       storage at each call site, so this function is not reentrant:
+  !       use convert_c_string_to in code called from several threads.
   function convert_c_string (cs) result (s)
+    use, intrinsic :: iso_c_binding, only: c_ptr
+    implicit none
+    type(c_ptr), intent(in) :: cs
+    character(len=:), allocatable :: s
+    call convert_c_string_to(cs, s)
+  end function convert_c_string
+  ! convert C string to fortran string (subroutine form, reentrant)
+  subroutine convert_c_string_to (cs, s)
     use, intrinsic :: iso_c_binding, only: c_ptr,c_char,c_null_char,&
          c_size_t,c_f_pointer,c_associated
     implicit none
     type(c_ptr), intent(in) :: cs
-    character(len=:), allocatable :: s
-    character(kind=c_char), dimension(:), pointer :: fptr => null()
+    character(len=:), allocatable, intent(out) :: s
+    character(kind=c_char), dimension(:), pointer :: fptr
     integer(kind=c_size_t) :: i,length
     if(.not. c_associated(cs)) then
-       s = get_empty_string()
+       allocate(character(len=0)::s)
     else       
        length = strlen_wrapper(cs)
        allocate(character(len=length)::s)
@@ -47,7 +58,7 @@ contains
           s(i:i)=fptr(i)
        end do
     end if
-  end function convert_c_string
+  end subroutine convert_c_string_to
   ! convert fortran string to "c" string (trailing blanks are ignored)
   pure function convert_fortran_string (s) result (cs)
     use, intrinsic :: iso_c_binding, only: c_char, c_null_char
