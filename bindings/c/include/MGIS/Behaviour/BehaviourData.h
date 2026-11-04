@@ -53,13 +53,13 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_get_behaviour(
     const mgis_bv_Behaviour** const, mgis_bv_BehaviourData* const);
 /*!
  * \brief update the behaviour data
- * \param[out] d: pointer to a pointer to the allocated data
+ * \param[in,out] d: behaviour data
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_update_behaviour_data(mgis_bv_BehaviourData* const);
 /*!
  * \brief reset the behaviour data
- * \param[out] d: pointer to a pointer to the allocated data
+ * \param[in,out] d: behaviour data
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_revert_behaviour_data(mgis_bv_BehaviourData* const);
@@ -101,7 +101,7 @@ MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_set_time_step_scaling_factor(
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_data_get_tangent_operator(
     mgis_real** const, mgis_bv_BehaviourData* const);
 /*!
- * \brief state at the end of the time step
+ * \brief set the time increment
  * \param[out] d: behaviour data
  * \param[in]  dt: time increment
  */

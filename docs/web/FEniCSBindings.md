@@ -173,6 +173,7 @@ for (i, t) in enumerate(load_steps):
         nRes = Res.norm("l2")
         print("    Residual:", nRes)
         niter += 1
+    assert nRes/nRes0 <= tol, "Newton method did not converge within maximum number of iterations."
     # update for new increment
     u.assign(u1)
     mgis_bv.update(m)

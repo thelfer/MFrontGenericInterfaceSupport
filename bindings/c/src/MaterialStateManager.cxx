@@ -144,6 +144,15 @@ mgis_status mgis_bv_material_state_manager_initializer_bind_dissipated_energies(
 }  // end of
    // mgis_bv_material_state_manager_initializer_bind_dissipated_energies
 
+mgis_status mgis_bv_material_state_manager_get_behaviour(
+    const mgis_bv_Behaviour** const b, mgis_bv_MaterialStateManager* const s) {
+  if (s == nullptr) {
+    return mgis_report_failure("null state manager");
+  }
+  *b = &(s->b);
+  return mgis_report_success();
+}  // end of mgis_bv_material_state_manager_get_behaviour
+
 mgis_status mgis_bv_material_state_manager_get_number_of_integration_points(
     mgis_size_type* n, mgis_bv_MaterialStateManager* const s) {
   if (s == nullptr) {

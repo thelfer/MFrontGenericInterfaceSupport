@@ -11,6 +11,7 @@
 #endif
 
 #include <cmath>
+#include <vector>
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
@@ -30,6 +31,13 @@ struct BuidableWithAndWithoutContext {
   bool build_with_context = false;
 };  // end of BuidableWithContext
 
+struct BuildableWithInitializerList {
+  BuildableWithInitializerList(const std::size_t n, const double v)
+      : values(n, v) {}
+  BuildableWithInitializerList(std::initializer_list<double> l) : values(l) {}
+  std::vector<double> values;
+};  // end of BuildableWithInitializerList
+
 struct ConstructTest final : public tfel::tests::TestCase {
   ConstructTest()
       : tfel::tests::TestCase("MGIS/Utilities", "ConstructTests") {
@@ -42,6 +50,7 @@ struct ConstructTest final : public tfel::tests::TestCase {
     this->test5();
     this->test6();
     this->test7();
+    this->test8();
     return this->result;
   }  // end of execute
 
@@ -221,6 +230,21 @@ struct ConstructTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(isValid(po));
     TFEL_TESTS_CHECK_EQUAL(po->build_with_context, true);
   }
+
+  void test8() {
+    using namespace mgis;
+    using Type = BuildableWithInitializerList;
+    auto ctx = Context{};
+    // the same constructor as for make_unique and make_shared must be called
+    auto p1 = make_unique<Type>(ctx, std::size_t{3}, 1.5);
+    auto p2 = make_unique_as<Type, Type>(ctx, std::size_t{3}, 1.5);
+    auto p3 = make_shared<Type>(ctx, std::size_t{3}, 1.5);
+    auto p4 = make_shared_as<Type, Type>(ctx, std::size_t{3}, 1.5);
+    TFEL_TESTS_ASSERT((p1.get() != nullptr) && (p1->values.size() == 3));
+    TFEL_TESTS_ASSERT((p2.get() != nullptr) && (p2->values.size() == 3));
+    TFEL_TESTS_ASSERT((p3.get() != nullptr) && (p3->values.size() == 3));
+    TFEL_TESTS_ASSERT((p4.get() != nullptr) && (p4->values.size() == 3));
+  }  // end of test8
 };
 
 TFEL_TESTS_GENERATE_PROXY(ConstructTest, "ConstructTest");

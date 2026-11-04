@@ -115,6 +115,14 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(cauchy(0)[3] - sig_ref[3]) < eps);
     TFEL_TESTS_ASSERT(std::abs(cauchy(0)[4] - sig_ref[4]) < eps);
     TFEL_TESTS_ASSERT(std::abs(cauchy(0)[5] - sig_ref[5]) < eps);
+    // deformation gradient computed by value
+    const auto Fc = F | transform([](const auto& v) {
+                      return tfel::math::tensor<3u, real>(v);
+                    });
+    const auto cauchy2 = pk1 | from_pk1_to_cauchy(Fc);
+    TFEL_TESTS_ASSERT(cauchy2.check(ctx));
+    TFEL_TESTS_ASSERT(std::abs(cauchy2(0)[0] - sig_ref[0]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(cauchy2(0)[3] - sig_ref[3]) < eps);
     // rotation matrix whose columns are the material axes expressed in the
     // global frame (here e_z, e_x and e_y), as the matrix of the
     // `@RotationMatrix` keyword of MTest

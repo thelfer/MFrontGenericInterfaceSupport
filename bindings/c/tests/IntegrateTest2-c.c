@@ -144,7 +144,7 @@ int main(const int argc, const char* const* argv) {
     if (fabs(pe[i] - p_ref[i]) > 1.e-12) {
       fprintf(stderr,
               "IntegrateTest: invalid value for the equivalent "
-              "viscoplastic strain at the first integration point"
+              "viscoplastic strain at the last integration point"
               "(expected '%g', computed '%g')\n",
               p_ref[i], pe[i]);
       return EXIT_FAILURE;

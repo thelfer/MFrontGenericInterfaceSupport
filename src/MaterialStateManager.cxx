@@ -581,6 +581,15 @@ namespace mgis::behaviour {
     if (std::holds_alternative<std::span<mgis::real>>(to)) {
       // reuse existing memory
       auto& to_v = std::get<std::span<mgis::real>>(to);
+      if ((values.size() != to_v.size()) &&
+          (values.size() * o.n == to_v.size())) {
+        // duplicate the uniform values
+        for (size_type idx = 0; idx != o.n; ++idx) {
+          std::copy(values.begin(), values.end(),
+                    to_v.begin() + idx * values.size());
+        }
+        return true;
+      }
       if (values.size() != to_v.size()) {
         return ctx.registerErrorMessage("arrays' size does not match");
       }
@@ -589,7 +598,8 @@ namespace mgis::behaviour {
       // reuse existing memory
       auto& to_v = std::get<std::vector<mgis::real>>(to);
       if (to_v.size() != values.size()) {
-        if (to_v.size() * o.n == values.size()) {
+        if ((to_v.size() * o.n == values.size()) ||
+            (values.size() * o.n == to_v.size())) {
           to_v.resize(values.size());
         }
       }
@@ -614,7 +624,13 @@ namespace mgis::behaviour {
     }
     const auto& from = src.value;
     if (std::holds_alternative<mgis::real>(from)) {
-      dest.value = std::get<mgis::real>(from);
+      if (std::holds_alternative<std::span<mgis::real>>(dest.value)) {
+        // reuse existing memory
+        auto& to_v = std::get<std::span<mgis::real>>(dest.value);
+        std::fill(to_v.begin(), to_v.end(), std::get<mgis::real>(from));
+      } else {
+        dest.value = std::get<mgis::real>(from);
+      }
     } else if (std::holds_alternative<std::vector<mgis::real>>(from)) {
       return updateMutableFieldHolderFromSpan(
           ctx, o, dest, std::get<std::vector<mgis::real>>(from));
@@ -878,12 +894,13 @@ namespace mgis::behaviour {
             const MaterialStateManager& s,
             const MaterialStateManagerSavingOptions& opts) noexcept {
     using namespace mgis::utilities::hdf5;
-    if (opts.save_gradients) {
+    if ((opts.save_gradients) && (!s.b.gradients.empty())) {
       if (!write(ctx, g, "gradients", s.gradients, opts.allow_overwrite)) {
         return false;
       }
     }
-    if (opts.save_thermodynamic_forces) {
+    if ((opts.save_thermodynamic_forces) &&
+        (!s.b.thermodynamic_forces.empty())) {
       if (!write(ctx, g, "thermodynamic_forces", s.thermodynamic_forces,
                  opts.allow_overwrite)) {
         return false;
@@ -1138,12 +1155,13 @@ namespace mgis::behaviour {
                const MaterialStateManagerRestoreOptions& opts) noexcept {
     using namespace mgis::utilities::hdf5;
     using MutableFieldHolder = MaterialStateManager::MutableFieldHolder;
-    if (opts.restore_gradients) {
+    if ((opts.restore_gradients) && (!s.b.gradients.empty())) {
       if (!read(ctx, s.gradients, g, "gradients")) {
         return ctx.registerErrorMessage("restoring gradients failed");
       }
     }
-    if (opts.restore_thermodynamic_forces) {
+    if ((opts.restore_thermodynamic_forces) &&
+        (!s.b.thermodynamic_forces.empty())) {
       if (!read(ctx, s.thermodynamic_forces, g, "thermodynamic_forces")) {
         return ctx.registerErrorMessage(
             "restoring thermodynamic forces failed");

@@ -173,6 +173,32 @@ static void check_material_data_manager(const mgis::behaviour::Behaviour& b) {
   }
 }  // end of check_material_data_manager
 
+static void check_update(const mgis::behaviour::Behaviour& b) {
+  using namespace mgis::behaviour;
+  using MutableFieldHolder = MaterialStateManager::MutableFieldHolder;
+  constexpr const auto eps = 1.e-14;
+  // s_esv given at each integration point in one state and uniform in the
+  // other one
+  auto uniform_values = std::vector<mgis::real>{1, 2, 3, 4, 5, 6};
+  auto values = std::vector<mgis::real>(12, 0);
+  MaterialDataManager d{b, 2};
+  setExternalStateVariable(d.s0, "s_esv", values,
+                           MaterialStateManager::EXTERNAL_STORAGE);
+  setExternalStateVariable(d.s1, "s_esv", uniform_values);
+  update(d);
+  for (mgis::size_type i = 0; i != 12; ++i) {
+    check(std::abs(values[i] - uniform_values[i % 6]) < eps,
+          "invalid external state variable value after update");
+  }
+  setExternalStateVariable(d.s0, "s_esv", uniform_values);
+  setExternalStateVariable(d.s1, "s_esv", values);
+  revert(d);
+  const auto& s_esv =
+      std::get<MutableFieldHolder>(d.s1.external_state_variables.at("s_esv"));
+  check(std::get<std::vector<mgis::real>>(s_esv.value) == uniform_values,
+        "invalid external state variable value after revert");
+}  // end of check_update
+
 int main(const int argc, const char* const* argv) {
   using namespace mgis::behaviour;
   constexpr const auto h = Hypothesis::TRIDIMENSIONAL;
@@ -184,6 +210,7 @@ int main(const int argc, const char* const* argv) {
     check_behaviour(b, h);
     check_behaviour_data(b);
     check_material_data_manager(b);
+    check_update(b);
   } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
