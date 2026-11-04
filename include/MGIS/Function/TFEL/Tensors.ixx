@@ -19,7 +19,7 @@ namespace mgis::function::customization_points {
 
   template <TensorConcept TensorType>
   struct AbsoluteValue<TensorType> {
-    static constexpr auto exe(const TensorType& v) noexcept {
+    static constexpr auto exe(const TensorType& v) MGIS_NOEXCEPT {
       constexpr auto N = compile_time_size<TensorType>;
       return AbsoluteValue<std::span<const real, N>>::exe(
           std::span<const real, N>(v.data(), N));
@@ -29,7 +29,7 @@ namespace mgis::function::customization_points {
   template <TensorConcept TensorType>
   struct AbsoluteValue<tfel::math::View<const TensorType>> {
     static constexpr auto exe(
-        const tfel::math::View<const TensorType>& v) noexcept {
+        const tfel::math::View<const TensorType>& v) MGIS_NOEXCEPT {
       constexpr auto N = compile_time_size<TensorType>;
       return AbsoluteValue<std::span<const real, N>>::exe(
           std::span<const real, N>(v.data(), N));
@@ -38,7 +38,7 @@ namespace mgis::function::customization_points {
 
   template <TensorConcept TensorType>
   struct MaximumComponent<TensorType> {
-    static constexpr real exe(const TensorType& v) noexcept {
+    static constexpr real exe(const TensorType& v) MGIS_NOEXCEPT {
       constexpr auto N = compile_time_size<TensorType>;
       return MaximumComponent<std::span<const real, N>>::exe(
           std::span<const real, N>(v.data(), N));
@@ -48,7 +48,7 @@ namespace mgis::function::customization_points {
   template <TensorConcept TensorType>
   struct MaximumComponent<tfel::math::View<const TensorType>> {
     static constexpr real exe(
-        const tfel::math::View<const TensorType>& v) noexcept {
+        const tfel::math::View<const TensorType>& v) MGIS_NOEXCEPT {
       constexpr auto N = compile_time_size<TensorType>;
       return MaximumComponent<std::span<const real, N>>::exe(
           std::span<const real, N>(v.data(), N));
@@ -57,7 +57,7 @@ namespace mgis::function::customization_points {
 
   template <TensorConcept TensorType>
   struct MinimumComponent<TensorType> {
-    static constexpr real exe(const TensorType& v) noexcept {
+    static constexpr real exe(const TensorType& v) MGIS_NOEXCEPT {
       constexpr auto N = compile_time_size<TensorType>;
       return MinimumComponent<std::span<const real, N>>::exe(
           std::span<const real, N>(v.data(), N));
@@ -67,7 +67,7 @@ namespace mgis::function::customization_points {
   template <TensorConcept TensorType>
   struct MinimumComponent<tfel::math::View<const TensorType>> {
     static constexpr real exe(
-        const tfel::math::View<const TensorType>& v) noexcept {
+        const tfel::math::View<const TensorType>& v) MGIS_NOEXCEPT {
       constexpr auto N = compile_time_size<TensorType>;
       return MinimumComponent<std::span<const real, N>>::exe(
           std::span<const real, N>(v.data(), N));

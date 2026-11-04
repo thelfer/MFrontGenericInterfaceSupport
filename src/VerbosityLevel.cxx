@@ -9,7 +9,7 @@
 
 namespace mgis {
 
-  VerbosityLevel &getDefaultVerbosityLevel() noexcept {
+  VerbosityLevel& getDefaultVerbosityLevel() MGIS_NOEXCEPT {
     //   if (Global::debug) {
     //     static VerbosityLevel verboseMode = verboseDebug;
     //     return verboseMode;
@@ -20,11 +20,12 @@ namespace mgis {
     //  }
   }  // end of getDefaultVerbosityLevel()
 
-  void setDefaultVerbosityLevel(const VerbosityLevel l) noexcept {
+  void setDefaultVerbosityLevel(const VerbosityLevel l) MGIS_NOEXCEPT {
     getDefaultVerbosityLevel() = l;
   }  // end of setDefaultVerbosityLevel
 
-  bool setDefaultVerbosityLevel(Context &ctx, std::string_view l) noexcept {
+  bool setDefaultVerbosityLevel(Context& ctx,
+                                std::string_view l) MGIS_NOEXCEPT {
     const auto lvl = convertToVerbosityLevel(ctx, l);
     if (lvl.has_value()) {
       setDefaultVerbosityLevel(*lvl);
@@ -35,7 +36,7 @@ namespace mgis {
   }  // end of setDefaultVerbosityLevel
 
   std::optional<VerbosityLevel> convertToVerbosityLevel(
-      Context &ctx, std::string_view l) noexcept {
+      Context& ctx, std::string_view l) MGIS_NOEXCEPT {
     if (l == "quiet") {
       return verboseQuiet;
     } else if (l == "level0") {

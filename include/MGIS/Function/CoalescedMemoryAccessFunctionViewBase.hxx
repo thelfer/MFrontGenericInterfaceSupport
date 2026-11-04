@@ -111,7 +111,7 @@ namespace mgis::function {
     constexpr CoalescedMemoryAccessFunctionViewBase(const Space&,
                                                     std::span<real>);
     //! \return the underlying quadrature space
-    [[nodiscard]] constexpr const Space& getSpace() const noexcept;
+    [[nodiscard]] constexpr const Space& getSpace() const MGIS_NOEXCEPT;
     /*!
      * \return the data associated with an integration point
      * \param[in] o: offset associated with the integration point

@@ -34,7 +34,7 @@ namespace mgis::function {
 
     template <typename CallableType, EvaluatorConcept EvaluatorType>
     struct UnaryOperationBase {
-      static constexpr size_type getNumberOfComponents() noexcept {
+      static constexpr size_type getNumberOfComponents() MGIS_NOEXCEPT {
         using UnaryOperationResult =
             std::invoke_result_t<CallableType, evaluator_result<EvaluatorType>>;
         return compile_time_size<UnaryOperationResult>;
@@ -102,11 +102,11 @@ namespace mgis::function {
   //! \return the number of components
   template <typename CallableType, EvaluatorConcept EvaluatorType>
   constexpr mgis::size_type getNumberOfComponents(
-      const UnaryOperation<CallableType, EvaluatorType>&) noexcept;
+      const UnaryOperation<CallableType, EvaluatorType>&) MGIS_NOEXCEPT;
   //! \return the number of components
   template <typename CallableType, EvaluatorConcept EvaluatorType>
   constexpr mgis::size_type getNumberOfComponents(
-      const UnaryOperation2<CallableType, EvaluatorType>&) noexcept;
+      const UnaryOperation2<CallableType, EvaluatorType>&) MGIS_NOEXCEPT;
 
   namespace internals {
 
@@ -167,7 +167,7 @@ namespace mgis::function::customization_points {
 
   template <>
   struct AbsoluteValue<real> {
-    [[nodiscard]] static constexpr real exe(const real& v) noexcept {
+    [[nodiscard]] static constexpr real exe(const real& v) MGIS_NOEXCEPT {
       return v < 0 ? -v : v;
     }
   };
@@ -175,8 +175,8 @@ namespace mgis::function::customization_points {
   template <std::size_t N>
   requires((N > 0) && (N != std::dynamic_extent))  //
       struct AbsoluteValue<std::span<const real, N>> {
-    [[nodiscard]] static constexpr auto exe(
-        const std::span<const real, N>& v) noexcept {
+    [[nodiscard]] static constexpr auto exe(const std::span<const real, N>& v)
+        MGIS_NOEXCEPT {
       auto r = std::array<real, N>{};
       for (std::size_t i = 0; i != N; ++i) {
         r[i] = std::abs(v[i]);
@@ -188,8 +188,8 @@ namespace mgis::function::customization_points {
   template <std::size_t N>
   requires((N > 0) && (N != std::dynamic_extent))  //
       struct AbsoluteValue<std::array<real, N>> {
-    [[nodiscard]] static constexpr auto exe(
-        const std::array<real, N>& v) noexcept {
+    [[nodiscard]] static constexpr auto exe(const std::array<real, N>& v)
+        MGIS_NOEXCEPT {
       auto r = std::array<real, N>{};
       for (std::size_t i = 0; i != N; ++i) {
         r[i] = std::abs(v[i]);
@@ -203,7 +203,7 @@ namespace mgis::function::customization_points {
 
   template <>
   struct MaximumComponent<real> {
-    [[nodiscard]] static constexpr real exe(const real& v) noexcept {
+    [[nodiscard]] static constexpr real exe(const real& v) MGIS_NOEXCEPT {
       return v;
     }
   };
@@ -211,9 +211,10 @@ namespace mgis::function::customization_points {
   template <std::size_t N>
   requires((N > 0) && (N != std::dynamic_extent))  //
       struct MaximumComponent<std::span<const real, N>> {
-    [[nodiscard]] static constexpr real exe(
-        const std::span<const real, N>& v) noexcept
-        requires((N != 0) && (N != std::dynamic_extent)) {
+    [[nodiscard]] static constexpr real exe(const std::span<const real, N>& v)
+        MGIS_NOEXCEPT
+      requires((N != 0) && (N != std::dynamic_extent))
+    {
       if constexpr (N == 1) {
         return v[0];
       } else if constexpr (N == 2) {
@@ -230,8 +231,8 @@ namespace mgis::function::customization_points {
 
   template <std::size_t N>
   requires(N > 0) struct MaximumComponent<std::array<real, N>> {
-    [[nodiscard]] static constexpr real exe(
-        const std::array<real, N>& v) noexcept {
+    [[nodiscard]] static constexpr real exe(const std::array<real, N>& v)
+        MGIS_NOEXCEPT {
       return MaximumComponent<std::span<const real, N>>::exe(
           std::span<const real, N>(v.data(), N));
     }
@@ -242,7 +243,7 @@ namespace mgis::function::customization_points {
 
   template <>
   struct MinimumComponent<real> {
-    [[nodiscard]] static constexpr real exe(const real& v) noexcept {
+    [[nodiscard]] static constexpr real exe(const real& v) MGIS_NOEXCEPT {
       return v;
     }
   };
@@ -250,9 +251,10 @@ namespace mgis::function::customization_points {
   template <std::size_t N>
   requires((N > 0) && (N != std::dynamic_extent))  //
       struct MinimumComponent<std::span<const real, N>> {
-    [[nodiscard]] static constexpr real exe(
-        const std::span<const real, N>& v) noexcept
-        requires((N != 0) && (N != std::dynamic_extent)) {
+    [[nodiscard]] static constexpr real exe(const std::span<const real, N>& v)
+        MGIS_NOEXCEPT
+      requires((N != 0) && (N != std::dynamic_extent))
+    {
       if constexpr (N == 1) {
         return v[0];
       } else if constexpr (N == 2) {
@@ -269,8 +271,8 @@ namespace mgis::function::customization_points {
 
   template <std::size_t N>
   requires(N > 0) struct MinimumComponent<std::array<real, N>> {
-    [[nodiscard]] static constexpr real exe(
-        const std::array<real, N>& v) noexcept {
+    [[nodiscard]] static constexpr real exe(const std::array<real, N>& v)
+        MGIS_NOEXCEPT {
       return MinimumComponent<std::span<const real, N>>::exe(
           std::span<const real, N>(v.data(), N));
     }

@@ -109,26 +109,23 @@ namespace mgis::function {
             TensorConcept TensorType,
             bool is_mutable>
   [[nodiscard]] constexpr const Space& getSpace(
-      const CoalescedMemoryAccessTensorView<Space,
-                                            TensorType,
-                                            is_mutable>&) noexcept;
+      const CoalescedMemoryAccessTensorView<Space, TensorType, is_mutable>&)
+      MGIS_NOEXCEPT;
   //! \brief a noop function to match the EvaluatorConcept concept
   template <FunctionalSpaceConcept Space,
             TensorConcept TensorType,
             bool is_mutable>
   [[nodiscard]] constexpr bool check(
       AbstractErrorHandler&,
-      const CoalescedMemoryAccessTensorView<Space,
-                                            TensorType,
-                                            is_mutable>&) noexcept;
+      const CoalescedMemoryAccessTensorView<Space, TensorType, is_mutable>&)
+      MGIS_NOEXCEPT;
   //! \return the number of components
   template <FunctionalSpaceConcept Space,
             TensorConcept TensorType,
             bool is_mutable>
   [[nodiscard]] constexpr size_type getNumberOfComponents(
-      const CoalescedMemoryAccessTensorView<Space,
-                                            TensorType,
-                                            is_mutable>&) noexcept;
+      const CoalescedMemoryAccessTensorView<Space, TensorType, is_mutable>&)
+      MGIS_NOEXCEPT;
 
 }  // namespace mgis::function
 

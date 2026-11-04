@@ -196,7 +196,7 @@ namespace mgis::behaviour {
   bool save(Context& ctx,
             H5::Group& g,
             const MaterialDataManager& m,
-            const MaterialDataManagerSavingOptions& opts) noexcept {
+            const MaterialDataManagerSavingOptions& opts) MGIS_NOEXCEPT {
     using namespace mgis::utilities::hdf5;
     // group for the state at the beginning of the time step
     if ((opts.allow_overwrite) && (!unlinkIfExists(ctx, g, "s0"))) {
@@ -227,7 +227,7 @@ namespace mgis::behaviour {
   bool restore(Context& ctx,
                MaterialDataManager& m,
                const H5::Group& g,
-               const MaterialDataManagerRestoreOptions& opts) noexcept {
+               const MaterialDataManagerRestoreOptions& opts) MGIS_NOEXCEPT {
     using namespace mgis::utilities::hdf5;
     // group for the state at the beginning of the time step
     auto og_s0 = openGroup(ctx, g, "s0");

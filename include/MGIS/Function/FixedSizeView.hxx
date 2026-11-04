@@ -69,7 +69,8 @@ namespace mgis::function {
     //! \brief return the underlying  space
     [[nodiscard]] constexpr decltype(auto) getSpace() const;
     //! \return the number of components
-    [[nodiscard]] constexpr size_type getNumberOfComponents() const noexcept;
+    [[nodiscard]] constexpr size_type getNumberOfComponents() const
+        MGIS_NOEXCEPT;
     /*!
      * \brief call operator
      * \param[in] i: integration point index
@@ -189,7 +190,7 @@ namespace mgis::function {
   //! \return the number of components
   template <FunctionConcept FunctionType, size_type N>
   [[nodiscard]] constexpr size_type getNumberOfComponents(
-      const FixedSizeView<FunctionType, N>&) noexcept;
+      const FixedSizeView<FunctionType, N>&) MGIS_NOEXCEPT;
 
 }  // end of namespace mgis::function
 

@@ -108,7 +108,7 @@ namespace mgis::function {
   [[nodiscard]] constexpr const Space& getSpace(
       const StridedCoalescedMemoryAccessTensorView<Space,
                                                    TensorType,
-                                                   is_mutable>&) noexcept;
+                                                   is_mutable>&) MGIS_NOEXCEPT;
   //! \brief a noop function to match the EvaluatorConcept concept
   template <FunctionalSpaceConcept Space,
             TensorConcept TensorType,
@@ -117,7 +117,7 @@ namespace mgis::function {
       AbstractErrorHandler&,
       const StridedCoalescedMemoryAccessTensorView<Space,
                                                    TensorType,
-                                                   is_mutable>&) noexcept;
+                                                   is_mutable>&) MGIS_NOEXCEPT;
   //! \return the number of components
   template <FunctionalSpaceConcept Space,
             TensorConcept TensorType,
@@ -125,7 +125,7 @@ namespace mgis::function {
   [[nodiscard]] constexpr size_type getNumberOfComponents(
       const StridedCoalescedMemoryAccessTensorView<Space,
                                                    TensorType,
-                                                   is_mutable>&) noexcept;
+                                                   is_mutable>&) MGIS_NOEXCEPT;
 
 }  // namespace mgis::function
 

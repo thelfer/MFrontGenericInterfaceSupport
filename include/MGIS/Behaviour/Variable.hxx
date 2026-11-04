@@ -59,8 +59,8 @@ namespace mgis::behaviour {
    * \param[in] vs: variables
    * \param[in] n: name
    */
-  MGIS_EXPORT MGIS_NODISCARD bool contains(const std::vector<Variable> &,
-                                           const std::string_view) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD bool contains(
+      const std::vector<Variable>&, const std::string_view) MGIS_NOEXCEPT;
   /*!
    * \return the variable with the given name
    * \param[in] vs: variables
@@ -74,9 +74,9 @@ namespace mgis::behaviour {
    * \param[in] n: name
    */
   MGIS_EXPORT OptionalReference<const Variable> getVariable(
-      Context &,
-      const std::vector<Variable> &,
-      const std::string_view) noexcept;
+      Context&,
+      const std::vector<Variable>&,
+      const std::string_view) MGIS_NOEXCEPT;
   /*!
    * \return the type of a variable from an identifier
    * \param[in] id: type identifier
@@ -102,7 +102,7 @@ namespace mgis::behaviour {
    * \param[in] h: modelling hypothesis
    */
   MGIS_EXPORT MGIS_NODISCARD std::optional<size_type> getVariableSize(
-      Context &, const Variable &, const Hypothesis) noexcept;
+      Context&, const Variable&, const Hypothesis) MGIS_NOEXCEPT;
   /*!
    * \return the size of an array that may contain the values described by the
    * given array of variables
@@ -120,7 +120,7 @@ namespace mgis::behaviour {
    * \param[in] h: modelling hypothesis
    */
   MGIS_EXPORT MGIS_NODISCARD std::optional<size_type> getArraySize(
-      Context &, const std::vector<Variable> &, const Hypothesis) noexcept;
+      Context&, const std::vector<Variable>&, const Hypothesis) MGIS_NOEXCEPT;
   /*!
    * \return the offset of the given variable for the given hypothesis
    * \param[in] vs: variables
@@ -138,10 +138,10 @@ namespace mgis::behaviour {
    * \param[in] h: modelling hypothesis
    */
   MGIS_EXPORT MGIS_NODISCARD std::optional<size_type> getVariableOffset(
-      Context &,
-      const std::vector<Variable> &,
+      Context&,
+      const std::vector<Variable>&,
       const std::string_view,
-      const Hypothesis) noexcept;
+      const Hypothesis) MGIS_NOEXCEPT;
   /*!
    * \return the type of the given variable as a string
    * \param[in] v: variable

@@ -209,8 +209,8 @@ namespace mgis {
   template <typename Type, typename... ArgumentsTypes>
   [[nodiscard]] std::optional<Type> construct(Context&,
                                               const std::source_location&,
-                                              ArgumentsTypes&&...) noexcept
-      requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
+                                              ArgumentsTypes&&...) MGIS_NOEXCEPT
+    requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
   /*!
    * \brief try to build a unique pointer holding the given type.
    *
@@ -225,10 +225,9 @@ namespace mgis {
    * \param[in] args: arguments passed to the constructor
    */
   template <typename Type, typename... ArgumentsTypes>
-  [[nodiscard]] std::unique_ptr<Type> make_unique(Context&,
-                                                  const std::source_location&,
-                                                  ArgumentsTypes&&...) noexcept
-      requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
+  [[nodiscard]] std::unique_ptr<Type> make_unique(
+      Context&, const std::source_location&, ArgumentsTypes&&...) MGIS_NOEXCEPT
+    requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
   /*!
    * \brief try to build a unique pointer of a base type holding the given type.
    *
@@ -244,9 +243,9 @@ namespace mgis {
    */
   template <typename BaseType, typename Type, typename... ArgumentsTypes>
   [[nodiscard]] std::unique_ptr<BaseType> make_unique_as(
-      Context&, const std::source_location&, ArgumentsTypes&&...) noexcept
-      requires std::is_base_of_v<BaseType, Type> &&
-      ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
+      Context&, const std::source_location&, ArgumentsTypes&&...) MGIS_NOEXCEPT
+    requires std::is_base_of_v<BaseType, Type> &&
+             ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
   /*!
    * \brief try to build a shared pointer holding the given type.
    *
@@ -260,10 +259,9 @@ namespace mgis {
    * \param[in] args: arguments passed to the constructor
    */
   template <typename Type, typename... ArgumentsTypes>
-  [[nodiscard]] std::shared_ptr<Type> make_shared(Context&,
-                                                  const std::source_location&,
-                                                  ArgumentsTypes&&...) noexcept
-      requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
+  [[nodiscard]] std::shared_ptr<Type> make_shared(
+      Context&, const std::source_location&, ArgumentsTypes&&...) MGIS_NOEXCEPT
+    requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
   /*!
    * \brief try to build a shared pointer of a base type holding the given type.
    *
@@ -279,9 +277,9 @@ namespace mgis {
    */
   template <typename BaseType, typename Type, typename... ArgumentsTypes>
   [[nodiscard]] std::shared_ptr<BaseType> make_shared_as(
-      Context&, const std::source_location&, ArgumentsTypes&&...) noexcept
-      requires std::is_base_of_v<BaseType, Type> &&
-      ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
+      Context&, const std::source_location&, ArgumentsTypes&&...) MGIS_NOEXCEPT
+    requires std::is_base_of_v<BaseType, Type> &&
+             ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
 
 #endif
 
@@ -299,8 +297,8 @@ namespace mgis {
    */
   template <typename Type, typename... ArgumentsTypes>
   [[nodiscard]] std::optional<Type> construct(Context&,
-                                              ArgumentsTypes&&...) noexcept
-      requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
+                                              ArgumentsTypes&&...) MGIS_NOEXCEPT
+    requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
   /*!
    * \brief try to build a unique pointer holding the given type.
    *
@@ -315,9 +313,9 @@ namespace mgis {
    * \param[in] args: arguments passed to the constructor
    */
   template <typename Type, typename... ArgumentsTypes>
-  [[nodiscard]] std::unique_ptr<Type> make_unique(Context&,
-                                                  ArgumentsTypes&&...) noexcept
-      requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
+  [[nodiscard]] std::unique_ptr<Type> make_unique(Context&, ArgumentsTypes&&...)
+      MGIS_NOEXCEPT
+    requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
   /*!
    * \brief try to build a unique pointer of a base type holding the given type.
    *
@@ -333,9 +331,9 @@ namespace mgis {
    */
   template <typename BaseType, typename Type, typename... ArgumentsTypes>
   [[nodiscard]] std::unique_ptr<BaseType> make_unique_as(
-      Context&, ArgumentsTypes&&...) noexcept requires
-      std::is_base_of_v<BaseType, Type> &&
-      ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
+      Context&, ArgumentsTypes&&...) MGIS_NOEXCEPT
+    requires std::is_base_of_v<BaseType, Type> &&
+             ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
   /*!
    * \brief try to build a shared pointer holding the given type.
    *
@@ -349,9 +347,9 @@ namespace mgis {
    * \param[in] args: arguments passed to the constructor
    */
   template <typename Type, typename... ArgumentsTypes>
-  [[nodiscard]] std::shared_ptr<Type> make_shared(Context&,
-                                                  ArgumentsTypes&&...) noexcept
-      requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
+  [[nodiscard]] std::shared_ptr<Type> make_shared(Context&, ArgumentsTypes&&...)
+      MGIS_NOEXCEPT
+    requires ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
   /*!
    * \brief try to build a shared pointer of a base type holding the given type.
    *
@@ -367,9 +365,9 @@ namespace mgis {
    */
   template <typename BaseType, typename Type, typename... ArgumentsTypes>
   [[nodiscard]] std::shared_ptr<BaseType> make_shared_as(
-      Context&, ArgumentsTypes&&...) noexcept requires
-      std::is_base_of_v<BaseType, Type> &&
-      ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
+      Context&, ArgumentsTypes&&...) MGIS_NOEXCEPT
+    requires std::is_base_of_v<BaseType, Type> &&
+             ::mgis::internals::is_constructible<Type, ArgumentsTypes...>;
 
 }  // end of namespace mgis
 

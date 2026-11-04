@@ -320,7 +320,7 @@ namespace mgis::behaviour {
       Context&,
       H5::Group&,
       const MaterialDataManager&,
-      const MaterialDataManagerSavingOptions& = {}) noexcept;
+      const MaterialDataManagerSavingOptions& = {}) MGIS_NOEXCEPT;
   /*!
    * \brief structure used to customize the saving of a `MaterialDataManager`
    */
@@ -337,7 +337,7 @@ namespace mgis::behaviour {
       Context&,
       MaterialDataManager&,
       const H5::Group&,
-      const MaterialDataManagerRestoreOptions& = {}) noexcept;
+      const MaterialDataManagerRestoreOptions& = {}) MGIS_NOEXCEPT;
 
 #endif /* MGIS_HAVE_HDF5 */
 

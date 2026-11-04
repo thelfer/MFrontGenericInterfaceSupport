@@ -78,7 +78,8 @@ namespace mgis::function {
     //! \brief return the underlying  space
     [[nodiscard]] constexpr decltype(auto) getSpace() const;
     //! \return the number of components
-    [[nodiscard]] constexpr size_type getNumberOfComponents() const noexcept;
+    [[nodiscard]] constexpr size_type getNumberOfComponents() const
+        MGIS_NOEXCEPT;
     /*!
      * \brief call operator
      * \param[in] i: integration point index
@@ -177,7 +178,7 @@ namespace mgis::function {
   template <FunctionConcept FunctionType,
             ::tfel::math::unit::UnitConcept UnitType>
   [[nodiscard]] constexpr size_type getNumberOfComponents(
-      const QuantityView<FunctionType, UnitType>&) noexcept;
+      const QuantityView<FunctionType, UnitType>&) MGIS_NOEXCEPT;
 
 }  // end of namespace mgis::function
 

@@ -110,16 +110,15 @@ namespace mgis {
    * value while the other don't (names are self descriptive)
    */
   template <typename F, typename... ArgumentsTypes>
-  invoke_result_t<F, ArgumentsTypes...> invoke(Context &,
-                                               const std::source_location &,
-                                               F &&,
-                                               ArgumentsTypes &&...) noexcept;
+  invoke_result_t<F, ArgumentsTypes...> invoke(Context&,
+                                               const std::source_location&,
+                                               F&&,
+                                               ArgumentsTypes&&...)
+      MGIS_NOEXCEPT;
   template <typename F, typename... ArgumentsTypes>
   invoke_result_t<F, ArgumentsTypes...> invokeCheckErrno(
-      Context &,
-      const std::source_location &,
-      F &&,
-      ArgumentsTypes &&...) noexcept;
+      Context&, const std::source_location&, F&&, ArgumentsTypes&&...)
+      MGIS_NOEXCEPT;
 
 #endif /* MGIS_USE_SOURCE_LOCATION_INFORMATION */
 
@@ -134,12 +133,11 @@ namespace mgis {
    * value while the other don't (names are self descriptive)
    */
   template <typename F, typename... ArgumentsTypes>
-  invoke_result_t<F, ArgumentsTypes...> invoke(Context &,
-                                               F &&,
-                                               ArgumentsTypes &&...) noexcept;
+  invoke_result_t<F, ArgumentsTypes...> invoke(
+      Context&, F&&, ArgumentsTypes&&...) MGIS_NOEXCEPT;
   template <typename F, typename... ArgumentsTypes>
   invoke_result_t<F, ArgumentsTypes...> invokeCheckErrno(
-      Context &, F &&, ArgumentsTypes &&...) noexcept;
+      Context&, F&&, ArgumentsTypes&&...) MGIS_NOEXCEPT;
 
 }  // end of namespace mgis
 

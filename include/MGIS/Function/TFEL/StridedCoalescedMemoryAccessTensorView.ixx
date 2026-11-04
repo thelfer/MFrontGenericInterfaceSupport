@@ -86,7 +86,7 @@ namespace mgis::function {
   constexpr const Space& getSpace(
       const StridedCoalescedMemoryAccessTensorView<Space,
                                                    TensorType,
-                                                   is_mutable>& v) noexcept {
+                                                   is_mutable>& v) MGIS_NOEXCEPT {
     return v.getSpace();
   }  // end of getSpace
 
@@ -97,7 +97,7 @@ namespace mgis::function {
       AbstractErrorHandler&,
       const StridedCoalescedMemoryAccessTensorView<Space,
                                                    TensorType,
-                                                   is_mutable>&) noexcept {
+                                                   is_mutable>&) MGIS_NOEXCEPT {
     return true;
   }  // end of check
 
@@ -107,7 +107,7 @@ namespace mgis::function {
   constexpr size_type getNumberOfComponents(
       const StridedCoalescedMemoryAccessTensorView<Space,
                                                    TensorType,
-                                                   is_mutable>&) noexcept {
+                                                   is_mutable>&) MGIS_NOEXCEPT {
     return compile_time_size<TensorType>;
   }  // end of getNumberOfComponents
 

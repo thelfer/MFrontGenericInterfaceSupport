@@ -10,8 +10,9 @@ namespace mgis {
 
   ProfilingSection::ProfilingSection(Context& c,
                                      std::string n,
-                                     bool enabled) noexcept
-      : ctx_ptr(&c), active(enabled) {
+                                     bool enabled) MGIS_NOEXCEPT
+      : ctx_ptr(&c),
+        active(enabled) {
     if (this->active && this->ctx_ptr != nullptr) {
       this->ctx_ptr->pushProfilingNode(std::move(n));
       this->start = std::chrono::high_resolution_clock::now();

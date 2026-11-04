@@ -189,10 +189,10 @@ namespace mgis::behaviour {
     return d;
   }  // end of load
 
-  std::optional<Behaviour> load(Context &ctx,
-                                const std::string &l,
-                                const std::string &f,
-                                const Hypothesis h) noexcept {
+  std::optional<Behaviour> load(Context& ctx,
+                                const std::string& l,
+                                const std::string& f,
+                                const Hypothesis h) MGIS_NOEXCEPT {
     try {
       return load(l, f, h);
     } catch (...) {
@@ -201,11 +201,11 @@ namespace mgis::behaviour {
     return {};
   }  // end of load
 
-  std::optional<Behaviour> load(Context &ctx,
-                                const FiniteStrainBehaviourOptions &o,
-                                const std::string &l,
-                                const std::string &f,
-                                const Hypothesis h) noexcept {
+  std::optional<Behaviour> load(Context& ctx,
+                                const FiniteStrainBehaviourOptions& o,
+                                const std::string& l,
+                                const std::string& f,
+                                const Hypothesis h) MGIS_NOEXCEPT {
     try {
       return load(o, l, f, h);
     } catch (...) {
@@ -281,7 +281,7 @@ namespace mgis::behaviour {
   }  // end of loadFromDatabase
 
   std::optional<Behaviour> loadFromDatabase(
-      Context &ctx, const LoadFromDatabaseOptions &opts) noexcept {
+      Context& ctx, const LoadFromDatabaseOptions& opts) MGIS_NOEXCEPT {
     try {
       return loadFromDatabase(opts);
     } catch (...) {
@@ -291,9 +291,9 @@ namespace mgis::behaviour {
   }  // end of loadFromDatabase
 
   std::optional<Behaviour> loadFromDatabase(
-      Context &ctx,
-      const FiniteStrainBehaviourOptions &o,
-      const LoadFromDatabaseOptions &opts) noexcept {
+      Context& ctx,
+      const FiniteStrainBehaviourOptions& o,
+      const LoadFromDatabaseOptions& opts) MGIS_NOEXCEPT {
     try {
       return loadFromDatabase(o, opts);
     } catch (...) {

@@ -33,58 +33,57 @@ namespace mgis {
     using pointer = ValueType*;
     using reference = ValueType&;
     //
-    constexpr OptionalReference() noexcept : ptr(nullptr) {}
+    constexpr OptionalReference() MGIS_NOEXCEPT : ptr(nullptr) {}
 
-    constexpr OptionalReference(std::nullptr_t) noexcept : ptr(nullptr) {}
+    constexpr OptionalReference(std::nullptr_t) MGIS_NOEXCEPT : ptr(nullptr) {}
 
-    constexpr OptionalReference(pointer p) noexcept : ptr(p) {}
-
-    template <typename ValueType2>
-    requires(std::is_convertible_v<ValueType2*, ValueType*>)  //
-        constexpr OptionalReference(
-            OptionalReference<ValueType2> other) noexcept
-        : ptr(other.get()) {}
+    constexpr OptionalReference(pointer p) MGIS_NOEXCEPT : ptr(p) {}
 
     template <typename ValueType2>
-    requires(std::is_convertible_v<ValueType2*, ValueType*>)  //
-        constexpr OptionalReference(
-            std::unique_ptr<ValueType2> const& other) noexcept
-        : ptr(other.get()) {}
+      requires(std::is_convertible_v<ValueType2*, ValueType*>)  //
+    constexpr OptionalReference(OptionalReference<ValueType2> other)
+        MGIS_NOEXCEPT : ptr(other.get()) {}
 
     template <typename ValueType2>
-    requires(std::is_convertible_v<ValueType2*, ValueType*>)  //
-        constexpr OptionalReference(
-            std::shared_ptr<ValueType2> const& other) noexcept
-        : ptr(other.get()) {}
+      requires(std::is_convertible_v<ValueType2*, ValueType*>)  //
+    constexpr OptionalReference(std::unique_ptr<ValueType2> const& other)
+        MGIS_NOEXCEPT : ptr(other.get()) {}
 
-    [[nodiscard]] constexpr pointer get() const noexcept { return this->ptr; }
+    template <typename ValueType2>
+      requires(std::is_convertible_v<ValueType2*, ValueType*>)  //
+    constexpr OptionalReference(std::shared_ptr<ValueType2> const& other)
+        MGIS_NOEXCEPT : ptr(other.get()) {}
+
+    [[nodiscard]] constexpr pointer get() const MGIS_NOEXCEPT {
+      return this->ptr;
+    }
 
     [[nodiscard]] constexpr reference operator*() const {
       assert(ptr != nullptr);
       return *ptr;
     }
 
-    constexpr pointer operator->() const noexcept { return this->ptr; }
+    constexpr pointer operator->() const MGIS_NOEXCEPT { return this->ptr; }
 
-    [[nodiscard]] constexpr bool has_value() const noexcept {
+    [[nodiscard]] constexpr bool has_value() const MGIS_NOEXCEPT {
       return this->ptr != nullptr;
     }
 
-    [[nodiscard]] constexpr operator bool() const noexcept {
+    [[nodiscard]] constexpr operator bool() const MGIS_NOEXCEPT {
       return this->ptr != nullptr;
     }
 
-    constexpr operator pointer() const noexcept { return this->ptr; }
+    constexpr operator pointer() const MGIS_NOEXCEPT { return this->ptr; }
 
-    constexpr pointer release() noexcept {
+    constexpr pointer release() MGIS_NOEXCEPT {
       pointer p(ptr);
       this->reset();
       return p;
     }
 
-    constexpr void reset(pointer p = nullptr) noexcept { this->ptr = p; }
+    constexpr void reset(pointer p = nullptr) MGIS_NOEXCEPT { this->ptr = p; }
 
-    constexpr void swap(OptionalReference& other) noexcept {
+    constexpr void swap(OptionalReference& other) MGIS_NOEXCEPT {
       std::swap(ptr, other.ptr);
     }
 
@@ -94,19 +93,19 @@ namespace mgis {
 
   template <typename ValueType>
   void swap(OptionalReference<ValueType>& p1,
-            OptionalReference<ValueType>& p2) noexcept {
+            OptionalReference<ValueType>& p2) MGIS_NOEXCEPT {
     p1.swap(p2);
   }
 
   template <typename ValueType>
   [[nodiscard]] constexpr OptionalReference<ValueType> make_optional_reference(
-      ValueType& p) noexcept {
+      ValueType& p) MGIS_NOEXCEPT {
     return OptionalReference<ValueType>(&p);
   }
 
   template <typename ValueType>
   [[nodiscard]] constexpr OptionalReference<ValueType> make_optional_reference(
-      ValueType* p) noexcept {
+      ValueType* p) MGIS_NOEXCEPT {
     return OptionalReference<ValueType>(p);
   }
 
@@ -124,31 +123,31 @@ namespace mgis {
 
   template <typename ValueType>
   [[nodiscard]] constexpr bool operator==(OptionalReference<ValueType> p,
-                                          std::nullptr_t) noexcept {
+                                          std::nullptr_t) MGIS_NOEXCEPT {
     return !p;
   }
 
   template <typename ValueType>
   [[nodiscard]] constexpr bool operator==(
-      std::nullptr_t, OptionalReference<ValueType> p) noexcept {
+      std::nullptr_t, OptionalReference<ValueType> p) MGIS_NOEXCEPT {
     return !p;
   }
 
   template <typename ValueType>
   [[nodiscard]] constexpr bool operator!=(OptionalReference<ValueType> p,
-                                          std::nullptr_t) noexcept {
+                                          std::nullptr_t) MGIS_NOEXCEPT {
     return static_cast<bool>(p);
   }
 
   template <typename ValueType>
   [[nodiscard]] constexpr bool operator!=(
-      std::nullptr_t, OptionalReference<ValueType> p) noexcept {
+      std::nullptr_t, OptionalReference<ValueType> p) MGIS_NOEXCEPT {
     return static_cast<bool>(p);
   }
 
   template <typename ValueType>
-  [[nodiscard]] constexpr bool isInvalid(
-      const OptionalReference<ValueType>& p) noexcept {
+  [[nodiscard]] constexpr bool isInvalid(const OptionalReference<ValueType>& p)
+      MGIS_NOEXCEPT {
     return p == nullptr;
   }  // end of isInvalid
 
@@ -159,7 +158,7 @@ namespace std {
   template <typename ValueType>
   struct hash<::mgis::OptionalReference<ValueType>> {
     [[nodiscard]] size_t operator()(
-        ::mgis::OptionalReference<ValueType> p) const noexcept {
+        ::mgis::OptionalReference<ValueType> p) const MGIS_NOEXCEPT {
       return hash<ValueType*>()(p.get());
     }
   };
@@ -172,14 +171,16 @@ namespace mgis::internal {
   template <typename ValueType>
   struct InvalidValueTraits<mgis::OptionalReference<ValueType>> {
     static constexpr bool isSpecialized = true;
-    static mgis::OptionalReference<ValueType> getValue() noexcept { return {}; }
+    static mgis::OptionalReference<ValueType> getValue() MGIS_NOEXCEPT {
+      return {};
+    }
   };
 
   //! \brief partial specialisation for optional reference
   template <typename T>
   struct OptionalTraits<OptionalReference<T>> {
     static constexpr bool isSpecialized = true;
-    static constexpr T& deference(OptionalReference<T>&& v) noexcept {
+    static constexpr T& deference(OptionalReference<T>&& v) MGIS_NOEXCEPT {
       return *v;
     }
   };

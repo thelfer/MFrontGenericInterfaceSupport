@@ -215,7 +215,7 @@ namespace mgis::function {
       constexpr const Space& CoalescedMemoryAccessFunctionViewBase<
           Space,
           N,
-          is_mutable>::getSpace() const noexcept {
+          is_mutable>::getSpace() const MGIS_NOEXCEPT {
     return this->function_components[0].getSpace();
   }  // end of getSpace
 

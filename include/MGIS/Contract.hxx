@@ -51,7 +51,7 @@ namespace mgis {
     constexpr ~ContractViolationHandler() override;
 
    protected:
-    [[noreturn]] static void abort(const char *const) noexcept;
+    [[noreturn]] static void abort(const char* const) MGIS_NOEXCEPT;
   };
 
   template <typename Type, typename... Args>

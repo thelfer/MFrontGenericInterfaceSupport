@@ -57,7 +57,7 @@ namespace mgis::function {
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0)  //
       constexpr size_type
-      FixedSizeView<FunctionType, N>::getNumberOfComponents() const noexcept {
+      FixedSizeView<FunctionType, N>::getNumberOfComponents() const MGIS_NOEXCEPT {
     return N;
   }
 
@@ -316,7 +316,7 @@ namespace mgis::function {
 
   template <FunctionConcept FunctionType, size_type N>
   constexpr mgis::size_type getNumberOfComponents(
-      const FixedSizeView<FunctionType, N>& v) noexcept {
+      const FixedSizeView<FunctionType, N>& v) MGIS_NOEXCEPT {
     return v.getNumberOfComponents();
   }  // end of getNumberOfComponents
 

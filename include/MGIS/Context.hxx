@@ -48,7 +48,7 @@ namespace mgis {
     enum FailureHandlerPolicy { ABORT, RAISE };
     template <FailureHandlerPolicy policy>
     struct FailureHandler {
-      explicit FailureHandler(Context &c) noexcept : ctx(c) {}
+      explicit FailureHandler(Context& c) MGIS_NOEXCEPT : ctx(c) {}
       template <typename T>
       decltype(auto) operator()(T &&v) const
           requires((internal::OptionalTraits<T>::isSpecialized) &&
@@ -93,26 +93,26 @@ namespace mgis {
      * The verbositiy level is initialized by calling the
      * `getDefaultVerbosityLevel` function.
      */
-    Context() noexcept;
+    Context() MGIS_NOEXCEPT;
 
     /*!
      * \brief constructor for an initializer
      * \param[in] i: initializer
      */
-    Context(const ContextInitializer &) noexcept;
+    Context(const ContextInitializer&) MGIS_NOEXCEPT;
     //
     Context(Context &&) = delete;
     Context(const Context &) = delete;
     Context &operator=(Context &&) = delete;
     Context &operator=(const Context &) = delete;
     //! \return the verbosity level
-    [[nodiscard]] const VerbosityLevel &getVerbosityLevel() const noexcept;
+    [[nodiscard]] const VerbosityLevel& getVerbosityLevel() const MGIS_NOEXCEPT;
 
     /*!
      * \brief change the level of verbosity
      * \param[in] l: the new verbose level
      */
-    void setVerbosityLevel(const VerbosityLevel) noexcept;
+    void setVerbosityLevel(const VerbosityLevel) MGIS_NOEXCEPT;
 
     /*!
      * \brief enable or disable profiling
@@ -121,12 +121,12 @@ namespace mgis {
      * \note when profiling is disabled, profiling sections introduce
      * almost no overhead.
      */
-    void enableProfiling(const bool) noexcept;
+    void enableProfiling(const bool) MGIS_NOEXCEPT;
 
     /*!
      * \return true if profiling is enabled, false otherwise
      */
-    [[nodiscard]] bool isProfilingEnabled() const noexcept;
+    [[nodiscard]] bool isProfilingEnabled() const MGIS_NOEXCEPT;
 
     /*!
      * \brief start a new profiling section
@@ -140,7 +140,7 @@ namespace mgis {
      * timing starts during construction and stops during destruction.
      */
     [[nodiscard]] ProfilingSection startNewProfiling(std::string,
-                                                     bool) noexcept;
+                                                     bool) MGIS_NOEXCEPT;
 
     /*!
      * \brief push a new profiling node into the current execution stack
@@ -149,7 +149,7 @@ namespace mgis {
      * \note this method is meant to be called internally by the
      * `Profiling` class during its construction.
      */
-    void pushProfilingNode(std::string) noexcept;
+    void pushProfilingNode(std::string) MGIS_NOEXCEPT;
 
     /*!
      * \brief pop the current profiling node from the execution stack and
@@ -158,13 +158,14 @@ namespace mgis {
      * \note this method is meant to be called internally by the
      * `Profiling` class during its destruction.
      */
-    void popProfilingNode(double) noexcept;
+    void popProfilingNode(double) MGIS_NOEXCEPT;
 
     /*!
      * \return the root node of the profiling results tree gathered during
      * execution
      */
-    [[nodiscard]] const ProfilingData &getProfilingResultTree() const noexcept;
+    [[nodiscard]] const ProfilingData& getProfilingResultTree() const
+        MGIS_NOEXCEPT;
 
     /*!
      * \return a failure handler
@@ -178,18 +179,18 @@ namespace mgis {
 
     //! \return a failure handler throwing exception in case of failure
     [[nodiscard]] FailureHandler<FailureHandlerPolicy::RAISE>
-    getThrowingFailureHandler() noexcept;
+    getThrowingFailureHandler() MGIS_NOEXCEPT;
 
     //! \return a failure handler aborting the execution in case of failure
     [[nodiscard]] FailureHandler<FailureHandlerPolicy::ABORT>
-    getFatalFailureHandler() noexcept;
+    getFatalFailureHandler() MGIS_NOEXCEPT;
 
     /*!
      * \brief set the current log stream.
      * \param[in] s: log stream
      * \note the user is responsible for ensuring that the given object is alive
      */
-    void setLogStream(std::ostream &) noexcept;
+    void setLogStream(std::ostream&) MGIS_NOEXCEPT;
 
     /*!
      * \brief set the current log stream.
@@ -198,21 +199,21 @@ namespace mgis {
      * default one, i.e. the one returned by the `mgis::getDefaultLogStream`
      * free function.
      */
-    void setLogStream(std::shared_ptr<std::ostream>) noexcept;
+    void setLogStream(std::shared_ptr<std::ostream>) MGIS_NOEXCEPT;
 
     //! \return a pointer to a log stream. This pointer may be null.
-    [[nodiscard]] std::shared_ptr<std::ostream> getLogStreamPointer()
-        const noexcept;
+    [[nodiscard]] std::shared_ptr<std::ostream> getLogStreamPointer() const
+        MGIS_NOEXCEPT;
 
     //! \brief reset the default log stream
-    void resetLogStream() noexcept;
+    void resetLogStream() MGIS_NOEXCEPT;
 
     /*!
      * \brief disable the default log stream
      *
      * \note logging is disable by creating a no-op output stream
      */
-    void disableLogStream() noexcept;
+    void disableLogStream() MGIS_NOEXCEPT;
 
     /*!
      * \return the current log stream
@@ -220,7 +221,7 @@ namespace mgis {
      * \note if no log stream is set, the default one is returned. See
      * `getDefaultLogStream` for details.
      */
-    [[nodiscard]] std::ostream &log() noexcept;
+    [[nodiscard]] std::ostream& log() MGIS_NOEXCEPT;
 
     /*!
      * \brief display the given arguments in the log stream if the current
@@ -235,7 +236,7 @@ namespace mgis {
      * level is below the first argument
      */
     template <typename... Args>
-    std::ostream &log(const VerbosityLevel, Args &&...) noexcept;
+    std::ostream& log(const VerbosityLevel, Args&&...) MGIS_NOEXCEPT;
 
     /*!
      * \brief a simple wrapper around the `log` method to print a warning
@@ -244,7 +245,7 @@ namespace mgis {
      * \param[in] args: streamed object
      */
     template <typename... Args>
-    void warning(Args &&...) noexcept;
+    void warning(Args&&...) MGIS_NOEXCEPT;
 
     /*!
      * \brief a simple wrapper around the `log` method which sets the minimun
@@ -256,7 +257,7 @@ namespace mgis {
      * `verboseDebug`
      */
     template <typename... Args>
-    void debug(Args &&...) noexcept;
+    void debug(Args&&...) MGIS_NOEXCEPT;
 
     //! \brief destructor
     ~Context() noexcept override;
