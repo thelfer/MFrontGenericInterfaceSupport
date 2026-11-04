@@ -30,7 +30,7 @@ namespace mgis::function {
                          std::array<real, static_cast<std::size_t>(Extent)>>;
 
   template <std::size_t Extent>
-  auto makeSpan(const std::array<real, Extent>& b) noexcept {
+  auto makeSpan(const std::array<real, Extent>& b) MGIS_NOEXCEPT {
     if constexpr (Extent == std::dynamic_extent) {
       return std::span<const real>(b);
     } else {
@@ -38,7 +38,7 @@ namespace mgis::function {
     }
   }  // end of makeSpan
 
-  inline auto makeSpan(const std::vector<real>& b) noexcept {
+  inline auto makeSpan(const std::vector<real>& b) MGIS_NOEXCEPT {
     return std::span<const real>(b);
   }  // end of makeSpan
 

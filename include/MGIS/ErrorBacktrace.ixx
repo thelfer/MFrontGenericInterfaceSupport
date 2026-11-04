@@ -44,7 +44,7 @@ namespace mgis {
   template <typename ReturnType>
   ReturnType ErrorBacktrace::registerErrorMessage(
       const ErrorReport e,
-      const std::source_location &l) noexcept  //
+      const std::source_location &l) MGIS_NOEXCEPT  //
       requires(internal::InvalidValueTraits<ReturnType>::isSpecialized) {
     std::ignore = this->registerErrorMessage(e, l);
     return internal::InvalidValueTraits<ReturnType>::getValue();
@@ -74,7 +74,7 @@ namespace mgis {
 
   template <typename ReturnType>
   ReturnType ErrorBacktrace::registerErrorMessage(
-      const ErrorReport e) noexcept  //
+      const ErrorReport e) MGIS_NOEXCEPT  //
       requires(internal::InvalidValueTraits<ReturnType>::isSpecialized) {
     std::ignore = this->registerErrorMessage(e);
     return internal::InvalidValueTraits<ReturnType>::getValue();

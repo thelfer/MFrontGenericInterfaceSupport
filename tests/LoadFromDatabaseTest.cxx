@@ -51,12 +51,14 @@ int main(const int argc, const char* const* argv) {
       check(fb.thermodynamic_forces[0].name == "FirstPiolaKirchhoffStress",
             "invalid stress measure");
     }
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     // a name matching several behaviours is rejected
     auto ctx = mgis::Context{};
     check(!loadFromDatabase(ctx, {.name = "Norton.*",
                                   .hypothesis = Hypothesis::TRIDIMENSIONAL})
                .has_value(),
           "a name matching several behaviours shall be rejected");
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
   } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;

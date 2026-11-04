@@ -25,7 +25,7 @@
 namespace mgis {
 
   //! \return a global instance of a MFrontDatabase
-  MGIS_VISIBILITY_EXPORT mfront::MFrontDatabase& getDatabase() noexcept;
+  MGIS_VISIBILITY_EXPORT mfront::MFrontDatabase& getDatabase() MGIS_NOEXCEPT;
 
 }  // namespace mgis
 

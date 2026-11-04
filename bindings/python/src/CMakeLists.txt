@@ -66,5 +66,6 @@ mgis_python_module(mgis_model model
 if(enable-mgis-function)
   mgis_python_module(mgis_function function
     function-module.cxx
+    NumPySupport.cxx
     Function.cxx)
 endif(enable-mgis-function)

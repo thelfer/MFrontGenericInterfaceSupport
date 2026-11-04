@@ -39,10 +39,18 @@ jobs:
             jobs_flag: '-j $(sysctl -n hw.ncpu)'
             fortran_support: 'OFF'
             python_support: 'OFF'
-          # the only build that compiles the code of MGIS_DEBUG; enable-exceptions is not
-          # tested since every error then terminates the process (#283)
+          # the only build that compiles the code of MGIS_DEBUG
           - os: ubuntu-latest
             build_type: Debug
+            jobs_flag: '-j $(nproc)'
+            fortran_support: 'ON'
+            python_support: 'ON'
+          # errors reported by exceptions (#283). The build type differs from the
+          # one of the matrix so that this entry adds a job instead of completing
+          # the Release one
+          - os: ubuntu-latest
+            build_type: RelWithDebInfo
+            enable_exceptions: 'ON'
             jobs_flag: '-j $(nproc)'
             fortran_support: 'ON'
             python_support: 'ON'
@@ -117,6 +125,7 @@ jobs:
         # between the runners, which have different processors (see setup-ccache)
         cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
               -Denable-c-bindings=ON                                  \
+              -Denable-exceptions=${{ matrix.enable_exceptions || 'OFF' }} \
               -Denable-fortran-bindings=${{ matrix.fortran_support }} \
               -Denable-python-bindings=${{ matrix.python_support }}   \
               -Denable-hdf5-support=ON                                \

@@ -18,15 +18,9 @@
 #include <concepts>
 #include <type_traits>
 #include "MGIS/Config.hxx"
+#include "MGIS/AbstractErrorHandler.hxx"
 #include "MGIS/Function/CompileTimeSize.hxx"
 #include "MGIS/Function/SpaceConcept.hxx"
-
-namespace mgis {
-
-  // forward declaration
-  struct AbstractErrorHandler;
-
-}  // end of namespace mgis
 
 namespace mgis::function {
 
@@ -220,18 +214,59 @@ namespace mgis::function {
   using evaluator_result =
       typename internals::EvaluatorResultQuery<EvaluatorType>::type;
 
+  /*!
+   * \brief check if the given evaluators shares the same space
+   *
+   * \param[in] ctx: context
+   * \param[in] e1: first evaluator
+   * \param[in] e2: second evaluator
+   */
+  [[nodiscard]] constexpr bool checkMatchingSpaces(
+      AbstractErrorHandler&,
+      const EvaluatorConcept auto&,
+      const EvaluatorConcept auto&);
+
   namespace internals {
 
     template <typename T>
     concept is_pointer_to_real = (std::same_as<real*, T>) ||
                                  (std::same_as<const real*, T>);
 
+    //! \brief concept satisfied by `real`, possibly const or a reference
+    template <typename T>
+    concept is_real = std::same_as<std::remove_cvref_t<T>, real>;
+
   }  // end of   namespace internals
+
+  /*!
+   * \return a pointer to the values held by an object with a `data` method,
+   * such as `std::span`, `std::array` or the tensorial objects of `TFEL/Math`
+   * \param[in] r: object
+   *
+   * \note `getDataPointer` is used by the views and modifiers to map the
+   * results of functions and evaluators. It can be overloaded to support other
+   * result types.
+   */
+  template <typename ResultType>
+  [[nodiscard]] constexpr auto getDataPointer(ResultType&& r) requires(
+      requires(ResultType & rr) {
+        { rr.data() } -> internals::is_pointer_to_real;
+      }) {
+    return r.data();
+  }
+  /*!
+   * \return a pointer to a scalar value
+   * \param[in] r: scalar value
+   */
+  template <internals::is_real ScalarType>
+  [[nodiscard]] constexpr auto getDataPointer(ScalarType&& r) MGIS_NOEXCEPT {
+    return &r;
+  }
 
   template <EvaluatorConcept EvaluatorType>
   inline constexpr auto isEvaluatorResultTypeMappable =
       requires(evaluator_result<EvaluatorType> rf) {
-    { rf.data() } -> internals::is_pointer_to_real;
+    { getDataPointer(rf) } -> internals::is_pointer_to_real;
   };
 
   namespace internals {
@@ -268,8 +303,8 @@ namespace mgis::function {
     };
 
     template <EvaluatorConcept EvaluatorType, size_type N>
-    [[nodiscard]] constexpr bool
-    checkEvaluatorNumberOfComponentsCompatibility() noexcept {
+    [[nodiscard]] constexpr bool checkEvaluatorNumberOfComponentsCompatibility()
+        MGIS_NOEXCEPT {
       constexpr auto Nc = number_of_components<EvaluatorType>;
       if constexpr (Nc == dynamic_extent) {
         return true;

@@ -19,10 +19,8 @@
 void declareState();
 
 void declareState(jlcxx::Module& m) {
-  using mgis::behaviour::Behaviour;
   using mgis::behaviour::State;
   m.add_type<State>("State")
-      .constructor<const Behaviour&>()
       .method(
           "set_stored_energy!",
           [](State& s, const mgis::real v) noexcept { s.stored_energy = v; })
@@ -95,5 +93,11 @@ void declareState(jlcxx::Module& m) {
               [](State& s, const std::string& n, const mgis::real v) {
                 mgis::behaviour::setExternalStateVariable(s, n, v);
               });
+  // State(b) creates a state which keeps b alive
+  m.add_type<mgis::julia::Wrapper<State>>("StateWrapper",
+                                          jlcxx::julia_base_type<State>());
+  m.constructor<mgis::julia::Wrapper<State>,
+                const mgis::julia::SharedBehaviour&>(
+      jlcxx::julia_base_type<State>());
 
 }  // end of declareState

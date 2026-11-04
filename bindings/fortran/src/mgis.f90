@@ -39,12 +39,23 @@ contains
     s = convert_fortran_string(msg)
     r = report_failure_wrapper(s)
   end function report_failure
+  ! \note with gfortran, the length of the result is kept in static
+  !       storage at each call site, so this function is not reentrant:
+  !       use get_error_message_to in code called from several threads.
   function get_error_message(s) result(msg)
     implicit none
     type(mgis_status) :: s
     character(len=:), allocatable :: msg
-    msg = convert_c_string(s%msg)
+    call convert_c_string_to(s%msg, msg)
   end function get_error_message
+  ! subroutine form of get_error_message, which can be called from
+  ! several threads
+  subroutine get_error_message_to(s, msg)
+    implicit none
+    type(mgis_status), intent(in) :: s
+    character(len=:), allocatable, intent(out) :: msg
+    call convert_c_string_to(s%msg, msg)
+  end subroutine get_error_message_to
   !
   function create_thread_pool(p, n) result(s)
     use, intrinsic :: iso_c_binding, only: c_size_t, c_associated

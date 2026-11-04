@@ -165,6 +165,30 @@ class BoundsCheckTest(unittest.TestCase):
         self.assertTrue(bound == mgis_bv.getUpperPhysicalBound(b, ev),
                         "invalid value returned by 'getUpperPhysicalBound'")
 
+    def test_error_message(self):
+        lib = os.environ['MGIS_TEST_BEHAVIOURS_LIBRARY']
+        h = mgis_bv.Hypothesis.Tridimensional
+        b = mgis_bv.load(lib, 'BoundsCheckTest', h)
+
+        def make(yg):
+            d = mgis_bv.BehaviourData(b)
+            for s in [d.s0, d.s1]:
+                mgis_bv.setMaterialProperty(s, "YoungModulus", yg)
+                mgis_bv.setMaterialProperty(s, "PoissonRatio", 0.3)
+                mgis_bv.setExternalStateVariable(s, "Temperature", 293.15)
+                mgis_bv.setExternalStateVariable(s, "ExternalStateVariable",
+                                                 0.)
+            return d
+
+        # Young modulus below its physical bound
+        d1 = make(-150e9)
+        d2 = make(150e9)
+        self.assertTrue(mgis_bv.integrate(d1, b) == -1, "integration shall fail")
+        self.assertTrue(d1.error_message != "", "no error message")
+        # each BehaviourData has its own buffer
+        self.assertTrue(d2.error_message == "",
+                        "error message of another BehaviourData")
+
 
 if __name__ == '__main__':
     unittest.main()

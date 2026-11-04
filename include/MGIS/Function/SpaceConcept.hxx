@@ -194,7 +194,7 @@ namespace mgis::function {
    * \brief  a simple meta function stating if SpaceType
    * does not expose an ElementWorkspace structure
    */
-  template <ElementSpaceConcept SpaceType>
+  template <SpaceConcept SpaceType>
   inline constexpr bool hasElementWorkspace = requires {
     typename SpaceTraits<SpaceType>::ElementWorkspace;
   };

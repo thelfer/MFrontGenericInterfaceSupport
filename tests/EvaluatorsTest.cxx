@@ -647,12 +647,16 @@ struct EvaluatorsTest final : public tfel::tests::TestCase {
     auto ctx = Context{};
     const Function f(BasicLinearSpace{1}, 4);
     const auto e = f.view() | as_stensor<1>;
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     TFEL_TESTS_ASSERT(e.check(ctx) == false);
     TFEL_TESTS_CHECK_EQUAL(ctx.getRawErrorMessage(),
                            "invalid number of components");
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     const auto e2 = f.view() | as_stensor<2>;
     TFEL_TESTS_ASSERT(e2.check(ctx));
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     TFEL_TESTS_ASSERT(check(ctx, e) == false);
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     TFEL_TESTS_ASSERT(check(ctx, e2));
     auto f2 = Function<BasicLinearSpace, 4>(BasicLinearSpace{1});
     TFEL_TESTS_ASSERT(assign(ctx, f2 | as_stensor<2>, e2));

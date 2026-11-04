@@ -44,7 +44,7 @@ namespace mgis {
 
 #endif
 
-  void ContractViolationHandler::abort(const char *const msg) noexcept {
+  void ContractViolationHandler::abort(const char* const msg) MGIS_NOEXCEPT {
     std::cerr << msg << '\n';
     std::abort();
   }  // end of abort

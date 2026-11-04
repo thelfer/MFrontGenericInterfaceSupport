@@ -20,7 +20,7 @@ namespace mgis {
       Context &ctx,
       const std::source_location &l,
       F &&f,
-      ArgumentsTypes &&...args) noexcept {
+      ArgumentsTypes &&...args) MGIS_NOEXCEPT {
     constexpr auto is_void =
         std::is_void_v<std::invoke_result_t<F, ArgumentsTypes...>>;
     if constexpr (is_void) {
@@ -64,7 +64,7 @@ namespace mgis {
       Context &ctx,
       const std::source_location &l,
       F &&f,
-      ArgumentsTypes &&...args) noexcept {
+      ArgumentsTypes &&...args) MGIS_NOEXCEPT {
     constexpr auto is_void =
         std::is_void_v<std::invoke_result_t<F, ArgumentsTypes...>>;
     if constexpr (is_void) {
@@ -91,7 +91,7 @@ namespace mgis {
 
   template <typename F, typename... ArgumentsTypes>
   invoke_result_t<F, ArgumentsTypes...> invokeCheckErrno(
-      Context &ctx, F &&f, ArgumentsTypes &&...args) noexcept {
+      Context &ctx, F &&f, ArgumentsTypes &&...args) MGIS_NOEXCEPT {
     constexpr auto is_void =
         std::is_void_v<std::invoke_result_t<F, ArgumentsTypes...>>;
     if constexpr (is_void) {
@@ -133,7 +133,7 @@ namespace mgis {
 
   template <typename F, typename... ArgumentsTypes>
   invoke_result_t<F, ArgumentsTypes...> invoke(
-      Context &ctx, F &&f, ArgumentsTypes &&...args) noexcept {
+      Context &ctx, F &&f, ArgumentsTypes &&...args) MGIS_NOEXCEPT {
     constexpr auto is_void =
         std::is_void_v<std::invoke_result_t<F, ArgumentsTypes...>>;
     if constexpr (is_void) {

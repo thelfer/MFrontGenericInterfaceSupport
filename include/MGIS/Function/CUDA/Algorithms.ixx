@@ -61,8 +61,7 @@ namespace mgis::function {
               FunctionType& f,
               const EvaluatorType e)  //
       requires(
-          ((LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) ||
-           (LinearQuadratureSpaceConcept<evaluator_space<EvaluatorType>>)) &&
+          (LinearElementSpaceConcept<evaluator_space<EvaluatorType>>) &&
           std::same_as<function_space<FunctionType>,
                        evaluator_space<EvaluatorType>>) {
     using Space = std::decay_t<decltype(getSpace(f))>;

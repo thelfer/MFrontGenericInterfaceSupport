@@ -19,6 +19,21 @@
 #include <string_view>
 #include "MGIS/Config-c.h"
 
+/*!
+ * \def MGIS_NOEXCEPT
+ * \brief exception specification of the functions which may report an error.
+ *
+ * If MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING is defined, reporting an error
+ * throws an exception, which must not reach a `noexcept` function: this would
+ * terminate the process. This macro is thus empty in this case and is equal to
+ * `noexcept` otherwise.
+ */
+#ifdef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
+#define MGIS_NOEXCEPT
+#else /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
+#define MGIS_NOEXCEPT noexcept
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
+
 namespace mgis::config {
 
   /*!
@@ -134,7 +149,7 @@ namespace mgis {
    * \brief specify a new terminate handler
    * \param[in] h: handler
    */
-  void setTerminateHandler(TerminateHandler &) noexcept;
+  MGIS_EXPORT void setTerminateHandler(const TerminateHandler) MGIS_NOEXCEPT;
   /*!
    * \brief call the terminate handler
    * \param[in] msg: message

@@ -14,6 +14,7 @@
 
 #include <jlcxx/jlcxx.hpp>
 #include "MGIS/Behaviour/BehaviourData.hxx"
+#include "MGIS/Behaviour/MaterialDataManager.hxx"
 #include "MGIS/Behaviour/Integrate.hxx"
 #include "MGIS/Julia/JuliaUtilities.hxx"
 
@@ -75,10 +76,10 @@ void declareIntegrate(jlcxx::Module& m) {
   int (*integrate_debug_ptr1)(mgis::behaviour::BehaviourDataView&,
                               const mgis::behaviour::Behaviour&) =
       mgis::behaviour::integrate_debug;
-  //   int (*integrate_ptr2)(mgis::behaviour::MaterialDataManager&,
-  //                         const IntegrationType, const mgis::real,
-  //                         const mgis::size_type, const mgis::size_type) =
-  //       mgis::behaviour::integrate;
+  int (*integrate_ptr2)(mgis::behaviour::MaterialDataManager&,
+                        const IntegrationType, const mgis::real,
+                        const mgis::size_type, const mgis::size_type) =
+      mgis::behaviour::integrate;
   //   int (*integrate_ptr3)(
   //       mgis::ThreadPool&, mgis::behaviour::MaterialDataManager&,
   //       const IntegrationType, const mgis::real) =
@@ -88,6 +89,6 @@ void declareIntegrate(jlcxx::Module& m) {
   m.method("integrate", integrate_ptr1);
   m.method("integrate_debug", &integrateDebugBehaviourData1);
   m.method("integrate_debug", integrate_debug_ptr1);
-  //   boost::python::def("integrate", integrate_ptr2);
+  m.method("integrate", integrate_ptr2);
   //   boost::python::def("integrate", integrate_ptr3);
 }  // end of declareIntegrate

@@ -22,7 +22,7 @@ namespace mgis {
    *
    * \note by default, std::cout is returned
    */
-  MGIS_EXPORT MGIS_NODISCARD std::ostream &getDefaultLogStream() noexcept;
+  MGIS_EXPORT MGIS_NODISCARD std::ostream& getDefaultLogStream() MGIS_NOEXCEPT;
   /*!
    * \brief set the default log stream as a file.
    *
@@ -34,29 +34,30 @@ namespace mgis {
    * `disableDefaultLogStream` except on the root process
    */
   MGIS_EXPORT MGIS_NODISCARD std::pair<bool, std::string> setDefaultLogStream(
-      std::string_view) noexcept;
+      std::string_view) MGIS_NOEXCEPT;
   /*!
    * \brief set the default log stream from an exisiting output stream
    *
    * \param[in, out] os: output stream
    * \note the user is responsible for ensuring that the given object is alive
    */
-  MGIS_EXPORT void setDefaultLogStream(std::ostream &) noexcept;
+  MGIS_EXPORT void setDefaultLogStream(std::ostream&) MGIS_NOEXCEPT;
   /*!
    * \brief set the default log stream from an exisiting output stream
    *
    * \param[in, out] os: output stream
    * \note if the given pointer is null, `resetDefaultLogStream` is called
    */
-  MGIS_EXPORT void setDefaultLogStream(std::shared_ptr<std::ostream>) noexcept;
+  MGIS_EXPORT void setDefaultLogStream(std::shared_ptr<std::ostream>)
+      MGIS_NOEXCEPT;
   //! \brief reset the default log stream
-  MGIS_EXPORT void resetDefaultLogStream() noexcept;
+  MGIS_EXPORT void resetDefaultLogStream() MGIS_NOEXCEPT;
   /*!
    *  \brief disable the default log stream
    *
    * \note logging is disable by creating a no-op output stream
    */
-  MGIS_EXPORT void disableDefaultLogStream() noexcept;
+  MGIS_EXPORT void disableDefaultLogStream() MGIS_NOEXCEPT;
   /*!
    * \brief list of available colors for output stream
    * \note this only works on the terminal
@@ -78,14 +79,14 @@ namespace mgis {
    * \param[in] c: color
    * \note this only works on the terminal
    */
-  MGIS_EXPORT void setStreamColor(std::ostream &,
-                                  const OutputStreamColors) noexcept;
+  MGIS_EXPORT void setStreamColor(std::ostream&,
+                                  const OutputStreamColors) MGIS_NOEXCEPT;
   /*!
    * \brief reset the color of the output
    * \param[out] out: output stream
    * \param[in] l: verbosity level
    */
-  MGIS_EXPORT void resetStreamColor(std::ostream &) noexcept;
+  MGIS_EXPORT void resetStreamColor(std::ostream&) MGIS_NOEXCEPT;
   /*!
    * \brief print a warning message
    *
@@ -93,7 +94,7 @@ namespace mgis {
    * \param[in] args: streamed object
    */
   template <typename... Args>
-  void warning(std::ostream &, Args &&...) noexcept;
+  void warning(std::ostream&, Args&&...) MGIS_NOEXCEPT;
   /*!
    * \brief print message for debugging
    *
@@ -101,10 +102,10 @@ namespace mgis {
    * \param[in] args: streamed object
    */
   template <typename... Args>
-  void debug(std::ostream &, Args &&...) noexcept;
+  void debug(std::ostream&, Args&&...) MGIS_NOEXCEPT;
 
-  MGIS_EXPORT void setErrorColor(std::ostream &) noexcept;
-  MGIS_EXPORT void setWarningColor(std::ostream &) noexcept;
+  MGIS_EXPORT void setErrorColor(std::ostream&) MGIS_NOEXCEPT;
+  MGIS_EXPORT void setWarningColor(std::ostream&) MGIS_NOEXCEPT;
 
 }  // end of namespace mgis
 

@@ -43,14 +43,14 @@ namespace mgis::behaviour::debug {
      * \param[in] d: behaviour data leading to the integration failure
      */
     virtual void analyse(const Behaviour&,
-                         const BehaviourData&) const noexcept = 0;
+                         const BehaviourData&) const MGIS_NOEXCEPT = 0;
     /*!
      * \brief handle an integration failure
      * \param[in] b: behaviour being integrated
      * \param[in] d: behaviour data view leading to the integration failure
      */
     virtual void analyse(const Behaviour&,
-                         const BehaviourDataView&) const noexcept = 0;
+                         const BehaviourDataView&) const MGIS_NOEXCEPT = 0;
     /*!
      * \brief use a copy of the inputs
      *
@@ -59,8 +59,8 @@ namespace mgis::behaviour::debug {
      * a significant overhead and is normally not required for correctly written
      * behaviours but data corruption may occur, so copying is safer.
      */
-    [[nodiscard]] virtual bool shallCopyBehaviourDataBeforeIntegration()
-        const noexcept = 0;
+    [[nodiscard]] virtual bool shallCopyBehaviourDataBeforeIntegration() const
+        MGIS_NOEXCEPT = 0;
     //! \brief destructor
     virtual ~BehaviourIntegrationFailureAnalyser() noexcept;
   };

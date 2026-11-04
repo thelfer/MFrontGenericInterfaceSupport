@@ -19,11 +19,11 @@ namespace mgis::function {
      * \brief constructor
      * \param[in] s: size of the space
      */
-    constexpr BasicLinearSpace(const size_type) noexcept;
+    constexpr BasicLinearSpace(const size_type) MGIS_NOEXCEPT;
     constexpr BasicLinearSpace(BasicLinearSpace&&) noexcept;
-    constexpr BasicLinearSpace(const BasicLinearSpace&) noexcept;
+    constexpr BasicLinearSpace(const BasicLinearSpace&) MGIS_NOEXCEPT;
     //
-    [[nodiscard]] constexpr size_type size() const noexcept;
+    [[nodiscard]] constexpr size_type size() const MGIS_NOEXCEPT;
     //! \brief destructor
     constexpr ~BasicLinearSpace() noexcept;
 
@@ -39,10 +39,10 @@ namespace mgis::function {
     using element_index_type = mgis::size_type;
   };
 
-  constexpr size_type getSpaceSize(const BasicLinearSpace&) noexcept;
+  constexpr size_type getSpaceSize(const BasicLinearSpace&) MGIS_NOEXCEPT;
 
-  [[nodiscard]] constexpr bool areEquivalent(const BasicLinearSpace&,
-                                             const BasicLinearSpace&) noexcept;
+  [[nodiscard]] constexpr bool areEquivalent(
+      const BasicLinearSpace&, const BasicLinearSpace&) MGIS_NOEXCEPT;
 
 }  // end of namespace mgis::function
 

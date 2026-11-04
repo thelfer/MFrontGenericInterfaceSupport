@@ -75,19 +75,19 @@ namespace mgis::behaviour {
 
   template <mgis::function::LinearElementSpaceConcept SpaceType>
   const SpaceType& MaterialFunctionManager<SpaceType>::getSpace()
-      const noexcept {
+      const MGIS_NOEXCEPT {
     return *(this->qspace);
   }  // end of getSpace
 
   template <mgis::function::LinearElementSpaceConcept SpaceType>
   std::shared_ptr<const SpaceType>
-  MaterialFunctionManager<SpaceType>::getSpacePointer() const noexcept {
+  MaterialFunctionManager<SpaceType>::getSpacePointer() const MGIS_NOEXCEPT {
     return this->qspace;
   }  // end of getSpacePointer
 
   template <mgis::function::LinearElementSpaceConcept SpaceType>
   mgis::function::SharedSpace<SpaceType>
-  MaterialFunctionManager<SpaceType>::getSharedSpace() const noexcept {
+  MaterialFunctionManager<SpaceType>::getSharedSpace() const MGIS_NOEXCEPT {
     return {this->qspace};
   }  // end of getSpacePointer
 

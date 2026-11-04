@@ -53,7 +53,7 @@ namespace mgis::behaviour::debug {
     DefaultBehaviourIntegrationFailureAnalyser() = default;
     //
     void analyse(const Behaviour& b,
-                 const BehaviourData& d) const noexcept override {
+                 const BehaviourData& d) const MGIS_NOEXCEPT override {
       std::ofstream f(
           getBehaviourIntegrationFailureAnalysisFileName(b.function, "md"));
       f.precision(14);
@@ -62,7 +62,7 @@ namespace mgis::behaviour::debug {
       }
     }
     void analyse(const Behaviour& b,
-                 const BehaviourDataView& d) const noexcept override {
+                 const BehaviourDataView& d) const MGIS_NOEXCEPT override {
       // write inputs to output file
       std::ofstream f(
           getBehaviourIntegrationFailureAnalysisFileName(b.function, "md"));
@@ -71,8 +71,8 @@ namespace mgis::behaviour::debug {
         print_markdown(f, b, d, 0);
       }
     }
-    [[nodiscard]] bool shallCopyBehaviourDataBeforeIntegration()
-        const noexcept override {
+    [[nodiscard]] bool shallCopyBehaviourDataBeforeIntegration() const
+        MGIS_NOEXCEPT override {
       return true;
     }
     ~DefaultBehaviourIntegrationFailureAnalyser() override = default;

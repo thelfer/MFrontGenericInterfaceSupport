@@ -52,9 +52,9 @@ namespace mgis {
     using ErrorReport = std::
         variant<const char *, std::pair<int, ErrorReportFunction>, std::string>;
     //! \brief specify if error reporting shall be fatal
-    static void setErrorReportingAsFatal() noexcept;
+    static void setErrorReportingAsFatal() MGIS_NOEXCEPT;
     //! \brief specify if error reporting shall be fatal
-    static void unsetErrorReportingAsFatal() noexcept;
+    static void unsetErrorReportingAsFatal() MGIS_NOEXCEPT;
     /*!
      * \brief call the terminate handler
      * \param[in] msg: message
@@ -120,8 +120,8 @@ namespace mgis {
      */
     [[nodiscard]] InvalidResult registerErrorMessage(
         const ErrorReport,
-        const std::source_location & =
-            std::source_location::current()) noexcept;
+        const std::source_location& = std::source_location::current())
+        MGIS_NOEXCEPT;
     /*!
      * \brief register a new error message
      * \param[in] e: error message
@@ -142,9 +142,9 @@ namespace mgis {
     template <typename ReturnType>
     [[nodiscard]] ReturnType registerErrorMessage(
         const ErrorReport,
-        const std::source_location & =
-            std::source_location::current()) noexcept  //
-        requires(internal::InvalidValueTraits<ReturnType>::isSpecialized);
+        const std::source_location& = std::source_location::current())
+        MGIS_NOEXCEPT  //
+      requires(internal::InvalidValueTraits<ReturnType>::isSpecialized);
 
 #else
     /*!
@@ -184,8 +184,8 @@ namespace mgis {
      * \param[in] e: error code
      * \note for convenience, this method always return an invalid results
      */
-    [[nodiscard]] InvalidResult registerErrorMessage(
-        const ErrorReport) noexcept;
+    [[nodiscard]] InvalidResult registerErrorMessage(const ErrorReport)
+        MGIS_NOEXCEPT;
     /*!
      * \brief register a new error message
      * \param[in] e: error message
@@ -200,9 +200,9 @@ namespace mgis {
      * \note for convenience, this method always return an invalid results
      */
     template <typename ReturnType>
-    [[nodiscard]] ReturnType registerErrorMessage(
-        const ErrorReport) noexcept  //
-        requires(internal::InvalidValueTraits<ReturnType>::isSpecialized);
+    [[nodiscard]] ReturnType registerErrorMessage(const ErrorReport)
+        MGIS_NOEXCEPT  //
+      requires(internal::InvalidValueTraits<ReturnType>::isSpecialized);
 #endif
     /*!
      * \brief register a new error message
@@ -210,22 +210,23 @@ namespace mgis {
      * \note for convenience, this method always return `InvalidResult`
      */
     [[nodiscard]] InvalidResult registerErrorMessageWithoutSourceLocation(
-        const ErrorReport) noexcept;
+        const ErrorReport) MGIS_NOEXCEPT;
     //! \brief remove the error messages
-    void clearErrorMessages() noexcept;
+    void clearErrorMessages() MGIS_NOEXCEPT;
     /*!
      * \return the registered error messages
      * \param[in] b: boolean. If true, the error message are cleared
      */
-    [[nodiscard]] std::string getErrorMessage(const bool = true) noexcept;
+    [[nodiscard]] std::string getErrorMessage(const bool = true) MGIS_NOEXCEPT;
     /*!
      * \return the error message without the decoration (file name, function
      * name, line number) \param[in] b: boolean. If true, the error message are
      * cleared
      */
-    [[nodiscard]] std::string getRawErrorMessage(const bool = true) noexcept;
+    [[nodiscard]] std::string getRawErrorMessage(const bool = true)
+        MGIS_NOEXCEPT;
     //! \return if the list registered error messages is empty
-    [[nodiscard]] bool empty() const noexcept;
+    [[nodiscard]] bool empty() const MGIS_NOEXCEPT;
     //! \brief destructor
     ~ErrorBacktrace() noexcept override;
 
@@ -247,13 +248,13 @@ namespace mgis {
      * \return the error message
      * \param[in] e: error report
      */
-    [[nodiscard]] static std::string getErrorMessage(
-        const ErrorReport &) noexcept;
+    [[nodiscard]] static std::string getErrorMessage(const ErrorReport&)
+        MGIS_NOEXCEPT;
     //! \return the registered error messages
-    [[nodiscard]] std::string getErrorMessage_() const noexcept;
+    [[nodiscard]] std::string getErrorMessage_() const MGIS_NOEXCEPT;
     //! \return the error message without the decoration (file name, function
     //! name, line number)
-    [[nodiscard]] std::string getRawErrorMessage_() const noexcept;
+    [[nodiscard]] std::string getRawErrorMessage_() const MGIS_NOEXCEPT;
     //! \brief treat the case when error reporting is fatal
     void treatFatalCase() const;
     //! \brief call the terminate handler
@@ -271,8 +272,9 @@ namespace mgis {
    * \param[in] l: description of the call site
    */
   MGIS_EXPORT MGIS_NODISCARD InvalidResult registerExceptionInErrorBacktrace(
-      ErrorBacktrace &,
-      const std::source_location & = std::source_location::current()) noexcept;
+      ErrorBacktrace&,
+      const std::source_location& = std::source_location::current())
+      MGIS_NOEXCEPT;
 #else
   /*!
    * \brief a custom Lippincott-like function that extract error messages from
@@ -281,7 +283,7 @@ namespace mgis {
    * \param[out] e: error back trace handler
    */
   MGIS_EXPORT MGIS_NODISCARD InvalidResult
-  registerExceptionInErrorBacktrace(ErrorBacktrace &) noexcept;
+  registerExceptionInErrorBacktrace(ErrorBacktrace&) MGIS_NOEXCEPT;
 #endif
   /*!
    * \brief a custom Lippincott-like function that extract error messages from
@@ -290,8 +292,8 @@ namespace mgis {
    *\param[out] e: error back trace handler
    */
   MGIS_EXPORT MGIS_NODISCARD InvalidResult
-  registerExceptionInErrorBacktraceWithoutSourceLocation(
-      ErrorBacktrace &) noexcept;
+  registerExceptionInErrorBacktraceWithoutSourceLocation(ErrorBacktrace&)
+      MGIS_NOEXCEPT;
 
 }  // end of namespace mgis
 

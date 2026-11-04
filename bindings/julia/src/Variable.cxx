@@ -35,7 +35,6 @@ void declareVariable(jlcxx::Module& m) {
                 return mgis::behaviour::getVariableSize(v, h);
               });
 
-  mgis::julia::expose_std_vector<Variable>(m, "VariablesVector");
   m.method("contains", [](std::vector<Variable>& v, const std::string& n) {
     return mgis::behaviour::contains(v, n);
   });

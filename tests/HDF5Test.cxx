@@ -120,11 +120,11 @@ int main(const int argc, const char* const* argv) {
       return EXIT_FAILURE;
     }
   }
-  // save a MaterialDataManager and restore it in a new one
+  // save a MaterialDataManager and restore it in a new one, with the default
+  // options: no mass density was saved
   auto m4 = MaterialDataManager{b, m.n};
   auto og4 = createGroup(ctx, root, "MaterialDataManager");
-  if ((isInvalid(og4)) || (!save(ctx, *og4, m)) ||
-      (!restore(ctx, m4, *og4, {{.restore_mass_densities = false}}))) {
+  if ((isInvalid(og4)) || (!save(ctx, *og4, m)) || (!restore(ctx, m4, *og4))) {
     std::cerr << ctx.getErrorMessage() << '\n';
     return EXIT_FAILURE;
   }
@@ -133,6 +133,11 @@ int main(const int argc, const char* const* argv) {
     std::cerr << "invalid values restored in a MaterialDataManager\n";
     return EXIT_FAILURE;
   }
+  if ((isMassDensityDefined(m4.s0)) || (isMassDensityDefined(m4.s1))) {
+    std::cerr << "unexpected mass density restored in a MaterialDataManager\n";
+    return EXIT_FAILURE;
+  }
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
   // an existing checkpoint must not be overwritten if not allowed
   auto ctx2 = Context{};
   if (save(ctx2, *og4, m, {{.allow_overwrite = false}})) {
@@ -140,6 +145,7 @@ int main(const int argc, const char* const* argv) {
                  "although overwriting was not allowed\n";
     return EXIT_FAILURE;
   }
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
   // external state variables which are not scalars, given at each
   // integration point
   const auto b2 = load(argv[1], "TensorialExternalStateVariableTest",

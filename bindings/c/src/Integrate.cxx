@@ -12,6 +12,8 @@
  */
 
 #include <string>
+#include <limits>
+#include <algorithm>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Behaviour/BehaviourDataView.h"
 #include "MGIS/Behaviour/Behaviour.h"
@@ -68,6 +70,20 @@ static mgis_status reportBehaviourIntegrationFailureOnRange(
   }
   return mgis_report_failure(what);
 }  // end of reportBehaviourIntegrationFailureOnRange
+
+/*!
+ * \return the time step scaling factor proposed by the behaviour, i.e. the
+ * minimum of the factors proposed on each thread
+ * \param[in] r: results of the integration
+ */
+static mgis_real getTimeStepScalingFactor(
+    const mgis::behaviour::MultiThreadedBehaviourIntegrationResult& r) {
+  auto tsf = std::numeric_limits<mgis_real>::max();
+  for (const auto& ri : r.results) {
+    tsf = std::min(tsf, ri.time_step_increase_factor);
+  }
+  return tsf;
+}  // end of getTimeStepScalingFactor
 
 /*!
  * \brief clear the error message of a behaviour data before a call
@@ -299,6 +315,56 @@ mgis_status mgis_bv_integrate_debug_material_data_manager_with_options(
   return mgis_report_success();
 }  // end of mgis_bv_integrate_debug_material_data_manager_with_options
 
+mgis_status mgis_bv_integrate_material_data_manager_with_options_2(
+    int* const r,
+    mgis_real* const tsf,
+    mgis_ThreadPool* const p,
+    mgis_bv_MaterialDataManager* const m,
+    mgis_bv_BehaviourIntegrationOptions* const o,
+    const mgis_real dt) {
+  if ((r == nullptr) || (tsf == nullptr) || (p == nullptr) || (m == nullptr) ||
+      (o == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *r = -1;
+  try {
+    const auto res = mgis::behaviour::integrate(*p, *m, *o, dt);
+    *r = res.exit_status;
+    *tsf = getTimeStepScalingFactor(res);
+    if ((*r != 1) && (*r != 0)) {
+      return reportBehaviourIntegrationFailure(res);
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_integrate_material_data_manager_with_options_2
+
+mgis_status mgis_bv_integrate_debug_material_data_manager_with_options_2(
+    int* const r,
+    mgis_real* const tsf,
+    mgis_ThreadPool* const p,
+    mgis_bv_MaterialDataManager* const m,
+    mgis_bv_BehaviourIntegrationOptions* const o,
+    const mgis_real dt) {
+  if ((r == nullptr) || (tsf == nullptr) || (p == nullptr) || (m == nullptr) ||
+      (o == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *r = -1;
+  try {
+    const auto res = mgis::behaviour::integrate_debug(*p, *m, *o, dt);
+    *r = res.exit_status;
+    *tsf = getTimeStepScalingFactor(res);
+    if ((*r != 1) && (*r != 0)) {
+      return reportBehaviourIntegrationFailure(res);
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_integrate_debug_material_data_manager_with_options_2
+
 mgis_status mgis_bv_integrate_material_data_manager_part(
     int* const r,
     mgis_bv_MaterialDataManager* const m,
@@ -348,6 +414,60 @@ mgis_status mgis_bv_integrate_debug_material_data_manager_part(
   }
   return mgis_report_success();
 }  // end of mgis_bv_integrate_debug_material_data_manager_part
+
+mgis_status mgis_bv_integrate_material_data_manager_part_2(
+    int* const r,
+    mgis_real* const tsf,
+    mgis_bv_MaterialDataManager* const m,
+    const mgis_bv_IntegrationType i,
+    const mgis_real dt,
+    const mgis_size_type b,
+    const mgis_size_type e) {
+  if ((r == nullptr) || (tsf == nullptr) || (m == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *r = -1;
+  try {
+    auto opts = mgis::behaviour::BehaviourIntegrationOptions{};
+    opts.integration_type = convertIntegrationType(i);
+    const auto res = mgis::behaviour::integrate(*m, opts, dt, b, e);
+    *r = res.exit_status;
+    *tsf = res.time_step_increase_factor;
+    if ((*r != 1) && (*r != 0)) {
+      return reportBehaviourIntegrationFailureOnRange(res);
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_integrate_material_data_manager_part_2
+
+mgis_status mgis_bv_integrate_debug_material_data_manager_part_2(
+    int* const r,
+    mgis_real* const tsf,
+    mgis_bv_MaterialDataManager* const m,
+    const mgis_bv_IntegrationType i,
+    const mgis_real dt,
+    const mgis_size_type b,
+    const mgis_size_type e) {
+  if ((r == nullptr) || (tsf == nullptr) || (m == nullptr)) {
+    return mgis_report_failure("invalid argument");
+  }
+  *r = -1;
+  try {
+    auto opts = mgis::behaviour::BehaviourIntegrationOptions{};
+    opts.integration_type = convertIntegrationType(i);
+    const auto res = mgis::behaviour::integrate_debug(*m, opts, dt, b, e);
+    *r = res.exit_status;
+    *tsf = res.time_step_increase_factor;
+    if ((*r != 1) && (*r != 0)) {
+      return reportBehaviourIntegrationFailureOnRange(res);
+    }
+  } catch (...) {
+    return mgis_handle_cxx_exception();
+  }
+  return mgis_report_success();
+}  // end of mgis_bv_integrate_debug_material_data_manager_part_2
 
 mgis_status mgis_bv_execute_initialize_function(
     int* const r,

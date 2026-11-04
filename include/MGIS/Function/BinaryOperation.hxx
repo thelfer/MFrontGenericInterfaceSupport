@@ -34,7 +34,7 @@ namespace mgis::function {
               EvaluatorConcept SecondEvaluatorType>
     struct BinaryOperationModifierBase {
       MGIS_HOST_DEVICE [[nodiscard]] static constexpr size_type
-      getNumberOfComponents() noexcept {
+      getNumberOfComponents() MGIS_NOEXCEPT {
         using result_type =
             std::invoke_result_t<CallableType,
                                  evaluator_result<FirstEvaluatorType>,

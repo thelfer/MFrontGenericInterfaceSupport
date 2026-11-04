@@ -83,6 +83,7 @@ class MFrontNonlinearMaterial:
             ])
             os.chdir(cwd)
             self.load_behaviour()
+        self.parameters = {}
         self.update_parameters(parameters)
 
     def load_behaviour(self):
@@ -107,6 +108,7 @@ class MFrontNonlinearMaterial:
     def update_parameters(self, parameters):
         for (key, value) in parameters.items():
             self.behaviour.setParameter(key, value)
+            self.parameters[key] = value
 
     def update_material_properties(self,
                                    degree,
@@ -145,6 +147,18 @@ class MFrontNonlinearMaterial:
                     mgis_bv.MaterialStateManagerStorageMode.LocalStorage)
 
     def get_parameter(self, name):
+        """
+        Returns the value of a parameter given to this material (at
+        construction or by `update_parameters`), or its default value
+        otherwise.
+
+        Note that the parameters are set in the behaviour library: they
+        are shared by all the materials using the same behaviour and
+        modelling hypothesis, so the value returned is the one given to
+        this material, not the one given later to another material.
+        """
+        if name in self.parameters:
+            return self.parameters[name]
         return self.behaviour.getParameterDefaultValue(name)
 
     def get_parameter_names(self):

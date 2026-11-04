@@ -77,7 +77,15 @@ Cauchy stress in the global frame.
 For spaces with very simple structure, `MGIS/Function` provides
 algorithms, such as the `assign` algorithm which allows to assign the
 values of an evaluator to a function. Let `sig` be a function, the
-following code assigns the values calculated by `sig_ev` 
+following code assigns the values calculated by `sig_ev` to `sig`:
+
+~~~~{.cxx}
+const auto ok = assign(ctx, sig | as_stensor<3>, sig_ev);
+~~~~
+
+where `ctx` is an execution context, i.e. an object of the `Context`
+class, which collects the error messages (see [this
+page](error_handling.html)).
 
 Those concepts now being defined, `MGIS/Function` can now be defined as
 set of algorithms, evaluators and modifiers used to operate and
@@ -117,45 +125,82 @@ A space must provide a way to iterate over its elements:
 In order to adapt to the structures used by as many solvers as possible,
 spaces in `mgis` are defined using a set of `C++` concepts:
 `SpaceConcept`, `ElementSpaceConcept`, `QuadratureSpaceConcept`,
-`FunctionalSpace`, `LinearElementSpaceConcept` and
+`FunctionalSpaceConcept`, `LinearElementSpaceConcept` and
 `LinearQuadratureSpaceConcept`.
 
-Let `SpaceType` be a type.
+The types and the indexing properties of a space are not read from the
+space itself but from a specialisation of the `mgis::function::SpaceTraits`
+class template. The other requirements are free functions taking the space
+as first argument. For instance, the `BasicLinearSpace` class
+(`MGIS/Function/BasicLinearSpace.hxx`) defines:
+
+~~~~{.cxx}
+template <>
+struct SpaceTraits<BasicLinearSpace> {
+  static constexpr bool linear_element_indexing = true;
+  using size_type = mgis::size_type;
+  using element_index_type = mgis::size_type;
+};
+
+constexpr size_type getSpaceSize(const BasicLinearSpace&) noexcept;
+
+constexpr bool areEquivalent(const BasicLinearSpace&,
+                             const BasicLinearSpace&) noexcept;
+~~~~
+
+The `BasicLinearQuadratureSpace` class
+(`MGIS/Function/BasicLinearQuadratureSpace.hxx`) is an example of a
+linear quadrature space.
+
+Let `SpaceType` be a type, `s` and `s2` two spaces of this type, `c` a
+cell index and `q` a quadrature point index.
 
 - `SpaceType` satisfies the `SpaceConcept` concept if:
-  - it exposes an integral type named `size_type` and a `size` method
-    (returning a `size_type`). This method shall return the total number
-    of elements in the discretization space.
+  - it is move constructible,
+  - `SpaceTraits<SpaceType>` exposes an integral type named `size_type`,
+  - `getSpaceSize(s)` returns a `size_type`. This function shall return
+    the total number of elements in the discretization space,
+  - `areEquivalent(s, s2)` returns a boolean stating if the two spaces
+    are equivalent.
 - `SpaceType` satisfies the `ElementSpaceConcept` concept if:
-  - it exposes an `element_index_type` type.
+  - it satisfies the `SpaceConcept`,
+  - `SpaceTraits<SpaceType>` exposes an `element_index_type` type.
 - `SpaceType` satisfies the `LinearElementSpaceConcept` concept if:
   - it satisfies the `ElementSpaceConcept`,
-  - it exposes a boolean value named `linear_element_indexing` which
-    must be `true`,
-  - elements of the space are indexed by integers ranging from from 0 to
-    `size()-1`. The `element_index_type` must be identical to
+  - `SpaceTraits<SpaceType>` exposes a `static constexpr` boolean data
+    member named `linear_element_indexing` which must be `true`,
+  - elements of the space are indexed by integers ranging from 0 to
+    `getSpaceSize(s)-1`. The `element_index_type` must be identical to
     `size_type`.
 - `SpaceType` satisfies the `QuadratureSpaceConcept` concept if:
   - it satisfies the `SpaceConcept`,
-  - it exposes a method named `getNumberOfCells` which returns a
-    `size_type`,
-  - it exposes an `cell_index_type` type,
-  - it exposes an `quadrature_point_index_type` type. In `MGIS/Function`,
-    this type must be an integer type,
-  - it exposes a method named `getNumberOfQuadraturePoints` which returns
-    the number of quadrature points of a given cell.
+  - `SpaceTraits<SpaceType>` exposes a `cell_index_type` type,
+  - `SpaceTraits<SpaceType>` exposes a `quadrature_point_index_type`
+    type. In `MGIS/Function`, this type must be an integer type,
+  - `getNumberOfCells(s)` returns the number of cells as a `size_type`,
+  - `getNumberOfQuadraturePoints(s, c)` returns the number of quadrature
+    points of the cell `c` as a `quadrature_point_index_type`.
 - `SpaceType` satisfies the `LinearQuadratureSpaceConcept` concept if:
   - it satisfies the `QuadratureSpaceConcept`,
-  - it exposes a boolean value named `cell_element_indexing` which
-    must be `true`,
-  - cells of the space are indexed by integers ranging from from 0 to
-    `getNumberOfCells()-1`. The `cell_index_type` must be identical to
-    `size_type`,
-  - it exposes a method `getQuadraturePointOffset` which must be a
-    bijection between all valid cell and quadrature points indices and
-    the range `[0:size()-1]`.
+  - `SpaceTraits<SpaceType>` exposes a `static constexpr` boolean data
+    member named `linear_cell_indexing` which must be `true`,
+  - cells of the space are indexed by integers ranging from 0 to
+    `getNumberOfCells(s)-1`. The `cell_index_type` must be an integer
+    type,
+  - `getQuadraturePointOffset(s, c, q)` returns a `size_type` and must
+    be a bijection between all valid cell and quadrature points indices
+    and the range `[0:getSpaceSize(s)-1]`.
 
 A functional space is either an element space and/or a quadrature space.
+
+> **Note**
+>
+> The algorithms provided by `MGIS/Function` (`assign` and
+> `scalar_reduce`) require a space satisfying the
+> `LinearElementSpaceConcept` concept. Functions, evaluators and
+> modifiers can be defined on a linear quadrature space which is not an
+> element space, but the loops over its cells and their quadrature
+> points must then be written by the solver.
 
 # Functions
 
@@ -287,6 +332,17 @@ details).
 
 ## Views
 
+The views described in this section, and the modifiers of the same name
+applied to evaluators, map the values returned by the underlying
+function or evaluator. The address of these values is obtained by the
+free function `getDataPointer`, which is provided for objects having a
+`data` method (such as `std::span`, `std::array` or the tensorial
+objects of `TFEL/Math`) and for scalar values (`real`, `real&` or
+`const real&`). Hence, a function returning a scalar, such as
+`Function<Space, 1>`, or a scalar evaluator, such as the von Mises
+stress, can be viewed as a quantity or as a scalar. `getDataPointer`
+can be overloaded to support other result types.
+
 ### Fixed-size Array functions
 
 The `view` function has a template overload taking the a size as
@@ -351,6 +407,9 @@ real values[8] = {1, 10,  // components XX
                   4, 40}; // components XY
 const auto ne = size_type { 2 };
 auto space = BasicLinearSpace{ne};
+using ScalarFunctionView =
+    FunctionView<BasicLinearSpace,
+                 FunctionDataLayoutDescription{.data_size = 1, .data_stride = 1}>;
 auto c_xx = ScalarFunctionView{space, std::span{values, ne}};
 auto c_yy = ScalarFunctionView{space, std::span{values + ne, ne}};
 auto c_zz = ScalarFunctionView{space, std::span{values + 2 * ne, ne}};
@@ -359,3 +418,26 @@ auto f = CoalescedMemoryAccessTensorView<BasicLinearSpace,
                                          tfel::math::stensor<2, real>>{
             std::array{c_xx, c_yy, c_zz, c_xy}};
 ~~~~
+
+The `StridedCoalescedMemoryAccessTensorView` class provides the same
+view directly from the space and the values: the stride between two
+successive components is the size of the space.
+
+~~~~{.cxx}
+auto f2 = StridedCoalescedMemoryAccessTensorView<
+    BasicLinearSpace, tfel::math::stensor<2, real>>{space, values};
+~~~~
+
+Both classes are functions (when mutable) and evaluators: they can be
+assigned with `assign` and combined with the modifiers working on
+tensorial values, as follows:
+
+~~~~{.cxx}
+auto tr = Function<BasicLinearSpace, 1>{space};
+const auto ok = assign(ctx, tr, f | trace);
+~~~~
+
+Since the components are not contiguous in memory, the views and
+modifiers mapping the values of a function or an evaluator, such as
+`as_stensor`, `as_fsarray`, `as_qt` or `view<N>`, can not be applied to
+them.

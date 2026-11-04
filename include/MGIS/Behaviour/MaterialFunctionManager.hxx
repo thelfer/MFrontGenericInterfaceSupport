@@ -83,11 +83,11 @@ namespace mgis::behaviour {
                             const std::shared_ptr<const SpaceType>&,
                             const std::shared_ptr<const Behaviour>&);
     //! \brief return the quadrature space
-    const SpaceType& getSpace() const noexcept;
+    const SpaceType& getSpace() const MGIS_NOEXCEPT;
     //! \brief return the pointer to the quadrature space
-    std::shared_ptr<const SpaceType> getSpacePointer() const noexcept;
+    std::shared_ptr<const SpaceType> getSpacePointer() const MGIS_NOEXCEPT;
     //! \brief return the pointer to the quadrature space
-    mgis::function::SharedSpace<SpaceType> getSharedSpace() const noexcept;
+    mgis::function::SharedSpace<SpaceType> getSharedSpace() const MGIS_NOEXCEPT;
 
    private:
     //! \brief quadrature space
