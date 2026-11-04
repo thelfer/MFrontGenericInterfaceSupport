@@ -25,7 +25,7 @@ namespace mgis::function::internals {
 
   template <EvaluatorConcept EvaluatorType>
   static std::optional<Function<BasicLinearSpace>> evaluate(
-      Context& ctx, const EvaluatorType& e) noexcept {
+      Context& ctx, const EvaluatorType& e) MGIS_NOEXCEPT {
     const auto& s = getSpace(e);
     const auto nc = getNumberOfComponents(e);
     if (!Function<BasicLinearSpace>::checkPreconditions(ctx, s, nc)) {
@@ -42,7 +42,7 @@ namespace mgis::function::internals {
   evaluateUnaryOperationOnSymmetricTensor(
       Context& ctx,
       const BasicImmutableFunctionView& f,
-      const EvaluatorModifierConcept auto& op) noexcept {
+      const EvaluatorModifierConcept auto& op) MGIS_NOEXCEPT {
     if (getNumberOfComponents(f) == 3) {
       return internals::evaluate(ctx, f | as_stensor<1> | op);
     } else if (getNumberOfComponents(f) == 4) {
@@ -58,7 +58,7 @@ namespace mgis::function::internals {
       Context& ctx,
       const BasicImmutableFunctionView& pk1,
       const BasicImmutableFunctionView& F,
-      const EvaluatorModifierConcept auto& op) noexcept {
+      const EvaluatorModifierConcept auto& op) MGIS_NOEXCEPT {
     if (getNumberOfComponents(pk1) == 3) {
       return internals::evaluate(
           ctx, pk1 | as_tensor<1> | from_pk1_to_cauchy(F | as_tensor<1>) | op);
@@ -77,23 +77,23 @@ namespace mgis::function::internals {
 namespace mgis::function {
 
   std::optional<Function<BasicLinearSpace>> computeTrace(
-      Context& ctx, const BasicImmutableFunctionView& f) noexcept {
+      Context& ctx, const BasicImmutableFunctionView& f) MGIS_NOEXCEPT {
     return internals::evaluateUnaryOperationOnSymmetricTensor(ctx, f, trace);
   }  // end of computeTrace
 
   std::optional<Function<BasicLinearSpace>> computeVonMisesStress(
-      Context& ctx, const BasicImmutableFunctionView& f) noexcept {
+      Context& ctx, const BasicImmutableFunctionView& f) MGIS_NOEXCEPT {
     return internals::evaluateUnaryOperationOnSymmetricTensor(ctx, f, vmis);
   }  // end of computeMisesStress
 
   std::optional<Function<BasicLinearSpace>> computeHydrostraticPressure(
-      Context& ctx, const BasicImmutableFunctionView& f) noexcept {
+      Context& ctx, const BasicImmutableFunctionView& f) MGIS_NOEXCEPT {
     return internals::evaluateUnaryOperationOnSymmetricTensor(
         ctx, f, hydrostatic_stress);
   }  // end of computeHydrostraticPressure
 
   std::optional<Function<BasicLinearSpace>> computeEigenValues(
-      Context& ctx, const BasicImmutableFunctionView& f) noexcept {
+      Context& ctx, const BasicImmutableFunctionView& f) MGIS_NOEXCEPT {
     return internals::evaluateUnaryOperationOnSymmetricTensor(ctx, f,
                                                               eigen_values<>);
   }  // end of computeHydrostraticPressure
@@ -102,7 +102,7 @@ namespace mgis::function {
   computeCauchyStressFromFirstPiolaKirchhoffStress(
       Context& ctx,
       const BasicImmutableFunctionView& pk1,
-      const BasicImmutableFunctionView& F) noexcept {
+      const BasicImmutableFunctionView& F) MGIS_NOEXCEPT {
     if (getNumberOfComponents(pk1) == 3) {
       return internals::evaluate(
           ctx, pk1 | as_tensor<1> | from_pk1_to_cauchy(F | as_tensor<1>));
@@ -120,7 +120,7 @@ namespace mgis::function {
   computeCauchyStressHydrostraticPressureFromFirstPiolaKirchhoffStress(
       Context& ctx,
       const BasicImmutableFunctionView& pk1,
-      const BasicImmutableFunctionView& F) noexcept {
+      const BasicImmutableFunctionView& F) MGIS_NOEXCEPT {
     return internals::evaluateUnaryOperationOnCauchyStressComputedFromPK1(
         ctx, pk1, F, hydrostatic_stress);
   }
@@ -129,7 +129,7 @@ namespace mgis::function {
   computeCauchyStressVonMisesStressFromFirstPiolaKirchhoffStress(
       Context& ctx,
       const BasicImmutableFunctionView& pk1,
-      const BasicImmutableFunctionView& F) noexcept {
+      const BasicImmutableFunctionView& F) MGIS_NOEXCEPT {
     return internals::evaluateUnaryOperationOnCauchyStressComputedFromPK1(
         ctx, pk1, F, vmis);
   }  // end of computeCauchyStressVonMisesStressFromFirstPiolaKirchhoffStress
@@ -138,7 +138,7 @@ namespace mgis::function {
   computeCauchyStressEigenValuesFromFirstPiolaKirchhoffStress(
       Context& ctx,
       const BasicImmutableFunctionView& pk1,
-      const BasicImmutableFunctionView& F) noexcept {
+      const BasicImmutableFunctionView& F) MGIS_NOEXCEPT {
     return internals::evaluateUnaryOperationOnCauchyStressComputedFromPK1(
         ctx, pk1, F, eigen_values<>);
   }  // end of computeStressCauchyEigenValuesFromFirstPiolaKirchhoffStress

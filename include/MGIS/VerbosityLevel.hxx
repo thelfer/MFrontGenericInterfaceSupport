@@ -33,26 +33,27 @@ namespace mgis {
   };                    // end of enum VerboseLevel
 
   //! \return the current default value of the verbosity level
-  [[nodiscard]] MGIS_EXPORT VerbosityLevel &getDefaultVerbosityLevel() noexcept;
+  [[nodiscard]] MGIS_EXPORT VerbosityLevel& getDefaultVerbosityLevel()
+      MGIS_NOEXCEPT;
   /*!
    * \brief change the default level of verbosity
    * \param[in] l: the new verbose level
    */
-  MGIS_EXPORT void setDefaultVerbosityLevel(const VerbosityLevel) noexcept;
+  MGIS_EXPORT void setDefaultVerbosityLevel(const VerbosityLevel) MGIS_NOEXCEPT;
   /*!
    * \brief change the default level of verbosity
    * \param[in] ctx: execution context
    * \param[in] l: the new verbose level
    */
-  MGIS_EXPORT bool setDefaultVerbosityLevel(Context &,
-                                            std::string_view) noexcept;
+  MGIS_EXPORT bool setDefaultVerbosityLevel(Context&,
+                                            std::string_view) MGIS_NOEXCEPT;
   /*!
    * \return the level of verbosity associated with the given string
    * \param[in] ctx: execution context
    * \param[in] l: string representation of the verbose level
    */
   [[nodiscard]] MGIS_EXPORT std::optional<VerbosityLevel>
-  convertToVerbosityLevel(Context &, std::string_view) noexcept;
+  convertToVerbosityLevel(Context&, std::string_view) MGIS_NOEXCEPT;
 
 }  // end of namespace mgis
 

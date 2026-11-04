@@ -32,26 +32,26 @@ namespace mgis::function {
      * \brief constructor
      * \param[in] n: number of elements
      */
-    constexpr BasicLinearQuadratureSpace(const size_type) noexcept;
+    constexpr BasicLinearQuadratureSpace(const size_type) MGIS_NOEXCEPT;
     constexpr BasicLinearQuadratureSpace(BasicLinearQuadratureSpace&&) noexcept;
-    constexpr BasicLinearQuadratureSpace(
-        const BasicLinearQuadratureSpace&) noexcept;
+    constexpr BasicLinearQuadratureSpace(const BasicLinearQuadratureSpace&)
+        MGIS_NOEXCEPT;
     //! \return the number of quadrature points
-    [[nodiscard]] constexpr size_type size() const noexcept;
+    [[nodiscard]] constexpr size_type size() const MGIS_NOEXCEPT;
     //! \return the number of cells in the quadrature space
-    [[nodiscard]] constexpr size_type getNumberOfCells() const noexcept;
+    [[nodiscard]] constexpr size_type getNumberOfCells() const MGIS_NOEXCEPT;
     /*!
      * \return the number quadrature points for the given element
      * \param[in] e: cell index
      */
     [[nodiscard]] constexpr size_type getNumberOfQuadraturePoints(
-        const size_type) const noexcept;
+        const size_type) const MGIS_NOEXCEPT;
     /*!
      * \return the workspace of the element
      * \param[in] e: cell index
      */
     [[nodiscard]] constexpr DummyCellWorkspace getCellWorkspace(
-        const size_type) const noexcept;
+        const size_type) const MGIS_NOEXCEPT;
     /*!
      * \return the offset associated with a quadrature space
      * \param[in] wk: element workspace
@@ -59,7 +59,7 @@ namespace mgis::function {
      * \param[in] i: quadrature point index
      */
     [[nodiscard]] constexpr size_type getQuadraturePointOffset(
-        const size_type, const size_type) const noexcept;
+        const size_type, const size_type) const MGIS_NOEXCEPT;
     //! \brief destructor
     constexpr ~BasicLinearQuadratureSpace() noexcept;
 
@@ -79,27 +79,27 @@ namespace mgis::function {
   };
 
   template <size_type N>
-  constexpr size_type getSpaceSize(
-      const BasicLinearQuadratureSpace<N>&) noexcept;
+  constexpr size_type getSpaceSize(const BasicLinearQuadratureSpace<N>&)
+      MGIS_NOEXCEPT;
 
   template <size_type N>
-  constexpr size_type getNumberOfCells(
-      const BasicLinearQuadratureSpace<N>&) noexcept;
+  constexpr size_type getNumberOfCells(const BasicLinearQuadratureSpace<N>&)
+      MGIS_NOEXCEPT;
 
   template <size_type N>
   constexpr size_type getNumberOfQuadraturePoints(
-      const BasicLinearQuadratureSpace<N>&, const size_type) noexcept;
+      const BasicLinearQuadratureSpace<N>&, const size_type) MGIS_NOEXCEPT;
 
   template <size_type N>
   constexpr size_type getQuadraturePointOffset(
       const BasicLinearQuadratureSpace<N>&,
       const size_type,
-      const size_type) noexcept;
+      const size_type) MGIS_NOEXCEPT;
 
   template <size_type N>
   [[nodiscard]] constexpr bool areEquivalent(
       const BasicLinearQuadratureSpace<N>&,
-      const BasicLinearQuadratureSpace<N>&) noexcept;
+      const BasicLinearQuadratureSpace<N>&) MGIS_NOEXCEPT;
 
 }  // end of namespace mgis::function
 

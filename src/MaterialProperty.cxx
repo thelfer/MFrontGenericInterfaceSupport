@@ -68,7 +68,8 @@ namespace mgis::material_property {
     return d;
   }  // end of load
 
-  bool isGenericParallelMaterialProperty(const MaterialProperty &mp) noexcept {
+  bool isGenericParallelMaterialProperty(const MaterialProperty& mp)
+      MGIS_NOEXCEPT {
     return mp.batch_fct != nullptr;
   }  // end of isGenericParallelMaterialProperty
 

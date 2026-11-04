@@ -12,7 +12,7 @@
 
 namespace mgis::internal {
 
-  static TerminateHandler &getTerminateHandler() noexcept {
+  static TerminateHandler& getTerminateHandler() MGIS_NOEXCEPT {
     static TerminateHandler h = +[](std::string_view msg) {
       std::cerr << "mgis default terminate handler called\n"  //
                 << msg << '\n';
@@ -25,7 +25,7 @@ namespace mgis::internal {
 
 namespace mgis {
 
-  void setTerminateHandler(TerminateHandler &h) noexcept {
+  void setTerminateHandler(const TerminateHandler h) MGIS_NOEXCEPT {
     if (h == nullptr) {
       return;
     }

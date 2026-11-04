@@ -17,27 +17,27 @@
 
 namespace mgis::function {
 
-  constexpr BasicLinearSpace::BasicLinearSpace(const size_type s) noexcept
+  constexpr BasicLinearSpace::BasicLinearSpace(const size_type s) MGIS_NOEXCEPT
       : nelts(s) {}
 
   constexpr BasicLinearSpace::BasicLinearSpace(
-      const BasicLinearSpace&) noexcept = default;
+      const BasicLinearSpace&) MGIS_NOEXCEPT = default;
 
   constexpr BasicLinearSpace::BasicLinearSpace(BasicLinearSpace&&) noexcept =
       default;
 
-  constexpr size_type BasicLinearSpace::size() const noexcept {
+  constexpr size_type BasicLinearSpace::size() const MGIS_NOEXCEPT {
     return this->nelts;
   }
 
   constexpr BasicLinearSpace::~BasicLinearSpace() noexcept = default;
 
-  constexpr size_type getSpaceSize(const BasicLinearSpace& s) noexcept {
+  constexpr size_type getSpaceSize(const BasicLinearSpace& s) MGIS_NOEXCEPT {
     return s.size();
   }
 
   constexpr bool areEquivalent(const BasicLinearSpace& s,
-                               const BasicLinearSpace& s2) noexcept {
+                               const BasicLinearSpace& s2) MGIS_NOEXCEPT {
     return s.size() == s2.size();
   }
 

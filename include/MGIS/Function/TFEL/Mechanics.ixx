@@ -187,7 +187,7 @@ namespace mgis::function::internals {
           StiffnessEvaluator,
           DeformationGradientEvaluatorType0,
           DeformationGradientEvaluatorType1,
-          CauchyStressEvaluatorType>&) noexcept {
+          CauchyStressEvaluatorType>&) MGIS_NOEXCEPT {
     const auto value =
         tfel::material::tangent_operator<ResultFlag, N, ::mgis::real>{};
     return value.size();

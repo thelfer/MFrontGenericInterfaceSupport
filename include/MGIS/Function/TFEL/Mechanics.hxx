@@ -29,14 +29,14 @@ namespace mgis::function::internals {
 
   struct HydrostaticStressOperator {
     MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
-        const tfel::math::StensorConcept auto& s) const noexcept {
+        const tfel::math::StensorConcept auto& s) const MGIS_NOEXCEPT {
       return tfel::math::trace(s) / 3;
     }
   };
 
   struct VonMisesStressOperator {
     MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
-        const tfel::math::StensorConcept auto& s) const noexcept {
+        const tfel::math::StensorConcept auto& s) const MGIS_NOEXCEPT {
       return tfel::math::sigmaeq(s);
     }
   };
@@ -46,10 +46,10 @@ namespace mgis::function::internals {
               tfel::math::TensorConcept DeformationGradientType>
     MGIS_HOST_DEVICE [[nodiscard]] constexpr auto operator()(
         const FirstPiolaKirchhoffStressType& pk1,
-        const DeformationGradientType& F) const noexcept
-        requires(
-            tfel::math::getSpaceDimension<FirstPiolaKirchhoffStressType>() ==
-            tfel::math::getSpaceDimension<DeformationGradientType>()) {
+        const DeformationGradientType& F) const MGIS_NOEXCEPT
+      requires(tfel::math::getSpaceDimension<FirstPiolaKirchhoffStressType>() ==
+               tfel::math::getSpaceDimension<DeformationGradientType>())
+    {
       return tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress(pk1, F);
     }
   };

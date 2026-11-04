@@ -11,14 +11,14 @@
 namespace mgis {
 
   template <typename... Args>
-  void warning(std::ostream &os, Args &&...args) noexcept {
+  void warning(std::ostream &os, Args &&...args) MGIS_NOEXCEPT {
     os << "[warning]: ";
     (os << ... << std::forward<Args>(args));
     os << std::endl;
   }  // end of namespace mgis
 
   template <typename... Args>
-  void debug(std::ostream &os, Args &&...args) noexcept {
+  void debug(std::ostream &os, Args &&...args) MGIS_NOEXCEPT {
     os << "[debug]: ";
     (os << ... << std::forward<Args>(args));
     os << std::endl;

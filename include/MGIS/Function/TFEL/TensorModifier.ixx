@@ -22,7 +22,7 @@ namespace mgis::function {
                                                   EvaluatorType>)  //
       constexpr size_type
       TensorModifier<TensorType,
-                     EvaluatorType>::getNumberOfComponents() const noexcept {
+                     EvaluatorType>::getNumberOfComponents() const MGIS_NOEXCEPT {
     return compile_time_size<TensorType>;
   }
 
@@ -52,9 +52,10 @@ namespace mgis::function {
       constexpr auto TensorModifier<TensorType, EvaluatorType>::apply(
           const evaluator_result<EvaluatorType>& values) const {
     if constexpr (DataViewConcept<evaluator_result<EvaluatorType>>) {
-      return tfel::math::map<const TensorType>(values.data());
+      return tfel::math::map<const TensorType>(getDataPointer(values));
     } else {
-      return TensorType(tfel::math::map<const TensorType>(values.data()));
+      return TensorType(
+          tfel::math::map<const TensorType>(getDataPointer(values)));
     }
   }  // end of apply
 
@@ -66,7 +67,7 @@ namespace mgis::function {
 
   template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
   constexpr mgis::size_type getNumberOfComponents(
-      const TensorModifier<TensorType, EvaluatorType>& e) noexcept {
+      const TensorModifier<TensorType, EvaluatorType>& e) MGIS_NOEXCEPT {
     return e.getNumberOfComponents();
   }
 

@@ -175,11 +175,11 @@ namespace mgis::behaviour {
    * \param[in] h: modelling hypothesis
    * \return the behaviour description
    */
-  MGIS_EXPORT MGIS_NODISCARD std::optional<Behaviour> load(
-      Context &,
-      const std::string &,
-      const std::string &,
-      const Hypothesis) noexcept;
+  MGIS_EXPORT MGIS_NODISCARD std::optional<Behaviour> load(Context&,
+                                                           const std::string&,
+                                                           const std::string&,
+                                                           const Hypothesis)
+      MGIS_NOEXCEPT;
   /*!
    * \brief load the description of a finite strain behaviour from a library
    *
@@ -193,11 +193,11 @@ namespace mgis::behaviour {
    * meaningful here
    */
   MGIS_EXPORT MGIS_NODISCARD std::optional<Behaviour> load(
-      Context &,
-      const FiniteStrainBehaviourOptions &,
-      const std::string &,
-      const std::string &,
-      const Hypothesis) noexcept;
+      Context&,
+      const FiniteStrainBehaviourOptions&,
+      const std::string&,
+      const std::string&,
+      const Hypothesis) MGIS_NOEXCEPT;
   /*!
    * \brief load the description of a behaviour from a library
    *
@@ -244,7 +244,7 @@ namespace mgis::behaviour {
    * \return the behaviour description
    */
   MGIS_EXPORT MGIS_NODISCARD std::optional<Behaviour> loadFromDatabase(
-      Context &, const LoadFromDatabaseOptions &) noexcept;
+      Context&, const LoadFromDatabaseOptions&) MGIS_NOEXCEPT;
   /*!
    * \brief load a finite strain behaviour from the database
    *
@@ -254,9 +254,9 @@ namespace mgis::behaviour {
    * \return the behaviour description
    */
   MGIS_EXPORT MGIS_NODISCARD std::optional<Behaviour> loadFromDatabase(
-      Context &,
-      const FiniteStrainBehaviourOptions &,
-      const LoadFromDatabaseOptions &) noexcept;
+      Context&,
+      const FiniteStrainBehaviourOptions&,
+      const LoadFromDatabaseOptions&) MGIS_NOEXCEPT;
   /*!
    * \brief load the description of a behaviour from the database
    *

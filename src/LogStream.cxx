@@ -14,15 +14,15 @@
 namespace mgis {
 
   [[nodiscard]] static std::
-      variant<std::monostate, std::ostream *, std::shared_ptr<std::ostream>>
-          &getGlobalLogStream() noexcept {
+      variant<std::monostate, std::ostream*, std::shared_ptr<std::ostream>>&
+      getGlobalLogStream() MGIS_NOEXCEPT {
     static std::variant<std::monostate, std::ostream *,
                         std::shared_ptr<std::ostream>>
         os;
     return os;
   }  // end of getGlobalLogStream
 
-  std::ostream &getDefaultLogStream() noexcept {
+  std::ostream& getDefaultLogStream() MGIS_NOEXCEPT {
     auto &os = getGlobalLogStream();
     if (std::holds_alternative<std::ostream *>(os)) {
       auto *const ptr = std::get<std::ostream *>(os);
@@ -40,8 +40,8 @@ namespace mgis {
     return std::cout;
   }  // end of getDefaultLogStream
 
-  std::pair<bool, std::string> setDefaultLogStream(
-      std::string_view n) noexcept {
+  std::pair<bool, std::string> setDefaultLogStream(std::string_view n)
+      MGIS_NOEXCEPT {
     auto ptr = std::make_shared<std::ofstream>(std::string{n});
     if (!(*ptr)) {
       return {false,
@@ -51,11 +51,11 @@ namespace mgis {
     return {true, ""};
   }  // end of setDefaultLogStream
 
-  void setDefaultLogStream(std::ostream &os) noexcept {
+  void setDefaultLogStream(std::ostream& os) MGIS_NOEXCEPT {
     getGlobalLogStream() = &os;
   }  // end of setDefaultLogStream
 
-  void setDefaultLogStream(std::shared_ptr<std::ostream> ptr) noexcept {
+  void setDefaultLogStream(std::shared_ptr<std::ostream> ptr) MGIS_NOEXCEPT {
     if (ptr.get() == nullptr) {
       resetDefaultLogStream();
       return;
@@ -63,11 +63,11 @@ namespace mgis {
     getGlobalLogStream() = ptr;
   }  // end of setDefaultLogStream
 
-  void resetDefaultLogStream() noexcept {
+  void resetDefaultLogStream() MGIS_NOEXCEPT {
     getGlobalLogStream() = std::monostate{};
   }  // end of resetDefaultLogStream
 
-  void disableDefaultLogStream() noexcept {
+  void disableDefaultLogStream() MGIS_NOEXCEPT {
     /*!
      * \brief a buffer which allows to create no-op output streams, i.e. streams
      * that does not nothing.
@@ -158,7 +158,8 @@ namespace mgis {
     static constexpr char Reset[4] = {033, '[', 'm', 017};
   };
 
-  void setStreamColor(std::ostream &os, const OutputStreamColors c) noexcept {
+  void setStreamColor(std::ostream& os,
+                      const OutputStreamColors c) MGIS_NOEXCEPT {
     if (c == OutputStreamColors::BLACK) {
       os.write(TerminalColors::Black, sizeof(TerminalColors::Black));
     } else if (c == OutputStreamColors::RED) {
@@ -180,15 +181,15 @@ namespace mgis {
     }
   }  // end of setStreamColor
 
-  void setErrorColor(std::ostream &os) noexcept {
+  void setErrorColor(std::ostream& os) MGIS_NOEXCEPT {
     os.write(TerminalColors::Red, sizeof(TerminalColors::Red));
   }
 
-  void setWarningColor(std::ostream &os) noexcept {
+  void setWarningColor(std::ostream& os) MGIS_NOEXCEPT {
     os.write(TerminalColors::LightBlue, sizeof(TerminalColors::LightBlue));
   }
 
-  void resetStreamColor(std::ostream &os) noexcept {
+  void resetStreamColor(std::ostream& os) MGIS_NOEXCEPT {
     os.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
   }
 

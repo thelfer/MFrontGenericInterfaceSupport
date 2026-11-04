@@ -193,6 +193,15 @@ cell index and `q` a quadrature point index.
 
 A functional space is either an element space and/or a quadrature space.
 
+> **Note**
+>
+> The algorithms provided by `MGIS/Function` (`assign` and
+> `scalar_reduce`) require a space satisfying the
+> `LinearElementSpaceConcept` concept. Functions, evaluators and
+> modifiers can be defined on a linear quadrature space which is not an
+> element space, but the loops over its cells and their quadrature
+> points must then be written by the solver.
+
 # Functions
 
 ## `C++` Concepts defined `MGIS/Function`
@@ -323,6 +332,17 @@ details).
 
 ## Views
 
+The views described in this section, and the modifiers of the same name
+applied to evaluators, map the values returned by the underlying
+function or evaluator. The address of these values is obtained by the
+free function `getDataPointer`, which is provided for objects having a
+`data` method (such as `std::span`, `std::array` or the tensorial
+objects of `TFEL/Math`) and for scalar values (`real`, `real&` or
+`const real&`). Hence, a function returning a scalar, such as
+`Function<Space, 1>`, or a scalar evaluator, such as the von Mises
+stress, can be viewed as a quantity or as a scalar. `getDataPointer`
+can be overloaded to support other result types.
+
 ### Fixed-size Array functions
 
 The `view` function has a template overload taking the a size as
@@ -398,3 +418,26 @@ auto f = CoalescedMemoryAccessTensorView<BasicLinearSpace,
                                          tfel::math::stensor<2, real>>{
             std::array{c_xx, c_yy, c_zz, c_xy}};
 ~~~~
+
+The `StridedCoalescedMemoryAccessTensorView` class provides the same
+view directly from the space and the values: the stride between two
+successive components is the size of the space.
+
+~~~~{.cxx}
+auto f2 = StridedCoalescedMemoryAccessTensorView<
+    BasicLinearSpace, tfel::math::stensor<2, real>>{space, values};
+~~~~
+
+Both classes are functions (when mutable) and evaluators: they can be
+assigned with `assign` and combined with the modifiers working on
+tensorial values, as follows:
+
+~~~~{.cxx}
+auto tr = Function<BasicLinearSpace, 1>{space};
+const auto ok = assign(ctx, tr, f | trace);
+~~~~
+
+Since the components are not contiguous in memory, the views and
+modifiers mapping the values of a function or an evaluator, such as
+`as_stensor`, `as_fsarray`, `as_qt` or `view<N>`, can not be applied to
+them.

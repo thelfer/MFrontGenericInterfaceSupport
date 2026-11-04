@@ -16,7 +16,7 @@
 
 namespace mgis {
 
-  mfront::MFrontDatabase& getDatabase() noexcept {
+  mfront::MFrontDatabase& getDatabase() MGIS_NOEXCEPT {
     static mfront::MFrontDatabase db;
     return db;
   }  // end of getDatabase

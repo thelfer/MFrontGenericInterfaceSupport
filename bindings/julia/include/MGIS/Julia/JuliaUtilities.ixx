@@ -23,33 +23,6 @@ namespace mgis {
   namespace julia {
 
     template <typename T>
-    void expose_std_vector(jlcxx::Module& m, const char* const n) {
-      m.add_type<std::vector<T>>(n)
-          .method("length",
-                  [](const std::vector<T>& v) noexcept -> std::int64_t {
-                    return static_cast<std::int64_t>(v.size());
-                  })
-          .method("setindex!",
-                  [](std::vector<T>& v, const T& value, const std::int64_t i) {
-                    if (i == 0) {
-                      mgis::raise<std::range_error>("invalid index");
-                    }
-                    v.at(i - 1) = value;
-                  })
-          .method("getindex", [](const std::vector<T>& v,
-                                 const std::int64_t i) {
-            if (i <= 0) {
-              mgis::raise<std::range_error>("invalid index");
-            }
-            return v.at(static_cast<typename std::vector<T>::size_type>(i - 1));
-          });
-      //           .method("=", [](std::vector<T>& v, const jlcxx::ArrayRef<T>&
-      //           s) {
-      //             assign(v, s);
-      //           });
-    }  // end of expose_std_vector
-
-    template <typename T>
     jlcxx::ConstArray<T, 1u> make_view(const std::vector<T>& v) {
       return jlcxx::make_const_array(v.data(), v.size());
     }  // end of make_view

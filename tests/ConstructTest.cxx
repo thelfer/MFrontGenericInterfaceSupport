@@ -69,18 +69,22 @@ struct ConstructTest final : public tfel::tests::TestCase {
     auto d1 = construct<Dummy>(ctx, false);
     TFEL_TESTS_ASSERT(d1.has_value());
     TFEL_TESTS_ASSERT(ctx.empty());
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     auto d2 = construct<Dummy>(ctx, true);
     TFEL_TESTS_ASSERT(!d2.has_value());
     TFEL_TESTS_ASSERT(!ctx.empty());
     TFEL_TESTS_CHECK_EQUAL(ctx.getRawErrorMessage(), "invalid argument");
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     ctx.clearErrorMessages();
     auto d3 = MGIS_CONSTRUCT(Dummy, ctx, false);
     TFEL_TESTS_ASSERT(d3.has_value());
     TFEL_TESTS_ASSERT(ctx.empty());
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     auto d4 = MGIS_CONSTRUCT(Dummy, ctx, true);
     TFEL_TESTS_ASSERT(!d4.has_value());
     TFEL_TESTS_ASSERT(!ctx.empty());
     TFEL_TESTS_CHECK_EQUAL(ctx.getRawErrorMessage(), "invalid argument");
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
   }  // end of test1
 
   void test2() {
@@ -89,18 +93,22 @@ struct ConstructTest final : public tfel::tests::TestCase {
     auto d1 = make_unique<Dummy>(ctx, false);
     TFEL_TESTS_ASSERT(d1.get() != nullptr);
     TFEL_TESTS_ASSERT(ctx.empty());
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     auto d2 = make_unique<Dummy>(ctx, true);
     TFEL_TESTS_ASSERT(d2.get() == nullptr);
     TFEL_TESTS_ASSERT(!ctx.empty());
     TFEL_TESTS_CHECK_EQUAL(ctx.getRawErrorMessage(), "invalid argument");
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     ctx.clearErrorMessages();
     auto d3 = MGIS_MAKE_UNIQUE(Dummy, ctx, false);
     TFEL_TESTS_ASSERT(d3.get() != nullptr);
     TFEL_TESTS_ASSERT(ctx.empty());
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     auto d4 = MGIS_MAKE_UNIQUE(Dummy, ctx, true);
     TFEL_TESTS_ASSERT(d4.get() == nullptr);
     TFEL_TESTS_ASSERT(!ctx.empty());
     TFEL_TESTS_CHECK_EQUAL(ctx.getRawErrorMessage(), "invalid argument");
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
   }  // end of test2
 
   void test3() {
@@ -109,18 +117,22 @@ struct ConstructTest final : public tfel::tests::TestCase {
     auto d1 = make_shared<Dummy>(ctx, false);
     TFEL_TESTS_ASSERT(d1.get() != nullptr);
     TFEL_TESTS_ASSERT(ctx.empty());
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     auto d2 = make_shared<Dummy>(ctx, true);
     TFEL_TESTS_ASSERT(d2.get() == nullptr);
     TFEL_TESTS_ASSERT(!ctx.empty());
     TFEL_TESTS_CHECK_EQUAL(ctx.getRawErrorMessage(), "invalid argument");
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     ctx.clearErrorMessages();
     auto d3 = MGIS_MAKE_SHARED(Dummy, ctx, false);
     TFEL_TESTS_ASSERT(d3.get() != nullptr);
     TFEL_TESTS_ASSERT(ctx.empty());
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     auto d4 = MGIS_MAKE_SHARED(Dummy, ctx, true);
     TFEL_TESTS_ASSERT(d4.get() == nullptr);
     TFEL_TESTS_ASSERT(!ctx.empty());
     TFEL_TESTS_CHECK_EQUAL(ctx.getRawErrorMessage(), "invalid argument");
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
   }  // end of test3
 
   void test4() {
@@ -166,15 +178,25 @@ struct ConstructTest final : public tfel::tests::TestCase {
       return true;
     };
     TFEL_TESTS_ASSERT(try_construct(false));
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     TFEL_TESTS_ASSERT(!try_construct(true));
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     TFEL_TESTS_ASSERT(try_make_unique(false));
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     TFEL_TESTS_ASSERT(!try_make_unique(true));
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     TFEL_TESTS_ASSERT(try_make_unique_as(false));
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     TFEL_TESTS_ASSERT(!try_make_unique_as(true));
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     TFEL_TESTS_ASSERT(try_make_shared(false));
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     TFEL_TESTS_ASSERT(!try_make_shared(true));
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     TFEL_TESTS_ASSERT(try_make_shared_as(false));
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     TFEL_TESTS_ASSERT(!try_make_shared_as(true));
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
   }
 
   void test5() {
@@ -204,11 +226,17 @@ struct ConstructTest final : public tfel::tests::TestCase {
       return true;
     };
     TFEL_TESTS_ASSERT(try_construct(false));
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     TFEL_TESTS_ASSERT(!try_construct(true));
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     TFEL_TESTS_ASSERT(try_make_unique(false));
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     TFEL_TESTS_ASSERT(!try_make_unique(true));
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
     TFEL_TESTS_ASSERT(try_make_shared(false));
+#ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
     TFEL_TESTS_ASSERT(!try_make_shared(true));
+#endif /* MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING */
   }
 
   void test6() {

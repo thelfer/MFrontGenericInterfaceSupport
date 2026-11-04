@@ -24,7 +24,6 @@ void declareBehaviourData(jlcxx::Module& m) {
   using mgis::behaviour::State;
 
   m.add_type<BehaviourData>("BehaviourData")
-      .constructor<const mgis::behaviour::Behaviour&>()
       .method("get_time_increment",
               [](BehaviourData& d) noexcept -> mgis::real& { return d.dt; })
       .method("set_time_increment!",
@@ -56,4 +55,10 @@ void declareBehaviourData(jlcxx::Module& m) {
       .method("make_view", [](BehaviourData& d) -> BehaviourDataView {
         return make_view(d);
       });
+  // BehaviourData(b) creates behaviour data which keep b alive
+  m.add_type<mgis::julia::Wrapper<BehaviourData>>(
+      "BehaviourDataWrapper", jlcxx::julia_base_type<BehaviourData>());
+  m.constructor<mgis::julia::Wrapper<BehaviourData>,
+                const mgis::julia::SharedBehaviour&>(
+      jlcxx::julia_base_type<BehaviourData>());
 }  // end of declareBehaviourData

@@ -116,8 +116,8 @@ namespace mgis::material_property {
    * `MFront`)
    * \param[in] mp: material property
    */
-  MGIS_EXPORT bool isGenericParallelMaterialProperty(
-      const MaterialProperty &) noexcept;
+  MGIS_EXPORT bool isGenericParallelMaterialProperty(const MaterialProperty&)
+      MGIS_NOEXCEPT;
 
   /*!
    * \brief load the description of a material property from a library

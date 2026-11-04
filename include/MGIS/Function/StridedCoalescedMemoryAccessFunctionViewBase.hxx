@@ -88,7 +88,7 @@ namespace mgis::function {
                                                           const size_type) const
         requires(LinearQuadratureSpaceConcept<Space>);
     //! \return the underlying quadrature space
-    [[nodiscard]] constexpr const Space& getSpace() const noexcept;
+    [[nodiscard]] constexpr const Space& getSpace() const MGIS_NOEXCEPT;
 
    protected:
     /*!
