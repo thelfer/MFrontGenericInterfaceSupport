@@ -54,7 +54,7 @@ int main(const int argc, const char* const* argv) {
   check_status(mgis_bv_behaviour_data_get_state_1(&s1, d));
   check_status(mgis_bv_state_set_scalar_external_state_variable_by_name(
       s1, "Temperature", 293.15));
-  // s0 is copied in s1
+  // s1 is copied in s0
   check_status(mgis_bv_update_behaviour_data(d));
   check_status(
       mgis_bv_state_get_external_state_variable_by_name(&T, s0, "Temperature"));

@@ -38,9 +38,11 @@ endif(NOT WIN32)
 
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
-if((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release"))
+if((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release") OR
+   (CMAKE_BUILD_TYPE STREQUAL "Profiling"))
   set(OPTIMISATION_FLAGS "-O2 -DNDEBUG ${OPTIMISATION_FLAGS}")
-endif((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release"))
+endif((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release") OR
+      (CMAKE_BUILD_TYPE STREQUAL "Profiling"))
 
 option(enable-glibcxx-debug "use the debug version of the C++ standard as implemented by the glib C++ library" OFF)
 if(enable-glibcxx-debug)

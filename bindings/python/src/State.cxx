@@ -90,7 +90,9 @@ static void State_setExternalStateVariable2(mgis::behaviour::State& s,
     }
     mgis::behaviour::setExternalStateVariable(s, o, pybind11::cast<double>(v));
   } else {
-    const auto values = mgis::python::mgis_convert_to_span(v);
+    // the converted array must outlive the span
+    const auto a = pybind11::array_t<double>(v);
+    const auto values = mgis::python::mgis_convert_to_span(a);
     if ((o > ne) || (values.size() > ne - o)) {
       mgis::raise(
           "setExternalStateVariable: invalid argument (offset out of range)");
@@ -103,9 +105,9 @@ void declareState(pybind11::module_& m) {
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::State;
   pybind11::class_<State>(m, "State")
-      .def_readonly("mass_density", &State::mass_density)
-      .def_readonly("stored_energy", &State::stored_energy)
-      .def_readonly("dissipated_energy", &State::dissipated_energy)
+      .def_readwrite("mass_density", &State::mass_density)
+      .def_readwrite("stored_energy", &State::stored_energy)
+      .def_readwrite("dissipated_energy", &State::dissipated_energy)
       .def_property_readonly("gradients", &State_getGradients)
       .def_property_readonly("thermodynamic_forces",
                              &State_getThermodynamicForces)

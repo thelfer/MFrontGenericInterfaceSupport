@@ -69,7 +69,7 @@ mgis_library(MFrontGenericInterface
 target_include_directories(MFrontGenericInterface
    PUBLIC 
    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-   $<INSTALL_INTERFACE:include>)
+   $<INSTALL_INTERFACE:${mgis_include_install_path}>)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_compile_definitions(MFrontGenericInterface PUBLIC MGIS_DEBUG)
 endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -87,7 +87,7 @@ if(enable-static)
   target_include_directories(MFrontGenericInterface-static
     PUBLIC 
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>)
+    $<INSTALL_INTERFACE:${mgis_include_install_path}>)
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(MFrontGenericInterface-static PUBLIC MGIS_DEBUG)
   endif(CMAKE_BUILD_TYPE STREQUAL "Debug")

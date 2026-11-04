@@ -31,6 +31,10 @@ class IntegrateTest2(unittest.TestCase):
         nig = 100
         # material data manager
         m = mgis_bv.MaterialDataManager(b, nig)
+        # maximal time step increase factor proposed by the behaviour
+        m.rdt = 1.5
+        self.assertTrue(abs(m.rdt - 1.5) < 1.e-14,
+                        "invalid time step scaling factor")
         # index of the equivalent viscplastic strain in the array of
         # state variable
         o = mgis_bv.getVariableOffset(b.isvs, 'EquivalentViscoplasticStrain',

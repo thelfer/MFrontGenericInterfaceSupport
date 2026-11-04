@@ -10,6 +10,7 @@
 #endif
 
 #include <cmath>
+#include <algorithm>
 #include <memory>
 #include <cstdlib>
 #include <iostream>
@@ -114,6 +115,14 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(cauchy(0)[3] - sig_ref[3]) < eps);
     TFEL_TESTS_ASSERT(std::abs(cauchy(0)[4] - sig_ref[4]) < eps);
     TFEL_TESTS_ASSERT(std::abs(cauchy(0)[5] - sig_ref[5]) < eps);
+    // deformation gradient computed by value
+    const auto Fc = F | transform([](const auto& v) {
+                      return tfel::math::tensor<3u, real>(v);
+                    });
+    const auto cauchy2 = pk1 | from_pk1_to_cauchy(Fc);
+    TFEL_TESTS_ASSERT(cauchy2.check(ctx));
+    TFEL_TESTS_ASSERT(std::abs(cauchy2(0)[0] - sig_ref[0]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(cauchy2(0)[3] - sig_ref[3]) < eps);
     // rotation matrix whose columns are the material axes expressed in the
     // global frame (here e_z, e_x and e_y), as the matrix of the
     // `@RotationMatrix` keyword of MTest
@@ -223,7 +232,20 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
       }
     }
     TFEL_TESTS_ASSERT(ok);
-    // conversion to a tangent operator of another type
+    // conversion to a tangent operator of another type, which depends on
+    // the deformation gradients and on the stress: two different
+    // deformation gradients and a stress with shear components
+    const auto F0_ref = tfel::math::tensor<3u, real>{
+        1.0, 1.01, 0.99, 0.02, 0.01, -0.01, 0.03, 0.0, 0.01};
+    const auto F1_ref = tfel::math::tensor<3u, real>{
+        1.1, 0.95, 1.02, 0.1, -0.05, 0.03, 0.07, -0.02, 0.04};
+    const auto s_ref =
+        tfel::math::stensor<3u, real>{1.5, -0.8, 0.6, 0.3, -0.2, 0.1};
+    for (size_type i = 0; i != 2; ++i) {
+      std::copy(F0_ref.begin(), F0_ref.end(), F0(i).begin());
+      std::copy(F1_ref.begin(), F1_ref.end(), F1(i).begin());
+      std::copy(s_ref.begin(), s_ref.end(), s(i).begin());
+    }
     auto dsig_dF = Function<BasicLinearSpace>{space, 54};
     const auto op2 =
         convert_finite_strain_stiffness<FiniteStrainStiffnessKind::DSIG_DF,
@@ -231,6 +253,23 @@ struct MechanicalEvaluatorsTest final : public tfel::tests::TestCase {
             F0 | as_tensor<3>, F1 | as_tensor<3>, s | as_stensor<3>);
     TFEL_TESTS_ASSERT(
         assign(ctx, dsig_dF | as_t2tost2<3>, dS_dEGL | as_st2tost2<3> | op2));
+    using TangentOperator =
+        tfel::material::FiniteStrainBehaviourTangentOperatorBase;
+    for (size_type i = 0; i != 2; ++i) {
+      auto K_ref = tfel::math::st2tost2<3u, real>{};
+      for (size_type k = 0; k != 36; ++k) {
+        K_ref.begin()[k] = dS_dEGL(i)[k];
+      }
+      const auto dsig_dF_ref =
+          tfel::material::convert<TangentOperator::DSIG_DF,
+                                  TangentOperator::DS_DEGL, 3u, real>(
+              K_ref, F0_ref, F1_ref, s_ref);
+      for (size_type k = 0; k != 54; ++k) {
+        const auto v = dsig_dF_ref.begin()[k];
+        TFEL_TESTS_ASSERT(std::abs(dsig_dF(i)[k] - v) <
+                          eps * std::max(real{1}, std::abs(v)));
+      }
+    }
   }  // end of test6
 };
 

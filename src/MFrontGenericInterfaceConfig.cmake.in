@@ -1,5 +1,12 @@
 @PACKAGE_INIT@
 
+# the dependencies of the library (Threads, OpenMP, HDF5) are looked for
+# with the C++ language, which a project using the C or Fortran bindings
+# may not have enabled
+if(NOT CMAKE_CXX_COMPILER_LOADED)
+  enable_language(CXX)
+endif(NOT CMAKE_CXX_COMPILER_LOADED)
+
 set(MGIS_FUNCTION_SUPPORT @enable-mgis-function@)
 set(MGIS_HAVE_TFEL @MGIS_HAVE_TFEL@)
 

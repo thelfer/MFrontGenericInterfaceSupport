@@ -26,8 +26,8 @@ extern "C" {
 
 /*!
  * \brief intialize a view of a behaviour data
- * \param[in]  v: pointer to the view
- * \param[out] d: pointer to a pointer to the allocated data
+ * \param[out] v: view
+ * \param[in]  d: behaviour data
  */
 MGIS_C_EXPORT mgis_status mgis_bv_make_behaviour_data_view(
     mgis_bv_BehaviourDataView* const, mgis_bv_BehaviourData* const);

@@ -205,6 +205,14 @@ MGIS_C_EXPORT mgis_status mgis_bv_load_finite_strain_behaviour(
 MGIS_C_EXPORT mgis_status mgis_bv_behaviour_get_tangent_operator_array_size(
     mgis_size_type* const, const mgis_bv_Behaviour* const);
 /*!
+ * \brief return the number of tangent operator blocks
+ * \param[out] c: number of tangent operator blocks
+ * \param[in] b: behaviour
+ */
+MGIS_C_EXPORT mgis_status
+mgis_bv_behaviour_get_number_of_tangent_operator_blocks(
+    mgis_size_type* const, const mgis_bv_Behaviour* const);
+/*!
  * \brief rotate gradients from the global frame to the material frame
  * \param[in,out] g: gradients
  * \param[in] b: behaviour
@@ -253,7 +261,7 @@ mgis_bv_behaviour_rotate_array_of_gradients_out_of_place(
     const mgis_real* const,
     const mgis_size_type);
 /*!
- * \brief rotate thermodynamic forces from the global frame to the material
+ * \brief rotate thermodynamic forces from the material frame to the global
  * frame.
  * \param[in,out] tf: thermodynamic forces
  * \param[in] b: behaviour
@@ -263,13 +271,12 @@ MGIS_C_EXPORT mgis_status
 mgis_bv_behaviour_rotate_thermodynamic_forces_in_place(
     mgis_real* const, const mgis_bv_Behaviour* const, const mgis_real* const);
 /*!
- * \brief rotate thermodynamic forces from the global frame to the material
+ * \brief rotate thermodynamic forces from the material frame to the global
  * frame.
- * \param[out] mtf: thermodynamic forces in the material frame
+ * \param[out] gtf: thermodynamic forces in the global frame
  * \param[in] b: behaviour
- * \param[in] gtf: thermodynamic forces in the global frame
+ * \param[in] mtf: thermodynamic forces in the material frame
  * \param[in] r: rotation matrix
- * \param[in] s: number of thermodynamic forces to be rotated
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_behaviour_rotate_thermodynamic_forces_out_of_place(
@@ -278,7 +285,7 @@ mgis_bv_behaviour_rotate_thermodynamic_forces_out_of_place(
     const mgis_real* const,
     const mgis_real* const);
 /*!
- * \brief rotate thermodynamic forces from the global frame to the material
+ * \brief rotate thermodynamic forces from the material frame to the global
  * frame.
  * \param[in,out] tf: thermodynamic forces
  * \param[in] b: behaviour
@@ -292,11 +299,11 @@ mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_in_place(
     const mgis_real* const,
     const mgis_size_type);
 /*!
- * \brief rotate thermodynamic forces from the global frame to the material
+ * \brief rotate thermodynamic forces from the material frame to the global
  * frame.
- * \param[out] mtf: thermodynamic forces in the material frame
+ * \param[out] gtf: thermodynamic forces in the global frame
  * \param[in] b: behaviour
- * \param[in] gtf: thermodynamic forces in the global frame
+ * \param[in] mtf: thermodynamic forces in the material frame
  * \param[in] r: rotation matrix
  * \param[in] s: number of thermodynamic forces to be rotated
  */
@@ -308,7 +315,7 @@ mgis_bv_behaviour_rotate_array_of_thermodynamic_forces_out_of_place(
     const mgis_real* const,
     const mgis_size_type);
 /*!
- * \brief rotate tangent operator blocks from the global frame to the material
+ * \brief rotate tangent operator blocks from the material frame to the global
  * frame.
  * \param[in,out] to: tangent operator blocks
  * \param[in] b: behaviour
@@ -318,13 +325,12 @@ MGIS_C_EXPORT mgis_status
 mgis_bv_behaviour_rotate_tangent_operator_blocks_in_place(
     mgis_real* const, const mgis_bv_Behaviour* const, const mgis_real* const);
 /*!
- * \brief rotate tangent operator blocks from the global frame to the material
+ * \brief rotate tangent operator blocks from the material frame to the global
  * frame.
- * \param[out] mto: tangent operator blocks in the material frame
+ * \param[out] gto: tangent operator blocks in the global frame
  * \param[in] b: behaviour
- * \param[in] gto: tangent operator blocks in the global frame
+ * \param[in] mto: tangent operator blocks in the material frame
  * \param[in] r: rotation matrix
- * \param[in] s: number of tangent operator blocks to be rotated
  */
 MGIS_C_EXPORT mgis_status
 mgis_bv_behaviour_rotate_tangent_operator_blocks_out_of_place(
@@ -333,7 +339,7 @@ mgis_bv_behaviour_rotate_tangent_operator_blocks_out_of_place(
     const mgis_real* const,
     const mgis_real* const);
 /*!
- * \brief rotate tangent operator blocks from the global frame to the material
+ * \brief rotate tangent operator blocks from the material frame to the global
  * frame.
  * \param[in,out] to: tangent operator blocks
  * \param[in] b: behaviour
@@ -347,11 +353,11 @@ mgis_bv_behaviour_rotate_array_of_tangent_operator_blocks_in_place(
     const mgis_real* const,
     const mgis_size_type);
 /*!
- * \brief rotate tangent operator blocks from the global frame to the material
+ * \brief rotate tangent operator blocks from the material frame to the global
  * frame.
- * \param[out] mto: tangent operator blocks in the material frame
+ * \param[out] gto: tangent operator blocks in the global frame
  * \param[in] b: behaviour
- * \param[in] gto: tangent operator blocks in the global frame
+ * \param[in] mto: tangent operator blocks in the material frame
  * \param[in] r: rotation matrix
  * \param[in] s: number of tangent operator blocks to be rotated
  */

@@ -1,0 +1,22 @@
+@DSL Default;
+@Behaviour DerivativeTypeVariableTest;
+@Description {
+  "Linear elasticity with an auxiliary state variable whose type is the "
+  "derivative of a symmetric tensor type alias with respect to another one, "
+  "followed by a scalar, used to check the sizes and offsets computed from "
+  "the type identifiers exported by MFront"
+}
+
+@AuxiliaryStateVariable derivative_type<StressStensor, StrainStensor> dsig_deto;
+@AuxiliaryStateVariable real a;
+
+@ProvidesSymmetricTangentOperator;
+@Integrator {
+  constexpr auto young = stress{100};
+  sig = young * (eto + deto);
+  dsig_deto = young * Stensor4::Id();
+  a = 42;
+  if (computeTangentOperator_) {
+    Dt = young * Stensor4::Id();
+  }
+}
