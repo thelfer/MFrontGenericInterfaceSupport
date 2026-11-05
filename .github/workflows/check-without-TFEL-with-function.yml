@@ -27,6 +27,8 @@ jobs:
               -Denable-fortran-bindings=ON                         \
               -Denable-python-bindings=On                          \
               -Denable-portable-build=ON                           \
+              -Denable-static=ON                                   \
+              -Denable-openmp=ON                                   \
               -Denable-julia-bindings=OFF                          \
               -Denable-parallel-stl-algorithms=OFF
 
