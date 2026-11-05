@@ -54,6 +54,14 @@ jobs:
             jobs_flag: '-j $(nproc)'
             fortran_support: 'ON'
             python_support: 'ON'
+          # libraries, headers and modules installed with a suffix (#427). As above,
+          # the build type differs from the one of the matrix to add a job
+          - os: ubuntu-latest
+            build_type: MinSizeRel
+            suffix: test
+            jobs_flag: '-j $(nproc)'
+            fortran_support: 'ON'
+            python_support: 'ON'
 
     runs-on: ${{ matrix.os }}
     permissions:
@@ -126,6 +134,7 @@ jobs:
         cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
               -Denable-c-bindings=ON                                  \
               -Denable-exceptions=${{ matrix.enable_exceptions || 'OFF' }} \
+              ${{ matrix.suffix && format('-DMGIS_APPEND_SUFFIX=ON -DMGIS_SUFFIX={0} -DCMAKE_INSTALL_PREFIX=$PWD/install', matrix.suffix) }} \
               -Denable-fortran-bindings=${{ matrix.fortran_support }} \
               -Denable-python-bindings=${{ matrix.python_support }}   \
               -Denable-hdf5-support=ON                                \
@@ -147,6 +156,15 @@ jobs:
         spack load tfel
         spack load hdf5
         make -C build check ${{ matrix.jobs_flag }}
+    - name: check the installation with a suffix
+      if: matrix.suffix
+      shell: spack-sh {0}
+      run: |
+        spack load tfel
+        spack load hdf5
+        make -C build install ${{ matrix.jobs_flag }}
+        test -e install/lib/libMFrontGenericInterface-${{ matrix.suffix }}.so
+        test -d install/include/MGIS-${{ matrix.suffix }}
 
     # even when a test fails, so that the next run does not compile everything again
     - name: Save ccache
