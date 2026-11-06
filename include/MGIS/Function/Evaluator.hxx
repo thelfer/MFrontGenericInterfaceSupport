@@ -1,6 +1,8 @@
 /*!
  * \file   MGIS/Function/Evaluator.hxx
- * \brief
+ * \brief Umbrella file which gathers the headers related to the evaluators:
+ * the concepts an evaluator or an evaluator modifier must satisfy and the
+ * evaluators built from unary and binary operations.
  * \author Thomas Helfer
  * \date   29/04/2025
  * \copyright (C) Copyright Thomas Helfer 2018.

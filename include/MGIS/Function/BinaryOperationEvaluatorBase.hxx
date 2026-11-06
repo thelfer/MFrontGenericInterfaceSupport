@@ -1,6 +1,8 @@
 /*!
  * \file   MGIS/Function/BinaryOperationEvaluatorBase.hxx
- * \brief
+ * \brief  This file declares the `BinaryOperationEvaluatorBase` class,
+ * a base class used to build an evaluator by applying a binary operation
+ * to the values returned by two evaluators.
  * \author Thomas Helfer
  * \date   07/05/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -24,6 +26,16 @@ namespace mgis::function {
   /*!
    * \brief the set of requirements that must be satisfied by both operands of
    * a binary operation on evaluators
+   *
+   * The two evaluators must be defined on the same space and must either both
+   * match the `ElementEvaluatorConcept` concept or both the
+   * `QuadratureEvaluatorConcept` concept: the values of the two operands are
+   * always computed at the same integration point.
+   *
+   * \tparam FirstEvaluatorType: evaluator used to compute the first argument
+   * of the binary operation
+   * \tparam SecondEvaluatorType: evaluator used to compute the second
+   * argument of the binary operation
    */
   template <EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
@@ -37,12 +49,25 @@ namespace mgis::function {
 
   /*!
    * \brief a base class to construct an evaluator by applying a binary
-   * operation on the results of two evaluators.
-   * \tparam Child: child class
-   * \tparam FirstEvaluatorType: evaluator used to compute
-   * the first argument of the binary operation
-   * \tparam SecondEvaluatorType: evaluator used to compute
-   * the first second of the binary operation
+   * operation on the results of two evaluators
+   *
+   * This class is meant to be used with the curiously recurring template
+   * pattern: the child class gives the binary operation through an `apply`
+   * member function taking the values returned by the two evaluators and
+   * returning the values of the resulting evaluator.
+   *
+   * The call operators of this class forward the values computed by the two
+   * evaluators to the `apply` member function of the child class: only the
+   * call operators which match the way both evaluators can be called are
+   * available.
+   *
+   * \tparam Child: type of the class deriving from this base class
+   * \tparam FirstEvaluatorType: evaluator used to compute the first argument
+   * of the binary operation
+   * \tparam SecondEvaluatorType: evaluator used to compute the second
+   * argument of the binary operation
+   * \note both evaluators must satisfy the requirements stated by
+   * `BinaryOperationEvaluatorBaseRequirement`
    */
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
@@ -50,20 +75,22 @@ namespace mgis::function {
   requires(BinaryOperationEvaluatorBaseRequirement<FirstEvaluatorType,
                                                    SecondEvaluatorType>)  //
       struct BinaryOperationEvaluatorBase {
-    //! \brief a simple alias
+    //! \brief type of the space on which the two evaluators are defined
     using Space = evaluator_space<FirstEvaluatorType>;
-    // boolean stating if both evaluators matches the ElementEvaluatorConcept
+    //! \brief true if both evaluators match the `ElementEvaluatorConcept`
     static constexpr auto isElementEvaluator =
         (ElementEvaluatorConcept<FirstEvaluatorType>)&&(
             ElementEvaluatorConcept<SecondEvaluatorType>);
-    // boolean stating if both evaluators matches the QuadratureEvaluatorConcept
+    //! \brief true if both evaluators match the `QuadratureEvaluatorConcept`
     static constexpr auto isQuadratureEvaluator =
         (QuadratureEvaluatorConcept<FirstEvaluatorType>)&&(
             QuadratureEvaluatorConcept<SecondEvaluatorType>);
     /*!
      * \brief constructor
-     * \param[in] e1: first evaluator
-     * \param[in] e2: second evaluator
+     * \param[in] e1: evaluator used to compute the first argument of the
+     * binary operation, a copy of it is stored in the object
+     * \param[in] e2: evaluator used to compute the second argument of the
+     * binary operation, a copy of it is stored in the object
      */
     constexpr BinaryOperationEvaluatorBase(const FirstEvaluatorType&,
                                            const SecondEvaluatorType&);
@@ -71,20 +98,39 @@ namespace mgis::function {
     constexpr BinaryOperationEvaluatorBase(const BinaryOperationEvaluatorBase&);
     //! \brief move constructor
     constexpr BinaryOperationEvaluatorBase(BinaryOperationEvaluatorBase&&);
-    //! \brief return the underlying space
+    /*!
+     * \brief return the underlying space
+     * \return the space on which the two evaluators are defined
+     */
     [[nodiscard]] constexpr decltype(auto) getSpace() const;
-    //! \brief perform consistency checks
+    /*!
+     * \brief perform consistency checks
+     * \param[in] ctx: error handler used to report the errors
+     * \return true if the values computed by the two evaluators are valid,
+     * the errors being reported using the error handler `ctx`
+     */
     [[nodiscard]] constexpr bool check(AbstractErrorHandler&) const;
     /*!
      * \brief call operator
-     * \param[in] i: integration point index
+     * \param[in] i: index of the element on which the values are computed
+     * \return values computed by the `apply` member function of the child class
+     * from the values returned by the two evaluators at the integration point
+     * `i`, which is the index of the element on which the values are computed
+     * \note only available if both evaluators can be called with an element
+     * index
      */
     [[nodiscard]] constexpr auto operator()(const element_index<Space>&) const
         requires((internals::EvaluatorResultQuery<FirstEvaluatorType>::b1) &&
                  (internals::EvaluatorResultQuery<SecondEvaluatorType>::b1));
     /*!
      * \brief call operator
-     * \param[in] i: integration point index
+     * \param[in] wk: workspace of the element on which the values are computed
+     * \param[in] i: index of the integration point of this element
+     * \return values computed by the `apply` member function of the child class
+     * from the values returned by the two evaluators at the integration point
+     * `i` of the element whose workspace is `wk`
+     * \note only available if both evaluators can be called with an element
+     * workspace and an element index
      */
     [[nodiscard]] constexpr auto operator()(const element_workspace<Space>&,
                                             const element_index<Space>&) const
@@ -93,7 +139,12 @@ namespace mgis::function {
     /*!
      * \brief call operator
      * \param[in] e: cell index
-     * \param[in] i: integration point index
+     * \param[in] i: quadrature point index of the cell of index `e`
+     * \return values computed by the `apply` member function of the child class
+     * from the values returned by the two evaluators at the quadrature point
+     * `i` of the cell `e`
+     * \note only available if both evaluators can be called with a cell index
+     * and a quadrature point index
      */
     [[nodiscard]] constexpr auto operator()(
         const cell_index<Space>, const quadrature_point_index<Space>) const
@@ -101,8 +152,14 @@ namespace mgis::function {
                  (internals::EvaluatorResultQuery<SecondEvaluatorType>::b3));
     /*!
      * \brief call operator
+     * \param[in] wk: workspace of the cell of index `e`
      * \param[in] e: cell index
-     * \param[in] i: integration point index
+     * \param[in] i: quadrature point index of the cell of index `e`
+     * \return values computed by the `apply` member function of the child class
+     * from the values returned by the two evaluators at the quadrature point
+     * `i` of the cell `e`, whose workspace is `wk`
+     * \note only available if both evaluators can be called with a cell
+     * workspace, a cell index and a quadrature point index
      */
     [[nodiscard]] constexpr auto operator()(
         const cell_workspace<Space>&,
@@ -118,6 +175,16 @@ namespace mgis::function {
     SecondEvaluatorType second_evaluator;
   };
 
+  /*!
+   * \brief return the underlying space
+   * \tparam Child: type of the class deriving from this base class
+   * \tparam FirstEvaluatorType: evaluator used to compute the first
+   * argument of the binary operation
+   * \tparam SecondEvaluatorType: evaluator used to compute the second
+   * argument of the binary operation
+   * \param[in] e: evaluator of the result of the binary operation
+   * \return the space on which the two evaluators are defined
+   */
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
@@ -125,7 +192,17 @@ namespace mgis::function {
       const BinaryOperationEvaluatorBase<Child,
                                          FirstEvaluatorType,
                                          SecondEvaluatorType>&);
-  //! \brief perform consistency checks
+  /*!
+   * \brief perform consistency checks
+   * \tparam Child: type of the class deriving from this base class
+   * \tparam FirstEvaluatorType: evaluator used to compute the first
+   * argument of the binary operation
+   * \tparam SecondEvaluatorType: evaluator used to compute the second
+   * argument of the binary operation
+   * \param[in] eh: error handler used to report the errors
+   * \param[in] e: evaluator of the result of the binary operation
+   * \return true if the values computed by the evaluator are valid
+   */
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>

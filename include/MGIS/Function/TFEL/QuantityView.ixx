@@ -1,6 +1,7 @@
 /*!
  * \file   MGIS/Function/TFEL/QuantityView.ixx
- * \brief
+ * \brief  File which contains the implementation of the `QuantityView` class
+ * declared in `MGIS/Function/TFEL/QuantityView.hxx`.
  * \author Thomas Helfer
  * \date   15/08/2026
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,6 +18,9 @@
 
 namespace mgis::function {
 
+  // the number of components of the underlying function must be exactly one;
+  // otherwise the message "invalid number of components" is registered in the
+  // error handler
   template <FunctionConcept FunctionType,
             ::tfel::math::unit::UnitConcept UnitType>
   constexpr bool QuantityView<FunctionType, UnitType>::checkPreconditions(
@@ -66,6 +70,10 @@ namespace mgis::function {
     return 1;
   }  // end of getNumberOfComponents
 
+  // the call operators use the `data` method of the underlying view when it is
+  // available and apply the `getDataPointer` function to the result of the
+  // call otherwise; a read-only quantity referencing the value of the function
+  // is returned
   template <FunctionConcept FunctionType,
             ::tfel::math::unit::UnitConcept UnitType>
   constexpr auto QuantityView<FunctionType, UnitType>::operator()(
@@ -147,6 +155,9 @@ namespace mgis::function {
     }
   }
 
+  // the non constant call operators follow the same strategy and return a
+  // mutable quantity referencing the value of the function, which may be
+  // modified
   template <FunctionConcept FunctionType,
             ::tfel::math::unit::UnitConcept UnitType>
   constexpr auto QuantityView<FunctionType, UnitType>::operator()(

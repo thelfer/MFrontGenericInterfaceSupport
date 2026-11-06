@@ -1,6 +1,7 @@
 /*!
  * \file   MGIS/Function/EvaluatorConcept.ixx
- * \brief
+ * \brief Implementation of the helpers associated with the `EvaluatorConcept`
+ * concept.
  * \author Thomas Helfer
  * \date   21/05/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,6 +18,13 @@
 
 namespace mgis::function {
 
+  /*!
+   * \brief implementation of the `checkMatchingSpaces` function
+   *
+   * \note if the spaces of the two evaluators are not equivalent, the error
+   * message "unmatched quadrature spaces" is registered in the error handler
+   * and the call returns false.
+   */
   constexpr bool checkMatchingSpaces(AbstractErrorHandler& ctx,
                                      const EvaluatorConcept auto& e1,
                                      const EvaluatorConcept auto& e2) {
@@ -32,17 +40,20 @@ namespace mgis::function {
 
 namespace mgis::function::internals {
 
+  //! \brief forwards the call to the `getSpace` function of the evaluator
   template <EvaluatorConcept EvaluatorType>
   constexpr decltype(auto) disambiguateGetSpace(const EvaluatorType& e) {
     return getSpace(e);
   }
 
+  //! \brief forwards the call to the `check` function of the evaluator
   template <EvaluatorConcept EvaluatorType>
   constexpr bool disambiguateCheck(AbstractErrorHandler& ctx,
                                    const EvaluatorType& e) {
     return check(ctx, e);
   }
 
+  //! \brief forwards the call to the `getNumberOfComponents` function
   template <EvaluatorConcept EvaluatorType>
   constexpr mgis::size_type disambiguateGetNumberOfComponents(
       const EvaluatorType& e) {

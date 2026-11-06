@@ -1,6 +1,8 @@
 /*!
  * \file   MGIS/Function/EvaluatorModifierConcept.hxx
- * \brief
+ * \brief File which defines the concept an evaluator modifier must satisfy, the
+ * `EvaluatorModifiersGroup` class used to combine modifiers and the `operator|`
+ * used to apply them to an evaluator.
  * \author Thomas Helfer
  * \date   05/06/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -22,10 +24,10 @@
 namespace mgis::function {
 
   /*!
-   * \brief a small class to specify that a type is a Modifier
+   * \brief a small class to specify that a type is a modifier
    *
-   * This is required because such the following definition
-   * of the EvaluatorModifierConcept concept is ill-formed:
+   * This is required because the following definition of the
+   * `EvaluatorModifierConcept` concept is ill-formed:
    *
    * \code{.cpp}
    * template<typename EvaluatorModifierType>
@@ -35,16 +37,18 @@ namespace mgis::function {
    *  });
    * \endcode
    *
-   * On the other side, defining the EvaluatorModifierConcept concept is
-   * required to combine modifiers, so relying on EvaluatorModifierTag is
-   * regarded as as a necessary evil.
+   * On the other side, defining the `EvaluatorModifierConcept` concept is
+   * required to combine modifiers, so relying on `EvaluatorModifierTag` is
+   * regarded as a necessary evil.
    */
   struct EvaluatorModifierTag {};
 
   /*!
-   * As explained in the description of the `EvaluatorModifierTag`,
-   * the following definition of the EvaluatorModifierConcept concept
-   * is ill-formed:
+   * \brief concept defining the modifiers which can be applied to evaluators
+   *
+   * As explained in the description of the `EvaluatorModifierTag`, the
+   * following definition of the `EvaluatorModifierConcept` concept is
+   * ill-formed:
    *
    * \code{.cpp}
    * template<typename EvaluatorModifierType>
@@ -54,18 +58,24 @@ namespace mgis::function {
    *  });
    * \endcode
    *
-   * When exposing an alias named Tag to be equal to the EvaluatorTag, a
-   * class explictly states that it has a call operator able to transform
-   * any evaluator to a new evaluator.
+   * When exposing an alias named `Tag` equal to the `EvaluatorModifierTag`, a
+   * class explicitly states that its call operator can transform any evaluator
+   * into a new evaluator.
+   *
+   * \tparam EvaluatorModifierType: type of the modifier
    */
   template <typename EvaluatorModifierType>
   concept EvaluatorModifierConcept =
       std::same_as<typename EvaluatorModifierType::Tag, EvaluatorModifierTag>;
 
   /*!
-   * \return the evaluator resulting from appling the modifier to the evaluator
+   * \brief applies a modifier to an evaluator
+   *
+   * \tparam EvaluatorType: evaluator type
+   * \tparam EvaluatorModifierType: type of the modifier
    * \param[in] e: evaluator
    * \param[in] m: modifier
+   * \return the evaluator resulting from applying the modifier to the evaluator
    */
   template <EvaluatorConcept EvaluatorType,
             EvaluatorModifierConcept EvaluatorModifierType>
@@ -77,6 +87,15 @@ namespace mgis::function {
 
   namespace internals {
 
+    /*!
+     * \brief removes the first modifier of a group of modifiers
+     *
+     * \tparam M0: type of the first modifier, which is removed
+     * \tparam Ms: types of the other modifiers
+     * \param[in] m: group of modifiers
+     * \return a group containing all the modifiers of the given group except
+     * the first one
+     */
     template <EvaluatorModifierConcept M0, EvaluatorModifierConcept... Ms>
     constexpr auto pop_front(const EvaluatorModifiersGroup<M0, Ms...>& m)  //
         requires(sizeof...(Ms) > 0) {
@@ -85,6 +104,19 @@ namespace mgis::function {
           m.group));
     }  // end of pop_front
 
+    /*!
+     * \brief applies a group of modifiers to an evaluator
+     *
+     * The modifiers are applied in order: the first modifier of the group is
+     * applied to the evaluator, the second one to the evaluator resulting from
+     * this first modification, and so on.
+     *
+     * \tparam Ms: types of the grouped modifiers
+     * \param[in] m: group of modifiers
+     * \param[in] e: evaluator
+     * \return the evaluator resulting from applying all the modifiers to the
+     * given evaluator
+     */
     template <EvaluatorModifierConcept... Ms>
     constexpr auto apply(const EvaluatorModifiersGroup<Ms...>& m,
                          const EvaluatorConcept auto& e)  //
@@ -101,8 +133,13 @@ namespace mgis::function {
   }  // end of namespace internals
 
   /*!
-   * \brief a class meant to group modifiers allowing modifiers
-   * composability
+   * \brief a class meant to group modifiers, allowing modifiers composability
+   *
+   * The modifiers are applied from left to right: the first modifier of the
+   * group is applied to the evaluator, the second one to the resulting
+   * evaluator, and so on.
+   *
+   * \tparam Ms: types of the grouped modifiers, at least one
    */
   template <EvaluatorModifierConcept... Ms>
   requires(sizeof...(Ms) > 0) struct EvaluatorModifiersGroup {
@@ -110,38 +147,73 @@ namespace mgis::function {
     using Tag = EvaluatorModifierTag;
     /*!
      * \brief constructor from an explicit list of modifiers
+     * \param[in] ms: modifiers, which are applied from left to right
      */
     constexpr EvaluatorModifiersGroup(Ms... ms) : group(ms...) {}
     /*!
      * \brief constructor from a tuple of modifiers
+     * \param[in] g: tuple of modifiers, which is applied from left to right
      */
     constexpr EvaluatorModifiersGroup(std::tuple<Ms...> g) : group(g) {}
 
     /*!
-     * \brief call operator applying each modifiers of the group
-     * \param [in] e: evaluator
+     * \brief call operator applying each modifier of the group
+     * \param[in] e: evaluator the modifiers of the group are applied to
+     * \return the evaluator resulting from applying all the modifiers of the
+     * group to the given evaluator
      */
     constexpr auto operator()(const EvaluatorConcept auto& e) const {
       return internals::apply(*this, e);
     }
-    // list of grouped modifiers
+    //! \brief list of the grouped modifiers
     const std::tuple<Ms...> group;
   };
 
+  /*!
+   * \brief deduction guide allowing a group of modifiers to be built from an
+   * explicit list of modifiers
+   *
+   * \tparam Ms: types of the grouped modifiers
+   */
   template <EvaluatorModifierConcept... Ms>
   requires(sizeof...(Ms) > 0) EvaluatorModifiersGroup(Ms...)
   ->EvaluatorModifiersGroup<Ms...>;
 
+  /*!
+   * \brief deduction guide allowing a group of modifiers to be built from a
+   * tuple of modifiers
+   *
+   * \tparam Ms: types of the grouped modifiers
+   */
   template <EvaluatorModifierConcept... Ms>
   requires(sizeof...(Ms) > 0) EvaluatorModifiersGroup(std::tuple<Ms...>)
   ->EvaluatorModifiersGroup<Ms...>;
 
-  //! \brief group two modifiers
+  /*!
+   * \brief groups two modifiers into a new group
+   *
+   * \tparam M0: type of the first modifier, which is applied first
+   * \tparam M1: type of the second modifier, which is applied to the result of
+   * the first modification
+   * \param[in] m0: first modifier
+   * \param[in] m1: second modifier
+   * \return a group containing the two given modifiers
+   */
   template <EvaluatorModifierConcept M0, EvaluatorModifierConcept M1>
   constexpr auto operator|(M0 const& m0, M1 const& m1) {
     return EvaluatorModifiersGroup<M0, M1>{m0, m1};
   }
 
+  /*!
+   * \brief adds a modifier at the beginning of a group of modifiers
+   *
+   * \tparam M0: type of the modifier, which is applied first
+   * \tparam M1: types of the modifiers of the group, which are applied after
+   * the given modifier
+   * \param[in] m0: modifier
+   * \param[in] m1: group of modifiers
+   * \return a new group of modifiers
+   */
   template <EvaluatorModifierConcept M0, EvaluatorModifierConcept... M1>
   constexpr auto operator|(M0 const& m0,
                            EvaluatorModifiersGroup<M1...> const& m1) {
@@ -152,6 +224,16 @@ namespace mgis::function {
         m1.group);
   }
 
+  /*!
+   * \brief adds a modifier at the end of a group of modifiers
+   *
+   * \tparam M0: type of the modifier, which is applied last
+   * \tparam M1: types of the modifiers of the group, which are applied before
+   * the given modifier
+   * \param[in] m1: group of modifiers
+   * \param[in] m0: modifier
+   * \return a new group of modifiers
+   */
   template <EvaluatorModifierConcept M0, EvaluatorModifierConcept... M1>
   constexpr auto operator|(EvaluatorModifiersGroup<M1...> const& m1,
                            M0 const& m0) {
@@ -162,6 +244,17 @@ namespace mgis::function {
         m1.group);
   }
 
+  /*!
+   * \brief merges two groups of modifiers
+   *
+   * \tparam M0: types of the modifiers of the first group, which are applied
+   * first
+   * \tparam M1: types of the modifiers of the second group, which are applied
+   * after the modifiers of the first group
+   * \param[in] m0: first group of modifiers
+   * \param[in] m1: second group of modifiers
+   * \return a new group containing all the modifiers of the two given groups
+   */
   template <EvaluatorModifierConcept... M0, EvaluatorModifierConcept... M1>
   constexpr auto operator|(EvaluatorModifiersGroup<M0...> const& m0,
                            EvaluatorModifiersGroup<M1...> const& m1) {

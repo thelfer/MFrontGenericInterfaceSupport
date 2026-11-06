@@ -1,6 +1,8 @@
 /*!
  * \file   MGIS/Function/TFEL/StridedCoalescedMemoryAccessTensorView.ixx
- * \brief
+ * \brief  File which contains the implementation of the
+ * `StridedCoalescedMemoryAccessTensorView` class declared in
+ * `MGIS/Function/TFEL/StridedCoalescedMemoryAccessTensorView.hxx`.
  * \author Thomas Helfer
  * \date   17/01/2026
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,6 +19,9 @@
 
 namespace mgis::function {
 
+  // the call operators build a strided coalesced view from the address of the
+  // first component value at the given integration point, the stride between
+  // successive components being equal to the size of the space
   template <FunctionalSpaceConcept Space,
             TensorConcept TensorType,
             bool is_mutable>
@@ -32,6 +37,8 @@ namespace mgis::function {
                                                         ne);
   }  // end of operator()
 
+  // for a quadrature space, the offset of the quadrature point is first
+  // computed using the `getQuadraturePointOffset` function
   template <FunctionalSpaceConcept Space,
             TensorConcept TensorType,
             bool is_mutable>
