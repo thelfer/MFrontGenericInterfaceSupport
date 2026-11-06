@@ -176,6 +176,11 @@ for _directory in dict.fromkeys((r\"${mgis_stubgen_library_directories}\", )):
       DESTINATION "${MGIS_PYTHON_MODULES_INSTALL_DIRECTORY}"
       COMPONENT python_bindings)
   endforeach(entry ${MGIS_PYTHON_STUBGEN_MODULES})
+  # PEP 561 marker: type checkers only use the stubs of an installed package
+  # if it holds this marker. Without stubs, it would make them fail.
+  install(FILES "${PROJECT_SOURCE_DIR}/bindings/python/mgis/py.typed"
+    DESTINATION "${MGIS_PYTHON_MODULES_INSTALL_DIRECTORY}"
+    COMPONENT python_bindings)
   add_custom_target(python-stubs ALL
     DEPENDS ${pybind11_stubgen_files})
 endfunction(generate_python_stubs)
