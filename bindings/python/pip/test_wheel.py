@@ -8,6 +8,7 @@ and the libraries of the two wheels are found and are consistent. On
 Windows, building behaviours requires Visual Studio and is not tested.
 """
 
+import ast
 import os
 import re
 import shutil
@@ -41,11 +42,15 @@ for directory, _, files in os.walk(mgishome):
             sys.exit("the mgis wheel must not contain the library " + name)
 
 # the stubs of the python modules are installed next to them, as well as
-# the py.typed marker
+# the py.typed marker. Type checkers stop on a stub which is not valid python
 for stub in ("_mgis.pyi", "behaviour.pyi", "material_property.pyi",
              "model.pyi", "function.pyi", "py.typed"):
-    if not os.path.isfile(os.path.join(mgishome, stub)):
+    path = os.path.join(mgishome, stub)
+    if not os.path.isfile(path):
         sys.exit("missing " + stub)
+    if stub.endswith(".pyi"):
+        with open(path, encoding="utf-8") as f:
+            ast.parse(f.read(), path)
 
 if os.name == "nt":
     sys.exit(0)
