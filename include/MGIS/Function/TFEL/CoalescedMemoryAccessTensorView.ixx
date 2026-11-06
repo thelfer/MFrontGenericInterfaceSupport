@@ -1,6 +1,8 @@
 /*!
  * \file   MGIS/Function/TFEL/CoalescedMemoryAccessTensorView.ixx
- * \brief
+ * \brief  File which contains the implementation of the
+ * `CoalescedMemoryAccessTensorView` class declared in
+ * `MGIS/Function/TFEL/CoalescedMemoryAccessTensorView.hxx`.
  * \author Thomas Helfer
  * \date   27/10/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,6 +19,9 @@
 
 namespace mgis::function {
 
+  // the call operators build a coalesced view from the array of the addresses
+  // of the values of the components at the given integration point, returned by
+  // the `getValuesPointers` member function of the base class
   template <FunctionalSpaceConcept Space,
             TensorConcept TensorType,
             bool is_mutable>

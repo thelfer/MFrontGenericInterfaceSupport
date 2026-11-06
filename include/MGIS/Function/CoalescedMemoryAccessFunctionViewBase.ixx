@@ -1,6 +1,8 @@
 /*!
  * \file   MGIS/Function/CoalescedMemoryAccessFunctionViewBase.ixx
- * \brief
+ * \brief File which contains the implementation of the
+ * `CoalescedMemoryAccessFunctionViewBase` class declared in
+ * `MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx`.
  * \author Thomas Helfer
  * \date   26/10/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,6 +19,10 @@
 
 namespace mgis::function {
 
+  // the views of the components are built by expanding a pack of indices over
+  // the components; the function returns an empty optional when the number of
+  // values does not match the number of components multiplied by the size of
+  // the space
   template <size_type N, typename Space>
   constexpr std::optional<
       std::array<FunctionView<Space,
@@ -66,6 +72,9 @@ namespace mgis::function {
     (std::make_index_sequence<N>());
   }  // end of splitArrayIntoScalarFunctionViews
 
+  // the result of `splitArrayIntoScalarFunctionViews` is dereferenced without
+  // checking: the number of values is assumed to have been checked by the
+  // `checkPreconditions` function before the split is performed
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       constexpr auto CoalescedMemoryAccessFunctionViewBase<
@@ -219,6 +228,8 @@ namespace mgis::function {
     return this->function_components[0].getSpace();
   }  // end of getSpace
 
+  // the addresses of the values of all the components at a given integration
+  // point are gathered by expanding a pack of indices over the components
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       constexpr

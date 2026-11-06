@@ -1,6 +1,7 @@
 /*!
  * \file   MGIS/Function/FunctionConcept.ixx
- * \brief
+ * \brief Implementation of the helpers associated with the `FunctionConcept`
+ * concept.
  * \author Thomas Helfer
  * \date   14/05/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -20,12 +21,14 @@
 
 namespace mgis::function::internals {
 
+  //! \brief forwards the call to the `getSpace` function of the function
   template <FunctionConcept FunctionType>
   constexpr decltype(auto) disambiguateGetSpace(const FunctionType& f)  //
       requires(!EvaluatorConcept<FunctionType>) {
     return getSpace(f);
   }  // end of disambiguateGetSpace
 
+  //! \brief forwards the call to the `getNumberOfComponents` function
   template <FunctionConcept FunctionType>
   constexpr mgis::size_type disambiguateGetNumberOfComponents(
       const FunctionType& f)  //
@@ -37,6 +40,13 @@ namespace mgis::function::internals {
 
 namespace mgis::function {
 
+  /*!
+   * \brief implementation of the `operator|` which assigns the values computed
+   * by an evaluator to the values of a function
+   *
+   * \note the errors detected during the assignment are reported by a default
+   * constructed `Context` object, which is not returned to the caller.
+   */
   template <EvaluatorConcept EvaluatorType,
             ViewableFunctionArgumentConcept FunctionType>
   bool operator|(EvaluatorType e, FunctionType&& f) requires(

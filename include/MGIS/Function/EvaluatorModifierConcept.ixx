@@ -1,6 +1,7 @@
 /*!
  * \file   MGIS/Function/EvaluatorModifierConcept.ixx
- * \brief
+ * \brief Implementation of the helpers associated with the
+ * `EvaluatorModifierConcept` concept.
  * \author Thomas Helfer
  * \date   05/06/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,6 +18,10 @@
 
 namespace mgis::function {
 
+  /*!
+   * \brief implementation of the `operator|` which applies the modifier to the
+   * given evaluator, calling the call operator of the modifier
+   */
   template <EvaluatorConcept EvaluatorType,
             EvaluatorModifierConcept EvaluatorModifierType>
   constexpr auto operator|(const EvaluatorType& e, EvaluatorModifierType m) {

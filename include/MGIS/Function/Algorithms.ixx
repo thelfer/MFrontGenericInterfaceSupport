@@ -1,6 +1,7 @@
 /*!
- * \file   MGIS/Function/Algorithm.ixx
- * \brief
+ * \file   MGIS/Function/Algorithms.ixx
+ * \brief Implementation of the algorithms which can be applied to the functions
+ * and the evaluators of the `MGIS/Function` library.
  * \author Thomas Helfer
  * \date   29/04/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -23,13 +24,21 @@
 namespace mgis::function::algorithm {
 
   /*!
-   * \brief copy N values
-   * \tparam N: number of values to be copied
+   * \brief copies `N` values from a range of input iterators to a range of
+   * output iterators
+   *
+   * When both iterators are random access iterators and the number of values is
+   * small, the copy is unrolled at compile time, which generates a more
+   * efficient code than the call to `std::copy` used otherwise.
+   *
+   * \tparam N: number of values to be copied, which must be greater than zero
    * \tparam InputIterator: input iterator type
    * \tparam OutputIterator: output iterator type
-   * \param[in] p: iterator to the beginning of the values to be copied
-   * \param[in] pe: iterator past the end of the values to be copied
-   * \param[in] po: iterator to the output values
+   * \param[in] p: iterator to the first value to be copied
+   * \param[in] pe: iterator past the last value to be copied
+   * \param[in] po: iterator to the first value assigned
+   * \note `std::copy` is used if more than nine values are copied or if one of
+   * the iterators is not a random access iterator
    */
   template <size_type N, typename InputIterator, typename OutputIterator>
   constexpr void copy(const InputIterator p,
@@ -66,6 +75,14 @@ namespace mgis::function::algorithm {
 
 namespace mgis::function::internals {
 
+  /*!
+   * \brief implementation of the most generic `assign_value` function, which
+   * iterates over the values of the right hand side
+   *
+   * The other overloads, declared in `MGIS/Function/Algorithms.hxx`, copy the
+   * values one by one, those connecting a scalar value and a container of a
+   * single value using only the first value of this container.
+   */
   constexpr void assign_value(std::span<real> lhs, const auto& rhs) {
     std::size_t i = 0;
     for (const auto& v : rhs) {
@@ -178,6 +195,20 @@ namespace mgis::function::internals {
     lhs[0] = rhs[0];
   }
 
+  /*!
+   * \brief assigns to a function the scalar values computed by an evaluator,
+   * the evaluation being sequential
+   *
+   * This overload is used when the values returned by both objects are scalar
+   * values and when the space does not require any workspace to access its
+   * elements: the function and the evaluator are called with the index of each
+   * element of the space.
+   *
+   * \tparam FunctionType: function type
+   * \tparam EvaluatorType: evaluator type
+   * \param[in,out] f: function assigned
+   * \param[in] e: evaluator providing the values assigned
+   */
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   constexpr void
   assign_sequential_scalar_impl(FunctionType& f, const EvaluatorType& e) requires(
@@ -194,6 +225,22 @@ namespace mgis::function::internals {
 
 #ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
+  /*!
+   * \brief assigns to a function the scalar values computed by an evaluator
+   * using the given execution policy
+   *
+   * \tparam ExecutionPolicy: execution policy type
+   * \tparam FunctionType: function type
+   * \tparam EvaluatorType: evaluator type
+   * \param[in] policy: execution policy used to perform the assignment
+   * \param[in,out] f: function assigned
+   * \param[in] e: evaluator providing the values assigned
+   * \note the sequential implementation is called when the policy is
+   * `std::execution::sequenced_policy`, which keeps this function `constexpr`
+   * in that case
+   * \note a view of the function is built before the loop if the function is
+   * not its own view
+   */
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
             EvaluatorConcept EvaluatorType>
@@ -227,6 +274,17 @@ namespace mgis::function::internals {
 
 #endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
+  /*!
+   * \brief assigns to a function the scalar values computed by an evaluator,
+   * the evaluation being sequential
+   *
+   * This overload is used when the values returned by both objects are scalar
+   * values and when the space requires a workspace to access its elements: the
+   * workspace of an element is retrieved before calling the function and the
+   * evaluator with this workspace and the index of the element. The function
+   * assigned and the evaluator providing the values assigned are the same
+   * arguments as for the other overload.
+   */
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   constexpr void
   assign_sequential_scalar_impl(FunctionType& f, const EvaluatorType& e) requires(
@@ -246,6 +304,22 @@ namespace mgis::function::internals {
 
 #ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
+  /*!
+   * \brief assigns to a function the scalar values computed by an evaluator
+   * using the given execution policy
+   *
+   * \tparam ExecutionPolicy: execution policy type
+   * \tparam FunctionType: function type
+   * \tparam EvaluatorType: evaluator type
+   * \param[in] policy: execution policy used to perform the assignment
+   * \param[in,out] f: function assigned
+   * \param[in] e: evaluator providing the values assigned
+   * \note the sequential implementation is called when the policy is
+   * `std::execution::sequenced_policy`, which keeps this function `constexpr`
+   * in that case
+   * \note the workspace of an element is retrieved within the loop, as it may
+   * depend on the index of the element
+   */
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
             EvaluatorConcept EvaluatorType>
@@ -283,6 +357,22 @@ namespace mgis::function::internals {
 
 #endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
+  /*!
+   * \brief assigns to a function the values computed by an evaluator, the
+   * evaluation being sequential
+   *
+   * This overload is used when the values returned by the function or the
+   * evaluator are not scalar values and when the space does not require any
+   * workspace to access its elements.
+   *
+   * \tparam FunctionType: function type
+   * \tparam EvaluatorType: evaluator type
+   * \param[in,out] f: function assigned
+   * \param[in] e: evaluator providing the values assigned
+   * \note the values returned by the evaluator are assigned directly to those
+   * returned by the function if the corresponding types are compatible, using
+   * one of the `assign_value` helpers otherwise
+   */
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   constexpr void
   assign_sequential_impl(FunctionType& f, const EvaluatorType& e) requires(
@@ -311,6 +401,26 @@ namespace mgis::function::internals {
 
 #ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
+  /*!
+   * \brief assigns to a function the values computed by an evaluator using the
+   * given execution policy
+   *
+   * This overload is used when the values returned by the function or the
+   * evaluator are not scalar values and when the space does not require any
+   * workspace to access its elements.
+   *
+   * \tparam ExecutionPolicy: execution policy type
+   * \tparam FunctionType: function type
+   * \tparam EvaluatorType: evaluator type
+   * \param[in] policy: execution policy used to perform the assignment
+   * \param[in,out] f: function assigned
+   * \param[in] e: evaluator providing the values assigned
+   * \note the sequential implementation is called when the policy is
+   * `std::execution::sequenced_policy`, which keeps this function `constexpr`
+   * in that case
+   * \note a view of the function is built before the loop if the function is
+   * not its own view
+   */
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
             EvaluatorConcept EvaluatorType>
@@ -360,6 +470,15 @@ namespace mgis::function::internals {
 
 #endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
+  /*!
+   * \brief assigns to a function the values computed by an evaluator, the
+   * evaluation being sequential
+   *
+   * This overload is used when the values returned by the function or the
+   * evaluator are not scalar values and when the space requires a workspace to
+   * access its elements. The function assigned and the evaluator providing the
+   * values assigned are the same arguments as for the other overload.
+   */
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   constexpr void
   assign_sequential_impl(FunctionType& f, const EvaluatorType& e) requires(
@@ -393,6 +512,26 @@ namespace mgis::function::internals {
 
 #ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
+  /*!
+   * \brief assigns to a function the values computed by an evaluator using the
+   * given execution policy
+   *
+   * This overload is used when the values returned by the function or the
+   * evaluator are not scalar values and when the space requires a workspace to
+   * access its elements.
+   *
+   * \tparam ExecutionPolicy: execution policy type
+   * \tparam FunctionType: function type
+   * \tparam EvaluatorType: evaluator type
+   * \param[in] policy: execution policy used to perform the assignment
+   * \param[in,out] f: function assigned
+   * \param[in] e: evaluator providing the values assigned
+   * \note the sequential implementation is called when the policy is
+   * `std::execution::sequenced_policy`, which keeps this function `constexpr`
+   * in that case
+   * \note a view of the function is built before the loop if the function is
+   * not its own view
+   */
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
             EvaluatorConcept EvaluatorType>
@@ -448,6 +587,17 @@ namespace mgis::function::internals {
 
 #endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
+  /*!
+   * \brief assigns to a function the values computed by an evaluator, the
+   * evaluation being sequential
+   *
+   * \tparam FunctionType: function type
+   * \tparam EvaluatorType: evaluator type
+   * \param[in,out] f: function assigned
+   * \param[in] e: evaluator providing the values assigned
+   * \note the scalar implementation is used when both the function and the
+   * evaluator return scalar values, the general implementation otherwise
+   */
   template <typename FunctionType, EvaluatorConcept EvaluatorType>
   constexpr void assign_sequential(FunctionType& f,
                                    const EvaluatorType e)  //
@@ -467,6 +617,19 @@ namespace mgis::function::internals {
 
 #ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
+  /*!
+   * \brief assigns to a function the values computed by an evaluator using the
+   * given execution policy
+   *
+   * \tparam ExecutionPolicy: execution policy type
+   * \tparam FunctionType: function type
+   * \tparam EvaluatorType: evaluator type
+   * \param[in,out] f: function assigned
+   * \param[in] policy: execution policy used to perform the assignment
+   * \param[in] e: evaluator providing the values assigned
+   * \note the scalar implementation is used when both the function and the
+   * evaluator return scalar values, the general implementation otherwise
+   */
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             typename FunctionType,
             EvaluatorConcept EvaluatorType>
@@ -488,6 +651,23 @@ namespace mgis::function::internals {
 
 #endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
+  /*!
+   * \brief reduces the values computed by an evaluator to a single scalar
+   * value, the evaluation being sequential
+   *
+   * The reduction is performed by `std::transform_reduce`: the values computed
+   * by the evaluator are combined two by two with the reduction operator,
+   * starting from the initial value.
+   *
+   * \tparam EvaluatorType: evaluator type
+   * \tparam OperatorType: reduction operator type
+   * \param[in] e: evaluator reduced
+   * \param[in] op: reduction operator
+   * \param[in] initial_value: value the reduction starts from
+   * \return the reduced value
+   * \note the first component of the values returned by the evaluator is used
+   * when those values are not scalar values
+   */
   template <EvaluatorConcept EvaluatorType, typename OperatorType>
   constexpr real sequential_scalar_reduce(const EvaluatorType e,
                                           const OperatorType op,
@@ -524,6 +704,24 @@ namespace mgis::function::internals {
 
 #ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
+  /*!
+   * \brief reduces the values computed by an evaluator to a single scalar
+   * value using the given execution policy
+   *
+   * The reduction is performed by `std::transform_reduce`, which is given the
+   * execution policy so that the evaluation can be parallelized.
+   *
+   * \tparam ExecutionPolicy: execution policy type
+   * \tparam EvaluatorType: evaluator type
+   * \tparam OperatorType: reduction operator type
+   * \param[in] policy: execution policy used to perform the reduction
+   * \param[in] e: evaluator reduced
+   * \param[in] op: reduction operator
+   * \param[in] initial_value: value the reduction starts from
+   * \return the reduced value
+   * \note the first component of the values returned by the evaluator is used
+   * when those values are not scalar values
+   */
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             EvaluatorConcept EvaluatorType,
             typename OperatorType>
@@ -567,6 +765,18 @@ namespace mgis::function {
 
 #ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
+  /*!
+   * \brief implementation of the `assign` algorithm using an execution policy
+   *
+   * The error messages "unmatched spaces" and "unmatched number of
+   * components" are registered in the error handler when the spaces of the
+   * function and the evaluator are not equivalent or when the number of
+   * components of the values they return differs. The evaluator is then
+   * checked before the values are assigned.
+   *
+   * \note the sequential implementation is called when the policy is
+   * `std::execution::sequenced_policy`
+   */
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             ViewableFunctionArgumentConcept FunctionType,
             EvaluatorConcept EvaluatorType>
@@ -600,6 +810,15 @@ namespace mgis::function {
 
 #endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
+  /*!
+   * \brief implementation of the sequential `assign` algorithm
+   *
+   * The error messages "unmatched spaces" and "unmatched number of
+   * components" are registered in the error handler when the spaces of the
+   * function and the evaluator are not equivalent or when the number of
+   * components of the values they return differs. The evaluator is then
+   * checked before the values are assigned.
+   */
   template <ViewableFunctionArgumentConcept FunctionType,
             EvaluatorConcept EvaluatorType>
   constexpr bool assign(AbstractErrorHandler& ctx,
@@ -626,6 +845,17 @@ namespace mgis::function {
 
 #ifdef MGIS_HAS_STL_PARALLEL_ALGORITHMS
 
+  /*!
+   * \brief implementation of the `scalar_reduce` algorithm using an execution
+   * policy
+   *
+   * The error message "non scalar evaluator" is registered in the error
+   * handler when the values returned by the evaluator have more than one
+   * component. The evaluator is then checked before being reduced.
+   *
+   * \note the sequential implementation is called when the policy is
+   * `std::execution::sequenced_policy`
+   */
   template <ExecutionPolicyConceptConcept ExecutionPolicy,
             EvaluatorConcept EvaluatorType,
             typename OperatorType>
@@ -652,6 +882,13 @@ namespace mgis::function {
 
 #endif /* MGIS_HAS_STL_PARALLEL_ALGORITHMS */
 
+  /*!
+   * \brief implementation of the sequential `scalar_reduce` algorithm
+   *
+   * The error message "non scalar evaluator" is registered in the error
+   * handler when the values returned by the evaluator have more than one
+   * component. The evaluator is then checked before being reduced.
+   */
   template <EvaluatorConcept EvaluatorType, typename OperatorType>
   constexpr std::optional<real> scalar_reduce(AbstractErrorHandler& ctx,
                                               const EvaluatorType e,
