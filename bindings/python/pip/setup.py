@@ -68,14 +68,13 @@ if _os.name == "nt":
 
 _TFEL_MFRONT_VERSION = "@TFEL_MFRONT_VERSION@"
 
-# The shared libraries of TFEL have a versioned soname, such as
-# libTFELMath.so.5.2.0-dev, so importing a module of this wheel fails with
-# a obscure 'libTFELXXX.so.5.2.0-dev: cannot open shared object file' error
-# when the installed tfel-mfront does not have the version this wheel was
-# built against. Check the version of the installed tfel-mfront package
-# instead, which also covers the cases where the libraries are not the ones
-# of a wheel (TFELHOME set externally), and which is what cmake verified at
-# configuration time (require-tfel and MGIS_REQUIRED_TFEL_VERSION).
+# The libraries of the tfel-mfront wheel are not versioned, so the dynamic
+# loader would silently use another version of TFEL than the one this wheel
+# was built against, whose ABI may differ. The version of the installed
+# tfel-mfront package is thus checked, which also covers the cases where the
+# libraries are not the ones of a wheel (TFELHOME set externally), and which
+# is what cmake verified at configuration time (require-tfel and
+# MGIS_REQUIRED_TFEL_VERSION).
 def _check_tfel_mfront():
     from importlib import metadata
 
