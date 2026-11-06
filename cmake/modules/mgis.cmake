@@ -23,6 +23,9 @@ function(mgis_library name)
   endif(${ARGC} LESS 2)
   add_library(${name} SHARED ${ARGN})
   add_library(mgis::${name} ALIAS ${name})
+  # reference to the library, used by generate_python_stubs to know the
+  # directories containing the dynamic link libraries of the build tree
+  set_property(GLOBAL APPEND PROPERTY MGIS_LIBRARIES "${name}")
   # the installed headers require C++20
   target_compile_features(${name} PUBLIC cxx_std_20)
   if(MGIS_APPEND_SUFFIX)

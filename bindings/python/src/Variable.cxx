@@ -83,6 +83,7 @@ static mgis::size_type getVariableSizeByString(
 void declareVariable(pybind11::module_&);
 
 void declareVariable(pybind11::module_& m) {
+  using namespace pybind11::literals;
   using mgis::behaviour::Variable;
   // wrapping the Variable::Type enum
   pybind11::enum_<Variable::Type>(m, "VariableType")
@@ -129,19 +130,23 @@ void declareVariable(pybind11::module_& m) {
            "`Tensor`, `Tensor1D`, `Tensor2D`, `Tensor3D`, `HigherOrderTensor` "
            "and `Array`");
   // free functions
-  m.def("getVariable", getVariableByString,
+  m.def("getVariable", getVariableByString, "variables"_a, "name"_a,
         pybind11::return_value_policy::copy);
   m.def("getVariableSize",
         pybind11::overload_cast<const Variable&,
                                 const mgis::behaviour::Hypothesis>(
-            &mgis::behaviour::getVariableSize));
-  m.def("getVariableSize", getVariableSizeByString);
+            &mgis::behaviour::getVariableSize),
+        "variable"_a, "hypothesis"_a);
+  m.def("getVariableSize", getVariableSizeByString, "variables"_a, "name"_a,
+        "hypothesis"_a);
   m.def("getArraySize",
         pybind11::overload_cast<const std::vector<Variable>&,
                                 const mgis::behaviour::Hypothesis>(
-            &mgis::behaviour::getArraySize));
-  m.def("getVariableOffset", getVariableOffsetByString);
+            &mgis::behaviour::getArraySize),
+        "variables"_a, "hypothesis"_a);
+  m.def("getVariableOffset", getVariableOffsetByString, "variables"_a, "name"_a,
+        "hypothesis"_a);
   m.def("getVariableTypeSymbolicRepresentation",
-        &mgis::behaviour::getVariableTypeSymbolicRepresentation);
+        &mgis::behaviour::getVariableTypeSymbolicRepresentation, "type"_a);
 
 }  // end of declareVariable

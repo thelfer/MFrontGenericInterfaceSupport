@@ -280,6 +280,22 @@ if (!isInvariantSatisfied) {
 }
 ~~~~
 
+## `pip` package
+
+The python bindings of `MGIS` can be installed using `pip`, see the
+[installation page](install.html). The wheel depends on the `tfel-mfront`
+wheel, pinned to the version of `TFEL` it is built against.
+
+## Stubs of the python modules
+
+When the python bindings are enabled and the `pybind11-stubgen` tool is
+found, the stub files (`.pyi` files) of the python modules are generated
+by the `python-stubs` target and installed next to the modules, with a
+`py.typed` marker. The `enable-pybind11-stubgen` option turns this off.
+
+The arguments of the python functions and methods now have names, and can
+be passed by keyword.
+
 # New features of the `MGIS/Behaviour` library
 
 ## Save/restore operations in `MaterialStateManager` and `MaterialDataManager`
@@ -683,6 +699,10 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/322>
 
+## Issue 319: Add support for `pybind11_stubgen`
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/319>
+
 ## Issue 308: Wrong statements and typos in the documentation and error messages
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/308>
@@ -838,6 +858,10 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 ## Issue 255: Fix `InvokeTest` on `MacOS`
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/255>
+
+## Issue 254: Add a `pip` package
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/254>
 
 ## Issue 250: Add `ErrorBacktrace::assertOrTerminate` 
 
