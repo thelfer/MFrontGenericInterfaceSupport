@@ -142,10 +142,22 @@ for _directory in dict.fromkeys((r\"${mgis_stubgen_library_directories}\", )):
     if os.path.isdir(_directory):
         os.add_dll_directory(_directory)
 ")
-    # the two paths of the PYTHONPATH variable are separated by a semicolon
-    string(REPLACE ";" "$<SEMICOLON>" mgis_stubgen_pythonpath
-           "${mgis_stubgen_sitecustomize_directory};${MGIS_PYTHON_MODULES_BUILD_DIR}")
+    set(mgis_stubgen_pythonpath
+        "${mgis_stubgen_sitecustomize_directory};${MGIS_PYTHON_MODULES_BUILD_DIR}")
   endif(WIN32)
+  # The PYTHONPATH variable is extended, not replaced: pybind11-stubgen and
+  # the python bindings of TFEL may only be found through it, as in the
+  # isolated build environments of pip.
+  if(NOT "$ENV{PYTHONPATH}" STREQUAL "")
+    if(WIN32)
+      string(APPEND mgis_stubgen_pythonpath ";$ENV{PYTHONPATH}")
+    else(WIN32)
+      string(APPEND mgis_stubgen_pythonpath ":$ENV{PYTHONPATH}")
+    endif(WIN32)
+  endif()
+  # the paths of the PYTHONPATH variable are separated by a semicolon on windows
+  string(REPLACE ";" "$<SEMICOLON>" mgis_stubgen_pythonpath
+         "${mgis_stubgen_pythonpath}")
   set(pybind11_stubgen_files)
   foreach(entry ${MGIS_PYTHON_STUBGEN_MODULES})
     string(REGEX REPLACE "^[^:]*:" "" module "${entry}")
