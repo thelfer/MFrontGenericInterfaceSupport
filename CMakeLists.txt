@@ -96,6 +96,19 @@ if(enable-python-bindings)
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DESCRIPTION
     "Contains the python bindings for MGIS")
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DEPENDS mgis)
+  option(enable-pybind11-stubgen "generates stubs for python extensions" ON)
+  if(enable-pybind11-stubgen)
+    # The modules are imported to generate their stubs: pybind11-stubgen
+    # shall be available for the python interpreter they are built for.
+    execute_process(COMMAND "${Python_EXECUTABLE}" -c "import pybind11_stubgen"
+      RESULT_VARIABLE pybind11_stubgen_import_status
+      OUTPUT_QUIET ERROR_QUIET)
+    if(pybind11_stubgen_import_status EQUAL 0)
+      set(pybind11_stubgen ON)
+      message(STATUS "Found pybind11-stubgen for ${Python_EXECUTABLE}")
+    endif()
+  endif()
+  include(cmake/modules/mgis-python-modules.cmake)
   # store the location of the python modules in the MGIS_PYTHON_MODULES_INSTALL_DIRECTORY variable
   # the variable can be set by the user, for instance to "site-packages" by
   # the pip package, see bindings/python/pip
@@ -349,6 +362,13 @@ endif(enable-testing)
 add_subdirectory(bindings)
 # shall be included after the other directories
 add_subdirectory(env)
+
+# Generation of the stubs of the python modules using pybind11-stubgen.
+# This call is placed at the end of the file as it requires that all the
+# python modules and all the MGIS libraries have been declared.
+if(enable-python-bindings)
+  generate_python_stubs()
+endif(enable-python-bindings)
 
 # Packaging
 if(MFrontGenericInterfaceSupportDevelopmentVersion)
