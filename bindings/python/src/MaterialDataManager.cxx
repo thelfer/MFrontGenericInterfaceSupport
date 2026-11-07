@@ -110,7 +110,7 @@ void declareMaterialDataManager(pybind11::module_& m) {
            "allocate the tangent operator blocks")
       .def("useExternalArrayOfTangentOperatorBlocks",
            &MaterialDataManager_useExternalArrayOfTangentOperatorBlocks,
-           "use and externally defined array to store the tangent operator "
+           "use an externally defined array to store the tangent operator "
            "blocks")
       .def("releaseArrayOfTangentOperatorBlocks",
            [](MaterialDataManager& d) {
@@ -122,7 +122,7 @@ void declareMaterialDataManager(pybind11::module_& m) {
            "allocate the array of speed of sounds")
       .def("useExternalArrayOfSpeedOfSounds",
            &MaterialDataManager_useExternalArrayOfSpeedOfSounds,
-           "use and externally defined array to store the spped of sounds")
+           "use an externally defined array to store the speed of sounds")
       .def("releaseArrayOfSpeedOfSounds",
            [](MaterialDataManager& d) { d.releaseArrayOfSpeedOfSounds(); },
            "release the array of speed of sounds")
