@@ -12,8 +12,11 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <string>
+#include <algorithm>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include "MGIS/Raise.hxx"
 #include "MGIS/ThreadPool.hxx"
 #include "MGIS/Behaviour/BehaviourData.hxx"
 #include "MGIS/Behaviour/MaterialDataManager.hxx"
@@ -22,8 +25,43 @@
 
 void declareIntegrate(pybind11::module_&);
 
+/*!
+ * \brief check that the arrays of a behaviour data have the sizes needed by the
+ * given behaviour. The behaviours are not compared, since loading the same
+ * behaviour twice is legitimate.
+ * \param[in] d: behaviour data
+ * \param[in] b: behaviour
+ */
+static void checkBehaviourDataLayout(const mgis::behaviour::BehaviourData& d,
+                                     const mgis::behaviour::Behaviour& b) {
+  const auto check = [](const char* const n, const mgis::size_type s,
+                        const mgis::size_type e) {
+    if (s != e) {
+      mgis::raise(
+          "the behaviour data does not match the behaviour: the array of the " +
+          std::string{n} + " holds " + std::to_string(s) + " values (" +
+          std::to_string(e) + " expected)");
+    }
+  };
+  const auto h = b.hypothesis;
+  for (const auto* const s : {&d.s0, &d.s1}) {
+    check("gradients", s->gradients.size(), getArraySize(b.gradients, h));
+    check("thermodynamic forces", s->thermodynamic_forces.size(),
+          getArraySize(b.thermodynamic_forces, h));
+    check("material properties", s->material_properties.size(),
+          getArraySize(b.mps, h));
+    check("internal state variables", s->internal_state_variables.size(),
+          getArraySize(b.isvs, h));
+    check("external state variables", s->external_state_variables.size(),
+          getArraySize(b.esvs, h));
+  }
+  check("tangent operator blocks", d.K.size(),
+        std::max(getTangentOperatorArraySize(b), mgis::size_type{1}));
+}  // end of checkBehaviourDataLayout
+
 static int integrateBehaviourData1(mgis::behaviour::BehaviourData& d,
                                    const mgis::behaviour::Behaviour& b) {
+  checkBehaviourDataLayout(d, b);
   auto v = mgis::behaviour::make_view(d);
   const auto s = mgis::behaviour::integrate(v, b);
   return s;
@@ -31,6 +69,7 @@ static int integrateBehaviourData1(mgis::behaviour::BehaviourData& d,
 
 static int integrateDebugBehaviourData1(mgis::behaviour::BehaviourData& d,
                                         const mgis::behaviour::Behaviour& b) {
+  checkBehaviourDataLayout(d, b);
   auto v = mgis::behaviour::make_view(d);
   const auto s = mgis::behaviour::integrate_debug(v, b);
   return s;
