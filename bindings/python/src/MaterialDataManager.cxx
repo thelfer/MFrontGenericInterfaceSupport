@@ -21,25 +21,29 @@
 void declareMaterialDataManager(pybind11::module_&);
 
 static void MaterialDataManagerInitializer_bindTangentOperator(
-    mgis::behaviour::MaterialDataManagerInitializer& i, pybind11::object K) {
-  i.K = mgis::python::mgis_convert_to_mutable_span(K);
+    pybind11::object self, pybind11::object K) {
+  auto& i = self.cast<mgis::behaviour::MaterialDataManagerInitializer&>();
+  i.K = mgis::python::mgis_convert_to_bound_span(K, self);
 }  // end of MaterialDataManagerInitializer_bindTangentOperator
 
 static void MaterialDataManagerInitializer_bindSpeedOfSound(
-    mgis::behaviour::MaterialDataManagerInitializer& i, pybind11::object vs) {
-  i.speed_of_sound = mgis::python::mgis_convert_to_mutable_span(vs);
+    pybind11::object self, pybind11::object vs) {
+  auto& i = self.cast<mgis::behaviour::MaterialDataManagerInitializer&>();
+  i.speed_of_sound = mgis::python::mgis_convert_to_bound_span(vs, self);
 }  // end of MaterialDataManagerInitializer_bindSpeedOfSound
 
 static void MaterialDataManager_useExternalArrayOfTangentOperatorBlocks(
-    mgis::behaviour::MaterialDataManager& m, pybind11::object K) {
+    pybind11::object self, pybind11::object K) {
+  auto& m = self.cast<mgis::behaviour::MaterialDataManager&>();
   m.useExternalArrayOfTangentOperatorBlocks(
-      mgis::python::mgis_convert_to_mutable_span(K));
+      mgis::python::mgis_convert_to_mutable_span(K, self));
 }  // end of MaterialDataManager_useExternalArrayOfTangentOperatorBlocks
 
 static void MaterialDataManager_useExternalArrayOfSpeedOfSounds(
-    mgis::behaviour::MaterialDataManager& m, pybind11::object vs) {
+    pybind11::object self, pybind11::object vs) {
+  auto& m = self.cast<mgis::behaviour::MaterialDataManager&>();
   m.useExternalArrayOfSpeedOfSounds(
-      mgis::python::mgis_convert_to_mutable_span(vs));
+      mgis::python::mgis_convert_to_mutable_span(vs, self));
 }  // end of MaterialDataManager_useExternalArrayOfSpeedOfSounds
 
 static pybind11::object MaterialDataManager_getK(pybind11::object self) {
@@ -62,6 +66,7 @@ static pybind11::object MaterialDataManager_getSpeedOfSound(
 }  // end of MaterialDataManager_getSpeedOfSound
 
 void declareMaterialDataManager(pybind11::module_& m) {
+  using namespace pybind11::literals;
   using mgis::size_type;
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::MaterialDataManager;
@@ -83,12 +88,11 @@ void declareMaterialDataManager(pybind11::module_& m) {
                     "caller)")
       .def("bindTangentOperator",
            &MaterialDataManagerInitializer_bindTangentOperator,
-           "use the given array to store the tangent operator blocks",
-           pybind11::keep_alive<1, 2>())
+           "use the given array to store the tangent operator blocks")
       .def("bindSpeedOfSound", &MaterialDataManagerInitializer_bindSpeedOfSound,
-           "use the given array to store the speed of sounds",
-           pybind11::keep_alive<1, 2>());
-  // exporting the MaterialDataManager class
+           "use the given array to store the speed of sounds");
+  // exporting the MaterialDataManager class. A member function pointer without
+  // named argument is not used, as None would be accepted as the object
   pybind11::class_<MaterialDataManager>(m, "MaterialDataManager")
       .def(pybind11::init<const Behaviour&, const size_type>(),
            pybind11::keep_alive<1, 2>())
@@ -96,28 +100,31 @@ void declareMaterialDataManager(pybind11::module_& m) {
                           const MaterialDataManagerInitializer&>(),
            pybind11::keep_alive<1, 2>(), pybind11::keep_alive<1, 4>())
       .def("setThreadSafe", &MaterialDataManager::setThreadSafe,
+           "thread_safe"_a,
            "specify if various operations performed by the MaterialDataManager "
            "(memory allocations) shall be protected by a mutex")
       .def("allocateArrayOfTangentOperatorBlocks",
-           &MaterialDataManager::allocateArrayOfTangentOperatorBlocks,
+           [](MaterialDataManager& d) {
+             d.allocateArrayOfTangentOperatorBlocks();
+           },
            "allocate the tangent operator blocks")
       .def("useExternalArrayOfTangentOperatorBlocks",
            &MaterialDataManager_useExternalArrayOfTangentOperatorBlocks,
-           "use and externally defined array to store the tangent operator "
-           "blocks",
-           pybind11::keep_alive<1, 2>())
+           "use an externally defined array to store the tangent operator "
+           "blocks")
       .def("releaseArrayOfTangentOperatorBlocks",
-           &MaterialDataManager::releaseArrayOfTangentOperatorBlocks,
+           [](MaterialDataManager& d) {
+             d.releaseArrayOfTangentOperatorBlocks();
+           },
            "release the arrays of tangent operator blocks")
       .def("allocateArrayOfSpeedOfSounds",
-           &MaterialDataManager::allocateArrayOfSpeedOfSounds,
+           [](MaterialDataManager& d) { d.allocateArrayOfSpeedOfSounds(); },
            "allocate the array of speed of sounds")
       .def("useExternalArrayOfSpeedOfSounds",
            &MaterialDataManager_useExternalArrayOfSpeedOfSounds,
-           "use and externally defined array to store the spped of sounds",
-           pybind11::keep_alive<1, 2>())
+           "use an externally defined array to store the speed of sounds")
       .def("releaseArrayOfSpeedOfSounds",
-           &MaterialDataManager::releaseArrayOfSpeedOfSounds,
+           [](MaterialDataManager& d) { d.releaseArrayOfSpeedOfSounds(); },
            "release the array of speed of sounds")
       .def_readonly("n", &MaterialDataManager::n)
       .def_readonly("number_of_integration_points", &MaterialDataManager::n)

@@ -12,7 +12,6 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <iostream>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Python/NumPySupport.hxx"
 
@@ -28,15 +27,6 @@ namespace mgis::python {
                                              pybind11::handle base) {
     auto view = std::span<double>(v);
     return wrapInNumPyArray(view, base);
-  }  // end of wrapInNumPyArray
-
-  pybind11::array_t<double> wrapInNumPyArray(
-      std::variant<std::span<double>, std::vector<double>>& v,
-      pybind11::handle base) {
-    if (std::holds_alternative<std::vector<double>>(v)) {
-      return wrapInNumPyArray(std::get<std::vector<double>>(v), base);
-    }
-    return wrapInNumPyArray(std::get<std::span<double>>(v), base);
   }  // end of wrapInNumPyArray
 
   pybind11::array_t<double> wrapInNumPyArray(std::span<double>& v,
@@ -55,16 +45,6 @@ namespace mgis::python {
                                              pybind11::handle base) {
     auto view = std::span<double>(v);
     return wrapInNumPyArray(view, nc, base);
-  }  // end of wrapInNumPyArray
-
-  pybind11::array_t<double> wrapInNumPyArray(
-      std::variant<std::span<double>, std::vector<double>>& v,
-      const size_type nc,
-      pybind11::handle base) {
-    if (std::holds_alternative<std::vector<double>>(v)) {
-      return wrapInNumPyArray(std::get<std::vector<double>>(v), nc, base);
-    }
-    return wrapInNumPyArray(std::get<std::span<double>>(v), nc, base);
   }  // end of wrapInNumPyArray
 
   pybind11::array_t<double> wrapInNumPyArray(std::span<double>& v,
@@ -88,17 +68,6 @@ namespace mgis::python {
     return wrapInNumPyArray(view, nl, nc, base);
   }  // end of wrapInNumPyArray
 
-  pybind11::array_t<double> wrapInNumPyArray(
-      std::variant<std::span<double>, std::vector<double>>& v,
-      const size_type nl,
-      const size_type nc,
-      pybind11::handle base) {
-    if (std::holds_alternative<std::vector<double>>(v)) {
-      return wrapInNumPyArray(std::get<std::vector<double>>(v), nl, nc, base);
-    }
-    return wrapInNumPyArray(std::get<std::span<double>>(v), nl, nc, base);
-  }  // end of wrapInNumPyArray
-
   std::span<mgis::real> mgis_convert_to_span(
       const pybind11::array_t<double>& o) {
     const auto i = o.request();
@@ -112,21 +81,54 @@ namespace mgis::python {
     return {static_cast<double*>(i.ptr), static_cast<mgis_size_type>(i.size)};
   }  // end of mgis_convert_to_span
 
-  std::span<mgis::real> mgis_convert_to_mutable_span(
+  pybind11::array_t<double> mgis_convert_to_array_without_copy(
       const pybind11::object& o) {
-    const auto a = pybind11::array_t<double>(o);
+    auto a = pybind11::array_t<double>(o);
     // the values written in a converted copy would be lost
     if ((!a.is(o)) && (!pybind11::module_::import("numpy")
                             .attr("may_share_memory")(a, o)
                             .cast<bool>())) {
       mgis::raise(
           "convert_to_span: expected an array of float64 values "
-          "(the values would be written in a converted copy)");
+          "(the object is converted into a copy, which can't be used)");
     }
+    return a;
+  }  // end of mgis_convert_to_array_without_copy
+
+  pybind11::array_t<double> mgis_convert_to_mutable_array(
+      const pybind11::object& o) {
+    auto a = mgis_convert_to_array_without_copy(o);
     if (!a.writeable()) {
       mgis::raise("convert_to_span: expected a writable array");
     }
-    return mgis_convert_to_span(a);
+    return a;
+  }  // end of mgis_convert_to_mutable_array
+
+  std::span<mgis::real> mgis_convert_to_mutable_span(
+      const pybind11::object& o) {
+    return mgis_convert_to_span(mgis_convert_to_mutable_array(o));
   }  // end of mgis_convert_to_mutable_span
+
+  std::span<mgis::real> mgis_convert_to_mutable_span(const pybind11::object& o,
+                                                     pybind11::handle u) {
+    const auto a = mgis_convert_to_mutable_array(o);
+    const auto values = mgis_convert_to_span(a);
+    // the array holds the export of the buffer and shall live as long as u
+    pybind11::cpp_function release(
+        [a](pybind11::handle weakref) { weakref.dec_ref(); });
+    (void)pybind11::weakref(u, release).release();
+    return values;
+  }  // end of mgis_convert_to_mutable_span
+
+  std::span<mgis::real> mgis_convert_to_bound_span(const pybind11::object& o,
+                                                   pybind11::handle i) {
+    const auto values = mgis_convert_to_mutable_span(o, i);
+    if (values.empty()) {
+      mgis::raise(
+          "convert_to_span: an empty array can't be bound "
+          "(it would be silently ignored)");
+    }
+    return values;
+  }  // end of mgis_convert_to_bound_span
 
 }  // end of namespace mgis::python

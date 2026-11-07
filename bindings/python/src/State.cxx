@@ -60,12 +60,25 @@ static void State_setMaterialProperty2(mgis::behaviour::State& s,
   mgis::behaviour::setMaterialProperty(s, o, v);
 }  // end of State_setMaterialProperty2
 
+/*!
+ * \return true if the given object is a number, as accepted by the setters
+ * taking a floating point value (a numpy scalar, a Decimal, a 0D array, etc.),
+ * and not an array of values
+ * \param[in] v: object
+ */
+static bool State_isScalar(const pybind11::object& v) {
+  if (pybind11::isinstance<pybind11::float_>(v) ||
+      pybind11::isinstance<pybind11::int_>(v)) {
+    return true;
+  }
+  return (PyNumber_Check(v.ptr()) != 0) &&
+         (pybind11::module_::import("numpy").attr("ndim")(v).cast<int>() == 0);
+}  // end of State_isScalar
+
 static void State_setExternalStateVariable(mgis::behaviour::State& s,
                                            const std::string& n,
                                            pybind11::object v) {
-  if (pybind11::isinstance<pybind11::float_>(v)) {
-    mgis::behaviour::setExternalStateVariable(s, n, pybind11::cast<double>(v));
-  } else if (pybind11::isinstance<pybind11::int_>(v)) {
+  if (State_isScalar(v)) {
     mgis::behaviour::setExternalStateVariable(s, n, pybind11::cast<double>(v));
   } else {
     mgis::behaviour::setExternalStateVariable(
@@ -77,13 +90,7 @@ static void State_setExternalStateVariable2(mgis::behaviour::State& s,
                                             const mgis::size_type o,
                                             pybind11::object v) {
   const auto ne = s.external_state_variables.size();
-  if (pybind11::isinstance<pybind11::float_>(v)) {
-    if (o >= ne) {
-      mgis::raise(
-          "setExternalStateVariable: invalid argument (offset out of range)");
-    }
-    mgis::behaviour::setExternalStateVariable(s, o, pybind11::cast<double>(v));
-  } else if (pybind11::isinstance<pybind11::int_>(v)) {
+  if (State_isScalar(v)) {
     if (o >= ne) {
       mgis::raise(
           "setExternalStateVariable: invalid argument (offset out of range)");
