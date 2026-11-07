@@ -66,6 +66,7 @@ static pybind11::object MaterialDataManager_getSpeedOfSound(
 }  // end of MaterialDataManager_getSpeedOfSound
 
 void declareMaterialDataManager(pybind11::module_& m) {
+  using namespace pybind11::literals;
   using mgis::size_type;
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::MaterialDataManager;
@@ -90,7 +91,8 @@ void declareMaterialDataManager(pybind11::module_& m) {
            "use the given array to store the tangent operator blocks")
       .def("bindSpeedOfSound", &MaterialDataManagerInitializer_bindSpeedOfSound,
            "use the given array to store the speed of sounds");
-  // exporting the MaterialDataManager class
+  // exporting the MaterialDataManager class. A member function pointer without
+  // named argument is not used, as None would be accepted as the object
   pybind11::class_<MaterialDataManager>(m, "MaterialDataManager")
       .def(pybind11::init<const Behaviour&, const size_type>(),
            pybind11::keep_alive<1, 2>())
@@ -98,26 +100,31 @@ void declareMaterialDataManager(pybind11::module_& m) {
                           const MaterialDataManagerInitializer&>(),
            pybind11::keep_alive<1, 2>(), pybind11::keep_alive<1, 4>())
       .def("setThreadSafe", &MaterialDataManager::setThreadSafe,
+           "thread_safe"_a,
            "specify if various operations performed by the MaterialDataManager "
            "(memory allocations) shall be protected by a mutex")
       .def("allocateArrayOfTangentOperatorBlocks",
-           &MaterialDataManager::allocateArrayOfTangentOperatorBlocks,
+           [](MaterialDataManager& d) {
+             d.allocateArrayOfTangentOperatorBlocks();
+           },
            "allocate the tangent operator blocks")
       .def("useExternalArrayOfTangentOperatorBlocks",
            &MaterialDataManager_useExternalArrayOfTangentOperatorBlocks,
            "use and externally defined array to store the tangent operator "
            "blocks")
       .def("releaseArrayOfTangentOperatorBlocks",
-           &MaterialDataManager::releaseArrayOfTangentOperatorBlocks,
+           [](MaterialDataManager& d) {
+             d.releaseArrayOfTangentOperatorBlocks();
+           },
            "release the arrays of tangent operator blocks")
       .def("allocateArrayOfSpeedOfSounds",
-           &MaterialDataManager::allocateArrayOfSpeedOfSounds,
+           [](MaterialDataManager& d) { d.allocateArrayOfSpeedOfSounds(); },
            "allocate the array of speed of sounds")
       .def("useExternalArrayOfSpeedOfSounds",
            &MaterialDataManager_useExternalArrayOfSpeedOfSounds,
            "use and externally defined array to store the spped of sounds")
       .def("releaseArrayOfSpeedOfSounds",
-           &MaterialDataManager::releaseArrayOfSpeedOfSounds,
+           [](MaterialDataManager& d) { d.releaseArrayOfSpeedOfSounds(); },
            "release the array of speed of sounds")
       .def_readonly("n", &MaterialDataManager::n)
       .def_readonly("number_of_integration_points", &MaterialDataManager::n)

@@ -67,6 +67,15 @@ class ArgumentsCheckTest(unittest.TestCase):
                 mgis_bv.setExternalStateVariable(d.s1, k, v)
                 self.assertEqual(d.s1.external_state_variables[0], 293)
 
+    def test_none_as_self(self):
+        m = mgis_bv.MaterialDataManager
+        for f in (m.allocateArrayOfTangentOperatorBlocks,
+                  m.releaseArrayOfTangentOperatorBlocks,
+                  m.allocateArrayOfSpeedOfSounds,
+                  m.releaseArrayOfSpeedOfSounds):
+            self.assertRaises(TypeError, f, None)
+        self.assertRaises(TypeError, m.setThreadSafe, None, True)
+
 
 if __name__ == '__main__':
     unittest.main()
