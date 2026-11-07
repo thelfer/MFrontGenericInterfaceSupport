@@ -128,6 +128,14 @@ namespace mgis::python {
 
   std::span<mgis::real> mgis_convert_to_span(const pybind11::array_t<double>&);
   /*!
+   * \brief convert an object into an array holding the buffer exported by this
+   * object, if any. An exception is thrown if the object is converted into a
+   * copy.
+   * \param[in] o: object
+   */
+  pybind11::array_t<double> mgis_convert_to_array_without_copy(
+      const pybind11::object&);
+  /*!
    * \brief convert an object in which values are written into a span.
    * Contrary to `mgis_convert_to_span`, an exception is thrown if the object
    * is converted into a copy, in which the written values would be lost, or

@@ -112,7 +112,7 @@ namespace mgis::python {
     return {static_cast<double*>(i.ptr), static_cast<mgis_size_type>(i.size)};
   }  // end of mgis_convert_to_span
 
-  pybind11::array_t<double> mgis_convert_to_mutable_array(
+  pybind11::array_t<double> mgis_convert_to_array_without_copy(
       const pybind11::object& o) {
     auto a = pybind11::array_t<double>(o);
     // the values written in a converted copy would be lost
@@ -121,8 +121,14 @@ namespace mgis::python {
                             .cast<bool>())) {
       mgis::raise(
           "convert_to_span: expected an array of float64 values "
-          "(the values would be written in a converted copy)");
+          "(the object is converted into a copy, which can't be used)");
     }
+    return a;
+  }  // end of mgis_convert_to_array_without_copy
+
+  pybind11::array_t<double> mgis_convert_to_mutable_array(
+      const pybind11::object& o) {
+    auto a = mgis_convert_to_array_without_copy(o);
     if (!a.writeable()) {
       mgis::raise("convert_to_span: expected a writable array");
     }

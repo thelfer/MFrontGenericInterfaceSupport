@@ -126,11 +126,8 @@ static pybind11::object MaterialStateManager_getDissipatedEnergies(
 static pybind11::array_t<double> MaterialStateManager_convertExternalValues(
     const pybind11::object& o,
     const mgis::behaviour::MaterialStateManager::UpdatePolicy p) {
-  auto a = pybind11::array_t<double>(o);
-  if ((p == mgis::behaviour::MaterialStateManager::NOUPDATE) &&
-      (!a.writeable())) {
-    // a converted copy is writable: a is o or a view of o
-    return a;
+  if (p == mgis::behaviour::MaterialStateManager::NOUPDATE) {
+    return mgis::python::mgis_convert_to_array_without_copy(o);
   }
   return mgis::python::mgis_convert_to_mutable_array(o);
 }  // end of MaterialStateManager_convertExternalValues
