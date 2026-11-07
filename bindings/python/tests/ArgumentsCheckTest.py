@@ -2,6 +2,9 @@
 
 import os
 import array
+import decimal
+import fractions
+import numpy
 
 try:
     import unittest2 as unittest
@@ -54,6 +57,15 @@ class ArgumentsCheckTest(unittest.TestCase):
         i.bindTangentOperator(K)
         m = mgis_bv.MaterialDataManager(b, n, i)
         self.assertRaises(BufferError, K.extend, extra)
+
+    def test_scalars_of_a_state(self):
+        d = mgis_bv.BehaviourData(self.__load('Norton'))
+        for v in (numpy.float32(293.), numpy.int32(293), numpy.array(293.),
+                  decimal.Decimal(293), fractions.Fraction(293)):
+            for k in ('Temperature', 0):
+                d.s1.external_state_variables[0] = 0
+                mgis_bv.setExternalStateVariable(d.s1, k, v)
+                self.assertEqual(d.s1.external_state_variables[0], 293)
 
 
 if __name__ == '__main__':
