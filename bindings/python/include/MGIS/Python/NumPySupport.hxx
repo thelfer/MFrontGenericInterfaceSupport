@@ -17,7 +17,6 @@
 
 #include <span>
 #include <vector>
-#include <variant>
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include "MGIS/Config.hxx"
@@ -37,15 +36,6 @@ namespace mgis::python {
    * \brief create a 1D-ndarray object from a vector.
    * The ndarray does not own the data, the lifetime of which is handled by
    * the vector.
-   * \param[in] v: values
-   * \param[in] base: object owning the values, kept alive by the ndarray
-   */
-  pybind11::array_t<double> wrapInNumPyArray(
-      std::variant<std::span<double>, std::vector<double>>&, pybind11::handle);
-  /*!
-   * \brief create a 1D-ndarray object from a vector.
-   * The ndarray does not own the data, the lifetime of which is handled by
-   * the vector.
    * \param[in] v: vector holding the values
    * \param[in] base: object owning the values, kept alive by the ndarray
    */
@@ -62,18 +52,6 @@ namespace mgis::python {
   pybind11::array_t<double> wrapInNumPyArray(std::span<double>&,
                                              const mgis::size_type,
                                              pybind11::handle);
-  /*!
-   * \brief create a 2D-ndarray object from a vector.
-   * The ndarray does not own the data, the lifetime of which is handled by
-   * the vector.
-   * \param[in] v: values
-   * \param[in] nc: number of columns
-   * \param[in] base: object owning the values, kept alive by the ndarray
-   */
-  pybind11::array_t<double> wrapInNumPyArray(
-      std::variant<std::span<double>, std::vector<double>>&,
-      const mgis::size_type,
-      pybind11::handle);
   /*!
    * \brief create a 2D-ndarray object from a vector.
    * The ndarray does not own the data, the lifetime of which is handled by
@@ -98,20 +76,6 @@ namespace mgis::python {
                                              const mgis::size_type,
                                              const mgis::size_type,
                                              pybind11::handle);
-  /*!
-   * \brief create a 3D-ndarray object from a vector.
-   * The ndarray does not own the data, the lifetime of which is handled by
-   * the vector.
-   * \param[in] v: values
-   * \param[in] nl: number of line
-   * \param[in] nc: number of columns
-   * \param[in] base: object owning the values, kept alive by the ndarray
-   */
-  pybind11::array_t<double> wrapInNumPyArray(
-      std::variant<std::span<double>, std::vector<double>>&,
-      const mgis::size_type,
-      const mgis::size_type,
-      pybind11::handle);
   /*!
    * \brief create a 3D-ndarray object from a vector.
    * The ndarray does not own the data, the lifetime of which is handled by

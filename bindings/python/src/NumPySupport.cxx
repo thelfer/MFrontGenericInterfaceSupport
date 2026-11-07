@@ -12,7 +12,6 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include <iostream>
 #include "MGIS/Raise.hxx"
 #include "MGIS/Python/NumPySupport.hxx"
 
@@ -28,15 +27,6 @@ namespace mgis::python {
                                              pybind11::handle base) {
     auto view = std::span<double>(v);
     return wrapInNumPyArray(view, base);
-  }  // end of wrapInNumPyArray
-
-  pybind11::array_t<double> wrapInNumPyArray(
-      std::variant<std::span<double>, std::vector<double>>& v,
-      pybind11::handle base) {
-    if (std::holds_alternative<std::vector<double>>(v)) {
-      return wrapInNumPyArray(std::get<std::vector<double>>(v), base);
-    }
-    return wrapInNumPyArray(std::get<std::span<double>>(v), base);
   }  // end of wrapInNumPyArray
 
   pybind11::array_t<double> wrapInNumPyArray(std::span<double>& v,
@@ -55,16 +45,6 @@ namespace mgis::python {
                                              pybind11::handle base) {
     auto view = std::span<double>(v);
     return wrapInNumPyArray(view, nc, base);
-  }  // end of wrapInNumPyArray
-
-  pybind11::array_t<double> wrapInNumPyArray(
-      std::variant<std::span<double>, std::vector<double>>& v,
-      const size_type nc,
-      pybind11::handle base) {
-    if (std::holds_alternative<std::vector<double>>(v)) {
-      return wrapInNumPyArray(std::get<std::vector<double>>(v), nc, base);
-    }
-    return wrapInNumPyArray(std::get<std::span<double>>(v), nc, base);
   }  // end of wrapInNumPyArray
 
   pybind11::array_t<double> wrapInNumPyArray(std::span<double>& v,
@@ -86,17 +66,6 @@ namespace mgis::python {
                                              pybind11::handle base) {
     auto view = std::span<double>(v);
     return wrapInNumPyArray(view, nl, nc, base);
-  }  // end of wrapInNumPyArray
-
-  pybind11::array_t<double> wrapInNumPyArray(
-      std::variant<std::span<double>, std::vector<double>>& v,
-      const size_type nl,
-      const size_type nc,
-      pybind11::handle base) {
-    if (std::holds_alternative<std::vector<double>>(v)) {
-      return wrapInNumPyArray(std::get<std::vector<double>>(v), nl, nc, base);
-    }
-    return wrapInNumPyArray(std::get<std::span<double>>(v), nl, nc, base);
   }  // end of wrapInNumPyArray
 
   std::span<mgis::real> mgis_convert_to_span(
