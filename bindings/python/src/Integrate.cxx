@@ -254,7 +254,10 @@ void declareIntegrate(pybind11::module_& m) {
       .def_readonly("n", &BehaviourIntegrationResult::n,
                     "number of the integration point that failed\n"
                     "or number of the last integration point \n"
-                    "that reported unreliable results")
+                    "that reported unreliable results. If no integration\n"
+                    "point failed or reported unreliable results, this is\n"
+                    "the largest value of the size type (2**64 - 1 on a\n"
+                    "64-bit system)")
       .def_property_readonly("error_message",
                              &BehaviourIntegrationResult_getErrorMessage);
 
