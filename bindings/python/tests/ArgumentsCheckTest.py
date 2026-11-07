@@ -76,6 +76,18 @@ class ArgumentsCheckTest(unittest.TestCase):
             self.assertRaises(TypeError, f, None)
         self.assertRaises(TypeError, m.setThreadSafe, None, True)
 
+    def test_empty_array_in_initializers(self):
+        e = numpy.zeros(0)
+        i = mgis_bv.MaterialDataManagerInitializer()
+        self.assertRaises(RuntimeError, i.bindTangentOperator, e)
+        self.assertRaises(RuntimeError, i.bindSpeedOfSound, e)
+        i = mgis_bv.MaterialStateManagerInitializer()
+        self.assertRaises(RuntimeError, i.bindGradients, e)
+        self.assertRaises(RuntimeError, i.bindThermodynamicForces, e)
+        self.assertRaises(RuntimeError, i.bindInternalStateVariables, e)
+        self.assertRaises(RuntimeError, i.bindStoredEnergies, e)
+        self.assertRaises(RuntimeError, i.bindDissipatedEnergies, e)
+
 
 if __name__ == '__main__':
     unittest.main()

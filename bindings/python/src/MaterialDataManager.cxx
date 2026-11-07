@@ -23,13 +23,13 @@ void declareMaterialDataManager(pybind11::module_&);
 static void MaterialDataManagerInitializer_bindTangentOperator(
     pybind11::object self, pybind11::object K) {
   auto& i = self.cast<mgis::behaviour::MaterialDataManagerInitializer&>();
-  i.K = mgis::python::mgis_convert_to_mutable_span(K, self);
+  i.K = mgis::python::mgis_convert_to_bound_span(K, self);
 }  // end of MaterialDataManagerInitializer_bindTangentOperator
 
 static void MaterialDataManagerInitializer_bindSpeedOfSound(
     pybind11::object self, pybind11::object vs) {
   auto& i = self.cast<mgis::behaviour::MaterialDataManagerInitializer&>();
-  i.speed_of_sound = mgis::python::mgis_convert_to_mutable_span(vs, self);
+  i.speed_of_sound = mgis::python::mgis_convert_to_bound_span(vs, self);
 }  // end of MaterialDataManagerInitializer_bindSpeedOfSound
 
 static void MaterialDataManager_useExternalArrayOfTangentOperatorBlocks(

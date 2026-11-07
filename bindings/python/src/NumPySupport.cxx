@@ -151,4 +151,15 @@ namespace mgis::python {
     return values;
   }  // end of mgis_convert_to_mutable_span
 
+  std::span<mgis::real> mgis_convert_to_bound_span(const pybind11::object& o,
+                                                   pybind11::handle i) {
+    const auto values = mgis_convert_to_mutable_span(o, i);
+    if (values.empty()) {
+      mgis::raise(
+          "convert_to_span: an empty array can't be bound "
+          "(it would be silently ignored)");
+    }
+    return values;
+  }  // end of mgis_convert_to_bound_span
+
 }  // end of namespace mgis::python

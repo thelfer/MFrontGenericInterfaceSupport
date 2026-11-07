@@ -22,32 +22,32 @@
 static void MaterialStateManagerInitializer_bindGradients(
     pybind11::object self, pybind11::object K) {
   auto& i = self.cast<mgis::behaviour::MaterialStateManagerInitializer&>();
-  i.gradients = mgis::python::mgis_convert_to_mutable_span(K, self);
+  i.gradients = mgis::python::mgis_convert_to_bound_span(K, self);
 }  // end of MaterialStateManagerInitializer_bindGradients
 
 static void MaterialStateManagerInitializer_bindThermodynamicForces(
     pybind11::object self, pybind11::object K) {
   auto& i = self.cast<mgis::behaviour::MaterialStateManagerInitializer&>();
-  i.thermodynamic_forces = mgis::python::mgis_convert_to_mutable_span(K, self);
+  i.thermodynamic_forces = mgis::python::mgis_convert_to_bound_span(K, self);
 }  // end of MaterialStateManagerInitializer_bindThermodynamicForces
 
 static void MaterialStateManagerInitializer_bindInternalStateVariables(
     pybind11::object self, pybind11::object K) {
   auto& i = self.cast<mgis::behaviour::MaterialStateManagerInitializer&>();
   i.internal_state_variables =
-      mgis::python::mgis_convert_to_mutable_span(K, self);
+      mgis::python::mgis_convert_to_bound_span(K, self);
 }  // end of MaterialStateManagerInitializer_bindInternalStateVariables
 
 static void MaterialStateManagerInitializer_bindStoredEnergies(
     pybind11::object self, pybind11::object K) {
   auto& i = self.cast<mgis::behaviour::MaterialStateManagerInitializer&>();
-  i.stored_energies = mgis::python::mgis_convert_to_mutable_span(K, self);
+  i.stored_energies = mgis::python::mgis_convert_to_bound_span(K, self);
 }  // end of MaterialStateManagerInitializer_bindStoredEnergies
 
 static void MaterialStateManagerInitializer_bindDissipatedEnergies(
     pybind11::object self, pybind11::object K) {
   auto& i = self.cast<mgis::behaviour::MaterialStateManagerInitializer&>();
-  i.dissipated_energies = mgis::python::mgis_convert_to_mutable_span(K, self);
+  i.dissipated_energies = mgis::python::mgis_convert_to_bound_span(K, self);
 }  // end of MaterialStateManagerInitializer_bindDissipatedEnergies
 
 /*!

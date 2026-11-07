@@ -161,6 +161,16 @@ namespace mgis::python {
    */
   std::span<mgis::real> mgis_convert_to_mutable_span(const pybind11::object&,
                                                      pybind11::handle);
+  /*!
+   * \brief convert an object given to an initializer: same as
+   * `mgis_convert_to_mutable_span`, but an exception is thrown if the object is
+   * empty, as an empty array means that no array is given to the initializer,
+   * so the object would be silently ignored.
+   * \param[in] o: object
+   * \param[in] i: initializer
+   */
+  std::span<mgis::real> mgis_convert_to_bound_span(const pybind11::object&,
+                                                   pybind11::handle);
 
 }  // end of namespace mgis::python
 
