@@ -1,4 +1,5 @@
 import os
+import warnings
 
 if os.name == 'nt' and hasattr(os, 'add_dll_directory'):
     # since Python 3.8, the directories listed in PATH are not searched for
@@ -15,8 +16,7 @@ if os.name == 'nt' and hasattr(os, 'add_dll_directory'):
 
 try:
     import mfront.database
-except:
-    print("loading mfront.database model failed")
-    pass
+except ImportError:
+    warnings.warn("loading mfront.database model failed")
 
 from ._mgis import *
