@@ -438,7 +438,7 @@ class AbstractNonlinearProblem:
                 except KeyError:
                     raise KeyError(
                         "'{}' could not be found as a flux or an internal state variable."
-                    )
+                        .format(f))
             block_shape = self.flattened_block_shapes[i]
             tang_block_vals = K[:, buff:buff + block_shape].ravel()
             t.vector().set_local(tang_block_vals)
