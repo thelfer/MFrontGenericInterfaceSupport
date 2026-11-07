@@ -135,6 +135,24 @@ namespace mgis::python {
    * \param[in] o: object
    */
   std::span<mgis::real> mgis_convert_to_mutable_span(const pybind11::object&);
+  /*!
+   * \brief convert an object in which values are written into an array holding
+   * the buffer exported by this object, if any. Contrary to the object, this
+   * array protects the values from a reallocation.
+   * An exception is thrown if the object is converted into a copy, or if the
+   * object is read-only.
+   * \param[in] o: object
+   */
+  pybind11::array_t<double> mgis_convert_to_mutable_array(
+      const pybind11::object&);
+  /*!
+   * \brief convert an object in which values are written into a span used
+   * after the call: the converted array is kept alive by the given object.
+   * \param[in] o: object
+   * \param[in] u: object using the span
+   */
+  std::span<mgis::real> mgis_convert_to_mutable_span(const pybind11::object&,
+                                                     pybind11::handle);
 
 }  // end of namespace mgis::python
 

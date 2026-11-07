@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import array
 
 try:
     import unittest2 as unittest
@@ -30,6 +31,29 @@ class ArgumentsCheckTest(unittest.TestCase):
         mgis_bv.setExternalStateVariable(d.s1, 'Temperature', 293.15)
         d.dt = 1
         self.assertEqual(mgis_bv.integrate(d, self.__load('Norton')), 1)
+
+    def test_external_array_not_reallocated(self):
+        # the object exporting the buffer can't be resized while it is used
+        b = self.__load('Norton')
+        n = 4
+        extra = [0.] * 1000
+        m = mgis_bv.MaterialDataManager(b, n)
+        T = array.array('d', [293.15] * n)
+        mgis_bv.setExternalStateVariable(
+            m.s1, 'Temperature', T,
+            mgis_bv.MaterialStateManagerStorageMode.ExternalStorage)
+        self.assertRaises(BufferError, T.extend, extra)
+        # the buffer is released once the manager no longer uses it
+        mgis_bv.setExternalStateVariable(m.s1, 'Temperature', 293.15)
+        T.extend(extra)
+        vs = array.array('d', [0.] * n)
+        m.useExternalArrayOfSpeedOfSounds(vs)
+        self.assertRaises(BufferError, vs.extend, extra)
+        i = mgis_bv.MaterialDataManagerInitializer()
+        K = array.array('d', [0.] * (n * 36))
+        i.bindTangentOperator(K)
+        m = mgis_bv.MaterialDataManager(b, n, i)
+        self.assertRaises(BufferError, K.extend, extra)
 
 
 if __name__ == '__main__':

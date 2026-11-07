@@ -112,9 +112,9 @@ namespace mgis::python {
     return {static_cast<double*>(i.ptr), static_cast<mgis_size_type>(i.size)};
   }  // end of mgis_convert_to_span
 
-  std::span<mgis::real> mgis_convert_to_mutable_span(
+  pybind11::array_t<double> mgis_convert_to_mutable_array(
       const pybind11::object& o) {
-    const auto a = pybind11::array_t<double>(o);
+    auto a = pybind11::array_t<double>(o);
     // the values written in a converted copy would be lost
     if ((!a.is(o)) && (!pybind11::module_::import("numpy")
                             .attr("may_share_memory")(a, o)
@@ -126,7 +126,23 @@ namespace mgis::python {
     if (!a.writeable()) {
       mgis::raise("convert_to_span: expected a writable array");
     }
-    return mgis_convert_to_span(a);
+    return a;
+  }  // end of mgis_convert_to_mutable_array
+
+  std::span<mgis::real> mgis_convert_to_mutable_span(
+      const pybind11::object& o) {
+    return mgis_convert_to_span(mgis_convert_to_mutable_array(o));
+  }  // end of mgis_convert_to_mutable_span
+
+  std::span<mgis::real> mgis_convert_to_mutable_span(const pybind11::object& o,
+                                                     pybind11::handle u) {
+    const auto a = mgis_convert_to_mutable_array(o);
+    const auto values = mgis_convert_to_span(a);
+    // the array holds the export of the buffer and shall live as long as u
+    pybind11::cpp_function release(
+        [a](pybind11::handle weakref) { weakref.dec_ref(); });
+    (void)pybind11::weakref(u, release).release();
+    return values;
   }  // end of mgis_convert_to_mutable_span
 
 }  // end of namespace mgis::python
