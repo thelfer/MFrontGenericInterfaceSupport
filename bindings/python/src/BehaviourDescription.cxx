@@ -262,12 +262,12 @@ void declareBehaviourDescription(pybind11::module_ &m) {
       .def_readonly("params", &BehaviourDescription::params,
                     "list of parameters")
       .def_readonly("parameters", &BehaviourDescription::params,
-                    "list of parameters (same as the `params` property")
+                    "list of parameters (same as the `params` property)")
       .def_readonly("iparams", &BehaviourDescription::iparams,
                     "list of integer parameters")
       .def_readonly(
           "integer_parameters", &BehaviourDescription::iparams,
-          "list of integer parameters (same as the `integer_params` property")
+          "list of integer parameters (same as the `iparams` property)")
       .def_readonly("usparams", &BehaviourDescription::usparams,
                     "list of unsigned short parameters")
       .def_readonly(
