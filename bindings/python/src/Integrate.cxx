@@ -191,6 +191,12 @@ MaterialDataManager_executePostProcessing3(
   return mgis::behaviour::executePostProcessing(output, t, m, n);
 }
 
+static pybind11::str BehaviourIntegrationResult_getErrorMessage(
+    const mgis::behaviour::BehaviourIntegrationResult& r) {
+  // a truncated message may end in the middle of a multibyte character
+  return pybind11::bytes(r.error_message).attr("decode")("utf-8", "replace");
+}  // end of BehaviourIntegrationResult_getErrorMessage
+
 void declareIntegrate(pybind11::module_& m) {
   using namespace mgis::behaviour;
 
@@ -249,8 +255,8 @@ void declareIntegrate(pybind11::module_& m) {
                     "number of the integration point that failed\n"
                     "or number of the last integration point \n"
                     "that reported unreliable results")
-      .def_readonly("error_message",
-                    &BehaviourIntegrationResult::error_message);
+      .def_property_readonly("error_message",
+                             &BehaviourIntegrationResult_getErrorMessage);
 
   pybind11::class_<MultiThreadedBehaviourIntegrationResult>(
       m, "MultiThreadedBehaviourIntegrationResult")
