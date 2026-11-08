@@ -18,7 +18,8 @@
 #include "MGIS/Config.hxx"
 #include "MGIS/Behaviour/Behaviour.hxx"
 
-namespace mgis::model {
+namespace mgis {
+namespace model {
 
   /*!
    * \brief a simple alias
@@ -42,6 +43,7 @@ namespace mgis::model {
                          const std::string &,
                          const mgis::behaviour::Hypothesis);
 
-}  // namespace mgis::model
+}  // end of namespace model
+}  // end of namespace mgis
 
 #endif /* LIB_MGIS_MODEL_MODEL_HXX */

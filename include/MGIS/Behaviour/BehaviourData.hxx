@@ -21,7 +21,8 @@
 #include "MGIS/Behaviour/State.hxx"
 #include "MGIS/Behaviour/BehaviourDataView.hxx"
 
-namespace mgis::behaviour {
+namespace mgis {
+namespace behaviour {
 
   // forward declaration
   struct Behaviour;
@@ -135,6 +136,7 @@ namespace mgis::behaviour {
                                   const BehaviourData&,
                                   const mgis::size_type);
 
-}  // end of namespace mgis::behaviour
+}  // end of namespace behaviour
+}  // end of namespace mgis
 
 #endif /* LIB_MGIS_BEHAVIOUR_BEHAVIOURDATA_HXX */

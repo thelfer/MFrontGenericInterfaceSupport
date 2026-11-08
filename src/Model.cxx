@@ -15,7 +15,8 @@
 #include "MGIS/Raise.hxx"
 #include "MGIS/Model/Model.hxx"
 
-namespace mgis::model {
+namespace mgis {
+namespace model {
 
   Model load(const std::string &l,
              const std::string &m,
@@ -37,4 +38,5 @@ namespace mgis::model {
     return model;
   }  // end of load
 
-}  // namespace mgis::model
+}  // end of namespace model
+}  // end of namespace mgis
