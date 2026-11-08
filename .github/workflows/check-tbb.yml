@@ -1,58 +1,75 @@
-name: CI
+# TFEL and TBB are built from source by Spack: unlike master, this branch has no
+# binary cache.
+name: CI with TFEL and TBB support on Linux and MacOs (spack)
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "rliv-3.1" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "rliv-3.1" ]
+
+# without cache, a run is long: a new push cancels the one in progress
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        include:
+          - os: ubuntu-latest
+            jobs_flag: '-j $(nproc)'
+            fortran_support: 'ON'
+
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v4
     - name: Set up Spack
-      uses: spack/setup-spack@v2
+      uses: spack/setup-spack@v3
       with:
-        ref: develop      # Spack version (examples: develop, releases/v0.21)
-        buildcache: true  # Configure oci://ghcr.io/spack/github-actions-buildcache
-        color: true       # Force color output (SPACK_COLOR=always)
-        path: ${{github.workspace}}/spack       # Where to clone Spack
+        spack_ref: v1.2.2      # Spack version
+        packages_ref: develop  # Spack packages (builtin repository) version
+        buildcache: false      # no binary cache on this branch
+        color: true            # Force color output (SPACK_COLOR=always)
+        spack_path: ${{github.workspace}}/spack       # Where to clone Spack
 
     - name: Install TFEL
       shell: spack-sh {0}
       run: |
-        # spack install python py-numpy py-pybind11
-        spack install tbb
-        spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
+        # intel-tbb@2023.2.0 (spack-packages, 2026-10-29) does not build on
+        # macOS: its thread composability manager passes --version-script
+        # to the Apple linker
+        spack install intel-tbb@2023.1.0
+        spack install tfel@rliv-5.1 ~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
+
     - name: cmake
       shell: spack-sh {0}
       run: |
-        # spack load python py-numpy py-pybind11
         # loading TFEL
         spack load tfel
         spack load intel-tbb
-        cmake -DCMAKE_BUILD_TYPE=Release .                         \
-              -Denable-c-bindings=ON                               \
-              -Denable-fortran-bindings=ON                         \
-              -Denable-python-bindings=OFF                         \
-              -Denable-portable-build=ON                           \
-              -Denable-julia-bindings=OFF                          \
-              -DTFEL_DIR=`spack location -i tfel`/share/tfel/cmake \
+        cmake -DCMAKE_BUILD_TYPE=Release .                            \
+              -Denable-c-bindings=ON                                  \
+              -Denable-fortran-bindings=${{ matrix.fortran_support }} \
+              -Denable-python-bindings=OFF                            \
+              -Denable-portable-build=ON                              \
+              -Denable-julia-bindings=OFF                             \
+              -DTFEL_DIR=`spack location -i tfel`/share/tfel/cmake    \
               -Denable-parallel-stl-algorithms=ON
     - name: make
       shell: spack-sh {0}
       run: |
-        # spack load python py-numpy py-pybind11
         spack load tfel
         spack load intel-tbb
-        make
+        make ${{ matrix.jobs_flag }}
     - name: make check
       shell: spack-sh {0}
       run: |
-        # spack load python py-numpy py-pybind11 tfel
         spack load tfel
         spack load intel-tbb
-        make check
+        make check ${{ matrix.jobs_flag }}
