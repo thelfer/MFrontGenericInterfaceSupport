@@ -1,0 +1,42 @@
+name: CI with the Ninja Multi-Config generator, without TFEL and bindings
+
+on:
+  push:
+    branches: [ "rliv-3.0" ]
+  pull_request:
+    branches: [ "rliv-3.0" ]
+
+# without cache, a run is long: a new push cancels the one in progress
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install ninja
+      run: |
+        sudo apt update
+        sudo apt install -y ninja-build
+
+    - name: cmake
+      run: |
+        cmake -G "Ninja Multi-Config" -S . -B build \
+              -Denable-c-bindings=OFF       \
+              -Denable-fortran-bindings=OFF \
+              -Denable-python-bindings=OFF  \
+              -Denable-julia-bindings=OFF   \
+              -Denable-portable-build=ON
+
+    - name: check in Release
+      run: |
+        cmake --build build --config Release --target check
+
+    - name: check in Debug
+      run: |
+        cmake --build build --config Debug --target check
