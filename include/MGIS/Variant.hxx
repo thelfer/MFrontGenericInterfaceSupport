@@ -725,9 +725,9 @@ namespace mgis {
 
 #ifdef MGIS_CPP14_CONSTEXPR
     template <typename... Traits>
-    inline constexpr Trait common_trait(Traits... traits) {
+    inline constexpr Trait common_trait(Traits... ts) {
       Trait result = Trait::TriviallyAvailable;
-      for (Trait t : {traits...}) {
+      for (Trait t : {ts...}) {
         if (static_cast<int>(t) > static_cast<int>(result)) {
           result = t;
         }
