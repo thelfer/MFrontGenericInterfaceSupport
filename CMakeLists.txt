@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
 
 include(cmake/modules/mgis.cmake)
 project("mfront-generic-interface")
