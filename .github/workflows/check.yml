@@ -69,7 +69,9 @@ jobs:
       if: matrix.julia_support == 'ON'
       run: |
         julia -e 'using Pkg; Pkg.add(name="CxxWrap", version="0.17.5")'
-        echo "JlCxx_ROOT=$(julia -e 'using CxxWrap; print(CxxWrap.prefix_path())')" >> $GITHUB_ENV
+        # JlCxx_ROOT, used on master, is ignored with the CMake policies of this
+        # branch (CMP0074)
+        echo "CMAKE_PREFIX_PATH=$(julia -e 'using CxxWrap; print(CxxWrap.prefix_path())')" >> $GITHUB_ENV
 
     - name: cmake
       shell: spack-sh {0}
