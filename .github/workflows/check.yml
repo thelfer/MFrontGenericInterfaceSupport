@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
         build_type: [Release]
         include:
           - os: ubuntu-latest
@@ -26,6 +26,10 @@ jobs:
             fortran_support: 'ON'
             python_support: 'ON'
             julia_support: 'ON'
+          - os: macos-latest
+            jobs_flag: '-j $(sysctl -n hw.ncpu)'
+            fortran_support: 'OFF'
+            python_support: 'OFF'
 
     runs-on: ${{ matrix.os }}
 
