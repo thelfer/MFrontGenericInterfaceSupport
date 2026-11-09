@@ -20,11 +20,14 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
         include:
           - os: ubuntu-latest
             jobs_flag: '-j $(nproc)'
             fortran_support: 'ON'
+          - os: macos-latest
+            jobs_flag: '-j $(sysctl -n hw.ncpu)'
+            fortran_support: 'OFF'
 
     runs-on: ${{ matrix.os }}
 
