@@ -36,6 +36,14 @@ extern "C" {
 #endif /* __cplusplus */
 
 /*!
+ * \brief unsigned integer type of the statistics, updated by atomic
+ * operations on the device (copy of the `mfront_gp_atomic_size_type` type of
+ * `TFEL`). `CUDA` only provides the 64 bits `atomicAdd` and `atomicMin`
+ * functions for `unsigned long long`.
+ */
+typedef unsigned long long mgis_gp_atomic_size_type;
+
+/*!
  * \brief statistics of the evaluation of a material property on a batch of
  * points (copy of the `mfront_gpmp_Statistics` structure of `TFEL`). The
  * device only updates them when an event occurs at a point (the `stlpar`
@@ -49,21 +57,21 @@ typedef struct mgis_mp_BatchStatistics {
    * \brief number of points where the evaluation failed (physical bound
    * violated, bound violated with the strict policy, invalid result)
    */
-  unsigned long long number_of_failures;
+  mgis_gp_atomic_size_type number_of_failures;
   /*!
    * \brief opaque key of the first point where the evaluation failed, or
    * `~0` if no point failed. Only the report function of the material
    * property decodes it.
    */
-  unsigned long long first_failure;
+  mgis_gp_atomic_size_type first_failure;
   //! \brief number of points where a bound is violated with the warning
   //! policy
-  unsigned long long number_of_unreliable_results;
+  mgis_gp_atomic_size_type number_of_unreliable_results;
   /*!
    * \brief opaque key of the first point where the result is unreliable, or
    * `~0` if no result is unreliable
    */
-  unsigned long long first_unreliable_result;
+  mgis_gp_atomic_size_type first_unreliable_result;
 } mgis_mp_BatchStatistics;
 
 /*!
@@ -73,10 +81,11 @@ typedef struct mgis_mp_BatchStatistics {
  */
 static inline void mgis_mp_initializeBatchStatistics(
     mgis_mp_BatchStatistics* const s) {
-  s->number_of_failures = 0;
-  s->first_failure = ~0ull;
-  s->number_of_unreliable_results = 0;
-  s->first_unreliable_result = ~0ull;
+  const mgis_gp_atomic_size_type zero = 0;
+  s->number_of_failures = zero;
+  s->first_failure = ~zero;
+  s->number_of_unreliable_results = zero;
+  s->first_unreliable_result = ~zero;
 } /* end of mgis_mp_initializeBatchStatistics */
 
 /*!
