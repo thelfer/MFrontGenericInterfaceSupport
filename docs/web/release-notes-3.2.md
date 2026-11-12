@@ -931,6 +931,16 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/158>
 
+## Issue 105: [mgis.fenics] tutorial for small strain and finite strain crystal plasticity
+
+A new demo of the `mgis.fenics` module, contributed by Jean-Michel
+Scherer, describes the tension of a polycrystal at small and finite
+strains with a crystal viscoplastic behaviour (see the [documented
+demo](mgis_fenics_polycrystal.html)). Its sources are distributed in
+the `docs/web/demos/mgis_fenics_polycrystal` directory.
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/105>
+
 ## Issue 90: [mgis.fenics] Handle integration failure
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/90>
