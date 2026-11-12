@@ -1,6 +1,8 @@
 /*!
  * \file   MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.ixx
- * \brief
+ * \brief File which contains the implementation of the
+ * `StridedCoalescedMemoryAccessFunctionViewBase` class declared in
+ * `MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.hxx`.
  * \author Thomas Helfer
  * \date   17/01/2026
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -112,6 +114,10 @@ namespace mgis::function {
     return this->space;
   }  // end of getSpace
 
+  // the values of the components are gathered using a pack of indices; the
+  // offset of the value of the `k`-th component at a given integration point
+  // is the sum of the offset of the integration point and of `k` times the
+  // size of the space
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)                    //
       constexpr std::array<real, N>  //

@@ -32,6 +32,8 @@
 static_assert(MGIS_MP_GENERIC_PARALLEL_API_VERSION == MFRONT_GPMP_API_VERSION);
 static_assert(std::is_same_v<mgis_real, mfront_gmp_real>);
 static_assert(sizeof(mgis_size_type) == sizeof(mfront_gmp_size_type));
+static_assert(
+    std::is_same_v<mgis_gp_atomic_size_type, mfront_gp_atomic_size_type>);
 static_assert(std::is_same_v<mgis_gp_AbstractBackendExecutionPolicy,
                              mfront_gp_AbstractBackendExecutionPolicy>);
 static_assert(static_cast<int>(MGIS_MATERIALPROPERTY_NONE_POLICY) ==

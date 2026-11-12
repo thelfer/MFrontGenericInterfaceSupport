@@ -1,6 +1,7 @@
 /*!
  * \file   MGIS/Function/EvaluatorModifierBase.ixx
- * \brief
+ * \brief File which contains the implementation of the `EvaluatorModifierBase`
+ * class declared in `MGIS/Function/EvaluatorModifierBase.hxx`.
  * \author Thomas Helfer
  * \date   07/05/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -42,6 +43,8 @@ namespace mgis::function {
     return internals::disambiguateGetSpace(this->evaluator);
   }  // end of getSpace
 
+  // the call operators downcast the object to the derived class and pass the
+  // values computed by the underlying evaluator to its `apply` member function
   template <typename Child, EvaluatorConcept EvaluatorType>
   constexpr auto EvaluatorModifierBase<Child, EvaluatorType>::operator()(
       const element_index<Space>& e) const

@@ -1,6 +1,8 @@
 /*!
  * \file   MGIS/Function/BinaryOperation.ixx
- * \brief
+ * \brief  Implementation of the `BinaryOperationModifier` and
+ * `BinaryOperationModifier2` classes and of the helpers declared in
+ * `MGIS/Function/BinaryOperation.hxx`.
  * \author Thomas Helfer
  * \date   11/05/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,6 +19,8 @@
 
 namespace mgis::function {
 
+  // the callable object is copied in the object, the two evaluators are
+  // handled by the `BinaryOperationEvaluatorBase` base class
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
@@ -34,6 +38,7 @@ namespace mgis::function {
                                      SecondEvaluatorType>(e1, e2),
         modifier(c) {}  // end of BinaryOperationModifier
 
+  //! \brief calls the stored callable object with the given values
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
@@ -49,6 +54,9 @@ namespace mgis::function {
     return this->modifier(v1, v2);
   }
 
+  // the callable object is not stored in the object: a default
+  // constructed object is used each time the values are computed, which is
+  // allowed since `CallableType` is trivially default constructible
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
@@ -65,6 +73,7 @@ namespace mgis::function {
     return c(v1, v2);
   }  // end of apply
 
+  //! \brief forwards the call to the `getNumberOfComponents` member
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
@@ -75,6 +84,7 @@ namespace mgis::function {
     return e.getNumberOfComponents();
   }  // end of getNumberOfComponents
 
+  //! \brief forwards the call to the `getNumberOfComponents` member
   template <typename CallableType,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
@@ -87,6 +97,7 @@ namespace mgis::function {
 
   namespace internals {
 
+    //! \brief stores copies of the callable object and of the evaluator
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>
     requires(std::is_copy_constructible_v<CallableType>)  //
         MGIS_HOST_DEVICE
@@ -95,6 +106,7 @@ namespace mgis::function {
                                    const SecondEvaluatorType& e)
         : modifier(c), e2(e) {}  // end of BinaryOperatorCurrying
 
+    //! \brief builds a `BinaryOperationModifier` from the given evaluator
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>
     requires(std::is_copy_constructible_v<CallableType>)  //
         template <typename FirstEvaluatorType>
@@ -110,6 +122,7 @@ namespace mgis::function {
           this->modifier, std::forward<FirstEvaluatorType>(e1), this->e2};
     }  // end of operator()
 
+    //! \brief stores a copy of the evaluator of the second argument
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>
     requires(std::is_trivially_default_constructible_v<CallableType>)  //
         MGIS_HOST_DEVICE
@@ -117,6 +130,7 @@ namespace mgis::function {
             BinaryOperatorCurrying2(const SecondEvaluatorType& e)
         : e2(e) {}
 
+    //! \brief builds a `BinaryOperationModifier2` from the given evaluator
     template <typename CallableType, EvaluatorConcept SecondEvaluatorType>
     requires(std::is_trivially_default_constructible_v<CallableType>)  //
         template <typename FirstEvaluatorType>
@@ -133,11 +147,13 @@ namespace mgis::function {
           std::forward<FirstEvaluatorType>(e1), this->e2);
     }  // end of operator()
 
+    //! \brief stores a copy of the callable object
     template <typename CallableType>
     MGIS_HOST_DEVICE constexpr binary_operation_modifier<
         CallableType>::binary_operation_modifier(const CallableType& c)
         : modifier(c) {}  // end of binary_operation_modifier
 
+    //! \brief partially applies the operation to the given evaluator
     template <typename CallableType>
     template <typename SecondEvaluatorType>
     MGIS_HOST_DEVICE constexpr auto
@@ -149,6 +165,7 @@ namespace mgis::function {
           this->modifier, std::forward<SecondEvaluatorType>(e2));
     }
 
+    //! \brief builds a `BinaryOperationModifier` from the two evaluators
     template <typename CallableType>
     template <typename FirstEvaluatorType, typename SecondEvaluatorType>
     MGIS_HOST_DEVICE constexpr auto
@@ -167,6 +184,7 @@ namespace mgis::function {
           std::forward<SecondEvaluatorType>(e2));
     }  // end of operator()
 
+    //! \brief partially applies the operation to the given evaluator
     template <typename CallableType>
     template <typename SecondEvaluatorType>
     MGIS_HOST_DEVICE constexpr auto
@@ -178,6 +196,7 @@ namespace mgis::function {
           std::forward<SecondEvaluatorType>(e2));
     }  // end of operator()
 
+    //! \brief builds a `BinaryOperationModifier2` from the two evaluators
     template <typename CallableType>
     template <typename FirstEvaluatorType, typename SecondEvaluatorType>
     MGIS_HOST_DEVICE constexpr auto
@@ -196,6 +215,8 @@ namespace mgis::function {
           std::forward<SecondEvaluatorType>(e2));
     }  // end of operator()
 
+    //! \brief the argument is only used to deduce the type of the
+    //!        binary operation
     template <typename CallableType>
     MGIS_HOST_DEVICE constexpr auto binary_operation_modifier2(CallableType) {
       return binary_operation_modifier2_impl<CallableType>{};
@@ -203,6 +224,9 @@ namespace mgis::function {
 
   }  // namespace internals
 
+  //! \brief creates a `binary_operation_modifier` from the callable object
+  //!        and applies it to the given evaluator, which is the evaluator of
+  //!        the second argument of the operation
   template <typename CallableType, typename SecondEvaluatorType>
   MGIS_HOST_DEVICE constexpr auto binary_operation(CallableType&& c,
                                                    SecondEvaluatorType&& e2)  //
@@ -213,6 +237,7 @@ namespace mgis::function {
     return modifier(std::forward<SecondEvaluatorType>(e2));
   }
 
+  //! \brief applies the operation to the two given evaluators
   template <typename CallableType,
             typename FirstEvaluatorType,
             typename SecondEvaluatorType>

@@ -1,0 +1,39 @@
+name: CI with the Ninja Multi-Config generator, without TFEL, HDF5 and bindings
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install ninja
+      run: |
+        sudo apt update
+        sudo apt install -y ninja-build
+
+    - name: cmake
+      run: |
+        cmake -G "Ninja Multi-Config" -S . -B build                \
+              -Denable-c-bindings=OFF                              \
+              -Denable-fortran-bindings=OFF                        \
+              -Denable-python-bindings=OFF                         \
+              -Denable-julia-bindings=OFF                          \
+              -Denable-hdf5-support=OFF                            \
+              -Denable-portable-build=ON                           \
+              -Denable-parallel-stl-algorithms=OFF
+
+    - name: check in Release
+      run: |
+        cmake --build build --config Release --target check
+
+    - name: check in Debug
+      run: |
+        cmake --build build --config Debug --target check

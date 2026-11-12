@@ -1,6 +1,7 @@
 /*!
  * \file   MGIS/Function/TFEL/QuantityModifier.ixx
- * \brief
+ * \brief  File which contains the implementation of the `QuantityModifier`
+ * class declared in `MGIS/Function/TFEL/QuantityModifier.hxx`.
  * \author Thomas Helfer
  * \date   16/08/2026
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -19,6 +20,9 @@
 
 namespace mgis::function {
 
+  // the number of components of the underlying evaluator must be exactly one;
+  // otherwise the message "invalid number of components" is registered in the
+  // error handler
   template <EvaluatorConcept EvaluatorType,
             ::tfel::math::unit::UnitConcept UnitType>
   constexpr bool QuantityModifier<EvaluatorType, UnitType>::checkPreconditions(
@@ -44,6 +48,8 @@ namespace mgis::function {
       : PreconditionsChecker<QuantityModifier>(pcheck, e),
         evaluator(e) {}  // end of QuantityModifier
 
+  // the check of the modifier is the check of the underlying evaluator
+  // followed by the check of its number of components
   template <EvaluatorConcept EvaluatorType,
             ::tfel::math::unit::UnitConcept UnitType>
   constexpr bool QuantityModifier<EvaluatorType, UnitType>::check(
@@ -68,6 +74,11 @@ namespace mgis::function {
     return 1;
   }
 
+  // the call operators use the `data` method of the underlying evaluator when
+  // it is available and apply the `getDataPointer` function to the result of
+  // the call otherwise. If the result is a data view, a read-only quantity
+  // referencing the value computed by the evaluator is returned, otherwise the
+  // value is copied into a quantity owning it
   template <EvaluatorConcept EvaluatorType,
             ::tfel::math::unit::UnitConcept UnitType>
   constexpr auto QuantityModifier<EvaluatorType, UnitType>::operator()(

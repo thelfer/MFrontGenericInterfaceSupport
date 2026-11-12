@@ -12,6 +12,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
+#include <span>
+#include <array>
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
@@ -199,6 +201,42 @@ static void check_update(const mgis::behaviour::Behaviour& b) {
         "invalid external state variable value after revert");
 }  // end of check_update
 
+static void check_external_storage_hook(const mgis::behaviour::Behaviour& b) {
+  using namespace mgis;
+  using namespace mgis::behaviour;
+  constexpr auto es = MaterialStateManager::EXTERNAL_STORAGE;
+  constexpr auto ls = MaterialStateManager::LOCAL_STORAGE;
+  constexpr auto update_policy = MaterialStateManager::NOUPDATE;
+  const auto T = std::array<real, 2>{293.15, 293.15};
+  const auto values = std::span<const real>{T};
+  auto ncalls = 0;
+  const auto hook = [&ncalls] { ++ncalls; };
+  auto ctx = Context{};
+  {
+    auto m = MaterialDataManager{b, 2};
+    check(setExternalStateVariable(ctx, m.s0, "Temperature", values, es,
+                                   update_policy, hook) &&
+              setExternalStateVariable(ctx, m.s1, "Temperature", values, es,
+                                       update_policy, hook),
+          "setting immutable values failed");
+    update(m);
+    revert(m);
+    check(ncalls == 0, "immutable values released by update or revert");
+    auto copy = m.s1.external_state_variables.at("Temperature");
+    setExternalStateVariable(m.s1, "Temperature", 293.15);
+    check(ncalls == 0,
+          "immutable values released although a copy refers to them");
+    copy = 293.15;
+    check(ncalls == 1, "immutable values not released when replaced");
+  }
+  check(ncalls == 2, "immutable values not released by the destruction");
+  auto m2 = MaterialDataManager{b, 2};
+  check(setExternalStateVariable(ctx, m2.s1, "Temperature", values, ls,
+                                 update_policy, hook),
+        "setting local values failed");
+  check(ncalls == 3, "hook not called at once with a local storage");
+}  // end of check_external_storage_hook
+
 int main(const int argc, const char* const* argv) {
   using namespace mgis::behaviour;
   constexpr const auto h = Hypothesis::TRIDIMENSIONAL;
@@ -211,6 +249,7 @@ int main(const int argc, const char* const* argv) {
     check_behaviour_data(b);
     check_material_data_manager(b);
     check_update(b);
+    check_external_storage_hook(b);
   } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;

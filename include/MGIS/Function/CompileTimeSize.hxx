@@ -1,6 +1,8 @@
 /*!
  * \file   MGIS/Function/CompileTimeSize.hxx
- * \brief
+ * \brief File which defines the helpers used to determine the number of
+ * components of a type (scalar value, span, array, tensor, etc...) when it is
+ * known at compile time.
  * \author Thomas Helfer
  * \date   10/05/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -22,62 +24,90 @@
 namespace mgis::function::internals {
 
   /*!
-   * \return the number of components (size) of a type
+   * \brief traits giving the number of components of a type
+   *
+   * This traits is specialized for scalar values, spans and arrays and, in the
+   * `MGIS/Function/TFEL` subdirectory, for TFEL's tensorial types. The primary
+   * template applies to the other types, such as `std::vector<real>`, whose
+   * number of components is only known at run time.
+   *
    * \tparam T: type
    */
   template <typename T>
   struct CompileTimeSize {
-    //! \brief default value
+    //! \brief default value: the number of components is only known at run time
     static constexpr size_type value = dynamic_extent;
   };
 
-  //! \brief partial specialization for floating point number
+  //! \brief specialization for a scalar value, which has one component
   template <>
   struct CompileTimeSize<real> {
+    //! \brief number of components
     static constexpr size_type value = 1;
   };
 
-  //! \brief partial specialization for fixed-sized span
+  /*!
+   * \brief specialization for a fixed-sized span
+   * \tparam N: number of values of the span
+   */
   template <std::size_t N>
   struct CompileTimeSize<std::span<real, N>> {
-    static constexpr size_type value = N;
-  };
-
-  //! \brief partial specialization for constant fixed-sized span
-  template <std::size_t N>
-  struct CompileTimeSize<std::span<const real, N>> {
-    static constexpr size_type value = N;
-  };
-
-  //! \brief partial specialization for dynamic-sized span
-  template <>
-  struct CompileTimeSize<std::span<real>> {
-    static constexpr size_type value = dynamic_extent;
-  };
-
-  //! \brief partial specialization for constant dynamic-sized span
-  template <>
-  struct CompileTimeSize<std::span<const real>> {
-    static constexpr size_type value = dynamic_extent;
-  };
-
-  //! \brief partial specialization for fixed-sized array
-  template <std::size_t N>
-  struct CompileTimeSize<std::array<real, N>> {
-    static constexpr size_type value = N;
-  };
-
-  //! \brief partial specialization for constant fixed-sized array
-  template <std::size_t N>
-  struct CompileTimeSize<std::array<const real, N>> {
+    //! \brief number of components
     static constexpr size_type value = N;
   };
 
   /*!
-   * \brief number of components of a type when known at compile-time,
-   * dynamic_extent otherwise
+   * \brief specialization for a constant fixed-sized span
+   * \tparam N: number of values of the span
+   */
+  template <std::size_t N>
+  struct CompileTimeSize<std::span<const real, N>> {
+    //! \brief number of components
+    static constexpr size_type value = N;
+  };
+
+  //! \brief specialization for a dynamic-sized span
+  template <>
+  struct CompileTimeSize<std::span<real>> {
+    //! \brief the number of components is only known at run time
+    static constexpr size_type value = dynamic_extent;
+  };
+
+  //! \brief specialization for a constant dynamic-sized span
+  template <>
+  struct CompileTimeSize<std::span<const real>> {
+    //! \brief the number of components is only known at run time
+    static constexpr size_type value = dynamic_extent;
+  };
+
+  /*!
+   * \brief specialization for a fixed-sized array
+   * \tparam N: number of values of the array
+   */
+  template <std::size_t N>
+  struct CompileTimeSize<std::array<real, N>> {
+    //! \brief number of components
+    static constexpr size_type value = N;
+  };
+
+  /*!
+   * \brief specialization for a constant fixed-sized array
+   * \tparam N: number of values of the array
+   */
+  template <std::size_t N>
+  struct CompileTimeSize<std::array<const real, N>> {
+    //! \brief number of components
+    static constexpr size_type value = N;
+  };
+
+  /*!
+   * \brief traits giving the number of components of a function or an evaluator
+   * when it is known at compile-time, dynamic_extent otherwise
    *
-   * This class is specialized later for evaluators and functions
+   * \tparam FunctionOrEvaluatorType: function or evaluator type
+   * \note this class is specialized for the evaluators in
+   * `MGIS/Function/EvaluatorConcept.hxx` and for the functions in
+   * `MGIS/Function/FunctionConcept.hxx`
    */
   template <typename FunctionOrEvaluatorType>
   struct NumberOfComponents;
@@ -87,8 +117,9 @@ namespace mgis::function::internals {
 namespace mgis::function {
 
   /*!
-   * \return the number of components (size) of a type if known, dynamic_extent
-   * otherwise
+   * \brief number of components (size) of a type if known at compile time,
+   * dynamic_extent otherwise
+   *
    * \tparam T: type
    */
   template <typename T>
@@ -96,8 +127,10 @@ namespace mgis::function {
       internals::CompileTimeSize<T>::value;
 
   /*!
-   * \brief number of components of a type when known at compile-time,
-   * dynamic_extent otherwise
+   * \brief number of components of a function or an evaluator when known at
+   * compile-time, dynamic_extent otherwise
+   *
+   * \tparam FunctionOrEvaluatorType: function or evaluator type
    */
   template <typename FunctionOrEvaluatorType>
   inline constexpr size_type number_of_components =

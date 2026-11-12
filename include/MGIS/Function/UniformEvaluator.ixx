@@ -1,6 +1,7 @@
 /*!
  * \file   MGIS/Function/UniformEvaluator.ixx
- * \brief
+ * \brief Inline implementation of the classes declared in
+ * `MGIS/Function/UniformEvaluator.hxx`, which includes this file at its end.
  * \author Thomas Helfer
  * \date   06/10/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -28,6 +29,8 @@ namespace mgis::function {
   template <SpaceConcept Space, std::size_t N>
   constexpr std::array<real, N> UniformEvaluator<Space, N>::buildValues(
       const std::span<const real>& v) MGIS_NOEXCEPT {
+    // the `std::index_sequence` is expanded so that the first `N` values of
+    // the span are copied in the array stored by the evaluator
     return [&v]<std::size_t... Is>(std::index_sequence<Is...>) {
       return std::array<real, N>{{v[Is]...}};
     }

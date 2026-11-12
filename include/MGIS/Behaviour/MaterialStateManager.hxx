@@ -16,11 +16,16 @@
 #define LIB_MGIS_BEHAVIOUR_MATERIALSTATEMANAGER_HXX
 
 #include <map>
+#include <utility>
+#include <concepts>
+#include <type_traits>
 #include <span>
+#include <memory>
 #include <string>
 #include <vector>
 #include <variant>
 #include <optional>
+#include <functional>
 #include <string_view>
 #ifdef MGIS_HAVE_HDF5
 #include "MGIS/Utilities/HDF5Forward.hxx"
@@ -123,6 +128,16 @@ namespace mgis::behaviour {
        * the constant (i.e. is of type `std::span<const real>`)
        */
       bool shall_be_updated = true;
+      /*!
+       * \brief object calling the clean-up hook of the externally allocated
+       * memory referenced by `value`, if any (see the `set` functions taking a
+       * hook).
+       *
+       * This object is shared by the copies of the field holder: the hook is
+       * called once, when the last copy is destroyed or no longer refers to
+       * this memory. Code replacing `value` by other values shall reset it.
+       */
+      std::shared_ptr<void> external_storage_hook = {};
     };  // end of struct MutableFieldHolder
         /*!
          *
@@ -134,11 +149,35 @@ namespace mgis::behaviour {
       using std::variant<std::monostate,
                          std::span<const mgis::real>,
                          MutableFieldHolder>::variant;
-      //
-      using std::variant<std::monostate,
-                         std::span<const mgis::real>,
-                         MutableFieldHolder>::operator=;
+      /*!
+       * \brief assign new values and release the clean-up hook
+       * \param[in] v: values
+       */
+      template <typename ValueType>
+      FieldHolder& operator=(ValueType&& v)
+        requires((!std::same_as<std::remove_cvref_t<ValueType>, FieldHolder>) &&
+                 (std::is_assignable_v<std::variant<std::monostate,
+                                                    std::span<const mgis::real>,
+                                                    MutableFieldHolder>&,
+                                       ValueType>))
+      {
+        std::variant<std::monostate, std::span<const mgis::real>,
+                     MutableFieldHolder>::operator=(std::forward<ValueType>(v));
+        this->external_storage_hook.reset();
+        return *this;
+      }
       FieldHolder& operator=(const mgis::real) MGIS_NOEXCEPT;
+      /*!
+       * \brief object calling the clean-up hook of the immutable externally
+       * allocated memory referenced by the `std::span<const mgis::real>`
+       * alternative, if any (see the `set` functions taking a hook).
+       *
+       * This object is shared by the copies of the field holder: the hook is
+       * called once, when the last copy is destroyed or no longer refers to
+       * this memory. Code replacing the values without using the assignment
+       * operators of this class (`emplace` for instance) shall reset it.
+       */
+      std::shared_ptr<void> external_storage_hook = {};
     };
     /*!
      * \brief enum used to express if a variable (material property, external
@@ -261,6 +300,9 @@ namespace mgis::behaviour {
    * \param[in] v: values
    * \param[in] s: storage mode
    * \param[in] p: update policy
+   * \param[in] h: clean-up hook, called once when the given values are no
+   * longer referenced (at once in case of local storage or of failure). The
+   * hook must not throw.
    */
   MGIS_EXPORT void setMaterialProperty(
       MaterialStateManager&,
@@ -268,7 +310,8 @@ namespace mgis::behaviour {
       std::span<mgis::real>,
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE,
-      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE);
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE,
+      std::function<void()> = {});
   /*!
    * \brief set the given material property
    *
@@ -294,6 +337,9 @@ namespace mgis::behaviour {
    * \param[in] v: values
    * \param[in] s: storage mode
    * \param[in] p: update policy
+   * \param[in] h: clean-up hook, called once when the given values are no
+   * longer referenced (at once in case of local storage or of failure). The
+   * hook must not throw.
    */
   MGIS_EXPORT MGIS_NODISCARD bool setMaterialProperty(
       Context&,
@@ -302,8 +348,8 @@ namespace mgis::behaviour {
       std::span<mgis::real>,
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE,
-      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE)
-      MGIS_NOEXCEPT;
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE,
+      std::function<void()> = {}) MGIS_NOEXCEPT;
   /*!
    * \brief set the given material property from an immutable memory region
    *
@@ -317,6 +363,9 @@ namespace mgis::behaviour {
    * \note the `UpdatePolicy` can be set to `UPDATE` in case of local storage,
    * i.e. the `UpdatePolicy` must be set to `NOUPDATE` in case of external
    * storage
+   * \param[in] h: clean-up hook, called once when the given values are no
+   * longer referenced (at once in case of local storage or of failure). The
+   * hook must not throw.
    */
   MGIS_EXPORT MGIS_NODISCARD bool setMaterialProperty(
       Context&,
@@ -325,8 +374,8 @@ namespace mgis::behaviour {
       std::span<const mgis::real>,
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE,
-      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE)
-      MGIS_NOEXCEPT;
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE,
+      std::function<void()> = {}) MGIS_NOEXCEPT;
   /*!
    * \brief remove the field holder associated with the given material property,
    * if defined
@@ -377,13 +426,17 @@ namespace mgis::behaviour {
    * \param[in] v: values
    * \param[in] s: storage mode
    * \param[in] p: update policy
+   * \param[in] h: clean-up hook, called once when the given values are no
+   * longer referenced (at once in case of local storage or of failure). The
+   * hook must not throw.
    */
   MGIS_EXPORT void setMassDensity(
       MaterialStateManager&,
       std::span<mgis::real>,
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE,
-      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE);
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE,
+      std::function<void()> = {});
   /*!
    * \return true if the given external state variable is defined.
    * \param[out] m: material state manager
@@ -422,6 +475,9 @@ namespace mgis::behaviour {
    * \param[in] v: values
    * \param[in] s: storage mode
    * \param[in] p: update policy
+   * \param[in] h: clean-up hook, called once when the given values are no
+   * longer referenced (at once in case of local storage or of failure). The
+   * hook must not throw.
    */
   MGIS_EXPORT void setExternalStateVariable(
       MaterialStateManager&,
@@ -429,7 +485,8 @@ namespace mgis::behaviour {
       std::span<mgis::real>,
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE,
-      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE);
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE,
+      std::function<void()> = {});
   /*!
    * \brief set the given external state variable
    *
@@ -455,6 +512,9 @@ namespace mgis::behaviour {
    * \param[in] v: values
    * \param[in] s: storage mode
    * \param[in] p: update policy
+   * \param[in] h: clean-up hook, called once when the given values are no
+   * longer referenced (at once in case of local storage or of failure). The
+   * hook must not throw.
    */
   MGIS_EXPORT MGIS_NODISCARD bool setExternalStateVariable(
       Context&,
@@ -463,8 +523,8 @@ namespace mgis::behaviour {
       std::span<mgis::real>,
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE,
-      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE)
-      MGIS_NOEXCEPT;
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE,
+      std::function<void()> = {}) MGIS_NOEXCEPT;
   /*!
    * \brief set the given external state variable from a non-modifiable memory
    * region
@@ -479,6 +539,9 @@ namespace mgis::behaviour {
    * \note the `UpdatePolicy` can be set to `UPDATE` in case of local storage,
    * i.e. the `UpdatePolicy` must be set to `NOUPDATE` in case of external
    * storage
+   * \param[in] h: clean-up hook, called once when the given values are no
+   * longer referenced (at once in case of local storage or of failure). The
+   * hook must not throw.
    */
   MGIS_EXPORT MGIS_NODISCARD bool setExternalStateVariable(
       Context&,
@@ -487,8 +550,8 @@ namespace mgis::behaviour {
       std::span<const mgis::real>,
       const MaterialStateManager::StorageMode =
           MaterialStateManager::LOCAL_STORAGE,
-      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE)
-      MGIS_NOEXCEPT;
+      const MaterialStateManager::UpdatePolicy = MaterialStateManager::UPDATE,
+      std::function<void()> = {}) MGIS_NOEXCEPT;
   /*!
    * \brief remove the field holder associated with the given external state
    * variable, if defined

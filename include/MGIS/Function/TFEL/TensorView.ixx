@@ -1,7 +1,8 @@
 
 /*!
  * \file   MGIS/Function/TFEL/TensorView.ixx
- * \brief
+ * \brief  File which contains the implementation of the `TensorView` class
+ * declared in `MGIS/Function/TFEL/TensorView.hxx`.
  * \author Thomas Helfer
  * \date   10/05/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -20,6 +21,9 @@
 
 namespace mgis::function {
 
+  // the number of components of the underlying function must be equal to the
+  // number of components of the tensorial type; otherwise the message "invalid
+  // number of components" is registered in the error handler
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr bool TensorView<FunctionType, TensorType>::checkPreconditions(
       AbstractErrorHandler& eh, const FunctionType& values) {
@@ -66,6 +70,10 @@ namespace mgis::function {
     return compile_time_size<TensorType>;
   }
 
+  // the call operators use the `data` method of the underlying view when it is
+  // available and apply the `getDataPointer` function to the result of the
+  // call otherwise; a read-only tensor sharing the values of the function is
+  // returned
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr auto TensorView<FunctionType, TensorType>::operator()(
       const element_index<Space>& i) const
@@ -142,6 +150,8 @@ namespace mgis::function {
     }
   }
 
+  // the mutable call operators proceed in the same way, but map the values of
+  // the function on a mutable tensor, which may be modified
   template <FunctionConcept FunctionType, TensorConcept TensorType>
   constexpr auto TensorView<FunctionType, TensorType>::operator()(
       const element_index<Space>& i)  //

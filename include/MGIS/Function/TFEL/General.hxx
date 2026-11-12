@@ -1,7 +1,9 @@
 /*!
  * \file   MGIS/Function/TFEL/General.hxx
- * \brief  This file contains common definitions to integrate TFEL's
- * types properly
+ * \brief  File which gathers the common definitions used to integrate TFEL's
+ *         types with the functions of the `MGIS/Function` framework. It
+ *         currently includes the specialisations of the `IsDataView` traits
+ *         for TFEL's types
  * \author Thomas Helfer
  * \date   02/10/2026
  */

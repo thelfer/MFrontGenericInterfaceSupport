@@ -1,6 +1,7 @@
 /*!
  * \file   MGIS/Function/TFEL/TensorModifier.ixx
- * \brief
+ * \brief  File which contains the implementation of the `TensorModifier` class
+ * declared in `MGIS/Function/TFEL/TensorModifier.hxx`.
  * \author Thomas Helfer
  * \date   13/05/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -26,7 +27,9 @@ namespace mgis::function {
     return compile_time_size<TensorType>;
   }
 
-  //! \brief perform consistency checks
+  // the check of the modifier is the check of the underlying evaluator
+  // followed by the check of the compatibility of its number of components
+  // with the number of components of the tensorial type
   template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
   requires(areTensorModifierRequirementsSatisfied<TensorType,
                                                   EvaluatorType>)  //
@@ -46,6 +49,10 @@ namespace mgis::function {
     return true;
   }
 
+  // the values returned by the underlying evaluator are mapped to a read-only
+  // tensor if they are stored in memory owned by another object (that is if
+  // they match the `DataViewConcept` concept), a tensor owning a copy of these
+  // values is returned otherwise
   template <TensorConcept TensorType, EvaluatorConcept EvaluatorType>
   requires(areTensorModifierRequirementsSatisfied<TensorType,
                                                   EvaluatorType>)  //
