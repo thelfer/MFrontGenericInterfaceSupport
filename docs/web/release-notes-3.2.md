@@ -24,6 +24,12 @@ This version is meant to be used with `TFEL` Version 5.2.
 
 - `CMake` 3.20 or later is required: the configuration fails with
   `CMake` 3.10 to 3.19, which Version 3.1 accepted.
+- The `enable-sanitize-options` option now takes the list of the
+  sanitizers to enable, for instance `address;undefined`. Passing `ON`
+  to this option is now an error, as most sanitizers cannot be
+  combined. A value `OFF`, given explicitly or kept in the cache of an
+  existing build directory, is still accepted and means that no
+  sanitizer is enabled.
 - The installed libraries and `python` modules now have an install
   `RPATH`: the library directory of the installation, unless it is a
   system directory, and the directories of the libraries they are
@@ -189,6 +195,14 @@ The following options control the support of the `HDF5` library:
   `enable-hdf5-automatic-support` for details.
 - `enable-hdf5-automatic-support`: if set, `MGIS` tries by default to
   support `HDF5` even if enable-hdf5-support` is not set.
+
+### Sanitizers
+
+The `enable-sanitize-options` option takes the list of the sanitizers
+to enable, as in `TFEL`. Each sanitizer can also be enabled by its
+dedicated option `enable-<name>-sanitizer`. See the [installation
+documentation](install.html#sanitizers-and-hardening-options) for
+details.
 
 ## `Doxygen` documentation
 
@@ -546,6 +560,10 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 ## Issue 413: Second review of 3.2: defects of the state managers, HDF5, MGIS/Function, Python bindings and build system
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/413>
+
+## Issue 412: Build system: enable-sanitize-options does not enable AddressSanitizer
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/412>
 
 ## Issue 410: C and Fortran bindings: error message of the behaviour lost by the initialize functions, post-processings and integrations, and tests of #398 on uniform values
 

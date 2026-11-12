@@ -44,8 +44,6 @@ else(enable-fast-math)
   mgis_enable_cxx_compiler_flag(OPTIMISATION_FLAGS2 "ffast-math")
 endif(enable-fast-math)
 
-option(enable-sanitize-options "enable various gcc sanitize options (undefined, address,...)" OFF)
-
 option(enable-glibcxx-debug "use the debug version of the C++ standard as implemented by the glib C++ library" OFF)
 if(enable-glibcxx-debug)
 SET(CMAKE_CXX_FLAGS_DEBUG "-g -D_GLIBCXX_DEBUG" CACHE STRING
@@ -90,26 +88,51 @@ SET(CMAKE_C_FLAGS_PROFILING "-pg" CACHE STRING
 MARK_AS_ADVANCED(CMAKE_CXX_FLAGS_PROFILING
   CMAKE_C_FLAGS_PROFILING)
 
-if(enable-sanitize-options)
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fcheck-pointer-bounds")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=bounds-strict")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=undefined")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=float-divide-by-zero")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=float-cast-overflow")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=bounds")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=alignment")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=object-size")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=vpt")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=address")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=null")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=return")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=signed-integer-overflow")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=bool")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=enum")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fstack-check")
-  #  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=leak")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fno-omit-frame-pointer")
-endif(enable-sanitize-options)
+# sanitizers, handled by cmake/modules/sanitizers.cmake
+# note: the sanitizers available in the generic gcc documentation can be
+# used: the sanitizers below are only the sanitizers supported by the
+# versions of gcc tested by the CI.
+# - pointer-compare and pointer-subtract require the address sanitizer
+#   and the link time optimization, which are added automatically
+# - hwaddress (HWASan) requires a target with memory tagging support
+include(cmake/modules/sanitizers.cmake)
+mgis_declare_sanitizer(address)
+mgis_declare_sanitizer(thread)
+mgis_declare_sanitizer(leak)
+mgis_declare_sanitizer(undefined)
+# sanitizers corresponding to a subset of the undefined behaviour sanitizer
+# (undefined), which can be enabled individually
+mgis_declare_sanitizer(alignment)
+mgis_declare_sanitizer(bool)
+mgis_declare_sanitizer(bounds)
+mgis_declare_sanitizer(bounds-strict)
+mgis_declare_sanitizer(builtin)
+mgis_declare_sanitizer(enum)
+mgis_declare_sanitizer(float-cast-overflow)
+mgis_declare_sanitizer(float-divide-by-zero)
+mgis_declare_sanitizer(null)
+mgis_declare_sanitizer(object-size)
+mgis_declare_sanitizer(return)
+mgis_declare_sanitizer(shift)
+mgis_declare_sanitizer(shift-base)
+mgis_declare_sanitizer(shift-exponent)
+mgis_declare_sanitizer(signed-integer-overflow)
+mgis_declare_sanitizer(vptr)
+# sanitizers requiring the address sanitizer and the link time optimization
+mgis_declare_sanitizer(pointer-compare fsanitize=pointer-compare fsanitize=address flto)
+mgis_declare_sanitizer(pointer-subtract fsanitize=pointer-subtract fsanitize=address flto)
+# sanitizers requiring a target with memory tagging support
+mgis_declare_sanitizer(hwaddress)
+# sanitizers which are not supported by the current version of gcc: the
+# dedicated options are still defined (and ignored) so that the same
+# options can be used whatever the version of gcc is
+mgis_declare_unavailable_sanitizer(integer)
+mgis_declare_unavailable_sanitizer(vpt)
+# hardening flags, which can be combined with the sanitizers above
+mgis_declare_sanitizer(fstack-check fstack-check)
+mgis_declare_sanitizer(fstack-protector-all fstack-protector-all)
+mgis_declare_sanitizer(fno-omit-frame-pointer fno-omit-frame-pointer)
+mgis_setup_sanitize_options()
 
 # basic C support
 set(COMPILER_C_WARNINGS "-Wall -W -pedantic")

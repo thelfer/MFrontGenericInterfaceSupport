@@ -97,14 +97,53 @@ if(enable-parallel-stl-algorithms)
   endif(NOT enable-libcxx)
 endif(enable-parallel-stl-algorithms)
 
-option(enable-sanitize-options "enable various clang sanitize options (undefined, address,...)" OFF)
-
-if(enable-sanitize-options)
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=address")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=thread")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=memory")
-  # mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=undefined")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=cfi")
-  mgis_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=safe-stack")
-endif(enable-sanitize-options)
+# sanitizers, handled by cmake/modules/sanitizers.cmake
+# note: other sanitizers are made available by the clang documentation: the
+# sanitizers declared below are the sanitizers supported by the versions of
+# clang tested by the continuous integration.
+# - cfi and shadow-call-stack require the link time optimization to be
+#   fully effective
+# - memory and safe-stack require all the linked code to be instrumented
+include(cmake/modules/sanitizers.cmake)
+mgis_declare_sanitizer(address)
+mgis_declare_sanitizer(thread)
+mgis_declare_sanitizer(leak)
+mgis_declare_sanitizer(memory fsanitize=memory fsanitize-memory-track-origins=2)
+mgis_declare_sanitizer(cfi fsanitize=cfi flto)
+mgis_declare_sanitizer(cfi-icall fsanitize=cfi-icall flto)
+mgis_declare_sanitizer(safe-stack)
+mgis_declare_sanitizer(shadow-call-stack)
+mgis_declare_sanitizer(dataflow)
+mgis_declare_sanitizer(hwaddress)
+mgis_declare_sanitizer(undefined)
+mgis_declare_sanitizer(float-divide-by-zero)
+mgis_declare_sanitizer(float-cast-overflow)
+mgis_declare_sanitizer(signed-integer-overflow)
+mgis_declare_sanitizer(unsigned-integer-overflow)
+mgis_declare_sanitizer(integer)
+mgis_declare_sanitizer(bounds)
+mgis_declare_sanitizer(alignment)
+mgis_declare_sanitizer(object-size)
+mgis_declare_sanitizer(null)
+mgis_declare_sanitizer(return)
+mgis_declare_sanitizer(bool)
+mgis_declare_sanitizer(enum)
+mgis_declare_sanitizer(shift)
+mgis_declare_sanitizer(shift-base)
+mgis_declare_sanitizer(shift-exponent)
+mgis_declare_sanitizer(vptr)
+# sanitizers requiring the address sanitizer and the link time optimization
+mgis_declare_sanitizer(pointer-compare fsanitize=pointer-compare fsanitize=address flto)
+mgis_declare_sanitizer(pointer-subtract fsanitize=pointer-subtract fsanitize=address flto)
+# sanitizers which are not supported by the current version of clang: the
+# dedicated options are still defined (and ignored) so that the same
+# options can be used whatever the version of clang is
+mgis_declare_unavailable_sanitizer(bounds-strict)
+mgis_declare_unavailable_sanitizer(vpt)
+# hardening flags, which can be combined with the sanitizers above
+mgis_declare_sanitizer(address-use-after-scope fsanitize-address-use-after-scope)
+mgis_declare_sanitizer(fstack-check fstack-check)
+mgis_declare_sanitizer(fstack-protector-all fstack-protector-all)
+mgis_declare_sanitizer(fno-omit-frame-pointer fno-omit-frame-pointer)
+mgis_setup_sanitize_options()
 
