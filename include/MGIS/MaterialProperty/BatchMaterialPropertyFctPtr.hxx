@@ -116,7 +116,10 @@ typedef struct mgis_mp_BatchField {
  * array of the arguments is read on the host.
  */
 typedef struct mgis_mp_BatchData {
-  //! \brief number of points
+  /*!
+   * \brief number of points. An empty batch is accepted. A batch holds at
+   * most \f$2^{48}-1\f$ points.
+   */
   mgis_size_type number_of_points;
   //! \brief output values
   mgis_mp_BatchField output;
@@ -140,7 +143,8 @@ typedef struct mgis_mp_BatchData {
   mgis_mp_BatchStatistics* statistics;
   /*!
    * \brief execution policy of the backend of the library, or null for the
-   * default policy of the backend (see `MGIS/BackendExecutionPolicy.h`)
+   * default policy of the backend (see `MGIS/BackendExecutionPolicy.h`). The
+   * `sycl` backend has no default policy.
    */
   const mgis_gp_AbstractBackendExecutionPolicy* execution_policy;
 } mgis_mp_BatchData;
@@ -154,7 +158,8 @@ typedef struct mgis_mp_BatchData {
  * - `1`: a bound is violated with the warning policy at some points;
  * - `-1`: a physical bound, or a bound with the strict policy, is violated
  *   at some points (the output is `NaN` at those points);
- * - `-4`: the result is not finite at some points;
+ * - `-4`: the result is not finite at some points (the output is the
+ *   computed value);
  * - `-5`: invalid arguments, nothing was computed;
  * - `-6`: invalid parameters, nothing was computed;
  * - `-7`: runtime error of the backend.
