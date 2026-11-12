@@ -170,7 +170,8 @@ static void test2(const std::string& library) {
   };
   check_refused("UnsupportedVersion", "unmatched version");
   check_refused("InvalidMemorySpace", "invalid memory space 'nowhere'");
-  check_refused("NoVersion", "is not supported");
+  check_refused("NoVersion",
+                "no symbol 'NoVersion_generic_parallel_api_version'");
 }
 
 int main(const int argc, const char* const* argv) {
