@@ -62,6 +62,7 @@ static pybind11::object MaterialDataManager_getSpeedOfSound(
 }  // end of MaterialDataManager_getSpeedOfSound
 
 void declareMaterialDataManager(pybind11::module_& m) {
+  using namespace pybind11::literals;
   using mgis::size_type;
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::MaterialDataManager;
@@ -82,10 +83,11 @@ void declareMaterialDataManager(pybind11::module_& m) {
                     "(the arrays bound through it must be kept alive by the "
                     "caller)")
       .def("bindTangentOperator",
-           &MaterialDataManagerInitializer_bindTangentOperator,
+           &MaterialDataManagerInitializer_bindTangentOperator, "K"_a,
            "use the given array to store the tangent operator blocks",
            pybind11::keep_alive<1, 2>())
       .def("bindSpeedOfSound", &MaterialDataManagerInitializer_bindSpeedOfSound,
+           "speed_of_sound"_a,
            "use the given array to store the speed of sounds",
            pybind11::keep_alive<1, 2>());
   // exporting the MaterialDataManager class
@@ -96,13 +98,14 @@ void declareMaterialDataManager(pybind11::module_& m) {
                           const MaterialDataManagerInitializer&>(),
            pybind11::keep_alive<1, 2>(), pybind11::keep_alive<1, 4>())
       .def("setThreadSafe", &MaterialDataManager::setThreadSafe,
+           "thread_safe"_a,
            "specify if various operations performed by the MaterialDataManager "
            "(memory allocations) shall be protected by a mutex")
       .def("allocateArrayOfTangentOperatorBlocks",
            &MaterialDataManager::allocateArrayOfTangentOperatorBlocks,
            "allocate the tangent operator blocks")
       .def("useExternalArrayOfTangentOperatorBlocks",
-           &MaterialDataManager_useExternalArrayOfTangentOperatorBlocks,
+           &MaterialDataManager_useExternalArrayOfTangentOperatorBlocks, "K"_a,
            "use and externally defined array to store the tangent operator "
            "blocks",
            pybind11::keep_alive<1, 2>())
@@ -114,6 +117,7 @@ void declareMaterialDataManager(pybind11::module_& m) {
            "allocate the array of speed of sounds")
       .def("useExternalArrayOfSpeedOfSounds",
            &MaterialDataManager_useExternalArrayOfSpeedOfSounds,
+           "speed_of_sound"_a,
            "use and externally defined array to store the spped of sounds",
            pybind11::keep_alive<1, 2>())
       .def("releaseArrayOfSpeedOfSounds",
@@ -132,7 +136,7 @@ void declareMaterialDataManager(pybind11::module_& m) {
       .def("update", ptr_update)
       .def("revert", ptr_revert);
   // free functions
-  m.def("update", ptr_update);
-  m.def("revert", ptr_revert);
+  m.def("update", ptr_update, "manager"_a);
+  m.def("revert", ptr_revert, "manager"_a);
 
 }  // end of declareMaterialDataManager

@@ -109,6 +109,7 @@ BehaviourDescription_getTangentOperatorBlocks(
 }  // end of BehaviourDescription_getTangentOperatorBlocks
 
 void declareBehaviourDescription(pybind11::module_ &m) {
+  using namespace pybind11::literals;
   using mgis::behaviour::BehaviourDescription;
   //
   double (*getParameterDefaultValue1)(const BehaviourDescription &,
@@ -275,38 +276,48 @@ void declareBehaviourDescription(pybind11::module_ &m) {
           "list of unsigned short parameters (same as the `usparams` property)")
       .def_property_readonly("tangent_operator_blocks",
                              BehaviourDescription_getTangentOperatorBlocks)
-      .def("getParameterDefaultValue", getParameterDefaultValue1)
-      .def("getIntegerParameterDefaultValue", getParameterDefaultValue2)
-      .def("getUnsignedShortParameterDefaultValue", getParameterDefaultValue3)
-      .def("hasBounds", hasBounds)
-      .def("hasLowerBound", hasLowerBound)
-      .def("hasUpperBound", hasUpperBound)
-      .def("getLowerBound", getLowerBound)
-      .def("getUpperBound", getUpperBound)
-      .def("hasPhysicalBounds", hasPhysicalBounds)
-      .def("hasLowerPhysicalBound", hasLowerPhysicalBound)
-      .def("hasUpperPhysicalBound", hasUpperPhysicalBound)
-      .def("getLowerPhysicalBound", getLowerPhysicalBound)
-      .def("getUpperPhysicalBound", getUpperPhysicalBound);
+      .def("getParameterDefaultValue", getParameterDefaultValue1, "name"_a)
+      .def("getIntegerParameterDefaultValue", getParameterDefaultValue2,
+           "name"_a)
+      .def("getUnsignedShortParameterDefaultValue", getParameterDefaultValue3,
+           "name"_a)
+      .def("hasBounds", hasBounds, "name"_a)
+      .def("hasLowerBound", hasLowerBound, "name"_a)
+      .def("hasUpperBound", hasUpperBound, "name"_a)
+      .def("getLowerBound", getLowerBound, "name"_a)
+      .def("getUpperBound", getUpperBound, "name"_a)
+      .def("hasPhysicalBounds", hasPhysicalBounds, "name"_a)
+      .def("hasLowerPhysicalBound", hasLowerPhysicalBound, "name"_a)
+      .def("hasUpperPhysicalBound", hasUpperPhysicalBound, "name"_a)
+      .def("getLowerPhysicalBound", getLowerPhysicalBound, "name"_a)
+      .def("getUpperPhysicalBound", getUpperPhysicalBound, "name"_a);
 
   m.def("isStandardFiniteStrainBehaviour",
-        mgis::behaviour::isStandardFiniteStrainBehaviour,
+        mgis::behaviour::isStandardFiniteStrainBehaviour, "library"_a,
+        "behaviour"_a,
         "return if the given behaviour is a standard finite strain behaviour, "
         "i.e. is a finite strain behaviour using the standard finite strain "
         "kinematic (called F-Cauchy although the stress measure can be chosen "
         "when loading the behaviour)");
-  m.def("getParameterDefaultValue", getParameterDefaultValue1);
-  m.def("getIntegerParameterDefaultValue", getParameterDefaultValue2);
-  m.def("getUnsignedShortParameterDefaultValue", getParameterDefaultValue3);
-  m.def("hasBounds", hasBounds);
-  m.def("hasLowerBound", hasLowerBound);
-  m.def("hasUpperBound", hasUpperBound);
-  m.def("getLowerBound", getLowerBound);
-  m.def("getUpperBound", getUpperBound);
-  m.def("hasPhysicalBounds", hasPhysicalBounds);
-  m.def("hasLowerPhysicalBound", hasLowerPhysicalBound);
-  m.def("hasUpperPhysicalBound", hasUpperPhysicalBound);
-  m.def("getLowerPhysicalBound", getLowerPhysicalBound);
-  m.def("getUpperPhysicalBound", getUpperPhysicalBound);
+  m.def("getParameterDefaultValue", getParameterDefaultValue1, "behaviour"_a,
+        "name"_a);
+  m.def("getIntegerParameterDefaultValue", getParameterDefaultValue2,
+        "behaviour"_a, "name"_a);
+  m.def("getUnsignedShortParameterDefaultValue", getParameterDefaultValue3,
+        "behaviour"_a, "name"_a);
+  m.def("hasBounds", hasBounds, "behaviour"_a, "name"_a);
+  m.def("hasLowerBound", hasLowerBound, "behaviour"_a, "name"_a);
+  m.def("hasUpperBound", hasUpperBound, "behaviour"_a, "name"_a);
+  m.def("getLowerBound", getLowerBound, "behaviour"_a, "name"_a);
+  m.def("getUpperBound", getUpperBound, "behaviour"_a, "name"_a);
+  m.def("hasPhysicalBounds", hasPhysicalBounds, "behaviour"_a, "name"_a);
+  m.def("hasLowerPhysicalBound", hasLowerPhysicalBound, "behaviour"_a,
+        "name"_a);
+  m.def("hasUpperPhysicalBound", hasUpperPhysicalBound, "behaviour"_a,
+        "name"_a);
+  m.def("getLowerPhysicalBound", getLowerPhysicalBound, "behaviour"_a,
+        "name"_a);
+  m.def("getUpperPhysicalBound", getUpperPhysicalBound, "behaviour"_a,
+        "name"_a);
 
 }  // end of declareBehaviour

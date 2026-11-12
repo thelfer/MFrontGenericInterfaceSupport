@@ -33,10 +33,12 @@ PYBIND11_MODULE(behaviour, m) {
   declareBehaviourDescription(m);
   declareBehaviour(m);
   declareState(m);
-  declareBehaviourData(m);
+  // a class shall be declared before the functions and the classes using it,
+  // so that it appears by its python name in their signatures
   declareBehaviourDataView(m);
-  declareMaterialDataManager(m);
+  declareBehaviourData(m);
   declareMaterialStateManager(m);
+  declareMaterialDataManager(m);
   declareIntegrate(m);
   declareFiniteStrainSupport(m);
 }  // end of module behaviour

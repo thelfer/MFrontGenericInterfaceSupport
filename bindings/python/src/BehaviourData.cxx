@@ -39,6 +39,7 @@ static std::string BehaviourData_getErrorMessage(
 }  // end of BehaviourData_getErrorMessage
 
 void declareBehaviourData(pybind11::module_& m) {
+  using namespace pybind11::literals;
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::BehaviourData;
   using mgis::behaviour::BehaviourDataView;
@@ -63,7 +64,7 @@ void declareBehaviourData(pybind11::module_& m) {
   // free functions
   BehaviourDataView (*ptr_make_view)(BehaviourData&) =
       &mgis::behaviour::make_view;
-  m.def("update", ptr_update);
-  m.def("revert", ptr_revert);
-  m.def("make_view", ptr_make_view, pybind11::keep_alive<0, 1>());
+  m.def("update", ptr_update, "data"_a);
+  m.def("revert", ptr_revert, "data"_a);
+  m.def("make_view", ptr_make_view, "data"_a, pybind11::keep_alive<0, 1>());
 }  // end of declareBehaviourData

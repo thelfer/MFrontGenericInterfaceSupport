@@ -96,24 +96,41 @@ if(enable-python-bindings)
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DESCRIPTION
     "Contains the python bindings for MGIS")
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DEPENDS mgis)
+  option(enable-pybind11-stubgen "generates stubs for python extensions" ON)
+  if(enable-pybind11-stubgen)
+    # The modules are imported to generate their stubs: pybind11-stubgen
+    # shall be available for the python interpreter they are built for.
+    execute_process(COMMAND "${Python_EXECUTABLE}" -c "import pybind11_stubgen"
+      RESULT_VARIABLE pybind11_stubgen_import_status
+      OUTPUT_QUIET ERROR_QUIET)
+    if(pybind11_stubgen_import_status EQUAL 0)
+      set(pybind11_stubgen ON)
+      message(STATUS "Found pybind11-stubgen for ${Python_EXECUTABLE}")
+    endif()
+  endif()
+  include(cmake/modules/mgis-python-modules.cmake)
   # store the location of the python modules in the MGIS_PYTHON_MODULES_INSTALL_DIRECTORY variable
-  if(MGIS_APPEND_SUFFIX)
-    if(WIN32)
-      set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
-          bin/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis_${MGIS_SUFFIX_FOR_PYTHON_MODULES})
-    else(WIN32)
-      set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
-          "lib${LIB_SUFFIX}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis_${MGIS_SUFFIX_FOR_PYTHON_MODULES}")
-    endif(WIN32)
-  else(MGIS_APPEND_SUFFIX)
-    if(WIN32)
-      set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
-          "bin/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis")
-    else(WIN32)
-      set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
-          "lib${LIB_SUFFIX}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis")
-    endif(WIN32)
-  endif(MGIS_APPEND_SUFFIX)
+  # the variable can be set by the user, for instance to "site-packages" by
+  # the pip package, see bindings/python/pip
+  if(NOT MGIS_PYTHON_MODULES_INSTALL_DIRECTORY)
+    if(MGIS_APPEND_SUFFIX)
+      if(WIN32)
+        set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+            bin/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis_${MGIS_SUFFIX_FOR_PYTHON_MODULES})
+      else(WIN32)
+        set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+            "lib${LIB_SUFFIX}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis_${MGIS_SUFFIX_FOR_PYTHON_MODULES}")
+      endif(WIN32)
+    else(MGIS_APPEND_SUFFIX)
+      if(WIN32)
+        set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+            "bin/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis")
+      else(WIN32)
+        set(MGIS_PYTHON_MODULES_INSTALL_DIRECTORY
+            "lib${LIB_SUFFIX}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/mgis")
+      endif(WIN32)
+    endif(MGIS_APPEND_SUFFIX)
+  endif(NOT MGIS_PYTHON_MODULES_INSTALL_DIRECTORY)
 endif(enable-python-bindings)
 
 # fenics-bindings (placed before compiler detection)
@@ -223,6 +240,9 @@ endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 
 #detecting TFEL and MFront
 option(disable-tfel "explicitly disable TFEL support. By default, MGIS tries to use TFEL for tests and MGIS/Function" OFF)
+option(require-tfel "the configuration fails if TFEL is not found. It is used by the pip package, which requires TFEL with all the features MGIS can use: see bindings/python/pip" OFF)
+set(MGIS_REQUIRED_TFEL_VERSION "" CACHE STRING
+    "if non-empty, the configuration fails if the version of the TFEL installation is not this one")
 if(NOT disable-tfel)
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
   find_package(TFEL)
@@ -232,6 +252,31 @@ if(NOT disable-tfel)
     include(behaviours)
   endif(TFEL_FOUND)
 endif(NOT disable-tfel)
+if(require-tfel)
+  if(disable-tfel)
+    message(FATAL_ERROR
+      "require-tfel and disable-tfel are mutually exclusive")
+  endif(disable-tfel)
+  if(NOT TFEL_FOUND)
+    message(FATAL_ERROR
+      "TFEL support is required (require-tfel is ON) but TFEL was not found. "
+      "Set TFELHOME or TFEL_DIR to help cmake find it")
+  endif(NOT TFEL_FOUND)
+  if(NOT MGIS_HAVE_MFRONT_SUPPORT)
+    message(FATAL_ERROR
+      "TFEL support is required (require-tfel is ON) but the TFEL installation provides no MFront support "
+      "(the TFEL libraries TFELMFrontDatabase or MTestFileGenerator were not found)")
+  endif(NOT MGIS_HAVE_MFRONT_SUPPORT)
+  if(enable-python-bindings AND NOT TFEL_PYTHON_BINDINGS)
+    message(FATAL_ERROR
+      "the python bindings of MGIS require the python bindings of TFEL "
+      "(the mfront.database module), which are not available in this TFEL installation")
+  endif(enable-python-bindings AND NOT TFEL_PYTHON_BINDINGS)
+  if(MGIS_REQUIRED_TFEL_VERSION AND NOT (TFEL_VERSION STREQUAL MGIS_REQUIRED_TFEL_VERSION))
+    message(FATAL_ERROR
+      "MGIS_REQUIRED_TFEL_VERSION is '${MGIS_REQUIRED_TFEL_VERSION}' but TFEL version '${TFEL_VERSION}' was found")
+  endif(MGIS_REQUIRED_TFEL_VERSION AND NOT (TFEL_VERSION STREQUAL MGIS_REQUIRED_TFEL_VERSION))
+endif(require-tfel)
 
 #documentations
 option(enable-doxygen-doc "enable generation of the Doxygen documentation" OFF)
@@ -317,6 +362,13 @@ endif(enable-testing)
 add_subdirectory(bindings)
 # shall be included after the other directories
 add_subdirectory(env)
+
+# Generation of the stubs of the python modules using pybind11-stubgen.
+# This call is placed at the end of the file as it requires that all the
+# python modules and all the MGIS libraries have been declared.
+if(enable-python-bindings)
+  generate_python_stubs()
+endif(enable-python-bindings)
 
 # Packaging
 if(MFrontGenericInterfaceSupportDevelopmentVersion)
