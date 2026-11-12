@@ -7,6 +7,10 @@ Compared to the other demos, it illustrates the handling of a rate
 dependent behaviour, through the time increment given to the problem,
 and of a rotation matrix varying from one grain to another.
 
+As the `mgis.fenics` module, this demo requires the legacy version of
+`FEniCS` (`DOLFIN` 2019.2), not `FEniCSx`. It was tested with the
+`DOLFIN` packages of Ubuntu 24.04 and 26.04, with `numpy` 1.26 and 2.3.
+
 > **Source files:**
 >
 > * Jupyter notebook: [mgis_fenics_polycrystal.ipynb](demos/mgis_fenics_polycrystal/mgis_fenics_polycrystal.ipynb)
