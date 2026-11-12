@@ -204,6 +204,9 @@ dedicated option `enable-<name>-sanitizer`. See the [installation
 documentation](install.html#sanitizers-and-hardening-options) for
 details.
 
+The `Run sanitizers` workflow, launched manually from the `Actions` tab
+of the repository, builds `MGIS` with the sanitizers and runs the tests.
+
 ## `Doxygen` documentation
 
 The doxygen documentation is now online:
@@ -608,6 +611,10 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 ## Issue 380: FEniCS tests do not compile and pass with a zero solution
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/380>
+
+## Issue 374: [ci] Add proper support for sanitizers
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/374>
 
 ## Issue 373: [ci] Add debug build in the test matrix
 

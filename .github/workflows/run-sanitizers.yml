@@ -1,0 +1,138 @@
+name: Run sanitizers
+
+# Manual workflow: it builds MGIS with the sanitizers and runs the tests. It
+# is only executed when triggered from the Actions tab of the repository or
+# using the GitHub CLI:
+#
+#   gh workflow run run-sanitizers.yml --ref <branch or tag>
+#
+# The sanitizers options are described in docs/web/install.md. TFEL is
+# installed by Spack from the build cache of the CI (see check.yml): it is
+# not instrumented, nor built with the debug mode of the standard library,
+# which MGIS thus can't use. The Fortran and Python bindings are disabled:
+# the test executables of the Fortran bindings are linked by the Fortran
+# compiler without the flags of the sanitizers, and the tests of the Python
+# bindings are run by an interpreter which is not instrumented.
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'CMake build type'
+        type: choice
+        options:
+          - Debug
+          - RelWithDebInfo
+          - Release
+        default: Debug
+      compiler:
+        description: 'C and C++ compilers'
+        type: choice
+        options:
+          - gcc
+          - clang
+        default: gcc
+      sanitize_options:
+        description: >-
+          semicolon separated list of the sanitizers to enable (e.g.
+          address;undefined with gcc). With clang, prefer listing the checks
+          of the undefined behaviour sanitizer individually: the vptr check
+          prevents the tests of the C bindings from being linked and the
+          function check reports every call to a behaviour (see
+          docs/web/install.md)
+        required: false
+        default: 'address'
+
+env:
+  BUILD_CACHE: oci://ghcr.io/${{ github.repository_owner }}/mgis-buildcache
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Spack
+      uses: spack/setup-spack@v3
+      with:
+        spack_ref: v1.2.2      # Spack version
+        packages_ref: develop  # Spack packages (builtin repository) version
+        buildcache: false      # our own build cache is configured below
+        color: true            # Force color output (SPACK_COLOR=always)
+        spack_path: ${{github.workspace}}/spack       # Where to clone Spack
+
+    - name: Set up the build cache
+      uses: ./.github/actions/setup-build-cache
+
+    # packages installed out of the source tree, as in check.yml
+    - name: Set up the install tree
+      run: spack config add "config:install_tree:root:${{ runner.temp }}/spack-opt"
+
+    - name: Install TFEL
+      shell: spack-sh {0}
+      env:
+        GITHUB_USER: ${{ github.actor }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # the same specs as in check.yml, so that the binaries of the build
+        # cache are used
+        tfel=$(git ls-remote https://github.com/thelfer/tfel.git refs/heads/master | cut -f1)
+        spack install tfel@master commit=$tfel ~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
+        spack install hdf5+cxx~mpi
+
+    - name: Prepare the build environment
+      run: |
+        if [ '${{ inputs.compiler }}' == 'clang' ]; then
+          echo 'COMPILER_ENV=CC=clang CXX=clang++' >> "$GITHUB_ENV"
+        else
+          echo 'COMPILER_ENV=' >> "$GITHUB_ENV"
+        fi
+
+    - name: cmake
+      shell: spack-sh {0}
+      env:
+        SANITIZE_OPTIONS: ${{ inputs.sanitize_options }}
+      run: |
+        spack load tfel
+        spack load hdf5
+        ${{ env.COMPILER_ENV }}                                         \
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} \
+              -Denable-sanitize-options="$SANITIZE_OPTIONS"            \
+              -Denable-c-bindings=ON                                  \
+              -Denable-fortran-bindings=OFF                           \
+              -Denable-python-bindings=OFF                            \
+              -Denable-julia-bindings=OFF                             \
+              -Denable-hdf5-support=ON                                \
+              -Denable-portable-build=ON                              \
+              -DTFEL_DIR=`spack location -i tfel`/share/tfel/cmake    \
+              -Denable-parallel-stl-algorithms=OFF
+        # a sanitizer whose flags are rejected is only disabled by cmake
+        if grep -q '^MGIS_SANITIZER_.*_AVAILABLE:BOOL=FALSE$' build/CMakeCache.txt; then
+          echo "a requested sanitizer is not available"
+          exit 1
+        fi
+
+    - name: make
+      shell: spack-sh {0}
+      run: |
+        spack load tfel
+        spack load hdf5
+        make -C build -j $(nproc)
+
+    - name: make check
+      shell: spack-sh {0}
+      run: |
+        spack load tfel
+        spack load hdf5
+        # by default, the undefined behaviour sanitizer only prints its reports
+        ASAN_OPTIONS=detect_leaks=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1 \
+          make -C build check -j $(nproc)
+
+    - name: Print test log on failure
+      if: ${{ failure() }}
+      run: |
+        cat build/Testing/Temporary/LastTest.log
