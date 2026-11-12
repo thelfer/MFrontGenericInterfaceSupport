@@ -1,6 +1,7 @@
 /*!
- * \file   FixedSizeModifier.ixx
- * \brief
+ * \file   MGIS/Function/FixedSizeModifier.ixx
+ * \brief File which contains the implementation of the `FixedSizeModifier`
+ * class declared in `MGIS/Function/FixedSizeModifier.hxx`.
  * \author Thomas Helfer
  * \date   07/05/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -21,6 +22,9 @@
 
 namespace mgis::function {
 
+  // the number of components of the underlying evaluator must be exactly `N`;
+  // otherwise the message "invalid number of components" is registered in the
+  // error handler
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0)  //
       constexpr bool FixedSizeModifier<EvaluatorType, N>::checkPreconditions(
@@ -71,6 +75,12 @@ namespace mgis::function {
     return N;
   }
 
+  // the call operators use the `data` method of the underlying evaluator when
+  // it is available and apply the `getDataPointer` function to the result of
+  // the call otherwise. A scalar is returned if `N` is equal to 1. If the
+  // result type is a data view, a fixed size span viewing the values computed
+  // by the evaluator is returned, otherwise the values are copied into a
+  // `std::array`
   template <EvaluatorConcept EvaluatorType, size_type N>
   requires(N > 0)  //
       constexpr auto FixedSizeModifier<EvaluatorType, N>::operator()(

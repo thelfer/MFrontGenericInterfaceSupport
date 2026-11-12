@@ -1,6 +1,7 @@
 /*!
  * \file   MGIS/Function/Function.ixx
- * \brief
+ * \brief Inline implementation of the classes declared in
+ * `MGIS/Function/Function.hxx`, which includes this file at its end.
  * \author Thomas Helfer
  * \date   10/03/2021
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -61,6 +62,11 @@ namespace mgis::function {
            (layout.data_stride == dynamic_extent);
   }  // end of has_dynamic_properties
 
+  /*!
+   * \brief the data offset of an integration point is its offset multiplied
+   * by the stride, which is taken from the template parameter when it is
+   * known at compile time, from the `FunctionDataStride` base class otherwise
+   */
   template <FunctionDataLayoutDescription layout>
   requires((layout.data_size > 0) && (layout.data_stride > 0) &&
            ((layout.data_size == dynamic_extent) ||
@@ -75,6 +81,12 @@ namespace mgis::function {
     }
   }  // end of getDataOffset
 
+  /*!
+   * \brief when the number of components and the stride are known at
+   * compile time, the only condition is that the external data contains at
+   * least `layout.data_stride * (space_size - 1) + layout.data_size`
+   * values; a space of size zero is accepted without any check
+   */
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
             bool is_mutable>
@@ -120,6 +132,12 @@ namespace mgis::function {
                (layout.data_stride != dynamic_extent))
       : PreconditionsChecker<FunctionView>(pcheck, s, v), space(s), values(v) {}
 
+  /*!
+   * \brief when only the number of components is known at run time, it must
+   * be greater than zero and not greater than the compile-time stride, and
+   * the external data must contain at least
+   * `layout.data_stride * (space_size - 1) + dsize` values
+   */
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
             bool is_mutable>
@@ -180,6 +198,12 @@ namespace mgis::function {
     this->data_size = dsize;
   }  // end of FunctionView
 
+  /*!
+   * \brief when only the stride is known at run time, it must be greater
+   * than zero and not smaller than the compile-time number of components,
+   * and the external data must contain at least
+   * `dstride * (space_size - 1) + layout.data_size` values
+   */
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
             bool is_mutable>
@@ -222,6 +246,9 @@ namespace mgis::function {
                (layout.data_stride == dynamic_extent))
       : FunctionView(preconditions_check, s, v, dstride) {}
 
+  //! \brief the run-time stride is stored in the `FunctionDataStride` base
+  //! class; the preconditions are checked by the `PreconditionsChecker` base
+  //! class when `doPreconditionsCheck` is true
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
             bool is_mutable>
@@ -240,6 +267,12 @@ namespace mgis::function {
     this->data_stride = dstride;
   }  // end of FunctionView
 
+  /*!
+   * \brief when both the number of components and the stride are only known
+   * at run time, both must be greater than zero, the number of components
+   * must not be greater than the stride and the external data must contain
+   * at least `dstride * (space_size - 1) + dsize` values
+   */
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
             bool is_mutable>
@@ -316,6 +349,12 @@ namespace mgis::function {
                (layout.data_stride == dynamic_extent))
       : FunctionView(preconditions_check, s, v, dsize, dstride) {}
 
+  /*!
+   * \brief the number of components and the stride, which are only known at
+   * run time, are stored in the `FunctionDataSize` and `FunctionDataStride`
+   * base classes; the preconditions are checked by the
+   * `PreconditionsChecker` base class when `doPreconditionsCheck` is true
+   */
   template <LinearFunctionalSpaceConcept Space,
             FunctionDataLayoutDescription layout,
             bool is_mutable>
@@ -677,6 +716,11 @@ namespace mgis::function {
         FunctionView<Space, simple_data_layout_description<N>, true>(
             pcheck, s, this->storage_values, dsize, dsize) {}
 
+  /*!
+   * \brief the `FunctionView` base is constructed with
+   * `this->storage_values`, i.e. it points to the values owned by the
+   * constructed function, not to the values of `f`
+   */
   template <LinearFunctionalSpaceConcept Space, size_type N>
   requires(N > 0) constexpr Function<Space, N>::Function(
       const Function& f) requires(N == dynamic_extent)
@@ -688,6 +732,8 @@ namespace mgis::function {
             f.getNumberOfComponents(),
             f.getNumberOfComponents()) {}  // end of Function
 
+  //! \brief the values are moved, not copied, and the `FunctionView` base
+  //! is bound to the values owned by the constructed function
   template <LinearFunctionalSpaceConcept Space, size_type N>
   requires(N > 0) constexpr Function<Space, N>::Function(Function&& f) requires(
       N == dynamic_extent)
@@ -699,6 +745,9 @@ namespace mgis::function {
             f.getNumberOfComponents(),
             f.getNumberOfComponents()) {}  // end of Function
 
+  //! \brief the view is bound to the values owned by the constructed
+  //! function; no precondition check is required since the storage has just
+  //! been created with the expected size
   template <LinearFunctionalSpaceConcept Space, size_type N>
   requires(N > 0) constexpr Function<Space, N>::Function(
       const Function& f) requires(N != dynamic_extent)
@@ -708,6 +757,8 @@ namespace mgis::function {
             no_precondition_check, f.getSpace(), this->storage_values) {
   }  // end of Function
 
+  //! \brief same as the copy constructor, except that the values are moved
+  //! and not copied
   template <LinearFunctionalSpaceConcept Space, size_type N>
   requires(N > 0) constexpr Function<Space, N>::Function(Function&& f) requires(
       N != dynamic_extent)

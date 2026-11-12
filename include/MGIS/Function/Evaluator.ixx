@@ -1,6 +1,9 @@
 /*!
  * \file   MGIS/Function/Evaluator.ixx
- * \brief
+ * \brief Inline file of `MGIS/Function/Evaluator.hxx`, included by this
+ * header. It has no content yet: the inline implementations of the
+ * evaluators are currently defined in `EvaluatorConcept.ixx` and in the
+ * inline files of the headers of the evaluators.
  * \author Thomas Helfer
  * \date   29/04/2025
  * \copyright (C) Copyright Thomas Helfer 2018.

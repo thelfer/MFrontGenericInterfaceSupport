@@ -1,6 +1,7 @@
 /*!
  * \file   MGIS/Function/BasicLinearQuadratureSpace.ixx
- * \brief
+ * \brief Implementation of the `mgis::function::BasicLinearQuadratureSpace`
+ * structure and of the functions associated with this space.
  * \author Thomas Helfer
  * \date   01/05/2025
  */
@@ -25,6 +26,10 @@ namespace mgis::function {
       BasicLinearQuadratureSpace(const BasicLinearQuadratureSpace&) MGIS_NOEXCEPT =
           default;
 
+  /*!
+   * \return the total number of quadrature points of the space, which is the
+   * number of cells multiplied by the number of quadrature points per cell
+   */
   template <size_type N>
   requires(N > 0) constexpr size_type
       BasicLinearQuadratureSpace<N>::size() const MGIS_NOEXCEPT {
@@ -37,6 +42,10 @@ namespace mgis::function {
     return this->ncells;
   }  // end of getNumberOfElements
 
+  /*!
+   * \return the number of quadrature points of the considered cell, which does
+   * not depend on the cell since all the cells have `N` quadrature points
+   */
   template <size_type N>
   requires(N > 0) constexpr size_type
       BasicLinearQuadratureSpace<N>::getNumberOfQuadraturePoints(
@@ -44,6 +53,10 @@ namespace mgis::function {
     return N;
   }  // end of getNumberOfQuadraturePoints
 
+  /*!
+   * \return an empty workspace: the quadrature points of a cell of this space
+   * are located from the index of this cell only
+   */
   template <size_type N>
   requires(N > 0) constexpr
       typename BasicLinearQuadratureSpace<N>::DummyCellWorkspace
@@ -52,6 +65,10 @@ namespace mgis::function {
     return {};
   }  // end of getCellWorkspace
 
+  /*!
+   * \return the offset of the quadrature point: the cells are stored one after
+   * the other and all have `N` quadrature points
+   */
   template <size_type N>
   requires(N > 0) constexpr size_type
       BasicLinearQuadratureSpace<N>::getQuadraturePointOffset(
@@ -63,24 +80,29 @@ namespace mgis::function {
   requires(N > 0) constexpr BasicLinearQuadratureSpace<
       N>::~BasicLinearQuadratureSpace() noexcept = default;
 
+  //! \brief forwards the call to the `size` member function
   template <size_type N>
   constexpr size_type getSpaceSize(
       const BasicLinearQuadratureSpace<N>& s) MGIS_NOEXCEPT {
     return s.size();
   }
 
+  //! \brief forwards the call to the `getNumberOfCells` member function
   template <size_type N>
   constexpr size_type getNumberOfCells(
       const BasicLinearQuadratureSpace<N>& s) MGIS_NOEXCEPT {
     return s.getNumberOfCells();
   }  // end of getNumberOfCells
 
+  //! \brief forwards the call to the `getNumberOfQuadraturePoints` member
+  /// function
   template <size_type N>
   constexpr size_type getNumberOfQuadraturePoints(
       const BasicLinearQuadratureSpace<N>& s, const size_type e) MGIS_NOEXCEPT {
     return s.getNumberOfQuadraturePoints(e);
   }  // end of getNumberOfQuadraturePoints
 
+  //! \brief forwards the call to the `getQuadraturePointOffset` member function
   template <size_type N>
   constexpr size_type getQuadraturePointOffset(
       const BasicLinearQuadratureSpace<N>& s,
@@ -89,6 +111,8 @@ namespace mgis::function {
     return s.getQuadraturePointOffset(e, i);
   }
 
+  // two spaces are declared equivalent when they have the same number of
+  // quadrature points, no identity of the spaces is required
   template <size_type N>
   constexpr bool areEquivalent(
       const BasicLinearQuadratureSpace<N>& s,

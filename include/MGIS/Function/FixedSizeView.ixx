@@ -1,6 +1,7 @@
 /*!
- * \file   FixedSizeView.ixx
- * \brief
+ * \file   MGIS/Function/FixedSizeView.ixx
+ * \brief File which contains the implementation of the `FixedSizeView` class
+ * declared in `MGIS/Function/FixedSizeView.hxx`.
  * \author th202608
  * \date   07/05/2025
  */
@@ -12,6 +13,9 @@
 
 namespace mgis::function {
 
+  // the number of components of the underlying function must be exactly `N`;
+  // otherwise the message "invalid number of components" is registered in the
+  // error handler
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0)  //
       constexpr bool FixedSizeView<FunctionType, N>::checkPreconditions(
@@ -61,6 +65,10 @@ namespace mgis::function {
     return N;
   }
 
+  // the call operators use the `data` method of the underlying view when it is
+  // available and apply the `getDataPointer` function to the result of the
+  // call otherwise; a scalar is returned if `N` is equal to 1, a fixed size
+  // span viewing the values of the function otherwise
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0)  //
       constexpr auto FixedSizeView<FunctionType, N>::operator()(
@@ -172,6 +180,8 @@ namespace mgis::function {
     }
   }
 
+  // the non-const call operators return values which reference the storage of
+  // the underlying function: the values may be modified through the view
   template <FunctionConcept FunctionType, size_type N>
   requires(N > 0)  //
       constexpr typename FixedSizeView<FunctionType, N>::mutable_value_type
@@ -292,6 +302,8 @@ namespace mgis::function {
     return FixedSizeView<std::decay_t<FunctionType>, N>(f);
   }  // end of view
 
+  // an immutable fixed size view is obtained by applying the fixed size view
+  // to an immutable view of the constant function
   template <size_type N, typename FunctionType>
   constexpr auto view(FunctionType& f) requires(
       (N > 0) && (N != dynamic_extent) &&                //

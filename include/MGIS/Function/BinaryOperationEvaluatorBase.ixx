@@ -1,6 +1,7 @@
 /*!
  * \file   MGIS/Function/BinaryOperationEvaluatorBase.ixx
- * \brief
+ * \brief  Implementation of the `BinaryOperationEvaluatorBase` class
+ * declared in `MGIS/Function/BinaryOperationEvaluatorBase.hxx`.
  * \author Thomas Helfer
  * \date   07/05/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,6 +18,7 @@
 
 namespace mgis::function {
 
+  //! \brief constructor, storing a copy of each of the two evaluators
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
@@ -30,6 +32,7 @@ namespace mgis::function {
       : first_evaluator(e1),
         second_evaluator(e2) {}  // end of BinaryOperationEvaluatorBase
 
+  //! \brief default copy constructor
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
@@ -41,6 +44,7 @@ namespace mgis::function {
           BinaryOperationEvaluatorBase(const BinaryOperationEvaluatorBase&) =
               default;
 
+  //! \brief default move constructor
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
@@ -52,6 +56,13 @@ namespace mgis::function {
           BinaryOperationEvaluatorBase(BinaryOperationEvaluatorBase&&) =
               default;
 
+  /*!
+   * \brief implementation of the `check` member function
+   *
+   * The spaces of the two evaluators are compared first, then the values
+   * computed by each evaluator are checked. The first failing check stops the
+   * process and registers the associated error message in the error handler.
+   */
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
@@ -74,6 +85,9 @@ namespace mgis::function {
     return true;
   }  // end of check
 
+  // the space of the first evaluator is returned: the requirements state
+  // that the two evaluators are defined on the same space and the `check`
+  // function verifies that their spaces are equivalent
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
@@ -86,6 +100,8 @@ namespace mgis::function {
     return internals::disambiguateGetSpace(this->first_evaluator);
   }  // end of getSpace
 
+  // the call operators downcast the object to the child class and pass the
+  // values computed by the two evaluators to its `apply` member function
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
@@ -153,6 +169,7 @@ namespace mgis::function {
                        this->second_evaluator(wk, e, i));
   }  // end of operator()
 
+  //! \brief forwards the call to the `getSpace` member function
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>
@@ -163,6 +180,7 @@ namespace mgis::function {
     return e.getSpace();
   }  // end of getSpace
 
+  //! \brief forwards the call to the `check` member function
   template <typename Child,
             EvaluatorConcept FirstEvaluatorType,
             EvaluatorConcept SecondEvaluatorType>

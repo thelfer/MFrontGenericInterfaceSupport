@@ -1,6 +1,9 @@
 /*!
  * \file   MGIS/Function/TFEL/Mechanics.ixx
- * \brief
+ * \brief  Implementation of the finite strain tangent operator conversion
+ * declared in `MGIS/Function/TFEL/Mechanics.hxx`: the
+ * `ConvertFiniteStrainStiffnessEvaluator` evaluator, the associated modifier
+ * generator and the `convert_finite_strain_stiffness` function.
  * \author Thomas Helfer
  * \date   02/05/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,6 +20,31 @@
 
 namespace mgis::function::internals {
 
+  /*!
+   * \brief evaluator computing a finite strain tangent operator from a tangent
+   * operator of another kind, given two deformation gradients and the Cauchy
+   * stress
+   *
+   * The conversion is performed by
+   * `tfel::material::convert<ResultFlag, SourceFlag, N>`, applied to the values
+   * returned by the four underlying evaluators at a given integration point.
+   * Only the call operators which match the way all the underlying evaluators
+   * can be called are available.
+   *
+   * \tparam N: space dimension (1, 2 or 3)
+   * \tparam ResultFlag: kind of the tangent operator returned by the evaluator
+   * \tparam SourceFlag: kind of the tangent operator taken as input
+   * \tparam StiffnessEvaluator: type of the evaluator providing the tangent
+   * operator to convert
+   * \tparam DeformationGradientEvaluatorType0: type of the evaluator providing
+   * the first deformation gradient
+   * \tparam DeformationGradientEvaluatorType1: type of the evaluator providing
+   * the second deformation gradient
+   * \tparam CauchyStressEvaluatorType: type of the evaluator providing the
+   * Cauchy stress
+   * \note only available if the values returned by the stiffness evaluator are
+   * convertible to a `tfel::material::tangent_operator` of kind `SourceFlag`
+   */
   template <unsigned short N,
             FiniteStrainStiffnessKind ResultFlag,
             FiniteStrainStiffnessKind SourceFlag,
@@ -30,10 +58,14 @@ namespace mgis::function::internals {
                                                              N,
                                                              ::mgis::real>>)  //
       struct ConvertFiniteStrainStiffnessEvaluator {
-    //! \brief a simple alias
+    //! \brief space on which the evaluator is defined
     using Space = evaluator_space<StiffnessEvaluator>;
     /*!
      * \brief constructor
+     * \param[in] K_: evaluator providing the tangent operator to convert
+     * \param[in] F0_: evaluator providing the first deformation gradient
+     * \param[in] F1_: evaluator providing the second deformation gradient
+     * \param[in] s_: evaluator providing the Cauchy stress
      */
     constexpr ConvertFiniteStrainStiffnessEvaluator(
         const StiffnessEvaluator& K_,
@@ -50,7 +82,12 @@ namespace mgis::function::internals {
     //! \brief move constructor
     constexpr ConvertFiniteStrainStiffnessEvaluator(
         ConvertFiniteStrainStiffnessEvaluator&&) = default;
-    //! \brief perform consistency checks
+    /*!
+     * \brief perform consistency checks
+     * \param[in] ctx: error handler used to report the errors
+     * \return true if the four underlying evaluators are valid and are defined
+     * on matching spaces
+     */
     [[nodiscard]] constexpr bool check(AbstractErrorHandler& ctx) const {
       return ((checkMatchingSpaces(ctx, this->K, this->F0)) &&
               (checkMatchingSpaces(ctx, this->K, this->F1)) &&
@@ -61,13 +98,19 @@ namespace mgis::function::internals {
               (internals::disambiguateCheck(ctx, this->s)));
     }
 
-    //! \brief return the underlying space
+    /*!
+     * \brief return the underlying space
+     * \return the space of the stiffness evaluator
+     */
     [[nodiscard]] constexpr decltype(auto) getSpace() const {
       return internals::disambiguateGetSpace(this->K);
     }
     /*!
-     * \brief call operator
+     * \brief call operator computing the converted tangent operator at a given
+     * element
      * \param[in] i: element index
+     * \return the tangent operator of kind `ResultFlag` computed from the
+     * values returned by the underlying evaluators
      */
     [[nodiscard]] constexpr auto operator()(const element_index<Space>& i) const
         requires(
@@ -83,9 +126,12 @@ namespace mgis::function::internals {
           tfel::math::stensor<N, ::mgis::real>(this->s(i)));
     }
     /*!
-     * \brief call operator
-     * \param[in] wk: element index
+     * \brief call operator computing the converted tangent operator at a given
+     * element, using an element workspace
+     * \param[in] wk: workspace associated with the element
      * \param[in] i: element index
+     * \return the tangent operator of kind `ResultFlag` computed from the
+     * values returned by the underlying evaluators
      */
     [[nodiscard]] constexpr auto operator()(const element_workspace<Space>& wk,
                                             const element_index<Space>& i) const
@@ -102,9 +148,12 @@ namespace mgis::function::internals {
           tfel::math::stensor<N, ::mgis::real>(this->s(wk, i)));
     }
     /*!
-     * \brief call operator
+     * \brief call operator computing the converted tangent operator at a given
+     * quadrature point
      * \param[in] e: cell index
      * \param[in] i: integration point index
+     * \return the tangent operator of kind `ResultFlag` computed from the
+     * values returned by the underlying evaluators
      */
     [[nodiscard]] constexpr auto operator()(
         const cell_index<Space>& e,
@@ -122,10 +171,13 @@ namespace mgis::function::internals {
           tfel::math::stensor<N, ::mgis::real>(this->s(e, i)));
     }
     /*!
-     * \brief call operator
-     * \param[in] wk: workspace
+     * \brief call operator computing the converted tangent operator at a given
+     * quadrature point, using a cell workspace
+     * \param[in] wk: workspace associated with the cell
      * \param[in] e: cell index
      * \param[in] i: integration point index
+     * \return the tangent operator of kind `ResultFlag` computed from the
+     * values returned by the underlying evaluators
      */
     [[nodiscard]] constexpr auto operator()(
         const cell_workspace<Space>& wk,
@@ -146,12 +198,35 @@ namespace mgis::function::internals {
     }
 
    private:
+    //! \brief evaluator providing the tangent operator to convert
     StiffnessEvaluator K;
+    //! \brief evaluator providing the first deformation gradient
     DeformationGradientEvaluatorType0 F0;
+    //! \brief evaluator providing the second deformation gradient
     DeformationGradientEvaluatorType1 F1;
+    //! \brief evaluator providing the Cauchy stress
     CauchyStressEvaluatorType s;
   };
 
+  /*!
+   * \brief perform consistency checks on a finite strain stiffness conversion
+   * evaluator
+   *
+   * \tparam N: space dimension (1, 2 or 3)
+   * \tparam ResultFlag: kind of the tangent operator returned by the evaluator
+   * \tparam SourceFlag: kind of the tangent operator taken as input
+   * \tparam StiffnessEvaluator: type of the evaluator providing the tangent
+   * operator to convert
+   * \tparam DeformationGradientEvaluatorType0: type of the evaluator providing
+   * the first deformation gradient
+   * \tparam DeformationGradientEvaluatorType1: type of the evaluator providing
+   * the second deformation gradient
+   * \tparam CauchyStressEvaluatorType: type of the evaluator providing the
+   * Cauchy stress
+   * \param[in] eh: error handler used to report the errors
+   * \param[in] e: conversion evaluator
+   * \return true if the conversion evaluator is valid
+   */
   template <unsigned short N,
             FiniteStrainStiffnessKind ResultFlag,
             FiniteStrainStiffnessKind SourceFlag,
@@ -172,6 +247,25 @@ namespace mgis::function::internals {
     return e.check(eh);
   }  // end of check
 
+  /*!
+   * \brief return the number of components of a finite strain stiffness
+   * conversion evaluator
+   *
+   * \tparam N: space dimension (1, 2 or 3)
+   * \tparam ResultFlag: kind of the tangent operator returned by the evaluator
+   * \tparam SourceFlag: kind of the tangent operator taken as input
+   * \tparam StiffnessEvaluator: type of the evaluator providing the tangent
+   * operator to convert
+   * \tparam DeformationGradientEvaluatorType0: type of the evaluator providing
+   * the first deformation gradient
+   * \tparam DeformationGradientEvaluatorType1: type of the evaluator providing
+   * the second deformation gradient
+   * \tparam CauchyStressEvaluatorType: type of the evaluator providing the
+   * Cauchy stress
+   * \param[in] e: conversion evaluator
+   * \return the number of components of a tangent operator of kind `ResultFlag`
+   * and dimension `N`
+   */
   template <unsigned short N,
             FiniteStrainStiffnessKind ResultFlag,
             FiniteStrainStiffnessKind SourceFlag,
@@ -193,6 +287,21 @@ namespace mgis::function::internals {
     return value.size();
   }  // end of getNumberOfComments
 
+  /*!
+   * \brief modifier which, applied to an evaluator returning a tangent operator
+   * of kind `SourceFlag`, builds a `ConvertFiniteStrainStiffnessEvaluator`
+   * converting it into a tangent operator of kind `ResultFlag`
+   *
+   * \tparam N: space dimension (1, 2 or 3)
+   * \tparam ResultFlag: kind of the tangent operator to be returned
+   * \tparam SourceFlag: kind of the tangent operator taken as input
+   * \tparam DeformationGradientEvaluatorType0: type of the evaluator providing
+   * the first deformation gradient
+   * \tparam DeformationGradientEvaluatorType1: type of the evaluator providing
+   * the second deformation gradient
+   * \tparam CauchyStressEvaluatorType: type of the evaluator providing the
+   * Cauchy stress
+   */
   template <unsigned short N,
             FiniteStrainStiffnessKind ResultFlag,
             FiniteStrainStiffnessKind SourceFlag,
@@ -200,6 +309,12 @@ namespace mgis::function::internals {
             TensorEvaluatorConcept DeformationGradientEvaluatorType1,
             StensorEvaluatorConcept CauchyStressEvaluatorType>
   struct ConvertFiniteStrainStiffnessModifierGenerator {
+    /*!
+     * \brief constructor
+     * \param[in] F0_: evaluator providing the first deformation gradient
+     * \param[in] F1_: evaluator providing the second deformation gradient
+     * \param[in] s_: evaluator providing the Cauchy stress
+     */
     constexpr ConvertFiniteStrainStiffnessModifierGenerator(
         const DeformationGradientEvaluatorType0& F0_,
         const DeformationGradientEvaluatorType1& F1_,
@@ -208,8 +323,18 @@ namespace mgis::function::internals {
           F1(F1_),
           s(s_) {} /* end of ConvertFiniteStrainStiffnessModifierGenerator */
 
+    //! \brief this alias allows to match the Evaluator Modifier concept
     using Tag = ::mgis::function::EvaluatorModifierTag;
 
+    /*!
+     * \brief build the evaluator converting a tangent operator
+     * \tparam StiffnessEvaluator: type of the evaluator providing the tangent
+     * operator to convert
+     * \param[in] K: evaluator providing the tangent operator to convert
+     * \return a `ConvertFiniteStrainStiffnessEvaluator`
+     * \note only available if the values returned by `K` are convertible to a
+     * `tfel::material::tangent_operator` of kind `SourceFlag`
+     */
     template <FourthOrderTensorEvaluatorConcept StiffnessEvaluator>
     [[nodiscard]] constexpr auto
     operator()(const StiffnessEvaluator& K) const requires(
@@ -223,11 +348,31 @@ namespace mgis::function::internals {
     }  // end of operator()
 
    private:
+    //! \brief evaluator providing the first deformation gradient
     const DeformationGradientEvaluatorType0 F0;
+    //! \brief evaluator providing the second deformation gradient
     const DeformationGradientEvaluatorType1 F1;
+    //! \brief evaluator providing the Cauchy stress
     const CauchyStressEvaluatorType s;
   };
 
+  /*!
+   * \brief return the space of a finite strain stiffness conversion evaluator
+   *
+   * \tparam N: space dimension (1, 2 or 3)
+   * \tparam ResultFlag: kind of the tangent operator returned by the evaluator
+   * \tparam SourceFlag: kind of the tangent operator taken as input
+   * \tparam StiffnessEvaluator: type of the evaluator providing the tangent
+   * operator to convert
+   * \tparam DeformationGradientEvaluatorType0: type of the evaluator providing
+   * the first deformation gradient
+   * \tparam DeformationGradientEvaluatorType1: type of the evaluator providing
+   * the second deformation gradient
+   * \tparam CauchyStressEvaluatorType: type of the evaluator providing the
+   * Cauchy stress
+   * \param[in] e: conversion evaluator
+   * \return the space on which the evaluator is defined
+   */
   template <unsigned short N,
             FiniteStrainStiffnessKind ResultFlag,
             FiniteStrainStiffnessKind SourceFlag,
@@ -251,6 +396,27 @@ namespace mgis::function::internals {
 
 namespace mgis::function {
 
+  /*!
+   * \brief definition of the `convert_finite_strain_stiffness` function
+   * declared in `MGIS/Function/TFEL/Mechanics.hxx`
+   *
+   * The space dimension `N` is deduced from that of the first deformation
+   * gradient evaluator; the second deformation gradient and the Cauchy stress
+   * must have the same dimension, which is enforced by `static_assert`.
+   *
+   * \tparam ResultFlag: kind of the tangent operator to be returned
+   * \tparam SourceFlag: kind of the tangent operator taken as input
+   * \tparam DeformationGradientEvaluatorType0: type of the evaluator providing
+   * the first deformation gradient
+   * \tparam DeformationGradientEvaluatorType1: type of the evaluator providing
+   * the second deformation gradient
+   * \tparam CauchyStressEvaluatorType: type of the evaluator providing the
+   * Cauchy stress
+   * \param[in] F0: evaluator used to compute the first deformation gradient
+   * \param[in] F1: evaluator used to compute the second deformation gradient
+   * \param[in] s: evaluator used to compute the Cauchy stress
+   * \return a modifier converting the tangent operators it is applied to
+   */
   template <FiniteStrainStiffnessKind ResultFlag,
             FiniteStrainStiffnessKind SourceFlag,
             TensorEvaluatorConcept DeformationGradientEvaluatorType0,

@@ -1,6 +1,8 @@
 /*!
  * \file   MGIS/Function/TFEL/CoalescedMemoryAccessCompositeTensorsView.ixx
- * \brief
+ * \brief  File which contains the implementation of the
+ * `CoalescedMemoryAccessCompositeTensorsView` class declared in
+ * `MGIS/Function/TFEL/CoalescedMemoryAccessCompositeTensorsView.hxx`.
  * \author Thomas Helfer
  * \date   27/10/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,6 +19,10 @@
 
 namespace mgis::function {
 
+  // the `get` member function dispatches at compile time: a scalar value is
+  // returned as a reference to the value of the corresponding component, a
+  // tensorial object as a coalesced view built from the addresses of the
+  // values of its components at the given integration point
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       template <size_type begin, ScalarOrTensorConcept ValueType>

@@ -1,7 +1,8 @@
 
 /*!
  * \file   MGIS/Function/TFEL/TensorialFunction.ixx
- * \brief
+ * \brief  File which contains the implementation of the `TensorialFunction`
+ * class declared in `MGIS/Function/TFEL/TensorialFunction.hxx`.
  * \author Thomas Helfer
  * \date   28/08/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -18,6 +19,8 @@
 
 namespace mgis::function {
 
+  // the constructor checking the preconditions delegates to the one allowing
+  // the preconditions to be skipped
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>
   requires(LinearElementSpaceConcept<Space> ||
            LinearQuadratureSpaceConcept<Space>)  //
@@ -34,6 +37,9 @@ namespace mgis::function {
     return true;
   }
 
+  // the function owns the values, stored by the `Function` base class, and the
+  // view, which shares them, is built from this base class, so it refers to the
+  // values of the function it belongs to
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>
   requires(LinearElementSpaceConcept<Space> ||
            LinearQuadratureSpaceConcept<Space>)  //
@@ -55,6 +61,9 @@ namespace mgis::function {
                                      typename TensorType::indexing_policy>()>&>(
                 *this)) {}  // end of TensorialFunction
 
+  // the view is rebound to the values copied from the source function; the
+  // preconditions are not checked as the view is built from the values of the
+  // function itself
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>
   requires(LinearElementSpaceConcept<Space> ||
            LinearQuadratureSpaceConcept<Space>)  //
@@ -118,6 +127,9 @@ namespace mgis::function {
     return f.view();
   }  // end of view
 
+  // a read-only `FunctionView` of the values owned by the function is created
+  // and wrapped in a `TensorModifier` so that its values are returned as
+  // read-only tensors viewing these values
   template <FunctionalSpaceConcept Space, TensorConcept TensorType>
   constexpr auto view(const TensorialFunction<Space, TensorType>& f) {
     constexpr auto N = tfel::math::getUnderlyingArrayMinimalSize<

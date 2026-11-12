@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import numpy
+import weakref
 
 try:
     import unittest2 as unittest
@@ -110,9 +112,14 @@ class ExternalStateVariableTest(unittest.TestCase):
         mgis_bv.setExternalStateVariable(
             d.s0, "v2_esv[0]", zeros[0:3],
             mgis_bv.MaterialStateManagerStorageMode.EXTERNAL_STORAGE)
+        # an externally stored array deleted by the caller is kept alive
+        values = v2_esv0_values.copy()
+        w = weakref.ref(values)
         mgis_bv.setExternalStateVariable(
-            d.s1, "v2_esv[0]", v2_esv0_values,
+            d.s1, "v2_esv[0]", values,
             mgis_bv.MaterialStateManagerStorageMode.EXTERNAL_STORAGE)
+        del values
+        self.assertIsNotNone(w(), "externally stored array released")
         v2_esv1_values = numpy.asarray([9, 8, 2, 3, 6, 4], dtype=numpy.float64)
         mgis_bv.setExternalStateVariable(
             d.s0, "v2_esv[1]", zeros[0:3],
@@ -170,6 +177,54 @@ class ExternalStateVariableTest(unittest.TestCase):
                 abs(d.s1.internal_state_variables[1, i + 6] -
                     v2_esv1_values[i + 3]) < eps,
                 "invalid internal state variable value")
+        # values converted into a temporary copy can not be stored externally
+        self.assertRaises(
+            RuntimeError, mgis_bv.setExternalStateVariable, d.s1, "v_esv",
+            [1., 2., 3.],
+            mgis_bv.MaterialStateManagerStorageMode.EXTERNAL_STORAGE)
+        # the array is released when replaced
+        mgis_bv.setExternalStateVariable(
+            d.s1, "v2_esv[0]", zeros[0:3],
+            mgis_bv.MaterialStateManagerStorageMode.EXTERNAL_STORAGE)
+        self.assertIsNone(w(), "replaced array not released")
+
+    def test_external_storage_lifetime(self):
+        b = self.__get_behaviour(mgis_bv.Hypothesis.Tridimensional)
+        d = mgis_bv.MaterialDataManager(b, 2)
+        es = mgis_bv.MaterialStateManagerStorageMode.EXTERNAL_STORAGE
+        ls = mgis_bv.MaterialStateManagerStorageMode.LOCAL_STORAGE
+        T = numpy.full(2, 293.15)
+        r = sys.getrefcount(T)
+        # no reference is kept with LOCAL_STORAGE
+        mgis_bv.setExternalStateVariable(d.s1, "Temperature", T, ls)
+        self.assertEqual(sys.getrefcount(T), r)
+        # with EXTERNAL_STORAGE, a reference is kept until the value is
+        # replaced by a scalar: update writes the uniform value into the array
+        mgis_bv.setExternalStateVariable(d.s0, "Temperature", T, es)
+        mgis_bv.setExternalStateVariable(d.s1, "Temperature", T, es)
+        self.assertEqual(sys.getrefcount(T), r + 2)
+        mgis_bv.setExternalStateVariable(d.s1, "Temperature", 293.15)
+        self.assertEqual(sys.getrefcount(T), r + 1)
+        T[:] = 0.
+        mgis_bv.update(d)
+        self.assertEqual(sys.getrefcount(T), r + 1)
+        self.assertTrue(numpy.all(T == 293.15))
+        mgis_bv.setExternalStateVariable(d.s0, "Temperature", 293.15)
+        self.assertEqual(sys.getrefcount(T), r)
+        # material property and mass density replaced by another array
+        E = numpy.full(2, 150e9)
+        rho = numpy.full(2, 7800.)
+        wE = weakref.ref(E)
+        wrho = weakref.ref(rho)
+        mgis_bv.setMaterialProperty(d.s1, "YoungModulus", E, es)
+        mgis_bv.setMassDensity(d.s1, rho, es)
+        del E, rho
+        self.assertIsNotNone(wE(), "externally stored array released")
+        self.assertIsNotNone(wrho(), "externally stored array released")
+        mgis_bv.setMaterialProperty(d.s1, "YoungModulus", numpy.ones(2), ls)
+        mgis_bv.setMassDensity(d.s1, numpy.ones(2), ls)
+        self.assertIsNone(wE(), "replaced array not released")
+        self.assertIsNone(wrho(), "replaced array not released")
 
 
     def test_strided_array(self):

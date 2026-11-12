@@ -1,7 +1,8 @@
 /*!
- * \file
- * MGIS/Function/TFEL/StridedCoalescedMemoryAccessCompositeTensorsView.ixx
- * \brief
+ * \file MGIS/Function/TFEL/StridedCoalescedMemoryAccessCompositeTensorsView.ixx
+ * \brief  File which contains the implementation of the
+ * `StridedCoalescedMemoryAccessCompositeTensorsView` class declared in
+ * `MGIS/Function/TFEL/StridedCoalescedMemoryAccessCompositeTensorsView.hxx`.
  * \author Thomas Helfer
  * \date   27/10/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -18,6 +19,11 @@
 
 namespace mgis::function {
 
+  // the `get` member function dispatches at compile time: a scalar value is
+  // returned as a reference to the value of the corresponding component, a
+  // tensorial object as a strided coalesced view built from the address of the
+  // first component value at the given integration point, the stride between
+  // successive components being equal to the size of the space
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       template <size_type begin, ScalarOrTensorConcept ValueType>
@@ -40,6 +46,8 @@ namespace mgis::function {
     }
   }  // end of get
 
+  // for a quadrature space, the offset of the quadrature point is first
+  // computed using the `getQuadraturePointOffset` function
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       template <size_type begin, ScalarOrTensorConcept ValueType>
