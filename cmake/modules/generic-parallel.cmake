@@ -12,12 +12,10 @@ function(mfront_generic_parallel_material_properties_check_library name
     "${CMAKE_CURRENT_BINARY_DIR}/generic-parallel-material-properties-${backend}")
   file(MAKE_DIRECTORY "${_directory}")
   set(_configuration "${_directory}/configuration.json")
-  file(WRITE "${_configuration}"
-    "interfaces_options: {\n"
-    "  generic-parallel: {\n"
-    "    backend: \"${backend}\"\n"
-    "  }\n"
-    "}\n")
+  # the file is only written if its contents changes: it is a dependency
+  # of the generation of the sources by mfront
+  file(CONFIGURE OUTPUT "${_configuration}" CONTENT
+    "interfaces_options: {\n  generic-parallel: {\n    backend: \"${backend}\"\n  }\n}\n")
   set(_sources)
   foreach(source ${ARGN})
     set(_file "${CMAKE_CURRENT_SOURCE_DIR}/${source}.mfront")

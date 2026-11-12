@@ -434,8 +434,13 @@ does not export the version of its functions, is refused. The
 `isGenericParallelMaterialProperty` function tells if a material property
 provides the functions of batches of points.
 
+In the `python` bindings, the `MaterialProperty` class exposes
+`mfront_interface`, `batch_api_version`, `backend`, `memory_space` and
+`execution_policy`, and `isGenericParallelMaterialProperty` is available.
+
 The types of those functions (`mgis_mp_BatchData`,
-`mgis_mp_BatchStatistics`, `mgis_mp_BatchOutputStatus`, etc.), declared in
+`mgis_mp_BatchStatistics`, `mgis_mp_BatchOutputStatus`,
+`mgis_gp_atomic_size_type`, etc.), declared in
 `MGIS/MaterialProperty/BatchMaterialPropertyFctPtr.hxx`, are copies of the
 ones of `TFEL`: `MGIS` does not depend on `TFEL`. The execution policies of
 the backends are defined by `TFEL`: `MGIS` only declares their type
@@ -650,6 +655,10 @@ For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/
 ## Issue 382: CMake packages installed in share/mgis/cmake, where find_package does not look
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/382>
+
+## Issue 381: Python bindings: MaterialProperty exposes neither the unit system nor the generic-parallel description
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/381>
 
 ## Issue 380: FEniCS tests do not compile and pass with a zero solution
 
