@@ -155,6 +155,7 @@ subroutine test()
      r = check(T_t == SCALAR,"invalid type for external state variable 'Temperature'")
   end if
   ! free ressources
+  call check_status(free_finite_strain_behaviour_options(o))
   call check_status(free_behaviour(b))
 end subroutine test
 
