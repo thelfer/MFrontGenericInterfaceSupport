@@ -3,6 +3,8 @@
 @Author Thomas Helfer, Jean-Michel Scherer;
 @Date 02 / 11 / 2022;
 @Description {
+  Meric-Cailletaud single crystal viscoplasticity for FCC crystals,
+  under the small strain assumption
 }
 
 @ModellingHypothesis Tridimensional;
@@ -13,10 +15,6 @@
 @Theta 1;
 
 @Brick StandardElasticity{
-/*
-  young_modulus: 1.0,
-  poisson_ratio: 0.3
-*/
   young_modulus1 : "E",
   young_modulus2 : "E",
   young_modulus3 : "E",
@@ -62,8 +60,6 @@ epl.setGlossaryName("PlasticStrain");
   using size_type = unsigned short;
   const auto& ss = FCCMericCailletaudSingleCrystalViscoPlasticitySlipSystems<real>::getSlipSystems();
   const auto& m = ss.him;
-  //constexpr const auto eeps = 1.e-12;
-  //const auto seps = eeps * D(0, 0);
   real exp_bp[Nss];
   for (size_type i = 0; i != Nss; ++i) {
       const auto p_ = p[i] + theta * abs(dg[i]);
@@ -79,9 +75,10 @@ epl.setGlossaryName("PlasticStrain");
         (dg[i] - d * a[i] * abs(dg[i])) / (1 + theta * d * abs(dg[i]));
     const auto x = C * (a[i] + theta * da);
     const auto f = max(abs(tau[i] - x) - r, stress(0));
-//    if (f > 1.1 * K) {
-//      return false;
-//    }
+    // a test such as `if (f > 1.1 * K) { return false; }` would reject
+    // the iterations leading to a too large viscoplastic slip rate, but
+    // requires the calling code to reduce the time step when the
+    // integration fails, which the demo does not do
     const auto sgn = tau[i] - x > 0 ? 1 : -1;
     // elasticity
     feel += dg[i] * ss.mus[i];

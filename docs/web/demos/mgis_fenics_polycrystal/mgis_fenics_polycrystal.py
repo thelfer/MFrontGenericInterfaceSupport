@@ -1,10 +1,13 @@
+import os
 from dolfin import *
-import ufl
+try:
+    import ufl_legacy as ufl
+except ImportError:
+    import ufl
 import mgis.fenics as mf
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.spatial.transform import Rotation
-from gradam import *
 
 behaviours = [
               "FCCMericCailletaudSingleCrystalViscoPlasticity",
@@ -37,11 +40,11 @@ Nincr = 100
 xdmf_mesh_file = XDMFFile(MPI.comm_world,"meshes/n20-id1.xdmf")
 mesh = Mesh()
 xdmf_mesh_file.read(mesh)
-mvc = MeshValueCollection("size_t", mesh, 3) 
+mvc = MeshValueCollection("size_t", mesh, 3)
 xdmf_mesh_file.read(mvc, "grains")
 
 grains = cpp.mesh.MeshFunctionSizet(mesh, mvc)
-facets = MeshFunction("size_t", mesh, dim=2)
+facets = MeshFunction("size_t", mesh, 2, 0)
 dx = Measure('dx', subdomain_data=grains)
 
 # create boundaries where to impose boundary conditions
@@ -64,11 +67,11 @@ def make_rotation_matrix(dim,
                          ori_file,
                          V,
                          mf,
-                         convention='from_euler'): 
+                         convention='from_euler'):
     '''
     Create the rotation matrix R for each grain. By convention, the rotation is done from sample frame
     to crystal frame i.e. V_crystal = R*V_sample).
-    
+
     Inputs:  * dim: int equal to 2 or 3. If 2, only use phi1 (first angle) to compute the rotation matrix,
                                          while Phi and phi2 are set to 0.
                                          If 3, use phi1, Phi and phi2 to compute the rotation matrix.
@@ -76,10 +79,10 @@ def make_rotation_matrix(dim,
                          1st and 2nd column vectors of the rotation matrix (the 3rd column is deduced).
                          If Euler angles are used, each line contains 3 angles phi1, Phi and phi2 separated
                          by spaces. If vectors are used, the first 3 values define the first column of R, the
-                         next threee values define the second column of R. Vectors need not be normalized. The 
-                         orientation defined on line 1 defines the rotation matrix of grain with tag 1, ... 
+                         next three values define the second column of R. Vectors need not be normalized. The
+                         orientation defined on line 1 defines the rotation matrix of grain with tag 1, ...
                          orientation defined on line n defines the rotation matrix of grain with tag n. If the
-                         file does not exist, it is assumed that the whole mesh has the tag 1 and the default 
+                         file does not exist, it is assumed that the whole mesh has the tag 1 and the default
                          orientation will be phi1=0, Phi=0, phi2=0.
              * V: FunctionSpace on which the rotation matrix is defined.
              * mf: MeshFunction containing the grain tags.
@@ -100,17 +103,17 @@ def make_rotation_matrix(dim,
     if convention=='from_euler':
         if (ori.size == 3): # degenerate case with a single grain
             ori = [ori, ori] # duplicate single crystal orientation in order to get a 2D list as well
-    elif convention=='from_vector': 
+    elif convention=='from_vector':
         if (ori.size == 6): # degenerate case with a single grain
             ori = [ori, ori] # duplicate single crystal orientation in order to get a 2D list as well
         angles = []
         for o in ori:
-            V1 = np.array(o[0:2])
-            V2 = np.array(o[3:5])
+            V1 = np.array(o[0:3])
+            V2 = np.array(o[3:6])
             V1 = V1/np.linalg.norm(V1)
             V2 = V2/np.linalg.norm(V2)
             V3 = np.cross(V1,V2)
-            R_ = np.hstack((V1,V2,V3))
+            R_ = np.column_stack((V1,V2,V3))
             r = Rotation.from_matrix(np.transpose(R_))
             phi = r.as_euler('ZXZ', degrees=True)
             angles.append(phi)
@@ -126,7 +129,7 @@ def make_rotation_matrix(dim,
             k = self.mf[cell.index]-1
             values[0] = pi*ori[k][self.index]/180.
         def value_shape(self):
-            return () 
+            return ()
 
     phi1_, Phi_, phi2_ = Angle(mf,0), Angle(mf,1), Angle(mf,2)
     phi1, Phi, phi2 = Function(V, name='phi1'), Function(V, name='Phi'), Function(V, name='phi2')
@@ -135,10 +138,10 @@ def make_rotation_matrix(dim,
     phi2.interpolate(phi2_)
     if (dim==2):
         R = as_matrix([[ cos(phi1),  sin(phi1), 0.],
-                       [-sin(phi1),  cos(phi1), 0.], 
+                       [-sin(phi1),  cos(phi1), 0.],
                        [        0.,         0., 1.]])
     else:
-        R = as_matrix([[cos(phi1)*cos(phi2)-sin(phi1)*sin(phi2)*cos(Phi), 
+        R = as_matrix([[cos(phi1)*cos(phi2)-sin(phi1)*sin(phi2)*cos(Phi),
                         sin(phi1)*cos(phi2)+cos(phi1)*sin(phi2)*cos(Phi),
                         sin(phi2)*sin(Phi)],
                        [-cos(phi1)*sin(phi2)-sin(phi1)*cos(phi2)*cos(Phi),
@@ -147,26 +150,26 @@ def make_rotation_matrix(dim,
                        [sin(phi1)*sin(Phi),
                         -cos(phi1)*sin(Phi),
                         cos(Phi)]])
-    return R, phi1, Phi, phi2   
+    return R, phi1, Phi, phi2
 
 R, phi1, Phi, phi2 = make_rotation_matrix(3,'meshes/n20-id1.ori',Vmf,grains,convention='from_euler')
 
 # set boundary conditions
 loading = Expression("q*t", q=v, t=0, degree=2)
-bcs = [ 
+bcs = [
        DirichletBC(Vu.sub(0), 0, facets, 1),
        DirichletBC(Vu.sub(0), loading, facets, 2),
-       DirichletBC(Vu, Constant((0,0,0)), 
-         CompiledSubDomain('near(x[0], 0.)*near(x[1], 0.)*near(x[2], 0.)'), 
+       DirichletBC(Vu, Constant((0,0,0)),
+         CompiledSubDomain('near(x[0], 0.)*near(x[1], 0.)*near(x[2], 0.)'),
          method='pointwise'),
-       DirichletBC(Vu.sub(1), Constant(0), 
-         CompiledSubDomain('near(x[0], 1.)*near(x[1], 0.)*near(x[2], 0.)'), 
+       DirichletBC(Vu.sub(1), Constant(0),
+         CompiledSubDomain('near(x[0], 1.)*near(x[1], 0.)*near(x[2], 0.)'),
          method='pointwise'),
-       DirichletBC(Vu.sub(2), Constant(0), 
-         CompiledSubDomain('near(x[0], 1.)*near(x[1], 0.)*near(x[2], 0.)'), 
+       DirichletBC(Vu.sub(2), Constant(0),
+         CompiledSubDomain('near(x[0], 1.)*near(x[1], 0.)*near(x[2], 0.)'),
          method='pointwise'),
-       DirichletBC(Vu.sub(1), Constant(0), 
-         CompiledSubDomain('near(x[0], 1.)*near(x[1], 0.)*near(x[2], 1.)'), 
+       DirichletBC(Vu.sub(1), Constant(0),
+         CompiledSubDomain('near(x[0], 1.)*near(x[1], 0.)*near(x[2], 1.)'),
          method='pointwise'),
       ]
 
@@ -196,28 +199,18 @@ for (b,behaviour) in enumerate(behaviours):
                                           material_properties=mat_prop,
                                           rotation_matrix=R.T)
     problem = mf.MFrontNonlinearProblem(u, material, quadrature_degree=1, bcs=bcs)
-    '''
-    prm = problem.solver.parameters
-    prm['linear_solver'] = 'cg' #'mumps' #'cg'
-    tol = 1e-5
-    prm["relative_tolerance"] = tol
-    prm['absolute_tolerance'] = tol
-    '''
-    
-    ''''''
+
     problem.solver = PETScSNESSolver('newtonls')
     prm = problem.solver.parameters
-    prm['line_search'] =  'nleqerr' 
-    prm['linear_solver'] = 'cg' #'mumps'
+    prm['line_search'] =  'nleqerr'
+    prm['linear_solver'] = 'cg'
     prm['preconditioner'] = 'amg'
-    prm['krylov_solver']['nonzero_initial_guess'] = False # True
+    prm['krylov_solver']['nonzero_initial_guess'] = False
     prm['maximum_iterations'] = 50
-    #prm['report'] = False
     tol = 1e-6
     prm["solution_tolerance"] = tol
     prm["relative_tolerance"] = tol
     prm['absolute_tolerance'] = tol
-    ''''''
 
     if behaviour=="FCCMericCailletaudSingleCrystalViscoPlasticity":
         epsel = problem.get_state_variable("ElasticStrain")
@@ -231,13 +224,13 @@ for (b,behaviour) in enumerate(behaviours):
     file_results = XDMFFile("results/{}_{}_polycrystal_results.xdmf".format(behaviour,hypothesis))
     file_results.parameters["flush_output"] = True
     file_results.parameters["functions_share_mesh"] = True
-    
+
     load_steps = np.hstack( (
                              np.linspace(0., 0.005, 11),
                              np.linspace(0.006, T[b]+0.006, Nincr+1),
                             )
                           )
-    
+
     for (i, t) in enumerate(load_steps):
         if i==0:
             dt = 0
@@ -290,9 +283,9 @@ for (b,behaviour) in enumerate(behaviours):
         print("\n")
 
 xlabel = r"$\bar{\varepsilon}_{11}$ or $\bar{F}_{11}-1$"
-ylabel = r"$\bar{\sigma}_{11}/\tau_0$ or $\bar{S}_{11}/\tau_0$"
+ylabel = r"$\bar{\sigma}_{11}/\tau_0$ or $\bar{P}_{11}/\tau_0$"
 plt.figure()
-plt.title(r"Polycrystal simple tension") 
+plt.title(r"Polycrystal simple tension")
 plt.plot(results[0,:, 0], results[0,:, 1]/tau0, "-o", markevery=3, label="Small strains")
 plt.plot(results[1,:, 0], results[1,:, 1]/tau0, "-s", markevery=3, label="Finite strains")
 plt.xlabel(xlabel)
@@ -300,4 +293,5 @@ plt.ylabel(ylabel)
 plt.xlim([0.,0.25])
 plt.ylim([0.,4.0])
 plt.legend()
+plt.savefig("mgis_fenics_polycrystal.png")
 plt.show()
