@@ -17,7 +17,6 @@ jobs:
     - name: Install numpy and pybind11
       run: |
         sudo apt update
-        sudo apt upgrade
         sudo apt install -y libhdf5-dev libpython3-dev python3-numpy pybind11-dev
 
     - name: cmake
