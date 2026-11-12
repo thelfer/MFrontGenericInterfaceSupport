@@ -1,0 +1,116 @@
+@DSL ImplicitFiniteStrain;
+@Behaviour FCCMericCailletaudFiniteStrainSingleCrystalViscoPlasticity;
+@Author Thomas Helfer, Jean-Michel Scherer;
+@Date 02 / 11 / 2022;
+@Description {
+}
+
+@ModellingHypothesis Tridimensional;
+@OrthotropicBehaviour;
+
+@Algorithm NewtonRaphson;
+@Epsilon 1.e-14;
+@Theta 1;
+
+@Brick FiniteStrainSingleCrystal{
+  young_modulus1 : "E",
+  young_modulus2 : "E",
+  young_modulus3 : "E",
+  poisson_ratio12 : "nu",
+  poisson_ratio23 : "nu",
+  poisson_ratio13 : "nu",
+  shear_modulus12 : "G",
+  shear_modulus23 : "G",
+  shear_modulus13 : "G",
+  shifted_elastic_deformation_gradient : true
+};
+
+@CrystalStructure FCC;
+@SlipSystem<0, 1, -1>{1, 1, 1};
+@InteractionMatrix{1, 0., 0., 0., 0., 0., 0.};
+
+@MaterialProperty real E;    // Young modulus (stress)
+@MaterialProperty real nu;   // Poisson ratio
+@MaterialProperty real G;    // Shear modulus (stress)
+@MaterialProperty real n;    // Viscosity law exponent
+@MaterialProperty real K;    // Viscosity law coefficient (stress)
+@MaterialProperty real Q;    // Isotropic hardening law modulus (stress)
+@MaterialProperty real b;    // Isotropic hardening law parameter
+@MaterialProperty real tau0; // Initial CRSS (stress)
+@MaterialProperty real d;    // Kinematic hardening law parameter
+@MaterialProperty real C;    // Kinematic hardening law modulus (stress)
+
+@AuxiliaryStateVariable strain p[Nss];
+p.setEntryName("EquivalentViscoplasticSlip");
+
+@AuxiliaryStateVariable strain a[Nss];
+a.setEntryName("BackStrain");
+
+@AuxiliaryStateVariable stress tau[Nss];
+tau.setEntryName("ResolvedShearStress");
+
+@AuxiliaryStateVariable tensor<3u,real> Fp;
+Fp.setEntryName("PlasticPartOfTheDeformationGradient");
+
+@Integrator {
+  using size_type = unsigned short;
+  const auto& m = ss.him;
+  //constexpr const auto eeps = 1.e-12;
+  //const auto seps = eeps * D(0, 0);
+  real exp_bp[Nss];
+  for (size_type i = 0; i != Nss; ++i) {
+      const auto p_ = p[i] + theta * abs(dg[i]);
+      exp_bp[i] = exp(-b * p_);
+  }
+  for (size_type i = 0; i != Nss; ++i) {
+    tau[i] = M | ss.mu[i];
+    auto r = tau0;
+    for (size_type j = 0; j != Nss; ++j) {
+      r += Q * m(i, j) * (1 - exp_bp[j]);
+    }
+    const auto da =  //
+        (dg[i] - d * a[i] * abs(dg[i])) / (1 + theta * d * abs(dg[i]));
+    const auto x = C * (a[i] + theta * da);
+    const auto f = max(abs(tau[i] - x) - r, stress(0));
+//    if (f > 1.1 * K) {
+//      return false;
+//    }
+    const auto sgn = tau[i] - x > 0 ? 1 : -1;
+    // viscoplasticity
+    const auto v = pow(f / K, n);
+    const auto dv = (n / K) * pow(f / K, n - 1);
+    fg[i] -= dt * v * sgn;
+    dfg_ddeel(i) = -dt * dv * (ss.mu[i] | dM_ddeel);
+    const auto sgn_gi = dg(i) > 0 ? 1 : -1;
+    const auto dda_ddg =
+        (1 - d * a[i] * sgn_gi) / (power<2>(1 + theta * d * abs(dg[i])));
+    dfg_ddg(i, i) += dt * dv * C * theta * dda_ddg;
+    for (size_type j = 0; j != Nss; ++j) {
+      const auto sgn_gj = dg(j) > 0 ? 1 : -1;
+      const auto dr = Q * m(i, j) * theta * b * exp_bp[j] * sgn_gj;
+      dfg_ddg(i, j) += dt * dv * dr * sgn;
+    }
+  }
+}
+
+@UpdateAuxiliaryStateVariables {
+  using size_type = unsigned short;
+  for (size_type i = 0; i != Nss; ++i) {
+    p[i] += abs(dg[i]);
+    const auto da =  //
+        (dg[i] - d * a[i] * abs(dg[i])) / (1 + theta * d * abs(dg[i]));
+    a[i] += da;
+  }
+  Fp = invert(Fe+tensor<3u,real>::Id())*F1;
+}
+
+@DissipatedEnergy {
+  using size_type = unsigned short;
+  for (size_type i = 0; i != Nss; ++i) {
+    Psi_d += tau[i] * dg[i];
+  }
+}
+
+@InternalEnergy {
+  Psi_s = 0.5 * (convertCauchyStressToSecondPiolaKirchhoffStress(sig, Fe+tensor<3u,real>::Id()) | eel);
+}
