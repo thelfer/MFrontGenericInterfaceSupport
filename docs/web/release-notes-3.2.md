@@ -531,6 +531,10 @@ assign(ctx, f | as_scalar, f2 | as_scalar);
 
 # Issues fixed
 
+## Issue 455: Crash at exit when a behaviour library is the only user of a threaded runtime (libgomp)
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/455>
+
 ## Issue 425: Python bindings on Windows: DLL directory of MGIS
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/425>

@@ -64,7 +64,14 @@ namespace mgis {
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
     return ::LoadLibrary(TEXT(l.c_str()));
 #else
+    // never unloaded, nor their dependencies: unloading them at the exit of
+    // the program may unload a runtime whose threads are still running (for
+    // instance the pool of threads of libgomp), which then crash
+#ifdef RTLD_NODELETE
+    return ::dlopen(l.c_str(), RTLD_NOW | RTLD_NODELETE);
+#else  /* RTLD_NODELETE */
     return ::dlopen(l.c_str(), RTLD_NOW);
+#endif /* RTLD_NODELETE */
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
   }    // end of load_library
 
