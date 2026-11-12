@@ -61,10 +61,24 @@ namespace mgis {
   }    // end of getErrorMessage
 
   static LibrariesManager::libhandler load_library(const std::string &l) {
+    // never unloaded, nor their dependencies: unloading them at the exit of
+    // the program may unload a runtime whose threads are still running (for
+    // instance the pool of threads of an OpenMP runtime), which then crash
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-    return ::LoadLibrary(TEXT(l.c_str()));
+    const auto h = ::LoadLibrary(TEXT(l.c_str()));
+    if (h != nullptr) {
+      const auto flags = GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+                         GET_MODULE_HANDLE_EX_FLAG_PIN;
+      auto pinned = HMODULE{};
+      ::GetModuleHandleEx(flags, reinterpret_cast<LPCTSTR>(h), &pinned);
+    }
+    return h;
 #else
+#ifdef RTLD_NODELETE
+    return ::dlopen(l.c_str(), RTLD_NOW | RTLD_NODELETE);
+#else  /* RTLD_NODELETE */
     return ::dlopen(l.c_str(), RTLD_NOW);
+#endif /* RTLD_NODELETE */
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
   }    // end of load_library
 
