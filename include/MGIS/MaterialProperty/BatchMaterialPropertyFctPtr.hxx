@@ -14,7 +14,6 @@
 #ifndef LIB_MGIS_MATERIALPROPERTY_BATCHMATERIALPROPERTYFCTPTR_HXX
 #define LIB_MGIS_MATERIALPROPERTY_BATCHMATERIALPROPERTYFCTPTR_HXX
 
-#include "MGIS/Config.hxx"
 #include "MGIS/MaterialProperty/MaterialPropertyFctPtr.hxx"
 #include "MGIS/BackendExecutionPolicy.h"
 
