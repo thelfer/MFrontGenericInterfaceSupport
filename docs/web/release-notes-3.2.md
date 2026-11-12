@@ -531,6 +531,10 @@ assign(ctx, f | as_scalar, f2 | as_scalar);
 
 # Issues fixed
 
+## Issue 444: Python bindings: new review
+
+For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/444>
+
 ## Issue 425: Python bindings on Windows: DLL directory of MGIS
 
 For more details, see <https://github.com/thelfer/MFrontGenericInterfaceSupport/issues/425>

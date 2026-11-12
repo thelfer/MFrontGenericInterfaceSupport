@@ -30,12 +30,13 @@ static pybind11::object BehaviourData_getK(pybind11::object self) {
   return mgis::python::wrapInNumPyArray(d.K, self);
 }  // end of MaterialStateManager_getK
 
-static std::string BehaviourData_getErrorMessage(
+static pybind11::str BehaviourData_getErrorMessage(
     const mgis::behaviour::BehaviourData& d) {
   if (d.error_message == nullptr) {
     return {};
   }
-  return d.error_message;
+  // a truncated message may end in the middle of a multibyte character
+  return pybind11::bytes(d.error_message).attr("decode")("utf-8", "replace");
 }  // end of BehaviourData_getErrorMessage
 
 void declareBehaviourData(pybind11::module_& m) {

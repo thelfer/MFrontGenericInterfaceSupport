@@ -13,6 +13,7 @@ from .utils import compute_on_quadrature
 import dolfin
 import subprocess
 import os
+import numbers
 
 mgis_hypothesis = {
     "plane_strain": mgis_bv.Hypothesis.PlaneStrain,
@@ -118,7 +119,7 @@ class MFrontNonlinearMaterial:
             self.material_properties = material_properties
         for s in [self.data_manager.s0, self.data_manager.s1]:
             for (key, value) in self.material_properties.items():
-                if type(value) in [int, float]:
+                if isinstance(value, numbers.Real):
                     mgis_bv.setMaterialProperty(s, key, value)
                 else:
                     values = compute_on_quadrature(
@@ -131,7 +132,7 @@ class MFrontNonlinearMaterial:
                                         external_state_variables):
         s = self.data_manager.s1
         for (key, value) in external_state_variables.items():
-            if type(value) in [int, float]:
+            if isinstance(value, numbers.Real):
                 mgis_bv.setExternalStateVariable(s, key, value)
             elif isinstance(value, dolfin.Constant):
                 mgis_bv.setExternalStateVariable(s, key, float(value))

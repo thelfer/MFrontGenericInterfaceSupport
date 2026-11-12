@@ -17,7 +17,6 @@
 
 #include <span>
 #include <vector>
-#include <variant>
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include "MGIS/Config.hxx"
@@ -37,15 +36,6 @@ namespace mgis::python {
    * \brief create a 1D-ndarray object from a vector.
    * The ndarray does not own the data, the lifetime of which is handled by
    * the vector.
-   * \param[in] v: values
-   * \param[in] base: object owning the values, kept alive by the ndarray
-   */
-  pybind11::array_t<double> wrapInNumPyArray(
-      std::variant<std::span<double>, std::vector<double>>&, pybind11::handle);
-  /*!
-   * \brief create a 1D-ndarray object from a vector.
-   * The ndarray does not own the data, the lifetime of which is handled by
-   * the vector.
    * \param[in] v: vector holding the values
    * \param[in] base: object owning the values, kept alive by the ndarray
    */
@@ -62,18 +52,6 @@ namespace mgis::python {
   pybind11::array_t<double> wrapInNumPyArray(std::span<double>&,
                                              const mgis::size_type,
                                              pybind11::handle);
-  /*!
-   * \brief create a 2D-ndarray object from a vector.
-   * The ndarray does not own the data, the lifetime of which is handled by
-   * the vector.
-   * \param[in] v: values
-   * \param[in] nc: number of columns
-   * \param[in] base: object owning the values, kept alive by the ndarray
-   */
-  pybind11::array_t<double> wrapInNumPyArray(
-      std::variant<std::span<double>, std::vector<double>>&,
-      const mgis::size_type,
-      pybind11::handle);
   /*!
    * \brief create a 2D-ndarray object from a vector.
    * The ndarray does not own the data, the lifetime of which is handled by
@@ -98,20 +76,6 @@ namespace mgis::python {
                                              const mgis::size_type,
                                              const mgis::size_type,
                                              pybind11::handle);
-  /*!
-   * \brief create a 3D-ndarray object from a vector.
-   * The ndarray does not own the data, the lifetime of which is handled by
-   * the vector.
-   * \param[in] v: values
-   * \param[in] nl: number of line
-   * \param[in] nc: number of columns
-   * \param[in] base: object owning the values, kept alive by the ndarray
-   */
-  pybind11::array_t<double> wrapInNumPyArray(
-      std::variant<std::span<double>, std::vector<double>>&,
-      const mgis::size_type,
-      const mgis::size_type,
-      pybind11::handle);
   /*!
    * \brief create a 3D-ndarray object from a vector.
    * The ndarray does not own the data, the lifetime of which is handled by
@@ -128,6 +92,14 @@ namespace mgis::python {
 
   std::span<mgis::real> mgis_convert_to_span(const pybind11::array_t<double>&);
   /*!
+   * \brief convert an object into an array holding the buffer exported by this
+   * object, if any. An exception is thrown if the object is converted into a
+   * copy.
+   * \param[in] o: object
+   */
+  pybind11::array_t<double> mgis_convert_to_array_without_copy(
+      const pybind11::object&);
+  /*!
    * \brief convert an object in which values are written into a span.
    * Contrary to `mgis_convert_to_span`, an exception is thrown if the object
    * is converted into a copy, in which the written values would be lost, or
@@ -135,6 +107,34 @@ namespace mgis::python {
    * \param[in] o: object
    */
   std::span<mgis::real> mgis_convert_to_mutable_span(const pybind11::object&);
+  /*!
+   * \brief convert an object in which values are written into an array holding
+   * the buffer exported by this object, if any. Contrary to the object, this
+   * array protects the values from a reallocation.
+   * An exception is thrown if the object is converted into a copy, or if the
+   * object is read-only.
+   * \param[in] o: object
+   */
+  pybind11::array_t<double> mgis_convert_to_mutable_array(
+      const pybind11::object&);
+  /*!
+   * \brief convert an object in which values are written into a span used
+   * after the call: the converted array is kept alive by the given object.
+   * \param[in] o: object
+   * \param[in] u: object using the span
+   */
+  std::span<mgis::real> mgis_convert_to_mutable_span(const pybind11::object&,
+                                                     pybind11::handle);
+  /*!
+   * \brief convert an object given to an initializer: same as
+   * `mgis_convert_to_mutable_span`, but an exception is thrown if the object is
+   * empty, as an empty array means that no array is given to the initializer,
+   * so the object would be silently ignored.
+   * \param[in] o: object
+   * \param[in] i: initializer
+   */
+  std::span<mgis::real> mgis_convert_to_bound_span(const pybind11::object&,
+                                                   pybind11::handle);
 
 }  // end of namespace mgis::python
 

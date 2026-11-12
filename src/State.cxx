@@ -316,13 +316,13 @@ namespace mgis::behaviour {
     const auto es = getVariableSize(ev, s.b.hypothesis);
     if (v.size() != es) {
       mgis::raise(
-          "setExternalSateVariable: invalid number of values "
+          "setExternalStateVariable: invalid number of values "
           "for external variable '" +
           std::string{n} +
           "' "
           "(" +
           std::to_string(v.size()) + " given, " + std::to_string(es) +
-          "expected)");
+          " expected)");
     }
     const auto o = getVariableOffset(s.b.esvs, n, s.b.hypothesis);
     setExternalStateVariable(s, o, v);
