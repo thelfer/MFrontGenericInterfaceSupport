@@ -254,25 +254,25 @@ namespace mgis::utilities::hdf5 {
   }
 
   template <>
-  [[nodiscard]] H5::PredType getNativeType<float>() MGIS_NOEXCEPT {
+  H5::PredType getNativeType<float>() MGIS_NOEXCEPT {
     return H5::PredType::NATIVE_FLOAT;
   }  // end of getNativeType
 
   template <>
-  [[nodiscard]] H5::PredType getNativeType<double>() MGIS_NOEXCEPT {
+  H5::PredType getNativeType<double>() MGIS_NOEXCEPT {
     return H5::PredType::NATIVE_DOUBLE;
   }  // end of getNativeType
 
   template <>
-  [[nodiscard]] H5::PredType getNativeType<long double>() MGIS_NOEXCEPT {
+  H5::PredType getNativeType<long double>() MGIS_NOEXCEPT {
     return H5::PredType::NATIVE_LDOUBLE;
   }  // end of getNativeType
 
-  [[nodiscard]] MGIS_EXPORT bool write(Context& ctx,
-                                       H5::Group& g,
-                                       const std::string& d,
-                                       const real& o,
-                                       const bool b) MGIS_NOEXCEPT {
+  bool write(Context& ctx,
+             H5::Group& g,
+             const std::string& d,
+             const real& o,
+             const bool b) MGIS_NOEXCEPT {
     if (b) {
       if (!unlinkIfExists(ctx, g, d)) {
         return false;
@@ -290,10 +290,8 @@ namespace mgis::utilities::hdf5 {
     return false;
   }  // end of write
 
-  [[nodiscard]] MGIS_EXPORT bool read(Context& ctx,
-                                      real& o,
-                                      const H5::Group& g,
-                                      const std::string& d) MGIS_NOEXCEPT {
+  bool read(Context& ctx, real& o, const H5::Group& g, const std::string& d)
+      MGIS_NOEXCEPT {
     auto odataset = openDataSet(ctx, g, d);
     if (isInvalid(odataset)) {
       return false;
