@@ -268,7 +268,7 @@ namespace mgis::utilities::hdf5 {
     return H5::PredType::NATIVE_LDOUBLE;
   }  // end of getNativeType
 
-  MGIS_EXPORT [[nodiscard]] bool write(Context& ctx,
+  [[nodiscard]] MGIS_EXPORT bool write(Context& ctx,
                                        H5::Group& g,
                                        const std::string& d,
                                        const real& o,
@@ -290,7 +290,7 @@ namespace mgis::utilities::hdf5 {
     return false;
   }  // end of write
 
-  MGIS_EXPORT [[nodiscard]] bool read(Context& ctx,
+  [[nodiscard]] MGIS_EXPORT bool read(Context& ctx,
                                       real& o,
                                       const H5::Group& g,
                                       const std::string& d) MGIS_NOEXCEPT {
