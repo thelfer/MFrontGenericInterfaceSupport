@@ -36,8 +36,22 @@ void declareMaterialProperty(pybind11::module_& m) {
       .def_readonly("output", &MaterialProperty::output,
                     "output of the material property")
       .def_readonly("inputs", &MaterialProperty::inputs,
-                    "inputs of the material property");
+                    "inputs of the material property")
+      .def_readonly("mfront_interface", &MaterialProperty::mfront_interface,
+                    "interface of `MFront` used to generate the material "
+                    "property")
+      .def_readonly("batch_api_version", &MaterialProperty::batch_api_version,
+                    "version of the functions of batches of points")
+      .def_readonly("backend", &MaterialProperty::backend,
+                    "backend of the library")
+      .def_readonly("memory_space", &MaterialProperty::memory_space,
+                    "memory space of the computations")
+      .def_readonly("execution_policy", &MaterialProperty::execution_policy,
+                    "identifier of the execution policy expected by the "
+                    "library");
   // wrapping free functions
   m.def("load", mgis::material_property::load);
+  m.def("isGenericParallelMaterialProperty",
+        mgis::material_property::isGenericParallelMaterialProperty);
 
 }  // end of declareMaterialProperty
