@@ -38,6 +38,7 @@ static void py_convertFiniteStrainTangentOperator(
 }  // end of py_py_convertFiniteStrainTangentOperator
 
 void declareFiniteStrainSupport(pybind11::module_& m) {
+  using namespace pybind11::literals;
   using namespace mgis::behaviour;
   pybind11::enum_<FiniteStrainStress>(m, "FiniteStrainStress")
       .value("PK1", FiniteStrainStress::PK1)
@@ -45,7 +46,9 @@ void declareFiniteStrainSupport(pybind11::module_& m) {
   pybind11::enum_<FiniteStrainTangentOperator>(m, "FiniteStrainTangentOperator")
       .value("DPK1_DF", FiniteStrainTangentOperator::DPK1_DF);
 
-  m.def("convertFiniteStrainStress", py_convertFiniteStrainStress);
+  m.def("convertFiniteStrainStress", py_convertFiniteStrainStress, "stress"_a,
+        "manager"_a, "type"_a);
   m.def("convertFiniteStrainTangentOperator",
-        py_convertFiniteStrainTangentOperator);
+        py_convertFiniteStrainTangentOperator, "tangent_operator"_a,
+        "manager"_a, "type"_a);
 }  // end of declareFiniteStrainSupport

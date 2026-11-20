@@ -276,6 +276,7 @@ static void MaterialStateManager_setExternalStateVariable4(
 void declareMaterialStateManager(pybind11::module_&);
 
 void declareMaterialStateManager(pybind11::module_& m) {
+  using namespace pybind11::literals;
   using mgis::size_type;
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::MaterialStateManager;
@@ -310,22 +311,27 @@ void declareMaterialStateManager(pybind11::module_& m) {
       m, "MaterialStateManagerInitializer")
       .def(pybind11::init<>())
       .def("bindGradients", &MaterialStateManagerInitializer_bindGradients,
+           "gradients"_a,
            "use the given array to store the gradients",
            pybind11::keep_alive<1, 2>())
       .def("bindThermodynamicForces",
            &MaterialStateManagerInitializer_bindThermodynamicForces,
+           "thermodynamic_forces"_a,
            "use the given array to store the thermodynamic forces",
            pybind11::keep_alive<1, 2>())
       .def("bindInternalStateVariables",
            &MaterialStateManagerInitializer_bindInternalStateVariables,
+           "internal_state_variables"_a,
            "use the given array to store the internal state variables",
            pybind11::keep_alive<1, 2>())
       .def("bindStoredEnergies",
            &MaterialStateManagerInitializer_bindStoredEnergies,
+           "stored_energies"_a,
            "use the given array to store the stored energies",
            pybind11::keep_alive<1, 2>())
       .def("bindDissipatedEnergies",
            &MaterialStateManagerInitializer_bindDissipatedEnergies,
+           "dissipated_energies"_a,
            "use the given array to store the dissipated energies",
            pybind11::keep_alive<1, 2>());
   // wrapping the MaterialStateManager class
@@ -351,46 +357,68 @@ void declareMaterialStateManager(pybind11::module_& m) {
                              &MaterialStateManager_getDissipatedEnergies)
       .def_property_readonly("internal_state_variables",
                              &MaterialStateManager_getInternalStateVariables)
-      .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty)
-      .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty2)
+      .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty,
+           "name"_a, "value"_a)
+      .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty2,
+           "name"_a, "value"_a, "update_policy"_a)
       .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty3,
+           "name"_a, "values"_a, "storage_mode"_a,
            storage_mode_doc)
       .def("setMaterialProperty", &MaterialStateManager_setMaterialProperty4,
+           "name"_a, "values"_a, "storage_mode"_a, "update_policy"_a,
            storage_mode_doc)
-      .def("setMassDensity", &MaterialStateManager_setMassDensity)
-      .def("setMassDensity", &MaterialStateManager_setMassDensity2)
-      .def("setMassDensity", &MaterialStateManager_setMassDensity3,
+      .def("setMassDensity", &MaterialStateManager_setMassDensity, "value"_a)
+      .def("setMassDensity", &MaterialStateManager_setMassDensity2, "value"_a,
+           "update_policy"_a)
+      .def("setMassDensity", &MaterialStateManager_setMassDensity3, "values"_a,
+           "storage_mode"_a,
            storage_mode_doc)
-      .def("setMassDensity", &MaterialStateManager_setMassDensity4,
+      .def("setMassDensity", &MaterialStateManager_setMassDensity4, "values"_a,
+           "storage_mode"_a, "update_policy"_a,
            storage_mode_doc)
       .def("setExternalStateVariable",
-           &MaterialStateManager_setExternalStateVariable)
+           &MaterialStateManager_setExternalStateVariable, "name"_a, "value"_a)
       .def("setExternalStateVariable",
-           &MaterialStateManager_setExternalStateVariable2)
+           &MaterialStateManager_setExternalStateVariable2, "name"_a, "value"_a,
+           "update_policy"_a)
       .def("setExternalStateVariable",
-           &MaterialStateManager_setExternalStateVariable3, storage_mode_doc)
+           &MaterialStateManager_setExternalStateVariable3, "name"_a,
+           "values"_a, "storage_mode"_a, storage_mode_doc)
       .def("setExternalStateVariable",
-           &MaterialStateManager_setExternalStateVariable4, storage_mode_doc);
+           &MaterialStateManager_setExternalStateVariable4, "name"_a,
+           "values"_a, "storage_mode"_a, "update_policy"_a, storage_mode_doc);
   // free functions
-  m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty);
-  m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty2);
+  m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty,
+        "state"_a, "name"_a, "value"_a);
+  m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty2,
+        "state"_a, "name"_a, "value"_a, "update_policy"_a);
   m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty3,
+        "state"_a, "name"_a, "values"_a, "storage_mode"_a,
         storage_mode_doc);
   m.def("setMaterialProperty", &MaterialStateManager_setMaterialProperty4,
+        "state"_a, "name"_a, "values"_a, "storage_mode"_a, "update_policy"_a,
         storage_mode_doc);
-  m.def("setMassDensity", &MaterialStateManager_setMassDensity);
-  m.def("setMassDensity", &MaterialStateManager_setMassDensity2);
-  m.def("setMassDensity", &MaterialStateManager_setMassDensity3,
+  m.def("setMassDensity", &MaterialStateManager_setMassDensity, "state"_a,
+        "value"_a);
+  m.def("setMassDensity", &MaterialStateManager_setMassDensity2, "state"_a,
+        "value"_a, "update_policy"_a);
+  m.def("setMassDensity", &MaterialStateManager_setMassDensity3, "state"_a,
+        "values"_a, "storage_mode"_a,
         storage_mode_doc);
-  m.def("setMassDensity", &MaterialStateManager_setMassDensity4,
+  m.def("setMassDensity", &MaterialStateManager_setMassDensity4, "state"_a,
+        "values"_a, "storage_mode"_a, "update_policy"_a,
         storage_mode_doc);
   m.def("setExternalStateVariable",
-        &MaterialStateManager_setExternalStateVariable);
+        &MaterialStateManager_setExternalStateVariable, "state"_a, "name"_a,
+        "value"_a);
   m.def("setExternalStateVariable",
-        &MaterialStateManager_setExternalStateVariable2);
+        &MaterialStateManager_setExternalStateVariable2, "state"_a, "name"_a,
+        "value"_a, "update_policy"_a);
   m.def("setExternalStateVariable",
-        &MaterialStateManager_setExternalStateVariable3, storage_mode_doc);
+        &MaterialStateManager_setExternalStateVariable3, "state"_a, "name"_a,
+        "values"_a, "storage_mode"_a, storage_mode_doc);
   m.def("setExternalStateVariable",
-        &MaterialStateManager_setExternalStateVariable4, storage_mode_doc);
+        &MaterialStateManager_setExternalStateVariable4, "state"_a, "name"_a,
+        "values"_a, "storage_mode"_a, "update_policy"_a, storage_mode_doc);
 
 }  // end of declareMaterialStateManager

@@ -153,6 +153,7 @@ MaterialDataManager_executePostProcessing3(
 }
 
 void declareIntegrate(pybind11::module_& m) {
+  using namespace pybind11::literals;
   using namespace mgis::behaviour;
 
   pybind11::enum_<IntegrationType>(m, "IntegrationType")
@@ -226,21 +227,28 @@ void declareIntegrate(pybind11::module_& m) {
                     &MultiThreadedBehaviourIntegrationResult::results);
 
   m.def("executeInitializeFunction",
-        BehaviourDataView_executeInitializeFunction);
+        BehaviourDataView_executeInitializeFunction, "view"_a, "behaviour"_a,
+        "name"_a);
   m.def("executeInitializeFunction",
-        BehaviourDataView_executeInitializeFunction2);
+        BehaviourDataView_executeInitializeFunction2, "view"_a, "behaviour"_a,
+        "name"_a, "inputs"_a);
   m.def("executeInitializeFunction",
-        MaterialDataManager_executeInitializeFunction);
+        MaterialDataManager_executeInitializeFunction, "manager"_a, "name"_a);
   m.def("executeInitializeFunction",
-        MaterialDataManager_executeInitializeFunction1);
+        MaterialDataManager_executeInitializeFunction1, "manager"_a, "name"_a,
+        "begin"_a, "end"_a);
   m.def("executeInitializeFunction",
-        MaterialDataManager_executeInitializeFunction2);
+        MaterialDataManager_executeInitializeFunction2, "thread_pool"_a,
+        "manager"_a, "name"_a);
   m.def("executeInitializeFunction",
-        MaterialDataManager_executeInitializeFunction3);
+        MaterialDataManager_executeInitializeFunction3, "manager"_a, "name"_a,
+        "inputs"_a);
   m.def("executeInitializeFunction",
-        MaterialDataManager_executeInitializeFunction4);
+        MaterialDataManager_executeInitializeFunction4, "manager"_a, "name"_a,
+        "inputs"_a, "begin"_a, "end"_a);
   m.def("executeInitializeFunction",
-        MaterialDataManager_executeInitializeFunction5);
+        MaterialDataManager_executeInitializeFunction5, "thread_pool"_a,
+        "manager"_a, "name"_a, "inputs"_a);
 
   int (*integrate_ptr1)(BehaviourDataView&, const Behaviour&) = integrate;
   int (*integrate_ptr2)(MaterialDataManager&, const IntegrationType,
@@ -271,21 +279,34 @@ void declareIntegrate(pybind11::module_& m) {
       mgis::ThreadPool&, MaterialDataManager&,
       const BehaviourIntegrationOptions&, const mgis::real) = integrate_debug;
 
-  m.def("integrate", &integrateBehaviourData1);
-  m.def("integrate", integrate_ptr1);
-  m.def("integrate", integrate_ptr2);
-  m.def("integrate", integrate_ptr3);
-  m.def("integrate", integrate_ptr4);
-  m.def("integrate", integrate_ptr5);
-  m.def("integrate_debug", &integrateDebugBehaviourData1);
-  m.def("integrate_debug", integrate_debug_ptr1);
-  m.def("integrate_debug", integrate_debug_ptr2);
-  m.def("integrate_debug", integrate_debug_ptr3);
-  m.def("integrate_debug", integrate_debug_ptr4);
-  m.def("integrate_debug", integrate_debug_ptr5);
-  m.def("executePostProcessing", BehaviourDataView_executePostProcessing);
-  m.def("executePostProcessing", MaterialDataManager_executePostProcessing);
-  m.def("executePostProcessing", MaterialDataManager_executePostProcessing2);
-  m.def("executePostProcessing", MaterialDataManager_executePostProcessing3);
+  m.def("integrate", &integrateBehaviourData1, "data"_a, "behaviour"_a);
+  m.def("integrate", integrate_ptr1, "view"_a, "behaviour"_a);
+  m.def("integrate", integrate_ptr2, "manager"_a, "integration_type"_a, "dt"_a,
+        "begin"_a, "end"_a);
+  m.def("integrate", integrate_ptr3, "thread_pool"_a, "manager"_a,
+        "integration_type"_a, "dt"_a);
+  m.def("integrate", integrate_ptr4, "manager"_a, "options"_a, "dt"_a,
+        "begin"_a, "end"_a);
+  m.def("integrate", integrate_ptr5, "thread_pool"_a, "manager"_a, "options"_a,
+        "dt"_a);
+  m.def("integrate_debug", &integrateDebugBehaviourData1, "data"_a,
+        "behaviour"_a);
+  m.def("integrate_debug", integrate_debug_ptr1, "view"_a, "behaviour"_a);
+  m.def("integrate_debug", integrate_debug_ptr2, "manager"_a,
+        "integration_type"_a, "dt"_a, "begin"_a, "end"_a);
+  m.def("integrate_debug", integrate_debug_ptr3, "thread_pool"_a, "manager"_a,
+        "integration_type"_a, "dt"_a);
+  m.def("integrate_debug", integrate_debug_ptr4, "manager"_a, "options"_a,
+        "dt"_a, "begin"_a, "end"_a);
+  m.def("integrate_debug", integrate_debug_ptr5, "thread_pool"_a, "manager"_a,
+        "options"_a, "dt"_a);
+  m.def("executePostProcessing", BehaviourDataView_executePostProcessing,
+        "outputs"_a, "view"_a, "behaviour"_a, "name"_a);
+  m.def("executePostProcessing", MaterialDataManager_executePostProcessing,
+        "outputs"_a, "manager"_a, "name"_a);
+  m.def("executePostProcessing", MaterialDataManager_executePostProcessing2,
+        "outputs"_a, "manager"_a, "name"_a, "begin"_a, "end"_a);
+  m.def("executePostProcessing", MaterialDataManager_executePostProcessing3,
+        "outputs"_a, "thread_pool"_a, "manager"_a, "name"_a);
 
 }  // end of declareIntegrate

@@ -32,7 +32,8 @@ void declareModel(pybind11::module_& m) {
   // wrapping free functions
   m.def("load", pybind11::overload_cast<const std::string&, const std::string&,
                                         const mgis::behaviour::Hypothesis>(
-                    mgis::model::load));
+                    mgis::model::load),
+        "library"_a, "model"_a, "hypothesis"_a);
   m.def("loadFromDatabase", Model_loadFromDatabase, "name"_a, "hypothesis"_a,
         "material"_a = std::optional<std::string>{});
 
