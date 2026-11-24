@@ -1,10 +1,9 @@
 /*!
- * \file MGIS/Function/TFEL/StridedCoalescedMemoryAccessCompositeTensorsView.hxx
- * \brief  File which defines the
- * `StridedCoalescedMemoryAccessCompositeTensorsView` class, a view handling
- * several tensorial objects of possibly different types sharing the same set
- * of components, whose values are stored contiguously in a single memory
- * region, in a non interleaved manner.
+ * \file MGIS/Function/TFEL/StridedMemoryAccessCompositeTensorsView.hxx
+ * \brief  File which defines the `StridedMemoryAccessCompositeTensorsView`
+ * class, a view handling several tensorial objects of possibly different types
+ * sharing the same set of components, whose values are stored contiguously in
+ * a single memory region, in a non interleaved manner.
  * \author Thomas Helfer
  * \date   27/10/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -17,17 +16,17 @@
  */
 
 #ifndef MGIS_HAVE_TFEL
-#error "TFEL is required to use strided coalesced memory access tensor views"
+#error "TFEL is required to use strided memory access tensor views"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSCOMPOSITETENSORVIEW_HXX
-#define LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSCOMPOSITETENSORVIEW_HXX
+#ifndef LIB_MGIS_FUNCTION_TFEL_STRIDEDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX
+#define LIB_MGIS_FUNCTION_TFEL_STRIDEDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX
 
 #include <tuple>
 #include <concepts>
 #include <type_traits>
 #include "TFEL/Math/Array/StridedView.hxx"
-#include "MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.hxx"
+#include "MGIS/Function/StridedMemoryAccessFunctionViewBase.hxx"
 #include "MGIS/Function/TFEL/General.hxx"
 #include "MGIS/Function/TFEL/TensorConcept.hxx"
 
@@ -35,8 +34,8 @@ namespace mgis::function {
 
   /*!
    * \brief traits defining the type used by the
-   * `StridedCoalescedMemoryAccessCompositeTensorsView` class to return a
-   * mutable value of the given type
+   * `StridedMemoryAccessCompositeTensorsView` class to return a mutable value
+   * of the given type
    *
    * The primary template returns a strided view of the tensorial type, whose
    * components are stored contiguously in a single memory region, in a non
@@ -47,7 +46,7 @@ namespace mgis::function {
    * `ScalarOrTensorConcept` concept
    */
   template <ScalarOrTensorConcept ValueType>
-  struct StridedCoalescedMemoryAccessCompositeTensorsViewMutableValue {
+  struct StridedMemoryAccessCompositeTensorsViewMutableValue {
     //! \brief type of the mutable value returned
     using type = tfel::math::StridedView<ValueType>;
   };
@@ -57,15 +56,15 @@ namespace mgis::function {
    * references to the value of the corresponding component
    */
   template <>
-  struct StridedCoalescedMemoryAccessCompositeTensorsViewMutableValue<real> {
+  struct StridedMemoryAccessCompositeTensorsViewMutableValue<real> {
     //! \brief type of the mutable value returned
     using type = real&;
   };
 
   /*!
    * \brief traits defining the type used by the
-   * `StridedCoalescedMemoryAccessCompositeTensorsView` class to return a
-   * read-only value of the given type
+   * `StridedMemoryAccessCompositeTensorsView` class to return a read-only
+   * value of the given type
    *
    * The primary template returns a strided view of the const tensorial type,
    * whose components are stored contiguously in a single memory region, in a
@@ -76,7 +75,7 @@ namespace mgis::function {
    * `ScalarOrTensorConcept` concept
    */
   template <ScalarOrTensorConcept ValueType>
-  struct StridedCoalescedMemoryAccessCompositeTensorsViewConstValue {
+  struct StridedMemoryAccessCompositeTensorsViewConstValue {
     //! \brief type of the read-only value returned
     using type = tfel::math::StridedView<const ValueType>;
   };
@@ -86,20 +85,20 @@ namespace mgis::function {
    * references to the value of the corresponding component
    */
   template <>
-  struct StridedCoalescedMemoryAccessCompositeTensorsViewConstValue<real> {
+  struct StridedMemoryAccessCompositeTensorsViewConstValue<real> {
     //! \brief type of the read-only value returned
     using type = const real&;
   };
 
   /*!
-   * \brief a strided coalesced memory access view handling several tensorial
-   * objects of possibly different types sharing the same set of components
+   * \brief a strided memory access view handling several tensorial objects
+   * of possibly different types sharing the same set of components
    *
    * The view is built from a space and an array of values, whose number of
    * values must be equal to `N * getSpaceSize(space)`, as described by the
-   * `StridedCoalescedMemoryAccessFunctionViewBase` class. The values of each
-   * component are stored contiguously in a single memory region, in a non
-   * interleaved manner: the values of the `k`-th component start at the offset
+   * `StridedMemoryAccessFunctionViewBase` class. The values of each component
+   * are stored contiguously in a single memory region, in a non interleaved
+   * manner: the values of the `k`-th component start at the offset
    * `k * getSpaceSize(space)`.
    *
    * The `get` member function returns, for a given integration point, the
@@ -119,8 +118,8 @@ namespace mgis::function {
    */
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable = true>
   requires(N > 0)  //
-      struct StridedCoalescedMemoryAccessCompositeTensorsView
-      : StridedCoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable> {
+      struct StridedMemoryAccessCompositeTensorsView
+      : StridedMemoryAccessFunctionViewBase<Space, N, is_mutable> {
     //
     /*!
      * \brief type returned by the mutable `get` member functions
@@ -129,7 +128,7 @@ namespace mgis::function {
      */
     template <ScalarOrTensorConcept ValueType>
     using MutableValues =
-        typename StridedCoalescedMemoryAccessCompositeTensorsViewMutableValue<
+        typename StridedMemoryAccessCompositeTensorsViewMutableValue<
             ValueType>::type;
     //
     /*!
@@ -139,14 +138,14 @@ namespace mgis::function {
      */
     template <ScalarOrTensorConcept ValueType>
     using ConstValues =
-        typename StridedCoalescedMemoryAccessCompositeTensorsViewConstValue<
+        typename StridedMemoryAccessCompositeTensorsViewConstValue<
             ValueType>::type;
     /*!
      * \brief constructors inherited from the
-     * `StridedCoalescedMemoryAccessFunctionViewBase` base class
+     * `StridedMemoryAccessFunctionViewBase` base class
      */
-    using StridedCoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
-        StridedCoalescedMemoryAccessFunctionViewBase;
+    using StridedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+        StridedMemoryAccessFunctionViewBase;
     /*!
      * \return the tensorial object built from the components of the view at the
      * given integration point
@@ -210,11 +209,11 @@ namespace mgis::function {
         requires((begin + internals::CompileTimeSize<ValueType>::value <= N) &&
                  LinearQuadratureSpaceConcept<Space>);
 
-  };  // end of StridedCoalescedMemoryAccessCompositeTensorsView
+  };  // end of StridedMemoryAccessCompositeTensorsView
 
 }  // namespace mgis::function
 
-#include "MGIS/Function/TFEL/StridedCoalescedMemoryAccessCompositeTensorsView.ixx"
+#include "MGIS/Function/TFEL/StridedMemoryAccessCompositeTensorsView.ixx"
 
-#endif /* LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSCOMPOSITETENSORVIEW_HXX \
+#endif /* LIB_MGIS_FUNCTION_TFEL_STRIDEDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX \
         */

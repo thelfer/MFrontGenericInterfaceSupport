@@ -1,8 +1,8 @@
 /*!
- * \file   MGIS/Function/CoalescedMemoryAccessFunctionViewBase.ixx
+ * \file   MGIS/Function/ScatteredMemoryAccessFunctionViewBase.ixx
  * \brief File which contains the implementation of the
- * `CoalescedMemoryAccessFunctionViewBase` class declared in
- * `MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx`.
+ * `ScatteredMemoryAccessFunctionViewBase` class declared in
+ * `MGIS/Function/ScatteredMemoryAccessFunctionViewBase.hxx`.
  * \author Thomas Helfer
  * \date   26/10/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -14,8 +14,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_FUNCTION_COALESCEDMEMORYACCESSFUNCTIONVIEWBASE_IXX
-#define LIB_MGIS_FUNCTION_COALESCEDMEMORYACCESSFUNCTIONVIEWBASE_IXX
+#ifndef LIB_MGIS_FUNCTION_SCATTEREDMEMORYACCESSFUNCTIONVIEWBASE_IXX
+#define LIB_MGIS_FUNCTION_SCATTEREDMEMORYACCESSFUNCTIONVIEWBASE_IXX
 
 namespace mgis::function {
 
@@ -77,7 +77,7 @@ namespace mgis::function {
   // `checkPreconditions` function before the split is performed
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
-      constexpr auto CoalescedMemoryAccessFunctionViewBase<
+      constexpr auto ScatteredMemoryAccessFunctionViewBase<
           Space,
           N,
           is_mutable>::splitValues(const Space& space, std::span<real> values) {
@@ -87,7 +87,7 @@ namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
-      constexpr auto CoalescedMemoryAccessFunctionViewBase<
+      constexpr auto ScatteredMemoryAccessFunctionViewBase<
           Space,
           N,
           is_mutable>::splitValues(const Space& space,
@@ -98,7 +98,7 @@ namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
-      constexpr bool CoalescedMemoryAccessFunctionViewBase<Space,
+      constexpr bool ScatteredMemoryAccessFunctionViewBase<Space,
                                                            N,
                                                            is_mutable>::
           checkPreconditions(
@@ -119,27 +119,27 @@ namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
-      constexpr CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
-          CoalescedMemoryAccessFunctionViewBase(
+      constexpr ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+          ScatteredMemoryAccessFunctionViewBase(
               const std::array<ScalarComponentFunctionView, N>& components)
-      : CoalescedMemoryAccessFunctionViewBase(preconditions_check, components) {
-  }  // end of CoalescedMemoryAccessFunctionViewBase
+      : ScatteredMemoryAccessFunctionViewBase(preconditions_check, components) {
+  }  // end of ScatteredMemoryAccessFunctionViewBase
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       template <bool doPreconditionsCheck>
-      constexpr CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
-          CoalescedMemoryAccessFunctionViewBase(
+      constexpr ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+          ScatteredMemoryAccessFunctionViewBase(
               const PreconditionsCheck<doPreconditionsCheck>& pcheck,
               const std::array<ScalarComponentFunctionView, N>& components)
-      : PreconditionsChecker<CoalescedMemoryAccessFunctionViewBase>(pcheck,
+      : PreconditionsChecker<ScatteredMemoryAccessFunctionViewBase>(pcheck,
                                                                     components),
         function_components(components) {
-  }  // end of CoalescedMemoryAccessFunctionViewBase
+  }  // end of ScatteredMemoryAccessFunctionViewBase
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
-      constexpr bool CoalescedMemoryAccessFunctionViewBase<
+      constexpr bool ScatteredMemoryAccessFunctionViewBase<
           Space,
           N,
           is_mutable>::checkPreconditions(AbstractErrorHandler& eh,
@@ -155,30 +155,30 @@ namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
-      constexpr CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
-          CoalescedMemoryAccessFunctionViewBase(
+      constexpr ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+          ScatteredMemoryAccessFunctionViewBase(
               const Space& space,
               std::span<const real> values) requires(!is_mutable)
-      : CoalescedMemoryAccessFunctionViewBase(
+      : ScatteredMemoryAccessFunctionViewBase(
             preconditions_check, space, values) {
-  }  // end of CoalescedMemoryAccessFunctionViewBase
+  }  // end of ScatteredMemoryAccessFunctionViewBase
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       template <bool doPreconditionsCheck>
-      constexpr CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
-          CoalescedMemoryAccessFunctionViewBase(
+      constexpr ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+          ScatteredMemoryAccessFunctionViewBase(
               const PreconditionsCheck<doPreconditionsCheck>& pcheck,
               const Space& space,
               std::span<const real> values) requires(!is_mutable)
-      : PreconditionsChecker<CoalescedMemoryAccessFunctionViewBase>(
+      : PreconditionsChecker<ScatteredMemoryAccessFunctionViewBase>(
             pcheck, space, values),
         function_components(splitValues(space, values)) {
-  }  // end of CoalescedMemoryAccessFunctionViewBase
+  }  // end of ScatteredMemoryAccessFunctionViewBase
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
-      constexpr bool CoalescedMemoryAccessFunctionViewBase<
+      constexpr bool ScatteredMemoryAccessFunctionViewBase<
           Space,
           N,
           is_mutable>::checkPreconditions(AbstractErrorHandler& eh,
@@ -193,22 +193,22 @@ namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
-      constexpr CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
-          CoalescedMemoryAccessFunctionViewBase(const Space& space,
+      constexpr ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+          ScatteredMemoryAccessFunctionViewBase(const Space& space,
                                                 std::span<real> values)
-      : CoalescedMemoryAccessFunctionViewBase(
+      : ScatteredMemoryAccessFunctionViewBase(
             preconditions_check, space, values) {
-  }  // end of CoalescedMemoryAccessFunctionViewBase
+  }  // end of ScatteredMemoryAccessFunctionViewBase
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       template <bool doPreconditionsCheck>
-      constexpr CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
-          CoalescedMemoryAccessFunctionViewBase(
+      constexpr ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+          ScatteredMemoryAccessFunctionViewBase(
               const PreconditionsCheck<doPreconditionsCheck>& pcheck,
               const Space& space,
               std::span<real> values)
-      : PreconditionsChecker<CoalescedMemoryAccessFunctionViewBase>(
+      : PreconditionsChecker<ScatteredMemoryAccessFunctionViewBase>(
             pcheck, space, values),
         function_components(splitValues(space, [&values] {
           if constexpr (is_mutable) {
@@ -217,11 +217,11 @@ namespace mgis::function {
             return std::span<const real>{values};
           }
         }())) {
-  }  // end of CoalescedMemoryAccessFunctionViewBase
+  }  // end of ScatteredMemoryAccessFunctionViewBase
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
-      constexpr const Space& CoalescedMemoryAccessFunctionViewBase<
+      constexpr const Space& ScatteredMemoryAccessFunctionViewBase<
           Space,
           N,
           is_mutable>::getSpace() const MGIS_NOEXCEPT {
@@ -233,9 +233,9 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       constexpr
-      typename CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+      typename ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           template MutableValues<N>  //
-      CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+      ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           getValuesPointers(const size_type i) requires(
               is_mutable&& LinearElementSpaceConcept<Space> &&
               (!hasElementWorkspace<Space>)) {
@@ -249,9 +249,9 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       constexpr
-      typename CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+      typename ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           template MutableValues<N>  //
-      CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+      ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           getValuesPointers(const size_type e,
                             const size_type q)  //
       requires(is_mutable&& LinearQuadratureSpaceConcept<Space> &&
@@ -266,9 +266,9 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       constexpr
-      typename CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+      typename ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           template ConstValues<N>  //
-      CoalescedMemoryAccessFunctionViewBase<
+      ScatteredMemoryAccessFunctionViewBase<
           Space,
           N,
           is_mutable>::getValuesPointers(const size_type i) const  //
@@ -284,9 +284,9 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       constexpr
-      typename CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+      typename ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           template ConstValues<N>  //
-      CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+      ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           getValuesPointers(const size_type e, const size_type q) const  //
       requires(LinearQuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
@@ -301,9 +301,9 @@ namespace mgis::function {
   requires(N > 0)  //
       template <size_type begin, size_type size>
       constexpr
-      typename CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+      typename ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           template MutableValues<size>  //
-      CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+      ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           getValuesPointers(const size_type i)  //
       requires((begin + size <= N) && is_mutable &&
                LinearElementSpaceConcept<Space> &&
@@ -319,9 +319,9 @@ namespace mgis::function {
   requires(N > 0)  //
       template <size_type begin, size_type size>
       constexpr
-      typename CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+      typename ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           template MutableValues<size>  //
-      CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+      ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           getValuesPointers(const size_type e,
                             const size_type q)  //
       requires((begin + size <= N) && is_mutable &&
@@ -338,9 +338,9 @@ namespace mgis::function {
   requires(N > 0)  //
       template <size_type begin, size_type size>
       constexpr
-      typename CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+      typename ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           template ConstValues<size>  //
-      CoalescedMemoryAccessFunctionViewBase<
+      ScatteredMemoryAccessFunctionViewBase<
           Space,
           N,
           is_mutable>::getValuesPointers(const size_type i) const  //
@@ -357,9 +357,9 @@ namespace mgis::function {
   requires(N > 0)  //
       template <size_type begin, size_type size>
       constexpr
-      typename CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+      typename ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           template ConstValues<size>  //
-      CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+      ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           getValuesPointers(const size_type e, const size_type q) const  //
       requires((begin + size <= N) && LinearQuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
@@ -372,7 +372,7 @@ namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0) template <size_type offset>
-  constexpr real* CoalescedMemoryAccessFunctionViewBase<
+  constexpr real* ScatteredMemoryAccessFunctionViewBase<
       Space,
       N,
       is_mutable>::getValuePointer(const size_type i)  //
@@ -384,7 +384,7 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       template <size_type offset>
-      constexpr real* CoalescedMemoryAccessFunctionViewBase<
+      constexpr real* ScatteredMemoryAccessFunctionViewBase<
           Space,
           N,
           is_mutable>::getValuePointer(const size_type e,
@@ -398,7 +398,7 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       template <size_type offset>
-      constexpr const real* CoalescedMemoryAccessFunctionViewBase<
+      constexpr const real* ScatteredMemoryAccessFunctionViewBase<
           Space,
           N,
           is_mutable>::getValuePointer(const size_type i) const  //
@@ -410,7 +410,7 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0) template <size_type offset>
   constexpr const real*  //
-      CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+      ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
           getValuePointer(const size_type e, const size_type q) const  //
       requires((offset < N) && LinearQuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
@@ -419,4 +419,4 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#endif /* LIB_MGIS_FUNCTION_COALESCEDMEMORYACCESSFUNCTIONVIEWBASE_IXX */
+#endif /* LIB_MGIS_FUNCTION_SCATTEREDMEMORYACCESSFUNCTIONVIEWBASE_IXX */

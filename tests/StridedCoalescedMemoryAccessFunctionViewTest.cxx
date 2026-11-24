@@ -16,7 +16,7 @@
 #include "MGIS/Function/SharedSpace.hxx"
 #include "MGIS/Function/BasicLinearSpace.hxx"
 #include "MGIS/Function/BasicLinearQuadratureSpace.hxx"
-#include "MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.hxx"
+#include "MGIS/Function/StridedMemoryAccessFunctionViewBase.hxx"
 #include "MGIS/Function/Algorithms.hxx"
 #include "MGIS/Function/TFEL/Tensors.hxx"
 
@@ -45,8 +45,8 @@ struct StridedCoalescedMemoryAccessFunctionViewBaseTest final
       auto space = BasicLinearSpace{2};
       auto values = std::vector<double>{5, 12, -2, 3};
       auto coalesced_view =
-          StridedCoalescedMemoryAccessFunctionViewBase<BasicLinearSpace, 2,
-                                                       true>(space, values);
+          StridedMemoryAccessFunctionViewBase<BasicLinearSpace, 2, true>(
+              space, values);
       auto ptr0 = coalesced_view.getValues(0);
       auto ptr1 = coalesced_view.getValues(1);
       return {std::array{ptr0[0], ptr0[1]},  //
@@ -83,8 +83,10 @@ struct StridedCoalescedMemoryAccessTensorViewTest final
       constexpr auto ne = size_type{2};
       auto space = BasicLinearSpace{ne};
       std::array<const real, 4 * ne> values = {1, 10, 2, 20, 3, 30, 4, 40};
-      const auto f = StridedCoalescedMemoryAccessTensorView<
-          BasicLinearSpace, tfel::math::stensor<2, real>, false>{space, values};
+      const auto f =
+          StridedMemoryAccessTensorView<BasicLinearSpace,
+                                        tfel::math::stensor<2, real>, false>{
+              space, values};
       return std::array{tfel::math::trace(f(0)), tfel::math::trace(f(1)),
                         tfel::math::trace(f(1) - 3 * f(0))};
     }();
@@ -100,10 +102,9 @@ struct StridedCoalescedMemoryAccessTensorViewTest final
     auto ctx = ContractViolationHandler{};
     auto space = BasicLinearSpace{2};
     auto values = std::array<real, 8>{1, 10, 2, 20, 3, 30, 4, 40};
-    auto f =
-        StridedCoalescedMemoryAccessTensorView<BasicLinearSpace,
-                                               tfel::math::stensor<2, real>>{
-            space, values};
+    auto f = StridedMemoryAccessTensorView<BasicLinearSpace,
+                                           tfel::math::stensor<2, real>>{
+        space, values};
     auto tr = Function<BasicLinearSpace, 1>{space};
     TFEL_TESTS_ASSERT(assign(ctx, tr, f | trace));
     TFEL_TESTS_ASSERT(std::abs(tr(1) - 60) < 1e-14);
@@ -142,9 +143,8 @@ struct StridedCoalescedMemoryAccessCompositeTensorsViewTest final
       auto space = BasicLinearSpace{ne};
       std::array<const real, 4 * ne> values = {1, 10, 2, 20, 3, 30, 4, 40};
       auto f =
-          StridedCoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4,
-                                                           false>{space,
-                                                                  values};
+          StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4, false>{
+              space, values};
       return std::array{
           tfel::math::trace(f.get<0, tfel::math::stensor<2, real>>(0)),
           tfel::math::trace(f.get<0, tfel::math::stensor<2, real>>(1)),
@@ -167,13 +167,11 @@ struct StridedCoalescedMemoryAccessCompositeTensorsViewTest final
       auto space = BasicLinearSpace{ne};
       std::array<real, 8> out_values = {0, 0, 0, 0, 0, 0, 0, 0};
       std::array<const real, 8> in_values = {1, 10, 2, 20, 3, 30, 4, 40};
-      auto out =
-          StridedCoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4>{
-              space, out_values};
+      auto out = StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4>{
+          space, out_values};
       const auto in =
-          StridedCoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4,
-                                                           false>{space,
-                                                                  in_values};
+          StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4, false>{
+              space, in_values};
       for (size_type idx = 0; idx != ne; ++idx) {
         auto o = out.get<0, tfel::math::stensor<2, real>>(idx);
         const auto i = in.get<0, tfel::math::stensor<2, real>>(idx);
@@ -195,7 +193,7 @@ struct StridedCoalescedMemoryAccessCompositeTensorsViewTest final
     using namespace mgis;
     using namespace mgis::function;
     using CompositeView =
-        StridedCoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4>;
+        StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4>;
     auto space = BasicLinearSpace{2};
     std::array<real, 6> out_values = {0, 0, 0, 0, 0, 0};
 #ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
@@ -209,10 +207,8 @@ struct StridedCoalescedMemoryAccessCompositeTensorsViewTest final
                   config::ContractViolationPolicy::RAISE) {
       bool has_thrown = false;
       try {
-        auto out =
-            StridedCoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace,
-                                                             4>{space,
-                                                                out_values};
+        auto out = StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4>{
+            space, out_values};
       } catch (std::exception&) {
         has_thrown = true;
       }
@@ -225,10 +221,9 @@ struct StridedCoalescedMemoryAccessCompositeTensorsViewTest final
     using namespace mgis;
     using namespace mgis::function;
     using CompositeView =
-        StridedCoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 6>;
+        StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 6>;
     using ImmutableCompositeView =
-        StridedCoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 6,
-                                                         false>;
+        StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 6, false>;
     constexpr auto young = real{150e9};
     constexpr auto nu = real{1} / 3;
     constexpr auto lambda = tfel::material::computeLambda(young, nu);
@@ -280,8 +275,7 @@ struct StridedCoalescedMemoryAccessCompositeTensorsViewTest final
     using namespace mgis;
     using namespace mgis::function;
     using ImmutableCompositeView =
-        StridedCoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 2,
-                                                         false>;
+        StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 2, false>;
     auto local_abs = [](const mgis::real r) { return r > 0 ? r : -r; };
     constexpr auto r = []() -> std::array<real, 4u> {
       auto ctx = ContractViolationHandler{};

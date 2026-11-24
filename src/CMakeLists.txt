@@ -42,8 +42,8 @@ if(enable-mgis-function)
     Function.cxx
     Evaluator.cxx
     UniformEvaluator.cxx
-    CoalescedMemoryAccessFunctionView.cxx
-    StridedCoalescedMemoryAccessFunctionView.cxx
+    ScatteredMemoryAccessFunctionView.cxx
+    StridedMemoryAccessFunctionView.cxx
     MaterialFunctionManager.cxx)
   if(MGIS_HAVE_TFEL)
     list(APPEND MFrontGenericInterface_SOURCES

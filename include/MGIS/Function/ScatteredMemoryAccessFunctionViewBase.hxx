@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx
+ * \file   MGIS/Function/ScatteredMemoryAccessFunctionViewBase.hxx
  * \brief File which defines a base class for views whose components are
  * stored contiguously in separate memory regions, each component being
  * described by a scalar function view.
@@ -14,8 +14,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_FUNCTION_COALESCEDMEMORYACCESSFUNCTIONVIEWBASE_HXX
-#define LIB_MGIS_FUNCTION_COALESCEDMEMORYACCESSFUNCTIONVIEWBASE_HXX
+#ifndef LIB_MGIS_FUNCTION_SCATTEREDMEMORYACCESSFUNCTIONVIEWBASE_HXX
+#define LIB_MGIS_FUNCTION_SCATTEREDMEMORYACCESSFUNCTIONVIEWBASE_HXX
 
 #include <span>
 #include <array>
@@ -98,19 +98,20 @@ namespace mgis::function {
    * The values of the different components at a given integration point are
    * not contiguous: the `getValuesPointers` function gathers the addresses of
    * those values, which allows the values of all the components at a given
-   * integration point to be read or written in a single operation. This
-   * scheme is used by the `CoalescedMemoryAccessTensorView` class to map
-   * tensorial objects whose components are stored in separate contiguous
-   * memory regions.
+   * integration point to be read or written in a single operation. The class
+   * is named after this way of accessing the memory, through one address per
+   * component. This scheme is used by the `ScatteredMemoryAccessTensorView`
+   * class to map tensorial objects whose components are stored in separate
+   * contiguous memory regions.
    *
    * \tparam Space: type of the space on which the views are defined
    * \tparam N: number of components, which must be strictly positive
    * \tparam is_mutable: boolean stating if the view can return mutable pointers
    */
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
-  requires(N > 0) struct CoalescedMemoryAccessFunctionViewBase
+  requires(N > 0) struct ScatteredMemoryAccessFunctionViewBase
       : private PreconditionsChecker<
-            CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>> {
+            ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>> {
     /*!
      * \brief array of the addresses of the values of `size` mutable components
      * at a given integration point
@@ -150,7 +151,7 @@ namespace mgis::function {
      * \brief constructor, checking that the components share the same space
      * \param[in] components: views of the components
      */
-    constexpr CoalescedMemoryAccessFunctionViewBase(
+    constexpr ScatteredMemoryAccessFunctionViewBase(
         const std::array<ScalarComponentFunctionView, N>&);
     /*!
      * \brief check that the preconditions to build the view are met
@@ -170,7 +171,7 @@ namespace mgis::function {
      * \param[in] space: space on which the view is defined
      * \param[in] values: constant values
      */
-    constexpr CoalescedMemoryAccessFunctionViewBase(
+    constexpr ScatteredMemoryAccessFunctionViewBase(
         const Space&, std::span<const real>) requires(!is_mutable);
     /*!
      * \brief check that the preconditions to build the view are met
@@ -187,7 +188,7 @@ namespace mgis::function {
      * \param[in] space: space on which the view is defined
      * \param[in] values: values
      */
-    constexpr CoalescedMemoryAccessFunctionViewBase(const Space&,
+    constexpr ScatteredMemoryAccessFunctionViewBase(const Space&,
                                                     std::span<real>);
     /*!
      * \brief return the underlying space
@@ -390,7 +391,7 @@ namespace mgis::function {
      * \param[in] components: views of the components
      */
     template <bool doPreconditionsCheck>
-    constexpr CoalescedMemoryAccessFunctionViewBase(
+    constexpr ScatteredMemoryAccessFunctionViewBase(
         const PreconditionsCheck<doPreconditionsCheck>&,
         const std::array<ScalarComponentFunctionView, N>&);
     /*!
@@ -402,7 +403,7 @@ namespace mgis::function {
      * \param[in] values: constant values
      */
     template <bool doPreconditionsCheck>
-    constexpr CoalescedMemoryAccessFunctionViewBase(
+    constexpr ScatteredMemoryAccessFunctionViewBase(
         const PreconditionsCheck<doPreconditionsCheck>&,
         const Space&,
         std::span<const real>) requires(!is_mutable);
@@ -415,7 +416,7 @@ namespace mgis::function {
      * \param[in] values: values
      */
     template <bool doPreconditionsCheck>
-    constexpr CoalescedMemoryAccessFunctionViewBase(
+    constexpr ScatteredMemoryAccessFunctionViewBase(
         const PreconditionsCheck<doPreconditionsCheck>&,
         const Space&,
         std::span<real>);
@@ -425,6 +426,6 @@ namespace mgis::function {
 
 }  // namespace mgis::function
 
-#include "MGIS/Function/CoalescedMemoryAccessFunctionViewBase.ixx"
+#include "MGIS/Function/ScatteredMemoryAccessFunctionViewBase.ixx"
 
-#endif /* LIB_MGIS_FUNCTION_COALESCEDMEMORYACCESSFUNCTIONVIEWBASE_HXX */
+#endif /* LIB_MGIS_FUNCTION_SCATTEREDMEMORYACCESSFUNCTIONVIEWBASE_HXX */

@@ -1,8 +1,9 @@
 /*!
- * \file   MGIS/Function/TFEL/CoalescedMemoryAccessTensorView.hxx
- * \brief  File which defines the `CoalescedMemoryAccessTensorView` class, a
+ * \file   MGIS/Function/TFEL/StridedMemoryAccessTensorView.hxx
+ * \brief  File which defines the `StridedMemoryAccessTensorView` class, a
  * view which acts as a function returning TFEL's tensorial objects whose
- * components are stored in separate contiguous memory regions.
+ * components are stored contiguously in a single memory region, in a non
+ * interleaved manner.
  * \author Thomas Helfer
  * \date   27/10/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -15,15 +16,15 @@
  */
 
 #ifndef MGIS_HAVE_TFEL
-#error "TFEL is required to use coalesced memory access tensor views"
+#error "TFEL is required to use strided memory access tensor views"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSTENSORVIEW_HXX
-#define LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSTENSORVIEW_HXX
+#ifndef LIB_MGIS_FUNCTION_TFEL_STRIDEDMEMORYACCESSTENSORVIEW_HXX
+#define LIB_MGIS_FUNCTION_TFEL_STRIDEDMEMORYACCESSTENSORVIEW_HXX
 
-#include "TFEL/Math/Array/ScatteredView.hxx"
+#include "TFEL/Math/Array/StridedView.hxx"
+#include "MGIS/Function/StridedMemoryAccessFunctionViewBase.hxx"
 #include "MGIS/Function/TFEL/General.hxx"
-#include "MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx"
 #include "MGIS/Function/TFEL/TensorConcept.hxx"
 
 namespace mgis::function {
@@ -32,14 +33,15 @@ namespace mgis::function {
 
     /*!
      * \brief partial specialization allowing functions to return a
-     * `tfel::math::ScatteredView`, i.e. a view of a tensorial object which
-     * stores one pointer per component
+     * `tfel::math::StridedView`, i.e. a view of a tensorial object which
+     * stores a pointer to its first component and the stride between two
+     * successive components
      *
      * \tparam TensorType: type of the tensorial object viewed, which must
      * match the `TensorConcept` concept
      */
     template <TensorConcept TensorType>
-    struct FunctionResultTypeTraits<::tfel::math::ScatteredView<TensorType>> {
+    struct FunctionResultTypeTraits<::tfel::math::StridedView<TensorType>> {
       //! \brief the traits are specialized for this type
       static constexpr auto is_specialized = true;
     };
@@ -47,21 +49,23 @@ namespace mgis::function {
   }  // namespace internals
 
   /*!
-   * \brief a coalesced memory access view which acts as a function returning
+   * \brief a strided memory access view which acts as a function returning
    * TFEL's tensorial objects
    *
-   * The view is built either from the views of the `N` scalar components of a
-   * tensorial object, `N` being the number of components of `TensorType`, or
-   * from a space and an array of values split into such views, as described by
-   * the `CoalescedMemoryAccessFunctionViewBase` class. The values of each
-   * component are stored contiguously for the different points of the space,
-   * so the values of the different components at a given integration point are
-   * not contiguous in memory.
+   * The view is built from a space and an array of values, whose number of
+   * values must be equal to `N * getSpaceSize(space)`, `N` being the number of
+   * components of `TensorType`. The values of each component are stored
+   * contiguously in a single memory region, in a non interleaved manner, as
+   * described by the `StridedMemoryAccessFunctionViewBase` class: the values
+   * of the `k`-th component start at the offset `k * getSpaceSize(space)`, so
+   * the stride between the values of two successive components at a given
+   * integration point is equal to the size of the space.
    *
-   * The call operators return a `tfel::math::ScatteredView` of the tensorial
-   * type, which gathers the addresses of the values of the components at a
-   * given integration point and allows the tensor to be read, or written for
-   * mutable views, in a single operation.
+   * The call operators return a `tfel::math::StridedView` of the tensorial
+   * type, built from the address of the first component value at the given
+   * integration point and the stride between successive components, and which
+   * allows the tensor to be read, or written for mutable views, in a single
+   * operation.
    *
    * Only the call operators which match the way the space can be addressed are
    * available.
@@ -74,75 +78,68 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space,
             TensorConcept TensorType,
             bool is_mutable = true>
-  struct CoalescedMemoryAccessTensorView
-      : CoalescedMemoryAccessFunctionViewBase<
+  struct StridedMemoryAccessTensorView
+      : StridedMemoryAccessFunctionViewBase<
             Space,
             internals::CompileTimeSize<TensorType>::value,
             is_mutable> {
     //! \brief type returned by the mutable call operators
-    using MutableValues = tfel::math::ScatteredView<TensorType>;
+    using MutableValues = tfel::math::StridedView<TensorType>;
     //! \brief type returned by the constant call operators
-    using ConstValues = tfel::math::ScatteredView<const TensorType>;
+    using ConstValues = tfel::math::StridedView<const TensorType>;
 
     /*!
      * \brief constructors inherited from the
-     * `CoalescedMemoryAccessFunctionViewBase` base class
+     * `StridedMemoryAccessFunctionViewBase` base class
      */
-    using CoalescedMemoryAccessFunctionViewBase<
+    using StridedMemoryAccessFunctionViewBase<
         Space,
         internals::CompileTimeSize<TensorType>::value,
-        is_mutable>::CoalescedMemoryAccessFunctionViewBase;
+        is_mutable>::StridedMemoryAccessFunctionViewBase;
     /*!
      * \return the values of all the components at the given integration point,
-     * as a mutable scattered view of the tensorial type
+     * as a mutable strided view of the tensorial type
      * \param[in] i: offset associated with the integration point
      * \note only available for mutable views defined on a linear element space
-     * without element workspace
      */
     [[nodiscard]] constexpr MutableValues operator()(const size_type) requires(
-        is_mutable&& LinearElementSpaceConcept<Space> &&
-        (!hasElementWorkspace<Space>));
+        is_mutable&& LinearElementSpaceConcept<Space>);
     /*!
      * \return the values of all the components at the given integration point,
-     * as a mutable scattered view of the tensorial type
+     * as a mutable strided view of the tensorial type
      * \param[in] e: cell index
      * \param[in] q: quadrature point index
      * \note only available for mutable views defined on a linear quadrature
-     * space without cell workspace
+     * space
      */
     [[nodiscard]] constexpr MutableValues
     operator()(const size_type, const size_type) requires(
-        is_mutable&& LinearQuadratureSpaceConcept<Space> &&
-        (!hasCellWorkspace<Space>));
+        is_mutable&& LinearQuadratureSpaceConcept<Space>);
     /*!
      * \return the values of all the components at the given integration point,
-     * as a read-only scattered view of the tensorial type
+     * as a read-only strided view of the tensorial type
      * \param[in] i: offset associated with the integration point
-     * \note only available for views defined on a linear element space without
-     * element workspace
+     * \note only available for views defined on a linear element space
      */
     [[nodiscard]] constexpr ConstValues operator()(const size_type) const
-        requires(LinearElementSpaceConcept<Space> &&
-                 (!hasElementWorkspace<Space>));
+        requires(LinearElementSpaceConcept<Space>);
     /*!
      * \return the values of all the components at the given integration point,
-     * as a read-only scattered view of the tensorial type
+     * as a read-only strided view of the tensorial type
      * \param[in] e: cell index
      * \param[in] q: quadrature point index
      * \note only available for views defined on a linear quadrature space
-     * without cell workspace
      */
     [[nodiscard]] constexpr ConstValues operator()(const size_type,
                                                    const size_type) const
-        requires(LinearQuadratureSpaceConcept<Space> &&
-                 (!hasCellWorkspace<Space>));
+        requires(LinearQuadratureSpaceConcept<Space>);
 
-  };  // end of CoalescedMemoryAccessTensorView
+  };  // end of StridedMemoryAccessTensorView
 
   /*!
    * \brief partial specialisation stating that a
-   * `CoalescedMemoryAccessTensorView` is its own view: it only stores the
-   * views of the components, so copying it is cheap
+   * `StridedMemoryAccessTensorView` is its own view: it only stores the space
+   * and a pointer to the first value, so copying it is cheap
    *
    * \tparam Space: functional space on which the view is defined
    * \tparam TensorType: type of the tensorial object mapped
@@ -152,7 +149,7 @@ namespace mgis::function {
             TensorConcept TensorType,
             bool is_mutable>
   struct LightweightViewTraits<
-      CoalescedMemoryAccessTensorView<Space, TensorType, is_mutable>>
+      StridedMemoryAccessTensorView<Space, TensorType, is_mutable>>
       : std::true_type {};
 
   /*!
@@ -160,14 +157,14 @@ namespace mgis::function {
    * \tparam Space: functional space on which the view is defined
    * \tparam TensorType: type of the tensorial object mapped
    * \tparam is_mutable: boolean stating if the view can return mutable values
-   * \param[in] v: coalesced memory access tensor view
+   * \param[in] v: strided memory access tensor view
    * \return the space on which the view is defined
    */
   template <FunctionalSpaceConcept Space,
             TensorConcept TensorType,
             bool is_mutable>
   [[nodiscard]] constexpr const Space& getSpace(
-      const CoalescedMemoryAccessTensorView<Space, TensorType, is_mutable>&)
+      const StridedMemoryAccessTensorView<Space, TensorType, is_mutable>&)
       MGIS_NOEXCEPT;
   /*!
    * \brief a noop function to match the `EvaluatorConcept` concept
@@ -175,7 +172,7 @@ namespace mgis::function {
    * \tparam TensorType: type of the tensorial object mapped
    * \tparam is_mutable: boolean stating if the view can return mutable values
    * \param[in] eh: unused error handler
-   * \param[in] v: unused coalesced memory access tensor view
+   * \param[in] v: unused strided memory access tensor view
    * \return always true: the validity of the view is guaranteed by its
    * constructors
    */
@@ -184,14 +181,14 @@ namespace mgis::function {
             bool is_mutable>
   [[nodiscard]] constexpr bool check(
       AbstractErrorHandler&,
-      const CoalescedMemoryAccessTensorView<Space, TensorType, is_mutable>&)
+      const StridedMemoryAccessTensorView<Space, TensorType, is_mutable>&)
       MGIS_NOEXCEPT;
   /*!
    * \brief return the number of components
    * \tparam Space: functional space on which the view is defined
    * \tparam TensorType: type of the tensorial object mapped
    * \tparam is_mutable: boolean stating if the view can return mutable values
-   * \param[in] v: unused coalesced memory access tensor view
+   * \param[in] v: unused strided memory access tensor view
    * \return the number of components of the view, which is the number of
    * components of the tensorial type
    */
@@ -199,11 +196,11 @@ namespace mgis::function {
             TensorConcept TensorType,
             bool is_mutable>
   [[nodiscard]] constexpr size_type getNumberOfComponents(
-      const CoalescedMemoryAccessTensorView<Space, TensorType, is_mutable>&)
+      const StridedMemoryAccessTensorView<Space, TensorType, is_mutable>&)
       MGIS_NOEXCEPT;
 
 }  // namespace mgis::function
 
-#include "MGIS/Function/TFEL/CoalescedMemoryAccessTensorView.ixx"
+#include "MGIS/Function/TFEL/StridedMemoryAccessTensorView.ixx"
 
-#endif /* LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSTENSORVIEW_HXX */
+#endif /* LIB_MGIS_FUNCTION_TFEL_STRIDEDMEMORYACCESSTENSORVIEW_HXX */

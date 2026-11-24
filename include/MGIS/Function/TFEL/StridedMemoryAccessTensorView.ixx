@@ -1,8 +1,8 @@
 /*!
- * \file   MGIS/Function/TFEL/StridedCoalescedMemoryAccessTensorView.ixx
+ * \file   MGIS/Function/TFEL/StridedMemoryAccessTensorView.ixx
  * \brief  File which contains the implementation of the
- * `StridedCoalescedMemoryAccessTensorView` class declared in
- * `MGIS/Function/TFEL/StridedCoalescedMemoryAccessTensorView.hxx`.
+ * `StridedMemoryAccessTensorView` class declared in
+ * `MGIS/Function/TFEL/StridedMemoryAccessTensorView.hxx`.
  * \author Thomas Helfer
  * \date   17/01/2026
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -14,8 +14,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSTENSORVIEW_IXX
-#define LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSTENSORVIEW_IXX
+#ifndef LIB_MGIS_FUNCTION_TFEL_STRIDEDMEMORYACCESSTENSORVIEW_IXX
+#define LIB_MGIS_FUNCTION_TFEL_STRIDEDMEMORYACCESSTENSORVIEW_IXX
 
 namespace mgis::function {
 
@@ -25,13 +25,12 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space,
             TensorConcept TensorType,
             bool is_mutable>
-  constexpr
-      typename StridedCoalescedMemoryAccessTensorView<Space,
-                                                      TensorType,
-                                                      is_mutable>::MutableValues
-      StridedCoalescedMemoryAccessTensorView<Space, TensorType, is_mutable>::
-      operator()(const size_type i) requires(
-          is_mutable&& LinearElementSpaceConcept<Space>) {
+  constexpr typename StridedMemoryAccessTensorView<Space,
+                                                   TensorType,
+                                                   is_mutable>::MutableValues
+  StridedMemoryAccessTensorView<Space, TensorType, is_mutable>::operator()(
+      const size_type
+          i) requires(is_mutable&& LinearElementSpaceConcept<Space>) {
     const auto ne = getSpaceSize(this->space);
     return tfel::math::StridedView<TensorType>(this->data_pointer + i, ne);
   }  // end of operator()
@@ -41,13 +40,12 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space,
             TensorConcept TensorType,
             bool is_mutable>
-  constexpr
-      typename StridedCoalescedMemoryAccessTensorView<Space,
-                                                      TensorType,
-                                                      is_mutable>::MutableValues
-      StridedCoalescedMemoryAccessTensorView<Space, TensorType, is_mutable>::
-      operator()(const size_type e,
-                 const size_type q)  //
+  constexpr typename StridedMemoryAccessTensorView<Space,
+                                                   TensorType,
+                                                   is_mutable>::MutableValues
+  StridedMemoryAccessTensorView<Space, TensorType, is_mutable>::operator()(
+      const size_type e,
+      const size_type q)  //
       requires(is_mutable&& LinearQuadratureSpaceConcept<Space>) {
     const auto ne = getSpaceSize(this->space);
     const auto o = getQuadraturePointOffset(this->space, e, q);
@@ -57,12 +55,11 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space,
             TensorConcept TensorType,
             bool is_mutable>
-  constexpr
-      typename StridedCoalescedMemoryAccessTensorView<Space,
-                                                      TensorType,
-                                                      is_mutable>::ConstValues
-      StridedCoalescedMemoryAccessTensorView<Space, TensorType, is_mutable>::
-      operator()(const size_type i) const  //
+  constexpr typename StridedMemoryAccessTensorView<Space,
+                                                   TensorType,
+                                                   is_mutable>::ConstValues
+  StridedMemoryAccessTensorView<Space, TensorType, is_mutable>::operator()(
+      const size_type i) const  //
       requires(LinearElementSpaceConcept<Space>) {
     const auto ne = getSpaceSize(this->space);
     return tfel::math::StridedView<const TensorType>(this->data_pointer + i,
@@ -72,12 +69,11 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space,
             TensorConcept TensorType,
             bool is_mutable>
-  constexpr
-      typename StridedCoalescedMemoryAccessTensorView<Space,
-                                                      TensorType,
-                                                      is_mutable>::ConstValues
-      StridedCoalescedMemoryAccessTensorView<Space, TensorType, is_mutable>::
-      operator()(const size_type e, const size_type q) const  //
+  constexpr typename StridedMemoryAccessTensorView<Space,
+                                                   TensorType,
+                                                   is_mutable>::ConstValues
+  StridedMemoryAccessTensorView<Space, TensorType, is_mutable>::operator()(
+      const size_type e, const size_type q) const  //
       requires(LinearQuadratureSpaceConcept<Space>) {
     const auto ne = getSpaceSize(this->space);
     const auto o = getQuadraturePointOffset(this->space, e, q);
@@ -89,9 +85,8 @@ namespace mgis::function {
             TensorConcept TensorType,
             bool is_mutable>
   constexpr const Space& getSpace(
-      const StridedCoalescedMemoryAccessTensorView<Space,
-                                                   TensorType,
-                                                   is_mutable>& v) MGIS_NOEXCEPT {
+      const StridedMemoryAccessTensorView<Space, TensorType, is_mutable>& v)
+      MGIS_NOEXCEPT {
     return v.getSpace();
   }  // end of getSpace
 
@@ -100,9 +95,8 @@ namespace mgis::function {
             bool is_mutable>
   constexpr bool check(
       AbstractErrorHandler&,
-      const StridedCoalescedMemoryAccessTensorView<Space,
-                                                   TensorType,
-                                                   is_mutable>&) MGIS_NOEXCEPT {
+      const StridedMemoryAccessTensorView<Space, TensorType, is_mutable>&)
+      MGIS_NOEXCEPT {
     return true;
   }  // end of check
 
@@ -110,13 +104,11 @@ namespace mgis::function {
             TensorConcept TensorType,
             bool is_mutable>
   constexpr size_type getNumberOfComponents(
-      const StridedCoalescedMemoryAccessTensorView<Space,
-                                                   TensorType,
-                                                   is_mutable>&) MGIS_NOEXCEPT {
+      const StridedMemoryAccessTensorView<Space, TensorType, is_mutable>&)
+      MGIS_NOEXCEPT {
     return compile_time_size<TensorType>;
   }  // end of getNumberOfComponents
 
 }  // namespace mgis::function
 
-#endif /* LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSTENSORVIEW_IXX \
-        */
+#endif /* LIB_MGIS_FUNCTION_TFEL_STRIDEDMEMORYACCESSTENSORVIEW_IXX */

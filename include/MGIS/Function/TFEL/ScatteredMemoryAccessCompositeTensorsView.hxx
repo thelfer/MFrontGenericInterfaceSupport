@@ -1,6 +1,6 @@
 /*!
- * \file   MGIS/Function/TFEL/CoalescedMemoryAccessCompositeTensorsView.hxx
- * \brief  File which defines the `CoalescedMemoryAccessCompositeTensorsView`
+ * \file   MGIS/Function/TFEL/ScatteredMemoryAccessCompositeTensorsView.hxx
+ * \brief  File which defines the `ScatteredMemoryAccessCompositeTensorsView`
  * class, a view handling several tensorial objects of possibly different types
  * sharing the same set of components, whose values are stored in separate
  * contiguous memory regions.
@@ -16,17 +16,17 @@
  */
 
 #ifndef MGIS_HAVE_TFEL
-#error "TFEL is required to use coalesced memory access tensor views"
+#error "TFEL is required to use scattered memory access tensor views"
 #endif /* MGIS_HAVE_TFEL */
 
-#ifndef LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSCOMPOSITETENSORVIEW_HXX
-#define LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSCOMPOSITETENSORVIEW_HXX
+#ifndef LIB_MGIS_FUNCTION_TFEL_SCATTEREDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX
+#define LIB_MGIS_FUNCTION_TFEL_SCATTEREDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX
 
 #include <tuple>
 #include <concepts>
 #include <type_traits>
 #include "TFEL/Math/Array/ScatteredView.hxx"
-#include "MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx"
+#include "MGIS/Function/ScatteredMemoryAccessFunctionViewBase.hxx"
 #include "MGIS/Function/TFEL/General.hxx"
 #include "MGIS/Function/TFEL/TensorConcept.hxx"
 
@@ -34,7 +34,7 @@ namespace mgis::function {
 
   /*!
    * \brief traits defining the type used by the
-   * `CoalescedMemoryAccessCompositeTensorsView` class to return a mutable
+   * `ScatteredMemoryAccessCompositeTensorsView` class to return a mutable
    * value of the given type
    *
    * The primary template returns a scattered view of the tensorial type, whose
@@ -45,7 +45,7 @@ namespace mgis::function {
    * `ScalarOrTensorConcept` concept
    */
   template <ScalarOrTensorConcept ValueType>
-  struct CoalescedMemoryAccessCompositeTensorsViewMutableValue {
+  struct ScatteredMemoryAccessCompositeTensorsViewMutableValue {
     //! \brief type of the mutable value returned
     using type = tfel::math::ScatteredView<ValueType>;
   };
@@ -55,14 +55,14 @@ namespace mgis::function {
    * references to the value of the corresponding component
    */
   template <>
-  struct CoalescedMemoryAccessCompositeTensorsViewMutableValue<real> {
+  struct ScatteredMemoryAccessCompositeTensorsViewMutableValue<real> {
     //! \brief type of the mutable value returned
     using type = real&;
   };
 
   /*!
    * \brief traits defining the type used by the
-   * `CoalescedMemoryAccessCompositeTensorsView` class to return a read-only
+   * `ScatteredMemoryAccessCompositeTensorsView` class to return a read-only
    * value of the given type
    *
    * The primary template returns a scattered view of the const tensorial type,
@@ -73,7 +73,7 @@ namespace mgis::function {
    * `ScalarOrTensorConcept` concept
    */
   template <ScalarOrTensorConcept ValueType>
-  struct CoalescedMemoryAccessCompositeTensorsViewConstValue {
+  struct ScatteredMemoryAccessCompositeTensorsViewConstValue {
     //! \brief type of the read-only value returned
     using type = tfel::math::ScatteredView<const ValueType>;
   };
@@ -83,18 +83,18 @@ namespace mgis::function {
    * references to the value of the corresponding component
    */
   template <>
-  struct CoalescedMemoryAccessCompositeTensorsViewConstValue<real> {
+  struct ScatteredMemoryAccessCompositeTensorsViewConstValue<real> {
     //! \brief type of the read-only value returned
     using type = const real&;
   };
 
   /*!
-   * \brief a coalesced memory access view handling several tensorial objects
+   * \brief a scattered memory access view handling several tensorial objects
    * of possibly different types sharing the same set of components
    *
    * The view is built either from the views of the `N` scalar components or
    * from a space and an array of values split into such views, as described by
-   * the `CoalescedMemoryAccessFunctionViewBase` class. The values of each
+   * the `ScatteredMemoryAccessFunctionViewBase` class. The values of each
    * component are stored contiguously for the different points of the space, so
    * the values of the different components at a given integration point are not
    * contiguous in memory.
@@ -115,8 +115,8 @@ namespace mgis::function {
    */
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable = true>
   requires(N > 0)  //
-      struct CoalescedMemoryAccessCompositeTensorsView
-      : CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable> {
+      struct ScatteredMemoryAccessCompositeTensorsView
+      : ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable> {
     //
     /*!
      * \brief type returned by the mutable `get` member functions
@@ -125,7 +125,7 @@ namespace mgis::function {
      */
     template <ScalarOrTensorConcept ValueType>
     using MutableValues =
-        typename CoalescedMemoryAccessCompositeTensorsViewMutableValue<
+        typename ScatteredMemoryAccessCompositeTensorsViewMutableValue<
             ValueType>::type;
     //
     /*!
@@ -135,14 +135,14 @@ namespace mgis::function {
      */
     template <ScalarOrTensorConcept ValueType>
     using ConstValues =
-        typename CoalescedMemoryAccessCompositeTensorsViewConstValue<
+        typename ScatteredMemoryAccessCompositeTensorsViewConstValue<
             ValueType>::type;
     /*!
      * \brief constructors inherited from the
-     * `CoalescedMemoryAccessFunctionViewBase` base class
+     * `ScatteredMemoryAccessFunctionViewBase` base class
      */
-    using CoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
-        CoalescedMemoryAccessFunctionViewBase;
+    using ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+        ScatteredMemoryAccessFunctionViewBase;
     /*!
      * \return the tensorial object built from the components of the view at the
      * given integration point
@@ -206,11 +206,11 @@ namespace mgis::function {
         requires((begin + internals::CompileTimeSize<ValueType>::value <= N) &&
                  LinearQuadratureSpaceConcept<Space>);
 
-  };  // end of CoalescedMemoryAccessCompositeTensorsView
+  };  // end of ScatteredMemoryAccessCompositeTensorsView
 
 }  // namespace mgis::function
 
-#include "MGIS/Function/TFEL/CoalescedMemoryAccessCompositeTensorsView.ixx"
+#include "MGIS/Function/TFEL/ScatteredMemoryAccessCompositeTensorsView.ixx"
 
-#endif /* LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSCOMPOSITETENSORVIEW_HXX \
+#endif /* LIB_MGIS_FUNCTION_TFEL_SCATTEREDMEMORYACCESSCOMPOSITETENSORSVIEW_HXX \
         */

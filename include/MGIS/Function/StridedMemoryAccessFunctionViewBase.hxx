@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.hxx
+ * \file   MGIS/Function/StridedMemoryAccessFunctionViewBase.hxx
  * \brief File which defines a base class for views whose components are
  * stored contiguously in a single memory region, in a non interleaved manner.
  * \author Thomas Helfer
@@ -13,8 +13,8 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_FUNCTION_STRIDEDCOALESCEDMEMORYACCESSFUNCTIONVIEWBASE_HXX
-#define LIB_MGIS_FUNCTION_STRIDEDCOALESCEDMEMORYACCESSFUNCTIONVIEWBASE_HXX
+#ifndef LIB_MGIS_FUNCTION_STRIDEDMEMORYACCESSFUNCTIONVIEWBASE_HXX
+#define LIB_MGIS_FUNCTION_STRIDEDMEMORYACCESSFUNCTIONVIEWBASE_HXX
 
 #include <span>
 #include <array>
@@ -38,24 +38,24 @@ namespace mgis::function {
    * +-------++-------++------++-------+----+-------++------++------++-------+
    * ~~~~
    *
-   * Contrary to the `CoalescedMemoryAccessFunctionViewBase` class, the values
+   * Contrary to the `ScatteredMemoryAccessFunctionViewBase` class, the values
    * of all the components are stored in a single contiguous memory region:
    * the values of the `k`-th component start at the offset
    * `k * getSpaceSize(space)`, i.e. the stride between the values of two
    * successive components at a given integration point is equal to the size
    * of the space. This allows the class to store only the space and a pointer
-   * to the first value.
+   * to the first value. The class is named after this way of accessing the
+   * memory, through the address of the value of the first component and a
+   * stride.
    *
    * \tparam Space: type of the space on which the view is defined
    * \tparam N: number of components, which must be strictly positive
    * \tparam is_mutable: boolean stating if the data pointer is mutable
    */
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
-  requires(N > 0) struct StridedCoalescedMemoryAccessFunctionViewBase
+  requires(N > 0) struct StridedMemoryAccessFunctionViewBase
       : private PreconditionsChecker<
-            StridedCoalescedMemoryAccessFunctionViewBase<Space,
-                                                         N,
-                                                         is_mutable>> {
+            StridedMemoryAccessFunctionViewBase<Space, N, is_mutable>> {
     /*!
      * \brief check that the preconditions to build the view are met
      * \param[in] eh: error handler used to report the errors
@@ -73,7 +73,7 @@ namespace mgis::function {
      * \param[in] space: space on which the view is defined
      * \param[in] values: constant values
      */
-    constexpr StridedCoalescedMemoryAccessFunctionViewBase(
+    constexpr StridedMemoryAccessFunctionViewBase(
         const Space&, std::span<const real>) requires(!is_mutable);
     /*!
      * \brief check that the preconditions to build the view are met
@@ -90,8 +90,8 @@ namespace mgis::function {
      * \param[in] space: space on which the view is defined
      * \param[in] values: values
      */
-    constexpr StridedCoalescedMemoryAccessFunctionViewBase(const Space&,
-                                                           std::span<real>);
+    constexpr StridedMemoryAccessFunctionViewBase(const Space&,
+                                                  std::span<real>);
     /*!
      * \return the values of all the components at the given integration point
      * \param[in] i: offset associated with the integration point
@@ -128,7 +128,7 @@ namespace mgis::function {
      * \param[in] values: constant values
      */
     template <bool doPreconditionsCheck>
-    constexpr StridedCoalescedMemoryAccessFunctionViewBase(
+    constexpr StridedMemoryAccessFunctionViewBase(
         const PreconditionsCheck<doPreconditionsCheck>&,
         const Space&,
         std::span<const real>) requires(!is_mutable);
@@ -141,7 +141,7 @@ namespace mgis::function {
      * \param[in] values: values
      */
     template <bool doPreconditionsCheck>
-    constexpr StridedCoalescedMemoryAccessFunctionViewBase(
+    constexpr StridedMemoryAccessFunctionViewBase(
         const PreconditionsCheck<doPreconditionsCheck>&,
         const Space&,
         std::span<real>);
@@ -154,7 +154,6 @@ namespace mgis::function {
 
 }  // namespace mgis::function
 
-#include "MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.ixx"
+#include "MGIS/Function/StridedMemoryAccessFunctionViewBase.ixx"
 
-#endif /* LIB_MGIS_FUNCTION_STRIDEDCOALESCEDMEMORYACCESSFUNCTIONVIEWBASE_HXX \
-        */
+#endif /* LIB_MGIS_FUNCTION_STRIDEDMEMORYACCESSFUNCTIONVIEWBASE_HXX */
