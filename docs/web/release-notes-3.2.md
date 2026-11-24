@@ -87,6 +87,23 @@ This version is meant to be used with `TFEL` Version 5.2.
 - Modifiers in `MGIS/Function` now creates a view from a temporary view
   rather than an evaluator. See below for details. In practice, most
   views are also evaluators, so this shall not impact existing user code.
+- The `CoalescedMemoryAccessFunctionViewBase`,
+  `CoalescedMemoryAccessTensorView` and
+  `CoalescedMemoryAccessCompositeTensorsView` classes of `MGIS/Function`
+  are renamed `ScatteredMemoryAccessFunctionViewBase`,
+  `ScatteredMemoryAccessTensorView` and
+  `ScatteredMemoryAccessCompositeTensorsView`. The former names are
+  deprecated: they can still be used, but the compilers report their
+  usage. They will be removed in Version 4.0. See below for details.
+- The headers of `MGIS/Function` depending on `TFEL` are located in the
+  `MGIS/Function/TFEL` directory. The headers of Version 3.1 which were
+  moved or renamed are deprecated: they can still be included, but emit
+  a message at compile-time. They will be removed in Version 4.0. See
+  below for details.
+- The names and the headers of the views using a strided memory access
+  which were used during the development of Version 3.2
+  (`StridedCoalescedMemoryAccess...`) are deprecated in the same way.
+  See below for details.
 - The types of the members `material_properties`, `mass_density` and
   `external_state_variables` of the `MaterialStateManager` class have
   changed to allow the usage of immutable externally allocated memory.
@@ -174,6 +191,99 @@ const auto rho = std::get<real>(s.mass_density->value);
 Code naming the former type of the maps, for instance
 `const std::map<std::string, MaterialStateManager::FieldHolder>&`, shall
 use the new comparator or `auto`.
+
+## Views of `MGIS/Function` named after the way they access the memory
+
+The views of `MGIS/Function` whose components are not interleaved were
+named after an expected effect, the coalescence of the memory accesses
+on GPUs. Whether the memory accesses are coalesced depends on the layout
+of the data and on the mapping of the threads to the data, not on the
+views. Like the views of `TFEL/Math` that they return (`CoalescedView`
+and `StridedCoalescedView`, renamed `ScatteredView` and `StridedView` in
+`TFEL` Version 5.2), those views are now named after the way they access
+the memory:
+
+- a scattered memory access uses one memory location per component,
+- a strided memory access uses the memory location of the first
+  component and the stride between two successive components.
+
+The classes of Version 3.1 are renamed as follows:
+
+- `CoalescedMemoryAccessFunctionViewBase` is renamed
+  `ScatteredMemoryAccessFunctionViewBase`,
+- `CoalescedMemoryAccessTensorView` is renamed
+  `ScatteredMemoryAccessTensorView`,
+- `CoalescedMemoryAccessCompositeTensorsView` is renamed
+  `ScatteredMemoryAccessCompositeTensorsView`.
+
+The former names are deprecated aliases of the new ones: code using them
+still compiles and behaves the same, but the compilers report their
+usage. The same holds for the
+`CoalescedMemoryAccessCompositeTensorsViewMutableValue` and
+`CoalescedMemoryAccessCompositeTensorsViewConstValue` traits, introduced
+in Version 3.1.1. As they are aliases, the former names can not be
+forward declared nor specialised.
+
+The `is_mutable` template parameter of the
+`CoalescedMemoryAccessFunctionViewBase` alias is `true` by default, as
+in Version 3.1.0, so that
+`CoalescedMemoryAccessFunctionViewBase<Space, N>` is valid. The
+`ScatteredMemoryAccessFunctionViewBase` class has no such default value,
+which `nvcc` does not support (see Issue 207): its three template
+arguments must be given.
+
+The classes using a strided memory access, introduced during the
+development of Version 3.2, were first named
+`StridedCoalescedMemoryAccessFunctionViewBase`,
+`StridedCoalescedMemoryAccessTensorView` and
+`StridedCoalescedMemoryAccessCompositeTensorsView`. Those names, and the
+`StridedCoalescedMemoryAccessCompositeTensorsViewMutableValue` and
+`StridedCoalescedMemoryAccessCompositeTensorsViewConstValue` traits, are
+also deprecated aliases of the new ones
+(`StridedMemoryAccessFunctionViewBase`, `StridedMemoryAccessTensorView`,
+`StridedMemoryAccessCompositeTensorsView`, etc.), although they were
+never part of a release: other projects already build against the
+development version.
+
+The headers declaring those classes under their former paths are
+deprecated (see below). The former names will be removed in Version 4.0.
+
+## Deprecated headers of `MGIS/Function`
+
+The headers of `MGIS/Function` depending on `TFEL` are located in the
+`MGIS/Function/TFEL` directory, and the headers of the views described
+above bear the new names of their classes. The headers of Version 3.1
+are deprecated: each of them includes the header replacing it and emits
+a message at compile-time. They will be removed in Version 4.0.
+
+- `MGIS/Function/Tensors.hxx`, `MGIS/Function/Mechanics.hxx` and
+  `MGIS/Function/TensorialFunction.hxx` are replaced by the headers of
+  the same name in the `MGIS/Function/TFEL` directory.
+- `TensorConcept.hxx`, `TensorView.hxx` and `TensorModifier.hxx`, in the
+  `MGIS/Function/Tensors` directory, are replaced by the headers of the
+  same name in the `MGIS/Function/TFEL` directory.
+- `MGIS/Function/Tensors/CoalescedMemoryAccessTensorView.hxx` and
+  `MGIS/Function/Tensors/CoalescedMemoryAccessCompositeTensorsView.hxx`
+  are replaced by
+  `MGIS/Function/TFEL/ScatteredMemoryAccessTensorView.hxx` and
+  `MGIS/Function/TFEL/ScatteredMemoryAccessCompositeTensorsView.hxx`.
+- `MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx` is replaced
+  by `MGIS/Function/ScatteredMemoryAccessFunctionViewBase.hxx`.
+
+The same holds for the headers which were named after the former names
+of the views during the development of Version 3.2:
+
+- `MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.hxx` is
+  replaced by `MGIS/Function/StridedMemoryAccessFunctionViewBase.hxx`.
+- In the `MGIS/Function/TFEL` directory,
+  `CoalescedMemoryAccessTensorView.hxx` and
+  `CoalescedMemoryAccessCompositeTensorsView.hxx` are replaced by
+  `ScatteredMemoryAccessTensorView.hxx` and
+  `ScatteredMemoryAccessCompositeTensorsView.hxx`.
+- In the same directory, `StridedCoalescedMemoryAccessTensorView.hxx`
+  and `StridedCoalescedMemoryAccessCompositeTensorsView.hxx` are
+  replaced by `StridedMemoryAccessTensorView.hxx` and
+  `StridedMemoryAccessCompositeTensorsView.hxx`.
 
 # Documentation
 
@@ -441,14 +551,18 @@ auto s = f2 | as_stensor<2u, stress>;
 
 The following classes have been introduced:
 
-- `StridedCoalescedMemoryAccessTensorView`
-- `StridedCoalescedMemoryAccessCompositeTensorsView`
+- `StridedMemoryAccessTensorView`
+- `StridedMemoryAccessCompositeTensorsView`
 
-### `StridedCoalescedMemoryAccessTensorView`
+Those classes access the components of a function through the memory
+location of the first one and the stride between two successive
+components, which is the size of the space.
 
-`StridedCoalescedMemoryAccessTensorView` is a tensorial function view
-which stores its components in non interleaved manner using the
-following scheme:
+### `StridedMemoryAccessTensorView`
+
+`StridedMemoryAccessTensorView` is a tensorial function view which
+stores its components in non interleaved manner using the following
+scheme:
 
 ~~~~
 | <------- Component 1 ---------> |....| <----- Component Nc ---------> |
@@ -463,7 +577,7 @@ following scheme:
 constexpr auto ne = size_type{2};
 auto space = BasicLinearSpace{ne};
 std::array<const real, 4 * ne> values = {1, 10, 2, 20, 3, 30, 4, 40};
-const auto f = StridedCoalescedMemoryAccessTensorView<
+const auto f = StridedMemoryAccessTensorView<
     BasicLinearSpace, tfel::math::stensor<2, real>, false>{space, values};
 const auto e1 = f(0);
 // e1 = {1, 2, 3, 4}
@@ -471,18 +585,16 @@ const auto e2 = f(1);
 // e2 = {10, 20, 30, 40}
 ~~~~
 
-## `StridedCoalescedMemoryAccessCompositeTensorsView`
+### `StridedMemoryAccessCompositeTensorsView`
 
-`StridedCoalescedMemoryAccessCompositeTensorsView` allows retrieving
-scalar or tensorial objects which are stored in a non interleaved
-manner.
+`StridedMemoryAccessCompositeTensorsView` allows retrieving scalar or
+tensorial objects which are stored in a non interleaved manner.
 
 #### Example of usage
 
 ~~~~{.cxx}
-using CompositeFunctionView = 
-    StridedCoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4,
-                                                     false>;
+using CompositeFunctionView =
+    StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4, false>;
 constexpr auto ne = size_type{2};
 auto space = BasicLinearSpace{ne};
 std::array<const real, 4 * ne> values = {1, 10, 2, 20, 3, 30, 4, 40};

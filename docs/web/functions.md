@@ -391,13 +391,19 @@ details).
 auto s = f | as_stensor<2u, stress>;
 ~~~~
 
-### The `CoalescedMemoryAccessTensorView` class
+### The `ScatteredMemoryAccessTensorView` and `StridedMemoryAccessTensorView` classes
 
-Coalescent memory access refers to an access pattern where each
-components of a function is accessed through its dedicated memory
-location (see the non-interleaved storage pattern described previously).
+Those classes are tensorial function views whose components are not
+interleaved (see the non-interleaved storage pattern described
+previously). They are named after the way they access the memory:
 
-The `CoalescedMemoryAccessTensorView` class allows to make a tensorial
+- scattered memory access refers to an access pattern where each
+  component of a function is accessed through its own memory location,
+- strided memory access refers to an access pattern where the components
+  of a function are accessed through the memory location of the first
+  one and the stride between two successive components.
+
+The `ScatteredMemoryAccessTensorView` class allows to make a tensorial
 function view from scalar function view on each components, as follows:
 
 ~~~~{.cxx}
@@ -414,17 +420,17 @@ auto c_xx = ScalarFunctionView{space, std::span{values, ne}};
 auto c_yy = ScalarFunctionView{space, std::span{values + ne, ne}};
 auto c_zz = ScalarFunctionView{space, std::span{values + 2 * ne, ne}};
 auto c_xy = ScalarFunctionView{space, std::span{values + 3 * ne, ne}};
-auto f = CoalescedMemoryAccessTensorView<BasicLinearSpace,
+auto f = ScatteredMemoryAccessTensorView<BasicLinearSpace,
                                          tfel::math::stensor<2, real>>{
             std::array{c_xx, c_yy, c_zz, c_xy}};
 ~~~~
 
-The `StridedCoalescedMemoryAccessTensorView` class provides the same
-view directly from the space and the values: the stride between two
+The `StridedMemoryAccessTensorView` class provides the same view
+directly from the space and the values: the stride between two
 successive components is the size of the space.
 
 ~~~~{.cxx}
-auto f2 = StridedCoalescedMemoryAccessTensorView<
+auto f2 = StridedMemoryAccessTensorView<
     BasicLinearSpace, tfel::math::stensor<2, real>>{space, values};
 ~~~~
 
@@ -441,3 +447,15 @@ Since the components are not contiguous in memory, the views and
 modifiers mapping the values of a function or an evaluator, such as
 `as_stensor`, `as_fsarray`, `as_qt` or `view<N>`, can not be applied to
 them.
+
+> **Note**
+>
+> In Version 3.1, the `ScatteredMemoryAccessTensorView` class was named
+> `CoalescedMemoryAccessTensorView`, after the coalescence of the memory
+> accesses that a non-interleaved storage allows on GPUs. During the
+> development of Version 3.2, the `StridedMemoryAccessTensorView` class
+> was named `StridedCoalescedMemoryAccessTensorView` for the same
+> reason. Whether the memory accesses are coalesced depends on the
+> layout of the data and on the mapping of the threads to the data, not
+> on the views. The former names are deprecated (see the release notes
+> of Version 3.2).
