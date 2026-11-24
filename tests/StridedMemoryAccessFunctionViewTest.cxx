@@ -1,5 +1,5 @@
 /*!
- * \file   tests/StridedCoalescedMemoryAccessFunctionViewTest.cxx
+ * \file   tests/StridedMemoryAccessFunctionViewTest.cxx
  * \brief
  * \author Thomas Helfer
  * \date   26/10/2025
@@ -22,13 +22,12 @@
 
 namespace mgis::function {}  // end of namespace mgis::function
 
-struct StridedCoalescedMemoryAccessFunctionViewBaseTest final
+struct StridedMemoryAccessFunctionViewBaseTest final
     : public tfel::tests::TestCase {
-  StridedCoalescedMemoryAccessFunctionViewBaseTest()
-      : tfel::tests::TestCase(
-            "MGIS/Function",
-            "StridedCoalescedMemoryAccessFunctionViewBaseTests") {
-  }  // end of StridedCoalescedMemoryAccessFunctionViewBaseTest
+  StridedMemoryAccessFunctionViewBaseTest()
+      : tfel::tests::TestCase("MGIS/Function",
+                              "StridedMemoryAccessFunctionViewBaseTests") {
+  }  // end of StridedMemoryAccessFunctionViewBaseTest
   tfel::tests::TestResult execute() override {
     this->test1();
     return this->result;
@@ -44,11 +43,11 @@ struct StridedCoalescedMemoryAccessFunctionViewBaseTest final
         []() -> std::tuple<std::array<real, 2>, std::array<real, 2>> {
       auto space = BasicLinearSpace{2};
       auto values = std::vector<double>{5, 12, -2, 3};
-      auto coalesced_view =
+      auto strided_view =
           StridedMemoryAccessFunctionViewBase<BasicLinearSpace, 2, true>(
               space, values);
-      auto ptr0 = coalesced_view.getValues(0);
-      auto ptr1 = coalesced_view.getValues(1);
+      auto ptr0 = strided_view.getValues(0);
+      auto ptr1 = strided_view.getValues(1);
       return {std::array{ptr0[0], ptr0[1]},  //
               std::array{ptr1[0], ptr1[1]}};
     }();
@@ -60,12 +59,11 @@ struct StridedCoalescedMemoryAccessFunctionViewBaseTest final
   }
 };
 
-struct StridedCoalescedMemoryAccessTensorViewTest final
-    : public tfel::tests::TestCase {
-  StridedCoalescedMemoryAccessTensorViewTest()
+struct StridedMemoryAccessTensorViewTest final : public tfel::tests::TestCase {
+  StridedMemoryAccessTensorViewTest()
       : tfel::tests::TestCase("MGIS/Function",
-                              "StridedCoalescedMemoryAccessTensorViewTests") {
-  }  // end of StridedCoalescedMemoryAccessTensorViewTest
+                              "StridedMemoryAccessTensorViewTests") {
+  }  // end of StridedMemoryAccessTensorViewTest
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
@@ -115,13 +113,12 @@ struct StridedCoalescedMemoryAccessTensorViewTest final
   }
 };
 
-struct StridedCoalescedMemoryAccessCompositeTensorsViewTest final
+struct StridedMemoryAccessCompositeTensorsViewTest final
     : public tfel::tests::TestCase {
-  StridedCoalescedMemoryAccessCompositeTensorsViewTest()
-      : tfel::tests::TestCase(
-            "MGIS/Function",
-            "StridedCoalescedMemoryAccessCompositeTensorsViewTests") {
-  }  // end of StridedCoalescedMemoryAccessCompositeTensorsViewTest
+  StridedMemoryAccessCompositeTensorsViewTest()
+      : tfel::tests::TestCase("MGIS/Function",
+                              "StridedMemoryAccessCompositeTensorsViewTests") {
+  }  // end of StridedMemoryAccessCompositeTensorsViewTest
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
@@ -294,18 +291,17 @@ struct StridedCoalescedMemoryAccessCompositeTensorsViewTest final
   }    // end of test5
 };
 
-TFEL_TESTS_GENERATE_PROXY(StridedCoalescedMemoryAccessFunctionViewBaseTest,
-                          "StridedCoalescedMemoryAccessFunctionViewBaseTest");
-TFEL_TESTS_GENERATE_PROXY(StridedCoalescedMemoryAccessTensorViewTest,
-                          "StridedCoalescedMemoryAccessTensorViewTest");
-TFEL_TESTS_GENERATE_PROXY(
-    StridedCoalescedMemoryAccessCompositeTensorsViewTest,
-    "StridedCoalescedMemoryAccessCompositeTensorsViewTest");
+TFEL_TESTS_GENERATE_PROXY(StridedMemoryAccessFunctionViewBaseTest,
+                          "StridedMemoryAccessFunctionViewBaseTest");
+TFEL_TESTS_GENERATE_PROXY(StridedMemoryAccessTensorViewTest,
+                          "StridedMemoryAccessTensorViewTest");
+TFEL_TESTS_GENERATE_PROXY(StridedMemoryAccessCompositeTensorsViewTest,
+                          "StridedMemoryAccessCompositeTensorsViewTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("StridedCoalescedMemoryAccessFunctionTest.xml");
+  m.addXMLTestOutput("StridedMemoryAccessFunctionTest.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

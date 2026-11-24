@@ -1,5 +1,5 @@
 /*!
- * \file   tests/CoalescedMemoryAccessFunctionViewTest.cxx
+ * \file   tests/ScatteredMemoryAccessFunctionViewTest.cxx
  * \brief
  * \author Thomas Helfer
  * \date   26/10/2025
@@ -22,12 +22,12 @@
 
 namespace mgis::function {}  // end of namespace mgis::function
 
-struct CoalescedMemoryAccessFunctionViewBaseTest final
+struct ScatteredMemoryAccessFunctionViewBaseTest final
     : public tfel::tests::TestCase {
-  CoalescedMemoryAccessFunctionViewBaseTest()
+  ScatteredMemoryAccessFunctionViewBaseTest()
       : tfel::tests::TestCase("MGIS/Function",
-                              "CoalescedMemoryAccessFunctionViewBaseTests") {
-  }  // end of CoalescedMemoryAccessFunctionViewBaseTest
+                              "ScatteredMemoryAccessFunctionViewBaseTests") {
+  }  // end of ScatteredMemoryAccessFunctionViewBaseTest
   tfel::tests::TestResult execute() override {
     this->test1();
     return this->result;
@@ -49,11 +49,11 @@ struct CoalescedMemoryAccessFunctionViewBaseTest final
       c1(0) = -2;
       c1(1) = 3;
       auto components = std::array{view(c0), view(c1)};
-      auto coalesced_view =
+      auto scattered_view =
           ScatteredMemoryAccessFunctionViewBase<BasicLinearSpace, 2, true>(
               components);
-      auto ptr0 = coalesced_view.getValuesPointers(0);
-      auto ptr1 = coalesced_view.getValuesPointers(1);
+      auto ptr0 = scattered_view.getValuesPointers(0);
+      auto ptr1 = scattered_view.getValuesPointers(1);
       return {std::array{*ptr0[0], *ptr0[1]},  //
               std::array{*ptr1[0], *ptr1[1]}};
     }();
@@ -65,12 +65,12 @@ struct CoalescedMemoryAccessFunctionViewBaseTest final
   }
 };
 
-struct CoalescedMemoryAccessTensorViewTest final
+struct ScatteredMemoryAccessTensorViewTest final
     : public tfel::tests::TestCase {
-  CoalescedMemoryAccessTensorViewTest()
+  ScatteredMemoryAccessTensorViewTest()
       : tfel::tests::TestCase("MGIS/Function",
-                              "CoalescedMemoryAccessTensorViewTests") {
-  }  // end of CoalescedMemoryAccessTensorViewTest
+                              "ScatteredMemoryAccessTensorViewTests") {
+  }  // end of ScatteredMemoryAccessTensorViewTest
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
@@ -139,12 +139,12 @@ struct CoalescedMemoryAccessTensorViewTest final
   }
 };
 
-struct CoalescedMemoryAccessCompositeTensorsViewTest final
+struct ScatteredMemoryAccessCompositeTensorsViewTest final
     : public tfel::tests::TestCase {
-  CoalescedMemoryAccessCompositeTensorsViewTest()
+  ScatteredMemoryAccessCompositeTensorsViewTest()
       : tfel::tests::TestCase(
-            "MGIS/Function", "CoalescedMemoryAccessCompositeTensorsViewTests") {
-  }  // end of CoalescedMemoryAccessCompositeTensorsViewTest
+            "MGIS/Function", "ScatteredMemoryAccessCompositeTensorsViewTests") {
+  }  // end of ScatteredMemoryAccessCompositeTensorsViewTest
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
@@ -320,17 +320,17 @@ struct CoalescedMemoryAccessCompositeTensorsViewTest final
   }    // end of test5
 };
 
-TFEL_TESTS_GENERATE_PROXY(CoalescedMemoryAccessFunctionViewBaseTest,
-                          "CoalescedMemoryAccessFunctionViewBaseTest");
-TFEL_TESTS_GENERATE_PROXY(CoalescedMemoryAccessTensorViewTest,
-                          "CoalescedMemoryAccessTensorViewTest");
-TFEL_TESTS_GENERATE_PROXY(CoalescedMemoryAccessCompositeTensorsViewTest,
-                          "CoalescedMemoryAccessCompositeTensorsViewTest");
+TFEL_TESTS_GENERATE_PROXY(ScatteredMemoryAccessFunctionViewBaseTest,
+                          "ScatteredMemoryAccessFunctionViewBaseTest");
+TFEL_TESTS_GENERATE_PROXY(ScatteredMemoryAccessTensorViewTest,
+                          "ScatteredMemoryAccessTensorViewTest");
+TFEL_TESTS_GENERATE_PROXY(ScatteredMemoryAccessCompositeTensorsViewTest,
+                          "ScatteredMemoryAccessCompositeTensorsViewTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("CoalescedMemoryAccessFunctionTest.xml");
+  m.addXMLTestOutput("ScatteredMemoryAccessFunctionTest.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
