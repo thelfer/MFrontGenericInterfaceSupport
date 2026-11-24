@@ -11,7 +11,7 @@
 
 #include "TFEL/Math/Forward/qt.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Array/CoalescedView.hxx"
+#include "TFEL/Math/Array/ScatteredView.hxx"
 #include "MGIS/Function/DataViewConcept.hxx"
 
 namespace mgis::function::internals {
@@ -53,18 +53,18 @@ namespace mgis::function::internals {
       : std::true_type {};
 
   /*!
-   * \brief partial specialisation for `tfel::math::CoalescedView`, a view of
-   * a mathematical object whose values are stored in a coalesced memory
+   * \brief partial specialisation for `tfel::math::ScatteredView`, a view of
+   * a mathematical object which stores one pointer per component
    *
    * \tparam MappedType: type of the mathematical object viewed, which must be
-   * mappable using a coalesced view
+   * mappable using a scattered view
    * \tparam IndexingPolicyType: policy used to address the values of the
    * viewed object
    */
   template <
-      ::tfel::math::MappableMathObjectUsingCoalescedViewConcept MappedType,
+      ::tfel::math::MappableMathObjectUsingScatteredViewConcept MappedType,
       typename IndexingPolicyType>
-  struct IsDataView<::tfel::math::CoalescedView<MappedType, IndexingPolicyType>>
+  struct IsDataView<::tfel::math::ScatteredView<MappedType, IndexingPolicyType>>
       : std::true_type {};
 
 }  // end of namespace mgis::function::internals

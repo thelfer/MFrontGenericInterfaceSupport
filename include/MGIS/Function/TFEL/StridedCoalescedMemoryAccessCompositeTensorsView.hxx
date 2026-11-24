@@ -26,7 +26,7 @@
 #include <tuple>
 #include <concepts>
 #include <type_traits>
-#include "TFEL/Math/Array/StridedCoalescedView.hxx"
+#include "TFEL/Math/Array/StridedView.hxx"
 #include "MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.hxx"
 #include "MGIS/Function/TFEL/General.hxx"
 #include "MGIS/Function/TFEL/TensorConcept.hxx"
@@ -38,10 +38,10 @@ namespace mgis::function {
    * `StridedCoalescedMemoryAccessCompositeTensorsView` class to return a
    * mutable value of the given type
    *
-   * The primary template returns a strided coalesced view of the tensorial
-   * type, whose components are stored contiguously in a single memory region,
-   * in a non interleaved manner. It is specialized below for scalar values,
-   * which are returned by reference.
+   * The primary template returns a strided view of the tensorial type, whose
+   * components are stored contiguously in a single memory region, in a non
+   * interleaved manner. It is specialized below for scalar values, which are
+   * returned by reference.
    *
    * \tparam ValueType: type of the value to be returned, which must match the
    * `ScalarOrTensorConcept` concept
@@ -49,7 +49,7 @@ namespace mgis::function {
   template <ScalarOrTensorConcept ValueType>
   struct StridedCoalescedMemoryAccessCompositeTensorsViewMutableValue {
     //! \brief type of the mutable value returned
-    using type = tfel::math::StridedCoalescedView<ValueType>;
+    using type = tfel::math::StridedView<ValueType>;
   };
 
   /*!
@@ -67,10 +67,10 @@ namespace mgis::function {
    * `StridedCoalescedMemoryAccessCompositeTensorsView` class to return a
    * read-only value of the given type
    *
-   * The primary template returns a strided coalesced view of the const
-   * tensorial type, whose components are stored contiguously in a single memory
-   * region, in a non interleaved manner. It is specialized below for scalar
-   * values, which are returned by const reference.
+   * The primary template returns a strided view of the const tensorial type,
+   * whose components are stored contiguously in a single memory region, in a
+   * non interleaved manner. It is specialized below for scalar values, which
+   * are returned by const reference.
    *
    * \tparam ValueType: type of the value to be returned, which must match the
    * `ScalarOrTensorConcept` concept
@@ -78,7 +78,7 @@ namespace mgis::function {
   template <ScalarOrTensorConcept ValueType>
   struct StridedCoalescedMemoryAccessCompositeTensorsViewConstValue {
     //! \brief type of the read-only value returned
-    using type = tfel::math::StridedCoalescedView<const ValueType>;
+    using type = tfel::math::StridedView<const ValueType>;
   };
 
   /*!
@@ -105,9 +105,9 @@ namespace mgis::function {
    * The `get` member function returns, for a given integration point, the
    * tensorial object built from the components with indices from `begin` to
    * `begin + M - 1`, `M` being the number of components of the queried type,
-   * as a strided coalesced view whose stride is equal to the size of the space.
-   * Several tensorial objects and scalar values may thus be extracted from the
-   * same view, provided that their ranges of components do not exceed the `N`
+   * as a strided view whose stride is equal to the size of the space. Several
+   * tensorial objects and scalar values may thus be extracted from the same
+   * view, provided that their ranges of components do not exceed the `N`
    * available components, as stated by the `requires`-clause.
    *
    * Only the member functions which match the way the space can be addressed

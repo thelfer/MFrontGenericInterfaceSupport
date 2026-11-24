@@ -21,8 +21,8 @@ namespace mgis::function {
 
   // the `get` member function dispatches at compile time: a scalar value is
   // returned as a reference to the value of the corresponding component, a
-  // tensorial object as a strided coalesced view built from the address of the
-  // first component value at the given integration point, the stride between
+  // tensorial object as a strided view built from the address of the first
+  // component value at the given integration point, the stride between
   // successive components being equal to the size of the space
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
@@ -41,7 +41,7 @@ namespace mgis::function {
     if constexpr (std::same_as<real, ValueType>) {
       return this->data_pointer[begin * ne + i];
     } else {
-      return tfel::math::StridedCoalescedView<ValueType>(
+      return tfel::math::StridedView<ValueType>(
           this->data_pointer + begin * ne + i, ne);
     }
   }  // end of get
@@ -65,7 +65,7 @@ namespace mgis::function {
     if constexpr (std::same_as<real, ValueType>) {
       return this->data_pointer[begin * ne + o];
     } else {
-      return tfel::math::StridedCoalescedView<ValueType>(
+      return tfel::math::StridedView<ValueType>(
           this->data_pointer + begin * ne + o, ne);
     }
   }  // end of get
@@ -87,7 +87,7 @@ namespace mgis::function {
     if constexpr (std::same_as<real, ValueType>) {
       return this->data_pointer[begin * ne + i];
     } else {
-      return tfel::math::StridedCoalescedView<const ValueType>(
+      return tfel::math::StridedView<const ValueType>(
           this->data_pointer + begin * ne + i, ne);
     }
   }  // end of get
@@ -109,7 +109,7 @@ namespace mgis::function {
     if constexpr (std::same_as<real, ValueType>) {
       return this->data_pointer[begin * ne + o];
     } else {
-      return tfel::math::StridedCoalescedView<const ValueType>(
+      return tfel::math::StridedView<const ValueType>(
           this->data_pointer + begin * ne + o, ne);
     }
   }  // end of get

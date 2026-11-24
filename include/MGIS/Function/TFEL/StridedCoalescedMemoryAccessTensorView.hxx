@@ -22,7 +22,7 @@
 #ifndef LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSTENSORVIEW_HXX
 #define LIB_MGIS_FUNCTION_TFEL_STRIDEDCOALESCEDMEMORYACCESSTENSORVIEW_HXX
 
-#include "TFEL/Math/Array/StridedCoalescedView.hxx"
+#include "TFEL/Math/Array/StridedView.hxx"
 #include "MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.hxx"
 #include "MGIS/Function/TFEL/General.hxx"
 #include "MGIS/Function/TFEL/TensorConcept.hxx"
@@ -33,16 +33,15 @@ namespace mgis::function {
 
     /*!
      * \brief partial specialization allowing functions to return a
-     * `tfel::math::StridedCoalescedView`, i.e. a tensorial object whose
-     * components are stored contiguously in a single memory region, in a non
-     * interleaved manner
+     * `tfel::math::StridedView`, i.e. a view of a tensorial object which
+     * stores a pointer to its first component and the stride between two
+     * successive components
      *
      * \tparam TensorType: type of the tensorial object viewed, which must
      * match the `TensorConcept` concept
      */
     template <TensorConcept TensorType>
-    struct FunctionResultTypeTraits<
-        ::tfel::math::StridedCoalescedView<TensorType>> {
+    struct FunctionResultTypeTraits<::tfel::math::StridedView<TensorType>> {
       //! \brief the traits are specialized for this type
       static constexpr auto is_specialized = true;
     };
@@ -63,11 +62,11 @@ namespace mgis::function {
    * successive components at a given integration point is equal to the size of
    * the space.
    *
-   * The call operators return a `tfel::math::StridedCoalescedView` of the
-   * tensorial type, built from the address of the first component value at the
-   * given integration point and the stride between successive components, and
-   * which allows the tensor to be read, or written for mutable views, in a
-   * single operation.
+   * The call operators return a `tfel::math::StridedView` of the tensorial
+   * type, built from the address of the first component value at the given
+   * integration point and the stride between successive components, and which
+   * allows the tensor to be read, or written for mutable views, in a single
+   * operation.
    *
    * Only the call operators which match the way the space can be addressed are
    * available.
@@ -86,9 +85,9 @@ namespace mgis::function {
             internals::CompileTimeSize<TensorType>::value,
             is_mutable> {
     //! \brief type returned by the mutable call operators
-    using MutableValues = tfel::math::StridedCoalescedView<TensorType>;
+    using MutableValues = tfel::math::StridedView<TensorType>;
     //! \brief type returned by the constant call operators
-    using ConstValues = tfel::math::StridedCoalescedView<const TensorType>;
+    using ConstValues = tfel::math::StridedView<const TensorType>;
 
     /*!
      * \brief constructors inherited from the
@@ -100,7 +99,7 @@ namespace mgis::function {
         is_mutable>::StridedCoalescedMemoryAccessFunctionViewBase;
     /*!
      * \return the values of all the components at the given integration point,
-     * as a mutable strided coalesced view of the tensorial type
+     * as a mutable strided view of the tensorial type
      * \param[in] i: offset associated with the integration point
      * \note only available for mutable views defined on a linear element space
      */
@@ -108,7 +107,7 @@ namespace mgis::function {
         is_mutable&& LinearElementSpaceConcept<Space>);
     /*!
      * \return the values of all the components at the given integration point,
-     * as a mutable strided coalesced view of the tensorial type
+     * as a mutable strided view of the tensorial type
      * \param[in] e: cell index
      * \param[in] q: quadrature point index
      * \note only available for mutable views defined on a linear quadrature
@@ -119,7 +118,7 @@ namespace mgis::function {
         is_mutable&& LinearQuadratureSpaceConcept<Space>);
     /*!
      * \return the values of all the components at the given integration point,
-     * as a read-only strided coalesced view of the tensorial type
+     * as a read-only strided view of the tensorial type
      * \param[in] i: offset associated with the integration point
      * \note only available for views defined on a linear element space
      */
@@ -127,7 +126,7 @@ namespace mgis::function {
         requires(LinearElementSpaceConcept<Space>);
     /*!
      * \return the values of all the components at the given integration point,
-     * as a read-only strided coalesced view of the tensorial type
+     * as a read-only strided view of the tensorial type
      * \param[in] e: cell index
      * \param[in] q: quadrature point index
      * \note only available for views defined on a linear quadrature space

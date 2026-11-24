@@ -21,7 +21,7 @@
 #ifndef LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSTENSORVIEW_HXX
 #define LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSTENSORVIEW_HXX
 
-#include "TFEL/Math/Array/CoalescedView.hxx"
+#include "TFEL/Math/Array/ScatteredView.hxx"
 #include "MGIS/Function/TFEL/General.hxx"
 #include "MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx"
 #include "MGIS/Function/TFEL/TensorConcept.hxx"
@@ -32,14 +32,14 @@ namespace mgis::function {
 
     /*!
      * \brief partial specialization allowing functions to return a
-     * `tfel::math::CoalescedView`, i.e. a tensorial object whose components
-     * are stored in separate contiguous memory regions
+     * `tfel::math::ScatteredView`, i.e. a view of a tensorial object which
+     * stores one pointer per component
      *
      * \tparam TensorType: type of the tensorial object viewed, which must
      * match the `TensorConcept` concept
      */
     template <TensorConcept TensorType>
-    struct FunctionResultTypeTraits<::tfel::math::CoalescedView<TensorType>> {
+    struct FunctionResultTypeTraits<::tfel::math::ScatteredView<TensorType>> {
       //! \brief the traits are specialized for this type
       static constexpr auto is_specialized = true;
     };
@@ -58,7 +58,7 @@ namespace mgis::function {
    * so the values of the different components at a given integration point are
    * not contiguous in memory.
    *
-   * The call operators return a `tfel::math::CoalescedView` of the tensorial
+   * The call operators return a `tfel::math::ScatteredView` of the tensorial
    * type, which gathers the addresses of the values of the components at a
    * given integration point and allows the tensor to be read, or written for
    * mutable views, in a single operation.
@@ -80,9 +80,9 @@ namespace mgis::function {
             internals::CompileTimeSize<TensorType>::value,
             is_mutable> {
     //! \brief type returned by the mutable call operators
-    using MutableValues = tfel::math::CoalescedView<TensorType>;
+    using MutableValues = tfel::math::ScatteredView<TensorType>;
     //! \brief type returned by the constant call operators
-    using ConstValues = tfel::math::CoalescedView<const TensorType>;
+    using ConstValues = tfel::math::ScatteredView<const TensorType>;
 
     /*!
      * \brief constructors inherited from the
@@ -94,7 +94,7 @@ namespace mgis::function {
         is_mutable>::CoalescedMemoryAccessFunctionViewBase;
     /*!
      * \return the values of all the components at the given integration point,
-     * as a mutable coalesced view of the tensorial type
+     * as a mutable scattered view of the tensorial type
      * \param[in] i: offset associated with the integration point
      * \note only available for mutable views defined on a linear element space
      * without element workspace
@@ -104,7 +104,7 @@ namespace mgis::function {
         (!hasElementWorkspace<Space>));
     /*!
      * \return the values of all the components at the given integration point,
-     * as a mutable coalesced view of the tensorial type
+     * as a mutable scattered view of the tensorial type
      * \param[in] e: cell index
      * \param[in] q: quadrature point index
      * \note only available for mutable views defined on a linear quadrature
@@ -116,7 +116,7 @@ namespace mgis::function {
         (!hasCellWorkspace<Space>));
     /*!
      * \return the values of all the components at the given integration point,
-     * as a read-only coalesced view of the tensorial type
+     * as a read-only scattered view of the tensorial type
      * \param[in] i: offset associated with the integration point
      * \note only available for views defined on a linear element space without
      * element workspace
@@ -126,7 +126,7 @@ namespace mgis::function {
                  (!hasElementWorkspace<Space>));
     /*!
      * \return the values of all the components at the given integration point,
-     * as a read-only coalesced view of the tensorial type
+     * as a read-only scattered view of the tensorial type
      * \param[in] e: cell index
      * \param[in] q: quadrature point index
      * \note only available for views defined on a linear quadrature space

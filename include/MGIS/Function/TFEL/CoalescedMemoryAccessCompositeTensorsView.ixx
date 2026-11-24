@@ -21,7 +21,7 @@ namespace mgis::function {
 
   // the `get` member function dispatches at compile time: a scalar value is
   // returned as a reference to the value of the corresponding component, a
-  // tensorial object as a coalesced view built from the addresses of the
+  // tensorial object as a scattered view built from the addresses of the
   // values of its components at the given integration point
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
@@ -39,7 +39,7 @@ namespace mgis::function {
       const auto ptr = this->template getValuePointer<begin>(i);
       return ptr[0];
     } else {
-      return tfel::math::CoalescedView<ValueType>(
+      return tfel::math::ScatteredView<ValueType>(
           this->template getValuesPointers<
               begin, internals::CompileTimeSize<ValueType>::value>(i));
     }
@@ -60,7 +60,7 @@ namespace mgis::function {
       const auto ptr = this->template getValuePointer<begin>(e, q);
       return ptr[0];
     } else {
-      return tfel::math::CoalescedView<ValueType>(
+      return tfel::math::ScatteredView<ValueType>(
           this->template getValuesPointers<
               begin, internals::CompileTimeSize<ValueType>::value>(e, q));
     }
@@ -82,7 +82,7 @@ namespace mgis::function {
       const auto ptr = this->template getValuePointer<begin>(i);
       return ptr[0];
     } else {
-      return tfel::math::CoalescedView<const ValueType>(
+      return tfel::math::ScatteredView<const ValueType>(
           this->template getValuesPointers<
               begin, internals::CompileTimeSize<ValueType>::value>(i));
     }
@@ -103,7 +103,7 @@ namespace mgis::function {
       const auto ptr = this->template getValuePointer<begin>(e, q);
       return ptr[0];
     } else {
-      return tfel::math::CoalescedView<const ValueType>(
+      return tfel::math::ScatteredView<const ValueType>(
           this->template getValuesPointers<
               begin, internals::CompileTimeSize<ValueType>::value>(e, q));
     }

@@ -25,7 +25,7 @@
 #include <tuple>
 #include <concepts>
 #include <type_traits>
-#include "TFEL/Math/Array/CoalescedView.hxx"
+#include "TFEL/Math/Array/ScatteredView.hxx"
 #include "MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx"
 #include "MGIS/Function/TFEL/General.hxx"
 #include "MGIS/Function/TFEL/TensorConcept.hxx"
@@ -37,7 +37,7 @@ namespace mgis::function {
    * `CoalescedMemoryAccessCompositeTensorsView` class to return a mutable
    * value of the given type
    *
-   * The primary template returns a coalesced view of the tensorial type, whose
+   * The primary template returns a scattered view of the tensorial type, whose
    * components are stored in separate contiguous memory regions. It is
    * specialized below for scalar values, which are returned by reference.
    *
@@ -47,7 +47,7 @@ namespace mgis::function {
   template <ScalarOrTensorConcept ValueType>
   struct CoalescedMemoryAccessCompositeTensorsViewMutableValue {
     //! \brief type of the mutable value returned
-    using type = tfel::math::CoalescedView<ValueType>;
+    using type = tfel::math::ScatteredView<ValueType>;
   };
 
   /*!
@@ -65,7 +65,7 @@ namespace mgis::function {
    * `CoalescedMemoryAccessCompositeTensorsView` class to return a read-only
    * value of the given type
    *
-   * The primary template returns a coalesced view of the const tensorial type,
+   * The primary template returns a scattered view of the const tensorial type,
    * whose components are stored in separate contiguous memory regions. It is
    * specialized below for scalar values, which are returned by const reference.
    *
@@ -75,7 +75,7 @@ namespace mgis::function {
   template <ScalarOrTensorConcept ValueType>
   struct CoalescedMemoryAccessCompositeTensorsViewConstValue {
     //! \brief type of the read-only value returned
-    using type = tfel::math::CoalescedView<const ValueType>;
+    using type = tfel::math::ScatteredView<const ValueType>;
   };
 
   /*!

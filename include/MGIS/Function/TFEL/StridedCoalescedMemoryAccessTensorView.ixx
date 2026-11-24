@@ -19,8 +19,8 @@
 
 namespace mgis::function {
 
-  // the call operators build a strided coalesced view from the address of the
-  // first component value at the given integration point, the stride between
+  // the call operators build a strided view from the address of the first
+  // component value at the given integration point, the stride between
   // successive components being equal to the size of the space
   template <FunctionalSpaceConcept Space,
             TensorConcept TensorType,
@@ -33,8 +33,7 @@ namespace mgis::function {
       operator()(const size_type i) requires(
           is_mutable&& LinearElementSpaceConcept<Space>) {
     const auto ne = getSpaceSize(this->space);
-    return tfel::math::StridedCoalescedView<TensorType>(this->data_pointer + i,
-                                                        ne);
+    return tfel::math::StridedView<TensorType>(this->data_pointer + i, ne);
   }  // end of operator()
 
   // for a quadrature space, the offset of the quadrature point is first
@@ -52,8 +51,7 @@ namespace mgis::function {
       requires(is_mutable&& LinearQuadratureSpaceConcept<Space>) {
     const auto ne = getSpaceSize(this->space);
     const auto o = getQuadraturePointOffset(this->space, e, q);
-    return tfel::math::StridedCoalescedView<TensorType>(this->data_pointer + o,
-                                                        ne);
+    return tfel::math::StridedView<TensorType>(this->data_pointer + o, ne);
   }  // end of operator()
 
   template <FunctionalSpaceConcept Space,
@@ -67,8 +65,8 @@ namespace mgis::function {
       operator()(const size_type i) const  //
       requires(LinearElementSpaceConcept<Space>) {
     const auto ne = getSpaceSize(this->space);
-    return tfel::math::StridedCoalescedView<const TensorType>(
-        this->data_pointer + i, ne);
+    return tfel::math::StridedView<const TensorType>(this->data_pointer + i,
+                                                     ne);
   }  // end of operator()
 
   template <FunctionalSpaceConcept Space,
@@ -83,8 +81,8 @@ namespace mgis::function {
       requires(LinearQuadratureSpaceConcept<Space>) {
     const auto ne = getSpaceSize(this->space);
     const auto o = getQuadraturePointOffset(this->space, e, q);
-    return tfel::math::StridedCoalescedView<const TensorType>(
-        this->data_pointer + o, ne);
+    return tfel::math::StridedView<const TensorType>(this->data_pointer + o,
+                                                     ne);
   }  // end of operator()
 
   template <FunctionalSpaceConcept Space,

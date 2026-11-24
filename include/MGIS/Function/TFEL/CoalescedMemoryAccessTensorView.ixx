@@ -19,7 +19,7 @@
 
 namespace mgis::function {
 
-  // the call operators build a coalesced view from the array of the addresses
+  // the call operators build a scattered view from the array of the addresses
   // of the values of the components at the given integration point, returned by
   // the `getValuesPointers` member function of the base class
   template <FunctionalSpaceConcept Space,
@@ -32,7 +32,7 @@ namespace mgis::function {
       const size_type
           i) requires(is_mutable&& LinearElementSpaceConcept<Space> &&
                       (!hasElementWorkspace<Space>)) {
-    return tfel::math::CoalescedView<TensorType>(this->getValuesPointers(i));
+    return tfel::math::ScatteredView<TensorType>(this->getValuesPointers(i));
   }  // end of operator()
 
   template <FunctionalSpaceConcept Space,
@@ -46,7 +46,7 @@ namespace mgis::function {
       const size_type q)  //
       requires(is_mutable&& LinearQuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
-    return tfel::math::CoalescedView<TensorType>(this->getValuesPointers(e, q));
+    return tfel::math::ScatteredView<TensorType>(this->getValuesPointers(e, q));
   }  // end of operator()
 
   template <FunctionalSpaceConcept Space,
@@ -59,7 +59,7 @@ namespace mgis::function {
       const size_type i) const  //
       requires(LinearElementSpaceConcept<Space> &&
                (!hasElementWorkspace<Space>)) {
-    return tfel::math::CoalescedView<const TensorType>(
+    return tfel::math::ScatteredView<const TensorType>(
         this->getValuesPointers(i));
   }  // end of operator()
 
@@ -73,7 +73,7 @@ namespace mgis::function {
       const size_type e, const size_type q) const  //
       requires(LinearQuadratureSpaceConcept<Space> &&
                (!hasCellWorkspace<Space>)) {
-    return tfel::math::CoalescedView<const TensorType>(
+    return tfel::math::ScatteredView<const TensorType>(
         this->getValuesPointers(e, q));
   }  // end of operator()
 
