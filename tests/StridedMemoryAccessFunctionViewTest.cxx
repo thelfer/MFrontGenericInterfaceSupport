@@ -1,5 +1,5 @@
 /*!
- * \file   tests/CoalescedMemoryAccessFunctionViewTest.cxx
+ * \file   tests/StridedMemoryAccessFunctionViewTest.cxx
  * \brief
  * \author Thomas Helfer
  * \date   26/10/2025
@@ -16,18 +16,18 @@
 #include "MGIS/Function/SharedSpace.hxx"
 #include "MGIS/Function/BasicLinearSpace.hxx"
 #include "MGIS/Function/BasicLinearQuadratureSpace.hxx"
-#include "MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx"
+#include "MGIS/Function/StridedMemoryAccessFunctionViewBase.hxx"
 #include "MGIS/Function/Algorithms.hxx"
 #include "MGIS/Function/TFEL/Tensors.hxx"
 
 namespace mgis::function {}  // end of namespace mgis::function
 
-struct CoalescedMemoryAccessFunctionViewBaseTest final
+struct StridedMemoryAccessFunctionViewBaseTest final
     : public tfel::tests::TestCase {
-  CoalescedMemoryAccessFunctionViewBaseTest()
+  StridedMemoryAccessFunctionViewBaseTest()
       : tfel::tests::TestCase("MGIS/Function",
-                              "CoalescedMemoryAccessFunctionViewBaseTests") {
-  }  // end of CoalescedMemoryAccessFunctionViewBaseTest
+                              "StridedMemoryAccessFunctionViewBaseTests") {
+  }  // end of StridedMemoryAccessFunctionViewBaseTest
   tfel::tests::TestResult execute() override {
     this->test1();
     return this->result;
@@ -42,20 +42,14 @@ struct CoalescedMemoryAccessFunctionViewBaseTest final
     constexpr auto r =
         []() -> std::tuple<std::array<real, 2>, std::array<real, 2>> {
       auto space = BasicLinearSpace{2};
-      auto c0 = Function<BasicLinearSpace, 1>{space};
-      auto c1 = Function<BasicLinearSpace, 1>{space};
-      c0(0) = 5;
-      c0(1) = 12;
-      c1(0) = -2;
-      c1(1) = 3;
-      auto components = std::array{view(c0), view(c1)};
-      auto coalesced_view =
-          CoalescedMemoryAccessFunctionViewBase<BasicLinearSpace, 2, true>(
-              components);
-      auto ptr0 = coalesced_view.getValuesPointers(0);
-      auto ptr1 = coalesced_view.getValuesPointers(1);
-      return {std::array{*ptr0[0], *ptr0[1]},  //
-              std::array{*ptr1[0], *ptr1[1]}};
+      auto values = std::vector<double>{5, 12, -2, 3};
+      auto strided_view =
+          StridedMemoryAccessFunctionViewBase<BasicLinearSpace, 2, true>(
+              space, values);
+      auto ptr0 = strided_view.getValues(0);
+      auto ptr1 = strided_view.getValues(1);
+      return {std::array{ptr0[0], ptr0[1]},  //
+              std::array{ptr1[0], ptr1[1]}};
     }();
     TFEL_TESTS_STATIC_ASSERT(local_abs(std::get<0>(r)[0] - 5) < 1e-14);
     TFEL_TESTS_STATIC_ASSERT(local_abs(std::get<0>(r)[1] + 2) < 1e-14);
@@ -65,16 +59,14 @@ struct CoalescedMemoryAccessFunctionViewBaseTest final
   }
 };
 
-struct CoalescedMemoryAccessTensorViewTest final
-    : public tfel::tests::TestCase {
-  CoalescedMemoryAccessTensorViewTest()
+struct StridedMemoryAccessTensorViewTest final : public tfel::tests::TestCase {
+  StridedMemoryAccessTensorViewTest()
       : tfel::tests::TestCase("MGIS/Function",
-                              "CoalescedMemoryAccessTensorViewTests") {
-  }  // end of CoalescedMemoryAccessTensorViewTest
+                              "StridedMemoryAccessTensorViewTests") {
+  }  // end of StridedMemoryAccessTensorViewTest
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
-    this->test3();
     return this->result;
   }
 
@@ -86,18 +78,13 @@ struct CoalescedMemoryAccessTensorViewTest final
     auto local_abs = [](const mgis::real r) { return r > 0 ? r : -r; };
     constexpr auto r = []() -> std::array<real, 3u> {
       auto ctx = ContractViolationHandler{};
-      const auto ne = size_type{2};
+      constexpr auto ne = size_type{2};
       auto space = BasicLinearSpace{ne};
-      std::array<const real, 8> values = {1, 10, 2, 20, 3, 30, 4, 40};
-      const auto oscalar_functions =
-          splitArrayIntoScalarFunctionViews<4>(ctx, space, values);
-      if (!oscalar_functions.has_value()) {
-        raise("splitArrayIntoScalarFunctionViews failed");
-      }
+      std::array<const real, 4 * ne> values = {1, 10, 2, 20, 3, 30, 4, 40};
       const auto f =
-          CoalescedMemoryAccessTensorView<BasicLinearSpace,
-                                          tfel::math::stensor<2, real>, false>{
-              *oscalar_functions};
+          StridedMemoryAccessTensorView<BasicLinearSpace,
+                                        tfel::math::stensor<2, real>, false>{
+              space, values};
       return std::array{tfel::math::trace(f(0)), tfel::math::trace(f(1)),
                         tfel::math::trace(f(1) - 3 * f(0))};
     }();
@@ -109,26 +96,13 @@ struct CoalescedMemoryAccessTensorViewTest final
   void test2() {
     using namespace mgis;
     using namespace mgis::function;
-    // immutable view built from mutable values
-    auto space = BasicLinearSpace{2};
-    auto values = std::array<real, 8>{1, 10, 2, 20, 3, 30, 4, 40};
-    const auto f =
-        CoalescedMemoryAccessTensorView<BasicLinearSpace,
-                                        tfel::math::stensor<2, real>, false>{
-            space, std::span<real>{values}};
-    TFEL_TESTS_ASSERT(std::abs(tfel::math::trace(f(0)) - 6) < 1e-14);
-    TFEL_TESTS_ASSERT(std::abs(tfel::math::trace(f(1)) - 60) < 1e-14);
-  }
-  void test3() {
-    using namespace mgis;
-    using namespace mgis::function;
     // the view is a function and an evaluator
     auto ctx = ContractViolationHandler{};
     auto space = BasicLinearSpace{2};
     auto values = std::array<real, 8>{1, 10, 2, 20, 3, 30, 4, 40};
-    auto f = CoalescedMemoryAccessTensorView<BasicLinearSpace,
-                                             tfel::math::stensor<2, real>>{
-        space, std::span<real>{values}};
+    auto f = StridedMemoryAccessTensorView<BasicLinearSpace,
+                                           tfel::math::stensor<2, real>>{
+        space, values};
     auto tr = Function<BasicLinearSpace, 1>{space};
     TFEL_TESTS_ASSERT(assign(ctx, tr, f | trace));
     TFEL_TESTS_ASSERT(std::abs(tr(1) - 60) < 1e-14);
@@ -139,12 +113,12 @@ struct CoalescedMemoryAccessTensorViewTest final
   }
 };
 
-struct CoalescedMemoryAccessCompositeTensorsViewTest final
+struct StridedMemoryAccessCompositeTensorsViewTest final
     : public tfel::tests::TestCase {
-  CoalescedMemoryAccessCompositeTensorsViewTest()
-      : tfel::tests::TestCase(
-            "MGIS/Function", "CoalescedMemoryAccessCompositeTensorsViewTests") {
-  }  // end of CoalescedMemoryAccessCompositeTensorsViewTest
+  StridedMemoryAccessCompositeTensorsViewTest()
+      : tfel::tests::TestCase("MGIS/Function",
+                              "StridedMemoryAccessCompositeTensorsViewTests") {
+  }  // end of StridedMemoryAccessCompositeTensorsViewTest
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
@@ -162,14 +136,12 @@ struct CoalescedMemoryAccessCompositeTensorsViewTest final
     auto local_abs = [](const mgis::real r) { return r > 0 ? r : -r; };
     constexpr auto r = []() -> std::array<real, 3u> {
       auto ctx = ContractViolationHandler{};
-      const auto ne = size_type{2};
+      constexpr auto ne = size_type{2};
       auto space = BasicLinearSpace{ne};
-      std::array<const real, 8> values = {1, 10, 2, 20, 3, 30, 4, 40};
-      const auto oscalar_functions =
-          splitArrayIntoScalarFunctionViews<4>(ctx, space, values);
+      std::array<const real, 4 * ne> values = {1, 10, 2, 20, 3, 30, 4, 40};
       auto f =
-          CoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4, false>{
-              *oscalar_functions};
+          StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4, false>{
+              space, values};
       return std::array{
           tfel::math::trace(f.get<0, tfel::math::stensor<2, real>>(0)),
           tfel::math::trace(f.get<0, tfel::math::stensor<2, real>>(1)),
@@ -192,10 +164,10 @@ struct CoalescedMemoryAccessCompositeTensorsViewTest final
       auto space = BasicLinearSpace{ne};
       std::array<real, 8> out_values = {0, 0, 0, 0, 0, 0, 0, 0};
       std::array<const real, 8> in_values = {1, 10, 2, 20, 3, 30, 4, 40};
-      auto out = CoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4>{
+      auto out = StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4>{
           space, out_values};
       const auto in =
-          CoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4, false>{
+          StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4, false>{
               space, in_values};
       for (size_type idx = 0; idx != ne; ++idx) {
         auto o = out.get<0, tfel::math::stensor<2, real>>(idx);
@@ -218,7 +190,7 @@ struct CoalescedMemoryAccessCompositeTensorsViewTest final
     using namespace mgis;
     using namespace mgis::function;
     using CompositeView =
-        CoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4>;
+        StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4>;
     auto space = BasicLinearSpace{2};
     std::array<real, 6> out_values = {0, 0, 0, 0, 0, 0};
 #ifndef MGIS_USE_EXCEPTIONS_FOR_ERROR_REPORTING
@@ -232,9 +204,8 @@ struct CoalescedMemoryAccessCompositeTensorsViewTest final
                   config::ContractViolationPolicy::RAISE) {
       bool has_thrown = false;
       try {
-        auto out =
-            CoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4>{
-                space, out_values};
+        auto out = StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 4>{
+            space, out_values};
       } catch (std::exception&) {
         has_thrown = true;
       }
@@ -247,9 +218,9 @@ struct CoalescedMemoryAccessCompositeTensorsViewTest final
     using namespace mgis;
     using namespace mgis::function;
     using CompositeView =
-        CoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 6>;
+        StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 6>;
     using ImmutableCompositeView =
-        CoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 6, false>;
+        StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 6, false>;
     constexpr auto young = real{150e9};
     constexpr auto nu = real{1} / 3;
     constexpr auto lambda = tfel::material::computeLambda(young, nu);
@@ -301,7 +272,7 @@ struct CoalescedMemoryAccessCompositeTensorsViewTest final
     using namespace mgis;
     using namespace mgis::function;
     using ImmutableCompositeView =
-        CoalescedMemoryAccessCompositeTensorsView<BasicLinearSpace, 2, false>;
+        StridedMemoryAccessCompositeTensorsView<BasicLinearSpace, 2, false>;
     auto local_abs = [](const mgis::real r) { return r > 0 ? r : -r; };
     constexpr auto r = []() -> std::array<real, 4u> {
       auto ctx = ContractViolationHandler{};
@@ -320,17 +291,17 @@ struct CoalescedMemoryAccessCompositeTensorsViewTest final
   }    // end of test5
 };
 
-TFEL_TESTS_GENERATE_PROXY(CoalescedMemoryAccessFunctionViewBaseTest,
-                          "CoalescedMemoryAccessFunctionViewBaseTest");
-TFEL_TESTS_GENERATE_PROXY(CoalescedMemoryAccessTensorViewTest,
-                          "CoalescedMemoryAccessTensorViewTest");
-TFEL_TESTS_GENERATE_PROXY(CoalescedMemoryAccessCompositeTensorsViewTest,
-                          "CoalescedMemoryAccessCompositeTensorsViewTest");
+TFEL_TESTS_GENERATE_PROXY(StridedMemoryAccessFunctionViewBaseTest,
+                          "StridedMemoryAccessFunctionViewBaseTest");
+TFEL_TESTS_GENERATE_PROXY(StridedMemoryAccessTensorViewTest,
+                          "StridedMemoryAccessTensorViewTest");
+TFEL_TESTS_GENERATE_PROXY(StridedMemoryAccessCompositeTensorsViewTest,
+                          "StridedMemoryAccessCompositeTensorsViewTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("CoalescedMemoryAccessFunctionTest.xml");
+  m.addXMLTestOutput("StridedMemoryAccessFunctionTest.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

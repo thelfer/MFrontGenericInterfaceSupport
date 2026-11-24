@@ -1,8 +1,8 @@
 /*!
- * \file   MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.ixx
+ * \file   MGIS/Function/StridedMemoryAccessFunctionViewBase.ixx
  * \brief File which contains the implementation of the
- * `StridedCoalescedMemoryAccessFunctionViewBase` class declared in
- * `MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.hxx`.
+ * `StridedMemoryAccessFunctionViewBase` class declared in
+ * `MGIS/Function/StridedMemoryAccessFunctionViewBase.hxx`.
  * \author Thomas Helfer
  * \date   17/01/2026
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -14,19 +14,17 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_FUNCTION_STRIDEDCOALESCEDMEMORYACCESSFUNCTIONVIEWBASE_IXX
-#define LIB_MGIS_FUNCTION_STRIDEDCOALESCEDMEMORYACCESSFUNCTIONVIEWBASE_IXX
+#ifndef LIB_MGIS_FUNCTION_STRIDEDMEMORYACCESSFUNCTIONVIEWBASE_IXX
+#define LIB_MGIS_FUNCTION_STRIDEDMEMORYACCESSFUNCTIONVIEWBASE_IXX
 
 namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
-      constexpr bool StridedCoalescedMemoryAccessFunctionViewBase<
-          Space,
-          N,
-          is_mutable>::checkPreconditions(AbstractErrorHandler& eh,
-                                          const Space& s,
-                                          std::span<const real> values)  //
+      constexpr bool StridedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+          checkPreconditions(AbstractErrorHandler& eh,
+                             const Space& s,
+                             std::span<const real> values)  //
       requires(!is_mutable) {
     const auto ne = getSpaceSize(s);
     if (values.size() != N * ne) {
@@ -37,40 +35,33 @@ namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
-      constexpr StridedCoalescedMemoryAccessFunctionViewBase<Space,
-                                                             N,
-                                                             is_mutable>::
-          StridedCoalescedMemoryAccessFunctionViewBase(
+      constexpr StridedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+          StridedMemoryAccessFunctionViewBase(
               const Space& s,
               std::span<const real> values) requires(!is_mutable)
-      : StridedCoalescedMemoryAccessFunctionViewBase(
-            preconditions_check, s, values) {
-  }  // end of StridedCoalescedMemoryAccessFunctionViewBase
+      : StridedMemoryAccessFunctionViewBase(preconditions_check, s, values) {
+  }  // end of StridedMemoryAccessFunctionViewBase
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       template <bool doPreconditionsCheck>
-      constexpr StridedCoalescedMemoryAccessFunctionViewBase<Space,
-                                                             N,
-                                                             is_mutable>::
-          StridedCoalescedMemoryAccessFunctionViewBase(
+      constexpr StridedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+          StridedMemoryAccessFunctionViewBase(
               const PreconditionsCheck<doPreconditionsCheck>& pcheck,
               const Space& s,
               std::span<const real> values) requires(!is_mutable)
-      : PreconditionsChecker<StridedCoalescedMemoryAccessFunctionViewBase>(
+      : PreconditionsChecker<StridedMemoryAccessFunctionViewBase>(
             pcheck, s, values),
         space(s),
         data_pointer(values.data()) {
-  }  // end of StridedCoalescedMemoryAccessFunctionViewBase
+  }  // end of StridedMemoryAccessFunctionViewBase
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
-      constexpr bool StridedCoalescedMemoryAccessFunctionViewBase<
-          Space,
-          N,
-          is_mutable>::checkPreconditions(AbstractErrorHandler& eh,
-                                          const Space& s,
-                                          std::span<real> values) {
+      constexpr bool StridedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+          checkPreconditions(AbstractErrorHandler& eh,
+                             const Space& s,
+                             std::span<real> values) {
     const auto ne = getSpaceSize(s);
     if (values.size() != N * ne) {
       return eh.registerErrorMessage("invalid number of values");
@@ -80,34 +71,29 @@ namespace mgis::function {
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
-      constexpr StridedCoalescedMemoryAccessFunctionViewBase<Space,
-                                                             N,
-                                                             is_mutable>::
-          StridedCoalescedMemoryAccessFunctionViewBase(const Space& s,
-                                                       std::span<real> values)
-      : StridedCoalescedMemoryAccessFunctionViewBase(
-            preconditions_check, s, values) {
-  }  // end of StridedCoalescedMemoryAccessFunctionViewBase
+      constexpr StridedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+          StridedMemoryAccessFunctionViewBase(const Space& s,
+                                              std::span<real> values)
+      : StridedMemoryAccessFunctionViewBase(preconditions_check, s, values) {
+  }  // end of StridedMemoryAccessFunctionViewBase
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       template <bool doPreconditionsCheck>
-      constexpr StridedCoalescedMemoryAccessFunctionViewBase<Space,
-                                                             N,
-                                                             is_mutable>::
-          StridedCoalescedMemoryAccessFunctionViewBase(
+      constexpr StridedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
+          StridedMemoryAccessFunctionViewBase(
               const PreconditionsCheck<doPreconditionsCheck>& pcheck,
               const Space& s,
               std::span<real> values)
-      : PreconditionsChecker<StridedCoalescedMemoryAccessFunctionViewBase>(
+      : PreconditionsChecker<StridedMemoryAccessFunctionViewBase>(
             pcheck, s, values),
         space(s),
         data_pointer(values.data()) {
-  }  // end of StridedCoalescedMemoryAccessFunctionViewBase
+  }  // end of StridedMemoryAccessFunctionViewBase
 
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
-      constexpr const Space& StridedCoalescedMemoryAccessFunctionViewBase<
+      constexpr const Space& StridedMemoryAccessFunctionViewBase<
           Space,
           N,
           is_mutable>::getSpace() const MGIS_NOEXCEPT {
@@ -121,9 +107,8 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)                    //
       constexpr std::array<real, N>  //
-      StridedCoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
-          getValues(const size_type i) const
-      requires(LinearElementSpaceConcept<Space>) {
+      StridedMemoryAccessFunctionViewBase<Space, N, is_mutable>::getValues(
+          const size_type i) const requires(LinearElementSpaceConcept<Space>) {
     return [ this, i ]<std::size_t... Is>(std::index_sequence<Is...>)
         ->std::array<real, N> {
       const auto ne = getSpaceSize(this->space);
@@ -135,9 +120,9 @@ namespace mgis::function {
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)                    //
       constexpr std::array<real, N>  //
-      StridedCoalescedMemoryAccessFunctionViewBase<Space, N, is_mutable>::
-          getValues(const size_type e,
-                    const size_type q) const  //
+      StridedMemoryAccessFunctionViewBase<Space, N, is_mutable>::getValues(
+          const size_type e,
+          const size_type q) const  //
       requires(LinearQuadratureSpaceConcept<Space>) {
     return [ this, e, q ]<std::size_t... Is>(std::index_sequence<Is...>)
         ->std::array<real, N> {
@@ -150,5 +135,4 @@ namespace mgis::function {
 
 }  // end of namespace mgis::function
 
-#endif /* LIB_MGIS_FUNCTION_STRIDEDCOALESCEDMEMORYACCESSFUNCTIONVIEWBASE_IXX \
-        */
+#endif /* LIB_MGIS_FUNCTION_STRIDEDMEMORYACCESSFUNCTIONVIEWBASE_IXX */

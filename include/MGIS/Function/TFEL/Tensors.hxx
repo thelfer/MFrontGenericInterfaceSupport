@@ -30,10 +30,10 @@
 #include "MGIS/Function/TFEL/TensorConcept.hxx"
 #include "MGIS/Function/TFEL/TensorView.hxx"
 #include "MGIS/Function/TFEL/TensorModifier.hxx"
-#include "MGIS/Function/TFEL/CoalescedMemoryAccessTensorView.hxx"
-#include "MGIS/Function/TFEL/CoalescedMemoryAccessCompositeTensorsView.hxx"
-#include "MGIS/Function/TFEL/StridedCoalescedMemoryAccessTensorView.hxx"
-#include "MGIS/Function/TFEL/StridedCoalescedMemoryAccessCompositeTensorsView.hxx"
+#include "MGIS/Function/TFEL/ScatteredMemoryAccessTensorView.hxx"
+#include "MGIS/Function/TFEL/ScatteredMemoryAccessCompositeTensorsView.hxx"
+#include "MGIS/Function/TFEL/StridedMemoryAccessTensorView.hxx"
+#include "MGIS/Function/TFEL/StridedMemoryAccessCompositeTensorsView.hxx"
 
 namespace mgis::function::internals {
 

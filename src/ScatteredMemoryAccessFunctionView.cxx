@@ -1,5 +1,5 @@
 /*!
- * \file   MGIS/Function/CoalescedMemoryAccessFunctionView.cxx
+ * \file   src/ScatteredMemoryAccessFunctionView.cxx
  * \brief
  * \author Thomas Helfer
  * \date   11/06/2020
@@ -12,7 +12,7 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include "MGIS/Function/CoalescedMemoryAccessFunctionViewBase.hxx"
+#include "MGIS/Function/ScatteredMemoryAccessFunctionViewBase.hxx"
 #ifdef MGIS_HAVE_TFEL
-#include "MGIS/Function/TFEL/CoalescedMemoryAccessCompositeTensorsView.hxx"
+#include "MGIS/Function/TFEL/ScatteredMemoryAccessCompositeTensorsView.hxx"
 #endif /* MGIS_HAVE_TFEL */

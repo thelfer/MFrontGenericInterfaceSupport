@@ -1,8 +1,8 @@
 /*!
- * \file   MGIS/Function/TFEL/CoalescedMemoryAccessCompositeTensorsView.ixx
+ * \file   MGIS/Function/TFEL/ScatteredMemoryAccessCompositeTensorsView.ixx
  * \brief  File which contains the implementation of the
- * `CoalescedMemoryAccessCompositeTensorsView` class declared in
- * `MGIS/Function/TFEL/CoalescedMemoryAccessCompositeTensorsView.hxx`.
+ * `ScatteredMemoryAccessCompositeTensorsView` class declared in
+ * `MGIS/Function/TFEL/ScatteredMemoryAccessCompositeTensorsView.hxx`.
  * \author Thomas Helfer
  * \date   27/10/2025
  * \copyright (C) Copyright Thomas Helfer 2018.
@@ -14,22 +14,22 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#ifndef LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSCOMPOSITETENSORVIEW_IXX
-#define LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSCOMPOSITETENSORVIEW_IXX
+#ifndef LIB_MGIS_FUNCTION_TFEL_SCATTEREDMEMORYACCESSCOMPOSITETENSORSVIEW_IXX
+#define LIB_MGIS_FUNCTION_TFEL_SCATTEREDMEMORYACCESSCOMPOSITETENSORSVIEW_IXX
 
 namespace mgis::function {
 
   // the `get` member function dispatches at compile time: a scalar value is
   // returned as a reference to the value of the corresponding component, a
-  // tensorial object as a coalesced view built from the addresses of the
+  // tensorial object as a scattered view built from the addresses of the
   // values of its components at the given integration point
   template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
   requires(N > 0)  //
       template <size_type begin, ScalarOrTensorConcept ValueType>
       constexpr
-      typename CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
+      typename ScatteredMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
           template MutableValues<ValueType>  //
-      CoalescedMemoryAccessCompositeTensorsView<Space,
+      ScatteredMemoryAccessCompositeTensorsView<Space,
                                                 N,
                                                 is_mutable>::get(const size_type
                                                                      i)  //
@@ -39,7 +39,7 @@ namespace mgis::function {
       const auto ptr = this->template getValuePointer<begin>(i);
       return ptr[0];
     } else {
-      return tfel::math::CoalescedView<ValueType>(
+      return tfel::math::ScatteredView<ValueType>(
           this->template getValuesPointers<
               begin, internals::CompileTimeSize<ValueType>::value>(i));
     }
@@ -49,9 +49,9 @@ namespace mgis::function {
   requires(N > 0)  //
       template <size_type begin, ScalarOrTensorConcept ValueType>
       constexpr
-      typename CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
+      typename ScatteredMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
           template MutableValues<ValueType>  //
-      CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::get(
+      ScatteredMemoryAccessCompositeTensorsView<Space, N, is_mutable>::get(
           const size_type e,
           const size_type q)  //
       requires((begin + internals::CompileTimeSize<ValueType>::value <= N) &&
@@ -60,7 +60,7 @@ namespace mgis::function {
       const auto ptr = this->template getValuePointer<begin>(e, q);
       return ptr[0];
     } else {
-      return tfel::math::CoalescedView<ValueType>(
+      return tfel::math::ScatteredView<ValueType>(
           this->template getValuesPointers<
               begin, internals::CompileTimeSize<ValueType>::value>(e, q));
     }
@@ -70,9 +70,9 @@ namespace mgis::function {
   requires(N > 0)  //
       template <size_type begin, ScalarOrTensorConcept ValueType>
       constexpr
-      typename CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
+      typename ScatteredMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
           template ConstValues<ValueType>  //
-      CoalescedMemoryAccessCompositeTensorsView<
+      ScatteredMemoryAccessCompositeTensorsView<
           Space,
           N,
           is_mutable>::get(const size_type i) const  //
@@ -82,7 +82,7 @@ namespace mgis::function {
       const auto ptr = this->template getValuePointer<begin>(i);
       return ptr[0];
     } else {
-      return tfel::math::CoalescedView<const ValueType>(
+      return tfel::math::ScatteredView<const ValueType>(
           this->template getValuesPointers<
               begin, internals::CompileTimeSize<ValueType>::value>(i));
     }
@@ -92,9 +92,9 @@ namespace mgis::function {
   requires(N > 0)  //
       template <size_type begin, ScalarOrTensorConcept ValueType>
       constexpr
-      typename CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
+      typename ScatteredMemoryAccessCompositeTensorsView<Space, N, is_mutable>::
           template ConstValues<ValueType>  //
-      CoalescedMemoryAccessCompositeTensorsView<Space, N, is_mutable>::get(
+      ScatteredMemoryAccessCompositeTensorsView<Space, N, is_mutable>::get(
           const size_type e,
           const size_type q) const  //
       requires((begin + internals::CompileTimeSize<ValueType>::value <= N) &&
@@ -103,7 +103,7 @@ namespace mgis::function {
       const auto ptr = this->template getValuePointer<begin>(e, q);
       return ptr[0];
     } else {
-      return tfel::math::CoalescedView<const ValueType>(
+      return tfel::math::ScatteredView<const ValueType>(
           this->template getValuesPointers<
               begin, internals::CompileTimeSize<ValueType>::value>(e, q));
     }
@@ -111,5 +111,5 @@ namespace mgis::function {
 
 }  // namespace mgis::function
 
-#endif /* LIB_MGIS_FUNCTION_TFEL_COALESCEDMEMORYACCESSCOMPOSITETENSORVIEW_IXX \
+#endif /* LIB_MGIS_FUNCTION_TFEL_SCATTEREDMEMORYACCESSCOMPOSITETENSORSVIEW_IXX \
         */

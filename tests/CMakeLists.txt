@@ -206,11 +206,11 @@ if(MGIS_HAVE_TFEL)
     add_tfel_test(UniformEvaluatorsTest UniformEvaluatorsTest.cxx)
     add_function_test_flags(UniformEvaluatorsTest)
 
-    add_tfel_test(CoalescedMemoryAccessFunctionViewTest CoalescedMemoryAccessFunctionViewTest.cxx)
-    add_function_test_flags(CoalescedMemoryAccessFunctionViewTest)
+    add_tfel_test(ScatteredMemoryAccessFunctionViewTest ScatteredMemoryAccessFunctionViewTest.cxx)
+    add_function_test_flags(ScatteredMemoryAccessFunctionViewTest)
 
-    add_tfel_test(StridedCoalescedMemoryAccessFunctionViewTest StridedCoalescedMemoryAccessFunctionViewTest.cxx)
-    add_function_test_flags(StridedCoalescedMemoryAccessFunctionViewTest)
+    add_tfel_test(StridedMemoryAccessFunctionViewTest StridedMemoryAccessFunctionViewTest.cxx)
+    add_function_test_flags(StridedMemoryAccessFunctionViewTest)
 
     add_tfel_test(MechanicalEvaluatorsTest MechanicalEvaluatorsTest.cxx)
     add_function_test_flags(MechanicalEvaluatorsTest)

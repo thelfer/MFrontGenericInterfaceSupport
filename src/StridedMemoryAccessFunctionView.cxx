@@ -1,5 +1,5 @@
 /*!
- * \file   StridedCoalescedMemoryAccessFunctionView.cxx
+ * \file   StridedMemoryAccessFunctionView.cxx
  * \brief
  * \author Thomas Helfer
  * \date   17/01/2026
@@ -12,7 +12,7 @@
  *   CeCILL-C_V1-en.txt and CeCILL-C_V1-fr.txt).
  */
 
-#include "MGIS/Function/StridedCoalescedMemoryAccessFunctionViewBase.hxx"
+#include "MGIS/Function/StridedMemoryAccessFunctionViewBase.hxx"
 #ifdef MGIS_HAVE_TFEL
-#include "MGIS/Function/TFEL/StridedCoalescedMemoryAccessCompositeTensorsView.hxx"
+#include "MGIS/Function/TFEL/StridedMemoryAccessCompositeTensorsView.hxx"
 #endif /* MGIS_HAVE_TFEL */
