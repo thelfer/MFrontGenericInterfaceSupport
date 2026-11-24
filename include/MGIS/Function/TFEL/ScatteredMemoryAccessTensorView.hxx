@@ -202,6 +202,17 @@ namespace mgis::function {
       const ScatteredMemoryAccessTensorView<Space, TensorType, is_mutable>&)
       MGIS_NOEXCEPT;
 
+  /*!
+   * \brief former name of `ScatteredMemoryAccessTensorView`
+   * \deprecated use `ScatteredMemoryAccessTensorView`
+   */
+  template <FunctionalSpaceConcept Space,
+            TensorConcept TensorType,
+            bool is_mutable = true>
+  using CoalescedMemoryAccessTensorView
+      [[deprecated("use ScatteredMemoryAccessTensorView")]] =
+          ScatteredMemoryAccessTensorView<Space, TensorType, is_mutable>;
+
 }  // namespace mgis::function
 
 #include "MGIS/Function/TFEL/ScatteredMemoryAccessTensorView.ixx"

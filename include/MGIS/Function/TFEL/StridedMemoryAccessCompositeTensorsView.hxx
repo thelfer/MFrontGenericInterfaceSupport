@@ -211,6 +211,35 @@ namespace mgis::function {
 
   };  // end of StridedMemoryAccessCompositeTensorsView
 
+  /*!
+   * \brief former name of `StridedMemoryAccessCompositeTensorsView`
+   * \deprecated use `StridedMemoryAccessCompositeTensorsView`
+   */
+  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable = true>
+  requires(N > 0) using StridedCoalescedMemoryAccessCompositeTensorsView
+      [[deprecated("use StridedMemoryAccessCompositeTensorsView")]] =
+          StridedMemoryAccessCompositeTensorsView<Space, N, is_mutable>;
+
+  /*!
+   * \brief former name of
+   * `StridedMemoryAccessCompositeTensorsViewMutableValue`
+   * \deprecated use `StridedMemoryAccessCompositeTensorsViewMutableValue`
+   */
+  template <ScalarOrTensorConcept ValueType>
+  using StridedCoalescedMemoryAccessCompositeTensorsViewMutableValue
+      [[deprecated(
+          "use StridedMemoryAccessCompositeTensorsViewMutableValue")]] =
+          StridedMemoryAccessCompositeTensorsViewMutableValue<ValueType>;
+
+  /*!
+   * \brief former name of `StridedMemoryAccessCompositeTensorsViewConstValue`
+   * \deprecated use `StridedMemoryAccessCompositeTensorsViewConstValue`
+   */
+  template <ScalarOrTensorConcept ValueType>
+  using StridedCoalescedMemoryAccessCompositeTensorsViewConstValue
+      [[deprecated("use StridedMemoryAccessCompositeTensorsViewConstValue")]] =
+          StridedMemoryAccessCompositeTensorsViewConstValue<ValueType>;
+
 }  // namespace mgis::function
 
 #include "MGIS/Function/TFEL/StridedMemoryAccessCompositeTensorsView.ixx"

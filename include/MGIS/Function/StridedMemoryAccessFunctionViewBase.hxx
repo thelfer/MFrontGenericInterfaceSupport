@@ -152,6 +152,15 @@ namespace mgis::function {
     const std::conditional_t<is_mutable, real*, const real*> data_pointer;
   };
 
+  /*!
+   * \brief former name of `StridedMemoryAccessFunctionViewBase`
+   * \deprecated use `StridedMemoryAccessFunctionViewBase`
+   */
+  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable>
+  requires(N > 0) using StridedCoalescedMemoryAccessFunctionViewBase
+      [[deprecated("use StridedMemoryAccessFunctionViewBase")]] =
+          StridedMemoryAccessFunctionViewBase<Space, N, is_mutable>;
+
 }  // namespace mgis::function
 
 #include "MGIS/Function/StridedMemoryAccessFunctionViewBase.ixx"

@@ -424,6 +424,21 @@ namespace mgis::function {
     std::array<ScalarComponentFunctionView, N> function_components;
   };
 
+  /*!
+   * \brief former name of `ScatteredMemoryAccessFunctionViewBase`
+   * \deprecated use `ScatteredMemoryAccessFunctionViewBase`
+   *
+   * \note `is_mutable` is `true` by default, as in Version 3.1.0, so that
+   * `CoalescedMemoryAccessFunctionViewBase<Space, N>` remains valid. The class
+   * itself can not declare this default value: `nvcc` copies it into the
+   * definitions of the member functions made outside of the class, which the
+   * host compiler rejects (see Issue 207).
+   */
+  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable = true>
+  requires(N > 0) using CoalescedMemoryAccessFunctionViewBase
+      [[deprecated("use ScatteredMemoryAccessFunctionViewBase")]] =
+          ScatteredMemoryAccessFunctionViewBase<Space, N, is_mutable>;
+
 }  // namespace mgis::function
 
 #include "MGIS/Function/ScatteredMemoryAccessFunctionViewBase.ixx"

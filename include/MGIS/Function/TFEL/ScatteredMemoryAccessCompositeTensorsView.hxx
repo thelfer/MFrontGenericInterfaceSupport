@@ -208,6 +208,34 @@ namespace mgis::function {
 
   };  // end of ScatteredMemoryAccessCompositeTensorsView
 
+  /*!
+   * \brief former name of `ScatteredMemoryAccessCompositeTensorsView`
+   * \deprecated use `ScatteredMemoryAccessCompositeTensorsView`
+   */
+  template <FunctionalSpaceConcept Space, size_type N, bool is_mutable = true>
+  requires(N > 0) using CoalescedMemoryAccessCompositeTensorsView
+      [[deprecated("use ScatteredMemoryAccessCompositeTensorsView")]] =
+          ScatteredMemoryAccessCompositeTensorsView<Space, N, is_mutable>;
+
+  /*!
+   * \brief former name of
+   * `ScatteredMemoryAccessCompositeTensorsViewMutableValue`
+   * \deprecated use `ScatteredMemoryAccessCompositeTensorsViewMutableValue`
+   */
+  template <ScalarOrTensorConcept ValueType>
+  using CoalescedMemoryAccessCompositeTensorsViewMutableValue [[deprecated(
+      "use ScatteredMemoryAccessCompositeTensorsViewMutableValue")]] =
+      ScatteredMemoryAccessCompositeTensorsViewMutableValue<ValueType>;
+
+  /*!
+   * \brief former name of `ScatteredMemoryAccessCompositeTensorsViewConstValue`
+   * \deprecated use `ScatteredMemoryAccessCompositeTensorsViewConstValue`
+   */
+  template <ScalarOrTensorConcept ValueType>
+  using CoalescedMemoryAccessCompositeTensorsViewConstValue [[deprecated(
+      "use ScatteredMemoryAccessCompositeTensorsViewConstValue")]] =
+      ScatteredMemoryAccessCompositeTensorsViewConstValue<ValueType>;
+
 }  // namespace mgis::function
 
 #include "MGIS/Function/TFEL/ScatteredMemoryAccessCompositeTensorsView.ixx"

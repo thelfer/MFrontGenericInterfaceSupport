@@ -199,6 +199,17 @@ namespace mgis::function {
       const StridedMemoryAccessTensorView<Space, TensorType, is_mutable>&)
       MGIS_NOEXCEPT;
 
+  /*!
+   * \brief former name of `StridedMemoryAccessTensorView`
+   * \deprecated use `StridedMemoryAccessTensorView`
+   */
+  template <FunctionalSpaceConcept Space,
+            TensorConcept TensorType,
+            bool is_mutable = true>
+  using StridedCoalescedMemoryAccessTensorView
+      [[deprecated("use StridedMemoryAccessTensorView")]] =
+          StridedMemoryAccessTensorView<Space, TensorType, is_mutable>;
+
 }  // namespace mgis::function
 
 #include "MGIS/Function/TFEL/StridedMemoryAccessTensorView.ixx"
