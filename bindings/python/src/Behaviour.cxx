@@ -245,40 +245,63 @@ void declareBehaviour(pybind11::module_ &m) {
   pybind11::class_<Behaviour, BehaviourDescription>(m, "Behaviour")
       // pybind11::class_<Behaviour>("Behaviour")
       .def("getInitializeFunctionsNames", Behaviour_getInitializeFunctionsNames)
-      .def("getInitializeFunctionInputs", Behaviour_getInitializeFunctionInputs)
+      .def("getInitializeFunctionInputs", Behaviour_getInitializeFunctionInputs,
+           "name"_a)
       .def("getPostProcessingsNames", Behaviour_getPostProcessingsNames)
-      .def("getPostProcessingOutputs", Behaviour_getPostProcessingOutputs)
-      .def("setParameter", setParameter1)
-      .def("setIntegerParameter", setParameter2)
-      .def("setUnsignedShortParameter", setParameter3)
-      .def("rotateGradients", rotate_gradients_in_place_member)
-      .def("rotateGradients", rotate_gradients_out_of_place_member)
+      .def("getPostProcessingOutputs", Behaviour_getPostProcessingOutputs,
+           "name"_a)
+      .def("setParameter", setParameter1, "name"_a, "value"_a)
+      .def("setIntegerParameter", setParameter2, "name"_a, "value"_a)
+      .def("setUnsignedShortParameter", setParameter3, "name"_a, "value"_a)
+      .def("rotateGradients", rotate_gradients_in_place_member, "gradients"_a,
+           "rotation_matrix"_a)
+      .def("rotateGradients", rotate_gradients_out_of_place_member,
+           "material_frame_gradients"_a, "global_frame_gradients"_a,
+           "rotation_matrix"_a)
       .def("rotateThermodynamicForces",
-           rotate_thermodynamic_forces_in_place_member)
+           rotate_thermodynamic_forces_in_place_member,
+           "thermodynamic_forces"_a, "rotation_matrix"_a)
       .def("rotateThermodynamicForces",
-           rotate_thermodynamic_forces_out_of_place_member)
+           rotate_thermodynamic_forces_out_of_place_member,
+           "global_frame_thermodynamic_forces"_a,
+           "material_frame_thermodynamic_forces"_a, "rotation_matrix"_a)
       .def("rotateTangentOperatorBlocks",
-           rotate_tangent_operator_blocks_in_place_member)
+           rotate_tangent_operator_blocks_in_place_member,
+           "tangent_operator_blocks"_a, "rotation_matrix"_a)
       .def("rotateTangentOperatorBlocks",
-           rotate_tangent_operator_blocks_out_of_place_member);
+           rotate_tangent_operator_blocks_out_of_place_member,
+           "global_frame_tangent_operator_blocks"_a,
+           "material_frame_tangent_operator_blocks"_a, "rotation_matrix"_a);
   // wrapping free functions
-  m.def("rotateGradients", rotate_gradients_in_place);
-  m.def("rotateGradients", rotate_gradients_out_of_place);
-  m.def("rotateThermodynamicForces", rotate_thermodynamic_forces_in_place);
-  m.def("rotateThermodynamicForces", rotate_thermodynamic_forces_out_of_place);
-  m.def("rotateTangentOperatorBlocks", rotate_tangent_operator_blocks_in_place);
+  m.def("rotateGradients", rotate_gradients_in_place, "gradients"_a,
+        "behaviour"_a, "rotation_matrix"_a);
+  m.def("rotateGradients", rotate_gradients_out_of_place,
+        "material_frame_gradients"_a, "behaviour"_a, "global_frame_gradients"_a,
+        "rotation_matrix"_a);
+  m.def("rotateThermodynamicForces", rotate_thermodynamic_forces_in_place,
+        "thermodynamic_forces"_a, "behaviour"_a, "rotation_matrix"_a);
+  m.def("rotateThermodynamicForces", rotate_thermodynamic_forces_out_of_place,
+        "global_frame_thermodynamic_forces"_a, "behaviour"_a,
+        "material_frame_thermodynamic_forces"_a, "rotation_matrix"_a);
+  m.def("rotateTangentOperatorBlocks", rotate_tangent_operator_blocks_in_place,
+        "tangent_operator_blocks"_a, "behaviour"_a, "rotation_matrix"_a);
   m.def("rotateTangentOperatorBlocks",
-        rotate_tangent_operator_blocks_out_of_place);
+        rotate_tangent_operator_blocks_out_of_place,
+        "global_frame_tangent_operator_blocks"_a, "behaviour"_a,
+        "material_frame_tangent_operator_blocks"_a, "rotation_matrix"_a);
 
-  m.def("load", load_ptr);
-  m.def("load", load_ptr2);
+  m.def("load", load_ptr, "library"_a, "behaviour"_a, "hypothesis"_a);
+  m.def("load", load_ptr2, "options"_a, "library"_a, "behaviour"_a,
+        "hypothesis"_a);
   m.def("loadFromDatabase", Behaviour_loadFromDatabase, "name"_a,
         "hypothesis"_a, "material"_a = std::optional<std::string>{});
   m.def("loadFromDatabase", Behaviour_loadFromDatabase2, "options"_a, "name"_a,
         "hypothesis"_a, "material"_a = std::optional<std::string>{});
 
-  m.def("setParameter", setParameter1);
-  m.def("setIntegerParameter", setParameter2);
-  m.def("setUnsignedShortParameter", setParameter3);
+  m.def("setParameter", setParameter1, "behaviour"_a, "name"_a, "value"_a);
+  m.def("setIntegerParameter", setParameter2, "behaviour"_a, "name"_a,
+        "value"_a);
+  m.def("setUnsignedShortParameter", setParameter3, "behaviour"_a, "name"_a,
+        "value"_a);
 
 }  // end of declareBehaviour

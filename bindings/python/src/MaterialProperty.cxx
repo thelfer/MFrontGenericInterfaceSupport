@@ -19,6 +19,7 @@
 void declareMaterialProperty(pybind11::module_&);
 
 void declareMaterialProperty(pybind11::module_& m) {
+  using namespace pybind11::literals;
   using mgis::material_property::MaterialProperty;
   // wrapping the MaterialProperty class
   pybind11::class_<MaterialProperty>(m, "MaterialProperty")
@@ -38,6 +39,6 @@ void declareMaterialProperty(pybind11::module_& m) {
       .def_readonly("inputs", &MaterialProperty::inputs,
                     "inputs of the material property");
   // wrapping free functions
-  m.def("load", mgis::material_property::load);
+  m.def("load", mgis::material_property::load, "library"_a, "name"_a);
 
 }  // end of declareMaterialProperty

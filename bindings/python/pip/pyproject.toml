@@ -1,0 +1,87 @@
+# Build of the mgis pip package.
+#
+# setup.py configures, builds and installs MGIS with cmake, then lays out
+# the installation as a python package. The wheels are built for each
+# python version by cibuildwheel, see .github/workflows/python-pip.yml
+#
+# The TFEL dependency (tfel-mfront) is pinned below, both for the build
+# and for the run. setup.py checks that the two pins and the constant
+# TFEL_DEPENDENCY of setup.py agree: bump the three values together.
+
+[build-system]
+requires = [
+  "setuptools>=64",
+  "cmake>=3.20",
+  "pybind11>=2.12",
+  "pybind11-stubgen>=3.0",
+  "numpy>=2.0",
+  "tfel-mfront==5.2.0.dev0",
+  "patchelf; sys_platform == 'linux'",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mgis"
+dynamic = ["version"]
+description = "MFrontGenericInterfaceSupport with Python bindings"
+readme = { text = "MGIS provides a generic interface to integrate MFront generated material libraries in solvers. This package provides the MGIS library, headers and Python bindings. It depends on the tfel-mfront package, pinned to the version it was built against. A C++ compiler is required to build MFront implementations.", content-type = "text/plain" }
+authors = [{ name = "Thomas Helfer", email = "thomas.helfer@cea.fr" }]
+requires-python = ">=3.9"
+dependencies = ["numpy", "tfel-mfront==5.2.0.dev0"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
+  "License :: OSI Approved :: CEA CNRS Inria Logiciel Libre License - CECILL-C",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
+  "Topic :: Scientific/Engineering",
+]
+
+[project.urls]
+Homepage = "https://thelfer.github.io/mgis/web/index.html"
+Source = "https://github.com/thelfer/MFrontGenericInterfaceSupport"
+
+# the content of the package is produced by setup.py
+[tool.setuptools]
+packages = []
+py-modules = []
+
+[tool.cibuildwheel]
+build-verbosity = 1
+skip = "*-musllinux_*"
+test-command = "python {package}/test_wheel.py"
+
+[tool.cibuildwheel.linux]
+archs = ["x86_64"]
+# auditwheel shall not vendor the TFEL libraries: they are provided by the
+# tfel-mfront wheel, installed next to this one. Vendoring them under
+# mangled names would make a behaviour loaded in python load a second copy
+# of TFEL. The rpath of the libraries of this wheel points to the sibling
+# tfel/lib directory, see set_relative_runtime_paths in setup.py.
+# The patterns are globs (auditwheel >= 6), which also behave correctly as
+# regular expressions for older versions. They do not match
+# libMFrontGenericInterface*, the library of MGIS itself.
+repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel} --exclude libTFEL* --exclude libMTest* --exclude libMFM* --exclude libMFrontQuery* --exclude libMFrontLogStream* --exclude libMFrontProfiling* --exclude libMFrontGenericParallelRuntime*"
+
+[tool.cibuildwheel.macos]
+archs = ["arm64"]
+environment = { MACOSX_DEPLOYMENT_TARGET = "11.0" }
+# same reason as on linux: delocate shall not move the TFEL libraries,
+# which are provided by the tfel-mfront wheel, into this wheel
+repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v -x libTFEL.* -x libMTest.* -x libMFM.* -x libMFrontQuery.* -x libMFrontLogStream.* -x libMFrontProfiling.* -x libMFrontGenericParallelRuntime.* {wheel}"
+
+[tool.cibuildwheel.windows]
+archs = ["AMD64"]
+# The DLLs of MGIS are in mgis/bin, and those of TFEL in tfel/bin, where
+# the python modules find them (os.add_dll_directory). delvewheel would
+# copy these DLLs under other names, so a behaviour loaded in python would
+# load a second copy of them.
+repair-wheel-command = ""

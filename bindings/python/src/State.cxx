@@ -102,6 +102,7 @@ static void State_setExternalStateVariable2(mgis::behaviour::State& s,
 }  // end of State_setExternalStateVariable2
 
 void declareState(pybind11::module_& m) {
+  using namespace pybind11::literals;
   using mgis::behaviour::Behaviour;
   using mgis::behaviour::State;
   pybind11::class_<State>(m, "State")
@@ -118,13 +119,17 @@ void declareState(pybind11::module_& m) {
       .def_property_readonly("external_state_variables",
                              &State_getExternalStateVariables);
   //
-  m.def("setMaterialProperty", State_setMaterialProperty,
+  m.def("setMaterialProperty", State_setMaterialProperty, "state"_a, "name"_a,
+        "value"_a,
         "set the value of a material property by name");
-  m.def("setMaterialProperty", State_setMaterialProperty2,
+  m.def("setMaterialProperty", State_setMaterialProperty2, "state"_a,
+        "offset"_a, "value"_a,
         "set the value of a material property by offset");
-  m.def("setExternalStateVariable", State_setExternalStateVariable,
+  m.def("setExternalStateVariable", State_setExternalStateVariable, "state"_a,
+        "name"_a, "value"_a,
         "set the value of an external state variable by name");
-  m.def("setExternalStateVariable", State_setExternalStateVariable2,
+  m.def("setExternalStateVariable", State_setExternalStateVariable2, "state"_a,
+        "offset"_a, "value"_a,
         "set the value of an external state variable by offset");
 
 }  // end of declareState
