@@ -45,6 +45,8 @@ order:
   materials](mgis_fenics_multiphase_model.html)
 * [Phase-field approach to brittle
   fracture](mgis_fenics_phase_field.html)
+* [Small-strain and finite-strain crystal viscoplasticity of a
+  polycrystal](mgis_fenics_polycrystal.html)
 
 # A brief overview of the `mgis.fenics` module
 

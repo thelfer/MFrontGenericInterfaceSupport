@@ -105,6 +105,7 @@ if(MGIS_HAVE_PANDOC)
   mgis_pandoc_generate_html_page(mgis_fenics_phase_field "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(mgis_fenics_heat_equation_phase_change "--toc" "--toc-depth=3")
   mgis_pandoc_generate_html_page(mgis_fenics_monolithic_transient_thermoelasticity "--toc" "--toc-depth=3")
+  mgis_pandoc_generate_html_page(mgis_fenics_polycrystal "--toc" "--toc-depth=3")
 endif(MGIS_HAVE_PANDOC)
 
 if(MGIS_HAVE_JUPYTER_NBCONVERT)
@@ -112,12 +113,12 @@ if(MGIS_HAVE_JUPYTER_NBCONVERT)
 endif(MGIS_HAVE_JUPYTER_NBCONVERT)
 
 if(MGIS_APPEND_SUFFIX)
-  install(DIRECTORY css img js mfront ipynb
+  install(DIRECTORY css img js mfront ipynb demos
     DESTINATION share/doc/mgis-${MGIS_SUFFIX}/web
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
 else(MGIS_APPEND_SUFFIX)
-  install(DIRECTORY css img js mfront ipynb
+  install(DIRECTORY css img js mfront ipynb demos
     DESTINATION share/doc/mgis/web
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
